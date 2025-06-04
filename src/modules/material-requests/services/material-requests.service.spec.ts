@@ -13,13 +13,13 @@ import {
 
 import { MaterialRequestsService } from './material-requests.service';
 
-import {
-	type DeleteMaterialRequestMutation,
-	type FindMaintainersWithMaterialRequestsQuery,
-	type FindMaterialRequestsByIdQuery,
-	type FindMaterialRequestsQuery,
-	type InsertMaterialRequestMutation,
-	type UpdateMaterialRequestMutation,
+import type {
+	DeleteMaterialRequestMutation,
+	FindMaintainersWithMaterialRequestsQuery,
+	FindMaterialRequestsByIdQuery,
+	FindMaterialRequestsQuery,
+	InsertMaterialRequestMutation,
+	UpdateMaterialRequestMutation,
 } from '~generated/graphql-db-types-hetarchief';
 import { mockOrganisations } from '~modules/organisations/mocks/organisations.mocks';
 import { OrganisationsService } from '~modules/organisations/services/organisations.service';
@@ -121,10 +121,7 @@ describe('MaterialRequestsService', () => {
 
 	describe('adapt', () => {
 		it('can adapt a FindMaterialRequestsQuery hasura response to our material request interface', () => {
-			const adapted = materialRequestsService.adapt(
-				mockGqlMaterialRequest1,
-				mockOrganisations
-			);
+			const adapted = materialRequestsService.adapt(mockGqlMaterialRequest1, mockOrganisations);
 			// test some sample keys
 			expect(adapted.id).toEqual(mockGqlMaterialRequest1.id);
 			expect(adapted.objectId).toEqual(mockGqlMaterialRequest1.ie_object_id);
@@ -132,9 +129,7 @@ describe('MaterialRequestsService', () => {
 			expect(adapted.reason).toEqual(mockGqlMaterialRequest1.reason);
 			// requestedBy
 			expect(adapted.requesterId).toEqual(mockGqlMaterialRequest1.requested_by.id);
-			expect(adapted.requesterFullName).toEqual(
-				mockGqlMaterialRequest1.requested_by.full_name
-			);
+			expect(adapted.requesterFullName).toEqual(mockGqlMaterialRequest1.requested_by.full_name);
 			expect(adapted.requesterMail).toEqual(mockGqlMaterialRequest1.requested_by.mail);
 			// maintainer
 			expect(adapted.maintainerId).toEqual(
@@ -149,10 +144,7 @@ describe('MaterialRequestsService', () => {
 		});
 
 		it('can adapt a FindMaterialRequestsByIdQuery hasura response to our material request interface', () => {
-			const adapted = materialRequestsService.adapt(
-				mockGqlMaterialRequest2,
-				mockOrganisations
-			);
+			const adapted = materialRequestsService.adapt(mockGqlMaterialRequest2, mockOrganisations);
 			// test some sample keys
 			expect(adapted.id).toEqual(mockGqlMaterialRequest2.id);
 			expect(adapted.objectId).toEqual(mockGqlMaterialRequest2.ie_object_id);
@@ -160,14 +152,10 @@ describe('MaterialRequestsService', () => {
 			expect(adapted.reason).toEqual(mockGqlMaterialRequest2.reason);
 			// requestedBy
 			expect(adapted.requesterId).toEqual(mockGqlMaterialRequest2.requested_by.id);
-			expect(adapted.requesterFullName).toEqual(
-				mockGqlMaterialRequest2.requested_by.full_name
-			);
+			expect(adapted.requesterFullName).toEqual(mockGqlMaterialRequest2.requested_by.full_name);
 			expect(adapted.requesterMail).toEqual(mockGqlMaterialRequest2.requested_by.mail);
 			// requestedBy.group
-			expect(adapted.requesterUserGroupId).toEqual(
-				mockGqlMaterialRequest2.requested_by.group.id
-			);
+			expect(adapted.requesterUserGroupId).toEqual(mockGqlMaterialRequest2.requested_by.group.id);
 			expect(adapted.requesterUserGroupDescription).toEqual(
 				mockGqlMaterialRequest2.requested_by.group.description
 			);
@@ -412,10 +400,7 @@ describe('MaterialRequestsService', () => {
 			};
 			mockDataService.execute.mockResolvedValueOnce(mockData);
 			const { id, profile_id } = mockGqlMaterialRequest1;
-			const affectedRows = await materialRequestsService.deleteMaterialRequest(
-				id,
-				profile_id
-			);
+			const affectedRows = await materialRequestsService.deleteMaterialRequest(id, profile_id);
 			expect(affectedRows).toBe(1);
 		});
 

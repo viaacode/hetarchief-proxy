@@ -2,7 +2,6 @@ import nlJson from '../i18n/locales/nl.json';
 
 export function getTranslationFallback(
 	key: string,
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	variables: Record<string, string | number> = {}
 ): string {
 	const translation = nlJson[key];
@@ -10,10 +9,10 @@ export function getTranslationFallback(
 		return resolveTranslationVariables(translation, variables);
 	}
 	if (key.includes('___')) {
-		return key.split('___')[1].replace('-', ' ') + ' ***';
-	} else {
-		return key + ' ***';
+		const displayKey = key.split('___')[1].replace('-', ' ');
+		return `${displayKey} ***`;
 	}
+	return `${key} ***`;
 }
 
 export function resolveTranslationVariables(
@@ -21,11 +20,11 @@ export function resolveTranslationVariables(
 	variables?: Record<string, string | number>
 ): string {
 	let resolvedTranslation = translation;
-	Object.keys(variables || {}).forEach((variableName) => {
+	for (const variableName of Object.keys(variables || {})) {
 		resolvedTranslation = resolvedTranslation.replace(
 			new RegExp(`{{${variableName}}}`, 'g'),
 			String(variables[variableName])
 		);
-	});
+	}
 	return resolvedTranslation;
 }

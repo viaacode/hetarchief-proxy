@@ -2,9 +2,7 @@ query getChildIeObjects($currentObjectIri: String!) {
 	graph_intellectual_entity(
 		where: {
 			id: { _eq: $currentObjectIri }
-			hasPart: {
-				dctermsFormat: { dcterms_format: { _in: ["videofragment", "audiofragment"] } }
-			}
+			hasPart: { dctermsFormat: { dcterms_format: { _in: ["videofragment", "audiofragment"] } } }
 		}
 	) {
 		hasPart {

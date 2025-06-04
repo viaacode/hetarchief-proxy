@@ -1,27 +1,18 @@
+// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
 import { DataService } from '@meemoo/admin-core-api';
-import {
-	BadRequestException,
-	Injectable,
-	InternalServerErrorException,
-	Logger,
-	NotFoundException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { compact, groupBy, isArray, isEmpty, isNil, kebabCase, set } from 'lodash';
 
-import {
-	type CreateMaterialRequestDto,
-	type MaterialRequestsQueryDto,
-	type SendRequestListDto,
-} from '../dto/material-requests.dto';
+import type { CreateMaterialRequestDto, MaterialRequestsQueryDto, SendRequestListDto } from '../dto/material-requests.dto';
 import { ORDER_PROP_TO_DB_PROP } from '../material-requests.consts';
-import {
-	type GqlMaterialRequest,
-	type GqlMaterialRequestMaintainer,
-	type MaterialRequest,
-	type MaterialRequestFindAllExtraParameters,
-	type MaterialRequestMaintainer,
-	type MaterialRequestSendRequestListUserInfo,
+import type {
+	GqlMaterialRequest,
+	GqlMaterialRequestMaintainer,
+	MaterialRequest,
+	MaterialRequestFindAllExtraParameters,
+	MaterialRequestMaintainer,
+	MaterialRequestSendRequestListUserInfo,
 } from '../material-requests.types';
 
 import {
@@ -47,15 +38,15 @@ import {
 	type UpdateMaterialRequestMutation,
 	type UpdateMaterialRequestMutationVariables,
 } from '~generated/graphql-db-types-hetarchief';
-import {
-	EmailTemplate,
-	type MaterialRequestEmailInfo,
-} from '~modules/campaign-monitor/campaign-monitor.types';
+import { EmailTemplate, type MaterialRequestEmailInfo } from '~modules/campaign-monitor/campaign-monitor.types';
+// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 import { convertSchemaIdentifierToId } from '~modules/ie-objects/helpers/convert-schema-identifier-to-id';
-import { type IeObjectType } from '~modules/ie-objects/ie-objects.types';
-import { type Organisation } from '~modules/organisations/organisations.types';
+import type { IeObjectType } from '~modules/ie-objects/ie-objects.types';
+import type { Organisation } from '~modules/organisations/organisations.types';
+// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
 import { OrganisationsService } from '~modules/organisations/services/organisations.service';
+// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { GroupId } from '~modules/users/types';
 import { PaginationHelper } from '~shared/helpers/pagination';
@@ -102,10 +93,7 @@ export class MaterialRequestsService {
 			}
 
 			if (parameters.userGroup === GroupId.VISITOR) {
-				where._or = [
-					...where._or,
-					{ intellectualEntity: { schema_name: { _ilike: query } } },
-				];
+				where._or = [...where._or, { intellectualEntity: { schema_name: { _ilike: query } } }];
 			}
 		}
 
@@ -211,9 +199,7 @@ export class MaterialRequestsService {
 	): Promise<MaterialRequest> {
 		const variables: InsertMaterialRequestMutationVariables = {
 			newMaterialRequest: {
-				ie_object_id: convertSchemaIdentifierToId(
-					createMaterialRequestDto.objectSchemaIdentifier
-				),
+				ie_object_id: convertSchemaIdentifierToId(createMaterialRequestDto.objectSchemaIdentifier),
 				profile_id: parameters.userProfileId,
 				reason: createMaterialRequestDto.reason,
 				type: createMaterialRequestDto.type,
@@ -262,15 +248,14 @@ export class MaterialRequestsService {
 			updated_at,
 		};
 
-		const { update_app_material_requests: updatedMaterialRequest } =
-			await this.dataService.execute<
-				UpdateMaterialRequestMutation,
-				UpdateMaterialRequestMutationVariables
-			>(UpdateMaterialRequestDocument, {
-				materialRequestId,
-				userProfileId,
-				updateMaterialRequest,
-			});
+		const { update_app_material_requests: updatedMaterialRequest } = await this.dataService.execute<
+			UpdateMaterialRequestMutation,
+			UpdateMaterialRequestMutationVariables
+		>(UpdateMaterialRequestDocument, {
+			materialRequestId,
+			userProfileId,
+			updateMaterialRequest,
+		});
 
 		if (isEmpty(updatedMaterialRequest.returning[0])) {
 			throw new BadRequestException(
@@ -316,9 +301,9 @@ export class MaterialRequestsService {
 			const groupedMaterialRequests: any = groupBy(materialRequests, 'maintainerId');
 			const groupedArray = [];
 
-			Object.keys(groupedMaterialRequests).forEach((key) => {
+			for (const key of Object.keys(groupedMaterialRequests)) {
 				groupedArray.push(groupedMaterialRequests[key]);
-			});
+			}
 
 			// Send mail to each maintainer containing only material requests for objects they are the maintainer of
 			await Promise.all(
@@ -382,8 +367,8 @@ export class MaterialRequestsService {
 			objectDctermsFormat: graphQlMaterialRequest.intellectualEntity?.dctermsFormat?.[0]
 				?.dcterms_format as IeObjectType,
 			objectThumbnailUrl:
-				graphQlMaterialRequest.intellectualEntity?.schemaThumbnail
-					?.schema_thumbnail_url?.[0] || null,
+				graphQlMaterialRequest.intellectualEntity?.schemaThumbnail?.schema_thumbnail_url?.[0] ||
+				null,
 			profileId: graphQlMaterialRequest.profile_id,
 			reason: graphQlMaterialRequest.reason,
 			createdAt: graphQlMaterialRequest.created_at,
@@ -397,8 +382,7 @@ export class MaterialRequestsService {
 			requesterUserGroupId: graphQlMaterialRequest.requested_by.group?.id || null,
 			requesterUserGroupName: graphQlMaterialRequest.requested_by.group?.name || null,
 			requesterUserGroupLabel: graphQlMaterialRequest.requested_by.group?.label || null,
-			requesterUserGroupDescription:
-				graphQlMaterialRequest.requested_by.group?.description || null,
+			requesterUserGroupDescription: graphQlMaterialRequest.requested_by.group?.description || null,
 			maintainerId: organisation?.schemaIdentifier,
 			maintainerName: organisation?.schemaName,
 			maintainerSlug:

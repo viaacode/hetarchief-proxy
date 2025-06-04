@@ -2,6 +2,7 @@ import { Controller, Headers, Post, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { AssetType } from '@viaa/avo2-types';
 
+// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
 import { SitemapService } from '../services/sitemap.service';
 
 import { APIKEY, ApiKeyGuard } from '~shared/guards/api-key.guard';
@@ -14,7 +15,6 @@ export class SitemapController {
 	@Post()
 	@UseGuards(ApiKeyGuard)
 	public async generateSitemap(
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		@Headers(APIKEY) apikey: string
 	): Promise<string> {
 		const sitemapConfig = await this.sitemapService.getSitemapConfig();

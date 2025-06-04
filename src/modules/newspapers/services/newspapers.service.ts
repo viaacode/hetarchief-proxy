@@ -1,16 +1,15 @@
-import https, { type RequestOptions } from 'https';
+import https, { type RequestOptions } from 'node:https';
 
+// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
 import { DataService } from '@meemoo/admin-core-api';
 import { Injectable } from '@nestjs/common';
+// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
 import { ConfigService } from '@nestjs/config';
 import { sortBy } from 'lodash';
 
-import { type Configuration } from '~config';
+import type { Configuration } from '~config';
 
-import {
-	GetNewspaperTitlesDocument,
-	type GetNewspaperTitlesQuery,
-} from '~generated/graphql-db-types-hetarchief';
+import { GetNewspaperTitlesDocument, type GetNewspaperTitlesQuery } from '~generated/graphql-db-types-hetarchief';
 import type { NewspaperTitle } from '~modules/ie-objects/ie-objects.types';
 import { customError } from '~shared/helpers/custom-error';
 
@@ -42,7 +41,7 @@ export class NewspapersService {
 						resolve(urlStream);
 					} else {
 						reject(
-							customError(`https request failed`, null, {
+							customError('https request failed', null, {
 								hostname: options.hostname,
 								path: options.path,
 								referer: options.headers?.Referer,

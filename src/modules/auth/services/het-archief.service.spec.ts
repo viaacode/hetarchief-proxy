@@ -2,7 +2,7 @@ import { ConfigService } from '@nestjs/config';
 import { Test, type TestingModule } from '@nestjs/testing';
 import got from 'got';
 
-import { type Configuration } from '~config';
+import type { Configuration } from '~config';
 
 import { HetArchiefService } from './het-archief.service';
 

@@ -2,7 +2,7 @@ import { TranslationsService } from '@meemoo/admin-core-api';
 import { Test, type TestingModule } from '@nestjs/testing';
 import { Idp } from '@viaa/avo2-types';
 import { addHours } from 'date-fns';
-import { type Request } from 'express';
+import type { Request } from 'express';
 
 import { VisitsService } from '../services/visits.service';
 import { type VisitRequest, type VisitSpaceCount, VisitStatus } from '../types';
@@ -18,7 +18,7 @@ import {
 	NotificationType,
 } from '~modules/notifications/types';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
-import { type VisitorSpace } from '~modules/spaces/spaces.types';
+import type { VisitorSpace } from '~modules/spaces/spaces.types';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupId, GroupName, Permission, type User } from '~modules/users/types';
 import { SessionHelper } from '~shared/auth/session-helper';

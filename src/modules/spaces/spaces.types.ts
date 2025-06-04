@@ -1,10 +1,10 @@
-import {
-	type FindSpaceByIdQuery,
-	type FindSpaceByOrganisationIdQuery,
-	type FindSpaceBySlugQuery,
-	type FindSpacesQuery,
+import type {
+	FindSpaceByIdQuery,
+	FindSpaceByOrganisationIdQuery,
+	FindSpaceBySlugQuery,
+	FindSpacesQuery,
 } from '~generated/graphql-db-types-hetarchief';
-import { type AudienceType, type ContactInfo, type VisitorSpaceStatus } from '~shared/types/types';
+import type { AudienceType, ContactInfo, VisitorSpaceStatus } from '~shared/types/types';
 
 export enum AccessType {
 	ACTIVE = 'ACTIVE',

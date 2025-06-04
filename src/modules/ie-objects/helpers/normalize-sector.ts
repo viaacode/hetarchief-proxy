@@ -13,7 +13,7 @@ export function normalizeSector(sector: string | undefined | null): IeObjectSect
 		.map((value) => value.toLowerCase())
 		.indexOf(sector.toLowerCase());
 	if (index === -1) {
-		console.error('Failed to find valid sector for value: ' + sector);
+		console.error(`Failed to find valid sector for value: ${sector}`);
 		return null;
 	}
 	return Object.values(IeObjectSector)[index] as IeObjectSector;

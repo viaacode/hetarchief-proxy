@@ -68,10 +68,7 @@ describe('QueryBuilder', () => {
 		});
 
 		it('should return a empty filter array query when no filters are specified', () => {
-			const esQuery = QueryBuilder.build(
-				{ size: 10, page: 1, filters: [] },
-				mockInputInfo as any
-			);
+			const esQuery = QueryBuilder.build({ size: 10, page: 1, filters: [] }, mockInputInfo as any);
 			expect(esQuery.query).toEqual({
 				bool: {
 					minimum_should_match: 1,
@@ -83,10 +80,7 @@ describe('QueryBuilder', () => {
 						},
 						{
 							terms: {
-								schema_license: [
-									'VIAA-PUBLIEK-METADATA-ALL',
-									'VIAA-PUBLIEK-CONTENT',
-								],
+								schema_license: ['VIAA-PUBLIEK-METADATA-ALL', 'VIAA-PUBLIEK-CONTENT'],
 							},
 						},
 					],
@@ -106,10 +100,7 @@ describe('QueryBuilder', () => {
 		});
 
 		it('should return a empty filter array query when empty filters are specified', () => {
-			const esQuery = QueryBuilder.build(
-				{ filters: [], size: 10, page: 1 },
-				mockInputInfo as any
-			);
+			const esQuery = QueryBuilder.build({ filters: [], size: 10, page: 1 }, mockInputInfo as any);
 
 			expect(esQuery.query).toEqual({
 				bool: {
@@ -122,10 +113,7 @@ describe('QueryBuilder', () => {
 						},
 						{
 							terms: {
-								schema_license: [
-									'VIAA-PUBLIEK-METADATA-ALL',
-									'VIAA-PUBLIEK-CONTENT',
-								],
+								schema_license: ['VIAA-PUBLIEK-METADATA-ALL', 'VIAA-PUBLIEK-CONTENT'],
 							},
 						},
 					],
@@ -249,10 +237,7 @@ describe('QueryBuilder', () => {
 									},
 									{
 										terms: {
-											schema_license: [
-												'VIAA-PUBLIEK-METADATA-ALL',
-												'VIAA-PUBLIEK-CONTENT',
-											],
+											schema_license: ['VIAA-PUBLIEK-METADATA-ALL', 'VIAA-PUBLIEK-CONTENT'],
 										},
 									},
 								],
@@ -327,10 +312,7 @@ describe('QueryBuilder', () => {
 									},
 									{
 										terms: {
-											schema_license: [
-												'VIAA-PUBLIEK-METADATA-ALL',
-												'VIAA-PUBLIEK-CONTENT',
-											],
+											schema_license: ['VIAA-PUBLIEK-METADATA-ALL', 'VIAA-PUBLIEK-CONTENT'],
 										},
 									},
 								],
@@ -356,12 +338,8 @@ describe('QueryBuilder', () => {
 				},
 				mockInputInfo as any
 			);
-			expect(getMultiMatchFieldsForQuery(queryObject?.query, true)).toEqual(
-				QUERY_FIELDS_LIMITED
-			);
-			expect(getMultiMatchFieldsForQuery(queryObject?.query, false)).toEqual(
-				QUERY_FIELDS_ALL
-			);
+			expect(getMultiMatchFieldsForQuery(queryObject?.query, true)).toEqual(QUERY_FIELDS_LIMITED);
+			expect(getMultiMatchFieldsForQuery(queryObject?.query, false)).toEqual(QUERY_FIELDS_ALL);
 		});
 
 		it('throws an internal server exception when an unknown filter value is passed', () => {
@@ -384,9 +362,7 @@ describe('QueryBuilder', () => {
 			} catch (e) {
 				error = e;
 			}
-			expect(error.message).toEqual(
-				"Field 'unknown filter' is not a valid search filter field."
-			);
+			expect(error.message).toEqual("Field 'unknown filter' is not a valid search filter field.");
 		});
 
 		it('throws an internal server exception when an unknown aggregate value is passed', () => {
@@ -472,10 +448,7 @@ describe('QueryBuilder', () => {
 									},
 									{
 										terms: {
-											schema_license: [
-												'VIAA-PUBLIEK-METADATA-ALL',
-												'VIAA-PUBLIEK-CONTENT',
-											],
+											schema_license: ['VIAA-PUBLIEK-METADATA-ALL', 'VIAA-PUBLIEK-CONTENT'],
 										},
 									},
 								],
@@ -559,12 +532,8 @@ describe('QueryBuilder', () => {
 					},
 				}
 			);
-			expect(getMultiMatchFieldsForQuery(queryObject?.query, true)).toEqual(
-				QUERY_FIELDS_LIMITED
-			);
-			expect(getMultiMatchFieldsForQuery(queryObject?.query, false)).toEqual(
-				QUERY_FIELDS_ALL
-			);
+			expect(getMultiMatchFieldsForQuery(queryObject?.query, true)).toEqual(QUERY_FIELDS_LIMITED);
+			expect(getMultiMatchFieldsForQuery(queryObject?.query, false)).toEqual(QUERY_FIELDS_ALL);
 			// Disabled matchbox filters for lemma split words
 			// https://meemoo.atlassian.net/browse/ARC-2405
 			// expect(queryObject.query.bool.should[0].bool.must[0].bool.should).toHaveLength(12);
@@ -600,12 +569,8 @@ describe('QueryBuilder', () => {
 					},
 				}
 			);
-			expect(getMultiMatchFieldsForQuery(queryObject?.query, true)).toEqual(
-				QUERY_FIELDS_LIMITED
-			);
-			expect(getMultiMatchFieldsForQuery(queryObject?.query, false)).toEqual(
-				QUERY_FIELDS_ALL
-			);
+			expect(getMultiMatchFieldsForQuery(queryObject?.query, true)).toEqual(QUERY_FIELDS_LIMITED);
+			expect(getMultiMatchFieldsForQuery(queryObject?.query, false)).toEqual(QUERY_FIELDS_ALL);
 		});
 
 		it('Should set a filter when consultable media is set to true', () => {
@@ -683,7 +648,7 @@ describe('QueryBuilder', () => {
 				}
 			);
 			expect(JSON.stringify(queryObject)).not.toContain(
-				ElasticsearchField.schema_maintainer + '.' + ElasticsearchField.organization_sector
+				`${ElasticsearchField.schema_maintainer}.${ElasticsearchField.organization_sector}`
 			);
 		});
 
@@ -723,7 +688,7 @@ describe('QueryBuilder', () => {
 				}
 			);
 			expect(JSON.stringify(queryObject)).not.toContain(
-				ElasticsearchField.schema_maintainer + '.' + ElasticsearchField.organization_sector
+				`${ElasticsearchField.schema_maintainer}.${ElasticsearchField.organization_sector}`
 			);
 		});
 

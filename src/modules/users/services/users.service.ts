@@ -1,21 +1,10 @@
+// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
 import { convertUserInfoToCommonUser, DataService, UserInfoType } from '@meemoo/admin-core-api';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { type Avo, type Idp } from '@viaa/avo2-types';
+import type { Avo, Idp } from '@viaa/avo2-types';
 
-import {
-	type CreateUserDto,
-	type UpdateAcceptedTosDto,
-	type UpdateUserDto,
-	type UpdateUserLangDto,
-} from '../dto/users.dto';
-import {
-	type GqlPermissionData,
-	type GqlUser,
-	GroupIdToName,
-	type GroupName,
-	type Permission,
-	type User,
-} from '../types';
+import type { CreateUserDto, UpdateAcceptedTosDto, UpdateUserDto, UpdateUserLangDto } from '../dto/users.dto';
+import { type GqlPermissionData, type GqlUser, GroupIdToName, type GroupName, type Permission, type User } from '../types';
 
 import {
 	GetUserByEmailDocument,
@@ -43,9 +32,9 @@ import {
 	type UpdateUserProfileMutation,
 	type UpdateUserProfileMutationVariables,
 } from '~generated/graphql-db-types-hetarchief';
-import { type IeObjectSector } from '~modules/ie-objects/ie-objects.types';
+import type { IeObjectSector } from '~modules/ie-objects/ie-objects.types';
 import { customError } from '~shared/helpers/custom-error';
-import { type UpdateResponse } from '~shared/types/types';
+import type { UpdateResponse } from '~shared/types/types';
 
 @Injectable()
 export class UsersService {
@@ -74,10 +63,8 @@ export class UsersService {
 			idp: graphQlUser?.identities?.[0]?.identity_provider_name as Idp,
 			isKeyUser: graphQlUser?.is_key_user,
 			lastAccessAt:
-				(graphQlUser as GetUserByIdentityIdQuery['users_profile'][0])?.last_access_at ||
-				null,
-			createdAt:
-				(graphQlUser as GetUserByIdentityIdQuery['users_profile'][0])?.created_at || null,
+				(graphQlUser as GetUserByIdentityIdQuery['users_profile'][0])?.last_access_at || null,
+			createdAt: (graphQlUser as GetUserByIdentityIdQuery['users_profile'][0])?.created_at || null,
 		};
 
 		if (graphQlUser?.organisation) {
@@ -120,10 +107,10 @@ export class UsersService {
 
 	public async getById(profileId: string): Promise<Avo.User.CommonUser> {
 		try {
-			const response = await this.dataService.execute<
-				GetUserByIdQuery,
-				GetUserByIdQueryVariables
-			>(GetUserByIdDocument, { id: profileId });
+			const response = await this.dataService.execute<GetUserByIdQuery, GetUserByIdQueryVariables>(
+				GetUserByIdDocument,
+				{ id: profileId }
+			);
 
 			if (!response || !response.users_profile[0]) {
 				throw customError('Could not fetch user', null, {
@@ -183,12 +170,12 @@ export class UsersService {
 			identity_provider_name: idp,
 			profile_id: createdUser.id,
 		};
-		await this.dataService.execute<
-			InsertUserIdentityMutation,
-			InsertUserIdentityMutationVariables
-		>(InsertUserIdentityDocument, {
-			newUserIdentity,
-		});
+		await this.dataService.execute<InsertUserIdentityMutation, InsertUserIdentityMutationVariables>(
+			InsertUserIdentityDocument,
+			{
+				newUserIdentity,
+			}
+		);
 		this.logger.debug(`user ${createdUser.id} linked with idp '${idp}'`);
 
 		return this.adapt({
@@ -227,13 +214,13 @@ export class UsersService {
 	}
 
 	public async updateUserLanguage(id: string, updateLanguage: UpdateUserLangDto): Promise<any> {
-		await this.dataService.execute<
-			UpdateUserLanguageMutation,
-			UpdateUserLanguageMutationVariables
-		>(UpdateUserLanguageDocument, {
-			lang: updateLanguage.language,
-			id: id,
-		});
+		await this.dataService.execute<UpdateUserLanguageMutation, UpdateUserLanguageMutationVariables>(
+			UpdateUserLanguageDocument,
+			{
+				lang: updateLanguage.language,
+				id: id,
+			}
+		);
 	}
 
 	public async updateAcceptedTos(

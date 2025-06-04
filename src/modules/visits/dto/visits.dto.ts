@@ -120,8 +120,7 @@ export class VisitsQueryDto {
 	@IsOptional()
 	@ApiPropertyOptional({
 		type: String,
-		description:
-			"Text to search for in the name or email af the requester. Use '%' for wildcard.",
+		description: "Text to search for in the name or email af the requester. Use '%' for wildcard.",
 		default: undefined,
 	})
 	query?: string;

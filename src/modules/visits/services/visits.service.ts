@@ -1,3 +1,4 @@
+// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
 import { DataService } from '@meemoo/admin-core-api';
 import {
 	BadRequestException,
@@ -11,7 +12,7 @@ import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { addMinutes, isBefore, isFuture, isPast, parseISO } from 'date-fns';
 import { compact, isArray, isEmpty, set, uniq } from 'lodash';
 
-import { type CreateVisitDto, type UpdateVisitDto, type VisitsQueryDto } from '../dto/visits.dto';
+import type { CreateVisitDto, UpdateVisitDto, VisitsQueryDto } from '../dto/visits.dto';
 import {
 	AccessStatus,
 	type GqlNote,
@@ -74,12 +75,13 @@ import {
 	type UpdateVisitMutation,
 	type UpdateVisitMutationVariables,
 } from '~generated/graphql-db-types-hetarchief';
+// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { ORDER_PROP_TO_DB_PROP } from '~modules/visits/consts';
 import { convertToDate } from '~shared/helpers/format-belgian-date';
 import { PaginationHelper } from '~shared/helpers/pagination';
 import { SortDirection } from '~shared/types';
-import { type VisitorSpaceStatus } from '~shared/types/types';
+import type { VisitorSpaceStatus } from '~shared/types/types';
 
 @Injectable()
 export class VisitsService {
@@ -180,8 +182,7 @@ export class VisitsService {
 									graphQlVisit?.access_type === VisitAccessType.Full ||
 									(graphQlVisit?.access_type === VisitAccessType.Folders &&
 										graphQlVisit?.visitor_space?.schema_maintainer_id ===
-											accessibleFolderIeLink?.intellectualEntity
-												?.schemaMaintainer?.org_identifier)
+											accessibleFolderIeLink?.intellectualEntity?.schemaMaintainer?.org_identifier)
 							)
 							.map(
 								(accessibleFolderIeLink) =>
@@ -254,12 +255,7 @@ export class VisitsService {
 
 		// Check status transition is valid
 		if (updateVisit.status) {
-			if (
-				!this.statusTransitionAllowed(
-					currentVisit.status,
-					updateVisit.status as VisitStatus
-				)
-			) {
+			if (!this.statusTransitionAllowed(currentVisit.status, updateVisit.status as VisitStatus)) {
 				throw new ForbiddenException(
 					`Status transition '${currentVisit.status}' -> '${updateVisit.status}' is not allowed`
 				);
@@ -278,8 +274,7 @@ export class VisitsService {
 				// THEN throw BadRequest exception
 				if (
 					isEmpty(accessType) ||
-					(isEmpty(accessFolderIds) &&
-						updateVisit.access_type === VisitAccessType.Folders) ||
+					(isEmpty(accessFolderIds) && updateVisit.access_type === VisitAccessType.Folders) ||
 					(!isEmpty(accessFolderIds) && updateVisit.access_type === VisitAccessType.Full)
 				) {
 					throw new BadRequestException(
@@ -331,11 +326,7 @@ export class VisitsService {
 		return this.findById(id);
 	}
 
-	public async insertNote(
-		visitId: string,
-		note: string,
-		userProfileId: string
-	): Promise<boolean> {
+	public async insertNote(visitId: string, note: string, userProfileId: string): Promise<boolean> {
 		const { insert_maintainer_visitor_space_request_note_one: insertNote } =
 			await this.dataService.execute<InsertNoteMutation, InsertNoteMutationVariables>(
 				InsertNoteDocument,
@@ -441,15 +432,13 @@ export class VisitsService {
 			limit,
 			orderBy: set(
 				{},
-				ORDER_PROP_TO_DB_PROP[orderProp] || ORDER_PROP_TO_DB_PROP['startAt'],
+				ORDER_PROP_TO_DB_PROP[orderProp] || ORDER_PROP_TO_DB_PROP.startAt,
 				orderDirection || SortDirection.desc
 			),
 		});
 
 		return Pagination<VisitRequest>({
-			items: visitsResponse.maintainer_visitor_space_request.map((visit: any) =>
-				this.adapt(visit)
-			),
+			items: visitsResponse.maintainer_visitor_space_request.map((visit: any) => this.adapt(visit)),
 			page,
 			size,
 			total: visitsResponse.maintainer_visitor_space_request_aggregate.aggregate.count,
@@ -524,9 +513,7 @@ export class VisitsService {
 			FindApprovedStartedVisitsWithoutNotificationQuery,
 			FindApprovedStartedVisitsWithoutNotificationQueryVariables
 		>(FindApprovedStartedVisitsWithoutNotificationDocument, { now: new Date().toISOString() });
-		return visitsResponse.maintainer_visitor_space_request.map((visit: any) =>
-			this.adapt(visit)
-		);
+		return visitsResponse.maintainer_visitor_space_request.map((visit: any) => this.adapt(visit));
 	}
 
 	public async getApprovedAndAlmostEndedVisitsWithoutNotification() {
@@ -537,9 +524,7 @@ export class VisitsService {
 			now: new Date().toISOString(),
 			warningDate: addMinutes(new Date(), 15).toISOString(),
 		});
-		return visitsResponse.maintainer_visitor_space_request.map((visit: any) =>
-			this.adapt(visit)
-		);
+		return visitsResponse.maintainer_visitor_space_request.map((visit: any) => this.adapt(visit));
 	}
 
 	public async getApprovedAndEndedVisitsWithoutNotification() {
@@ -547,9 +532,7 @@ export class VisitsService {
 			FindApprovedEndedVisitsWithoutNotificationQuery,
 			FindApprovedEndedVisitsWithoutNotificationQueryVariables
 		>(FindApprovedEndedVisitsWithoutNotificationDocument, { now: new Date().toISOString() });
-		return visitsResponse.maintainer_visitor_space_request.map((visit: any) =>
-			this.adapt(visit)
-		);
+		return visitsResponse.maintainer_visitor_space_request.map((visit: any) => this.adapt(visit));
 	}
 
 	/**

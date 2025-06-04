@@ -1,7 +1,8 @@
-import { type ExecutionContext } from '@nestjs/common';
-import { type ConfigService } from '@nestjs/config';
+import type { ExecutionContext } from '@nestjs/common';
+// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
+import { ConfigService } from '@nestjs/config';
 
-import { type Configuration } from '~config';
+import type { Configuration } from '~config';
 
 import { API_KEY_EXCEPTION, APIKEY, ApiKeyGuard } from '~shared/guards/api-key.guard';
 
@@ -22,9 +23,8 @@ const mockExecutionContextCorrect = {
 			header: (headerName: string) => {
 				if (headerName === APIKEY) {
 					return mockApiKey;
-				} else {
-					return undefined;
 				}
+				return undefined;
 			},
 		}),
 	}),
@@ -46,9 +46,8 @@ const mockExecutionContextWrong = {
 			header: (headerName: string) => {
 				if (headerName === APIKEY) {
 					return 'wrongApiKey';
-				} else {
-					return undefined;
 				}
+				return undefined;
 			},
 		}),
 	}),
@@ -65,9 +64,9 @@ describe('ApiKeyGuard', () => {
 	it('Should not allow access when apiKey header is not set', async () => {
 		let error: any;
 		try {
-			new ApiKeyGuard(
-				mockConfigService as unknown as ConfigService<Configuration>
-			).canActivate(mockExecutionContextNotSet);
+			new ApiKeyGuard(mockConfigService as unknown as ConfigService<Configuration>).canActivate(
+				mockExecutionContextNotSet
+			);
 		} catch (err) {
 			error = err;
 		}
@@ -77,9 +76,9 @@ describe('ApiKeyGuard', () => {
 	it('Should not allow access when apiKey header is wrong', async () => {
 		let error: any;
 		try {
-			new ApiKeyGuard(
-				mockConfigService as unknown as ConfigService<Configuration>
-			).canActivate(mockExecutionContextWrong);
+			new ApiKeyGuard(mockConfigService as unknown as ConfigService<Configuration>).canActivate(
+				mockExecutionContextWrong
+			);
 		} catch (err) {
 			error = err;
 		}

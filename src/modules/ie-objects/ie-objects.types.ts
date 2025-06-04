@@ -1,6 +1,6 @@
-import { type IPagination } from '@studiohyperdrive/pagination';
+import type { IPagination } from '@studiohyperdrive/pagination';
 
-import { type FindAllIeObjectsByFolderIdQuery } from '~generated/graphql-db-types-hetarchief';
+import type { FindAllIeObjectsByFolderIdQuery } from '~generated/graphql-db-types-hetarchief';
 
 export type IeObjectSectorLicenseMatrix = Readonly<
 	Record<IeObjectSector, Readonly<IeObjectLicense[]>>
@@ -133,7 +133,6 @@ export interface IeObject {
 	dctermsMedium: string[];
 	premisIdentifier: Record<string, string>[];
 	abstract: string;
-	// biome-ignore lint/suspicious/noExplicitAny: we don't know the exact format of this field, since each organisation can enter it differently
 	creator: any;
 	dateCreated: string | null;
 	datePublished: string;
@@ -152,7 +151,6 @@ export interface IeObject {
 	maintainerOverlay: boolean | null;
 	maintainerIiifAgreement?: boolean | null;
 	name: string;
-	// biome-ignore lint/suspicious/noExplicitAny: we don't know the exact format of this field, since each organisation can enter it differently
 	publisher: any;
 	spatial: string[];
 	temporal: string[];
@@ -160,7 +158,6 @@ export interface IeObject {
 	accessThrough?: IeObjectAccessThrough[];
 	ebucoreObjectType?: string | null;
 	meemoofilmContainsEmbeddedCaption?: boolean;
-	// biome-ignore lint/suspicious/noExplicitAny: we don't know the exact format of this field, since each organisation can enter it differently
 	contributor?: any;
 	copyrightHolder?: string;
 	premisIsPartOf?: string | null;

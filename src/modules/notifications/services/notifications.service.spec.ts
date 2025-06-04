@@ -16,13 +16,8 @@ import {
 } from '~generated/graphql-db-types-hetarchief';
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 import { mockGqlNotification } from '~modules/notifications/services/__mocks__/app_notification';
-import {
-	type GqlNotification,
-	type Notification,
-	NotificationStatus,
-	NotificationType,
-} from '~modules/notifications/types';
-import { type VisitorSpace } from '~modules/spaces/spaces.types';
+import { type GqlNotification, type Notification, NotificationStatus, NotificationType } from '~modules/notifications/types';
+import type { VisitorSpace } from '~modules/spaces/spaces.types';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupId, GroupName, Permission, type User } from '~modules/users/types';
 import { type VisitRequest, VisitStatus } from '~modules/visits/types';
@@ -265,7 +260,6 @@ describe('NotificationsService', () => {
 				},
 			};
 			mockDataService.execute.mockResolvedValueOnce(mockData);
-			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			const { id, created_at, updated_at, visitor_space_request, ...mockNotification } =
 				mockGqlNotification1;
 			const response = await notificationsService.create([
@@ -282,13 +276,9 @@ describe('NotificationsService', () => {
 				.mockResolvedValueOnce([mockNotification, mockNotification]);
 
 			const {
-				// eslint-disable-next-line @typescript-eslint/no-unused-vars
 				id,
-				// eslint-disable-next-line @typescript-eslint/no-unused-vars
 				created_at,
-				// eslint-disable-next-line @typescript-eslint/no-unused-vars
 				updated_at,
-				// eslint-disable-next-line @typescript-eslint/no-unused-vars
 				visitor_space_request,
 				recipient,
 				...createNotification
@@ -418,10 +408,7 @@ describe('NotificationsService', () => {
 				.spyOn(notificationsService, 'create')
 				.mockResolvedValueOnce([mockNotification]);
 
-			const response = await notificationsService.onDenyVisitRequest(
-				mockVisitRequest,
-				mockSpace
-			);
+			const response = await notificationsService.onDenyVisitRequest(mockVisitRequest, mockSpace);
 
 			expect(response.status).toEqual(NotificationStatus.UNREAD);
 			createNotificationSpy.mockRestore();
@@ -454,7 +441,6 @@ describe('NotificationsService', () => {
 				},
 			};
 			mockDataService.execute.mockResolvedValueOnce(mockData);
-			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			const { id, created_at, updated_at, visitor_space_request, ...mockNotification } =
 				mockGqlNotification1;
 			const response = await notificationsService.update(
@@ -472,7 +458,6 @@ describe('NotificationsService', () => {
 				},
 			};
 			mockDataService.execute.mockResolvedValueOnce(mockData);
-			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			const { id, created_at, updated_at, visitor_space_request, ...mockNotification } =
 				mockGqlNotification1;
 			let error: any;
@@ -501,7 +486,6 @@ describe('NotificationsService', () => {
 				},
 			};
 			mockDataService.execute.mockResolvedValueOnce(mockData);
-			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			const { id, created_at, updated_at, visitor_space_request, ...mockNotification } =
 				mockGqlNotification1;
 			const affectedRows = await notificationsService.updateAll(

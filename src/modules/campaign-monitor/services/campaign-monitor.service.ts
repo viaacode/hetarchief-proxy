@@ -1,18 +1,14 @@
+// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
 import { TranslationsService } from '@meemoo/admin-core-api';
-import {
-	BadRequestException,
-	Injectable,
-	InternalServerErrorException,
-	Logger,
-	type OnApplicationBootstrap,
-} from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, Logger, type OnApplicationBootstrap } from '@nestjs/common';
+// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
 import { ConfigService } from '@nestjs/config';
 import * as promiseUtils from 'blend-promise-utils';
 import { groupBy, head, isArray, isEmpty, isNil, toPairs } from 'lodash';
 import * as queryString from 'query-string';
 import { stringifyUrl } from 'query-string';
 
-import { type Configuration } from '~config';
+import type { Configuration } from '~config';
 
 import { getTemplateId } from '../campaign-monitor.consts';
 import {
@@ -24,27 +20,24 @@ import {
 	type MaterialRequestEmailInfo,
 	type VisitEmailInfo,
 } from '../campaign-monitor.types';
-import {
-	type CampaignMonitorConfirmationData,
-	type CampaignMonitorConfirmMailQueryDto,
-	type CampaignMonitorData,
-	type CampaignMonitorMaterialRequestData,
-	type CampaignMonitorNewsletterUpdatePreferencesQueryDto,
-	type CampaignMonitorSendMailDto,
-	type CampaignMonitorUpdatePreferencesData,
-	type CampaignMonitorVisitData,
+import type {
+	CampaignMonitorConfirmationData,
+	CampaignMonitorConfirmMailQueryDto,
+	CampaignMonitorData,
+	CampaignMonitorMaterialRequestData,
+	CampaignMonitorNewsletterUpdatePreferencesQueryDto,
+	CampaignMonitorSendMailDto,
+	CampaignMonitorUpdatePreferencesData,
+	CampaignMonitorVisitData,
 } from '../dto/campaign-monitor.dto';
 import { decryptData, encryptData } from '../helpers/crypto-helper';
 
-import {
-	MaterialRequestRequesterCapacity,
-	MaterialRequestType,
-} from '~modules/material-requests/material-requests.types';
-import { type VisitRequest } from '~modules/visits/types';
+import { MaterialRequestRequesterCapacity, MaterialRequestType } from '~modules/material-requests/material-requests.types';
+import type { VisitRequest } from '~modules/visits/types';
 import { customError } from '~shared/helpers/custom-error';
 import { checkRequiredEnvs } from '~shared/helpers/env-check';
 import { formatAsBelgianDate } from '~shared/helpers/format-belgian-date';
-import { type Locale } from '~shared/types/types';
+import type { Locale } from '~shared/types/types';
 
 @Injectable()
 export class CampaignMonitorService implements OnApplicationBootstrap {
@@ -70,9 +63,7 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 
 		this.isEnabled = this.configService.get('ENABLE_SEND_EMAIL');
 		this.rerouteEmailsTo = this.configService.get('REROUTE_EMAILS_TO');
-		this.subscriberEndpoint = this.configService.get(
-			'CAMPAIGN_MONITOR_SUBSCRIBER_API_ENDPOINT'
-		);
+		this.subscriberEndpoint = this.configService.get('CAMPAIGN_MONITOR_SUBSCRIBER_API_ENDPOINT');
 		this.newsletterListId = this.configService.get('CAMPAIGN_MONITOR_OPTIN_LIST_HETARCHIEF');
 
 		this.clientHost = this.configService.get('CLIENT_HOST');
@@ -89,20 +80,19 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 		throwErrors = true
 	): Promise<T> {
 		try {
+			let normalizedPath = path;
 			if (!path.startsWith('/')) {
-				path = '/' + path;
+				normalizedPath = `/${path}`;
 			}
-			const url = this.configService.get('CAMPAIGN_MONITOR_API_ENDPOINT') + path;
+			const url = this.configService.get('CAMPAIGN_MONITOR_API_ENDPOINT') + normalizedPath;
 			const response = await fetch(url, {
 				method: method,
 				...(data ? { body: JSON.stringify(data) } : undefined),
 				credentials: 'include',
 				headers: {
-					Authorization:
-						'Basic ' +
-						Buffer.from(
-							this.configService.get('CAMPAIGN_MONITOR_API_KEY') + ':.'
-						).toString('base64'),
+					Authorization: `Basic ${Buffer.from(
+						`${this.configService.get('CAMPAIGN_MONITOR_API_KEY')}:.`
+					).toString('base64')}`,
 				},
 			});
 			if (response.status < 200 || response.status >= 400) {
@@ -143,7 +133,7 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 
 		await promiseUtils.map(groupedRecipientsByLanguage, async ([language, recipients]) => {
 			const recipientsForLanguage: string[] = [];
-			recipients.forEach((recipient) => {
+			for (const recipient of recipients) {
 				if (recipient.email) {
 					recipientsForLanguage.push(recipient.email);
 				} else {
@@ -152,7 +142,7 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 						this.configService.get('MEEMOO_MAINTAINER_MISSING_EMAIL_FALLBACK')
 					);
 				}
-			});
+			}
 			const data: CampaignMonitorData = {
 				to: recipientsForLanguage,
 				consentToTrack: 'unchanged',
@@ -298,10 +288,7 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 				}
 			} else {
 				// Update user info in campaign monitor
-				const subscriberData = this.convertPreferencesToNewsletterTemplateData(
-					userInfo,
-					true
-				);
+				const subscriberData = this.convertPreferencesToNewsletterTemplateData(userInfo, true);
 
 				const data = {
 					Subscribers: [subscriberData],
@@ -325,10 +312,7 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 				return;
 			}
 
-			const subscriberData = this.convertPreferencesToNewsletterTemplateData(
-				cmUserInfo,
-				true
-			);
+			const subscriberData = this.convertPreferencesToNewsletterTemplateData(cmUserInfo, true);
 
 			const data = {
 				Subscribers: [subscriberData],
@@ -425,10 +409,7 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 				);
 			}
 		} catch (err) {
-			throw new BadRequestException(
-				err,
-				'Failed to send email using the campaign monitor api'
-			);
+			throw new BadRequestException(err, 'Failed to send email using the campaign monitor api');
 		}
 	}
 
@@ -536,9 +517,7 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 					};
 				}),
 				user_request_context:
-					MATERIAL_REQUEST_REQUESTER_CAPACITY_TRANSLATIONS[
-						emailInfo.sendRequestListDto.type
-					],
+					MATERIAL_REQUEST_REQUESTER_CAPACITY_TRANSLATIONS[emailInfo.sendRequestListDto.type],
 				user_organisation: emailInfo.sendRequestListDto.organisation,
 				user_email: emailInfo.materialRequests[0]?.requesterMail,
 			};
@@ -583,7 +562,7 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 
 		return {
 			EmailAddress: userInfo.email,
-			Name: userInfo.firstName + ' ' + userInfo.lastName,
+			Name: `${userInfo.firstName} ${userInfo.lastName}`,
 			Resubscribe: resubscribe,
 			ConsentToTrack: resubscribe ? 'Yes' : 'Unchanged',
 			CustomFields: toPairs(customFields).map((pair) => {

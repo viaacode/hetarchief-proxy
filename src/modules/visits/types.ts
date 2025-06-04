@@ -1,15 +1,15 @@
-import {
-	type FindActiveVisitByUserAndSpaceQuery,
-	type FindApprovedAlmostEndedVisitsWithoutNotificationQuery,
-	type FindApprovedEndedVisitsWithoutNotificationQuery,
-	type FindApprovedStartedVisitsWithoutNotificationQuery,
-	type FindVisitByIdQuery,
-	type FindVisitEndDatesByFolderIdQuery,
-	type FindVisitsQuery,
-	type InsertVisitMutation,
-	type Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum,
+import type {
+	FindActiveVisitByUserAndSpaceQuery,
+	FindApprovedAlmostEndedVisitsWithoutNotificationQuery,
+	FindApprovedEndedVisitsWithoutNotificationQuery,
+	FindApprovedStartedVisitsWithoutNotificationQuery,
+	FindVisitByIdQuery,
+	FindVisitEndDatesByFolderIdQuery,
+	FindVisitsQuery,
+	InsertVisitMutation,
+	Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum,
 } from '~generated/graphql-db-types-hetarchief';
-import { type Locale } from '~shared/types/types';
+import type { Locale } from '~shared/types/types';
 
 export { Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum as VisitAccessType } from '~generated/graphql-db-types-hetarchief';
 

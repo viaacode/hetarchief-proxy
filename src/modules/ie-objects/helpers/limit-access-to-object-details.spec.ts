@@ -9,7 +9,7 @@ import {
 } from '../mocks/ie-objects.mock';
 
 import { limitAccessToObjectDetails } from './limit-access-to-object-details';
-import { type LimitAccessUserInfo } from './limit-access-to-object-details.types';
+import type { LimitAccessUserInfo } from './limit-access-to-object-details.types';
 
 import { GroupId } from '~modules/users/types';
 
@@ -117,10 +117,7 @@ describe('Limit access to object details', () => {
 				...mockIeObject1,
 				maintainerId: 'OR-154dn75',
 				sector: IeObjectSector.CULTURE,
-				licenses: [
-					IeObjectLicense.PUBLIEK_METADATA_LTD,
-					IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
-				],
+				licenses: [IeObjectLicense.PUBLIEK_METADATA_LTD, IeObjectLicense.BEZOEKERTOOL_METADATA_ALL],
 			},
 			// User: Basis gebruiker - folder access visitor space Amsab-ISG - Culture sector
 			{
@@ -135,10 +132,7 @@ describe('Limit access to object details', () => {
 		expect(limitedAccessIeObject1d).toEqual({
 			...mockIeObjectWithMetadataSetALL,
 			maintainerId: 'OR-154dn75',
-			licenses: [
-				IeObjectLicense.PUBLIEK_METADATA_LTD,
-				IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
-			],
+			licenses: [IeObjectLicense.PUBLIEK_METADATA_LTD, IeObjectLicense.BEZOEKERTOOL_METADATA_ALL],
 			accessThrough: [
 				IeObjectAccessThrough.VISITOR_SPACE_FOLDERS,
 				IeObjectAccessThrough.PUBLIC_INFO,
@@ -153,10 +147,7 @@ describe('Limit access to object details', () => {
 				...mockIeObject1,
 				maintainerId: 'OR-154dn75',
 				sector: IeObjectSector.CULTURE,
-				licenses: [
-					IeObjectLicense.PUBLIEK_METADATA_LTD,
-					IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
-				],
+				licenses: [IeObjectLicense.PUBLIEK_METADATA_LTD, IeObjectLicense.BEZOEKERTOOL_METADATA_ALL],
 			},
 			// User: Basis gebruiker - folder access visitor space MAAR NIET VOOR Amsab-ISG - Culture sector
 			{
@@ -173,10 +164,7 @@ describe('Limit access to object details', () => {
 		expect(limitedAccessIeObject1da).toEqual({
 			...mockIeObjectWithMetadataSetLTD,
 			maintainerId: 'OR-154dn75',
-			licenses: [
-				IeObjectLicense.PUBLIEK_METADATA_LTD,
-				IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
-			],
+			licenses: [IeObjectLicense.PUBLIEK_METADATA_LTD, IeObjectLicense.BEZOEKERTOOL_METADATA_ALL],
 			accessThrough: [IeObjectAccessThrough.PUBLIC_INFO],
 		});
 	});
@@ -213,10 +201,7 @@ describe('Limit access to object details', () => {
 				IeObjectLicense.INTRA_CP_CONTENT,
 				IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
 			],
-			accessThrough: [
-				IeObjectAccessThrough.VISITOR_SPACE_FULL,
-				IeObjectAccessThrough.PUBLIC_INFO,
-			],
+			accessThrough: [IeObjectAccessThrough.VISITOR_SPACE_FULL, IeObjectAccessThrough.PUBLIC_INFO],
 		});
 	});
 
@@ -227,10 +212,7 @@ describe('Limit access to object details', () => {
 				...mockIeObject1,
 				maintainerId: 'OR-kw57h48', // Letterenhuis
 				sector: IeObjectSector.CULTURE,
-				licenses: [
-					IeObjectLicense.PUBLIEK_METADATA_LTD,
-					IeObjectLicense.BEZOEKERTOOL_CONTENT,
-				],
+				licenses: [IeObjectLicense.PUBLIEK_METADATA_LTD, IeObjectLicense.BEZOEKERTOOL_CONTENT],
 			},
 			// User: KIOSK - ADVN (Culture sector)
 			{
@@ -486,10 +468,7 @@ describe('Limit access to object details', () => {
 				IeObjectLicense.INTRA_CP_CONTENT,
 				IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
 			],
-			accessThrough: [
-				IeObjectAccessThrough.VISITOR_SPACE_FULL,
-				IeObjectAccessThrough.PUBLIC_INFO,
-			],
+			accessThrough: [IeObjectAccessThrough.VISITOR_SPACE_FULL, IeObjectAccessThrough.PUBLIC_INFO],
 		});
 	});
 
@@ -508,10 +487,7 @@ describe('Limit access to object details', () => {
 			{
 				...mockIeObject1,
 				sector: IeObjectSector.CULTURE,
-				licenses: [
-					IeObjectLicense.PUBLIEK_METADATA_LTD,
-					IeObjectLicense.BEZOEKERTOOL_CONTENT,
-				],
+				licenses: [IeObjectLicense.PUBLIEK_METADATA_LTD, IeObjectLicense.BEZOEKERTOOL_CONTENT],
 			},
 			// KIOSK
 			mockUserInfoTestCaseNoSectorD

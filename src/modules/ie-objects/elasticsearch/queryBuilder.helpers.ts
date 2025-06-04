@@ -1,6 +1,6 @@
 import { compact, isArray, isEmpty, isNil } from 'lodash';
 
-import { type ElasticsearchSubQuery } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
+import type { ElasticsearchSubQuery } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
 
 /**
  * Output a bool query with AND logic for each of the subQueries
@@ -104,8 +104,8 @@ export function applyFilter(
 
 	// eg: isConsultable filters have array of items to be processed
 	if (isArray(newFilter.query) && newFilter.query.length > 0) {
-		return filterObject.bool[newFilter.occurrenceType].push(...newFilter.query);
+		filterObject.bool[newFilter.occurrenceType].push(...newFilter.query);
+	} else {
+		filterObject.bool[newFilter.occurrenceType].push(newFilter.query);
 	}
-
-	filterObject.bool[newFilter.occurrenceType].push(newFilter.query);
 }

@@ -1,9 +1,10 @@
+// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
 import { DataService, TranslationsService } from '@meemoo/admin-core-api';
 import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { set } from 'lodash';
 
-import { type CreateSpaceDto, type SpacesQueryDto, type UpdateSpaceDto } from '../dto/spaces.dto';
+import type { CreateSpaceDto, SpacesQueryDto, UpdateSpaceDto } from '../dto/spaces.dto';
 import { AccessType, type GqlSpace, type VisitorSpace } from '../spaces.types';
 
 import {
@@ -31,13 +32,10 @@ import {
 	type UpdateSpaceMutation,
 	type UpdateSpaceMutationVariables,
 } from '~generated/graphql-db-types-hetarchief';
-import {
-	type GqlOrganisation,
-	OrganisationContactPointType,
-} from '~modules/organisations/organisations.types';
+import { type GqlOrganisation, OrganisationContactPointType } from '~modules/organisations/organisations.types';
 import { DuplicateKeyException } from '~shared/exceptions/duplicate-key.exception';
 import { PaginationHelper } from '~shared/helpers/pagination';
-import { type Locale, type Recipient } from '~shared/types/types';
+import type { Locale, Recipient } from '~shared/types/types';
 
 @Injectable()
 export class SpacesService {
@@ -85,9 +83,7 @@ export class SpacesService {
 		return contactPoint?.schema_email || null;
 	}
 
-	public adaptTelephone(
-		contactPoints: GqlOrganisation['schemaContactPoint'] | undefined
-	): string {
+	public adaptTelephone(contactPoints: GqlOrganisation['schemaContactPoint'] | undefined): string {
 		const contactPoint = (contactPoints || []).find(
 			(contactPoint) =>
 				contactPoint.schema_contact_type === OrganisationContactPointType.ontsluiting

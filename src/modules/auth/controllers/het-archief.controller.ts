@@ -1,38 +1,33 @@
+// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
 import { TranslationsService } from '@meemoo/admin-core-api';
-import {
-	Body,
-	Controller,
-	Get,
-	HttpException,
-	HttpStatus,
-	Logger,
-	Post,
-	Query,
-	Redirect,
-	Req,
-	Res,
-	Session,
-} from '@nestjs/common';
+import { Body, Controller, Get, HttpException, HttpStatus, Logger, Post, Query, Redirect, Req, Res, Session } from '@nestjs/common';
+// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
 import { ConfigService } from '@nestjs/config';
 import { ApiTags } from '@nestjs/swagger';
 import { Idp } from '@viaa/avo2-types';
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import { get, isEmpty, isEqual, pick } from 'lodash';
 import { stringifyUrl } from 'query-string';
 
-import { type Configuration } from '~config';
+import type { Configuration } from '~config';
 
 import { NO_ORG_LINKED } from '../constants';
+// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
 import { HetArchiefService } from '../services/het-archief.service';
+// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
 import { IdpService } from '../services/idp.service';
-import { type RelayState, SamlCallbackBody } from '../types';
+import type { RelayState, SamlCallbackBody } from '../types';
 
 import { orgNotLinkedLogoutAndRedirectToErrorPage } from '~modules/auth/org-not-linked-redirect';
+// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
+// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
 import { FoldersService } from '~modules/folders/services/folders.service';
-import { type Organisation } from '~modules/organisations/organisations.types';
+import type { Organisation } from '~modules/organisations/organisations.types';
+// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
 import { OrganisationsService } from '~modules/organisations/services/organisations.service';
+// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
 import { UsersService } from '~modules/users/services/users.service';
 import { Permission } from '~modules/users/types';
 import { LdapApp, type LdapUser } from '~shared/auth/auth.types';
@@ -141,14 +136,12 @@ export class HetArchiefController {
 			const organisationId = isEmpty(ldapUser?.attributes?.o)
 				? null
 				: ldapUser.attributes.o.find((org) => org.toLowerCase().startsWith('or')) ||
-				  ldapUser.attributes.o[0];
+					ldapUser.attributes.o[0];
 
 			let organisation: Organisation | null = null;
 			if (organisationId) {
 				organisation = (
-					await this.organisationService.findOrganisationsBySchemaIdentifiers([
-						organisationId,
-					])
+					await this.organisationService.findOrganisationsBySchemaIdentifiers([organisationId])
 				)[0];
 			}
 
@@ -314,10 +307,7 @@ export class HetArchiefController {
 		@Query('forceLogout') forceLogout: 'true' | 'false' = 'false'
 	) {
 		try {
-			if (
-				forceLogout === 'true' ||
-				SessionHelper.isLoggedInWithIdp(Idp.HETARCHIEF, session)
-			) {
+			if (forceLogout === 'true' || SessionHelper.isLoggedInWithIdp(Idp.HETARCHIEF, session)) {
 				const idpUser = SessionHelper.getIdpUserInfo(session);
 				const idpLogoutUrl = await this.hetArchiefService.createLogoutRequestUrl(
 					idpUser?.name_id || 'kiosk',
@@ -360,10 +350,7 @@ export class HetArchiefController {
 					const relayState: any = JSON.parse(samlCallbackBody.RelayState);
 					returnToUrl = get(relayState, 'returnToUrl');
 				} catch (err) {
-					this.logger.error(
-						'Received logout response from idp with invalid relayState',
-						err
-					);
+					this.logger.error('Received logout response from idp with invalid relayState', err);
 				}
 
 				response.redirect(returnToUrl);

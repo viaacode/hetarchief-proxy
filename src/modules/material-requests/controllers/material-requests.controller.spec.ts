@@ -53,9 +53,7 @@ describe('MaterialRequestsController', () => {
 			.setLogger(new TestingLogger())
 			.compile();
 
-		materialRequestsController = module.get<MaterialRequestsController>(
-			MaterialRequestsController
-		);
+		materialRequestsController = module.get<MaterialRequestsController>(MaterialRequestsController);
 	});
 
 	afterEach(() => {
@@ -118,16 +116,13 @@ describe('MaterialRequestsController', () => {
 
 	describe('createMaterialRequest', () => {
 		it('should create a material request', async () => {
-			mockMaterialRequestsService.createMaterialRequest.mockResolvedValueOnce(
-				mockMaterialRequest1
-			);
+			mockMaterialRequestsService.createMaterialRequest.mockResolvedValueOnce(mockMaterialRequest1);
 			const createdMaterialRequest = await materialRequestsController.createMaterialRequest(
 				{
 					objectSchemaIdentifier: '9471f49f-5ac0-43f5-a74a-09c4c56463a4',
 					reason: 'voor mijn onderzoek en studie',
 					type: MaterialRequestType.VIEW,
-					requesterCapacity:
-						Lookup_App_Material_Request_Requester_Capacity_Enum.Education,
+					requesterCapacity: Lookup_App_Material_Request_Requester_Capacity_Enum.Education,
 				},
 				new SessionUserEntity({
 					...mockUser,
@@ -140,9 +135,7 @@ describe('MaterialRequestsController', () => {
 
 	describe('updateMaterialRequest', () => {
 		it('should update a material request by id', async () => {
-			mockMaterialRequestsService.updateMaterialRequest.mockResolvedValueOnce(
-				mockMaterialRequest1
-			);
+			mockMaterialRequestsService.updateMaterialRequest.mockResolvedValueOnce(mockMaterialRequest1);
 			const updatedMaterialRequest = await materialRequestsController.updateMaterialRequest(
 				mockMaterialRequest1.id,
 				{

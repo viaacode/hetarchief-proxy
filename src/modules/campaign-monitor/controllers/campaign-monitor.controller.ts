@@ -1,32 +1,22 @@
-import {
-	Body,
-	Controller,
-	Get,
-	InternalServerErrorException,
-	Post,
-	Query,
-	Redirect,
-	Req,
-	UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Get, InternalServerErrorException, Post, Query, Redirect, Req, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { Request } from 'express';
+import type { Request } from 'express';
 
-import {
-	type CampaignMonitorNewsletterPreferences,
-	EmailTemplate,
-} from '../campaign-monitor.types';
-import {
+import { type CampaignMonitorNewsletterPreferences, EmailTemplate } from '../campaign-monitor.types';
+import type {
 	CampaignMonitorConfirmMailQueryDto,
 	CampaignMonitorNewsletterPreferencesQueryDto,
 	CampaignMonitorNewsletterUpdatePreferencesQueryDto,
 	CampaignMonitorSendMailDto,
 } from '../dto/campaign-monitor.dto';
+// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
 import { CampaignMonitorService } from '../services/campaign-monitor.service';
 
+// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
-import { SessionUserEntity } from '~modules/users/classes/session-user';
+import type { SessionUserEntity } from '~modules/users/classes/session-user';
+// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
 import { UsersService } from '~modules/users/services/users.service';
 import { GroupName } from '~modules/users/types';
 import { SessionUser } from '~shared/decorators/user.decorator';
@@ -70,9 +60,7 @@ export class CampaignMonitorController {
 	async getPreferences(
 		@Query() preferencesQueryDto: CampaignMonitorNewsletterPreferencesQueryDto
 	): Promise<CampaignMonitorNewsletterPreferences> {
-		return await this.campaignMonitorService.fetchNewsletterPreferences(
-			preferencesQueryDto.email
-		);
+		return await this.campaignMonitorService.fetchNewsletterPreferences(preferencesQueryDto.email);
 	}
 
 	@Post('preferences')
@@ -91,8 +79,7 @@ export class CampaignMonitorController {
 				const updatedUser = await this.usersService.getById(user.getId());
 				if (!updatedUser) {
 					throw new InternalServerErrorException({
-						message:
-							'Failed to update preferences for campaign monitor. User was not found',
+						message: 'Failed to update preferences for campaign monitor. User was not found',
 						additionalInfo: {
 							preferences,
 							userId: user.getId(),

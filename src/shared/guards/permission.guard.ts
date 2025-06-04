@@ -1,15 +1,10 @@
-import {
-	type CanActivate,
-	type ExecutionContext,
-	ForbiddenException,
-	Injectable,
-	Logger,
-} from '@nestjs/common';
+import { type CanActivate, type ExecutionContext, ForbiddenException, Injectable, Logger } from '@nestjs/common';
+// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
 import { Reflector } from '@nestjs/core';
-import { type Observable } from 'rxjs';
+import type { Observable } from 'rxjs';
 
 import { SessionUserEntity } from '~modules/users/classes/session-user';
-import { type Permission } from '~modules/users/types';
+import type { Permission } from '~modules/users/types';
 import { SessionHelper } from '~shared/auth/session-helper';
 
 @Injectable()
@@ -54,8 +49,7 @@ export class PermissionGuard implements CanActivate {
 		// user needs any of the anyPermissions
 		if (!user.hasAny(allAnyPermissions)) {
 			throw new ForbiddenException(
-				"You don't have the required permission for this route: " +
-					context.getArgs()?.[0]?.url
+				`You don't have the required permission for this route: ${context.getArgs()?.[0]?.url}`
 			);
 		}
 		return true;

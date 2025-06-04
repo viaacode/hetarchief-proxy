@@ -1,6 +1,6 @@
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Test, type TestingModule } from '@nestjs/testing';
-import { type Request } from 'express';
+import type { Request } from 'express';
 
 import {
 	mockNewsletterUpdatePreferencesQueryDto,
@@ -69,8 +69,7 @@ describe('CampaignMonitorController', () => {
 			.setLogger(new TestingLogger())
 			.compile();
 
-		campaignMonitorController =
-			module.get<CampaignMonitorController>(CampaignMonitorController);
+		campaignMonitorController = module.get<CampaignMonitorController>(CampaignMonitorController);
 	});
 
 	afterEach(() => {
@@ -145,7 +144,7 @@ describe('CampaignMonitorController', () => {
 
 			const result = await campaignMonitorController.confirmMail(mockSendMailQueryDto, {
 				path: 'campaign-monitor/confirm-email',
-				headers: { ['x-viaa-request-id']: 'test-meemoo-request-id' },
+				headers: { 'x-viaa-request-id': 'test-meemoo-request-id' },
 			} as unknown as Request);
 
 			expect(result).toEqual({
@@ -159,7 +158,7 @@ describe('CampaignMonitorController', () => {
 			mockData.mail = 'invalid@mail.com';
 			const result = await campaignMonitorController.confirmMail(mockData, {
 				path: 'campaign-monitor/confirm-email',
-				headers: { ['x-viaa-request-id']: 'test-meemoo-request-id' },
+				headers: { 'x-viaa-request-id': 'test-meemoo-request-id' },
 			} as unknown as Request);
 
 			expect(result).toEqual({

@@ -40,8 +40,7 @@ describe('Convert node to es query filter objects', () => {
 	});
 
 	it('Use case 2 - genetics AND ("dna sequencing" AND crispr AND (cloning OR genomics) AND NOT dna)', () => {
-		const node =
-			"genetics AND ('dna sequencing' AND crispr AND (cloning OR genomics) AND NOT dna)";
+		const node = "genetics AND ('dna sequencing' AND crispr AND (cloning OR genomics) AND NOT dna)";
 
 		const convertedNodesToEsQueryFilterObjects = convertNodeToEsQueryFilterObjects(
 			jsep(node),

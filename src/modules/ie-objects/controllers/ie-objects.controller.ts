@@ -2,6 +2,7 @@
 // Disable consistent imports since they try to import IeObjectsQueryDto as a type
 // But that breaks the endpoint body validation
 
+// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
 import { PlayerTicketController, PlayerTicketService } from '@meemoo/admin-core-api';
 import {
 	BadRequestException,
@@ -17,16 +18,18 @@ import {
 	Req,
 	Res,
 } from '@nestjs/common';
+// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
 import { ConfigService } from '@nestjs/config';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { type IPagination } from '@studiohyperdrive/pagination';
+import type { IPagination } from '@studiohyperdrive/pagination';
 import { mapLimit } from 'blend-promise-utils';
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import { compact, intersection, isNil, kebabCase } from 'lodash';
 
-import { Configuration } from '~config';
+import type { Configuration } from '~config';
 
-import {
+import type {
+	IeObjectsAutocompleteQueryDto,
 	IeObjectsQueryDto,
 	IeObjectsSimilarQueryDto,
 	PlayerTicketsQueryDto,
@@ -43,20 +46,18 @@ import {
 	IeObjectLicense,
 	type IeObjectSeo,
 	type IeObjectsWithAggregations,
-	RelatedIeObject,
-	RelatedIeObjects,
+	type RelatedIeObject,
+	type RelatedIeObjects,
 } from '../ie-objects.types';
+// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
 import { IeObjectsService } from '../services/ie-objects.service';
 
+// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
-import {
-	ALL_INDEXES,
-	IeObjectsSearchFilterField,
-	Operator,
-} from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
+import { ALL_INDEXES, IeObjectsSearchFilterField, Operator } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
 import { convertSchemaIdentifierToId } from '~modules/ie-objects/helpers/convert-schema-identifier-to-id';
-import { SessionUserEntity } from '~modules/users/classes/session-user';
+import type { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupName } from '~modules/users/types';
 import { Ip } from '~shared/decorators/ip.decorator';
 import { Referer } from '~shared/decorators/referer.decorator';
@@ -106,11 +107,7 @@ export class IeObjectsController {
 		try {
 			return await Promise.all(
 				filePaths.map((filePath) =>
-					this.playerTicketController.getTicketServiceTokenForFilePath(
-						filePath,
-						referer,
-						ip
-					)
+					this.playerTicketController.getTicketServiceTokenForFilePath(filePath, referer, ip)
 				)
 			);
 		} catch (err) {
@@ -151,9 +148,7 @@ export class IeObjectsController {
 		);
 
 		const hasPublicAccessThumbnail = ieObject?.licenses.some((license: IeObjectLicense) =>
-			[IeObjectLicense.PUBLIEK_METADATA_ALL, IeObjectLicense.PUBLIEK_CONTENT].includes(
-				license
-			)
+			[IeObjectLicense.PUBLIEK_METADATA_ALL, IeObjectLicense.PUBLIEK_CONTENT].includes(license)
 		);
 		return {
 			name: hasPublicAccess ? ieObject?.name : null,
@@ -316,8 +311,7 @@ export class IeObjectsController {
 
 	@Get('/related')
 	@ApiOperation({
-		description:
-			'Get objects that cover the same subject as the passed object schema identifier.',
+		description: 'Get objects that cover the same subject as the passed object schema identifier.',
 	})
 	public async getRelatedIeObjects(
 		@Query('ieObjectIri') ieObjectIri: string,
@@ -343,7 +337,7 @@ export class IeObjectsController {
 					maintainerId: user.getOrganisationId(),
 					accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
 					accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
-			  })
+				})
 			: null;
 		const censoredChildIeObjects: Partial<RelatedIeObject>[] = (childIeObjects || []).map(
 			(childIeObject) =>
@@ -448,8 +442,7 @@ export class IeObjectsController {
 		// Only search in the visitor space elasticsearch index if the user is searching inside a visitor space
 		const maintainerFilter = queryDto?.filters?.find(
 			(filter) =>
-				filter.field === IeObjectsSearchFilterField.MAINTAINER_ID &&
-				filter.operator === Operator.IS
+				filter.field === IeObjectsSearchFilterField.MAINTAINER_ID && filter.operator === Operator.IS
 		);
 		const esIndex = maintainerFilter?.value?.toLowerCase() || ALL_INDEXES;
 
@@ -504,8 +497,7 @@ export class IeObjectsController {
 			.map((domain) => new RegExp(domain.trim()));
 		if (!WHITELISTED_DOMAINS.some((regex) => regex.test(altoJsonUrl))) {
 			throw new BadRequestException({
-				message:
-					"The provided url doesn't seem to be part of the whitelisted asset service urls.",
+				message: "The provided url doesn't seem to be part of the whitelisted asset service urls.",
 				additionalInfo: {
 					altoJsonUrl,
 					WHITELISTED_DOMAINS,
@@ -535,19 +527,28 @@ export class IeObjectsController {
 
 	@Get('metadata/autocomplete')
 	public async getMetadataAutocomplete(
-		@Query('field') field: AutocompleteField,
-		@Query('query') query: string
+		@Body() queryDto: IeObjectsAutocompleteQueryDto | null
 	): Promise<string[]> {
-		if (!Object.values(AutocompleteField).includes(field)) {
+		if (!Object.values(AutocompleteField).includes(queryDto?.field)) {
 			throw new BadRequestException({
 				message: 'Invalid field',
 				additionalInfo: {
-					field,
+					field: queryDto?.field,
 					acceptedFields: Object.values(AutocompleteField),
 				},
 			});
 		}
-		return this.ieObjectsService.getMetadataAutocomplete(field, query);
+		if (!queryDto?.query) {
+			throw new BadRequestException('Body param query is required');
+		}
+		if (!queryDto?.filters) {
+			throw new BadRequestException('Body param filters is required');
+		}
+		return this.ieObjectsService.getMetadataAutocomplete(queryDto.field, queryDto.query, {
+			filters: queryDto.filters,
+			page: 1,
+			size: 4,
+		});
 	}
 
 	/**

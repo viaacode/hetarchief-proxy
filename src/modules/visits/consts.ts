@@ -1,4 +1,4 @@
-import { type VisitRequest } from '~modules/visits/types';
+import type { VisitRequest } from '~modules/visits/types';
 
 export const ORDER_PROP_TO_DB_PROP: Partial<Record<keyof VisitRequest, string>> = {
 	id: 'id',

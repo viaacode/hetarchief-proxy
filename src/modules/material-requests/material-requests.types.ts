@@ -1,12 +1,12 @@
-import {
-	type FindMaintainersWithMaterialRequestsQuery,
-	type FindMaterialRequestsByIdQuery,
-	type FindMaterialRequestsQuery,
-	type Lookup_App_Material_Request_Requester_Capacity_Enum,
-	type Lookup_App_Material_Request_Type_Enum,
+import type {
+	FindMaintainersWithMaterialRequestsQuery,
+	FindMaterialRequestsByIdQuery,
+	FindMaterialRequestsQuery,
+	Lookup_App_Material_Request_Requester_Capacity_Enum,
+	Lookup_App_Material_Request_Type_Enum,
 } from '~generated/graphql-db-types-hetarchief';
-import { type IeObjectType } from '~modules/ie-objects/ie-objects.types';
-import { type Locale } from '~shared/types/types';
+import type { IeObjectType } from '~modules/ie-objects/ie-objects.types';
+import type { Locale } from '~shared/types/types';
 
 export interface MaterialRequest {
 	id: string;

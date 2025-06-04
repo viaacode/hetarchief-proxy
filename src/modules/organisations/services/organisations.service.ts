@@ -1,14 +1,11 @@
+// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
 import { DataService } from '@meemoo/admin-core-api';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Inject, Injectable, InternalServerErrorException } from '@nestjs/common';
-import { Cache } from 'cache-manager';
+import type { Cache } from 'cache-manager';
 import { shuffle } from 'lodash';
 
-import {
-	type GqlOrganisation,
-	type MaintainerGridOrganisation,
-	type Organisation,
-} from '../organisations.types';
+import type { GqlOrganisation, MaintainerGridOrganisation, Organisation } from '../organisations.types';
 
 import {
 	FindOrganisationsBySchemaIdsDocument,
@@ -20,7 +17,7 @@ import {
 	GetOrganisationsThatHaveObjectsDocument,
 	type GetOrganisationsThatHaveObjectsQuery,
 } from '~generated/graphql-db-types-hetarchief';
-import { type IeObjectSector } from '~modules/ie-objects/ie-objects.types';
+import type { IeObjectSector } from '~modules/ie-objects/ie-objects.types';
 
 @Injectable()
 export class OrganisationsService {
@@ -93,9 +90,7 @@ export class OrganisationsService {
 					GetOrganisationsThatHaveObjectsDocument
 				);
 
-			return organisationsResponse.graph_organisations_with_objects.map(
-				this.adaptOrganisation
-			);
+			return organisationsResponse.graph_organisations_with_objects.map(this.adaptOrganisation);
 		} catch (err: any) {
 			throw new InternalServerErrorException(
 				JSON.stringify({
@@ -120,9 +115,10 @@ export class OrganisationsService {
 				3_600_000
 			);
 
-			return shuffle(
-				allContentPartners.filter((contentPartner) => !!contentPartner.logoUrl)
-			).slice(0, limit);
+			return shuffle(allContentPartners.filter((contentPartner) => !!contentPartner.logoUrl)).slice(
+				0,
+				limit
+			);
 		} catch (err: any) {
 			throw new InternalServerErrorException(
 				JSON.stringify({

@@ -1,25 +1,20 @@
+// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
 import { PlayerTicketService } from '@meemoo/admin-core-api';
-import {
-	Controller,
-	ForbiddenException,
-	Get,
-	Header,
-	Param,
-	Query,
-	Req,
-	Res,
-} from '@nestjs/common';
+import { Controller, ForbiddenException, Get, Header, Param, Query, Req, Res } from '@nestjs/common';
+// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
 import { ConfigService } from '@nestjs/config';
 import { ApiTags } from '@nestjs/swagger';
 import archiver from 'archiver';
 import { mapLimit } from 'blend-promise-utils';
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import { cloneDeep, isNil } from 'lodash';
 
 import type { Configuration } from '~config';
 
+// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
+// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
 import { IeObjectsController } from '~modules/ie-objects/controllers/ie-objects.controller';
 import { convertObjectToCsv } from '~modules/ie-objects/helpers/convert-objects-to-csv';
 import { convertObjectToXml } from '~modules/ie-objects/helpers/convert-objects-to-xml';
@@ -29,8 +24,9 @@ import {
 	NEWSPAPER_MIME_TYPE_BROWSE_COPY,
 	NEWSPAPER_MIME_TYPE_IMAGE_API,
 } from '~modules/newspapers/newspapers.consts';
+// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
 import { NewspapersService } from '~modules/newspapers/services/newspapers.service';
-import { SessionUserEntity } from '~modules/users/classes/session-user';
+import type { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Ip } from '~shared/decorators/ip.decorator';
 import { Referer } from '~shared/decorators/referer.decorator';
 import { SessionUser } from '~shared/decorators/user.decorator';
@@ -69,9 +65,7 @@ export class NewspapersController {
 		const limitedObjectMetadata = limitedObjectMetadatas[0];
 
 		if (!limitedObjectMetadata) {
-			throw new ForbiddenException(
-				'Object not found or you do not have permission to see it'
-			);
+			throw new ForbiddenException('Object not found or you do not have permission to see it');
 		}
 
 		if (limitedObjectMetadata.dctermsFormat !== 'newspaper') {
@@ -87,17 +81,17 @@ export class NewspapersController {
 		}[] = [];
 
 		// Extract images and alto xml urls from the object
-		const exportSinglePage = !isNil(pageIndex) && !isNaN(pageIndex);
+		const exportSinglePage = !isNil(pageIndex) && !Number.isNaN(pageIndex);
 		const pagesToExport: IeObjectPage[] = exportSinglePage
 			? limitedObjectMetadata.pages.slice(pageIndex, pageIndex + 1)
 			: limitedObjectMetadata.pages;
 
 		// Pages correspond to pages of the newspaper
-		pagesToExport.forEach((page) => {
+		for (const page of pagesToExport) {
 			// Each page has multiple representations, e.g. browse copy image, alto xml, image api url, etc.
-			return page.representations.forEach((representation) => {
+			for (const representation of page.representations) {
 				// Each representation can have multiple files, but usually it's just one
-				return representation.files.forEach((file) => {
+				for (const file of representation.files) {
 					const pageNumber = String(page.pageNumber).padStart(3, '0');
 					if (file.mimeType === NEWSPAPER_MIME_TYPE_BROWSE_COPY) {
 						zipEntries.push({
@@ -113,16 +107,16 @@ export class NewspapersController {
 						});
 					}
 
-					return null;
-				});
-			});
-		});
+					null;
+				}
+			}
+		}
 
 		// Add metadata in different formats to zipEntries array
 		const metadataInfo = cloneDeep(limitedObjectMetadata);
-		delete metadataInfo.pages;
-		delete metadataInfo.mentions;
-		delete metadataInfo.accessThrough;
+		metadataInfo.pages = undefined;
+		metadataInfo.mentions = undefined;
+		metadataInfo.accessThrough = undefined;
 		zipEntries.push({
 			filename: 'metadata.xml',
 			type: 'string',
@@ -147,15 +141,15 @@ export class NewspapersController {
 		res.on('warning', (err) => {
 			if (err.code === 'ENOENT') {
 				// log warning
-				console.warn('zip stream warning: ' + err);
+				console.warn(`zip stream warning: ${err}`);
 			} else {
 				// throw error
 				throw err;
 			}
 		});
 
-		const pageSuffix = exportSinglePage ? '-page-' + (pageIndex + 1) : '';
-		const filename = `${'newspaper-' + id}${pageSuffix}.zip`;
+		const pageSuffix = exportSinglePage ? `-page-${pageIndex + 1}` : '';
+		const filename = `${`newspaper-${id}`}${pageSuffix}.zip`;
 		res.set({
 			'Content-Disposition': `attachment; filename=${filename}`,
 		});
@@ -189,9 +183,7 @@ export class NewspapersController {
 					archive.append(entry.value, { name: entry.filename });
 				}
 			} catch (err) {
-				console.error(
-					customError('Failed to add file to zip', err, { entry, referer, ip })
-				);
+				console.error(customError('Failed to add file to zip', err, { entry, referer, ip }));
 			}
 		});
 
@@ -243,9 +235,7 @@ export class NewspapersController {
 		const limitedObjectMetadata = limitedObjectMetadatas[0];
 
 		if (!limitedObjectMetadata) {
-			throw new ForbiddenException(
-				'Object not found or you do not have permission to see it'
-			);
+			throw new ForbiddenException('Object not found or you do not have permission to see it');
 		}
 
 		if (limitedObjectMetadata.dctermsFormat !== 'newspaper') {
@@ -271,7 +261,7 @@ export class NewspapersController {
 			);
 		}
 
-		const filename = `${'newspaper-' + id}-selectie.jpg`;
+		const filename = `${`newspaper-${id}`}-selectie.jpg`;
 		res.set({
 			'Content-Disposition': `attachment; filename=${filename}`,
 		});

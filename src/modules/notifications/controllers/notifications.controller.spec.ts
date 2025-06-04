@@ -1,7 +1,7 @@
 import { TranslationsService } from '@meemoo/admin-core-api';
 import { ConfigService } from '@nestjs/config';
 import { Test, type TestingModule } from '@nestjs/testing';
-import { type IPagination } from '@studiohyperdrive/pagination';
+import type { IPagination } from '@studiohyperdrive/pagination';
 import { Idp } from '@viaa/avo2-types';
 
 import { NotificationsService } from '../services/notifications.service';
@@ -159,9 +159,7 @@ describe('NotificationsController', () => {
 
 		notificationsController = module.get<NotificationsController>(NotificationsController);
 
-		sessionHelperSpy = jest
-			.spyOn(SessionHelper, 'getArchiefUserInfo')
-			.mockReturnValue(mockUser);
+		sessionHelperSpy = jest.spyOn(SessionHelper, 'getArchiefUserInfo').mockReturnValue(mockUser);
 	});
 
 	afterAll(async () => {
@@ -200,9 +198,7 @@ describe('NotificationsController', () => {
 				error = err;
 			}
 
-			expect(error.response.message).toEqual(
-				'You need to be logged in to get your notifications'
-			);
+			expect(error.response.message).toEqual('You need to be logged in to get your notifications');
 		});
 	});
 
@@ -226,10 +222,8 @@ describe('NotificationsController', () => {
 	describe('markAllAsRead', () => {
 		it('should mark all notification of a specific user as read', async () => {
 			mockNotificationsService.updateAll.mockResolvedValueOnce(5);
-			const response = await notificationsController.markAllAsRead(
-				new SessionUserEntity(mockUser)
-			);
-			expect(response).toEqual({ status: `updated 5 notifications`, total: 5 });
+			const response = await notificationsController.markAllAsRead(new SessionUserEntity(mockUser));
+			expect(response).toEqual({ status: 'updated 5 notifications', total: 5 });
 		});
 	});
 
@@ -243,9 +237,9 @@ describe('NotificationsController', () => {
 				mockVisit,
 				mockVisit,
 			]);
-			mockVisitsService.getApprovedAndAlmostEndedVisitsWithoutNotification.mockResolvedValueOnce(
-				[mockVisit]
-			);
+			mockVisitsService.getApprovedAndAlmostEndedVisitsWithoutNotification.mockResolvedValueOnce([
+				mockVisit,
+			]);
 			mockVisitsService.getApprovedAndEndedVisitsWithoutNotification.mockResolvedValueOnce([
 				mockVisit,
 				mockVisit,
@@ -276,15 +270,11 @@ describe('NotificationsController', () => {
 				...mockNotification1,
 				status: NotificationStatus.READ,
 			});
-			mockVisitsService.getApprovedAndStartedVisitsWithoutNotification.mockResolvedValueOnce(
-				[]
-			);
+			mockVisitsService.getApprovedAndStartedVisitsWithoutNotification.mockResolvedValueOnce([]);
 			mockVisitsService.getApprovedAndAlmostEndedVisitsWithoutNotification.mockResolvedValueOnce(
 				[]
 			);
-			mockVisitsService.getApprovedAndEndedVisitsWithoutNotification.mockResolvedValueOnce(
-				[]
-			);
+			mockVisitsService.getApprovedAndEndedVisitsWithoutNotification.mockResolvedValueOnce([]);
 			mockNotificationsService.create
 				.mockResolvedValueOnce([])
 				.mockResolvedValueOnce([])

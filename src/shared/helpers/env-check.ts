@@ -6,10 +6,10 @@ export function checkRequiredEnvs(requiredEnvs: string[]) {
 	}
 	const logger = new Logger('Check Required Envs');
 
-	requiredEnvs.forEach((envVar: string) => {
+	for (const envVar of requiredEnvs) {
 		if (!process.env[envVar]) {
 			logger.error(`Environment variable ${envVar} is required.`);
 			throw new InternalServerErrorException(`Environment variable ${envVar} is required.`);
 		}
-	});
+	}
 }

@@ -1,32 +1,26 @@
 import { convertUserInfoToCommonUser, UserInfoType } from '@meemoo/admin-core-api';
-import {
-	Controller,
-	Get,
-	Headers,
-	HttpStatus,
-	Logger,
-	Post,
-	Query,
-	Redirect,
-	Session,
-	UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, Headers, HttpStatus, Logger, Post, Query, Redirect, Session, UseGuards } from '@nestjs/common';
+// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
 import { ConfigService } from '@nestjs/config';
 import { ApiTags } from '@nestjs/swagger';
-import { type Avo } from '@viaa/avo2-types';
+import type { Avo } from '@viaa/avo2-types';
 import { isToday, parseISO } from 'date-fns';
 
-import { type Configuration } from '~config';
+import type { Configuration } from '~config';
 
+// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
 import { IdpService } from '../services/idp.service';
 import { LoginMessage, type LoginResponse } from '../types';
 
+// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
-import { SessionUserEntity } from '~modules/users/classes/session-user';
+import type { SessionUserEntity } from '~modules/users/classes/session-user';
+// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
 import { UsersService } from '~modules/users/services/users.service';
 import { SessionHelper } from '~shared/auth/session-helper';
 import { SessionUser } from '~shared/decorators/user.decorator';
 import { APIKEY, ApiKeyGuard } from '~shared/guards/api-key.guard';
+// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
 import { SessionService } from '~shared/services/session.service';
 
 @ApiTags('Auth')
@@ -70,17 +64,12 @@ export class AuthController {
 								})
 								.catch((err) => {
 									this.logger.error(
-										'Failed to update user in campaign monitor. user: ' +
-											JSON.stringify(user) +
-											'   ' +
-											JSON.stringify(err)
+										`Failed to update user in campaign monitor. user: ${JSON.stringify(user)}   ${JSON.stringify(err)}`
 									);
 								});
 						})
 						.catch(() => {
-							this.logger.error(
-								'Failed to update user lastAccessAt date. id: ' + user.getId()
-							);
+							this.logger.error(`Failed to update user lastAccessAt date. id: ${user.getId()}`);
 						});
 				}
 			}
@@ -142,10 +131,7 @@ export class AuthController {
 
 	@Post('clear-sessions')
 	@UseGuards(ApiKeyGuard)
-	async clearSessions(
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		@Headers(APIKEY) apikey: string
-	): Promise<{ message: string }> {
+	async clearSessions(@Headers(APIKEY) apikey: string): Promise<{ message: string }> {
 		await this.sessionService.clearRedis();
 		return { message: 'User sessions have been cleared' };
 	}

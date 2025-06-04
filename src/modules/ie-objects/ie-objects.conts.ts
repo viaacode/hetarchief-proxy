@@ -256,29 +256,27 @@ function getXmlTextValue(value: any): XmlNode[] {
 				text: value,
 			},
 		];
-	} else {
-		return [
-			{
-				type: 'text',
-				text: JSON.stringify(value),
-			},
-		];
 	}
+	return [
+		{
+			type: 'text',
+			text: JSON.stringify(value),
+		},
+	];
 }
 
 function getArrayXmlValue(name: string, values: string[]): XmlNode[] {
 	return uniq(values || []).flatMap((value: string) => {
 		if (Array.isArray(value)) {
 			return getArrayXmlValue(name, value);
-		} else {
-			return [
-				{
-					type: 'element',
-					name,
-					elements: getXmlTextValue(value),
-				},
-			];
 		}
+		return [
+			{
+				type: 'element',
+				name,
+				elements: getXmlTextValue(value),
+			},
+		];
 	});
 }
 

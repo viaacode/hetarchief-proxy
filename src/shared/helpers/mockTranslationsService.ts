@@ -1,4 +1,5 @@
-import { type TranslationsService } from '@meemoo/admin-core-api';
+// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
+import { TranslationsService } from '@meemoo/admin-core-api';
 
 import { getTranslationFallback } from '~shared/helpers/translation-fallback';
 

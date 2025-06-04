@@ -1,4 +1,4 @@
-import { type IeObjectsVisitorSpaceInfo } from '../ie-objects.types';
+import type { IeObjectsVisitorSpaceInfo } from '../ie-objects.types';
 
 import identifierSearchQueryExact from './templates/exact/identifier-search-query.json';
 import nameSearchQueryExact from './templates/exact/name-search-query.json';
@@ -9,7 +9,7 @@ import nameSearchQueryFuzzy from './templates/fuzzy/name-search-query.json';
 import searchQueryAllFuzzy from './templates/fuzzy/search-query--metadata-all.json';
 import searchQueryLimitedFuzzy from './templates/fuzzy/search-query--metadata-limited.json';
 
-import { type SessionUserEntity } from '~modules/users/classes/session-user';
+import type { SessionUserEntity } from '~modules/users/classes/session-user';
 
 export const ALL_INDEXES = 'or-*';
 

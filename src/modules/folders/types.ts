@@ -1,13 +1,13 @@
-import {
-	type FindFolderByIdQuery,
-	type FindFolderIeObjectsByFolderIdQuery,
-	type FindFoldersByUserQuery,
-	type FindIeObjectBySchemaIdentifierQuery,
-	type FindIeObjectInFolderQuery,
-	type InsertFolderMutation,
-	type UpdateFolderMutation,
+import type {
+	FindFolderByIdQuery,
+	FindFolderIeObjectsByFolderIdQuery,
+	FindFoldersByUserQuery,
+	FindIeObjectBySchemaIdentifierQuery,
+	FindIeObjectInFolderQuery,
+	InsertFolderMutation,
+	UpdateFolderMutation,
 } from '~generated/graphql-db-types-hetarchief';
-import { type IeObject } from '~modules/ie-objects/ie-objects.types';
+import type { IeObject } from '~modules/ie-objects/ie-objects.types';
 
 export interface Folder {
 	id: string;

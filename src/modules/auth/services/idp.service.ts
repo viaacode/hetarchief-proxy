@@ -1,15 +1,18 @@
-import { type Locale, TranslationsService } from '@meemoo/admin-core-api';
+// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
+import { Locale, TranslationsService } from '@meemoo/admin-core-api';
 import { Injectable } from '@nestjs/common';
+// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
 import { ConfigService } from '@nestjs/config';
 import { Idp } from '@viaa/avo2-types';
 import { intersection } from 'lodash';
 import queryString from 'query-string';
 
-import { type Configuration } from '~config';
+import type { Configuration } from '~config';
 
 import { NO_ORG_LINKED } from '../constants';
 
-import { type Organisation } from '~modules/organisations/organisations.types';
+import type { Organisation } from '~modules/organisations/organisations.types';
+// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { GroupId } from '~modules/users/types';
 import { LdapApp, type LdapUser } from '~shared/auth/auth.types';
@@ -25,9 +28,7 @@ export class IdpService {
 		protected spacesService: SpacesService,
 		private readonly translationsService: TranslationsService
 	) {
-		this.meemooAdminOrganizationIds = configService
-			.get('MEEMOO_ADMIN_ORGANIZATION_IDS')
-			.split(',');
+		this.meemooAdminOrganizationIds = configService.get('MEEMOO_ADMIN_ORGANIZATION_IDS').split(',');
 	}
 
 	public hasSpecificLogoutPage(idp: Idp): boolean {

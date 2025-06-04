@@ -12,7 +12,7 @@ import { type IeObject, IeObjectExtraUserGroupType, IeObjectLicense } from '../i
 
 import { getAccessThrough } from './get-access-through';
 
-import { type LimitAccessUserInfo } from '~modules/ie-objects/helpers/limit-access-to-object-details.types';
+import type { LimitAccessUserInfo } from '~modules/ie-objects/helpers/limit-access-to-object-details.types';
 import { GroupId } from '~modules/users/types';
 
 // figure out what properties the user can see and which should be stripped
@@ -21,7 +21,7 @@ export const limitAccessToObjectDetails = (
 	userInfo: LimitAccessUserInfo
 ): Partial<IeObject> => {
 	if (!ieObject) {
-		console.error('Trying to limit metadata on null ie object: ' + ieObject);
+		console.error(`Trying to limit metadata on null ie object: ${ieObject}`);
 		return {};
 	}
 	const licensesByUserGroup = [
@@ -120,9 +120,7 @@ export const limitAccessToObjectDetails = (
 
 	const ieObjectLimitedProps: string[] = uniq(
 		accessibleLicenses.flatMap((accessibleLicense: IeObjectLicense) => {
-			return IE_OBJECT_PROPS_BY_METADATA_SET[
-				IE_OBJECT_METADATA_SET_BY_LICENSE[accessibleLicense]
-			];
+			return IE_OBJECT_PROPS_BY_METADATA_SET[IE_OBJECT_METADATA_SET_BY_LICENSE[accessibleLicense]];
 		})
 	);
 
@@ -134,8 +132,7 @@ export const limitAccessToObjectDetails = (
 	const accessThrough = getAccessThrough({
 		hasFullAccess: hasFullVisitorSpaceAccess,
 		hasFolderAccess,
-		hasIntraCPLicenses:
-			intersection(accessibleLicenses, IE_OBJECT_INTRA_CP_LICENSES).length > 0,
+		hasIntraCPLicenses: intersection(accessibleLicenses, IE_OBJECT_INTRA_CP_LICENSES).length > 0,
 		hasPublicLicenses: intersection(accessibleLicenses, IE_OBJECT_PUBLIC_LICENSES).length > 0,
 	});
 

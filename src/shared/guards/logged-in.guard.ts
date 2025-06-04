@@ -4,7 +4,7 @@ import {
 	Injectable,
 	UnauthorizedException,
 } from '@nestjs/common';
-import { type Observable } from 'rxjs';
+import type { Observable } from 'rxjs';
 
 import { SessionHelper } from '~shared/auth/session-helper';
 

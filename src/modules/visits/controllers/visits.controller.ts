@@ -1,5 +1,6 @@
-import { randomUUID } from 'crypto';
+import { randomUUID } from 'node:crypto';
 
+// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
 import { TranslationsService } from '@meemoo/admin-core-api';
 import {
 	BadRequestException,
@@ -19,28 +20,26 @@ import {
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Pagination } from '@studiohyperdrive/pagination';
-import { type IPagination } from '@studiohyperdrive/pagination/dist/lib/pagination.types';
+import type { IPagination } from '@studiohyperdrive/pagination/dist/lib/pagination.types';
 import { isFuture } from 'date-fns';
-import { Request } from 'express';
+import type { Request } from 'express';
 import { uniqBy } from 'lodash';
 
-import { CreateVisitDto, UpdateVisitDto, VisitsQueryDto } from '../dto/visits.dto';
+import type { CreateVisitDto, UpdateVisitDto, VisitsQueryDto } from '../dto/visits.dto';
+// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
 import { VisitsService } from '../services/visits.service';
-import {
-	type AccessStatus,
-	VisitAccessType,
-	type VisitRequest,
-	type VisitSpaceCount,
-	VisitStatus,
-} from '../types';
+import { type AccessStatus, VisitAccessType, type VisitRequest, type VisitSpaceCount, VisitStatus } from '../types';
 
+// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
+// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
 import { NotificationsService } from '~modules/notifications/services/notifications.service';
 import { NotificationType } from '~modules/notifications/types';
+// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
 import { SpacesService } from '~modules/spaces/services/spaces.service';
-import { type VisitorSpace } from '~modules/spaces/spaces.types';
-import { SessionUserEntity } from '~modules/users/classes/session-user';
+import type { VisitorSpace } from '~modules/spaces/spaces.types';
+import type { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupName, Permission } from '~modules/users/types';
 import { getFakeVisitorRequest } from '~modules/visits/controllers/visits.controller.helpers';
 import { RequireAnyPermissions } from '~shared/decorators/require-any-permissions.decorator';
@@ -67,26 +66,19 @@ export class VisitsController {
 		description:
 			'Get Visits endpoint for Meemoo Admins and CP Admins. Visitors should use the /personal endpoint. ',
 	})
-	@RequireAnyPermissions(
-		Permission.MANAGE_ALL_VISIT_REQUESTS,
-		Permission.MANAGE_CP_VISIT_REQUESTS
-	)
+	@RequireAnyPermissions(Permission.MANAGE_ALL_VISIT_REQUESTS, Permission.MANAGE_CP_VISIT_REQUESTS)
 	public async getVisits(
 		@Query() queryDto: VisitsQueryDto,
 		@SessionUser() user: SessionUserEntity
 	): Promise<IPagination<VisitRequest>> {
 		if (user.has(Permission.MANAGE_ALL_VISIT_REQUESTS)) {
 			return await this.visitsService.findAll(queryDto, {
-				...(queryDto?.visitorSpaceSlug
-					? { visitorSpaceSlug: queryDto.visitorSpaceSlug }
-					: {}),
+				...(queryDto?.visitorSpaceSlug ? { visitorSpaceSlug: queryDto.visitorSpaceSlug } : {}),
 				...(queryDto?.requesterId ? { userProfileId: queryDto.requesterId } : {}),
 			});
 		}
 		// CP_VISIT_REQUESTS (user has any of these permissions as enforced by guard)
-		const cpSpace = await this.spacesService.findSpaceByOrganisationId(
-			user.getOrganisationId()
-		);
+		const cpSpace = await this.spacesService.findSpaceByOrganisationId(user.getOrganisationId());
 
 		if (!cpSpace) {
 			const userLanguage = user.getLanguage();
@@ -126,7 +118,8 @@ export class VisitsController {
 				size: 1,
 				total: 1,
 			});
-		} else if (user.getGroupName() === GroupName.MEEMOO_ADMIN) {
+		}
+		if (user.getGroupName() === GroupName.MEEMOO_ADMIN) {
 			const visitorSpaces = await this.spacesService.findAll(
 				{
 					// Do not include inactive visitor spaces otherwise they show up in the visitor spaces dropdown and cause errors:
@@ -284,16 +277,15 @@ export class VisitsController {
 						userLanguage
 					)
 				);
-			} else {
-				// Space does not exist
-				throw new NotFoundException(
-					this.translationsService.tText(
-						'modules/visits/controllers/visits___space-with-slug-name-was-not-found',
-						{ name: visitorSpaceSlug },
-						userLanguage
-					)
-				);
 			}
+			// Space does not exist
+			throw new NotFoundException(
+				this.translationsService.tText(
+					'modules/visits/controllers/visits___space-with-slug-name-was-not-found',
+					{ name: visitorSpaceSlug },
+					userLanguage
+				)
+			);
 		}
 
 		return activeVisit;
@@ -305,10 +297,7 @@ export class VisitsController {
 		@Param('slug') slug: string,
 		@SessionUser() user: SessionUserEntity
 	): Promise<VisitSpaceCount> {
-		const count = await this.visitsService.getPendingVisitCountForUserBySlug(
-			user.getId(),
-			slug
-		);
+		const count = await this.visitsService.getPendingVisitCountForUserBySlug(user.getId(), slug);
 		return count;
 	}
 
@@ -396,6 +385,7 @@ export class VisitsController {
 		@Body() updateVisitDto: UpdateVisitDto,
 		@SessionUser() user: SessionUserEntity
 	): Promise<VisitRequest> {
+		let updateVisitDtoValidated = updateVisitDto;
 		const originalVisit = await this.visitsService.findById(id);
 
 		if (
@@ -405,7 +395,7 @@ export class VisitsController {
 		) {
 			if (
 				originalVisit.userProfileId !== user.getId() ||
-				updateVisitDto.status !== VisitStatus.CANCELLED_BY_VISITOR
+				updateVisitDtoValidated.status !== VisitStatus.CANCELLED_BY_VISITOR
 			) {
 				const userLanguage = user.getLanguage();
 				throw new ForbiddenException(
@@ -418,26 +408,26 @@ export class VisitsController {
 			}
 
 			// user can only update status, not anything else
-			updateVisitDto = {
+			updateVisitDtoValidated = {
 				status: VisitStatus.CANCELLED_BY_VISITOR,
 			};
 		}
 
 		// update the Visit
-		const visit = await this.visitsService.update(id, updateVisitDto, user.getId());
+		const visit = await this.visitsService.update(id, updateVisitDtoValidated, user.getId());
 
 		// Post-processing for notifications
-		if (updateVisitDto.status) {
+		if (updateVisitDtoValidated.status) {
 			await this.postProcessVisitStatusChange(
 				request,
 				visit,
-				updateVisitDto,
+				updateVisitDtoValidated,
 				originalVisit.status,
 				user
 			);
 		}
-		if (updateVisitDto.startAt || updateVisitDto.endAt) {
-			await this.postProcessVisitTimes(updateVisitDto, visit);
+		if (updateVisitDtoValidated.startAt || updateVisitDtoValidated.endAt) {
+			await this.postProcessVisitTimes(updateVisitDtoValidated, visit);
 		}
 
 		return visit;

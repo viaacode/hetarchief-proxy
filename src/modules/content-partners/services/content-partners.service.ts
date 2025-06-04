@@ -1,9 +1,10 @@
+// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
 import { DataService } from '@meemoo/admin-core-api';
 import { Injectable } from '@nestjs/common';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 
-import { type ContentPartnersQueryDto } from '../dto/content-partners.dto';
-import { type ContentPartner } from '../types';
+import type { ContentPartnersQueryDto } from '../dto/content-partners.dto';
+import type { ContentPartner } from '../types';
 
 import {
 	FindContentPartnersDocument,

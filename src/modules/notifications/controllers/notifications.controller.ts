@@ -1,30 +1,20 @@
+// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
 import { Locale, TranslationsService } from '@meemoo/admin-core-api';
-import {
-	Controller,
-	ForbiddenException,
-	Get,
-	Headers,
-	Param,
-	Patch,
-	Post,
-	Query,
-	UseGuards,
-} from '@nestjs/common';
+import { Controller, ForbiddenException, Get, Headers, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { type IPagination } from '@studiohyperdrive/pagination';
+import type { IPagination } from '@studiohyperdrive/pagination';
 import { addMonths } from 'date-fns';
 
 import { type Notification, NotificationStatus, NotificationType } from '../types';
 
-import { type App_Notification_Insert_Input } from '~generated/graphql-db-types-hetarchief';
-import {
-	CreateFromMaintenanceAlertDto,
-	NotificationsQueryDto,
-} from '~modules/notifications/dto/notifications.dto';
+import type { App_Notification_Insert_Input } from '~generated/graphql-db-types-hetarchief';
+import type { CreateFromMaintenanceAlertDto, NotificationsQueryDto } from '~modules/notifications/dto/notifications.dto';
+// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
 import { NotificationsService } from '~modules/notifications/services/notifications.service';
-import { SessionUserEntity } from '~modules/users/classes/session-user';
+import type { SessionUserEntity } from '~modules/users/classes/session-user';
+// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
 import { VisitsService } from '~modules/visits/services/visits.service';
-import { type VisitRequest } from '~modules/visits/types';
+import type { VisitRequest } from '~modules/visits/types';
 import { SessionUser } from '~shared/decorators/user.decorator';
 import { APIKEY, ApiKeyGuard } from '~shared/guards/api-key.guard';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
@@ -88,10 +78,7 @@ export class NotificationsController {
 	 */
 	@UseGuards(ApiKeyGuard)
 	@Post('check-new')
-	public async checkNewNotifications(
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		@Headers(APIKEY) apikey: string
-	): Promise<{
+	public async checkNewNotifications(@Headers(APIKEY) apikey: string): Promise<{
 		status: string;
 		notifications?: Partial<Record<NotificationType, number>>;
 		total: number;
@@ -112,25 +99,22 @@ export class NotificationsController {
 					Locale.En // Admin only endpoint, no logged in user since we use an apikey
 				),
 				notifications: {
-					[NotificationType.ACCESS_PERIOD_VISITOR_SPACE_STARTED]:
-						accessStartsNotifications.length,
+					[NotificationType.ACCESS_PERIOD_VISITOR_SPACE_STARTED]: accessStartsNotifications.length,
 					[NotificationType.ACCESS_PERIOD_VISITOR_SPACE_END_WARNING]:
 						accessAlmostEndedNotifications.length,
-					[NotificationType.ACCESS_PERIOD_VISITOR_SPACE_ENDED]:
-						accessEndedNotifications.length,
+					[NotificationType.ACCESS_PERIOD_VISITOR_SPACE_ENDED]: accessEndedNotifications.length,
 				},
 				total: totalNotificationsSent,
 			};
-		} else {
-			return {
-				status: this.translationsService.tText(
-					'modules/notifications/controllers/notifications___no-notifications-had-to-be-sent',
-					null,
-					Locale.En // Admin only endpoint, no logged in user since we use an apikey
-				),
-				total: 0,
-			};
 		}
+		return {
+			status: this.translationsService.tText(
+				'modules/notifications/controllers/notifications___no-notifications-had-to-be-sent',
+				null,
+				Locale.En // Admin only endpoint, no logged in user since we use an apikey
+			),
+			total: 0,
+		};
 	}
 
 	/**

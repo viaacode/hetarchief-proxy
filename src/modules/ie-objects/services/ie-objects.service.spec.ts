@@ -2,7 +2,7 @@ import { DataService, PlayerTicketService } from '@meemoo/admin-core-api';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { ConfigService } from '@nestjs/config';
 import { Test, type TestingModule } from '@nestjs/testing';
-import { type Cache } from 'cache-manager';
+import type { Cache } from 'cache-manager';
 import { cloneDeep } from 'lodash';
 
 import { IeObjectsSearchFilterField, Operator } from '../elasticsearch/elasticsearch.consts';
@@ -29,7 +29,7 @@ import {
 
 import { IeObjectsService } from './ie-objects.service';
 
-import { type FindIeObjectsForSitemapQuery } from '~generated/graphql-db-types-hetarchief';
+import type { FindIeObjectsForSitemapQuery } from '~generated/graphql-db-types-hetarchief';
 import {
 	mockAutocompleteQueryResponseCreators,
 	mockAutocompleteQueryResponseNewspaperSeries,
@@ -183,9 +183,9 @@ describe('ieObjectsService', () => {
 	describe('findBySchemaIdentifier', () => {
 		it('returns the full object details as retrieved from the DB', async () => {
 			// Mock the ie object
-			mockIeObject2.forEach((mockObject2Response) => {
+			for (const mockObject2Response of mockIeObject2) {
 				mockDataService.execute.mockResolvedValueOnce(mockObject2Response);
-			});
+			}
 
 			// Mock the parent object
 			const mockParentIeObject = cloneDeep(mockIeObject2);
@@ -195,9 +195,9 @@ describe('ieObjectsService', () => {
 			mockParentIeObject[IeObjectDetailResponseIndex.IsPartOf] = {
 				isPartOf: [],
 			};
-			mockParentIeObject.forEach((mockParentIeObjectResponse) => {
+			for (const mockParentIeObjectResponse of mockParentIeObject) {
 				mockDataService.execute.mockResolvedValueOnce(mockParentIeObjectResponse);
-			});
+			}
 
 			// Fetch the object
 			const ieObject = await ieObjectsService.findByIeObjectId(
@@ -208,13 +208,9 @@ describe('ieObjectsService', () => {
 
 			// Validate the object
 			expect(ieObject.schemaIdentifier).toEqual(mockObjectSchemaIdentifier);
-			expect(ieObject.maintainerId).toEqual(
-				mockIeObject2Metadata.schemaMaintainer.org_identifier
-			);
+			expect(ieObject.maintainerId).toEqual(mockIeObject2Metadata.schemaMaintainer.org_identifier);
 			expect(ieObject.copyrightHolder).toEqual(
-				mockIeObject2[
-					IeObjectDetailResponseIndex.SchemaCopyrightHolder
-				].schemaCopyrightHolder
+				mockIeObject2[IeObjectDetailResponseIndex.SchemaCopyrightHolder].schemaCopyrightHolder
 					.map((item) => item.schema_copyright_holder)
 					.join(', ') || undefined
 			);
@@ -224,8 +220,8 @@ describe('ieObjectsService', () => {
 
 			// Check parent ie and current ie info is merged: https://meemoo.atlassian.net/browse/ARC-2135
 			expect(ieObject.bibframeEdition).toEqual(
-				mockParentIeObject[IeObjectDetailResponseIndex.IeObject]
-					.graph_intellectual_entity[0].bibframe_edition
+				mockParentIeObject[IeObjectDetailResponseIndex.IeObject].graph_intellectual_entity[0]
+					.bibframe_edition
 			);
 		});
 
@@ -242,9 +238,9 @@ describe('ieObjectsService', () => {
 			].graph_intellectual_entity[0].isRepresentedBy = [];
 
 			mockDataService.execute.mockReset();
-			objectIeMock.forEach((mockObject2Response) => {
+			for (const mockObject2Response of objectIeMock) {
 				mockDataService.execute.mockResolvedValueOnce(mockObject2Response);
-			});
+			}
 
 			const ieObject = await ieObjectsService.findByIeObjectId(
 				mockObjectId,
@@ -259,9 +255,7 @@ describe('ieObjectsService', () => {
 		it('returns an empty array if no files were found', async () => {
 			const objectIeMock = cloneDeep(mockIeObject2);
 			objectIeMock[IeObjectDetailResponseIndex.HasPart].graph_intellectual_entity = [];
-			objectIeMock[
-				IeObjectDetailResponseIndex.IsRepresentedBy
-			].graph__intellectual_entity[0] = {
+			objectIeMock[IeObjectDetailResponseIndex.IsRepresentedBy].graph__intellectual_entity[0] = {
 				isRepresentedBy: [
 					{
 						...(objectIeMock[IeObjectDetailResponseIndex.IsRepresentedBy]
@@ -270,9 +264,9 @@ describe('ieObjectsService', () => {
 					},
 				],
 			};
-			objectIeMock.forEach((mockObject2Response) => {
+			for (const mockObject2Response of objectIeMock) {
 				mockDataService.execute.mockResolvedValueOnce(mockObject2Response);
-			});
+			}
 
 			const ieObject = await ieObjectsService.findByIeObjectId(
 				mockObjectId,
@@ -288,11 +282,7 @@ describe('ieObjectsService', () => {
 			const mockData: Readonly<IeObjectDetailResponseTypes> = mockIeObjectEmpty;
 			mockDataService.execute.mockResolvedValueOnce(mockData);
 
-			const ieObject = await ieObjectsService.findByIeObjectId(
-				'invalidId',
-				'referer',
-				'127.0.0.1'
-			);
+			const ieObject = await ieObjectsService.findByIeObjectId('invalidId', 'referer', '127.0.0.1');
 			expect(ieObject).toEqual(null);
 		});
 	});
@@ -305,10 +295,7 @@ describe('ieObjectsService', () => {
 
 			mockDataService.execute.mockResolvedValueOnce(mockData);
 
-			const response = await ieObjectsService.findAllIeObjectMetadataByFolderId(
-				'ids',
-				'dontMatch'
-			);
+			const response = await ieObjectsService.findAllIeObjectMetadataByFolderId('ids', 'dontMatch');
 			expect(response).toHaveLength(0);
 		});
 		it('should successfully return all objects by folderId adapted', async () => {

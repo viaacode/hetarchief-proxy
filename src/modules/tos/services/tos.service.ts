@@ -1,12 +1,10 @@
+// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
 import { DataService } from '@meemoo/admin-core-api';
 import { Injectable, NotFoundException } from '@nestjs/common';
 
-import { type Tos } from '../types';
+import type { Tos } from '../types';
 
-import {
-	GetTosLastUpdatedAtDocument,
-	type GetTosLastUpdatedAtQuery,
-} from '~generated/graphql-db-types-hetarchief';
+import { GetTosLastUpdatedAtDocument, type GetTosLastUpdatedAtQuery } from '~generated/graphql-db-types-hetarchief';
 
 @Injectable()
 export class TosService {

@@ -1,7 +1,7 @@
 import { Test, type TestingModule } from '@nestjs/testing';
-import { type IPagination } from '@studiohyperdrive/pagination';
+import type { IPagination } from '@studiohyperdrive/pagination';
 import { Idp } from '@viaa/avo2-types';
-import { type Request } from 'express';
+import type { Request } from 'express';
 
 import { FoldersService } from '../services/folders.service';
 
@@ -186,9 +186,7 @@ describe('FoldersController', () => {
 
 	describe('getFolderObjectsById', () => {
 		it('should return the objects in the folder', async () => {
-			mockFoldersService.findObjectsByFolderId.mockResolvedValueOnce(
-				mockFolderObjectsResponse
-			);
+			mockFoldersService.findObjectsByFolderId.mockResolvedValueOnce(mockFolderObjectsResponse);
 			mockIeObjectsService.getVisitorSpaceAccessInfoFromUser.mockResolvedValue({
 				objectIds: [mockFolderObjectsResponse.items[0].schemaIdentifier],
 				visitorSpaceIds: [],
@@ -281,9 +279,7 @@ describe('FoldersController', () => {
 			);
 			mockFoldersService.findFolderById.mockResolvedValueOnce(mockFoldersResponse.items[0]);
 			mockFoldersService.findFolderById.mockResolvedValueOnce(mockFoldersResponse.items[0]);
-			mockFoldersService.findObjectInFolderById.mockResolvedValue(
-				mockFoldersResponse.items[0]
-			);
+			mockFoldersService.findObjectInFolderById.mockResolvedValue(mockFoldersResponse.items[0]);
 			mockIeObjectsService.findByIeObjectId.mockResolvedValue([mockIeObject1]);
 			const folderObject = await foldersController.addObjectToFolder(
 				mockRequest,
@@ -304,9 +300,7 @@ describe('FoldersController', () => {
 				...mockFoldersResponse.items[0],
 				userProfileId: 'other-profile-id',
 			});
-			mockIeObjectsService.findByIeObjectId.mockResolvedValueOnce([
-				mockFoldersResponse.items[0],
-			]);
+			mockIeObjectsService.findByIeObjectId.mockResolvedValueOnce([mockFoldersResponse.items[0]]);
 
 			let error: any;
 			try {
@@ -478,12 +472,8 @@ describe('FoldersController', () => {
 			});
 
 			mockFoldersService.create.mockResolvedValueOnce(mockFoldersResponse.items[0]);
-			mockFoldersService.findObjectsByFolderId.mockResolvedValueOnce(
-				mockFolderObjectsResponse
-			);
-			mockFoldersService.addObjectToFolder.mockResolvedValue(
-				mockFolderObjectsResponse.items[0]
-			);
+			mockFoldersService.findObjectsByFolderId.mockResolvedValueOnce(mockFolderObjectsResponse);
+			mockFoldersService.addObjectToFolder.mockResolvedValue(mockFolderObjectsResponse.items[0]);
 
 			const sharedFolder = await foldersController.acceptSharedFolder(
 				'referer',

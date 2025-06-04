@@ -10,9 +10,9 @@ export class CreateEventsDto {
 	})
 	@ApiProperty({
 		type: String,
-		description: `Log an event with this type. Possible types: ${Object.values(
-			LogEventType
-		).join(', ')}`,
+		description: `Log an event with this type. Possible types: ${Object.values(LogEventType).join(
+			', '
+		)}`,
 		example: LogEventType.USER_AUTHENTICATE,
 		enum: LogEventType,
 	})
@@ -31,7 +31,8 @@ export class CreateEventsDto {
 	@IsObject()
 	@ApiProperty({
 		type: Object,
-		description: `Additional information about the event. For instance the video id, or the page url`,
+		description:
+			'Additional information about the event. For instance the video id, or the page url',
 		example: {
 			schema_identifier:
 				'09f17b37445c4ce59f645c2d5db9dbf8dbee79eba623459caa8c6496108641a0900618cb6ceb4e9b8ad907e47b980ee3',

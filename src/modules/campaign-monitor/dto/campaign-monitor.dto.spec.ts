@@ -70,8 +70,7 @@ describe('CampaignMonitorDto', () => {
 	});
 	describe('CampaignMonitorNewsletterPreferencesDto', () => {
 		it('should be able to construct a CampaignMonitorNewsletterPreferencesDto object', async () => {
-			const campaignMonitorNewsletterPreferencesDto =
-				new CampaignMonitorNewsletterPreferencesDto();
+			const campaignMonitorNewsletterPreferencesDto = new CampaignMonitorNewsletterPreferencesDto();
 			expect(campaignMonitorNewsletterPreferencesDto).toEqual({});
 		});
 	});

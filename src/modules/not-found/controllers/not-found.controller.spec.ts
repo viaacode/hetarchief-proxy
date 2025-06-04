@@ -9,7 +9,7 @@ import { GroupId, GroupName, Permission, type User } from '~modules/users/types'
 import { mockTranslationsService } from '~shared/helpers/mockTranslationsService';
 import { Locale } from '~shared/types/types';
 
-export const mockUser: User = {
+const mockUser: User = {
 	id: 'e791ecf1-e121-4c54-9d2e-34524b6467c6',
 	firstName: 'Test',
 	lastName: 'Testers',
