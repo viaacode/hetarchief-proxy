@@ -12,7 +12,8 @@ import type { IeObject } from '../ie-objects.types';
 function mapIeObjectForExport(ieObject: Partial<IeObject>): any {
 	// Flatten isPartOf property
 	const ieObjectCopy = _.pick(ieObject, IE_OBJECT_PROPS_METADATA_EXPORT);
-	ieObjectCopy.isPartOf = undefined;
+	// biome-ignore lint/performance/noDelete: This property cannot be on the object, otherwise it will get exported as an empty string to csv
+	delete ieObjectCopy.isPartOf;
 	return {
 		...ieObjectCopy,
 		...Object.fromEntries(

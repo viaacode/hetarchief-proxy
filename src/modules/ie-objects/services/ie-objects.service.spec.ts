@@ -509,7 +509,12 @@ describe('ieObjectsService', () => {
 				.mockResolvedValue(mockAutocompleteQueryResponseNewspaperSeries);
 			const result = await ieObjectsService.getMetadataAutocomplete(
 				AutocompleteField.newspaperSeriesName,
-				'volks'
+				'volks',
+				{
+					filters: [],
+					page: 1,
+					size: 4,
+				}
 			);
 			expect(result).toEqual([
 				'De volksbonder: orgaan van den Liberale Volksbond, Antwerpen',
@@ -525,7 +530,12 @@ describe('ieObjectsService', () => {
 				.mockResolvedValue(mockAutocompleteQueryResponseCreators);
 			const result = await ieObjectsService.getMetadataAutocomplete(
 				AutocompleteField.creator,
-				'Dirk'
+				'Dirk',
+				{
+					filters: [],
+					page: 1,
+					size: 4,
+				}
 			);
 			expect(result).toEqual([
 				'Dirk Van Mechelen',
