@@ -1,12 +1,13 @@
 import { Body, Controller, Post, Req } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { Request } from 'express';
+import type { Request } from 'express';
 import { isbot } from 'isbot';
 
 import { CreateEventsDto } from '../dto/events.dto';
+
 import { EventsService } from '../services/events.service';
 
-import { type LogEvent } from '~modules/events/types';
+import type { LogEvent } from '~modules/events/types';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupName } from '~modules/users/types';
 import { SessionUser } from '~shared/decorators/user.decorator';

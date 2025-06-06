@@ -17,13 +17,14 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBody, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { type IPagination } from '@studiohyperdrive/pagination';
+import type { IPagination } from '@studiohyperdrive/pagination';
 import { AssetType } from '@viaa/avo2-types';
 import { uniqBy } from 'lodash';
 
 import { CreateSpaceDto, SpacesQueryDto, UpdateSpaceDto } from '../dto/spaces.dto';
+
 import { SpacesService } from '../services/spaces.service';
-import { type VisitorSpace } from '../spaces.types';
+import type { VisitorSpace } from '../spaces.types';
 
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupName, Permission } from '~modules/users/types';
@@ -73,9 +74,7 @@ export class SpacesController {
 
 		// CP ADMINS always have access to their own space
 		if (user.getGroupName() === GroupName.CP_ADMIN) {
-			const ownSpace = await this.spacesService.findSpaceByOrganisationId(
-				user.getOrganisationId()
-			);
+			const ownSpace = await this.spacesService.findSpaceByOrganisationId(user.getOrganisationId());
 			if (ownSpace) {
 				spaces.items = uniqBy([...spaces.items, ownSpace], (space) => space.id);
 			}
@@ -105,10 +104,7 @@ export class SpacesController {
 				)
 			);
 		}
-		if (
-			space.status === VisitorSpaceStatus.Inactive &&
-			!user.has(Permission.UPDATE_ALL_SPACES)
-		) {
+		if (space.status === VisitorSpaceStatus.Inactive && !user.has(Permission.UPDATE_ALL_SPACES)) {
 			throw new GoneException(
 				this.translationsService.tText(
 					'modules/spaces/controllers/spaces___space-with-slug-slug-is-inactive',

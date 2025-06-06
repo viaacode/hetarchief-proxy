@@ -1,16 +1,17 @@
 import { Controller, Headers, Post, Query, UseGuards } from '@nestjs/common';
+
 import { ConfigService } from '@nestjs/config';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import got from 'got';
 import { stringifyUrl } from 'query-string';
 
-import { type Configuration } from '~config';
+import type { Configuration } from '~config';
 
 import { Permission } from '~modules/users/types';
 import { RequireAnyPermissions } from '~shared/decorators/require-any-permissions.decorator';
 import { APIKEY } from '~shared/guards/api-key.guard';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
-import { Locale } from '~shared/types/types';
+import type { Locale } from '~shared/types/types';
 
 @ApiTags('Client Cache')
 @Controller('client-cache')
@@ -26,7 +27,6 @@ export class ClientCacheController {
 	async getOrganisationElementsForUser(
 		@Query('language') language: Locale,
 		@Query('path') path: string,
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		@Headers(APIKEY) apikey: string
 	): Promise<{ message: string }> {
 		const clientHost: string = this.configService.get('CLIENT_HOST');
@@ -35,7 +35,7 @@ export class ClientCacheController {
 		return got
 			.post({
 				url: stringifyUrl({
-					url: clientHost + '/api/clear-cache',
+					url: `${clientHost}/api/clear-cache`,
 					query: {
 						language,
 						path,

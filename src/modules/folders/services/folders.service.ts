@@ -4,13 +4,13 @@ import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { format } from 'date-fns';
 import { isEmpty, maxBy } from 'lodash';
 
-import {
-	type Folder,
-	type FolderObjectLink,
-	type GqlFolder,
-	type GqlFolderWithIeObjects,
-	type GqlObject,
-	type GqlUpdateFolder,
+import type {
+	Folder,
+	FolderObjectLink,
+	GqlFolder,
+	GqlFolderWithIeObjects,
+	GqlObject,
+	GqlUpdateFolder,
 } from '../types';
 
 import {
@@ -46,13 +46,11 @@ import {
 	type UpdateFolderMutationVariables,
 	type Users_Folder_Ie_Bool_Exp,
 } from '~generated/graphql-db-types-hetarchief';
-import { type FolderObjectsQueryDto } from '~modules/folders/dto/folders.dto';
-import {
-	type IeObject,
-	type IeObjectSector,
-	type IeObjectType,
-} from '~modules/ie-objects/ie-objects.types';
+import { FolderObjectsQueryDto } from '~modules/folders/dto/folders.dto';
+import type { IeObject, IeObjectSector, IeObjectType } from '~modules/ie-objects/ie-objects.types';
+
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
+
 import { VisitsService } from '~modules/visits/services/visits.service';
 import { PaginationHelper } from '~shared/helpers/pagination';
 
@@ -77,12 +75,11 @@ export class FoldersService {
 			return undefined;
 		}
 
-		const thumbnailUrl: string | undefined =
-			await this.ieObjectsService.getThumbnailUrlWithToken(
-				gqlIeObject?.schemaThumbnail?.schema_thumbnail_url?.[0],
-				referer,
-				ip
-			);
+		const thumbnailUrl: string | undefined = await this.ieObjectsService.getThumbnailUrlWithToken(
+			gqlIeObject?.schemaThumbnail?.schema_thumbnail_url?.[0],
+			referer,
+			ip
+		);
 
 		/* istanbul ignore next */
 		return {
@@ -150,7 +147,7 @@ export class FoldersService {
 				(gqlFolder as GqlFolderWithIeObjects).intellectualEntities
 					? (gqlFolder as GqlFolderWithIeObjects).intellectualEntities.map((object) =>
 							this.adaptFolderObjectLink(object, referer, ip)
-					  )
+						)
 					: []
 			),
 		};
@@ -200,9 +197,7 @@ export class FoldersService {
 
 		return Pagination<Folder>({
 			items: await Promise.all(
-				foldersResponse.users_folder.map((folder: any) =>
-					this.adaptFolder(folder, referer, ip)
-				)
+				foldersResponse.users_folder.map((folder: any) => this.adaptFolder(folder, referer, ip))
 			),
 			page,
 			size,
@@ -409,11 +404,7 @@ export class FoldersService {
 		};
 	}
 
-	public async removeObjectFromFolder(
-		folderId: string,
-		ieObjectId: string,
-		userProfileId: string
-	) {
+	public async removeObjectFromFolder(folderId: string, ieObjectId: string, userProfileId: string) {
 		const response = await this.dataService.execute<
 			RemoveObjectFromFolderMutation,
 			RemoveObjectFromFolderMutationVariables

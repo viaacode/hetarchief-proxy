@@ -2,11 +2,11 @@ import { TranslationsService } from '@meemoo/admin-core-api';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Test, type TestingModule } from '@nestjs/testing';
 
-import { type Configuration } from '~config';
+import type { Configuration } from '~config';
 
 import { IdpService } from './idp.service';
 
-import { type Organisation } from '~modules/organisations/organisations.types';
+import type { Organisation } from '~modules/organisations/organisations.types';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { GroupId } from '~modules/users/types';
 import { LdapApp } from '~shared/auth/auth.types';
@@ -126,7 +126,7 @@ describe('IdpService', () => {
 			const ldapUser = getLdapUser();
 			ldapUser.attributes.o = [];
 
-			let err;
+			let err: any;
 
 			try {
 				await idpService.determineUserGroup(ldapUser, null, Locale.Nl);
@@ -160,11 +160,7 @@ describe('IdpService', () => {
 			ldapUser.attributes.o = ['OR-rf5kf25'];
 			mockSpacesService.findByMaintainerId.mockResolvedValueOnce({ id: 'space-1' });
 
-			const group = await idpService.determineUserGroup(
-				ldapUser,
-				mockOrganisation,
-				Locale.Nl
-			);
+			const group = await idpService.determineUserGroup(ldapUser, mockOrganisation, Locale.Nl);
 			expect(group).toEqual(GroupId.CP_ADMIN);
 		});
 	});

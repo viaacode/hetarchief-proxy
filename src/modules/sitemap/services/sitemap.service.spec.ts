@@ -7,7 +7,7 @@ import {
 	mockSitemapConfig,
 	mockSitemapSpaces,
 } from '../mocks/sitemap.mocks';
-import { type SitemapItemInfo } from '../sitemap.types';
+import type { SitemapItemInfo } from '../sitemap.types';
 
 import { SitemapService } from './sitemap.service';
 
@@ -167,10 +167,7 @@ describe('SitemapService', () => {
 				},
 			];
 
-			const response = sitemapService.blacklistAndPrioritizePages(
-				mockPages,
-				mockSitemapConfig
-			);
+			const response = sitemapService.blacklistAndPrioritizePages(mockPages, mockSitemapConfig);
 			expect(response).toEqual([
 				{
 					loc: '/bezoek',

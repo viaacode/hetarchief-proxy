@@ -1,5 +1,5 @@
-import { type Idp } from '@viaa/avo2-types';
-import { type Response } from 'express';
+import type { Idp } from '@viaa/avo2-types';
+import type { Response } from 'express';
 import queryString from 'query-string';
 
 /**

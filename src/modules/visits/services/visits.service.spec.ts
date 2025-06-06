@@ -355,10 +355,7 @@ describe('VisitsService', () => {
 			};
 			mockDataService.execute.mockResolvedValueOnce(mockData);
 
-			const activeVisit = await visitsService.getActiveVisitForUserAndSpace(
-				'user-1',
-				'space-1'
-			);
+			const activeVisit = await visitsService.getActiveVisitForUserAndSpace('user-1', 'space-1');
 
 			expect(activeVisit).toBeNull();
 		});
@@ -367,10 +364,7 @@ describe('VisitsService', () => {
 	describe('getPendingVisitCountForUserBySlug', () => {
 		it('returns the count of the pending visits for the current user in a given space', async () => {
 			mockDataService.execute.mockResolvedValueOnce(getDefaultVisitAggregateResponse());
-			const response = await visitsService.getPendingVisitCountForUserBySlug(
-				'user-1',
-				'space-1'
-			);
+			const response = await visitsService.getPendingVisitCountForUserBySlug('user-1', 'space-1');
 			expect(response.count).toBe(1);
 		});
 	});
@@ -634,10 +628,7 @@ describe('VisitsService', () => {
 				maintainer_visitor_space_request: [{ id: '1' }],
 			} as GetVisitRequestForAccessQuery);
 
-			const hasAccess: boolean = await visitsService.hasAccess(
-				mockUserProfileId,
-				'maintainer-1'
-			);
+			const hasAccess: boolean = await visitsService.hasAccess(mockUserProfileId, 'maintainer-1');
 
 			expect(hasAccess).toEqual(true);
 		});
@@ -647,10 +638,7 @@ describe('VisitsService', () => {
 				maintainer_visitor_space_request: [],
 			} as GetVisitRequestForAccessQuery);
 
-			const hasAccess: boolean = await visitsService.hasAccess(
-				mockUserProfileId,
-				'maintainer-1'
-			);
+			const hasAccess: boolean = await visitsService.hasAccess(mockUserProfileId, 'maintainer-1');
 
 			expect(hasAccess).toEqual(false);
 		});

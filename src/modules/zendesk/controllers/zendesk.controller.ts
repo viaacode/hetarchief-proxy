@@ -3,7 +3,7 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { CreateTicketRequestDto } from '../dto/zendesk.dto';
 import { ZendeskService } from '../services/zendesk.service';
-import { type CreateTicketResponse } from '../zendesk.types';
+import type { CreateTicketResponse } from '../zendesk.types';
 
 @ApiTags('Zendesk')
 @Controller('zendesk')

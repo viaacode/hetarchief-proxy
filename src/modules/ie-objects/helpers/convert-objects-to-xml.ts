@@ -23,9 +23,7 @@ export const convertObjectToXml = (object: Partial<IeObject>, clientHost: string
 
 	// Permalink
 	dcElements.push(
-		...IE_OBJECT_PROPERTY_TO_DUBLIN_CORE.permalink(
-			`${clientHost}/pid/${object.schemaIdentifier}`
-		)
+		...IE_OBJECT_PROPERTY_TO_DUBLIN_CORE.permalink(`${clientHost}/pid/${object.schemaIdentifier}`)
 	);
 
 	// Rights

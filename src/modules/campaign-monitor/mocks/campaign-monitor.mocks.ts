@@ -7,15 +7,16 @@ import {
 	EmailTemplate,
 	type MaterialRequestEmailInfo,
 } from '../campaign-monitor.types';
+
 import {
-	type CampaignMonitorConfirmationData,
-	type CampaignMonitorConfirmMailQueryDto,
-	type CampaignMonitorMaterialRequestData,
-	type CampaignMonitorNewsletterUpdatePreferencesQueryDto,
-	type RequestListItem,
+	CampaignMonitorConfirmMailQueryDto,
+	CampaignMonitorConfirmationData,
+	CampaignMonitorMaterialRequestData,
+	CampaignMonitorNewsletterUpdatePreferencesQueryDto,
+	RequestListItem,
 } from '../dto/campaign-monitor.dto';
 
-import { type SendRequestListDto } from '~modules/material-requests/dto/material-requests.dto';
+import type { SendRequestListDto } from '~modules/material-requests/dto/material-requests.dto';
 import { mockMaterialRequest1 } from '~modules/material-requests/mocks/material-requests.mocks';
 import { GroupId, GroupName, Permission, type User } from '~modules/users/types';
 import { mockConfigService } from '~shared/test/mock-config-service';
@@ -133,7 +134,7 @@ export const mockCampaignMonitorMaterialRequestDataToRequester: CampaignMonitorM
 
 export const mockNewsletterTemplateDataWithNewsletter = {
 	EmailAddress: mockUserInfo.email,
-	Name: mockUserInfo.firstName + ' ' + mockUserInfo.lastName,
+	Name: `${mockUserInfo.firstName} ${mockUserInfo.lastName}`,
 	Resubscribe: true,
 	ConsentToTrack: 'Yes',
 	CustomFields: [

@@ -3,7 +3,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 
 import { TosService } from './tos.service';
 
-import { type GetTosLastUpdatedAtQuery } from '~generated/graphql-db-types-hetarchief';
+import type { GetTosLastUpdatedAtQuery } from '~generated/graphql-db-types-hetarchief';
 import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {

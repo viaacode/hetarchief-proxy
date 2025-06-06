@@ -1,8 +1,8 @@
 import { Logger } from '@nestjs/common';
 
-import { type GroupName, type Permission, type User } from '../types';
+import type { GroupName, Permission, User } from '../types';
 
-import { type IeObjectSector } from '~modules/ie-objects/ie-objects.types';
+import type { IeObjectSector } from '~modules/ie-objects/ie-objects.types';
 import { Locale } from '~shared/types/types';
 
 export class SessionUserEntity {
@@ -44,7 +44,7 @@ export class SessionUserEntity {
 	}
 
 	public getFullName(): string {
-		return this.getFirstName() + ' ' + this.getLastName();
+		return `${this.getFirstName()} ${this.getLastName()}`;
 	}
 
 	public getMail(): string {

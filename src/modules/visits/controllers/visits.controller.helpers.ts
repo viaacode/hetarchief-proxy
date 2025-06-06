@@ -1,10 +1,10 @@
-import { randomUUID } from 'crypto';
+import { randomUUID } from 'node:crypto';
 
 import { addYears } from 'date-fns';
 
 import { Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum } from '~generated/graphql-db-types-hetarchief';
-import { type VisitorSpace } from '~modules/spaces/spaces.types';
-import { type SessionUserEntity } from '~modules/users/classes/session-user';
+import type { VisitorSpace } from '~modules/spaces/spaces.types';
+import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { type VisitRequest, VisitStatus } from '~modules/visits/types';
 
 export function getFakeVisitorRequest(user: SessionUserEntity, space: VisitorSpace): VisitRequest {

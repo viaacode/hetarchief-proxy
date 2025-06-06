@@ -102,9 +102,7 @@ describe('CampaignMonitorService', () => {
 	describe('getAdminEmail', () => {
 		it('should return the rerout email address if set', () => {
 			campaignMonitorService.setRerouteEmailsTo('overrule@meemoo.be');
-			expect(campaignMonitorService.getAdminEmail('me@meemoo.be')).toEqual(
-				'overrule@meemoo.be'
-			);
+			expect(campaignMonitorService.getAdminEmail('me@meemoo.be')).toEqual('overrule@meemoo.be');
 		});
 
 		it('should return the rerout email address if set', () => {
@@ -129,10 +127,7 @@ describe('CampaignMonitorService', () => {
 	describe('sendForVisit', () => {
 		it('should use fallback email if email address is undefined for a maintainer', async () => {
 			const visit = getMockVisitRequest();
-			const sendTransactionalMailSpy = jest.spyOn(
-				campaignMonitorService,
-				'sendTransactionalMail'
-			);
+			const sendTransactionalMailSpy = jest.spyOn(campaignMonitorService, 'sendTransactionalMail');
 			sendTransactionalMailSpy.mockResolvedValueOnce(undefined);
 
 			await campaignMonitorService.sendForVisit({
@@ -229,9 +224,7 @@ describe('CampaignMonitorService', () => {
 			const materialRequestEmailInfo = mockMaterialRequestEmailInfo;
 			materialRequestEmailInfo.template = EmailTemplate.MATERIAL_REQUEST_REQUESTER;
 			const result =
-				campaignMonitorService.convertMaterialRequestsToEmailTemplateData(
-					materialRequestEmailInfo
-				);
+				campaignMonitorService.convertMaterialRequestsToEmailTemplateData(materialRequestEmailInfo);
 			expect(result).toEqual(mockCampaignMonitorMaterialRequestDataToRequester);
 		});
 	});
@@ -241,10 +234,7 @@ describe('CampaignMonitorService', () => {
 			const materialRequestEmailInfo = mockMaterialRequestEmailInfo;
 			materialRequestEmailInfo.template = EmailTemplate.MATERIAL_REQUEST_REQUESTER;
 			materialRequestEmailInfo.to = null;
-			const sendTransactionalMailSpy = jest.spyOn(
-				campaignMonitorService,
-				'sendTransactionalMail'
-			);
+			const sendTransactionalMailSpy = jest.spyOn(campaignMonitorService, 'sendTransactionalMail');
 			sendTransactionalMailSpy.mockResolvedValueOnce(undefined);
 			try {
 				await campaignMonitorService.sendForMaterialRequest(materialRequestEmailInfo);
@@ -274,8 +264,7 @@ describe('CampaignMonitorService', () => {
 			const materialRequestEmailInfo = mockMaterialRequestEmailInfo;
 			materialRequestEmailInfo.template = EmailTemplate.MATERIAL_REQUEST_REQUESTER;
 
-			const result =
-				await campaignMonitorService.sendForMaterialRequest(materialRequestEmailInfo);
+			const result = await campaignMonitorService.sendForMaterialRequest(materialRequestEmailInfo);
 			expect(result).toBeFalsy();
 			campaignMonitorService.setIsEnabled(true);
 		});
@@ -305,9 +294,7 @@ describe('CampaignMonitorService', () => {
 				materialRequestEmailInfo.to = 'test@example.com';
 				await campaignMonitorService.sendForMaterialRequest(materialRequestEmailInfo);
 				fail(
-					new Error(
-						'sendForMaterialRequest should have thrown an error when CM throws an error'
-					)
+					new Error('sendForMaterialRequest should have thrown an error when CM throws an error')
 				);
 			} catch (e) {
 				expect(e).toBeDefined();
@@ -321,13 +308,9 @@ describe('CampaignMonitorService', () => {
 				mockUserInfo,
 				true
 			);
-			expect(result.EmailAddress).toEqual(
-				mockNewsletterTemplateDataWithNewsletter.EmailAddress
-			);
+			expect(result.EmailAddress).toEqual(mockNewsletterTemplateDataWithNewsletter.EmailAddress);
 			expect(result.Name).toEqual(mockNewsletterTemplateDataWithNewsletter.Name);
-			expect(result.Resubscribe).toEqual(
-				mockNewsletterTemplateDataWithNewsletter.Resubscribe
-			);
+			expect(result.Resubscribe).toEqual(mockNewsletterTemplateDataWithNewsletter.Resubscribe);
 			expect(result.ConsentToTrack).toEqual(
 				mockNewsletterTemplateDataWithNewsletter.ConsentToTrack
 			);
@@ -363,13 +346,9 @@ describe('CampaignMonitorService', () => {
 				mockUserInfo,
 				true
 			);
-			expect(result.EmailAddress).toEqual(
-				mockNewsletterTemplateDataWithNewsletter.EmailAddress
-			);
+			expect(result.EmailAddress).toEqual(mockNewsletterTemplateDataWithNewsletter.EmailAddress);
 			expect(result.Name).toEqual(mockNewsletterTemplateDataWithNewsletter.Name);
-			expect(result.Resubscribe).toEqual(
-				mockNewsletterTemplateDataWithNewsletter.Resubscribe
-			);
+			expect(result.Resubscribe).toEqual(mockNewsletterTemplateDataWithNewsletter.Resubscribe);
 			expect(result.ConsentToTrack).toEqual(
 				mockNewsletterTemplateDataWithNewsletter.ConsentToTrack
 			);

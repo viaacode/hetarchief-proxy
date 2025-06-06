@@ -1,4 +1,4 @@
-import { type Locale } from '~shared/types/types';
+import type { Locale } from '~shared/types/types';
 
 export enum SpecialPermissionGroups {
 	loggedOutUsers = '-1',

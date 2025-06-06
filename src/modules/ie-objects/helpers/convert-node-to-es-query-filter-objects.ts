@@ -1,7 +1,7 @@
 import { BadRequestException } from '@nestjs/common';
-import { type baseTypes, type Expression } from 'jsep';
+import type { Expression, baseTypes } from 'jsep';
 
-import { type SearchFilter } from '../dto/ie-objects.dto';
+import { SearchFilter } from '../dto/ie-objects.dto';
 
 import { decodeSearchterm } from './encode-search-term';
 
@@ -45,16 +45,8 @@ export const convertNodeToEsQueryFilterObjects = (
 		case 'BinaryExpression': {
 			const operator = (node.operator as baseTypes) === 'AND' ? AND : OR;
 			return operator([
-				convertNodeToEsQueryFilterObjects(
-					node.left as Expression,
-					searchTemplates,
-					searchFilter
-				),
-				convertNodeToEsQueryFilterObjects(
-					node.right as Expression,
-					searchTemplates,
-					searchFilter
-				),
+				convertNodeToEsQueryFilterObjects(node.left as Expression, searchTemplates, searchFilter),
+				convertNodeToEsQueryFilterObjects(node.right as Expression, searchTemplates, searchFilter),
 			]);
 		}
 

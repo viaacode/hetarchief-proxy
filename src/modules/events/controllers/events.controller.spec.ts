@@ -1,6 +1,6 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 import { Idp } from '@viaa/avo2-types';
-import { type Request } from 'express';
+import type { Request } from 'express';
 
 import { EventsService } from '../services/events.service';
 import { LogEventType } from '../types';
@@ -53,24 +53,19 @@ describe('EventsController', () => {
 
 	describe('sendEvent', () => {
 		it('should send log events', async () => {
-			const result = eventsController.sendEvent(
-				mockRequest,
-				new SessionUserEntity(mockUser),
-				{ type: LogEventType.USER_AUTHENTICATE, path: 'http://localhost:3200' }
-			);
+			const result = eventsController.sendEvent(mockRequest, new SessionUserEntity(mockUser), {
+				type: LogEventType.USER_AUTHENTICATE,
+				path: 'http://localhost:3200',
+			});
 			expect(result).toBeTruthy();
 		});
 
 		it('should send log events with data', async () => {
-			const result = eventsController.sendEvent(
-				mockRequest,
-				new SessionUserEntity(mockUser),
-				{
-					type: LogEventType.USER_AUTHENTICATE,
-					path: 'http://localhost:3200',
-					data: { test: true },
-				}
-			);
+			const result = eventsController.sendEvent(mockRequest, new SessionUserEntity(mockUser), {
+				type: LogEventType.USER_AUTHENTICATE,
+				path: 'http://localhost:3200',
+				data: { test: true },
+			});
 			expect(result).toBeTruthy();
 		});
 	});

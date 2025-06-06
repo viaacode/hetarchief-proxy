@@ -3,7 +3,7 @@ import { HttpStatus } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Test, type TestingModule } from '@nestjs/testing';
 import { Idp } from '@viaa/avo2-types';
-import { type Request, type Response } from 'express';
+import type { Request, Response } from 'express';
 import { noop } from 'lodash';
 
 import { HetArchiefService } from '../services/het-archief.service';
@@ -11,7 +11,7 @@ import { IdpService } from '../services/idp.service';
 
 import { HetArchiefController } from './het-archief.controller';
 
-import { type CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
+import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 import { EventsService } from '~modules/events/services/events.service';
 import { FoldersService } from '~modules/folders/services/folders.service';
 import { mockOrganisations } from '~modules/organisations/mocks/organisations.mocks';
@@ -195,10 +195,7 @@ describe('HetArchiefController', () => {
 		});
 
 		it('should immediately redirect to the returnUrl if there is a valid session', async () => {
-			const result = await hetArchiefController.loginRoute(
-				getNewMockSession(),
-				hetArchiefLoginUrl
-			);
+			const result = await hetArchiefController.loginRoute(getNewMockSession(), hetArchiefLoginUrl);
 			expect(result).toEqual({
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,
 				url: hetArchiefLoginUrl,
@@ -224,9 +221,7 @@ describe('HetArchiefController', () => {
 			mockIdpService.determineUserGroup.mockReturnValue(GroupId.CP_ADMIN);
 			mockIdpService.userGroupRequiresMaintainerLink.mockReturnValue(true);
 			mockUsersService.updateUser.mockResolvedValue(archiefUser);
-			mockCampaignMonitorService.updateNewsletterPreferences.mockResolvedValue(
-				Promise.resolve()
-			);
+			mockCampaignMonitorService.updateNewsletterPreferences.mockResolvedValue(Promise.resolve());
 
 			const result = await hetArchiefController.loginCallback(mockRequest, {}, samlResponse, {
 				redirect: noop,
@@ -332,12 +327,9 @@ describe('HetArchiefController', () => {
 			mockArchiefService.assertSamlResponse.mockRejectedValue({
 				message: 'SAML Response is no longer valid',
 			});
-			const response = await hetArchiefController.loginCallback(
-				mockRequest,
-				{},
-				samlResponse,
-				{ redirect: noop } as Response
-			);
+			const response = await hetArchiefController.loginCallback(mockRequest, {}, samlResponse, {
+				redirect: noop,
+			} as Response);
 			expect(response).toEqual({
 				url: `${mockConfigService.get(
 					'HOST'
@@ -373,10 +365,7 @@ describe('HetArchiefController', () => {
 			mockArchiefService.createLogoutRequestUrl.mockImplementation(() => {
 				throw new Error('Test error handling');
 			});
-			const result = await hetArchiefController.logout(
-				getNewMockSession(),
-				hetArchiefLoginUrl
-			);
+			const result = await hetArchiefController.logout(getNewMockSession(), hetArchiefLoginUrl);
 			expect(result).toBeUndefined();
 		});
 	});

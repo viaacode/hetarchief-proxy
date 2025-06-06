@@ -1,10 +1,10 @@
-import { Readable } from 'stream';
+import { Readable } from 'node:stream';
 
 import {
 	AssetsService,
 	ContentPagesService,
 	DataService,
-	type DbContentPage,
+	DbContentPage,
 } from '@meemoo/admin-core-api';
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { AssetType } from '@viaa/avo2-types';
@@ -12,15 +12,17 @@ import { format } from 'date-fns';
 import { compact, kebabCase, uniqBy } from 'lodash';
 import xmlFormat from 'xml-formatter';
 
-import { type SitemapConfig, type SitemapItemInfo } from '../sitemap.types';
+import type { SitemapConfig, SitemapItemInfo } from '../sitemap.types';
 
 import {
 	GetSitemapConfigDocument,
 	type GetSitemapConfigQuery,
 } from '~generated/graphql-db-types-hetarchief';
 import { IeObjectLicense, type IeObjectsSitemap } from '~modules/ie-objects/ie-objects.types';
+
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { SITEMAP_XML_OBJECTS_SIZE } from '~modules/sitemap/sitemap.consts';
+
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { Locale, VisitorSpaceStatus } from '~shared/types/types';
 
@@ -101,14 +103,14 @@ export class SitemapService {
 				...staticPageSitemapEntries,
 				...contentPageSitemapEntries,
 				...activeSpaces.items.map((space) => ({
-					loc: '/zoeken/?aanbieders=' + space.maintainerId,
+					loc: `/zoeken/?aanbieders=${space.maintainerId}`,
 					links: [
 						{
-							href: '/zoeken/?aanbieders=' + space.maintainerId,
+							href: `/zoeken/?aanbieders=${space.maintainerId}`,
 							hreflang: Locale.Nl,
 						},
 						{
-							href: '/search/?aanbieders=' + space.maintainerId,
+							href: `/search/?aanbieders=${space.maintainerId}`,
 							hreflang: Locale.En,
 						},
 					],
@@ -154,7 +156,7 @@ export class SitemapService {
 		`,
 			{ lineSeparator: '\n' }
 		);
-		await this.uploadXml(indexXml, `index.xml`);
+		await this.uploadXml(indexXml, 'index.xml');
 		return renderedGeneralXml; // This is returned for unit tests
 	}
 
@@ -212,7 +214,7 @@ export class SitemapService {
 			);
 		} catch (err) {
 			throw new InternalServerErrorException(
-				'Failed to getContentPageSitemapEntries: ' + JSON.stringify(err, null, 2)
+				`Failed to getContentPageSitemapEntries: ${JSON.stringify(err, null, 2)}`
 			);
 		}
 	}
@@ -254,9 +256,7 @@ export class SitemapService {
 					const hreflang = translatedPage.hreflang;
 					const href =
 						process.env.CLIENT_HOST +
-						(translatedPage.hreflang === Locale.Nl
-							? ''
-							: '/' + translatedPage.hreflang) +
+						(translatedPage.hreflang === Locale.Nl ? '' : `/${translatedPage.hreflang}`) +
 						translatedPage.href;
 					return `<xhtml:link rel="alternate" hreflang="${hreflang}" href="${href}"/>`;
 				})
@@ -322,18 +322,17 @@ export class SitemapService {
 	}
 
 	private mapIeObjectToSitemapInfo(object: IeObjectsSitemap): SitemapItemInfo {
-		const objectPath =
-			object.maintainerSlug + '/' + object.schemaIdentifier + '/' + kebabCase(object.name);
+		const objectPath = `${object.maintainerSlug}/${object.schemaIdentifier}/${kebabCase(object.name)}`;
 
 		return {
-			loc: '/zoeken/' + objectPath,
+			loc: `/zoeken/${objectPath}`,
 			links: [
 				{
-					href: '/search/' + objectPath,
+					href: `/search/${objectPath}`,
 					hreflang: Locale.En,
 				},
 				{
-					href: '/zoeken/' + objectPath,
+					href: `/zoeken/${objectPath}`,
 					hreflang: Locale.Nl,
 				},
 			],

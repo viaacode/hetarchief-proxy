@@ -1,4 +1,4 @@
-import { type ExecutionContext } from '@nestjs/common';
+import type { ExecutionContext } from '@nestjs/common';
 
 import { LoggedInGuard } from './logged-in.guard';
 
@@ -18,9 +18,7 @@ describe('LoggedInGuard', () => {
 				id: 'test-user-id',
 			},
 		};
-		const canActivate = new LoggedInGuard().canActivate(
-			mockExecutionContextWithSession(session)
-		);
+		const canActivate = new LoggedInGuard().canActivate(mockExecutionContextWithSession(session));
 		expect(canActivate).toBe(true);
 	});
 

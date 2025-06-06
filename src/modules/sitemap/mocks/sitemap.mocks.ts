@@ -1,6 +1,6 @@
 import { type DbContentPage, Locale } from '@meemoo/admin-core-api';
 
-import { type SitemapConfig } from '../sitemap.types';
+import type { SitemapConfig } from '../sitemap.types';
 
 export const mockSitemapConfig: SitemapConfig = {
 	value: [

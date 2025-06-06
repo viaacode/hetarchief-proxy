@@ -10,23 +10,26 @@ import {
 	UseGuards,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { Request } from 'express';
+import type { Request } from 'express';
 
 import {
 	type CampaignMonitorNewsletterPreferences,
 	EmailTemplate,
 } from '../campaign-monitor.types';
+
 import {
 	CampaignMonitorConfirmMailQueryDto,
 	CampaignMonitorNewsletterPreferencesQueryDto,
 	CampaignMonitorNewsletterUpdatePreferencesQueryDto,
 	CampaignMonitorSendMailDto,
 } from '../dto/campaign-monitor.dto';
+
 import { CampaignMonitorService } from '../services/campaign-monitor.service';
 
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
+
 import { UsersService } from '~modules/users/services/users.service';
 import { GroupName } from '~modules/users/types';
 import { SessionUser } from '~shared/decorators/user.decorator';
@@ -70,9 +73,7 @@ export class CampaignMonitorController {
 	async getPreferences(
 		@Query() preferencesQueryDto: CampaignMonitorNewsletterPreferencesQueryDto
 	): Promise<CampaignMonitorNewsletterPreferences> {
-		return await this.campaignMonitorService.fetchNewsletterPreferences(
-			preferencesQueryDto.email
-		);
+		return await this.campaignMonitorService.fetchNewsletterPreferences(preferencesQueryDto.email);
 	}
 
 	@Post('preferences')
@@ -91,8 +92,7 @@ export class CampaignMonitorController {
 				const updatedUser = await this.usersService.getById(user.getId());
 				if (!updatedUser) {
 					throw new InternalServerErrorException({
-						message:
-							'Failed to update preferences for campaign monitor. User was not found',
+						message: 'Failed to update preferences for campaign monitor. User was not found',
 						additionalInfo: {
 							preferences,
 							userId: user.getId(),

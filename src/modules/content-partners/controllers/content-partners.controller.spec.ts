@@ -40,8 +40,7 @@ describe('ContentPartnersController', () => {
 			.setLogger(new TestingLogger())
 			.compile();
 
-		contentPartnersController =
-			module.get<ContentPartnersController>(ContentPartnersController);
+		contentPartnersController = module.get<ContentPartnersController>(ContentPartnersController);
 	});
 
 	it('should be defined', () => {

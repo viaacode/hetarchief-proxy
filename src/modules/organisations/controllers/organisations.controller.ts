@@ -1,7 +1,8 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
-import { type Organisation } from '~modules/organisations/organisations.types';
+import type { Organisation } from '~modules/organisations/organisations.types';
+
 import { OrganisationsService } from '~modules/organisations/services/organisations.service';
 
 @ApiTags('Organisations')

@@ -1,4 +1,4 @@
-import { type GqlFolderWithIeObjects } from '~modules/folders/types';
+import type { GqlFolderWithIeObjects } from '~modules/folders/types';
 
 export const mockGqlFolder: GqlFolderWithIeObjects = {
 	id: '0018c1b6-97ae-435f-abef-31a2cde011fd',

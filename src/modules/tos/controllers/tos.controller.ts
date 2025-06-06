@@ -2,7 +2,7 @@ import { Controller, Get, Logger } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
 import { TosService } from '../services/tos.service';
-import { type Tos } from '../types';
+import type { Tos } from '../types';
 
 @ApiTags('Tos')
 @Controller('tos')

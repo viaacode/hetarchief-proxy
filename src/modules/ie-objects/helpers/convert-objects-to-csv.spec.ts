@@ -1,4 +1,4 @@
-import { type IeObject } from '../ie-objects.types';
+import type { IeObject } from '../ie-objects.types';
 import {
 	mockIeObjectWithMetadataSetALL,
 	mockIeObjectWithMetadataSetAllCsv,

@@ -4,19 +4,19 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { Idp } from '@viaa/avo2-types';
 import { cloneDeep } from 'lodash';
 
-import { type CreateSpaceDto } from '../dto/spaces.dto';
+import { CreateSpaceDto } from '../dto/spaces.dto';
 
 import { mockGqlSpace } from './__mocks__/cp_space';
 import { SpacesService } from './spaces.service';
 
-import {
-	type CreateSpaceMutation,
-	type FindSpaceByIdQuery,
-	type FindSpaceByOrganisationIdQuery,
-	type FindSpaceBySlugQuery,
-	type FindSpacesQuery,
-	type GetVisitorSpaceCpAdminProfilesQuery,
-	type UpdateSpaceMutation,
+import type {
+	CreateSpaceMutation,
+	FindSpaceByIdQuery,
+	FindSpaceByOrganisationIdQuery,
+	FindSpaceBySlugQuery,
+	FindSpacesQuery,
+	GetVisitorSpaceCpAdminProfilesQuery,
+	UpdateSpaceMutation,
 } from '~generated/graphql-db-types-hetarchief';
 import {
 	type GqlOrganisation,
@@ -307,10 +307,7 @@ describe('SpacesService', () => {
 
 		it('returns a paginated response with all spaces (query %)', async () => {
 			mockDataService.execute.mockResolvedValueOnce(mockFindSpacesResponse);
-			const response = await spacesService.findAll(
-				{ query: '%', page: 1, size: 10 },
-				mockUser.id
-			);
+			const response = await spacesService.findAll({ query: '%', page: 1, size: 10 }, mockUser.id);
 			expect(response.items.length).toBe(1);
 			expect(response.page).toBe(1);
 			expect(response.size).toBe(10);
@@ -319,10 +316,7 @@ describe('SpacesService', () => {
 
 		it('returns a paginated response with all spaces (query %%)', async () => {
 			mockDataService.execute.mockResolvedValueOnce(mockFindSpacesResponse);
-			const response = await spacesService.findAll(
-				{ query: '%%', page: 1, size: 10 },
-				mockUser.id
-			);
+			const response = await spacesService.findAll({ query: '%%', page: 1, size: 10 }, mockUser.id);
 			expect(response.items.length).toBe(1);
 			expect(response.page).toBe(1);
 			expect(response.size).toBe(10);
@@ -459,8 +453,7 @@ describe('SpacesService', () => {
 
 		it('returns null if the space was not found', async () => {
 			const mockData: FindSpaceByOrganisationIdQuery = {
-				maintainer_visitor_space:
-					[] as FindSpaceByOrganisationIdQuery['maintainer_visitor_space'],
+				maintainer_visitor_space: [] as FindSpaceByOrganisationIdQuery['maintainer_visitor_space'],
 			};
 			mockDataService.execute.mockResolvedValueOnce(mockData);
 

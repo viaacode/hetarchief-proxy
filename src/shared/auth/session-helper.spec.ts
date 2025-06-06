@@ -51,7 +51,7 @@ describe('SessionHelper', () => {
 
 	describe('ensureValidSession', () => {
 		it('should throw an exception if an invalid session is passed', () => {
-			let exception;
+			let exception: any;
 			try {
 				SessionHelper.ensureValidSession(undefined);
 			} catch (e) {
@@ -68,9 +68,7 @@ describe('SessionHelper', () => {
 		it('should return valid when the expire date is in the future', () => {
 			const valid = SessionHelper.isIdpUserSessionValid({
 				idpUserInfo: {
-					session_not_on_or_after: new Date(
-						new Date().getTime() + 3600 * 1000
-					).toISOString(), // one hour from now
+					session_not_on_or_after: new Date(new Date().getTime() + 3600 * 1000).toISOString(), // one hour from now
 				},
 			});
 			expect(valid).toEqual(true);
@@ -168,7 +166,7 @@ describe('SessionHelper', () => {
 		});
 
 		it('should throw an exception when an invalid session was passed', () => {
-			let exception;
+			let exception: any;
 			try {
 				SessionHelper.setIdpUserInfo(null, Idp.HETARCHIEF, mockLdapUser);
 			} catch (e) {
@@ -189,7 +187,7 @@ describe('SessionHelper', () => {
 		});
 
 		it('should throw an exception when an invalid session was passed', () => {
-			let exception;
+			let exception: any;
 			try {
 				SessionHelper.setArchiefUserInfo(null, mockArchiefUser);
 			} catch (e) {

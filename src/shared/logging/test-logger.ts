@@ -2,12 +2,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-empty-function */
 
-import { type LoggerService } from '@nestjs/common';
+import { LoggerService } from '@nestjs/common';
 
 export class TestingLogger implements LoggerService {
 	/**
 	 * Write a 'log' level log.
 	 */
+
 	log(message: any, ...optionalParams: any[]) {}
 
 	/**

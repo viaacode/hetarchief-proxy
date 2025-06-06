@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
 
+import { ConfigModule } from '@nestjs/config';
 import { EventsController } from './controllers/events.controller';
 import { EventsService } from './services/events.service';
 

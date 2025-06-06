@@ -1,12 +1,12 @@
-import { type Idp } from '@viaa/avo2-types';
+import type { Idp } from '@viaa/avo2-types';
 
-import {
-	type GetUserByIdentityIdQuery,
-	type InsertUserMutation,
-	type UpdateUserProfileMutation,
+import type {
+	GetUserByIdentityIdQuery,
+	InsertUserMutation,
+	UpdateUserProfileMutation,
 } from '~generated/graphql-db-types-hetarchief';
-import { type IeObjectSector } from '~modules/ie-objects/ie-objects.types';
-import { type Locale } from '~shared/types/types';
+import type { IeObjectSector } from '~modules/ie-objects/ie-objects.types';
+import type { Locale } from '~shared/types/types';
 
 export enum Permission {
 	SEARCH = 'SEARCH',

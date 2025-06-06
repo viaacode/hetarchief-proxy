@@ -6,7 +6,7 @@ import { json } from 'express';
 import session from 'express-session';
 import helmet from 'helmet';
 
-import { type ConfigService } from '~config';
+import { ConfigService } from '~config';
 
 import packageJson from '../package.json';
 

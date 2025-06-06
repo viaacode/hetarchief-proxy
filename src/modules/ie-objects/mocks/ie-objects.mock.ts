@@ -10,13 +10,13 @@ import {
 	IsPartOfKey,
 } from '../ie-objects.types';
 
-import {
-	type FindAllIeObjectsByFolderIdQuery,
-	type FindIeObjectsForSitemapQuery,
-	type GetChildIeObjectsQuery,
-	type GetParentIeObjectQuery,
+import type {
+	FindAllIeObjectsByFolderIdQuery,
+	FindIeObjectsForSitemapQuery,
+	GetChildIeObjectsQuery,
+	GetParentIeObjectQuery,
 } from '~generated/graphql-db-types-hetarchief';
-import { type IeObjectDetailResponseTypes } from '~modules/ie-objects/services/ie-objects.service.types';
+import type { IeObjectDetailResponseTypes } from '~modules/ie-objects/services/ie-objects.service.types';
 import { GroupId, GroupName, Permission } from '~modules/users/types';
 import { mockConfigService } from '~shared/test/mock-config-service';
 import { Locale } from '~shared/types/types';
@@ -81,13 +81,13 @@ export const mockIeObject1: Readonly<IeObject> = {
 		{
 			iri: 'https://data-int.hetarchief.be/id/entity/4f1mg9x363',
 			schemaIdentifier: '4f1mg9x363',
-			collectionType: IsPartOfKey.serie,
+			collectionType: IsPartOfKey.series,
 			name: 'Serie1',
 		},
 		{
 			iri: 'https://data-int.hetarchief.be/id/entity/4f1mg9x363',
 			schemaIdentifier: '4f1mg9x363',
-			collectionType: IsPartOfKey.programma,
+			collectionType: IsPartOfKey.program,
 			name: 'Programma1',
 		},
 	],
@@ -140,13 +140,13 @@ export const mockIeObjectWithMetadataSetLTD: Readonly<Partial<IeObject>> = {
 		{
 			iri: 'https://data-int.hetarchief.be/id/entity/4f1mg9x363',
 			schemaIdentifier: '4f1mg9x363',
-			collectionType: IsPartOfKey.serie,
+			collectionType: IsPartOfKey.series,
 			name: 'Serie1',
 		},
 		{
 			iri: 'https://data-int.hetarchief.be/id/entity/4f1mg9x363',
 			schemaIdentifier: '4f1mg9x363',
-			collectionType: IsPartOfKey.programma,
+			collectionType: IsPartOfKey.program,
 			name: 'Programma1',
 		},
 	],
@@ -175,13 +175,13 @@ export const mockIeObjectWithMetadataSetALL: Readonly<Partial<IeObject>> = {
 		{
 			iri: 'https://data-int.hetarchief.be/id/entity/4f1mg9x363',
 			schemaIdentifier: '4f1mg9x363',
-			collectionType: 'serie' as IsPartOfKey,
+			collectionType: IsPartOfKey.series,
 			name: 'Serie1',
 		},
 		{
 			iri: 'https://data-int.hetarchief.be/id/entity/4f1mg9x363',
 			schemaIdentifier: '4f1mg9x363',
-			collectionType: 'programma' as IsPartOfKey,
+			collectionType: IsPartOfKey.program,
 			name: 'Programma1',
 		},
 	],
@@ -293,13 +293,13 @@ export const mockIeObjectWithMetadataSetALLWithEssence: Readonly<Partial<IeObjec
 		{
 			iri: 'https://data-int.hetarchief.be/id/entity/4f1mg9x363',
 			schemaIdentifier: '4f1mg9x363',
-			collectionType: IsPartOfKey.serie,
+			collectionType: IsPartOfKey.series,
 			name: 'Serie1',
 		},
 		{
 			iri: 'https://data-int.hetarchief.be/id/entity/4f1mg9x363',
 			schemaIdentifier: '4f1mg9x363',
-			collectionType: IsPartOfKey.programma,
+			collectionType: IsPartOfKey.program,
 			name: 'Programma1',
 		},
 	],
@@ -330,13 +330,13 @@ export const mockIeObjectLimitedInFolder: Readonly<Partial<IeObject>> = {
 		{
 			iri: 'https://data-int.hetarchief.be/id/entity/4f1mg9x363',
 			schemaIdentifier: '4f1mg9x363',
-			collectionType: 'serie' as IsPartOfKey,
+			collectionType: IsPartOfKey.series,
 			name: 'Serie1',
 		},
 		{
 			iri: 'https://data-int.hetarchief.be/id/entity/4f1mg9x363',
 			schemaIdentifier: '4f1mg9x363',
-			collectionType: 'programma' as IsPartOfKey,
+			collectionType: IsPartOfKey.program,
 			name: 'Programma1',
 		},
 	],
@@ -386,13 +386,13 @@ export const mockIeObjectDefaultLimitedMetadata: Readonly<Partial<IeObject>> = {
 		{
 			iri: 'https://data-int.hetarchief.be/id/entity/4f1mg9x363',
 			schemaIdentifier: '4f1mg9x363',
-			collectionType: 'serie' as IsPartOfKey,
+			collectionType: IsPartOfKey.series,
 			name: 'Serie1',
 		},
 		{
 			iri: 'https://data-int.hetarchief.be/id/entity/4f1mg9x363',
 			schemaIdentifier: '4f1mg9x363',
-			collectionType: 'programma' as IsPartOfKey,
+			collectionType: IsPartOfKey.program,
 			name: 'Programma1',
 		},
 	],
@@ -917,11 +917,11 @@ export const mockChildrenIeObjects: Readonly<GetChildIeObjectsQuery> = {
 			hasPart: [
 				{
 					...mockRelatedIeObject,
-					schema_identifier: mockRelatedIeObject.schema_identifier + '__1',
+					schema_identifier: `${mockRelatedIeObject.schema_identifier}__1`,
 				},
 				{
 					...mockRelatedIeObject,
-					schema_identifier: mockRelatedIeObject.schema_identifier + '__2',
+					schema_identifier: `${mockRelatedIeObject.schema_identifier}__2`,
 				},
 			],
 		},
@@ -950,21 +950,15 @@ export const mockGqlIeObjectFindByFolderId: FindAllIeObjectsByFolderIdQuery['use
 			],
 			schemaIsPartOf: [
 				{
-					type: 'reeks',
+					type: IsPartOfKey.series,
 					collection: {
 						schema_name: 'WEB',
 					},
 				},
 				{
-					type: 'archief',
+					type: IsPartOfKey.archive,
 					collection: {
 						schema_name: 'digitaal archief/videoproducties',
-					},
-				},
-				{
-					type: 'alternatief',
-					collection: {
-						schema_name: 'videoproductie',
 					},
 				},
 			],
@@ -994,16 +988,12 @@ export const mockGqlIeObjectFindByFolderIdResult: Readonly<Partial<IeObject>> = 
 	dctermsFormat: IeObjectType.VIDEO,
 	isPartOf: [
 		{
-			collectionType: 'reeks' as IsPartOfKey,
+			collectionType: IsPartOfKey.series,
 			name: 'WEB',
 		},
 		{
-			collectionType: 'archief' as IsPartOfKey,
+			collectionType: IsPartOfKey.archive,
 			name: 'digitaal archief/videoproducties',
-		},
-		{
-			collectionType: 'alternatief' as IsPartOfKey,
-			name: 'videoproductie',
 		},
 	],
 	maintainerName: 'Huis van Alijn',
@@ -1031,31 +1021,7 @@ export const mockSitemapObject: Readonly<IeObjectsSitemap> = {
 };
 
 export const mockIeObjectWithMetadataSetLtdCsv = `iri;schemaIdentifier;meemooOriginalCp;meemooLocalId;maintainerId;maintainerName;name;dctermsFormat;dctermsMedium.0;duration;dateCreated;datePublished;creator.productionCompany.0;description;keywords.0;keywords.1;keywords.2;keywords.3;keywords.4;keywords.5;keywords.6;keywords.7;keywords.8;keywords.9;keywords.10;inLanguage;numberOfPages;abrahamInfo;spatial;temporal;copyrightHolder;isPartOf.0.iri;isPartOf.0.schemaIdentifier;isPartOf.0.collectionType;isPartOf.0.name;isPartOf.1.iri;isPartOf.1.schemaIdentifier;isPartOf.1.collectionType;isPartOf.1.name
-https://data-int.hetarchief.be/id/entity/8911p09j1g;8911p09j1g;;;OR-rf5kf25;vrt;Durf te vragen R002 A0001;video;16mm;00:39:52;[2020-09-01];2020-09-01;Roses Are Blue;Humaninterestprogramma waarin Siska Schoeters op een openhartige manier gevoelige thema's bespreekbaar maakt. Elke aflevering nodigt zij een groep mensen uit waar we stiekem heel veel vragen over hebben, maar die we niet zelf in hun gezicht durven stellen.;INTERVIEW;ZIEKTE;GEZONDHEID;ZIEKTE VAN ALZHEIMER;JONGDEMENTIE;THUISVERPLEGING;FIETS;GEHEUGEN;VERGETEN;AGRESSIE;KARAKTERVORMING;;;;;;vrt;https://data-int.hetarchief.be/id/entity/4f1mg9x363;4f1mg9x363;serie;Serie1;https://data-int.hetarchief.be/id/entity/4f1mg9x363;4f1mg9x363;programma;Programma1`;
-export const mockIeObjectWithMetadataSetAllWithEssenceCsv = `iri;schemaIdentifier;meemooOriginalCp;meemooLocalId;meemooMediaObjectId;premisIdentifier.0.premisid;maintainerId;maintainerName;name;dctermsFormat;dctermsMedium.0;duration;dateCreated;datePublished;creator.productionCompany.0;description;genre.0;keywords.0;keywords.1;keywords.2;keywords.3;keywords.4;keywords.5;keywords.6;keywords.7;keywords.8;keywords.9;keywords.10;inLanguage;numberOfPages;abrahamInfo;spatial;temporal;copyrightHolder;width;height;synopsis;alternativeTitle;publisher;abstract;ebucoreObjectType;meemooDescriptionCast;isPartOf.0.iri;isPartOf.0.schemaIdentifier;isPartOf.0.collectionType;isPartOf.0.name;isPartOf.1.iri;isPartOf.1.schemaIdentifier;isPartOf.1.collectionType;isPartOf.1.name
-https://data-int.hetarchief.be/id/entity/8911p09j1g;8911p09j1g;;;49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c;WP00178829;OR-rf5kf25;vrt;Durf te vragen R002 A0001;video;16mm;00:39:52;[2020-09-01];2020-09-01;Roses Are Blue;Humaninterestprogramma waarin Siska Schoeters op een openhartige manier gevoelige thema's bespreekbaar maakt. Elke aflevering nodigt zij een groep mensen uit waar we stiekem heel veel vragen over hebben, maar die we niet zelf in hun gezicht durven stellen.;program;INTERVIEW;ZIEKTE;GEZONDHEID;ZIEKTE VAN ALZHEIMER;JONGDEMENTIE;THUISVERPLEGING;FIETS;GEHEUGEN;VERGETEN;AGRESSIE;KARAKTERVORMING;;;;;;vrt;;;;;;"In Vlaanderen leven ongeveer 1800 mensen met de diagnose van jongdementie.
-Dementie is meer dan vergeten alleen. Dat zeggen Christine, Roger, Marleen, John en Paul. Samen met hun mantelzorger antwoorden ze op vragen als: ""Kan je genezen?"" en ""Heb je al aan euthanasie gedacht?"".
-Marleen noemt het een 'klotenziekte' maar toch blijft ze positief en wil ze nog zoveel mogelijk van het leven genieten. Dat ondervindt Siska in een fietstocht die het Ventiel, een vrijwilligersorganisatie voor mensen met jongdementie, organiseert.
-
-Roger Vanparijs  (66) Marleen Snauwaert (65)
-Roger kreeg in 2007 de diagnose van frontotemporale jongdementie. Op de hersenscan zagen de artsen dat het rechterdeel vooraan in de hersenen helemaal zwart geworden was en eigenlijk afgestorven was. Volgens zijn vrouw, Marleen is zijn karakter ook heel erg veranderd. Ook dat is een typisch verschijnsel van frontotemporale jongdementie. Roger is verbaal ook heel agressief en kan snel uitvliegen.
-Roger was werfleider bij ruwbouwprojecten. Maar op een bepaald moment begon hij fouten te maken in de job. Ook leren werken met Excel lukte niet. Omdat hij niet begreep wat er aan de hand was, zakte hij weg in een depressie. Na vijf lange jaren zoeken wat er aan de hand was, ontdekte een neuroloog dat het een vorm van jongdementie was.
-
-Paul Goossens  (67) en Katelijne Lefevre (60)
-Paul kreeg vier jaar geleden een diagnose van parkinson. Niet veel later zei de neuroloog dat hij ook alzheimer had. Paul vindt het heel belangrijk om te praten over alzheimer. Volgens hem denken de meeste mensen dat je, eens je de diagnose gekregen hebt, niks meer kan en je een oud persoon bent die gewoon in een zetel zit en een plantje is. Het is voor Paul heel belangrijk om te ontkrachten.
-Paul moest kiezen tussen medicatie voor parkinson of voor alzheimer, omdat die elkaar kunnen beïnvloeden. Hij heeft gekozen voor de remmers voor alzheimer. “Ik wil liever mijn hersenen langer houden. Met fysische beperkingen kan ik beter om.""
-
-Marleen Peperstraete (62) en Dirk Cecabooter (64)
-Marleen heeft de diagnose van alzheimer gekregen toen ze 57 jaar was. Eerst dachten de artsen dat ze een depressie had. Ze maakte fouten op haar werk, en niet veel later is ze volledig gestopt met werken. Na vele onderzoeken kreeg ze de diagnose Alzheimer.
-Naast het feit dat Marleen veel zaken vergeet, is het meest uitgesproken symptoom van de ziekte bij haar dat ze geen dieptezicht meer heeft. Ze kan dus maar heel moeilijk schrijven, haar schoenen aandoen, wandelen... Het is heel duidelijk dat Marleen en Dirk elkaar graag zien. Dirk is gestopt met werken om zijn vrouw te kunnen verzorgen. Marleen vergeet heel veel, maar het gsm-nummer van Dirk kan ze nog zo uit het hoofd opzeggen.
-
-Christine Pluymers  (70) en Jean-Pierre Vanden Waeyenberg (65)
-Christine kreeg 3 jaar geleden de diagnose van alzheimer. Maar de ziekte sluimerde al langer, daarom kreeg ze nog de diagnose van jongdementie. Voor Christine is het moeilijk om te weten welke dag het is. Ook het uur lezen is heel moeilijk geworden. Het moeilijkste voor Christine is ontdekken dat ze niet meer kan schrijven omdat ze haar hele leven leerkracht Nederlands (en dodsdienst) is geweest. Haar spelling ging al een tijdje achteruit, maar om nu echt niet meer de coördinatie te hebben om te kunnen schrijven, dat was een zware klap.
-Alleen blijven zonder haar man Jean-Pierre begint moeilijk te worden. Hij schrijft wel altijd op een briefje waar hij naartoe gaat, maar soms vergeet ze dat te lezen of leest ze het en vergeet ze het snel weer. Hierdoor raakt ze in paniek als hij er niet is.
-
-John  Buck (44) & Cindy De Buck (46)
-John heeft de diagnose van frontotemporale jongdementie gekregen. Hij is niet getrouwd, dus zijn zus Cindy zorgt voor hem. John woont begeleid in een studio omdat alleen wonen geen optie meer is. De begeleiders daar zorgen er ook voor dat hij zijn medicatie neemt. Overdag gaat John naar Ter Motte, een zorginstelling aangepast voor mensen met jongdementie. Ze organiseren er verschillende activiteiten want hoe actiever de mensen zijn, hoe minder snel ze achteruit gaan.
-Cindy gaat John elke vrijdag halen in Ter Motte. Ze doet hard haar best om voor hem te zorgen. Zijn kortetermijngeheugen is al aangetast, maar van zijn jeugd weet hij nog veel. Bij John is vooral zijn karakter veranderd door de ziekte. Hij was agressief en durfde ook seksueel getinte opmerkingen te maken naar vrouwen toe. Zijn remmingen vallen weg door de ziekte. Door de medicatie is dit intussen verbeterd.";;;https://data-int.hetarchief.be/id/entity/4f1mg9x363;4f1mg9x363;serie;Serie1;https://data-int.hetarchief.be/id/entity/4f1mg9x363;4f1mg9x363;programma;Programma1`;
+https://data-int.hetarchief.be/id/entity/8911p09j1g;8911p09j1g;;;OR-rf5kf25;vrt;Durf te vragen R002 A0001;video;16mm;00:39:52;[2020-09-01];2020-09-01;Roses Are Blue;Humaninterestprogramma waarin Siska Schoeters op een openhartige manier gevoelige thema's bespreekbaar maakt. Elke aflevering nodigt zij een groep mensen uit waar we stiekem heel veel vragen over hebben, maar die we niet zelf in hun gezicht durven stellen.;INTERVIEW;ZIEKTE;GEZONDHEID;ZIEKTE VAN ALZHEIMER;JONGDEMENTIE;THUISVERPLEGING;FIETS;GEHEUGEN;VERGETEN;AGRESSIE;KARAKTERVORMING;;;;;;vrt;https://data-int.hetarchief.be/id/entity/4f1mg9x363;4f1mg9x363;series;Serie1;https://data-int.hetarchief.be/id/entity/4f1mg9x363;4f1mg9x363;program;Programma1`;
 
 export const mockIeObjectWithMetadataSetAllCsv = `iri;schemaIdentifier;meemooOriginalCp;meemooLocalId;meemooMediaObjectId;premisIdentifier.0.premisid;maintainerId;maintainerName;name;dctermsFormat;dctermsMedium.0;duration;dateCreated;datePublished;creator.productionCompany.0;description;genre.0;keywords.0;keywords.1;keywords.2;keywords.3;keywords.4;keywords.5;keywords.6;keywords.7;keywords.8;keywords.9;keywords.10;inLanguage;numberOfPages;abrahamInfo;spatial;temporal;copyrightHolder;width;height;synopsis;alternativeTitle;publisher;abstract;ebucoreObjectType;meemooDescriptionCast;isPartOf.0.iri;isPartOf.0.schemaIdentifier;isPartOf.0.collectionType;isPartOf.0.name;isPartOf.1.iri;isPartOf.1.schemaIdentifier;isPartOf.1.collectionType;isPartOf.1.name
 https://data-int.hetarchief.be/id/entity/8911p09j1g;8911p09j1g;;;49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c;WP00178829;OR-zp3w03v;vrt;Durf te vragen R002 A0001;video;16mm;00:39:52;[2020-09-01];2020-09-01;Roses Are Blue;Humaninterestprogramma waarin Siska Schoeters op een openhartige manier gevoelige thema's bespreekbaar maakt. Elke aflevering nodigt zij een groep mensen uit waar we stiekem heel veel vragen over hebben, maar die we niet zelf in hun gezicht durven stellen.;program;INTERVIEW;ZIEKTE;GEZONDHEID;ZIEKTE VAN ALZHEIMER;JONGDEMENTIE;THUISVERPLEGING;FIETS;GEHEUGEN;VERGETEN;AGRESSIE;KARAKTERVORMING;;;;;;vrt;;;;;;"In Vlaanderen leven ongeveer 1800 mensen met de diagnose van jongdementie.
@@ -1080,7 +1046,33 @@ Alleen blijven zonder haar man Jean-Pierre begint moeilijk te worden. Hij schrij
 
 John  Buck (44) & Cindy De Buck (46)
 John heeft de diagnose van frontotemporale jongdementie gekregen. Hij is niet getrouwd, dus zijn zus Cindy zorgt voor hem. John woont begeleid in een studio omdat alleen wonen geen optie meer is. De begeleiders daar zorgen er ook voor dat hij zijn medicatie neemt. Overdag gaat John naar Ter Motte, een zorginstelling aangepast voor mensen met jongdementie. Ze organiseren er verschillende activiteiten want hoe actiever de mensen zijn, hoe minder snel ze achteruit gaan.
-Cindy gaat John elke vrijdag halen in Ter Motte. Ze doet hard haar best om voor hem te zorgen. Zijn kortetermijngeheugen is al aangetast, maar van zijn jeugd weet hij nog veel. Bij John is vooral zijn karakter veranderd door de ziekte. Hij was agressief en durfde ook seksueel getinte opmerkingen te maken naar vrouwen toe. Zijn remmingen vallen weg door de ziekte. Door de medicatie is dit intussen verbeterd.";;;https://data-int.hetarchief.be/id/entity/4f1mg9x363;4f1mg9x363;serie;Serie1;https://data-int.hetarchief.be/id/entity/4f1mg9x363;4f1mg9x363;programma;Programma1`;
+Cindy gaat John elke vrijdag halen in Ter Motte. Ze doet hard haar best om voor hem te zorgen. Zijn kortetermijngeheugen is al aangetast, maar van zijn jeugd weet hij nog veel. Bij John is vooral zijn karakter veranderd door de ziekte. Hij was agressief en durfde ook seksueel getinte opmerkingen te maken naar vrouwen toe. Zijn remmingen vallen weg door de ziekte. Door de medicatie is dit intussen verbeterd.";;;https://data-int.hetarchief.be/id/entity/4f1mg9x363;4f1mg9x363;series;Serie1;https://data-int.hetarchief.be/id/entity/4f1mg9x363;4f1mg9x363;program;Programma1`;
+
+export const mockIeObjectWithMetadataSetAllWithEssenceCsv = `iri;schemaIdentifier;meemooOriginalCp;meemooLocalId;meemooMediaObjectId;premisIdentifier.0.premisid;maintainerId;maintainerName;name;dctermsFormat;dctermsMedium.0;duration;dateCreated;datePublished;creator.productionCompany.0;description;genre.0;keywords.0;keywords.1;keywords.2;keywords.3;keywords.4;keywords.5;keywords.6;keywords.7;keywords.8;keywords.9;keywords.10;inLanguage;numberOfPages;abrahamInfo;spatial;temporal;copyrightHolder;width;height;synopsis;alternativeTitle;publisher;abstract;ebucoreObjectType;meemooDescriptionCast;isPartOf.0.iri;isPartOf.0.schemaIdentifier;isPartOf.0.collectionType;isPartOf.0.name;isPartOf.1.iri;isPartOf.1.schemaIdentifier;isPartOf.1.collectionType;isPartOf.1.name
+https://data-int.hetarchief.be/id/entity/8911p09j1g;8911p09j1g;;;49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c;WP00178829;OR-rf5kf25;vrt;Durf te vragen R002 A0001;video;16mm;00:39:52;[2020-09-01];2020-09-01;Roses Are Blue;Humaninterestprogramma waarin Siska Schoeters op een openhartige manier gevoelige thema's bespreekbaar maakt. Elke aflevering nodigt zij een groep mensen uit waar we stiekem heel veel vragen over hebben, maar die we niet zelf in hun gezicht durven stellen.;program;INTERVIEW;ZIEKTE;GEZONDHEID;ZIEKTE VAN ALZHEIMER;JONGDEMENTIE;THUISVERPLEGING;FIETS;GEHEUGEN;VERGETEN;AGRESSIE;KARAKTERVORMING;;;;;;vrt;;;;;;"In Vlaanderen leven ongeveer 1800 mensen met de diagnose van jongdementie.
+Dementie is meer dan vergeten alleen. Dat zeggen Christine, Roger, Marleen, John en Paul. Samen met hun mantelzorger antwoorden ze op vragen als: ""Kan je genezen?"" en ""Heb je al aan euthanasie gedacht?"".
+Marleen noemt het een 'klotenziekte' maar toch blijft ze positief en wil ze nog zoveel mogelijk van het leven genieten. Dat ondervindt Siska in een fietstocht die het Ventiel, een vrijwilligersorganisatie voor mensen met jongdementie, organiseert.
+
+Roger Vanparijs  (66) Marleen Snauwaert (65)
+Roger kreeg in 2007 de diagnose van frontotemporale jongdementie. Op de hersenscan zagen de artsen dat het rechterdeel vooraan in de hersenen helemaal zwart geworden was en eigenlijk afgestorven was. Volgens zijn vrouw, Marleen is zijn karakter ook heel erg veranderd. Ook dat is een typisch verschijnsel van frontotemporale jongdementie. Roger is verbaal ook heel agressief en kan snel uitvliegen.
+Roger was werfleider bij ruwbouwprojecten. Maar op een bepaald moment begon hij fouten te maken in de job. Ook leren werken met Excel lukte niet. Omdat hij niet begreep wat er aan de hand was, zakte hij weg in een depressie. Na vijf lange jaren zoeken wat er aan de hand was, ontdekte een neuroloog dat het een vorm van jongdementie was.
+
+Paul Goossens  (67) en Katelijne Lefevre (60)
+Paul kreeg vier jaar geleden een diagnose van parkinson. Niet veel later zei de neuroloog dat hij ook alzheimer had. Paul vindt het heel belangrijk om te praten over alzheimer. Volgens hem denken de meeste mensen dat je, eens je de diagnose gekregen hebt, niks meer kan en je een oud persoon bent die gewoon in een zetel zit en een plantje is. Het is voor Paul heel belangrijk om te ontkrachten.
+Paul moest kiezen tussen medicatie voor parkinson of voor alzheimer, omdat die elkaar kunnen beïnvloeden. Hij heeft gekozen voor de remmers voor alzheimer. “Ik wil liever mijn hersenen langer houden. Met fysische beperkingen kan ik beter om.""
+
+Marleen Peperstraete (62) en Dirk Cecabooter (64)
+Marleen heeft de diagnose van alzheimer gekregen toen ze 57 jaar was. Eerst dachten de artsen dat ze een depressie had. Ze maakte fouten op haar werk, en niet veel later is ze volledig gestopt met werken. Na vele onderzoeken kreeg ze de diagnose Alzheimer.
+Naast het feit dat Marleen veel zaken vergeet, is het meest uitgesproken symptoom van de ziekte bij haar dat ze geen dieptezicht meer heeft. Ze kan dus maar heel moeilijk schrijven, haar schoenen aandoen, wandelen... Het is heel duidelijk dat Marleen en Dirk elkaar graag zien. Dirk is gestopt met werken om zijn vrouw te kunnen verzorgen. Marleen vergeet heel veel, maar het gsm-nummer van Dirk kan ze nog zo uit het hoofd opzeggen.
+
+Christine Pluymers  (70) en Jean-Pierre Vanden Waeyenberg (65)
+Christine kreeg 3 jaar geleden de diagnose van alzheimer. Maar de ziekte sluimerde al langer, daarom kreeg ze nog de diagnose van jongdementie. Voor Christine is het moeilijk om te weten welke dag het is. Ook het uur lezen is heel moeilijk geworden. Het moeilijkste voor Christine is ontdekken dat ze niet meer kan schrijven omdat ze haar hele leven leerkracht Nederlands (en dodsdienst) is geweest. Haar spelling ging al een tijdje achteruit, maar om nu echt niet meer de coördinatie te hebben om te kunnen schrijven, dat was een zware klap.
+Alleen blijven zonder haar man Jean-Pierre begint moeilijk te worden. Hij schrijft wel altijd op een briefje waar hij naartoe gaat, maar soms vergeet ze dat te lezen of leest ze het en vergeet ze het snel weer. Hierdoor raakt ze in paniek als hij er niet is.
+
+John  Buck (44) & Cindy De Buck (46)
+John heeft de diagnose van frontotemporale jongdementie gekregen. Hij is niet getrouwd, dus zijn zus Cindy zorgt voor hem. John woont begeleid in een studio omdat alleen wonen geen optie meer is. De begeleiders daar zorgen er ook voor dat hij zijn medicatie neemt. Overdag gaat John naar Ter Motte, een zorginstelling aangepast voor mensen met jongdementie. Ze organiseren er verschillende activiteiten want hoe actiever de mensen zijn, hoe minder snel ze achteruit gaan.
+Cindy gaat John elke vrijdag halen in Ter Motte. Ze doet hard haar best om voor hem te zorgen. Zijn kortetermijngeheugen is al aangetast, maar van zijn jeugd weet hij nog veel. Bij John is vooral zijn karakter veranderd door de ziekte. Hij was agressief en durfde ook seksueel getinte opmerkingen te maken naar vrouwen toe. Zijn remmingen vallen weg door de ziekte. Door de medicatie is dit intussen verbeterd.";;;https://data-int.hetarchief.be/id/entity/4f1mg9x363;4f1mg9x363;series;Serie1;https://data-int.hetarchief.be/id/entity/4f1mg9x363;4f1mg9x363;program;Programma1`;
+
 export const mockIeObjectWithMetadataSetLtdXml = `<?xml version="1.0" encoding="UTF-8"?>
 <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/">
   <rdf:Description rdf:about="http://dublincore.org/">
@@ -1110,8 +1102,8 @@ export const mockIeObjectWithMetadataSetLtdXml = `<?xml version="1.0" encoding="
     <dc:subject>KARAKTERVORMING</dc:subject>
     <dc:rights>vrt</dc:rights>
     <dc:identifier note="Permalink">${mockConfigService.get(
-		'CLIENT_HOST'
-	)}/pid/8911p09j1g</dc:identifier>
+			'CLIENT_HOST'
+		)}/pid/8911p09j1g</dc:identifier>
   </rdf:Description>
 </rdf:RDF>`;
 
@@ -1170,8 +1162,8 @@ John  Buck (44) &amp; Cindy De Buck (46)
 John heeft de diagnose van frontotemporale jongdementie gekregen. Hij is niet getrouwd, dus zijn zus Cindy zorgt voor hem. John woont begeleid in een studio omdat alleen wonen geen optie meer is. De begeleiders daar zorgen er ook voor dat hij zijn medicatie neemt. Overdag gaat John naar Ter Motte, een zorginstelling aangepast voor mensen met jongdementie. Ze organiseren er verschillende activiteiten want hoe actiever de mensen zijn, hoe minder snel ze achteruit gaan.
 Cindy gaat John elke vrijdag halen in Ter Motte. Ze doet hard haar best om voor hem te zorgen. Zijn kortetermijngeheugen is al aangetast, maar van zijn jeugd weet hij nog veel. Bij John is vooral zijn karakter veranderd door de ziekte. Hij was agressief en durfde ook seksueel getinte opmerkingen te maken naar vrouwen toe. Zijn remmingen vallen weg door de ziekte. Door de medicatie is dit intussen verbeterd.</dcterms:abstract>
     <dc:identifier note="Permalink">${mockConfigService.get(
-		'CLIENT_HOST'
-	)}/pid/8911p09j1g</dc:identifier>
+			'CLIENT_HOST'
+		)}/pid/8911p09j1g</dc:identifier>
   </rdf:Description>
 </rdf:RDF>`;
 
@@ -1230,7 +1222,7 @@ John  Buck (44) &amp; Cindy De Buck (46)
 John heeft de diagnose van frontotemporale jongdementie gekregen. Hij is niet getrouwd, dus zijn zus Cindy zorgt voor hem. John woont begeleid in een studio omdat alleen wonen geen optie meer is. De begeleiders daar zorgen er ook voor dat hij zijn medicatie neemt. Overdag gaat John naar Ter Motte, een zorginstelling aangepast voor mensen met jongdementie. Ze organiseren er verschillende activiteiten want hoe actiever de mensen zijn, hoe minder snel ze achteruit gaan.
 Cindy gaat John elke vrijdag halen in Ter Motte. Ze doet hard haar best om voor hem te zorgen. Zijn kortetermijngeheugen is al aangetast, maar van zijn jeugd weet hij nog veel. Bij John is vooral zijn karakter veranderd door de ziekte. Hij was agressief en durfde ook seksueel getinte opmerkingen te maken naar vrouwen toe. Zijn remmingen vallen weg door de ziekte. Door de medicatie is dit intussen verbeterd.</dcterms:abstract>
     <dc:identifier note="Permalink">${mockConfigService.get(
-		'CLIENT_HOST'
-	)}/pid/8911p09j1g</dc:identifier>
+			'CLIENT_HOST'
+		)}/pid/8911p09j1g</dc:identifier>
   </rdf:Description>
 </rdf:RDF>`;

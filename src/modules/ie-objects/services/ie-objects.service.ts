@@ -1,19 +1,20 @@
-import { randomUUID } from 'crypto';
-import fs from 'fs/promises';
+import { randomUUID } from 'node:crypto';
+import fs from 'node:fs/promises';
 
 import { DataService, PlayerTicketService } from '@meemoo/admin-core-api';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Inject, Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
+
 import { ConfigService } from '@nestjs/config';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { mapLimit } from 'blend-promise-utils';
-import { Cache } from 'cache-manager';
+import type { Cache } from 'cache-manager';
 import got, { type Got } from 'got';
-import { compact, find, isArray, isEmpty, isNil, kebabCase, omitBy, orderBy, uniq } from 'lodash';
+import { compact, find, isArray, isEmpty, isNil, kebabCase, omitBy, orderBy } from 'lodash';
 
-import { type Configuration } from '~config';
+import type { Configuration } from '~config';
 
-import { type IeObjectsQueryDto, type IeObjectsSimilarQueryDto } from '../dto/ie-objects.dto';
+import { IeObjectsQueryDto, IeObjectsSimilarQueryDto } from '../dto/ie-objects.dto';
 import { QueryBuilder } from '../elasticsearch/queryBuilder';
 import { convertQueryToLiteralString } from '../helpers/convert-query-to-literal-string';
 import { getSearchEndpoint } from '../helpers/get-search-endpoint';
@@ -32,10 +33,10 @@ import {
 	type IeObjectPages,
 	type IeObjectRepresentation,
 	type IeObjectSector,
+	IeObjectType,
 	type IeObjectsSitemap,
 	type IeObjectsVisitorSpaceInfo,
 	type IeObjectsWithAggregations,
-	IeObjectType,
 	type IsPartOfKey,
 	type Mention,
 	type RelatedIeObject,
@@ -76,11 +77,14 @@ import {
 } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
 import { AND } from '~modules/ie-objects/elasticsearch/queryBuilder.helpers';
 import { convertSchemaIdentifierToId } from '~modules/ie-objects/helpers/convert-schema-identifier-to-id';
-import { convertStringToSearchTerms } from '~modules/ie-objects/helpers/convert-string-to-search-terms';
+import {
+	type SearchTermParseResult,
+	convertStringToSearchTerms,
+} from '~modules/ie-objects/helpers/convert-string-to-search-terms';
 import { AUTOCOMPLETE_FIELD_TO_ES_FIELD_NAME } from '~modules/ie-objects/ie-objects.conts';
 import {
-	CACHE_KEY_PREFIX_IE_OBJECT_DETAIL,
 	CACHE_KEY_PREFIX_IE_OBJECTS_SEARCH,
+	CACHE_KEY_PREFIX_IE_OBJECT_DETAIL,
 	IE_OBJECT_DETAIL_QUERIES,
 } from '~modules/ie-objects/services/ie-objects.service.consts';
 import {
@@ -92,9 +96,11 @@ import {
 	type IeObjectDetailResponseTypes,
 } from '~modules/ie-objects/services/ie-objects.service.types';
 import { OrganisationPreference } from '~modules/organisations/organisations.types';
+
 import { SpacesService } from '~modules/spaces/services/spaces.service';
-import { type SessionUserEntity } from '~modules/users/classes/session-user';
+import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupName } from '~modules/users/types';
+
 import { VisitsService } from '~modules/visits/services/visits.service';
 import { VisitStatus, VisitTimeframe } from '~modules/visits/types';
 import { customError } from '~shared/helpers/custom-error';
@@ -123,6 +129,55 @@ export class IeObjectsService {
 		});
 	}
 
+	private async getEsQueryObject(
+		inputQuery: IeObjectsQueryDto,
+		user: SessionUserEntity,
+		visitorSpaceInfo?: IeObjectsVisitorSpaceInfo
+	): Promise<any> {
+		let spacesIds: string[] = [];
+
+		// All the space ids are only needed when isConsultableOnlyOnLocation is a filter, and it is set to 'true'
+		if (inputQuery.filters && inputQuery.filters.length > 0) {
+			const consultableFilter = inputQuery.filters.find(
+				(filter) => filter.field === IeObjectsSearchFilterField.CONSULTABLE_ONLY_ON_LOCATION
+			);
+			if (consultableFilter && consultableFilter.value === 'true') {
+				const spaces = await this.spacesService.findAll(
+					{
+						status: [VisitorSpaceStatus.Active],
+						page: 1,
+						size: 1000,
+					},
+					user.getId()
+				);
+
+				spacesIds = spaces.items.map((space) => space.maintainerId);
+			}
+		}
+
+		let esQuery: any;
+		try {
+			esQuery = QueryBuilder.build(inputQuery, {
+				user,
+				visitorSpaceInfo,
+				spacesIds,
+			});
+		} catch (err) {
+			/*
+				If the QueryBuilder throws an error, we try the query with a literal string.
+				If that also throws an error, we return http 500
+				We update the inputQuery because it is later used.
+			*/
+			const literalStringInputQuery = convertQueryToLiteralString(inputQuery);
+			esQuery = QueryBuilder.build(literalStringInputQuery, {
+				user,
+				visitorSpaceInfo,
+				spacesIds,
+			});
+		}
+		return esQuery;
+	}
+
 	public async findAll(
 		inputQuery: IeObjectsQueryDto,
 		esIndex: string | null,
@@ -144,53 +199,13 @@ export class IeObjectsService {
 					}),
 					aggregations: [],
 					searchTerms: [],
+					searchTermsParsedSuccessfully: true,
 				};
 			}
 
 			const id = randomUUID();
 
-			let spacesIds: string[] = [];
-
-			// All the space ids are only needed when isConsultableOnlyOnLocation is a filter, and it is set to 'true'
-			if (inputQuery.filters && inputQuery.filters.length > 0) {
-				const consultableFilter = inputQuery.filters.find(
-					(filter) =>
-						filter.field === IeObjectsSearchFilterField.CONSULTABLE_ONLY_ON_LOCATION
-				);
-				if (consultableFilter && consultableFilter.value === 'true') {
-					const spaces = await this.spacesService.findAll(
-						{
-							status: [VisitorSpaceStatus.Active],
-							page: 1,
-							size: 1000,
-						},
-						user.getId()
-					);
-
-					spacesIds = spaces.items.map((space) => space.maintainerId);
-				}
-			}
-
-			let esQuery: any;
-			try {
-				esQuery = QueryBuilder.build(inputQuery, {
-					user,
-					visitorSpaceInfo,
-					spacesIds,
-				});
-			} catch (err) {
-				/*
-					If the QueryBuilder throws an error, we try the query with a literal string.
-					If that also throws an error, we return http 500
-					We update the inputQuery because it is later used.
-				*/
-				inputQuery = convertQueryToLiteralString(inputQuery);
-				esQuery = QueryBuilder.build(inputQuery, {
-					user,
-					visitorSpaceInfo,
-					spacesIds,
-				});
-			}
+			const esQuery = await this.getEsQueryObject(inputQuery, user, visitorSpaceInfo);
 
 			if (inputQuery.size > 0 && process.env.NODE_ENV === 'local') {
 				fs.writeFile('query.json', JSON.stringify(esQuery, null, 2));
@@ -198,9 +213,7 @@ export class IeObjectsService {
 
 			if (this.configService.get('ELASTICSEARCH_LOG_QUERIES')) {
 				this.logger.log(
-					`${id}, Executing elasticsearch query on index ${esIndex}: ${JSON.stringify(
-						esQuery
-					)}`
+					`${id}, Executing elasticsearch query on index ${esIndex}: ${JSON.stringify(esQuery)}`
 				);
 			}
 
@@ -227,6 +240,9 @@ export class IeObjectsService {
 
 			const adaptedESResponse = await this.adaptESResponse(objectResponse);
 
+			const searchTermParseResult = this.getSimpleSearchTermsFromBooleanExpression(
+				inputQuery.filters
+			);
 			return {
 				...Pagination<IeObject>({
 					// 24 in parallel, since one search page contains 24 items usually
@@ -238,7 +254,8 @@ export class IeObjectsService {
 					total: adaptedESResponse.hits.total.value,
 				}),
 				aggregations: adaptedESResponse.aggregations,
-				searchTerms: this.getSimpleSearchTermsFromBooleanExpression(inputQuery.filters),
+				searchTerms: searchTermParseResult.plainTextSearchTerms,
+				searchTermsParsedSuccessfully: searchTermParseResult.parsedSuccessfully,
 			};
 		} catch (err) {
 			console.error(new InternalServerErrorException('Failed getting ieObjects', err));
@@ -290,11 +307,7 @@ export class IeObjectsService {
 		);
 		// Newspaper thumbnails can be viewed without requiring a player ticket
 		if (adapted && adapted.dctermsFormat !== IeObjectType.NEWSPAPER && referer) {
-			adapted.thumbnailUrl = await this.getThumbnailUrlWithToken(
-				adapted.thumbnailUrl,
-				referer,
-				ip
-			);
+			adapted.thumbnailUrl = await this.getThumbnailUrlWithToken(adapted.thumbnailUrl, referer, ip);
 		}
 		return adapted;
 	}
@@ -364,8 +377,8 @@ export class IeObjectsService {
 						fields: [
 							ElasticsearchField.schema_name,
 							ElasticsearchField.schema_description,
-							ElasticsearchField.schema_keywords + '.keyword',
-							ElasticsearchField.schema_is_part_of + '.*.keyword',
+							`${ElasticsearchField.schema_keywords}.keyword`,
+							`${ElasticsearchField.schema_is_part_of}.*.keyword`,
 							ElasticsearchField.schema_creator_text,
 						],
 						like: [
@@ -403,7 +416,7 @@ export class IeObjectsService {
 									],
 								},
 							},
-					  ]
+						]
 					: []),
 				regularQuery.query.bool.should[1],
 			]),
@@ -451,11 +464,7 @@ export class IeObjectsService {
 
 		if (this.configService.get('NODE_ENV') !== 'test') {
 			// log performance times of sub queries
-			const tableData = orderBy(
-				performanceTimes,
-				(performanceItem) => performanceItem[3],
-				'desc'
-			);
+			const tableData = orderBy(performanceTimes, (performanceItem) => performanceItem[3], 'desc');
 			console.table(tableData);
 		}
 
@@ -480,9 +489,8 @@ export class IeObjectsService {
 		);
 
 		// Get parent ieObject if it exists
-		const parentIeObjectId = (
-			responses[IeObjectDetailResponseIndex.IsPartOf] as GetIsPartOfQuery
-		)?.isPartOf?.[0]?.isPartOf?.id;
+		const parentIeObjectId = (responses[IeObjectDetailResponseIndex.IsPartOf] as GetIsPartOfQuery)
+			?.isPartOf?.[0]?.isPartOf?.id;
 		let parentIeObject: Partial<IeObject> | null = null;
 		if (parentIeObjectId) {
 			parentIeObject = await this.findByIeObjectId(parentIeObjectId, referer, ip);
@@ -564,7 +572,6 @@ export class IeObjectsService {
 			isPartOfResponse,
 			hasCarrierResponse,
 			meemooLocalIdResponse,
-			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			_premisIdentifierResponse,
 			mhFragmentIdentifierResponse,
 			parentCollectionResponse,
@@ -574,7 +581,6 @@ export class IeObjectsService {
 			schemaDurationResponse,
 			schemaGenreResponse,
 			schemaInLanguageResponse,
-			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			_schemaIsPartOfResponse,
 			schemaKeywordsResponse,
 			schemaLicenseResponse,
@@ -599,8 +605,7 @@ export class IeObjectsService {
 		}
 
 		const schemaMaintainer = ie?.schemaMaintainer;
-		const dctermsFormat = dctermsFormatResponse.dctermsFormat[0]
-			?.dcterms_format as IeObjectType;
+		const dctermsFormat = dctermsFormatResponse.dctermsFormat[0]?.dcterms_format as IeObjectType;
 		const premisIdentifiers = isPartOfResponse?.isPartOf?.[0]?.isPartOf?.premisIdentifier
 			?.premis_identifier as (
 			| Record<string, string>
@@ -619,6 +624,21 @@ export class IeObjectsService {
 			ip
 		);
 
+		const isPartOfParentCollections = parentCollectionResponse?.parentCollection?.map((part) => {
+			return {
+				iri: part.collection?.id,
+				schemaIdentifier: part.collection?.schema_identifier,
+				name: part.collection?.schema_name,
+				collectionType: part.collection?.collection_type as IsPartOfKey,
+				isPreceededBy: part.collection?.isPreceededBy,
+				isSucceededBy: part.collection?.isSucceededBy,
+				locationCreated: part.collection?.schema_location_created,
+				startDate: part.collection?.schema_start_date,
+				endDate: part.collection?.schema_end_date,
+				publisher: part.collection?.schema_publisher,
+			};
+		});
+
 		const ieObject: IeObject = {
 			schemaIdentifier: ie?.schema_identifier,
 			iri: ieObjectId,
@@ -636,15 +656,8 @@ export class IeObjectsService {
 			) as IeObjectLicense[],
 			premisIdentifier: premisIdentifiers,
 			abrahamInfo: {
-				id: premisIdentifiers?.find(
-					(premisIdentifier) => Object.keys(premisIdentifier)[0] === 'abraham_id'
-				)?.abraham_id,
-				uri: premisIdentifiers?.find(
-					(premisIdentifier) => Object.keys(premisIdentifier)[0] === 'abraham_uri'
-				)?.abraham_uri,
-				code: premisIdentifiers?.find(
-					(premisIdentifier) => Object.keys(premisIdentifier)[0] === 'code_number'
-				)?.code_number,
+				id: isPartOfParentCollections[0]?.schemaIdentifier,
+				uri: isPartOfParentCollections[0]?.iri,
 			},
 			abstract: ie?.schema_abstract,
 			genre: compact(schemaGenreResponse?.schemaGenre?.map((item) => item.schema_genre)),
@@ -657,9 +670,7 @@ export class IeObjectsService {
 			publisher: compact(
 				schemaPublisherResponse?.schemaPublisher?.map((item) => item.schema_publisher_array)
 			),
-			spatial: compact(
-				schemaSpatialResponse?.schemaSpatial?.map((item) => item.schema_spatial)
-			), // Location of the content
+			spatial: compact(schemaSpatialResponse?.schemaSpatial?.map((item) => item.schema_spatial)), // Location of the content
 			temporal: compact(
 				schemaTemporalResponse?.schemaTemporal?.map((item) => item.schema_temporal)
 			),
@@ -689,20 +700,7 @@ export class IeObjectsService {
 			name: ie?.schema_name,
 			thumbnailUrl,
 			premisIsPartOf: ie?.premis_is_part_of,
-			isPartOf: parentCollectionResponse?.parentCollection?.map((part) => {
-				return {
-					iri: part.collection?.id,
-					schemaIdentifier: part.collection?.schema_identifier,
-					name: part.collection?.schema_name,
-					collectionType: part.collection?.collection_type as IsPartOfKey,
-					isPreceededBy: part.collection?.isPreceededBy,
-					isSucceededBy: part.collection?.isSucceededBy,
-					locationCreated: part.collection?.schema_location_created,
-					startDate: part.collection?.schema_start_date,
-					endDate: part.collection?.schema_end_date,
-					publisher: part.collection?.schema_publisher,
-				};
-			}),
+			isPartOf: isPartOfParentCollections,
 			collectionSeasonNumber:
 				parentCollectionResponse?.parentCollection?.[0]?.collection?.schema_season_number,
 			numberOfPages: ie?.schema_number_of_pages,
@@ -710,8 +708,7 @@ export class IeObjectsService {
 			meemooLocalId: meemooLocalIdResponse?.meemooLocalId
 				?.map((item) => item?.meemoo_local_id)
 				.join(', '),
-			collectionName:
-				parentCollectionResponse?.parentCollection?.[0]?.collection?.schema_name,
+			collectionName: parentCollectionResponse?.parentCollection?.[0]?.collection?.schema_name,
 			collectionId: parentCollectionResponse?.parentCollection?.[0]?.collection?.id,
 			issueNumber: ie?.schema_issue_number,
 			fragmentId: compact(
@@ -732,8 +729,7 @@ export class IeObjectsService {
 			),
 			width: hasCarrierResponse?.graph_carrier?.[0]?.schema_width,
 			height: hasCarrierResponse?.graph_carrier?.[0]?.schema_height,
-			bibframeProductionMethod:
-				hasCarrierResponse?.graph_carrier?.[0]?.bibframe_production_method, // Text type
+			bibframeProductionMethod: hasCarrierResponse?.graph_carrier?.[0]?.bibframe_production_method, // Text type
 			bibframeEdition: ie?.bibframe_edition, // Publication type
 			locationCreated: compact(
 				parentCollectionResponse?.parentCollection?.map(
@@ -808,17 +804,12 @@ export class IeObjectsService {
 	 * - and audio and audioFragment under audio
 	 * @param esResponse
 	 */
-	public async adaptESResponse(
-		esResponse: ElasticsearchResponse
-	): Promise<ElasticsearchResponse> {
+	public async adaptESResponse(esResponse: ElasticsearchResponse): Promise<ElasticsearchResponse> {
 		// merge 'film' aggregations with 'video' if need be
 		if (esResponse.aggregations?.dcterms_format?.buckets) {
 			esResponse.aggregations.dcterms_format.buckets =
 				esResponse.aggregations.dcterms_format.buckets.filter((bucket) => {
-					if (
-						bucket.key === IeObjectType.FILM ||
-						bucket.key === IeObjectType.VIDEO_FRAGMENT
-					) {
+					if (bucket.key === IeObjectType.FILM || bucket.key === IeObjectType.VIDEO_FRAGMENT) {
 						const videoBucket = find(esResponse.aggregations.dcterms_format.buckets, {
 							key: IeObjectType.VIDEO,
 						});
@@ -954,8 +945,8 @@ export class IeObjectsService {
 
 	public adaptMetadata(ieObject: Partial<IeObject>): Partial<IeObject> {
 		// unset thumbnail and representations
-		delete ieObject.pages;
-		delete ieObject.thumbnailUrl;
+		ieObject.pages = undefined;
+		ieObject.thumbnailUrl = undefined;
 		return ieObject;
 	}
 
@@ -991,12 +982,14 @@ export class IeObjectsService {
 						await mapLimit(
 							page?.isRepresentedBy || [],
 							20,
-							async (
-								representation: DbRepresentation
-							): Promise<IeObjectRepresentation> => {
+							async (representation: DbRepresentation): Promise<IeObjectRepresentation> => {
 								if (!representation) {
 									return null;
 								}
+								const transcriptInfo = representation.schemaTranscriptUrls?.[0];
+								const schemaTranscript = transcriptInfo?.schema_transcript;
+								const schemaTranscriptUrl = transcriptInfo?.schema_transcript_url || null;
+
 								return {
 									id: representation.id,
 									schemaName: representation.schema_name,
@@ -1004,18 +997,11 @@ export class IeObjectsService {
 									schemaInLanguage: representation.schema_in_language,
 									schemaStartTime: representation.schema_start_time,
 									schemaEndTime: representation.schema_end_time,
-									schemaTranscript:
-										representation.schemaTranscriptUrls?.[0]?.schema_transcript,
-									schemaTranscriptUrl:
-										representation.schemaTranscriptUrls?.[0]
-											?.schema_transcript_url || null,
+									schemaTranscript,
+									schemaTranscriptUrl,
 									edmIsNextInSequence: representation.edm_is_next_in_sequence,
 									updatedAt: representation.updated_at,
-									files: await this.adaptFiles(
-										representation.includes,
-										referer,
-										ip
-									),
+									files: await this.adaptFiles(representation.includes, referer, ip),
 								};
 							}
 						)
@@ -1220,14 +1206,27 @@ export class IeObjectsService {
 
 	public getSimpleSearchTermsFromBooleanExpression(
 		filters: IeObjectsQueryDto['filters']
-	): string[] {
+	): SearchTermParseResult {
 		const searchTerms = filters
 			.filter((searchFilter) => searchFilter.field === IeObjectsSearchFilterField.QUERY)
 			.map((filter) => filter.value);
 		if (!searchTerms || searchTerms.length === 0) {
-			return [];
+			return {
+				plainTextSearchTerms: [],
+				parsedSuccessfully: true,
+			};
 		}
-		return searchTerms.flatMap((searchTerm) => convertStringToSearchTerms(searchTerm));
+		const searchTermParseResults: SearchTermParseResult[] = searchTerms.flatMap((searchTerm) =>
+			convertStringToSearchTerms(searchTerm)
+		);
+		const plainTextSearchTerms = searchTermParseResults.flatMap(
+			(result) => result.plainTextSearchTerms
+		);
+		const parsedSuccessfully = searchTermParseResults.every((result) => result.parsedSuccessfully);
+		return {
+			plainTextSearchTerms,
+			parsedSuccessfully,
+		};
 	}
 
 	public async getIeObjectChildrenIris(ieObjectIri: string): Promise<string[]> {
@@ -1242,46 +1241,85 @@ export class IeObjectsService {
 
 	public async getMetadataAutocomplete(
 		field: AutocompleteField,
-		query: string
+		query: string,
+		inputQuery: IeObjectsQueryDto,
+		user?: SessionUserEntity
 	): Promise<string[]> {
+		// Get active visits for the current user
+		// Need this to retrieve visitorSpaceAccessInfo
+		const visitorSpaceAccessInfo = await this.getVisitorSpaceAccessInfoFromUser(user);
+
+		// Reuse the existing logic to build a query object
+		const esQuery: any = await this.getEsQueryObject(inputQuery, user, visitorSpaceAccessInfo);
+
+		// Extend the default query with the autocomplete query
 		const esField = AUTOCOMPLETE_FIELD_TO_ES_FIELD_NAME[field];
-		const esQuery: any = {
-			_source: false,
-			fields: [esField],
-			query: {
-				match_phrase_prefix: {
-					[esField]: query,
-				},
+		esQuery._source = false;
+		esQuery.fields = [`${esField}.sayt`];
+		esQuery.query = {
+			bool: {
+				must: [
+					{
+						match_phrase_prefix: {
+							[`${esField}.sayt`]: query,
+						},
+					},
+					esQuery.query,
+				],
 			},
 		};
+		esQuery.collapse = {
+			field: `${esField}.keyword`, // Collapse on the keyword field to get unique values,
+		};
+
+		if (process.env.NODE_ENV === 'local') {
+			fs.writeFile('query-autocomplete.json', JSON.stringify(esQuery, null, 2));
+		}
+
+		const id = randomUUID();
+		if (this.configService.get('ELASTICSEARCH_LOG_QUERIES')) {
+			this.logger.log(
+				`${id}, Executing elasticsearch query on index ${ALL_INDEXES}: ${JSON.stringify(esQuery)}`
+			);
+		}
 
 		const response: EsQueryAutocompleteMatchPhraseResponse = await this.executeQuery(
 			ALL_INDEXES,
 			esQuery
 		);
 
+		if (this.configService.get('ELASTICSEARCH_LOG_QUERIES')) {
+			this.logger.log(
+				`${id}, Response from elasticsearch query on index ${ALL_INDEXES}: ${JSON.stringify(
+					esQuery
+				)}`
+			);
+		}
+
 		const queryParts = query.toLowerCase().split(' ');
 
 		// Map elasticsearch response to a list of unique strings
-		return uniq(
-			(response as EsQueryAutocompleteMatchPhraseResponse).hits?.hits?.flatMap((hit) => {
-				const value = hit.fields[esField];
-				if (isArray(value)) {
-					// List of strings
-					// Filter all values that contain all query words
-					return value
-						.filter((v) =>
-							queryParts.every((queryPart) =>
-								v.toLowerCase().split(':').pop().includes(queryPart)
-							)
-						)
-						.map((v) => v.split(':').pop().trim());
+		return response.hits?.hits?.flatMap((hit) => {
+			const value = hit.fields[`${esField}.sayt`];
+			if (isArray(value)) {
+				// List of strings
+				let relevantValues: string[];
+				if (value.length > 1) {
+					// If there are multiple values, filter them based on the query parts
+					relevantValues = value.filter((v) =>
+						queryParts.every((queryPart) => v.toLowerCase().includes(queryPart))
+					);
 				} else {
-					// Single string
-					return value;
+					relevantValues = value;
 				}
-			})
-		);
+
+				return relevantValues.map((v) => {
+					return v.trim();
+				});
+			}
+			// Single string
+			return value;
+		});
 	}
 
 	public async getPreviousNextIeObject(collectionId: string, ieObjectIri: string) {
@@ -1294,11 +1332,9 @@ export class IeObjectsService {
 		});
 		return {
 			previousIeObjectId:
-				response.graph__intellectual_entity_prev_and_next[0]?.previousIeObject
-					?.schema_identifier,
+				response.graph__intellectual_entity_prev_and_next[0]?.previousIeObject?.schema_identifier,
 			nextIeObjectId:
-				response.graph__intellectual_entity_prev_and_next[0]?.nextIeObject
-					?.schema_identifier,
+				response.graph__intellectual_entity_prev_and_next[0]?.nextIeObject?.schema_identifier,
 		};
 	}
 

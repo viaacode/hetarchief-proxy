@@ -3944,6 +3944,345 @@ export type Graph__Ha_Des_Primary_Identifier_Stream_Cursor_Value_Input = {
   intellectual_entity_id?: InputMaybe<Scalars['String']['input']>;
 };
 
+/** columns and relationships of "graph._highlight" */
+export type Graph__Highlight = {
+  __typename?: 'graph__highlight';
+  created_at?: Maybe<Scalars['timestamptz']['output']>;
+  height?: Maybe<Scalars['Int']['output']>;
+  id?: Maybe<Scalars['String']['output']>;
+  schema_mentions_id?: Maybe<Scalars['String']['output']>;
+  updated_at?: Maybe<Scalars['timestamptz']['output']>;
+  width?: Maybe<Scalars['Int']['output']>;
+  x?: Maybe<Scalars['Int']['output']>;
+  y?: Maybe<Scalars['Int']['output']>;
+};
+
+/** aggregated selection of "graph._highlight" */
+export type Graph__Highlight_Aggregate = {
+  __typename?: 'graph__highlight_aggregate';
+  aggregate?: Maybe<Graph__Highlight_Aggregate_Fields>;
+  nodes: Array<Graph__Highlight>;
+};
+
+export type Graph__Highlight_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Graph__Highlight_Aggregate_Bool_Exp_Count>;
+};
+
+export type Graph__Highlight_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Graph__Highlight_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+  filter?: InputMaybe<Graph__Highlight_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
+/** aggregate fields of "graph._highlight" */
+export type Graph__Highlight_Aggregate_Fields = {
+  __typename?: 'graph__highlight_aggregate_fields';
+  avg?: Maybe<Graph__Highlight_Avg_Fields>;
+  count: Scalars['Int']['output'];
+  max?: Maybe<Graph__Highlight_Max_Fields>;
+  min?: Maybe<Graph__Highlight_Min_Fields>;
+  stddev?: Maybe<Graph__Highlight_Stddev_Fields>;
+  stddev_pop?: Maybe<Graph__Highlight_Stddev_Pop_Fields>;
+  stddev_samp?: Maybe<Graph__Highlight_Stddev_Samp_Fields>;
+  sum?: Maybe<Graph__Highlight_Sum_Fields>;
+  var_pop?: Maybe<Graph__Highlight_Var_Pop_Fields>;
+  var_samp?: Maybe<Graph__Highlight_Var_Samp_Fields>;
+  variance?: Maybe<Graph__Highlight_Variance_Fields>;
+};
+
+
+/** aggregate fields of "graph._highlight" */
+export type Graph__Highlight_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Graph__Highlight_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+/** order by aggregate values of table "graph._highlight" */
+export type Graph__Highlight_Aggregate_Order_By = {
+  avg?: InputMaybe<Graph__Highlight_Avg_Order_By>;
+  count?: InputMaybe<Order_By>;
+  max?: InputMaybe<Graph__Highlight_Max_Order_By>;
+  min?: InputMaybe<Graph__Highlight_Min_Order_By>;
+  stddev?: InputMaybe<Graph__Highlight_Stddev_Order_By>;
+  stddev_pop?: InputMaybe<Graph__Highlight_Stddev_Pop_Order_By>;
+  stddev_samp?: InputMaybe<Graph__Highlight_Stddev_Samp_Order_By>;
+  sum?: InputMaybe<Graph__Highlight_Sum_Order_By>;
+  var_pop?: InputMaybe<Graph__Highlight_Var_Pop_Order_By>;
+  var_samp?: InputMaybe<Graph__Highlight_Var_Samp_Order_By>;
+  variance?: InputMaybe<Graph__Highlight_Variance_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "graph._highlight" */
+export type Graph__Highlight_Arr_Rel_Insert_Input = {
+  data: Array<Graph__Highlight_Insert_Input>;
+};
+
+/** aggregate avg on columns */
+export type Graph__Highlight_Avg_Fields = {
+  __typename?: 'graph__highlight_avg_fields';
+  height?: Maybe<Scalars['Float']['output']>;
+  width?: Maybe<Scalars['Float']['output']>;
+  x?: Maybe<Scalars['Float']['output']>;
+  y?: Maybe<Scalars['Float']['output']>;
+};
+
+/** order by avg() on columns of table "graph._highlight" */
+export type Graph__Highlight_Avg_Order_By = {
+  height?: InputMaybe<Order_By>;
+  width?: InputMaybe<Order_By>;
+  x?: InputMaybe<Order_By>;
+  y?: InputMaybe<Order_By>;
+};
+
+/** Boolean expression to filter rows from the table "graph._highlight". All fields are combined with a logical 'AND'. */
+export type Graph__Highlight_Bool_Exp = {
+  _and?: InputMaybe<Array<Graph__Highlight_Bool_Exp>>;
+  _not?: InputMaybe<Graph__Highlight_Bool_Exp>;
+  _or?: InputMaybe<Array<Graph__Highlight_Bool_Exp>>;
+  created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+  height?: InputMaybe<Int_Comparison_Exp>;
+  id?: InputMaybe<String_Comparison_Exp>;
+  schema_mentions_id?: InputMaybe<String_Comparison_Exp>;
+  updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+  width?: InputMaybe<Int_Comparison_Exp>;
+  x?: InputMaybe<Int_Comparison_Exp>;
+  y?: InputMaybe<Int_Comparison_Exp>;
+};
+
+/** input type for inserting data into table "graph._highlight" */
+export type Graph__Highlight_Insert_Input = {
+  created_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  height?: InputMaybe<Scalars['Int']['input']>;
+  id?: InputMaybe<Scalars['String']['input']>;
+  schema_mentions_id?: InputMaybe<Scalars['String']['input']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  width?: InputMaybe<Scalars['Int']['input']>;
+  x?: InputMaybe<Scalars['Int']['input']>;
+  y?: InputMaybe<Scalars['Int']['input']>;
+};
+
+/** aggregate max on columns */
+export type Graph__Highlight_Max_Fields = {
+  __typename?: 'graph__highlight_max_fields';
+  created_at?: Maybe<Scalars['timestamptz']['output']>;
+  height?: Maybe<Scalars['Int']['output']>;
+  id?: Maybe<Scalars['String']['output']>;
+  schema_mentions_id?: Maybe<Scalars['String']['output']>;
+  updated_at?: Maybe<Scalars['timestamptz']['output']>;
+  width?: Maybe<Scalars['Int']['output']>;
+  x?: Maybe<Scalars['Int']['output']>;
+  y?: Maybe<Scalars['Int']['output']>;
+};
+
+/** order by max() on columns of table "graph._highlight" */
+export type Graph__Highlight_Max_Order_By = {
+  created_at?: InputMaybe<Order_By>;
+  height?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  schema_mentions_id?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+  width?: InputMaybe<Order_By>;
+  x?: InputMaybe<Order_By>;
+  y?: InputMaybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Graph__Highlight_Min_Fields = {
+  __typename?: 'graph__highlight_min_fields';
+  created_at?: Maybe<Scalars['timestamptz']['output']>;
+  height?: Maybe<Scalars['Int']['output']>;
+  id?: Maybe<Scalars['String']['output']>;
+  schema_mentions_id?: Maybe<Scalars['String']['output']>;
+  updated_at?: Maybe<Scalars['timestamptz']['output']>;
+  width?: Maybe<Scalars['Int']['output']>;
+  x?: Maybe<Scalars['Int']['output']>;
+  y?: Maybe<Scalars['Int']['output']>;
+};
+
+/** order by min() on columns of table "graph._highlight" */
+export type Graph__Highlight_Min_Order_By = {
+  created_at?: InputMaybe<Order_By>;
+  height?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  schema_mentions_id?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+  width?: InputMaybe<Order_By>;
+  x?: InputMaybe<Order_By>;
+  y?: InputMaybe<Order_By>;
+};
+
+/** Ordering options when selecting data from "graph._highlight". */
+export type Graph__Highlight_Order_By = {
+  created_at?: InputMaybe<Order_By>;
+  height?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  schema_mentions_id?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+  width?: InputMaybe<Order_By>;
+  x?: InputMaybe<Order_By>;
+  y?: InputMaybe<Order_By>;
+};
+
+/** select columns of table "graph._highlight" */
+export enum Graph__Highlight_Select_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Height = 'height',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  SchemaMentionsId = 'schema_mentions_id',
+  /** column name */
+  UpdatedAt = 'updated_at',
+  /** column name */
+  Width = 'width',
+  /** column name */
+  X = 'x',
+  /** column name */
+  Y = 'y'
+}
+
+/** aggregate stddev on columns */
+export type Graph__Highlight_Stddev_Fields = {
+  __typename?: 'graph__highlight_stddev_fields';
+  height?: Maybe<Scalars['Float']['output']>;
+  width?: Maybe<Scalars['Float']['output']>;
+  x?: Maybe<Scalars['Float']['output']>;
+  y?: Maybe<Scalars['Float']['output']>;
+};
+
+/** order by stddev() on columns of table "graph._highlight" */
+export type Graph__Highlight_Stddev_Order_By = {
+  height?: InputMaybe<Order_By>;
+  width?: InputMaybe<Order_By>;
+  x?: InputMaybe<Order_By>;
+  y?: InputMaybe<Order_By>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Graph__Highlight_Stddev_Pop_Fields = {
+  __typename?: 'graph__highlight_stddev_pop_fields';
+  height?: Maybe<Scalars['Float']['output']>;
+  width?: Maybe<Scalars['Float']['output']>;
+  x?: Maybe<Scalars['Float']['output']>;
+  y?: Maybe<Scalars['Float']['output']>;
+};
+
+/** order by stddev_pop() on columns of table "graph._highlight" */
+export type Graph__Highlight_Stddev_Pop_Order_By = {
+  height?: InputMaybe<Order_By>;
+  width?: InputMaybe<Order_By>;
+  x?: InputMaybe<Order_By>;
+  y?: InputMaybe<Order_By>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Graph__Highlight_Stddev_Samp_Fields = {
+  __typename?: 'graph__highlight_stddev_samp_fields';
+  height?: Maybe<Scalars['Float']['output']>;
+  width?: Maybe<Scalars['Float']['output']>;
+  x?: Maybe<Scalars['Float']['output']>;
+  y?: Maybe<Scalars['Float']['output']>;
+};
+
+/** order by stddev_samp() on columns of table "graph._highlight" */
+export type Graph__Highlight_Stddev_Samp_Order_By = {
+  height?: InputMaybe<Order_By>;
+  width?: InputMaybe<Order_By>;
+  x?: InputMaybe<Order_By>;
+  y?: InputMaybe<Order_By>;
+};
+
+/** Streaming cursor of the table "graph__highlight" */
+export type Graph__Highlight_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: Graph__Highlight_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type Graph__Highlight_Stream_Cursor_Value_Input = {
+  created_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  height?: InputMaybe<Scalars['Int']['input']>;
+  id?: InputMaybe<Scalars['String']['input']>;
+  schema_mentions_id?: InputMaybe<Scalars['String']['input']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  width?: InputMaybe<Scalars['Int']['input']>;
+  x?: InputMaybe<Scalars['Int']['input']>;
+  y?: InputMaybe<Scalars['Int']['input']>;
+};
+
+/** aggregate sum on columns */
+export type Graph__Highlight_Sum_Fields = {
+  __typename?: 'graph__highlight_sum_fields';
+  height?: Maybe<Scalars['Int']['output']>;
+  width?: Maybe<Scalars['Int']['output']>;
+  x?: Maybe<Scalars['Int']['output']>;
+  y?: Maybe<Scalars['Int']['output']>;
+};
+
+/** order by sum() on columns of table "graph._highlight" */
+export type Graph__Highlight_Sum_Order_By = {
+  height?: InputMaybe<Order_By>;
+  width?: InputMaybe<Order_By>;
+  x?: InputMaybe<Order_By>;
+  y?: InputMaybe<Order_By>;
+};
+
+/** aggregate var_pop on columns */
+export type Graph__Highlight_Var_Pop_Fields = {
+  __typename?: 'graph__highlight_var_pop_fields';
+  height?: Maybe<Scalars['Float']['output']>;
+  width?: Maybe<Scalars['Float']['output']>;
+  x?: Maybe<Scalars['Float']['output']>;
+  y?: Maybe<Scalars['Float']['output']>;
+};
+
+/** order by var_pop() on columns of table "graph._highlight" */
+export type Graph__Highlight_Var_Pop_Order_By = {
+  height?: InputMaybe<Order_By>;
+  width?: InputMaybe<Order_By>;
+  x?: InputMaybe<Order_By>;
+  y?: InputMaybe<Order_By>;
+};
+
+/** aggregate var_samp on columns */
+export type Graph__Highlight_Var_Samp_Fields = {
+  __typename?: 'graph__highlight_var_samp_fields';
+  height?: Maybe<Scalars['Float']['output']>;
+  width?: Maybe<Scalars['Float']['output']>;
+  x?: Maybe<Scalars['Float']['output']>;
+  y?: Maybe<Scalars['Float']['output']>;
+};
+
+/** order by var_samp() on columns of table "graph._highlight" */
+export type Graph__Highlight_Var_Samp_Order_By = {
+  height?: InputMaybe<Order_By>;
+  width?: InputMaybe<Order_By>;
+  x?: InputMaybe<Order_By>;
+  y?: InputMaybe<Order_By>;
+};
+
+/** aggregate variance on columns */
+export type Graph__Highlight_Variance_Fields = {
+  __typename?: 'graph__highlight_variance_fields';
+  height?: Maybe<Scalars['Float']['output']>;
+  width?: Maybe<Scalars['Float']['output']>;
+  x?: Maybe<Scalars['Float']['output']>;
+  y?: Maybe<Scalars['Float']['output']>;
+};
+
+/** order by variance() on columns of table "graph._highlight" */
+export type Graph__Highlight_Variance_Order_By = {
+  height?: InputMaybe<Order_By>;
+  width?: InputMaybe<Order_By>;
+  x?: InputMaybe<Order_By>;
+  y?: InputMaybe<Order_By>;
+};
+
 /** columns and relationships of "graph._index_intellectual_entity" */
 export type Graph__Index_Intellectual_Entity = {
   __typename?: 'graph__index_intellectual_entity';
@@ -9727,7 +10066,7 @@ export type Graph_Highlight = {
   __typename?: 'graph_highlight';
   created_at?: Maybe<Scalars['timestamptz']['output']>;
   height: Scalars['Int']['output'];
-  schema_mentions_id: Scalars['String']['output'];
+  id: Scalars['String']['output'];
   updated_at?: Maybe<Scalars['timestamptz']['output']>;
   width: Scalars['Int']['output'];
   x: Scalars['Int']['output'];
@@ -9739,17 +10078,6 @@ export type Graph_Highlight_Aggregate = {
   __typename?: 'graph_highlight_aggregate';
   aggregate?: Maybe<Graph_Highlight_Aggregate_Fields>;
   nodes: Array<Graph_Highlight>;
-};
-
-export type Graph_Highlight_Aggregate_Bool_Exp = {
-  count?: InputMaybe<Graph_Highlight_Aggregate_Bool_Exp_Count>;
-};
-
-export type Graph_Highlight_Aggregate_Bool_Exp_Count = {
-  arguments?: InputMaybe<Array<Graph_Highlight_Select_Column>>;
-  distinct?: InputMaybe<Scalars['Boolean']['input']>;
-  filter?: InputMaybe<Graph_Highlight_Bool_Exp>;
-  predicate: Int_Comparison_Exp;
 };
 
 /** aggregate fields of "graph.highlight" */
@@ -9775,28 +10103,6 @@ export type Graph_Highlight_Aggregate_FieldsCountArgs = {
   distinct?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
-/** order by aggregate values of table "graph.highlight" */
-export type Graph_Highlight_Aggregate_Order_By = {
-  avg?: InputMaybe<Graph_Highlight_Avg_Order_By>;
-  count?: InputMaybe<Order_By>;
-  max?: InputMaybe<Graph_Highlight_Max_Order_By>;
-  min?: InputMaybe<Graph_Highlight_Min_Order_By>;
-  stddev?: InputMaybe<Graph_Highlight_Stddev_Order_By>;
-  stddev_pop?: InputMaybe<Graph_Highlight_Stddev_Pop_Order_By>;
-  stddev_samp?: InputMaybe<Graph_Highlight_Stddev_Samp_Order_By>;
-  sum?: InputMaybe<Graph_Highlight_Sum_Order_By>;
-  var_pop?: InputMaybe<Graph_Highlight_Var_Pop_Order_By>;
-  var_samp?: InputMaybe<Graph_Highlight_Var_Samp_Order_By>;
-  variance?: InputMaybe<Graph_Highlight_Variance_Order_By>;
-};
-
-/** input type for inserting array relation for remote table "graph.highlight" */
-export type Graph_Highlight_Arr_Rel_Insert_Input = {
-  data: Array<Graph_Highlight_Insert_Input>;
-  /** upsert condition */
-  on_conflict?: InputMaybe<Graph_Highlight_On_Conflict>;
-};
-
 /** aggregate avg on columns */
 export type Graph_Highlight_Avg_Fields = {
   __typename?: 'graph_highlight_avg_fields';
@@ -9806,14 +10112,6 @@ export type Graph_Highlight_Avg_Fields = {
   y?: Maybe<Scalars['Float']['output']>;
 };
 
-/** order by avg() on columns of table "graph.highlight" */
-export type Graph_Highlight_Avg_Order_By = {
-  height?: InputMaybe<Order_By>;
-  width?: InputMaybe<Order_By>;
-  x?: InputMaybe<Order_By>;
-  y?: InputMaybe<Order_By>;
-};
-
 /** Boolean expression to filter rows from the table "graph.highlight". All fields are combined with a logical 'AND'. */
 export type Graph_Highlight_Bool_Exp = {
   _and?: InputMaybe<Array<Graph_Highlight_Bool_Exp>>;
@@ -9821,7 +10119,7 @@ export type Graph_Highlight_Bool_Exp = {
   _or?: InputMaybe<Array<Graph_Highlight_Bool_Exp>>;
   created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
   height?: InputMaybe<Int_Comparison_Exp>;
-  schema_mentions_id?: InputMaybe<String_Comparison_Exp>;
+  id?: InputMaybe<String_Comparison_Exp>;
   updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
   width?: InputMaybe<Int_Comparison_Exp>;
   x?: InputMaybe<Int_Comparison_Exp>;
@@ -9830,7 +10128,7 @@ export type Graph_Highlight_Bool_Exp = {
 
 /** unique or primary key constraints on table "graph.highlight" */
 export enum Graph_Highlight_Constraint {
-  /** unique or primary key constraint on columns "x", "y", "schema_mentions_id" */
+  /** unique or primary key constraint on columns "id" */
   HighlightPkey = 'highlight_pkey'
 }
 
@@ -9846,7 +10144,7 @@ export type Graph_Highlight_Inc_Input = {
 export type Graph_Highlight_Insert_Input = {
   created_at?: InputMaybe<Scalars['timestamptz']['input']>;
   height?: InputMaybe<Scalars['Int']['input']>;
-  schema_mentions_id?: InputMaybe<Scalars['String']['input']>;
+  id?: InputMaybe<Scalars['String']['input']>;
   updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
   width?: InputMaybe<Scalars['Int']['input']>;
   x?: InputMaybe<Scalars['Int']['input']>;
@@ -9858,22 +10156,11 @@ export type Graph_Highlight_Max_Fields = {
   __typename?: 'graph_highlight_max_fields';
   created_at?: Maybe<Scalars['timestamptz']['output']>;
   height?: Maybe<Scalars['Int']['output']>;
-  schema_mentions_id?: Maybe<Scalars['String']['output']>;
+  id?: Maybe<Scalars['String']['output']>;
   updated_at?: Maybe<Scalars['timestamptz']['output']>;
   width?: Maybe<Scalars['Int']['output']>;
   x?: Maybe<Scalars['Int']['output']>;
   y?: Maybe<Scalars['Int']['output']>;
-};
-
-/** order by max() on columns of table "graph.highlight" */
-export type Graph_Highlight_Max_Order_By = {
-  created_at?: InputMaybe<Order_By>;
-  height?: InputMaybe<Order_By>;
-  schema_mentions_id?: InputMaybe<Order_By>;
-  updated_at?: InputMaybe<Order_By>;
-  width?: InputMaybe<Order_By>;
-  x?: InputMaybe<Order_By>;
-  y?: InputMaybe<Order_By>;
 };
 
 /** aggregate min on columns */
@@ -9881,22 +10168,11 @@ export type Graph_Highlight_Min_Fields = {
   __typename?: 'graph_highlight_min_fields';
   created_at?: Maybe<Scalars['timestamptz']['output']>;
   height?: Maybe<Scalars['Int']['output']>;
-  schema_mentions_id?: Maybe<Scalars['String']['output']>;
+  id?: Maybe<Scalars['String']['output']>;
   updated_at?: Maybe<Scalars['timestamptz']['output']>;
   width?: Maybe<Scalars['Int']['output']>;
   x?: Maybe<Scalars['Int']['output']>;
   y?: Maybe<Scalars['Int']['output']>;
-};
-
-/** order by min() on columns of table "graph.highlight" */
-export type Graph_Highlight_Min_Order_By = {
-  created_at?: InputMaybe<Order_By>;
-  height?: InputMaybe<Order_By>;
-  schema_mentions_id?: InputMaybe<Order_By>;
-  updated_at?: InputMaybe<Order_By>;
-  width?: InputMaybe<Order_By>;
-  x?: InputMaybe<Order_By>;
-  y?: InputMaybe<Order_By>;
 };
 
 /** response of any mutation on the table "graph.highlight" */
@@ -9919,7 +10195,7 @@ export type Graph_Highlight_On_Conflict = {
 export type Graph_Highlight_Order_By = {
   created_at?: InputMaybe<Order_By>;
   height?: InputMaybe<Order_By>;
-  schema_mentions_id?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
   updated_at?: InputMaybe<Order_By>;
   width?: InputMaybe<Order_By>;
   x?: InputMaybe<Order_By>;
@@ -9928,9 +10204,7 @@ export type Graph_Highlight_Order_By = {
 
 /** primary key columns input for table: graph.highlight */
 export type Graph_Highlight_Pk_Columns_Input = {
-  schema_mentions_id: Scalars['String']['input'];
-  x: Scalars['Int']['input'];
-  y: Scalars['Int']['input'];
+  id: Scalars['String']['input'];
 };
 
 /** select columns of table "graph.highlight" */
@@ -9940,7 +10214,7 @@ export enum Graph_Highlight_Select_Column {
   /** column name */
   Height = 'height',
   /** column name */
-  SchemaMentionsId = 'schema_mentions_id',
+  Id = 'id',
   /** column name */
   UpdatedAt = 'updated_at',
   /** column name */
@@ -9955,7 +10229,7 @@ export enum Graph_Highlight_Select_Column {
 export type Graph_Highlight_Set_Input = {
   created_at?: InputMaybe<Scalars['timestamptz']['input']>;
   height?: InputMaybe<Scalars['Int']['input']>;
-  schema_mentions_id?: InputMaybe<Scalars['String']['input']>;
+  id?: InputMaybe<Scalars['String']['input']>;
   updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
   width?: InputMaybe<Scalars['Int']['input']>;
   x?: InputMaybe<Scalars['Int']['input']>;
@@ -9971,14 +10245,6 @@ export type Graph_Highlight_Stddev_Fields = {
   y?: Maybe<Scalars['Float']['output']>;
 };
 
-/** order by stddev() on columns of table "graph.highlight" */
-export type Graph_Highlight_Stddev_Order_By = {
-  height?: InputMaybe<Order_By>;
-  width?: InputMaybe<Order_By>;
-  x?: InputMaybe<Order_By>;
-  y?: InputMaybe<Order_By>;
-};
-
 /** aggregate stddev_pop on columns */
 export type Graph_Highlight_Stddev_Pop_Fields = {
   __typename?: 'graph_highlight_stddev_pop_fields';
@@ -9988,14 +10254,6 @@ export type Graph_Highlight_Stddev_Pop_Fields = {
   y?: Maybe<Scalars['Float']['output']>;
 };
 
-/** order by stddev_pop() on columns of table "graph.highlight" */
-export type Graph_Highlight_Stddev_Pop_Order_By = {
-  height?: InputMaybe<Order_By>;
-  width?: InputMaybe<Order_By>;
-  x?: InputMaybe<Order_By>;
-  y?: InputMaybe<Order_By>;
-};
-
 /** aggregate stddev_samp on columns */
 export type Graph_Highlight_Stddev_Samp_Fields = {
   __typename?: 'graph_highlight_stddev_samp_fields';
@@ -10003,14 +10261,6 @@ export type Graph_Highlight_Stddev_Samp_Fields = {
   width?: Maybe<Scalars['Float']['output']>;
   x?: Maybe<Scalars['Float']['output']>;
   y?: Maybe<Scalars['Float']['output']>;
-};
-
-/** order by stddev_samp() on columns of table "graph.highlight" */
-export type Graph_Highlight_Stddev_Samp_Order_By = {
-  height?: InputMaybe<Order_By>;
-  width?: InputMaybe<Order_By>;
-  x?: InputMaybe<Order_By>;
-  y?: InputMaybe<Order_By>;
 };
 
 /** Streaming cursor of the table "graph_highlight" */
@@ -10025,7 +10275,7 @@ export type Graph_Highlight_Stream_Cursor_Input = {
 export type Graph_Highlight_Stream_Cursor_Value_Input = {
   created_at?: InputMaybe<Scalars['timestamptz']['input']>;
   height?: InputMaybe<Scalars['Int']['input']>;
-  schema_mentions_id?: InputMaybe<Scalars['String']['input']>;
+  id?: InputMaybe<Scalars['String']['input']>;
   updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
   width?: InputMaybe<Scalars['Int']['input']>;
   x?: InputMaybe<Scalars['Int']['input']>;
@@ -10041,14 +10291,6 @@ export type Graph_Highlight_Sum_Fields = {
   y?: Maybe<Scalars['Int']['output']>;
 };
 
-/** order by sum() on columns of table "graph.highlight" */
-export type Graph_Highlight_Sum_Order_By = {
-  height?: InputMaybe<Order_By>;
-  width?: InputMaybe<Order_By>;
-  x?: InputMaybe<Order_By>;
-  y?: InputMaybe<Order_By>;
-};
-
 /** update columns of table "graph.highlight" */
 export enum Graph_Highlight_Update_Column {
   /** column name */
@@ -10056,7 +10298,7 @@ export enum Graph_Highlight_Update_Column {
   /** column name */
   Height = 'height',
   /** column name */
-  SchemaMentionsId = 'schema_mentions_id',
+  Id = 'id',
   /** column name */
   UpdatedAt = 'updated_at',
   /** column name */
@@ -10085,14 +10327,6 @@ export type Graph_Highlight_Var_Pop_Fields = {
   y?: Maybe<Scalars['Float']['output']>;
 };
 
-/** order by var_pop() on columns of table "graph.highlight" */
-export type Graph_Highlight_Var_Pop_Order_By = {
-  height?: InputMaybe<Order_By>;
-  width?: InputMaybe<Order_By>;
-  x?: InputMaybe<Order_By>;
-  y?: InputMaybe<Order_By>;
-};
-
 /** aggregate var_samp on columns */
 export type Graph_Highlight_Var_Samp_Fields = {
   __typename?: 'graph_highlight_var_samp_fields';
@@ -10102,14 +10336,6 @@ export type Graph_Highlight_Var_Samp_Fields = {
   y?: Maybe<Scalars['Float']['output']>;
 };
 
-/** order by var_samp() on columns of table "graph.highlight" */
-export type Graph_Highlight_Var_Samp_Order_By = {
-  height?: InputMaybe<Order_By>;
-  width?: InputMaybe<Order_By>;
-  x?: InputMaybe<Order_By>;
-  y?: InputMaybe<Order_By>;
-};
-
 /** aggregate variance on columns */
 export type Graph_Highlight_Variance_Fields = {
   __typename?: 'graph_highlight_variance_fields';
@@ -10117,14 +10343,6 @@ export type Graph_Highlight_Variance_Fields = {
   width?: Maybe<Scalars['Float']['output']>;
   x?: Maybe<Scalars['Float']['output']>;
   y?: Maybe<Scalars['Float']['output']>;
-};
-
-/** order by variance() on columns of table "graph.highlight" */
-export type Graph_Highlight_Variance_Order_By = {
-  height?: InputMaybe<Order_By>;
-  width?: InputMaybe<Order_By>;
-  x?: InputMaybe<Order_By>;
-  y?: InputMaybe<Order_By>;
 };
 
 /** Koppeltabel voor representation en file (includes) */
@@ -15451,9 +15669,9 @@ export type Graph_Schema_Mentions = {
   confidence?: Maybe<Scalars['numeric']['output']>;
   created_at?: Maybe<Scalars['timestamptz']['output']>;
   /** An array relationship */
-  highlights: Array<Graph_Highlight>;
+  highlights: Array<Graph__Highlight>;
   /** An aggregate relationship */
-  highlights_aggregate: Graph_Highlight_Aggregate;
+  highlights_aggregate: Graph__Highlight_Aggregate;
   id: Scalars['String']['output'];
   intellectual_entity_id: Scalars['String']['output'];
   /** An object relationship */
@@ -15465,21 +15683,21 @@ export type Graph_Schema_Mentions = {
 
 /** columns and relationships of "graph.schema_mentions" */
 export type Graph_Schema_MentionsHighlightsArgs = {
-  distinct_on?: InputMaybe<Array<Graph_Highlight_Select_Column>>;
+  distinct_on?: InputMaybe<Array<Graph__Highlight_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
   offset?: InputMaybe<Scalars['Int']['input']>;
-  order_by?: InputMaybe<Array<Graph_Highlight_Order_By>>;
-  where?: InputMaybe<Graph_Highlight_Bool_Exp>;
+  order_by?: InputMaybe<Array<Graph__Highlight_Order_By>>;
+  where?: InputMaybe<Graph__Highlight_Bool_Exp>;
 };
 
 
 /** columns and relationships of "graph.schema_mentions" */
 export type Graph_Schema_MentionsHighlights_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Graph_Highlight_Select_Column>>;
+  distinct_on?: InputMaybe<Array<Graph__Highlight_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
   offset?: InputMaybe<Scalars['Int']['input']>;
-  order_by?: InputMaybe<Array<Graph_Highlight_Order_By>>;
-  where?: InputMaybe<Graph_Highlight_Bool_Exp>;
+  order_by?: InputMaybe<Array<Graph__Highlight_Order_By>>;
+  where?: InputMaybe<Graph__Highlight_Bool_Exp>;
 };
 
 /** aggregated selection of "graph.schema_mentions" */
@@ -15563,8 +15781,8 @@ export type Graph_Schema_Mentions_Bool_Exp = {
   _or?: InputMaybe<Array<Graph_Schema_Mentions_Bool_Exp>>;
   confidence?: InputMaybe<Numeric_Comparison_Exp>;
   created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
-  highlights?: InputMaybe<Graph_Highlight_Bool_Exp>;
-  highlights_aggregate?: InputMaybe<Graph_Highlight_Aggregate_Bool_Exp>;
+  highlights?: InputMaybe<Graph__Highlight_Bool_Exp>;
+  highlights_aggregate?: InputMaybe<Graph__Highlight_Aggregate_Bool_Exp>;
   id?: InputMaybe<String_Comparison_Exp>;
   intellectual_entity_id?: InputMaybe<String_Comparison_Exp>;
   thing?: InputMaybe<Graph_Thing_Bool_Exp>;
@@ -15578,6 +15796,141 @@ export enum Graph_Schema_Mentions_Constraint {
   SchemaMentionsPkey = 'schema_mentions_pkey'
 }
 
+/** Crosstable between schema_mentions and highlight */
+export type Graph_Schema_Mentions_Highlight = {
+  __typename?: 'graph_schema_mentions_highlight';
+  highlight_id: Scalars['String']['output'];
+  schema_mentions_id: Scalars['String']['output'];
+};
+
+/** aggregated selection of "graph.schema_mentions_highlight" */
+export type Graph_Schema_Mentions_Highlight_Aggregate = {
+  __typename?: 'graph_schema_mentions_highlight_aggregate';
+  aggregate?: Maybe<Graph_Schema_Mentions_Highlight_Aggregate_Fields>;
+  nodes: Array<Graph_Schema_Mentions_Highlight>;
+};
+
+/** aggregate fields of "graph.schema_mentions_highlight" */
+export type Graph_Schema_Mentions_Highlight_Aggregate_Fields = {
+  __typename?: 'graph_schema_mentions_highlight_aggregate_fields';
+  count: Scalars['Int']['output'];
+  max?: Maybe<Graph_Schema_Mentions_Highlight_Max_Fields>;
+  min?: Maybe<Graph_Schema_Mentions_Highlight_Min_Fields>;
+};
+
+
+/** aggregate fields of "graph.schema_mentions_highlight" */
+export type Graph_Schema_Mentions_Highlight_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Graph_Schema_Mentions_Highlight_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+/** Boolean expression to filter rows from the table "graph.schema_mentions_highlight". All fields are combined with a logical 'AND'. */
+export type Graph_Schema_Mentions_Highlight_Bool_Exp = {
+  _and?: InputMaybe<Array<Graph_Schema_Mentions_Highlight_Bool_Exp>>;
+  _not?: InputMaybe<Graph_Schema_Mentions_Highlight_Bool_Exp>;
+  _or?: InputMaybe<Array<Graph_Schema_Mentions_Highlight_Bool_Exp>>;
+  highlight_id?: InputMaybe<String_Comparison_Exp>;
+  schema_mentions_id?: InputMaybe<String_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "graph.schema_mentions_highlight" */
+export enum Graph_Schema_Mentions_Highlight_Constraint {
+  /** unique or primary key constraint on columns "highlight_id", "schema_mentions_id" */
+  SchemaMentionsHighlightPkey = 'schema_mentions_highlight_pkey'
+}
+
+/** input type for inserting data into table "graph.schema_mentions_highlight" */
+export type Graph_Schema_Mentions_Highlight_Insert_Input = {
+  highlight_id?: InputMaybe<Scalars['String']['input']>;
+  schema_mentions_id?: InputMaybe<Scalars['String']['input']>;
+};
+
+/** aggregate max on columns */
+export type Graph_Schema_Mentions_Highlight_Max_Fields = {
+  __typename?: 'graph_schema_mentions_highlight_max_fields';
+  highlight_id?: Maybe<Scalars['String']['output']>;
+  schema_mentions_id?: Maybe<Scalars['String']['output']>;
+};
+
+/** aggregate min on columns */
+export type Graph_Schema_Mentions_Highlight_Min_Fields = {
+  __typename?: 'graph_schema_mentions_highlight_min_fields';
+  highlight_id?: Maybe<Scalars['String']['output']>;
+  schema_mentions_id?: Maybe<Scalars['String']['output']>;
+};
+
+/** response of any mutation on the table "graph.schema_mentions_highlight" */
+export type Graph_Schema_Mentions_Highlight_Mutation_Response = {
+  __typename?: 'graph_schema_mentions_highlight_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int']['output'];
+  /** data from the rows affected by the mutation */
+  returning: Array<Graph_Schema_Mentions_Highlight>;
+};
+
+/** on_conflict condition type for table "graph.schema_mentions_highlight" */
+export type Graph_Schema_Mentions_Highlight_On_Conflict = {
+  constraint: Graph_Schema_Mentions_Highlight_Constraint;
+  update_columns?: Array<Graph_Schema_Mentions_Highlight_Update_Column>;
+  where?: InputMaybe<Graph_Schema_Mentions_Highlight_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "graph.schema_mentions_highlight". */
+export type Graph_Schema_Mentions_Highlight_Order_By = {
+  highlight_id?: InputMaybe<Order_By>;
+  schema_mentions_id?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: graph.schema_mentions_highlight */
+export type Graph_Schema_Mentions_Highlight_Pk_Columns_Input = {
+  highlight_id: Scalars['String']['input'];
+  schema_mentions_id: Scalars['String']['input'];
+};
+
+/** select columns of table "graph.schema_mentions_highlight" */
+export enum Graph_Schema_Mentions_Highlight_Select_Column {
+  /** column name */
+  HighlightId = 'highlight_id',
+  /** column name */
+  SchemaMentionsId = 'schema_mentions_id'
+}
+
+/** input type for updating data in table "graph.schema_mentions_highlight" */
+export type Graph_Schema_Mentions_Highlight_Set_Input = {
+  highlight_id?: InputMaybe<Scalars['String']['input']>;
+  schema_mentions_id?: InputMaybe<Scalars['String']['input']>;
+};
+
+/** Streaming cursor of the table "graph_schema_mentions_highlight" */
+export type Graph_Schema_Mentions_Highlight_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: Graph_Schema_Mentions_Highlight_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type Graph_Schema_Mentions_Highlight_Stream_Cursor_Value_Input = {
+  highlight_id?: InputMaybe<Scalars['String']['input']>;
+  schema_mentions_id?: InputMaybe<Scalars['String']['input']>;
+};
+
+/** update columns of table "graph.schema_mentions_highlight" */
+export enum Graph_Schema_Mentions_Highlight_Update_Column {
+  /** column name */
+  HighlightId = 'highlight_id',
+  /** column name */
+  SchemaMentionsId = 'schema_mentions_id'
+}
+
+export type Graph_Schema_Mentions_Highlight_Updates = {
+  /** sets the columns of the filtered rows to the given values */
+  _set?: InputMaybe<Graph_Schema_Mentions_Highlight_Set_Input>;
+  /** filter the rows which have to be updated */
+  where: Graph_Schema_Mentions_Highlight_Bool_Exp;
+};
+
 /** input type for incrementing numeric columns in table "graph.schema_mentions" */
 export type Graph_Schema_Mentions_Inc_Input = {
   confidence?: InputMaybe<Scalars['numeric']['input']>;
@@ -15587,7 +15940,7 @@ export type Graph_Schema_Mentions_Inc_Input = {
 export type Graph_Schema_Mentions_Insert_Input = {
   confidence?: InputMaybe<Scalars['numeric']['input']>;
   created_at?: InputMaybe<Scalars['timestamptz']['input']>;
-  highlights?: InputMaybe<Graph_Highlight_Arr_Rel_Insert_Input>;
+  highlights?: InputMaybe<Graph__Highlight_Arr_Rel_Insert_Input>;
   id?: InputMaybe<Scalars['String']['input']>;
   intellectual_entity_id?: InputMaybe<Scalars['String']['input']>;
   thing?: InputMaybe<Graph_Thing_Obj_Rel_Insert_Input>;
@@ -15657,7 +16010,7 @@ export type Graph_Schema_Mentions_On_Conflict = {
 export type Graph_Schema_Mentions_Order_By = {
   confidence?: InputMaybe<Order_By>;
   created_at?: InputMaybe<Order_By>;
-  highlights_aggregate?: InputMaybe<Graph_Highlight_Aggregate_Order_By>;
+  highlights_aggregate?: InputMaybe<Graph__Highlight_Aggregate_Order_By>;
   id?: InputMaybe<Order_By>;
   intellectual_entity_id?: InputMaybe<Order_By>;
   thing?: InputMaybe<Graph_Thing_Order_By>;
@@ -20431,6 +20784,10 @@ export type Mutation_Root = {
   delete_graph_schema_mentions?: Maybe<Graph_Schema_Mentions_Mutation_Response>;
   /** delete single row from the table: "graph.schema_mentions" */
   delete_graph_schema_mentions_by_pk?: Maybe<Graph_Schema_Mentions>;
+  /** delete data from the table: "graph.schema_mentions_highlight" */
+  delete_graph_schema_mentions_highlight?: Maybe<Graph_Schema_Mentions_Highlight_Mutation_Response>;
+  /** delete single row from the table: "graph.schema_mentions_highlight" */
+  delete_graph_schema_mentions_highlight_by_pk?: Maybe<Graph_Schema_Mentions_Highlight>;
   /** delete data from the table: "graph.schema_role" */
   delete_graph_schema_role?: Maybe<Graph_Schema_Role_Mutation_Response>;
   /** delete single row from the table: "graph.schema_role" */
@@ -20693,6 +21050,10 @@ export type Mutation_Root = {
   insert_graph_schema_license_one?: Maybe<Graph_Schema_License>;
   /** insert data into the table: "graph.schema_mentions" */
   insert_graph_schema_mentions?: Maybe<Graph_Schema_Mentions_Mutation_Response>;
+  /** insert data into the table: "graph.schema_mentions_highlight" */
+  insert_graph_schema_mentions_highlight?: Maybe<Graph_Schema_Mentions_Highlight_Mutation_Response>;
+  /** insert a single row into the table: "graph.schema_mentions_highlight" */
+  insert_graph_schema_mentions_highlight_one?: Maybe<Graph_Schema_Mentions_Highlight>;
   /** insert a single row into the table: "graph.schema_mentions" */
   insert_graph_schema_mentions_one?: Maybe<Graph_Schema_Mentions>;
   /** insert data into the table: "graph.schema_role" */
@@ -21029,6 +21390,12 @@ export type Mutation_Root = {
   update_graph_schema_mentions?: Maybe<Graph_Schema_Mentions_Mutation_Response>;
   /** update single row of the table: "graph.schema_mentions" */
   update_graph_schema_mentions_by_pk?: Maybe<Graph_Schema_Mentions>;
+  /** update data of the table: "graph.schema_mentions_highlight" */
+  update_graph_schema_mentions_highlight?: Maybe<Graph_Schema_Mentions_Highlight_Mutation_Response>;
+  /** update single row of the table: "graph.schema_mentions_highlight" */
+  update_graph_schema_mentions_highlight_by_pk?: Maybe<Graph_Schema_Mentions_Highlight>;
+  /** update multiples rows of table: "graph.schema_mentions_highlight" */
+  update_graph_schema_mentions_highlight_many?: Maybe<Array<Maybe<Graph_Schema_Mentions_Highlight_Mutation_Response>>>;
   /** update multiples rows of table: "graph.schema_mentions" */
   update_graph_schema_mentions_many?: Maybe<Array<Maybe<Graph_Schema_Mentions_Mutation_Response>>>;
   /** update data of the table: "graph.schema_role" */
@@ -21413,9 +21780,7 @@ export type Mutation_RootDelete_Graph_HighlightArgs = {
 
 /** mutation root */
 export type Mutation_RootDelete_Graph_Highlight_By_PkArgs = {
-  schema_mentions_id: Scalars['String']['input'];
-  x: Scalars['Int']['input'];
-  y: Scalars['Int']['input'];
+  id: Scalars['String']['input'];
 };
 
 
@@ -21666,6 +22031,19 @@ export type Mutation_RootDelete_Graph_Schema_MentionsArgs = {
 /** mutation root */
 export type Mutation_RootDelete_Graph_Schema_Mentions_By_PkArgs = {
   id: Scalars['String']['input'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Graph_Schema_Mentions_HighlightArgs = {
+  where: Graph_Schema_Mentions_Highlight_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Graph_Schema_Mentions_Highlight_By_PkArgs = {
+  highlight_id: Scalars['String']['input'];
+  schema_mentions_id: Scalars['String']['input'];
 };
 
 
@@ -22531,6 +22909,20 @@ export type Mutation_RootInsert_Graph_Schema_License_OneArgs = {
 export type Mutation_RootInsert_Graph_Schema_MentionsArgs = {
   objects: Array<Graph_Schema_Mentions_Insert_Input>;
   on_conflict?: InputMaybe<Graph_Schema_Mentions_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Graph_Schema_Mentions_HighlightArgs = {
+  objects: Array<Graph_Schema_Mentions_Highlight_Insert_Input>;
+  on_conflict?: InputMaybe<Graph_Schema_Mentions_Highlight_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Graph_Schema_Mentions_Highlight_OneArgs = {
+  object: Graph_Schema_Mentions_Highlight_Insert_Input;
+  on_conflict?: InputMaybe<Graph_Schema_Mentions_Highlight_On_Conflict>;
 };
 
 
@@ -23747,6 +24139,26 @@ export type Mutation_RootUpdate_Graph_Schema_Mentions_By_PkArgs = {
 
 
 /** mutation root */
+export type Mutation_RootUpdate_Graph_Schema_Mentions_HighlightArgs = {
+  _set?: InputMaybe<Graph_Schema_Mentions_Highlight_Set_Input>;
+  where: Graph_Schema_Mentions_Highlight_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Graph_Schema_Mentions_Highlight_By_PkArgs = {
+  _set?: InputMaybe<Graph_Schema_Mentions_Highlight_Set_Input>;
+  pk_columns: Graph_Schema_Mentions_Highlight_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Graph_Schema_Mentions_Highlight_ManyArgs = {
+  updates: Array<Graph_Schema_Mentions_Highlight_Updates>;
+};
+
+
+/** mutation root */
 export type Mutation_RootUpdate_Graph_Schema_Mentions_ManyArgs = {
   updates: Array<Graph_Schema_Mentions_Updates>;
 };
@@ -24454,6 +24866,10 @@ export type Query_Root = {
   graph__ha_des_primary_identifier: Array<Graph__Ha_Des_Primary_Identifier>;
   /** fetch aggregated fields from the table: "graph._ha_des_primary_identifier" */
   graph__ha_des_primary_identifier_aggregate: Graph__Ha_Des_Primary_Identifier_Aggregate;
+  /** fetch data from the table: "graph._highlight" */
+  graph__highlight: Array<Graph__Highlight>;
+  /** fetch aggregated fields from the table: "graph._highlight" */
+  graph__highlight_aggregate: Graph__Highlight_Aggregate;
   /** fetch data from the table: "graph._index_intellectual_entity" */
   graph__index_intellectual_entity: Array<Graph__Index_Intellectual_Entity>;
   /** fetch aggregated fields from the table: "graph._index_intellectual_entity" */
@@ -24732,6 +25148,12 @@ export type Query_Root = {
   graph_schema_mentions_aggregate: Graph_Schema_Mentions_Aggregate;
   /** fetch data from the table: "graph.schema_mentions" using primary key columns */
   graph_schema_mentions_by_pk?: Maybe<Graph_Schema_Mentions>;
+  /** fetch data from the table: "graph.schema_mentions_highlight" */
+  graph_schema_mentions_highlight: Array<Graph_Schema_Mentions_Highlight>;
+  /** fetch aggregated fields from the table: "graph.schema_mentions_highlight" */
+  graph_schema_mentions_highlight_aggregate: Graph_Schema_Mentions_Highlight_Aggregate;
+  /** fetch data from the table: "graph.schema_mentions_highlight" using primary key columns */
+  graph_schema_mentions_highlight_by_pk?: Maybe<Graph_Schema_Mentions_Highlight>;
   /** fetch data from the table: "graph.schema_role" */
   graph_schema_role: Array<Graph_Schema_Role>;
   /** fetch aggregated fields from the table: "graph.schema_role" */
@@ -25252,6 +25674,24 @@ export type Query_RootGraph__Ha_Des_Primary_Identifier_AggregateArgs = {
   offset?: InputMaybe<Scalars['Int']['input']>;
   order_by?: InputMaybe<Array<Graph__Ha_Des_Primary_Identifier_Order_By>>;
   where?: InputMaybe<Graph__Ha_Des_Primary_Identifier_Bool_Exp>;
+};
+
+
+export type Query_RootGraph__HighlightArgs = {
+  distinct_on?: InputMaybe<Array<Graph__Highlight_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Graph__Highlight_Order_By>>;
+  where?: InputMaybe<Graph__Highlight_Bool_Exp>;
+};
+
+
+export type Query_RootGraph__Highlight_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Graph__Highlight_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Graph__Highlight_Order_By>>;
+  where?: InputMaybe<Graph__Highlight_Bool_Exp>;
 };
 
 
@@ -25931,9 +26371,7 @@ export type Query_RootGraph_Highlight_AggregateArgs = {
 
 
 export type Query_RootGraph_Highlight_By_PkArgs = {
-  schema_mentions_id: Scalars['String']['input'];
-  x: Scalars['Int']['input'];
-  y: Scalars['Int']['input'];
+  id: Scalars['String']['input'];
 };
 
 
@@ -26423,6 +26861,30 @@ export type Query_RootGraph_Schema_Mentions_AggregateArgs = {
 
 export type Query_RootGraph_Schema_Mentions_By_PkArgs = {
   id: Scalars['String']['input'];
+};
+
+
+export type Query_RootGraph_Schema_Mentions_HighlightArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Schema_Mentions_Highlight_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Graph_Schema_Mentions_Highlight_Order_By>>;
+  where?: InputMaybe<Graph_Schema_Mentions_Highlight_Bool_Exp>;
+};
+
+
+export type Query_RootGraph_Schema_Mentions_Highlight_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Schema_Mentions_Highlight_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Graph_Schema_Mentions_Highlight_Order_By>>;
+  where?: InputMaybe<Graph_Schema_Mentions_Highlight_Bool_Exp>;
+};
+
+
+export type Query_RootGraph_Schema_Mentions_Highlight_By_PkArgs = {
+  highlight_id: Scalars['String']['input'];
+  schema_mentions_id: Scalars['String']['input'];
 };
 
 
@@ -27233,6 +27695,12 @@ export type Subscription_Root = {
   graph__ha_des_primary_identifier_aggregate: Graph__Ha_Des_Primary_Identifier_Aggregate;
   /** fetch data from the table in a streaming manner: "graph._ha_des_primary_identifier" */
   graph__ha_des_primary_identifier_stream: Array<Graph__Ha_Des_Primary_Identifier>;
+  /** fetch data from the table: "graph._highlight" */
+  graph__highlight: Array<Graph__Highlight>;
+  /** fetch aggregated fields from the table: "graph._highlight" */
+  graph__highlight_aggregate: Graph__Highlight_Aggregate;
+  /** fetch data from the table in a streaming manner: "graph._highlight" */
+  graph__highlight_stream: Array<Graph__Highlight>;
   /** fetch data from the table: "graph._index_intellectual_entity" */
   graph__index_intellectual_entity: Array<Graph__Index_Intellectual_Entity>;
   /** fetch aggregated fields from the table: "graph._index_intellectual_entity" */
@@ -27623,6 +28091,14 @@ export type Subscription_Root = {
   graph_schema_mentions_aggregate: Graph_Schema_Mentions_Aggregate;
   /** fetch data from the table: "graph.schema_mentions" using primary key columns */
   graph_schema_mentions_by_pk?: Maybe<Graph_Schema_Mentions>;
+  /** fetch data from the table: "graph.schema_mentions_highlight" */
+  graph_schema_mentions_highlight: Array<Graph_Schema_Mentions_Highlight>;
+  /** fetch aggregated fields from the table: "graph.schema_mentions_highlight" */
+  graph_schema_mentions_highlight_aggregate: Graph_Schema_Mentions_Highlight_Aggregate;
+  /** fetch data from the table: "graph.schema_mentions_highlight" using primary key columns */
+  graph_schema_mentions_highlight_by_pk?: Maybe<Graph_Schema_Mentions_Highlight>;
+  /** fetch data from the table in a streaming manner: "graph.schema_mentions_highlight" */
+  graph_schema_mentions_highlight_stream: Array<Graph_Schema_Mentions_Highlight>;
   /** fetch data from the table in a streaming manner: "graph.schema_mentions" */
   graph_schema_mentions_stream: Array<Graph_Schema_Mentions>;
   /** fetch data from the table: "graph.schema_role" */
@@ -28315,6 +28791,31 @@ export type Subscription_RootGraph__Ha_Des_Primary_Identifier_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<Graph__Ha_Des_Primary_Identifier_Stream_Cursor_Input>>;
   where?: InputMaybe<Graph__Ha_Des_Primary_Identifier_Bool_Exp>;
+};
+
+
+export type Subscription_RootGraph__HighlightArgs = {
+  distinct_on?: InputMaybe<Array<Graph__Highlight_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Graph__Highlight_Order_By>>;
+  where?: InputMaybe<Graph__Highlight_Bool_Exp>;
+};
+
+
+export type Subscription_RootGraph__Highlight_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Graph__Highlight_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Graph__Highlight_Order_By>>;
+  where?: InputMaybe<Graph__Highlight_Bool_Exp>;
+};
+
+
+export type Subscription_RootGraph__Highlight_StreamArgs = {
+  batch_size: Scalars['Int']['input'];
+  cursor: Array<InputMaybe<Graph__Highlight_Stream_Cursor_Input>>;
+  where?: InputMaybe<Graph__Highlight_Bool_Exp>;
 };
 
 
@@ -29239,9 +29740,7 @@ export type Subscription_RootGraph_Highlight_AggregateArgs = {
 
 
 export type Subscription_RootGraph_Highlight_By_PkArgs = {
-  schema_mentions_id: Scalars['String']['input'];
-  x: Scalars['Int']['input'];
-  y: Scalars['Int']['input'];
+  id: Scalars['String']['input'];
 };
 
 
@@ -29878,6 +30377,37 @@ export type Subscription_RootGraph_Schema_Mentions_AggregateArgs = {
 
 export type Subscription_RootGraph_Schema_Mentions_By_PkArgs = {
   id: Scalars['String']['input'];
+};
+
+
+export type Subscription_RootGraph_Schema_Mentions_HighlightArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Schema_Mentions_Highlight_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Graph_Schema_Mentions_Highlight_Order_By>>;
+  where?: InputMaybe<Graph_Schema_Mentions_Highlight_Bool_Exp>;
+};
+
+
+export type Subscription_RootGraph_Schema_Mentions_Highlight_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Schema_Mentions_Highlight_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Graph_Schema_Mentions_Highlight_Order_By>>;
+  where?: InputMaybe<Graph_Schema_Mentions_Highlight_Bool_Exp>;
+};
+
+
+export type Subscription_RootGraph_Schema_Mentions_Highlight_By_PkArgs = {
+  highlight_id: Scalars['String']['input'];
+  schema_mentions_id: Scalars['String']['input'];
+};
+
+
+export type Subscription_RootGraph_Schema_Mentions_Highlight_StreamArgs = {
+  batch_size: Scalars['Int']['input'];
+  cursor: Array<InputMaybe<Graph_Schema_Mentions_Highlight_Stream_Cursor_Input>>;
+  where?: InputMaybe<Graph_Schema_Mentions_Highlight_Bool_Exp>;
 };
 
 
@@ -33014,7 +33544,7 @@ export type GetHasPartQueryVariables = Exact<{
 }>;
 
 
-export type GetHasPartQuery = { __typename?: 'query_root', graph_intellectual_entity: Array<{ __typename?: 'graph_intellectual_entity', schema_position?: number | null, schemaMentions: Array<{ __typename?: 'graph_schema_mentions', confidence?: any | null, highlights: Array<{ __typename?: 'graph_highlight', x: number, y: number, width: number, height: number }>, thing: { __typename?: 'graph_thing', id: string, schema_name?: string | null, schema_birth_date?: any | null, schema_birth_place?: string | null, schema_death_date?: any | null, schema_death_place?: string | null } }>, isRepresentedBy: Array<{ __typename?: 'graph_representation', id: string, schema_name?: string | null, is_media_fragment_of?: string | null, schema_in_language?: string | null, schema_start_time?: any | null, schema_end_time?: any | null, edm_is_next_in_sequence?: string | null, updated_at?: any | null, schemaTranscriptUrls: Array<{ __typename?: 'graph_schema_transcript_url', schema_transcript: string, schema_transcript_url: string }>, includes: Array<{ __typename?: 'graph_includes', file: { __typename?: 'graph_file', id: string, schema_name?: string | null, ebucore_has_mime_type?: string | null, premis_stored_at?: string | null, schema_thumbnail_url?: string | null, schema_duration?: any | null, edm_is_next_in_sequence?: string | null, created_at?: any | null } }> }> }> };
+export type GetHasPartQuery = { __typename?: 'query_root', graph_intellectual_entity: Array<{ __typename?: 'graph_intellectual_entity', schema_position?: number | null, schemaMentions: Array<{ __typename?: 'graph_schema_mentions', confidence?: any | null, highlights: Array<{ __typename?: 'graph__highlight', x?: number | null, y?: number | null, width?: number | null, height?: number | null }>, thing: { __typename?: 'graph_thing', id: string, schema_name?: string | null, schema_birth_date?: any | null, schema_birth_place?: string | null, schema_death_date?: any | null, schema_death_place?: string | null } }>, isRepresentedBy: Array<{ __typename?: 'graph_representation', id: string, schema_name?: string | null, is_media_fragment_of?: string | null, schema_in_language?: string | null, schema_start_time?: any | null, schema_end_time?: any | null, edm_is_next_in_sequence?: string | null, updated_at?: any | null, schemaTranscriptUrls: Array<{ __typename?: 'graph_schema_transcript_url', schema_transcript: string, schema_transcript_url: string }>, includes: Array<{ __typename?: 'graph_includes', file: { __typename?: 'graph_file', id: string, schema_name?: string | null, ebucore_has_mime_type?: string | null, premis_stored_at?: string | null, schema_thumbnail_url?: string | null, schema_duration?: any | null, edm_is_next_in_sequence?: string | null, created_at?: any | null } }> }> }> };
 
 export type GetIeObjectQueryVariables = Exact<{
   ieObjectId: Scalars['String']['input'];

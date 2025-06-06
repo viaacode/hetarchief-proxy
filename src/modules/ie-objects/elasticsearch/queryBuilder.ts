@@ -2,7 +2,7 @@ import { BadRequestException, InternalServerErrorException } from '@nestjs/commo
 import jsep from 'jsep';
 import { clamp, forEach, isArray, isNil } from 'lodash';
 
-import { type IeObjectsQueryDto, type SearchFilter } from '../dto/ie-objects.dto';
+import { IeObjectsQueryDto, SearchFilter } from '../dto/ie-objects.dto';
 import {
 	buildFreeTextFilter,
 	convertNodeToEsQueryFilterObjects,
@@ -21,16 +21,16 @@ import {
 	IeObjectsSearchFilterField,
 	MAX_COUNT_SEARCH_RESULTS,
 	MAX_NUMBER_SEARCH_RESULTS,
-	MetadataAccessType,
 	MULTI_MATCH_FIELDS,
 	MULTI_MATCH_QUERY_MAPPING,
+	MetadataAccessType,
 	NEEDS_AGG_SUFFIX,
 	NEEDS_FILTER_SUFFIX,
 	NUMBER_OF_FILTER_OPTIONS_DEFAULT,
 	NUMBER_OF_OPTIONS_PER_AGGREGATE,
 	OCCURRENCE_TYPE,
-	Operator,
 	ORDER_MAPPINGS,
+	Operator,
 	OrderProperty,
 	type QueryBuilderInputInfo,
 	QueryType,
@@ -38,10 +38,10 @@ import {
 	VALUE_OPERATORS,
 } from './elasticsearch.consts';
 
-import { AND, applyFilter, OR } from '~modules/ie-objects/elasticsearch/queryBuilder.helpers';
+import { AND, OR, applyFilter } from '~modules/ie-objects/elasticsearch/queryBuilder.helpers';
 import { GroupId, GroupName } from '~modules/users/types';
 import { PaginationHelper } from '~shared/helpers/pagination';
-import { type SortDirection } from '~shared/types';
+import type { SortDirection } from '~shared/types';
 
 (jsep as any).removeAllBinaryOps();
 (jsep as any).removeAllUnaryOps();
@@ -82,29 +82,21 @@ export class QueryBuilder {
 				IE_OBJECTS_SEARCH_FILTER_FIELD_IN_METADATA_ALL.includes(filter.field)
 			);
 
-			let queryFromMetadataLimitedFilters:
-				| ElasticsearchSubQuery
-				| Record<string, never>
-				| null = null;
+			let queryFromMetadataLimitedFilters: ElasticsearchSubQuery | Record<string, never> | null =
+				null;
 
 			if (filtersMetadataLimited.length === filtersMetadataAll.length) {
 				// If there are filters that can only be applied to the full metadata set and not to the limited metadata set
 				// Then we skip searching the limited metadata set, since the result ie objects might not fully comply with all filters
-				queryFromMetadataLimitedFilters = this.buildFilterObject(
+				queryFromMetadataLimitedFilters = QueryBuilder.buildFilterObject(
 					filtersMetadataLimited,
 					inputInfo,
 					MetadataAccessType.LIMITED
 				);
 			}
 
-			const queryFromMetadataAllFilters:
-				| ElasticsearchSubQuery
-				| Record<string, never>
-				| null = this.buildFilterObject(
-				filtersMetadataAll,
-				inputInfo,
-				MetadataAccessType.ALL
-			);
+			const queryFromMetadataAllFilters: ElasticsearchSubQuery | Record<string, never> | null =
+				QueryBuilder.buildFilterObject(filtersMetadataAll, inputInfo, MetadataAccessType.ALL);
 
 			// Build the license checks for the elastic search query in 6 parts:
 			// 1) Check schema_license contains "PUBLIC-METADATA-LTD"
@@ -114,17 +106,17 @@ export class QueryBuilder {
 			// 5) Check if the user is a KIOSK or CP_ADMIN user
 			// 6) Check if the user is a key user and object has INTRA_CP_METADATA_ALL or INTRA_CP_CONTENT license
 			const licensesFilterPublicLimited: ElasticsearchSubQuery[] =
-				this.buildLicensesFilterPublicLimited();
+				QueryBuilder.buildLicensesFilterPublicLimited();
 			const licensesFilterPublicAll: ElasticsearchSubQuery[] =
-				this.buildLicensesFilterPublicAll();
+				QueryBuilder.buildLicensesFilterPublicAll();
 			const licensesFilterVisitorSpaceFullAccess: ElasticsearchSubQuery[] =
-				this.buildLicensesFilterVisitorSpaceFullAccess(inputInfo);
+				QueryBuilder.buildLicensesFilterVisitorSpaceFullAccess(inputInfo);
 			const licensesFilterVisitorSpaceFolderAccess: ElasticsearchSubQuery[] =
-				this.buildLicensesFilterVisitorSpaceFolderAccess(inputInfo);
+				QueryBuilder.buildLicensesFilterVisitorSpaceFolderAccess(inputInfo);
 			const licensesFilterIntraCpFullAccess: ElasticsearchSubQuery[] =
-				this.buildLicensesFilterKioskAndCpAdmin(inputInfo);
+				QueryBuilder.buildLicensesFilterKioskAndCpAdmin(inputInfo);
 			const licensesFilterKeyUsers: ElasticsearchSubQuery[] =
-				this.buildLicensesFilterKeyUsers(inputInfo);
+				QueryBuilder.buildLicensesFilterKeyUsers(inputInfo);
 
 			const { offset, limit } = PaginationHelper.convertPagination(
 				searchRequest.page,
@@ -138,10 +130,13 @@ export class QueryBuilder {
 			const from = clamp(offset, 0, max);
 
 			// Specify the aggs objects with optional search terms
-			const aggs = this.buildAggsObject(searchRequest);
+			const aggs = QueryBuilder.buildAggsObject(searchRequest);
 
 			// Add sorting
-			const sort = this.buildSortArray(searchRequest.orderProp, searchRequest.orderDirection);
+			const sort = QueryBuilder.buildSortArray(
+				searchRequest.orderProp,
+				searchRequest.orderDirection
+			);
 
 			/**
 			 * Assemble the complete query object:
@@ -266,6 +261,18 @@ export class QueryBuilder {
 		elasticKey: string,
 		searchFilter: SearchFilter
 	): { occurrenceType: string; query: any } {
+		if (searchFilter.field === IeObjectsSearchFilterField.CREATOR) {
+			// Creator is always the full name, so we can collapse "contains" under "is" and collapse "contains_not" under "is_not"
+			// https://meemoo.atlassian.net/browse/ARC-1844?focusedCommentId=58372
+			return {
+				occurrenceType: OCCURRENCE_TYPE[searchFilter.operator],
+				query: {
+					term: {
+						'schema_creator_text.keyword': searchFilter.value,
+					},
+				},
+			};
+		}
 		if (
 			FLATTENED_FIELDS.includes(searchFilter.field) &&
 			[Operator.CONTAINS, Operator.CONTAINS_NOT].includes(searchFilter.operator)
@@ -293,7 +300,7 @@ export class QueryBuilder {
 				occurrenceType: OCCURRENCE_TYPE[searchFilter.operator],
 				query: {
 					query_string: {
-						query: searchFilter.value.toLowerCase() + '*',
+						query: `${searchFilter.value.toLowerCase()}*`,
 						default_field: elasticKey,
 					},
 				},
@@ -303,16 +310,16 @@ export class QueryBuilder {
 		// Is, IsNot
 
 		// must, must_not, filter
-		const occurrenceType = this.getOccurrenceType(searchFilter.operator);
+		const occurrenceType = QueryBuilder.getOccurrenceType(searchFilter.operator);
 
 		// Filter value the user typed in
-		const value = this.buildValue(searchFilter);
+		const value = QueryBuilder.buildValue(searchFilter);
 
 		// term, terms, range, match, query_string
-		const queryType: QueryType = this.getQueryType(searchFilter, value);
+		const queryType: QueryType = QueryBuilder.getQueryType(searchFilter, value);
 
 		// Append .keyword if needed
-		const queryKey = elasticKey + this.filterSuffix(searchFilter.field);
+		const queryKey = elasticKey + QueryBuilder.filterSuffix(searchFilter.field);
 
 		return {
 			occurrenceType,
@@ -356,9 +363,9 @@ export class QueryBuilder {
 		if (inputInfo.user?.getGroupName() === GroupName.KIOSK_VISITOR) {
 			filterArray.push({
 				terms: {
-					[ElasticsearchField.schema_maintainer +
-					'.' +
-					ElasticsearchField.schema_identifier]: [inputInfo.user?.getOrganisationId()],
+					[`${ElasticsearchField.schema_maintainer}.${ElasticsearchField.schema_identifier}`]: [
+						inputInfo.user?.getOrganisationId(),
+					],
 				},
 			});
 		}
@@ -371,21 +378,22 @@ export class QueryBuilder {
 			IeObjectsSearchFilterField.CONSULTABLE_PUBLIC_DOMAIN,
 			IeObjectsSearchFilterField.RELEASE_DATE,
 		];
-		if (
-			filters?.some((filter: SearchFilter) => customSearchFilterFields.includes(filter.field))
-		) {
-			const customFilters = this.determineCustomFilters(filters, inputInfo);
+		let validatedFilters = filters;
+		if (filters?.some((filter: SearchFilter) => customSearchFilterFields.includes(filter.field))) {
+			const customFilters = QueryBuilder.determineCustomFilters(filters, inputInfo);
 
 			// apply determined consultable filters if there are any
-			customFilters.forEach((customFilter) => applyFilter(filterObject, customFilter));
+			for (const customFilter of customFilters) {
+				applyFilter(filterObject, customFilter);
+			}
 			// Remove CONSULTABLE_ONLY_ON_LOCATION and CONSULTABLE_MEDIA filter entries from the filter list,
 			// since they have been handled above and should not be handled by the standard field filtering logic.
-			filters = filters.filter(
+			validatedFilters = filters.filter(
 				(filter: SearchFilter) => !customSearchFilterFields.includes(filter.field)
 			);
 		}
 
-		forEach(filters, (searchFilter: SearchFilter) => {
+		for (const searchFilter of validatedFilters) {
 			// First, check for special 'multi match fields'. Fields like query, name and description
 			// query multiple fields at once
 			if (MULTI_MATCH_FIELDS.includes(searchFilter.field)) {
@@ -394,31 +402,33 @@ export class QueryBuilder {
 						`Value cannot be empty when filtering on field '${searchFilter.field}'`
 					);
 				}
-				if (this.isFuzzyOperator(searchFilter.operator)) {
+				if (QueryBuilder.isFuzzyOperator(searchFilter.operator)) {
 					// Use a multi field search template to fuzzy search in elasticsearch across multiple fields
 
-					let textFilters;
+					let textFilters: any[];
 					if (searchFilter.field === IeObjectsSearchFilterField.QUERY) {
 						// We only want to parse a boolean query if it contains some boolean operators or quotes or parentheses
-						if (this.isBooleanSearchTerm(searchFilter.value)) {
-							textFilters = [
-								convertNodeToEsQueryFilterObjects(
-									jsep(encodeSearchterm(searchFilter.value)),
-									{
-										fuzzy: MULTI_MATCH_QUERY_MAPPING.fuzzy.query[
-											metadataAccessType
-										],
-										exact: MULTI_MATCH_QUERY_MAPPING.exact.query[
-											metadataAccessType
-										],
-									},
-									searchFilter
-								),
-							];
+						if (QueryBuilder.isBooleanSearchTerm(searchFilter.value)) {
+							try {
+								textFilters = [
+									convertNodeToEsQueryFilterObjects(
+										jsep(encodeSearchterm(searchFilter.value)),
+										{
+											fuzzy: MULTI_MATCH_QUERY_MAPPING.fuzzy.query[metadataAccessType],
+											exact: MULTI_MATCH_QUERY_MAPPING.exact.query[metadataAccessType],
+										},
+										searchFilter
+									),
+								];
+							} catch (err) {
+								// Search term with logical operators could not be parsed
+								// Fall back to regular text search
+								const searchTemplate = MULTI_MATCH_QUERY_MAPPING.fuzzy.query[metadataAccessType];
+								textFilters = [buildFreeTextFilter(searchTemplate, searchFilter)];
+							}
 						} else {
 							// If no boolean operators were found, do a simple text search using the fuzzy search term template
-							const searchTemplate =
-								MULTI_MATCH_QUERY_MAPPING.fuzzy.query[metadataAccessType];
+							const searchTemplate = MULTI_MATCH_QUERY_MAPPING.fuzzy.query[metadataAccessType];
 							textFilters = [buildFreeTextFilter(searchTemplate, searchFilter)];
 						}
 					} else {
@@ -427,42 +437,38 @@ export class QueryBuilder {
 						textFilters = [buildFreeTextFilter(searchTemplate, searchFilter)];
 					}
 
-					textFilters.forEach((filter: any[]) =>
+					for (const filter of textFilters) {
 						applyFilter(filterObject, {
-							occurrenceType: this.getOccurrenceType(searchFilter.operator),
+							occurrenceType: QueryBuilder.getOccurrenceType(searchFilter.operator),
 							query: filter,
-						})
-					);
-					return;
-				} else {
-					// Exact match
-					// Use a multi field search template to exact search in elasticsearch across multiple fields
-					const searchTemplate =
-						MULTI_MATCH_QUERY_MAPPING.exact[searchFilter.field][metadataAccessType];
-
-					if (!searchTemplate) {
-						throw new BadRequestException(
-							`An exact search is not supported for multi field: '${searchFilter.field}'`
-						);
+						});
 					}
-
-					const textFilter = buildFreeTextFilter(searchTemplate, searchFilter);
-
-					applyFilter(filterObject, {
-						occurrenceType: this.getOccurrenceType(searchFilter.operator),
-						query: textFilter,
-					});
-					return;
+					continue;
 				}
+				// Exact match
+				// Use a multi field search template to exact search in elasticsearch across multiple fields
+				const searchTemplate =
+					MULTI_MATCH_QUERY_MAPPING.exact[searchFilter.field][metadataAccessType];
+
+				if (!searchTemplate) {
+					throw new BadRequestException(
+						`An exact search is not supported for multi field: '${searchFilter.field}'`
+					);
+				}
+
+				const textFilter = buildFreeTextFilter(searchTemplate, searchFilter);
+
+				applyFilter(filterObject, {
+					occurrenceType: QueryBuilder.getOccurrenceType(searchFilter.operator),
+					query: textFilter,
+				});
+				continue;
 			}
 			/**
 			 * query/advanced query fields are NOT allowed to be queried with the is/isNot operator
-			 * name and description are also multi_match fields, but they are allowed to be queried using is/isNot operator
+			 * name is a multi_match field, but is allowed to be queried using is/isNot operator
 			 */
-			if (
-				MULTI_MATCH_FIELDS.includes(searchFilter.field) &&
-				[IeObjectsSearchFilterField.QUERY].includes(searchFilter.field)
-			) {
+			if (searchFilter.field === IeObjectsSearchFilterField.QUERY) {
 				throw new BadRequestException(
 					`Field '${searchFilter.field}' cannot be queried with the '${searchFilter.operator}' operator.`
 				);
@@ -476,9 +482,9 @@ export class QueryBuilder {
 				);
 			}
 
-			const advancedFilter = this.buildFilter(elasticKey, searchFilter);
+			const advancedFilter = QueryBuilder.buildFilter(elasticKey, searchFilter);
 			applyFilter(filterObject, advancedFilter);
-		});
+		}
 
 		if (filterArray.length > 0) {
 			applyFilter(filterObject, {
@@ -487,11 +493,7 @@ export class QueryBuilder {
 			});
 		}
 
-		if (
-			!filterObject.bool?.must &&
-			!filterObject.bool?.must_not &&
-			!filterObject.bool?.filter
-		) {
+		if (!filterObject.bool?.must && !filterObject.bool?.must_not && !filterObject.bool?.filter) {
 			return {};
 		}
 
@@ -538,16 +540,13 @@ export class QueryBuilder {
 				query: [
 					{
 						terms: {
-							[ElasticsearchField.schema_maintainer +
-							'.' +
-							ElasticsearchField.schema_identifier]: inputInfo?.spacesIds,
+							[`${ElasticsearchField.schema_maintainer}.${ElasticsearchField.schema_identifier}`]:
+								inputInfo?.spacesIds,
 						},
 					},
 					{
 						terms: {
-							[ElasticsearchField.schema_license]: [
-								IeObjectLicense.BEZOEKERTOOL_CONTENT,
-							],
+							[ElasticsearchField.schema_license]: [IeObjectLicense.BEZOEKERTOOL_CONTENT],
 						},
 					},
 				],
@@ -575,23 +574,17 @@ export class QueryBuilder {
 					OR([
 						{
 							terms: {
-								[ElasticsearchField.schema_license]: [
-									IeObjectLicense.PUBLIEK_CONTENT,
-								],
+								[ElasticsearchField.schema_license]: [IeObjectLicense.PUBLIEK_CONTENT],
 							},
 						},
 						{
 							terms: {
-								[ElasticsearchField.schema_license]: [
-									IeObjectLicense.BEZOEKERTOOL_CONTENT,
-								],
+								[ElasticsearchField.schema_license]: [IeObjectLicense.BEZOEKERTOOL_CONTENT],
 							},
 						},
 						{
 							terms: {
-								[ElasticsearchField.schema_license]: [
-									IeObjectLicense.INTRA_CP_CONTENT,
-								],
+								[ElasticsearchField.schema_license]: [IeObjectLicense.INTRA_CP_CONTENT],
 							},
 						},
 					]),
@@ -707,9 +700,8 @@ export class QueryBuilder {
 			AND([
 				{
 					terms: {
-						[ElasticsearchField.schema_maintainer +
-						'.' +
-						ElasticsearchField.schema_identifier]: visitorSpaceInfo.visitorSpaceIds,
+						[`${ElasticsearchField.schema_maintainer}.${ElasticsearchField.schema_identifier}`]:
+							visitorSpaceInfo.visitorSpaceIds,
 					},
 				},
 				{
@@ -777,11 +769,8 @@ export class QueryBuilder {
 				AND([
 					{
 						terms: {
-							[ElasticsearchField.schema_maintainer +
-							'.' +
-							ElasticsearchField.schema_identifier]: isNil(user?.getOrganisationId())
-								? []
-								: [user?.getOrganisationId()],
+							[`${ElasticsearchField.schema_maintainer}.${ElasticsearchField.schema_identifier}`]:
+								isNil(user?.getOrganisationId()) ? [] : [user?.getOrganisationId()],
 						},
 					},
 					{
@@ -830,11 +819,8 @@ export class QueryBuilder {
 							should: [
 								{
 									terms: {
-										[ElasticsearchField.schema_maintainer +
-										'.' +
-										ElasticsearchField.schema_identifier]: [
-											user?.getOrganisationId(),
-										],
+										[`${ElasticsearchField.schema_maintainer}.${ElasticsearchField.schema_identifier}`]:
+											[user?.getOrganisationId()],
 									},
 								},
 								{
@@ -875,18 +861,15 @@ export class QueryBuilder {
 			const elasticProperty =
 				READABLE_TO_ELASTIC_FILTER_NAMES[aggProperty as IeObjectsSearchFilterField];
 			if (!elasticProperty) {
-				throw new InternalServerErrorException(
-					`Failed to resolve agg property: ${aggProperty}`
-				);
+				throw new InternalServerErrorException(`Failed to resolve agg property: ${aggProperty}`);
 			}
 
 			aggs[elasticProperty] = {
 				terms: {
-					field: elasticProperty + this.aggSuffix(aggProperty),
+					field: elasticProperty + QueryBuilder.aggSuffix(aggProperty),
 					size:
-						NUMBER_OF_OPTIONS_PER_AGGREGATE[
-							aggProperty as IeObjectsSearchFilterField
-						] ?? NUMBER_OF_FILTER_OPTIONS_DEFAULT,
+						NUMBER_OF_OPTIONS_PER_AGGREGATE[aggProperty as IeObjectsSearchFilterField] ??
+						NUMBER_OF_FILTER_OPTIONS_DEFAULT,
 				},
 			};
 			// }

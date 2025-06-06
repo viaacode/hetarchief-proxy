@@ -4,11 +4,11 @@ import { Idp } from '@viaa/avo2-types';
 
 import { UsersService } from './users.service';
 
-import {
-	type GetUserByIdentityIdQuery,
-	type InsertUserMutation,
-	type UpdateUserLastAccessDateMutation,
-	type UpdateUserProfileMutation,
+import type {
+	GetUserByIdentityIdQuery,
+	InsertUserMutation,
+	UpdateUserLastAccessDateMutation,
+	UpdateUserProfileMutation,
 } from '~generated/graphql-db-types-hetarchief';
 import { mockUserResponse } from '~modules/users/services/__mock__/user.mock';
 import { GroupId, GroupName, Permission, type User } from '~modules/users/types';

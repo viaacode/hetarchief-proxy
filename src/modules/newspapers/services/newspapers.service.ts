@@ -1,11 +1,12 @@
-import https, { type RequestOptions } from 'https';
+import https, { type RequestOptions } from 'node:https';
 
 import { DataService } from '@meemoo/admin-core-api';
 import { Injectable } from '@nestjs/common';
+
 import { ConfigService } from '@nestjs/config';
 import { sortBy } from 'lodash';
 
-import { type Configuration } from '~config';
+import type { Configuration } from '~config';
 
 import {
 	GetNewspaperTitlesDocument,
@@ -42,7 +43,7 @@ export class NewspapersService {
 						resolve(urlStream);
 					} else {
 						reject(
-							customError(`https request failed`, null, {
+							customError('https request failed', null, {
 								hostname: options.hostname,
 								path: options.path,
 								referer: options.headers?.Referer,

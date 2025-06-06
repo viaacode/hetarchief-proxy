@@ -17,21 +17,26 @@ import {
 import { ApiTags } from '@nestjs/swagger';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import * as promiseUtils from 'blend-promise-utils';
-import { Request } from 'express';
+import type { Request } from 'express';
 import { isNil } from 'lodash';
 
 import { type Folder, type FolderShared, FolderStatus } from '../types';
 
 import { EmailTemplate } from '~modules/campaign-monitor/campaign-monitor.types';
+
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
+
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
 import { CreateOrUpdateFolderDto, FolderObjectsQueryDto } from '~modules/folders/dto/folders.dto';
+
 import { FoldersService } from '~modules/folders/services/folders.service';
 import { convertSchemaIdentifierToId } from '~modules/ie-objects/helpers/convert-schema-identifier-to-id';
 import { type IeObject, IeObjectLicense } from '~modules/ie-objects/ie-objects.types';
+
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
+
 import { UsersService } from '~modules/users/services/users.service';
 import { Permission } from '~modules/users/types';
 import { Ip } from '~shared/decorators/ip.decorator';
@@ -69,41 +74,27 @@ export class FoldersController {
 			});
 		}
 
-		const folders = await this.foldersService.findFoldersByUser(
-			user.getId(),
-			referer,
-			ip,
-			1,
-			1000
-		);
+		const folders = await this.foldersService.findFoldersByUser(user.getId(), referer, ip, 1, 1000);
 
 		// Limit access to the objects in the folders
 		const visitorSpaceAccessInfo =
 			await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
 
-		folders.items.forEach((folder) => {
+		for (const folder of folders.items) {
 			folder.objects = (folder.objects ?? []).map((object) => {
 				if (!object) {
 					console.error(
-						new CustomError(
-							'Trying to limit metadata on null ie object in folder',
-							null,
-							{
-								object,
-								folderId: folder.id,
-								folderName: folder.name,
-							}
-						)
+						new CustomError('Trying to limit metadata on null ie object in folder', null, {
+							object,
+							folderId: folder.id,
+							folderName: folder.name,
+						})
 					);
 					return {}; // ieObject in folder no longer exists
 				}
-				return this.ieObjectsService.limitObjectInFolder(
-					object,
-					user,
-					visitorSpaceAccessInfo
-				);
+				return this.ieObjectsService.limitObjectInFolder(object, user, visitorSpaceAccessInfo);
 			});
-		});
+		}
 
 		return folders;
 	}
@@ -144,23 +135,17 @@ export class FoldersController {
 						// Check if all relevant licenses are intra cp licenses
 						.filter(
 							(license) =>
-								![
-									IeObjectLicense.INTRA_CP_CONTENT,
-									IeObjectLicense.INTRA_CP_METADATA_ALL,
-								].includes(license)
+								![IeObjectLicense.INTRA_CP_CONTENT, IeObjectLicense.INTRA_CP_METADATA_ALL].includes(
+									license
+								)
 						).length === 0;
 				if (!isKeyUser && hasOnlyIntraCpLicenses) {
 					return false;
-				} else {
-					return true;
 				}
+				return true;
 			})
 			.map((object) => {
-				return this.ieObjectsService.limitObjectInFolder(
-					object,
-					user,
-					visitorSpaceAccessInfo
-				);
+				return this.ieObjectsService.limitObjectInFolder(object, user, visitorSpaceAccessInfo);
 			});
 
 		return folderObjects;
@@ -197,13 +182,7 @@ export class FoldersController {
 		@Body() updateFolderDto: CreateOrUpdateFolderDto,
 		@SessionUser() user: SessionUserEntity
 	): Promise<Folder> {
-		return await this.foldersService.update(
-			folderId,
-			user.getId(),
-			updateFolderDto,
-			referer,
-			ip
-		);
+		return await this.foldersService.update(folderId, user.getId(), updateFolderDto, referer, ip);
 	}
 
 	@Delete(':folderId')
@@ -216,9 +195,8 @@ export class FoldersController {
 		const affectedRows = await this.foldersService.delete(folderId, user.getId());
 		if (affectedRows > 0) {
 			return { status: 'the folder has been deleted' };
-		} else {
-			return { status: 'no folders found with that id' };
 		}
+		return { status: 'no folders found with that id' };
 	}
 
 	@Post(':folderId/objects/:objectSchemaIdentifier')
@@ -293,9 +271,8 @@ export class FoldersController {
 		);
 		if (affectedRows > 0) {
 			return { status: 'the object has been deleted' };
-		} else {
-			return { status: 'no object found with that id in that folder' };
 		}
+		return { status: 'no object found with that id in that folder' };
 	}
 
 	@Patch(':oldFolderId/objects/:objectSchemaIdentifier/move')

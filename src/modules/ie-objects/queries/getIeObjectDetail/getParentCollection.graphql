@@ -3,8 +3,8 @@ query getParentCollection($ieObjectId: String!) {
 		where: { intellectual_entity_id: { _eq: $ieObjectId } }
 	) {
 		collection {
-			id
-			schema_identifier
+			id # Abraham URI
+			schema_identifier # Abraham ID
 			schema_name
 			collection_type
 			isPreceededBy {

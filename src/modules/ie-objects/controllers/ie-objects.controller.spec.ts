@@ -6,8 +6,8 @@ import {
 import { NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Test, type TestingModule } from '@nestjs/testing';
-import { type IPagination } from '@studiohyperdrive/pagination';
-import { type Request, type Response } from 'express';
+import type { IPagination } from '@studiohyperdrive/pagination';
+import type { Request, Response } from 'express';
 import { cloneDeep } from 'lodash';
 
 import { type IeObject, IeObjectLicense, type RelatedIeObject } from '../ie-objects.types';
@@ -29,7 +29,7 @@ import { OrganisationsService } from '~modules/organisations/services/organisati
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { mockVisitRequest } from '~modules/visits/services/__mocks__/cp_visit';
 import { VisitsService } from '~modules/visits/services/visits.service';
-import { type VisitRequest } from '~modules/visits/types';
+import type { VisitRequest } from '~modules/visits/types';
 import { mockTranslationsService } from '~shared/helpers/mockTranslationsService';
 import { TestingLogger } from '~shared/logging/test-logger';
 import { mockConfigService } from '~shared/test/mock-config-service';
@@ -214,12 +214,7 @@ describe('IeObjectsController', () => {
 			mockIeObjectsService.findByIeObjectId.mockResolvedValueOnce(mockResponse);
 
 			try {
-				await ieObjectsController.getIeObjectsByIds(
-					['1'],
-					'referer',
-					'127.0.0.1',
-					mockSessionUser
-				);
+				await ieObjectsController.getIeObjectsByIds(['1'], 'referer', '127.0.0.1', mockSessionUser);
 				fail('Expected an error to be thrown if the object does not exist');
 			} catch (err) {
 				expect(err.message).toEqual('You do not have access to this object');
@@ -229,18 +224,11 @@ describe('IeObjectsController', () => {
 
 		it('should throw a not found exception if the object does not exist', async () => {
 			mockIeObjectsService.findByIeObjectId.mockRejectedValueOnce(
-				new NotFoundException(
-					`Object IE with id '${mockIeObject1.schemaIdentifier}' not found`
-				)
+				new NotFoundException(`Object IE with id '${mockIeObject1.schemaIdentifier}' not found`)
 			);
 
 			try {
-				await ieObjectsController.getIeObjectsByIds(
-					['1'],
-					'referer',
-					'127.0.0.1',
-					mockSessionUser
-				);
+				await ieObjectsController.getIeObjectsByIds(['1'], 'referer', '127.0.0.1', mockSessionUser);
 				fail('Expected an error to be thrown if the object does not exist');
 			} catch (err) {
 				expect(err.message).toEqual(
@@ -319,11 +307,7 @@ describe('IeObjectsController', () => {
 			};
 			mockIeObjectsService.findByIeObjectId.mockResolvedValueOnce(mockResponse);
 
-			const result = await ieObjectsController.getIeObjectSeoById(
-				'referer',
-				'127.0.0.1',
-				'1'
-			);
+			const result = await ieObjectsController.getIeObjectSeoById('referer', '127.0.0.1', '1');
 
 			expect(result).toEqual({
 				name: mockIeObject1.name,
@@ -339,11 +323,7 @@ describe('IeObjectsController', () => {
 			};
 			mockIeObjectsService.findByIeObjectId.mockResolvedValueOnce(mockResponse);
 
-			const result = await ieObjectsController.getIeObjectSeoById(
-				'referer',
-				'127.0.0.1',
-				'1'
-			);
+			const result = await ieObjectsController.getIeObjectSeoById('referer', '127.0.0.1', '1');
 
 			expect(result).toEqual({
 				name: mockIeObject1.name,
@@ -359,11 +339,7 @@ describe('IeObjectsController', () => {
 			};
 			mockIeObjectsService.findByIeObjectId.mockResolvedValueOnce(mockResponse);
 
-			const result = await ieObjectsController.getIeObjectSeoById(
-				'referer',
-				'127.0.0.1',
-				'1'
-			);
+			const result = await ieObjectsController.getIeObjectSeoById('referer', '127.0.0.1', '1');
 
 			expect(result).toEqual({
 				name: null,

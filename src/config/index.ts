@@ -1,9 +1,9 @@
 import { ForbiddenException } from '@nestjs/common';
 import { NotImplementedException } from '@nestjs/common/exceptions/not-implemented.exception';
-import { type DatabaseType } from '@viaa/avo2-types';
+import type { DatabaseType } from '@viaa/avo2-types';
 
 import { DEFAULT_CONFIG } from './config.const';
-import { type Configuration } from './config.types';
+import type { Configuration } from './config.types';
 
 const WHITE_LIST_DOMAINS = ['http://localhost:3000'];
 const VALID_MIME_TYPES: string[] = ['image/png', 'image/gif', 'image/jpeg', 'image/bmp'];
@@ -39,7 +39,7 @@ const config = (): Configuration => {
 		ENVIRONMENT: env,
 		HOST: getEnvValue('HOST', true),
 		CLIENT_HOST: getEnvValue('CLIENT_HOST', true),
-		PORT: parseInt(getEnvValue('PORT', false), 10) || DEFAULT_CONFIG.port,
+		PORT: Number.parseInt(getEnvValue('PORT', false), 10) || DEFAULT_CONFIG.port,
 		PROXY_API_KEY: getEnvValue('PROXY_API_KEY', true),
 		GRAPHQL_URL_HET_ARCHIEF: getEnvValue('GRAPHQL_URL_HET_ARCHIEF', true),
 		GRAPHQL_SECRET_HET_ARCHIEF: getEnvValue('GRAPHQL_SECRET_HET_ARCHIEF', env !== 'local'), // Not required on localhost
@@ -48,7 +48,7 @@ const config = (): Configuration => {
 		GRAPHQL_SECRET_LOGGING: getEnvValue('GRAPHQL_SECRET_LOGGING', true),
 		DATABASE_APPLICATION_TYPE: getEnvValue('DATABASE_APPLICATION_TYPE', true) as DatabaseType,
 		COOKIE_SECRET: getEnvValue('COOKIE_SECRET', true),
-		COOKIE_MAX_AGE: parseInt(getEnvValue('COOKIE_MAX_AGE', true), 10),
+		COOKIE_MAX_AGE: Number.parseInt(getEnvValue('COOKIE_MAX_AGE', true), 10),
 		REDIS_CONNECTION_STRING: getEnvValue('REDIS_CONNECTION_STRING', false),
 		ELASTICSEARCH_URL: getEnvValue('ELASTICSEARCH_URL', true),
 		SSUM_REGISTRATION_PAGE: getEnvValue('SSUM_REGISTRATION_PAGE', true),
@@ -78,7 +78,7 @@ const config = (): Configuration => {
 		TICKET_SERVICE_CERTIFICATE: cleanMultilineEnv(getEnvValue('TICKET_SERVICE_CERT', true)),
 		TICKET_SERVICE_KEY: cleanMultilineEnv(getEnvValue('TICKET_SERVICE_KEY', true)),
 		TICKET_SERVICE_PASSPHRASE: getEnvValue('TICKET_SERVICE_PASSPHRASE', true),
-		TICKET_SERVICE_MAXAGE: parseInt(getEnvValue('TICKET_SERVICE_MAXAGE', true), 10),
+		TICKET_SERVICE_MAXAGE: Number.parseInt(getEnvValue('TICKET_SERVICE_MAXAGE', true), 10),
 		MEDIA_SERVICE_URL: getEnvValue('MEDIA_SERVICE_URL', true),
 		ENABLE_SEND_EMAIL: getEnvValue('ENABLE_SEND_EMAIL', true) === 'true',
 		CAMPAIGN_MONITOR_API_ENDPOINT: getEnvValue('CAMPAIGN_MONITOR_API_ENDPOINT', false),

@@ -1,4 +1,4 @@
-import { type IeObjectsVisitorSpaceInfo } from '../ie-objects.types';
+import type { IeObjectsVisitorSpaceInfo } from '../ie-objects.types';
 
 import identifierSearchQueryExact from './templates/exact/identifier-search-query.json';
 import nameSearchQueryExact from './templates/exact/name-search-query.json';
@@ -9,7 +9,7 @@ import nameSearchQueryFuzzy from './templates/fuzzy/name-search-query.json';
 import searchQueryAllFuzzy from './templates/fuzzy/search-query--metadata-all.json';
 import searchQueryLimitedFuzzy from './templates/fuzzy/search-query--metadata-limited.json';
 
-import { type SessionUserEntity } from '~modules/users/classes/session-user';
+import { SessionUserEntity } from '~modules/users/classes/session-user';
 
 export const ALL_INDEXES = 'or-*';
 
@@ -72,8 +72,6 @@ export const IE_OBJECTS_SEARCH_FILTER_FIELD_IN_METADATA_LIMITED: IeObjectsSearch
 	IeObjectsSearchFilterField.RELEASE_DATE,
 	IeObjectsSearchFilterField.MAINTAINER_ID,
 	IeObjectsSearchFilterField.CONSULTABLE_ONLY_ON_LOCATION,
-	IeObjectsSearchFilterField.CONSULTABLE_MEDIA,
-	IeObjectsSearchFilterField.CONSULTABLE_PUBLIC_DOMAIN,
 	IeObjectsSearchFilterField.CAST,
 	IeObjectsSearchFilterField.IDENTIFIER,
 	IeObjectsSearchFilterField.LICENSES,
@@ -87,6 +85,8 @@ export const IE_OBJECTS_SEARCH_FILTER_FIELD_IN_METADATA_ALL: IeObjectsSearchFilt
 	IeObjectsSearchFilterField.CAPTION,
 	IeObjectsSearchFilterField.PUBLISHER,
 	IeObjectsSearchFilterField.OBJECT_TYPE,
+	IeObjectsSearchFilterField.CONSULTABLE_MEDIA,
+	IeObjectsSearchFilterField.CONSULTABLE_PUBLIC_DOMAIN,
 ];
 
 export enum Operator {

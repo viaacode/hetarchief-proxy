@@ -8,6 +8,7 @@ import {
 	type GetFirstObjectIdQuery,
 } from '~generated/graphql-db-types-hetarchief';
 import { ALL_INDEXES } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
+
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 
 @Injectable()

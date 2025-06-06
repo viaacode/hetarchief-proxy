@@ -12,8 +12,8 @@ export function getLocaleFromUrl(url: string): Locale {
 	return (
 		Object.values(Locale).find((languageCode) => {
 			return (
-				urlWithoutQueryParams.includes(process.env.CLIENT_URL + '/' + languageCode + '/') ||
-				urlWithoutQueryParams === process.env.CLIENT_URL + '/' + languageCode
+				urlWithoutQueryParams.includes(`${process.env.CLIENT_URL}/${languageCode}/`) ||
+				urlWithoutQueryParams === `${process.env.CLIENT_URL}/${languageCode}`
 			);
 		}) || Locale.Nl
 	);

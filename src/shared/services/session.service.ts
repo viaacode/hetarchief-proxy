@@ -1,11 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
+
 import { ConfigService } from '@nestjs/config';
 import connectRedis from 'connect-redis';
 import session from 'express-session';
-import { createClient, type RedisClient } from 'redis';
+import { type RedisClient, createClient } from 'redis';
 import SessionFileStore from 'session-file-store';
 
-import { type Configuration } from '~config';
+import type { Configuration } from '~config';
 
 const FileStore = SessionFileStore(session);
 
@@ -83,9 +84,7 @@ export class SessionService {
 			this.getRedisClient().on('error', (err) =>
 				this.logger.error('Redis Client Error', err.stack)
 			);
-			this.getRedisClient().on('connect', () =>
-				this.logger.log('Connected to redis successfully')
-			);
+			this.getRedisClient().on('connect', () => this.logger.log('Connected to redis successfully'));
 
 			sessionConfig.store = new redisStore({ client: this.getRedisClient() });
 

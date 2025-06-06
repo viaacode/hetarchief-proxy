@@ -14,9 +14,9 @@ import {
 	UseGuards,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { type IPagination } from '@studiohyperdrive/pagination';
+import type { IPagination } from '@studiohyperdrive/pagination';
 import { Idp } from '@viaa/avo2-types';
-import { Request } from 'express';
+import type { Request } from 'express';
 import { isEmpty, isNil } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -26,7 +26,8 @@ import {
 	SendRequestListDto,
 	UpdateMaterialRequestDto,
 } from '../dto/material-requests.dto';
-import { type MaterialRequest, type MaterialRequestMaintainer } from '../material-requests.types';
+import type { MaterialRequest, MaterialRequestMaintainer } from '../material-requests.types';
+
 import { MaterialRequestsService } from '../services/material-requests.service';
 
 import { EventsService } from '~modules/events/services/events.service';
@@ -59,9 +60,9 @@ export class MaterialRequestsController {
 		@SessionUser() user: SessionUserEntity
 	): Promise<IPagination<MaterialRequest>> {
 		// ARC-1472 Validate the user group if the request has maintainerIds
-		queryDto = this.validateMaintainerIdsWithUserGroup(user, queryDto);
+		const validatedQueryDto = this.validateMaintainerIdsWithUserGroup(user, queryDto);
 
-		return await this.materialRequestsService.findAll(queryDto, {
+		return await this.materialRequestsService.findAll(validatedQueryDto, {
 			userProfileId: user.getId(),
 			userGroup: user.getGroupId(),
 			isPersonal: false,
@@ -78,9 +79,9 @@ export class MaterialRequestsController {
 		@SessionUser() user: SessionUserEntity
 	): Promise<IPagination<MaterialRequest>> {
 		// ARC-1472 Validate the user group if the request has maintainerIds
-		queryDto = this.validateMaintainerIdsWithUserGroup(user, queryDto);
+		const validatedQueryDto = this.validateMaintainerIdsWithUserGroup(user, queryDto);
 
-		return this.materialRequestsService.findAll(queryDto, {
+		return this.materialRequestsService.findAll(validatedQueryDto, {
 			userProfileId: user.getId(),
 			userGroup: user.getGroupId(),
 			isPersonal: true,
@@ -151,9 +152,8 @@ export class MaterialRequestsController {
 
 		if (affectedRows > 0) {
 			return { status: 'Material request has been deleted' };
-		} else {
-			return { status: `no material requests found with that id: ${materialRequestId}` };
 		}
+		return { status: `no material requests found with that id: ${materialRequestId}` };
 	}
 
 	@Post('/send')
@@ -176,11 +176,11 @@ export class MaterialRequestsController {
 				isPersonal: true,
 			});
 
-			materialRequests.items.forEach((materialRequest: MaterialRequest) => {
+			for (const materialRequest of materialRequests.items) {
 				// If the email does not exist, the campaign monitor service will default to process.env.MEEMOO_MAINTAINER_MISSING_EMAIL_FALLBACK
 				materialRequest.requesterCapacity = sendRequestListDto.type;
 				materialRequest.organisation = sendRequestListDto?.organisation;
-			});
+			}
 
 			await this.materialRequestsService.sendRequestList(
 				materialRequests.items,

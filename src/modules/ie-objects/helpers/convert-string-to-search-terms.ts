@@ -11,15 +11,30 @@ jsep.addBinaryOp('OR', 1);
 
 jsep.addUnaryOp('NOT');
 
-export function convertStringToSearchTerms(searchQuery: string): string[] {
+export interface SearchTermParseResult {
+	plainTextSearchTerms: string[];
+	parsedSuccessfully: boolean;
+}
+
+export function convertStringToSearchTerms(searchQuery: string): SearchTermParseResult {
 	if (!searchQuery) {
-		return [];
+		return { plainTextSearchTerms: [], parsedSuccessfully: true };
 	}
 	try {
 		const node = jsep(encodeSearchterm(searchQuery));
-		return convertNodeToSearchTerms(node);
+		const plainTextSearchTerms = convertNodeToSearchTerms(node);
+		return { plainTextSearchTerms, parsedSuccessfully: true };
 	} catch (err) {
-		return compact(searchQuery.replace(/[^a-zA-Z0-9]+/g, ' ').split(' '));
+		const plainTextSearchTerms = compact(
+			searchQuery
+				.replace(/([^A-Z])AND([^A-Z])/g, '$1 $2')
+				.replace(/([^A-Z])OR([^A-Z])/g, '$1 $2')
+				.replace(/([^A-Z])NOT([^A-Z])/g, '$1 $2')
+				.replace(/[^a-zA-Z0-9]+/g, ' ')
+				.replace(/ +/, ' ')
+				.split(' ')
+		);
+		return { plainTextSearchTerms, parsedSuccessfully: false };
 	}
 }
 

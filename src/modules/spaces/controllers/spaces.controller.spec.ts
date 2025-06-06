@@ -133,9 +133,7 @@ describe('SpacesController', () => {
 			} catch (e) {
 				error = e;
 			}
-			expect(error.message).toEqual(
-				'You do not have the right permissions to query this data'
-			);
+			expect(error.message).toEqual('You do not have the right permissions to query this data');
 		});
 
 		it('should throw an exception on illegal querying of PENDING spaces', async () => {
@@ -148,9 +146,7 @@ describe('SpacesController', () => {
 			} catch (e) {
 				error = e;
 			}
-			expect(error.message).toEqual(
-				'You do not have the right permissions to query this data'
-			);
+			expect(error.message).toEqual('You do not have the right permissions to query this data');
 		});
 	});
 
@@ -170,10 +166,7 @@ describe('SpacesController', () => {
 
 			let error: any;
 			try {
-				await spacesController.getSpaceBySlug(
-					'huis-van-alijn',
-					new SessionUserEntity(mockUser)
-				);
+				await spacesController.getSpaceBySlug('huis-van-alijn', new SessionUserEntity(mockUser));
 			} catch (err) {
 				error = err;
 			}

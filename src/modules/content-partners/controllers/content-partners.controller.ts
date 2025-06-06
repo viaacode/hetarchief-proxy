@@ -1,10 +1,11 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { type IPagination } from '@studiohyperdrive/pagination';
+import type { IPagination } from '@studiohyperdrive/pagination';
 
 import { ContentPartnersQueryDto } from '../dto/content-partners.dto';
+
 import { ContentPartnersService } from '../services/content-partners.service';
-import { type ContentPartner } from '../types';
+import type { ContentPartner } from '../types';
 
 @ApiTags('Content-partners')
 @Controller('content-partners')

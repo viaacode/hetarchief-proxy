@@ -1,7 +1,7 @@
 import { DataService } from '@meemoo/admin-core-api';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Test, type TestingModule } from '@nestjs/testing';
-import { type Cache } from 'cache-manager';
+import type { Cache } from 'cache-manager';
 
 import { mockGqlOrganisation, mockOrganisation1 } from '../mocks/organisations.mocks';
 

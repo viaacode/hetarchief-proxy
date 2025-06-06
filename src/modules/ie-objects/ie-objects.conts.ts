@@ -256,29 +256,27 @@ function getXmlTextValue(value: any): XmlNode[] {
 				text: value,
 			},
 		];
-	} else {
-		return [
-			{
-				type: 'text',
-				text: JSON.stringify(value),
-			},
-		];
 	}
+	return [
+		{
+			type: 'text',
+			text: JSON.stringify(value),
+		},
+	];
 }
 
 function getArrayXmlValue(name: string, values: string[]): XmlNode[] {
 	return uniq(values || []).flatMap((value: string) => {
 		if (Array.isArray(value)) {
 			return getArrayXmlValue(name, value);
-		} else {
-			return [
-				{
-					type: 'element',
-					name,
-					elements: getXmlTextValue(value),
-				},
-			];
 		}
+		return [
+			{
+				type: 'element',
+				name,
+				elements: getXmlTextValue(value),
+			},
+		];
 	});
 }
 
@@ -597,8 +595,8 @@ export const IE_OBJECT_PROPERTY_TO_DUBLIN_CORE: Record<string, XmlNodeFactory> =
 };
 
 export const AUTOCOMPLETE_FIELD_TO_ES_FIELD_NAME: Record<AutocompleteField, string> = {
-	[AutocompleteField.creator]: AutocompleteEsField.creator + '.sayt',
-	[AutocompleteField.locationCreated]: AutocompleteEsField.locationCreated + '.sayt',
-	[AutocompleteField.newspaperSeriesName]: AutocompleteEsField.newspaperSeriesName + '.sayt',
-	[AutocompleteField.mentions]: AutocompleteEsField.mentions + '.sayt',
+	[AutocompleteField.creator]: AutocompleteEsField.creator,
+	[AutocompleteField.locationCreated]: AutocompleteEsField.locationCreated,
+	[AutocompleteField.newspaperSeriesName]: AutocompleteEsField.newspaperSeriesName,
+	[AutocompleteField.mentions]: AutocompleteEsField.mentions,
 };

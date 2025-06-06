@@ -4,10 +4,11 @@ import {
 	type ExecutionContext,
 	Injectable,
 } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { type Request } from 'express';
 
-import { type Configuration } from '~config';
+import { ConfigService } from '@nestjs/config';
+import type { Request } from 'express';
+
+import type { Configuration } from '~config';
 
 export const APIKEY = 'apikey';
 
@@ -26,9 +27,8 @@ export class ApiKeyGuard implements CanActivate {
 	private static getRequest(ctxOrReq: ExecutionContext | Request): Request {
 		if ((ctxOrReq as ExecutionContext).switchToHttp) {
 			return (ctxOrReq as ExecutionContext).switchToHttp().getRequest();
-		} else {
-			return ctxOrReq as Request;
 		}
+		return ctxOrReq as Request;
 	}
 
 	private static getApiKey(ctxOrReq: ExecutionContext | Request): string | undefined {

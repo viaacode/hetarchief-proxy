@@ -1,4 +1,4 @@
-import { type TranslationsService } from '@meemoo/admin-core-api';
+import { TranslationsService } from '@meemoo/admin-core-api';
 
 import { getTranslationFallback } from '~shared/helpers/translation-fallback';
 

@@ -1,4 +1,4 @@
-import * as path from 'path';
+import * as path from 'node:path';
 
 import { TranslationsService } from '@meemoo/admin-core-api';
 import { Controller, Get, Header, HttpCode, Query } from '@nestjs/common';

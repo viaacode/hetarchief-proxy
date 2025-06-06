@@ -1,8 +1,8 @@
-import {
-	type FindOrganisationsBySchemaIdsQuery,
-	type GetOrganisationBySlugQuery,
+import type {
+	FindOrganisationsBySchemaIdsQuery,
+	GetOrganisationBySlugQuery,
 } from '~generated/graphql-db-types-hetarchief';
-import { type IeObjectSector } from '~modules/ie-objects/ie-objects.types';
+import type { IeObjectSector } from '~modules/ie-objects/ie-objects.types';
 
 export enum OrganisationPreference {
 	logoEmbedding = 'logo-embedding',

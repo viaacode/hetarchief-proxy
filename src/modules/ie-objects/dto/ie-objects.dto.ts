@@ -9,6 +9,7 @@ import {
 	OrderProperty,
 } from '../elasticsearch/elasticsearch.consts';
 
+import { AutocompleteField } from '~modules/ie-objects/ie-objects.types';
 import { commaSeparatedStringToArray } from '~shared/helpers/comma-separated-string-to-array';
 import { SortDirection } from '~shared/types';
 
@@ -33,7 +34,8 @@ export class SearchFilter {
 	})
 	@ApiPropertyOptional({
 		type: [String],
-		description: `The array of values for the filter. Uses the OR operator. If both multiValue and value are set, value is ignored.`,
+		description:
+			'The array of values for the filter. Uses the OR operator. If both multiValue and value are set, value is ignored.',
 	})
 	multiValue?: Array<string>;
 
@@ -41,7 +43,8 @@ export class SearchFilter {
 	@IsOptional()
 	@ApiPropertyOptional({
 		type: String,
-		description: `The single value for the filter. If both multiValue and value are set, value is ignored.`,
+		description:
+			'The single value for the filter. If both multiValue and value are set, value is ignored.',
 	})
 	value?: string;
 
@@ -52,6 +55,34 @@ export class SearchFilter {
 		description: `The query operator. Options are: ${Object.values(Operator).join(', ')}`,
 	})
 	operator: Operator;
+}
+
+export class IeObjectsAutocompleteQueryDto {
+	@Type(() => SearchFilter)
+	@IsArray()
+	@ValidateNested()
+	@ApiPropertyOptional({
+		type: () => [SearchFilter],
+		description: 'Filter to query the media items',
+	})
+	filters?: SearchFilter[];
+
+	@IsString()
+	@Type(() => String)
+	@ApiProperty({
+		type: String,
+		description: 'The field to find autocomplete values for',
+		enum: AutocompleteField,
+	})
+	field: AutocompleteField;
+
+	@IsString()
+	@Type(() => String)
+	@ApiProperty({
+		type: String,
+		description: 'The text the user already typed in the autocomplete input field',
+	})
+	query: string;
 }
 
 export class IeObjectsQueryDto {

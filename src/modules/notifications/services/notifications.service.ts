@@ -8,7 +8,7 @@ import { HttpException, Injectable, Logger, NotFoundException } from '@nestjs/co
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { isPast } from 'date-fns';
 
-import { type DeleteNotificationDto } from '../dto/notifications.dto';
+import { DeleteNotificationDto } from '../dto/notifications.dto';
 import {
 	type GqlNotification,
 	type Notification,
@@ -36,13 +36,14 @@ import {
 	type UpdateNotificationMutationVariables,
 } from '~generated/graphql-db-types-hetarchief';
 import { EmailTemplate } from '~modules/campaign-monitor/campaign-monitor.types';
+
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
-import { type VisitorSpace } from '~modules/spaces/spaces.types';
-import { type SessionUserEntity } from '~modules/users/classes/session-user';
-import { type VisitRequest } from '~modules/visits/types';
+import type { VisitorSpace } from '~modules/spaces/spaces.types';
+import { SessionUserEntity } from '~modules/users/classes/session-user';
+import type { VisitRequest } from '~modules/visits/types';
 import { convertToDate, formatAsBelgianDate } from '~shared/helpers/format-belgian-date';
 import { PaginationHelper } from '~shared/helpers/pagination';
-import { type Recipient } from '~shared/types/types';
+import type { Recipient } from '~shared/types/types';
 
 @Injectable()
 export class NotificationsService {
@@ -58,9 +59,7 @@ export class NotificationsService {
 	/**
 	 * Adapt a notification as returned by a typical graphQl response to our internal notification data model
 	 */
-	public adaptNotification(
-		gqlNotification: GqlNotification | undefined
-	): Notification | undefined {
+	public adaptNotification(gqlNotification: GqlNotification | undefined): Notification | undefined {
 		if (!gqlNotification) {
 			return undefined;
 		}

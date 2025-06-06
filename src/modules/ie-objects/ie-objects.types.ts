@@ -1,6 +1,6 @@
-import { type IPagination } from '@studiohyperdrive/pagination';
+import type { IPagination } from '@studiohyperdrive/pagination';
 
-import { type FindAllIeObjectsByFolderIdQuery } from '~generated/graphql-db-types-hetarchief';
+import type { FindAllIeObjectsByFolderIdQuery } from '~generated/graphql-db-types-hetarchief';
 
 export type IeObjectSectorLicenseMatrix = Readonly<
 	Record<IeObjectSector, Readonly<IeObjectLicense[]>>
@@ -89,22 +89,20 @@ export interface IeObjectRepresentation {
 	files: IeObjectFile[];
 }
 
+/**
+ * This info now lives in another place and no longer resides under is_part_of
+ * alternatief → table: graph.schema_alternate_name, column: schema_alternate_name
+ * serienummer  → table: graph.collection, column: schema_season_number
+ * seizoennummer → table: graph.collection, column: schema_season_number
+ * registratie →  not available for now
+ * stuk → not available for now
+ */
 export enum IsPartOfKey {
-	alternatief = 'alternatief',
-	archief = 'archief',
-	deelarchief = 'deelarchief',
-	deelreeks = 'deelreeks',
-	programma = 'programma',
-	reeks = 'reeks',
-	seizoen = 'seizoen',
-	serie = 'serie',
-	stuk = 'stuk',
-	episode = 'episode',
-	aflevering = 'aflevering',
-	bestanddeel = 'bestanddeel',
-	registratie = 'registratie',
-	serienummer = 'serienummer',
-	seizoennummer = 'seizoennummer',
+	archive = 'archive',
+	program = 'program',
+	season = 'season',
+	series = 'series',
+	newspaper = 'newspaper',
 }
 
 export interface IsPartOfCollection {
@@ -135,7 +133,6 @@ export interface IeObject {
 	dctermsMedium: string[];
 	premisIdentifier: Record<string, string>[];
 	abstract: string;
-	// biome-ignore lint/suspicious/noExplicitAny: we don't know the exact format of this field, since each organisation can enter it differently
 	creator: any;
 	dateCreated: string | null;
 	datePublished: string;
@@ -154,7 +151,6 @@ export interface IeObject {
 	maintainerOverlay: boolean | null;
 	maintainerIiifAgreement?: boolean | null;
 	name: string;
-	// biome-ignore lint/suspicious/noExplicitAny: we don't know the exact format of this field, since each organisation can enter it differently
 	publisher: any;
 	spatial: string[];
 	temporal: string[];
@@ -162,7 +158,6 @@ export interface IeObject {
 	accessThrough?: IeObjectAccessThrough[];
 	ebucoreObjectType?: string | null;
 	meemoofilmContainsEmbeddedCaption?: boolean;
-	// biome-ignore lint/suspicious/noExplicitAny: we don't know the exact format of this field, since each organisation can enter it differently
 	contributor?: any;
 	copyrightHolder?: string;
 	premisIsPartOf?: string | null;
@@ -181,7 +176,6 @@ export interface IeObject {
 	abrahamInfo?: {
 		id: string;
 		uri: string;
-		code: string;
 	};
 	synopsis: string;
 	collectionName?: string;
@@ -330,6 +324,7 @@ export interface ElasticsearchObject {
 export interface IeObjectsWithAggregations extends IPagination<Partial<IeObject>> {
 	aggregations: any;
 	searchTerms: string[];
+	searchTermsParsedSuccessfully: boolean;
 }
 
 export interface IeObjectsVisitorSpaceInfo {
@@ -407,7 +402,7 @@ export interface EsQueryAutocompleteMatchPhraseResponse {
 			_index: string;
 			_id: string;
 			_score: number;
-			fields: Record<AutocompleteEsField, string | string[]>;
+			fields: Record<AutocompleteEsField & '.sayt', string | string[]>;
 			_ignored?: string[];
 		}[];
 	};

@@ -10,7 +10,7 @@ export class ContentPartnersQueryDto {
 		if (input.value === undefined) {
 			return undefined;
 		}
-		return input.value === 'false' ? false : true;
+		return input.value !== 'false';
 	})
 	@IsOptional()
 	@ApiPropertyOptional({

@@ -4,19 +4,19 @@ import { format } from 'date-fns';
 
 import { FoldersService } from './folders.service';
 
-import {
-	type FindFolderIeObjectsByFolderIdQuery,
-	type FindFoldersByUserQuery,
-	type FindIeObjectBySchemaIdentifierQuery,
-	type FindIeObjectInFolderQuery,
-	type InsertFolderMutation,
-	type InsertIeObjectIntoFolderMutation,
-	type RemoveObjectFromFolderMutation,
-	type SoftDeleteFolderMutation,
-	type UpdateFolderMutation,
+import type {
+	FindFolderIeObjectsByFolderIdQuery,
+	FindFoldersByUserQuery,
+	FindIeObjectBySchemaIdentifierQuery,
+	FindIeObjectInFolderQuery,
+	InsertFolderMutation,
+	InsertIeObjectIntoFolderMutation,
+	RemoveObjectFromFolderMutation,
+	SoftDeleteFolderMutation,
+	UpdateFolderMutation,
 } from '~generated/graphql-db-types-hetarchief';
 import { mockGqlFolder } from '~modules/folders/services/__mocks__/users_folder';
-import { type FolderObjectLink, type GqlObject } from '~modules/folders/types';
+import type { FolderObjectLink, GqlObject } from '~modules/folders/types';
 import { type IeObject, IeObjectType, IsPartOfKey } from '~modules/ie-objects/ie-objects.types';
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { VisitsService } from '~modules/visits/services/visits.service';
@@ -199,13 +199,13 @@ const mockFolderObject: Partial<IeObject> & { folderEntryCreatedAt: string } = {
 		{
 			iri: 'http://data.viaa.be/terms/1.0#serie',
 			schemaIdentifier: '8s4jm2514q',
-			collectionType: IsPartOfKey.serie,
+			collectionType: IsPartOfKey.series,
 			name: 'Serie1',
 		},
 		{
 			iri: 'http://data.viaa.be/terms/1.0#programma',
 			schemaIdentifier: '8s4jm2514q',
-			collectionType: IsPartOfKey.programma,
+			collectionType: IsPartOfKey.program,
 			name: 'Programma1',
 		},
 	],
@@ -274,9 +274,7 @@ describe('FoldersService', () => {
 			// test some sample keys
 			expect(adapted.id).toEqual(mockGqlFolder.id);
 			expect(adapted.name).toEqual(mockGqlFolder.name);
-			expect(adapted.usedForLimitedAccessUntil).toEqual(
-				format(mockVisitEndDates[1], 'yyyy-MM-dd')
-			);
+			expect(adapted.usedForLimitedAccessUntil).toEqual(format(mockVisitEndDates[1], 'yyyy-MM-dd'));
 			expect(adapted.userProfileId).toEqual(mockGqlFolder.user_profile_id);
 			expect(adapted.objects[0].schemaIdentifier).toEqual(
 				mockGqlFolder.intellectualEntities[0].intellectualEntity.schema_identifier
@@ -424,9 +422,7 @@ describe('FoldersService', () => {
 				},
 			};
 			mockDataService.execute.mockResolvedValueOnce(mockData);
-			// eslint-disable-next-line @typescript-eslint/no-unused-vars
-			const { id, created_at, updated_at, intellectualEntities, ...mockFolder } =
-				mockGqlFolder1;
+			const { id, created_at, updated_at, intellectualEntities, ...mockFolder } = mockGqlFolder1;
 			const response = await foldersService.create(mockFolder, 'referer', '');
 			expect(response.id).toBe(mockGqlFolder1.id);
 		});
@@ -440,15 +436,8 @@ describe('FoldersService', () => {
 				},
 			};
 			mockDataService.execute.mockResolvedValueOnce(mockData);
-			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			const { id, created_at, updated_at, user_profile_id, ...mockFolder } = mockGqlFolder1;
-			const response = await foldersService.update(
-				id,
-				user_profile_id,
-				mockFolder,
-				'referer',
-				''
-			);
+			const response = await foldersService.update(id, user_profile_id, mockFolder, 'referer', '');
 			expect(response.id).toBe(mockGqlFolder1.id);
 		});
 	});

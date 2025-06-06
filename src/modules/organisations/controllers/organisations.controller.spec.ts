@@ -1,6 +1,6 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
-import { type Organisation } from '../organisations.types';
+import type { Organisation } from '../organisations.types';
 import { OrganisationsService } from '../services/organisations.service';
 
 import { OrganisationsController } from './organisations.controller';
@@ -54,9 +54,7 @@ describe('OrganisationsController', () => {
 
 			const result = await organisationsController.getOrganisationBySlug('non-existent-slug');
 			expect(result).toBeNull();
-			expect(organisationsService.findOrganisationBySlug).toHaveBeenCalledWith(
-				'non-existent-slug'
-			);
+			expect(organisationsService.findOrganisationBySlug).toHaveBeenCalledWith('non-existent-slug');
 		});
 	});
 
@@ -71,9 +69,9 @@ describe('OrganisationsController', () => {
 
 			const result = await organisationsController.fetchOrganisationsForMaintainerGrid(10);
 			expect(result).toEqual(mockOrganisations);
-			expect(
-				organisationsService.fetchRandomContentPartnersForMaintainerGrid
-			).toHaveBeenCalledWith(10);
+			expect(organisationsService.fetchRandomContentPartnersForMaintainerGrid).toHaveBeenCalledWith(
+				10
+			);
 		});
 	});
 });

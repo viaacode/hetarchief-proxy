@@ -1,7 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
+
 import { ConfigService } from '@nestjs/config';
 
-import { type Configuration } from '~config';
+import type { Configuration } from '~config';
 
 import { SamlService } from './saml.service';
 

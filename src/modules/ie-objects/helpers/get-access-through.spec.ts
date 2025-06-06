@@ -15,9 +15,7 @@ describe('Access Through', () => {
 		IeObjectLicense.INTRA_CP_CONTENT,
 		IeObjectLicense.INTRA_CP_METADATA_ALL,
 	].some((license: IeObjectLicense) =>
-		[IeObjectLicense.PUBLIEK_METADATA_LTD, IeObjectLicense.PUBLIEK_METADATA_ALL].includes(
-			license
-		)
+		[IeObjectLicense.PUBLIEK_METADATA_LTD, IeObjectLicense.PUBLIEK_METADATA_ALL].includes(license)
 	);
 	// INT - ARC2.0: test cases voor licenties en gebruikersgroepen - https://docs.google.com/document/d/1Ejqag9Do7QngIBp2nj6sY0M1dYqO4Dh9ZFw0W3Vuwow/edit
 	// -------------------------------------------------------------------------
