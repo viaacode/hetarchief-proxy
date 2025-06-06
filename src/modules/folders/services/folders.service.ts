@@ -1,11 +1,17 @@
-// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
 import { DataService } from '@meemoo/admin-core-api';
 import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { format } from 'date-fns';
 import { isEmpty, maxBy } from 'lodash';
 
-import type { Folder, FolderObjectLink, GqlFolder, GqlFolderWithIeObjects, GqlObject, GqlUpdateFolder } from '../types';
+import type {
+	Folder,
+	FolderObjectLink,
+	GqlFolder,
+	GqlFolderWithIeObjects,
+	GqlObject,
+	GqlUpdateFolder,
+} from '../types';
 
 import {
 	FindFolderByIdDocument,
@@ -40,11 +46,11 @@ import {
 	type UpdateFolderMutationVariables,
 	type Users_Folder_Ie_Bool_Exp,
 } from '~generated/graphql-db-types-hetarchief';
-import type { FolderObjectsQueryDto } from '~modules/folders/dto/folders.dto';
+import { FolderObjectsQueryDto } from '~modules/folders/dto/folders.dto';
 import type { IeObject, IeObjectSector, IeObjectType } from '~modules/ie-objects/ie-objects.types';
-// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
+
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
-// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
+
 import { VisitsService } from '~modules/visits/services/visits.service';
 import { PaginationHelper } from '~shared/helpers/pagination';
 

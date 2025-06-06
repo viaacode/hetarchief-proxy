@@ -1,7 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
-// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
 import { StatusService } from '../services/status.service';
 
 @ApiTags('Status')

@@ -1,6 +1,6 @@
-import type { CampaignMonitorVisitData } from './dto/campaign-monitor.dto';
+import { CampaignMonitorVisitData } from './dto/campaign-monitor.dto';
 
-import type { SendRequestListDto } from '~modules/material-requests/dto/material-requests.dto';
+import { SendRequestListDto } from '~modules/material-requests/dto/material-requests.dto';
 import type { MaterialRequest } from '~modules/material-requests/material-requests.types';
 import type { VisitRequest } from '~modules/visits/types';
 import type { Locale, Recipient } from '~shared/types/types';

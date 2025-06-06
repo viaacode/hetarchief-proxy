@@ -1,5 +1,10 @@
-import { BadRequestException, type CanActivate, type ExecutionContext, Injectable } from '@nestjs/common';
-// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
+import {
+	BadRequestException,
+	type CanActivate,
+	type ExecutionContext,
+	Injectable,
+} from '@nestjs/common';
+
 import { ConfigService } from '@nestjs/config';
 import type { Request } from 'express';
 

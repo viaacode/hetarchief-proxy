@@ -1,7 +1,6 @@
-// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
 import { Locale, TranslationsService } from '@meemoo/admin-core-api';
 import { Injectable } from '@nestjs/common';
-// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
+
 import { ConfigService } from '@nestjs/config';
 import { Idp } from '@viaa/avo2-types';
 import { intersection } from 'lodash';
@@ -12,7 +11,7 @@ import type { Configuration } from '~config';
 import { NO_ORG_LINKED } from '../constants';
 
 import type { Organisation } from '~modules/organisations/organisations.types';
-// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
+
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { GroupId } from '~modules/users/types';
 import { LdapApp, type LdapUser } from '~shared/auth/auth.types';

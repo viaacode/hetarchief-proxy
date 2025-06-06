@@ -2,8 +2,8 @@ import { Controller, Get, Query } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import type { IPagination } from '@studiohyperdrive/pagination';
 
-import type { ContentPartnersQueryDto } from '../dto/content-partners.dto';
-// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
+import { ContentPartnersQueryDto } from '../dto/content-partners.dto';
+
 import { ContentPartnersService } from '../services/content-partners.service';
 import type { ContentPartner } from '../types';
 

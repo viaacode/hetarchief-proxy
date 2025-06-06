@@ -1,4 +1,4 @@
-import type { IeObjectsQueryDto } from '../dto/ie-objects.dto';
+import { IeObjectsQueryDto } from '../dto/ie-objects.dto';
 
 // This function adds quotes around the searchterms values of the IeObjectsQueryDto object
 export const convertQueryToLiteralString = (query: IeObjectsQueryDto): IeObjectsQueryDto => {

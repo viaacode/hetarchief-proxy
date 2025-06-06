@@ -1,21 +1,32 @@
-// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
-import { convertUserInfoToCommonUser, DataService, UserInfoType } from '@meemoo/admin-core-api';
+import { DataService, UserInfoType, convertUserInfoToCommonUser } from '@meemoo/admin-core-api';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import type { Avo, Idp } from '@viaa/avo2-types';
 
-import type { CreateUserDto, UpdateAcceptedTosDto, UpdateUserDto, UpdateUserLangDto } from '../dto/users.dto';
-import { type GqlPermissionData, type GqlUser, GroupIdToName, type GroupName, type Permission, type User } from '../types';
+import {
+	CreateUserDto,
+	UpdateAcceptedTosDto,
+	UpdateUserDto,
+	UpdateUserLangDto,
+} from '../dto/users.dto';
+import {
+	type GqlPermissionData,
+	type GqlUser,
+	GroupIdToName,
+	type GroupName,
+	type Permission,
+	type User,
+} from '../types';
 
 import {
 	GetUserByEmailDocument,
 	type GetUserByEmailQuery,
 	type GetUserByEmailQueryVariables,
 	GetUserByIdDocument,
+	type GetUserByIdQuery,
+	type GetUserByIdQueryVariables,
 	GetUserByIdentityIdDocument,
 	type GetUserByIdentityIdQuery,
 	type GetUserByIdentityIdQueryVariables,
-	type GetUserByIdQuery,
-	type GetUserByIdQueryVariables,
 	InsertUserDocument,
 	InsertUserIdentityDocument,
 	type InsertUserIdentityMutation,

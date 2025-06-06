@@ -1,7 +1,19 @@
-// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
 import { TranslationsService } from '@meemoo/admin-core-api';
-import { Body, Controller, Get, HttpException, HttpStatus, Logger, Post, Query, Redirect, Req, Res, Session } from '@nestjs/common';
-// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
+import {
+	Body,
+	Controller,
+	Get,
+	HttpException,
+	HttpStatus,
+	Logger,
+	Post,
+	Query,
+	Redirect,
+	Req,
+	Res,
+	Session,
+} from '@nestjs/common';
+
 import { ConfigService } from '@nestjs/config';
 import { ApiTags } from '@nestjs/swagger';
 import { Idp } from '@viaa/avo2-types';
@@ -12,22 +24,22 @@ import { stringifyUrl } from 'query-string';
 import type { Configuration } from '~config';
 
 import { NO_ORG_LINKED } from '../constants';
-// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
+
 import { HetArchiefService } from '../services/het-archief.service';
-// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
+
 import { IdpService } from '../services/idp.service';
 import type { RelayState, SamlCallbackBody } from '../types';
 
 import { orgNotLinkedLogoutAndRedirectToErrorPage } from '~modules/auth/org-not-linked-redirect';
-// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
+
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
-// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
+
 import { FoldersService } from '~modules/folders/services/folders.service';
 import type { Organisation } from '~modules/organisations/organisations.types';
-// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
+
 import { OrganisationsService } from '~modules/organisations/services/organisations.service';
-// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
+
 import { UsersService } from '~modules/users/services/users.service';
 import { Permission } from '~modules/users/types';
 import { LdapApp, type LdapUser } from '~shared/auth/auth.types';

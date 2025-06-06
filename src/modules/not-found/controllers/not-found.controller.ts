@@ -1,12 +1,11 @@
 import * as path from 'node:path';
 
-// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
 import { TranslationsService } from '@meemoo/admin-core-api';
 import { Controller, Get, Header, HttpCode, Query } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import * as fs from 'fs-extra';
 
-import type { SessionUserEntity } from '~modules/users/classes/session-user';
+import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { SessionUser } from '~shared/decorators/user.decorator';
 
 @ApiTags('Not found')

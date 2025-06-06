@@ -1,7 +1,7 @@
 import { BadRequestException } from '@nestjs/common';
-import type { baseTypes, Expression } from 'jsep';
+import type { Expression, baseTypes } from 'jsep';
 
-import type { SearchFilter } from '../dto/ie-objects.dto';
+import { SearchFilter } from '../dto/ie-objects.dto';
 
 import { decodeSearchterm } from './encode-search-term';
 

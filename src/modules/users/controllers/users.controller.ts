@@ -1,12 +1,21 @@
-import { Body, Controller, InternalServerErrorException, Logger, Param, ParseUUIDPipe, Patch, Session, UseGuards } from '@nestjs/common';
+import {
+	Body,
+	Controller,
+	InternalServerErrorException,
+	Logger,
+	Param,
+	ParseUUIDPipe,
+	Patch,
+	Session,
+	UseGuards,
+} from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
-import type { UpdateAcceptedTosDto, UpdateUserLangDto } from '../dto/users.dto';
-// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
+import { UpdateAcceptedTosDto, UpdateUserLangDto } from '../dto/users.dto';
+
 import { UsersService } from '../services/users.service';
 import type { User } from '../types';
 
-// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 import { SessionHelper } from '~shared/auth/session-helper';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';

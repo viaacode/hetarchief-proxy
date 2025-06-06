@@ -7,9 +7,10 @@ import {
 	EmailTemplate,
 	type MaterialRequestEmailInfo,
 } from '../campaign-monitor.types';
-import type {
-	CampaignMonitorConfirmationData,
+
+import {
 	CampaignMonitorConfirmMailQueryDto,
+	CampaignMonitorConfirmationData,
 	CampaignMonitorMaterialRequestData,
 	CampaignMonitorNewsletterUpdatePreferencesQueryDto,
 	RequestListItem,

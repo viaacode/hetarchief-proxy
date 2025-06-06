@@ -1,6 +1,15 @@
-// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
 import { Locale, TranslationsService } from '@meemoo/admin-core-api';
-import { Controller, ForbiddenException, Get, Headers, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import {
+	Controller,
+	ForbiddenException,
+	Get,
+	Headers,
+	Param,
+	Patch,
+	Post,
+	Query,
+	UseGuards,
+} from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import type { IPagination } from '@studiohyperdrive/pagination';
 import { addMonths } from 'date-fns';
@@ -8,11 +17,14 @@ import { addMonths } from 'date-fns';
 import { type Notification, NotificationStatus, NotificationType } from '../types';
 
 import type { App_Notification_Insert_Input } from '~generated/graphql-db-types-hetarchief';
-import type { CreateFromMaintenanceAlertDto, NotificationsQueryDto } from '~modules/notifications/dto/notifications.dto';
-// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
+import {
+	CreateFromMaintenanceAlertDto,
+	NotificationsQueryDto,
+} from '~modules/notifications/dto/notifications.dto';
+
 import { NotificationsService } from '~modules/notifications/services/notifications.service';
-import type { SessionUserEntity } from '~modules/users/classes/session-user';
-// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
+import { SessionUserEntity } from '~modules/users/classes/session-user';
+
 import { VisitsService } from '~modules/visits/services/visits.service';
 import type { VisitRequest } from '~modules/visits/types';
 import { SessionUser } from '~shared/decorators/user.decorator';

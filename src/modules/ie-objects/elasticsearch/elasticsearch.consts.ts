@@ -9,7 +9,7 @@ import nameSearchQueryFuzzy from './templates/fuzzy/name-search-query.json';
 import searchQueryAllFuzzy from './templates/fuzzy/search-query--metadata-all.json';
 import searchQueryLimitedFuzzy from './templates/fuzzy/search-query--metadata-limited.json';
 
-import type { SessionUserEntity } from '~modules/users/classes/session-user';
+import { SessionUserEntity } from '~modules/users/classes/session-user';
 
 export const ALL_INDEXES = 'or-*';
 

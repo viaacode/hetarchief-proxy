@@ -1,11 +1,14 @@
-// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
 import { DataService } from '@meemoo/admin-core-api';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Inject, Injectable, InternalServerErrorException } from '@nestjs/common';
 import type { Cache } from 'cache-manager';
 import { shuffle } from 'lodash';
 
-import type { GqlOrganisation, MaintainerGridOrganisation, Organisation } from '../organisations.types';
+import type {
+	GqlOrganisation,
+	MaintainerGridOrganisation,
+	Organisation,
+} from '../organisations.types';
 
 import {
 	FindOrganisationsBySchemaIdsDocument,

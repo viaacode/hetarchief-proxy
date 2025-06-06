@@ -1,10 +1,10 @@
 import type { ExecutionContext } from '@nestjs/common';
-// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
+
 import { ConfigService } from '@nestjs/config';
 
 import type { Configuration } from '~config';
 
-import { API_KEY_EXCEPTION, APIKEY, ApiKeyGuard } from '~shared/guards/api-key.guard';
+import { APIKEY, API_KEY_EXCEPTION, ApiKeyGuard } from '~shared/guards/api-key.guard';
 
 const mockApiKey = 'MySecretApiKey';
 

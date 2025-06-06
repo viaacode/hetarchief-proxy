@@ -1,7 +1,7 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
-import type { CreateTicketRequestDto } from '../dto/zendesk.dto';
+import { CreateTicketRequestDto } from '../dto/zendesk.dto';
 import { ZendeskService } from '../services/zendesk.service';
 import type { CreateTicketResponse } from '../zendesk.types';
 

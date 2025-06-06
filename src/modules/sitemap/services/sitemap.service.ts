@@ -1,7 +1,11 @@
 import { Readable } from 'node:stream';
 
-// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
-import { AssetsService, ContentPagesService, DataService, DbContentPage } from '@meemoo/admin-core-api';
+import {
+	AssetsService,
+	ContentPagesService,
+	DataService,
+	DbContentPage,
+} from '@meemoo/admin-core-api';
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { AssetType } from '@viaa/avo2-types';
 import { format } from 'date-fns';
@@ -10,12 +14,15 @@ import xmlFormat from 'xml-formatter';
 
 import type { SitemapConfig, SitemapItemInfo } from '../sitemap.types';
 
-import { GetSitemapConfigDocument, type GetSitemapConfigQuery } from '~generated/graphql-db-types-hetarchief';
+import {
+	GetSitemapConfigDocument,
+	type GetSitemapConfigQuery,
+} from '~generated/graphql-db-types-hetarchief';
 import { IeObjectLicense, type IeObjectsSitemap } from '~modules/ie-objects/ie-objects.types';
-// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
+
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { SITEMAP_XML_OBJECTS_SIZE } from '~modules/sitemap/sitemap.consts';
-// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
+
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { Locale, VisitorSpaceStatus } from '~shared/types/types';
 

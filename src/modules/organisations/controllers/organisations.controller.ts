@@ -2,7 +2,7 @@ import { Controller, Get, Param, Query } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
 import type { Organisation } from '~modules/organisations/organisations.types';
-// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
+
 import { OrganisationsService } from '~modules/organisations/services/organisations.service';
 
 @ApiTags('Organisations')

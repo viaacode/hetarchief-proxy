@@ -1,15 +1,17 @@
 import https, { type RequestOptions } from 'node:https';
 
-// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
 import { DataService } from '@meemoo/admin-core-api';
 import { Injectable } from '@nestjs/common';
-// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
+
 import { ConfigService } from '@nestjs/config';
 import { sortBy } from 'lodash';
 
 import type { Configuration } from '~config';
 
-import { GetNewspaperTitlesDocument, type GetNewspaperTitlesQuery } from '~generated/graphql-db-types-hetarchief';
+import {
+	GetNewspaperTitlesDocument,
+	type GetNewspaperTitlesQuery,
+} from '~generated/graphql-db-types-hetarchief';
 import type { NewspaperTitle } from '~modules/ie-objects/ie-objects.types';
 import { customError } from '~shared/helpers/custom-error';
 

@@ -2,7 +2,7 @@ import { BadRequestException, InternalServerErrorException } from '@nestjs/commo
 import jsep from 'jsep';
 import { clamp, forEach, isArray, isNil } from 'lodash';
 
-import type { IeObjectsQueryDto, SearchFilter } from '../dto/ie-objects.dto';
+import { IeObjectsQueryDto, SearchFilter } from '../dto/ie-objects.dto';
 import {
 	buildFreeTextFilter,
 	convertNodeToEsQueryFilterObjects,
@@ -21,16 +21,16 @@ import {
 	IeObjectsSearchFilterField,
 	MAX_COUNT_SEARCH_RESULTS,
 	MAX_NUMBER_SEARCH_RESULTS,
-	MetadataAccessType,
 	MULTI_MATCH_FIELDS,
 	MULTI_MATCH_QUERY_MAPPING,
+	MetadataAccessType,
 	NEEDS_AGG_SUFFIX,
 	NEEDS_FILTER_SUFFIX,
 	NUMBER_OF_FILTER_OPTIONS_DEFAULT,
 	NUMBER_OF_OPTIONS_PER_AGGREGATE,
 	OCCURRENCE_TYPE,
-	Operator,
 	ORDER_MAPPINGS,
+	Operator,
 	OrderProperty,
 	type QueryBuilderInputInfo,
 	QueryType,
@@ -38,7 +38,7 @@ import {
 	VALUE_OPERATORS,
 } from './elasticsearch.consts';
 
-import { AND, applyFilter, OR } from '~modules/ie-objects/elasticsearch/queryBuilder.helpers';
+import { AND, OR, applyFilter } from '~modules/ie-objects/elasticsearch/queryBuilder.helpers';
 import { GroupId, GroupName } from '~modules/users/types';
 import { PaginationHelper } from '~shared/helpers/pagination';
 import type { SortDirection } from '~shared/types';

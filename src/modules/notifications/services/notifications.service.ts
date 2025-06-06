@@ -1,11 +1,20 @@
-// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
-import { DataService, Locale, MaintenanceAlertsService, TranslationsService } from '@meemoo/admin-core-api';
+import {
+	DataService,
+	Locale,
+	MaintenanceAlertsService,
+	TranslationsService,
+} from '@meemoo/admin-core-api';
 import { HttpException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { isPast } from 'date-fns';
 
-import type { DeleteNotificationDto } from '../dto/notifications.dto';
-import { type GqlNotification, type Notification, NotificationStatus, NotificationType } from '../types';
+import { DeleteNotificationDto } from '../dto/notifications.dto';
+import {
+	type GqlNotification,
+	type Notification,
+	NotificationStatus,
+	NotificationType,
+} from '../types';
 
 import {
 	type App_Notification_Bool_Exp,
@@ -27,10 +36,10 @@ import {
 	type UpdateNotificationMutationVariables,
 } from '~generated/graphql-db-types-hetarchief';
 import { EmailTemplate } from '~modules/campaign-monitor/campaign-monitor.types';
-// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
+
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 import type { VisitorSpace } from '~modules/spaces/spaces.types';
-import type { SessionUserEntity } from '~modules/users/classes/session-user';
+import { SessionUserEntity } from '~modules/users/classes/session-user';
 import type { VisitRequest } from '~modules/visits/types';
 import { convertToDate, formatAsBelgianDate } from '~shared/helpers/format-belgian-date';
 import { PaginationHelper } from '~shared/helpers/pagination';

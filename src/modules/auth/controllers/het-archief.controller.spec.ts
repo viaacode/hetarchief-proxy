@@ -11,7 +11,6 @@ import { IdpService } from '../services/idp.service';
 
 import { HetArchiefController } from './het-archief.controller';
 
-// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 import { EventsService } from '~modules/events/services/events.service';
 import { FoldersService } from '~modules/folders/services/folders.service';

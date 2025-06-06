@@ -4,7 +4,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { Idp } from '@viaa/avo2-types';
 import { cloneDeep } from 'lodash';
 
-import type { CreateSpaceDto } from '../dto/spaces.dto';
+import { CreateSpaceDto } from '../dto/spaces.dto';
 
 import { mockGqlSpace } from './__mocks__/cp_space';
 import { SpacesService } from './spaces.service';

@@ -2,7 +2,6 @@
 // Disable consistent imports since they try to import IeObjectsQueryDto as a type
 // But that breaks the endpoint body validation
 
-// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
 import { PlayerTicketController, PlayerTicketService } from '@meemoo/admin-core-api';
 import {
 	BadRequestException,
@@ -18,7 +17,7 @@ import {
 	Req,
 	Res,
 } from '@nestjs/common';
-// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
+
 import { ConfigService } from '@nestjs/config';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import type { IPagination } from '@studiohyperdrive/pagination';
@@ -28,7 +27,7 @@ import { compact, intersection, isNil, kebabCase } from 'lodash';
 
 import type { Configuration } from '~config';
 
-import type {
+import {
 	IeObjectsAutocompleteQueryDto,
 	IeObjectsQueryDto,
 	IeObjectsSimilarQueryDto,
@@ -49,15 +48,18 @@ import {
 	type RelatedIeObject,
 	type RelatedIeObjects,
 } from '../ie-objects.types';
-// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
+
 import { IeObjectsService } from '../services/ie-objects.service';
 
-// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
-import { ALL_INDEXES, IeObjectsSearchFilterField, Operator } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
+import {
+	ALL_INDEXES,
+	IeObjectsSearchFilterField,
+	Operator,
+} from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
 import { convertSchemaIdentifierToId } from '~modules/ie-objects/helpers/convert-schema-identifier-to-id';
-import type { SessionUserEntity } from '~modules/users/classes/session-user';
+import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupName } from '~modules/users/types';
 import { Ip } from '~shared/decorators/ip.decorator';
 import { Referer } from '~shared/decorators/referer.decorator';
@@ -525,7 +527,7 @@ export class IeObjectsController {
 		}
 	}
 
-	@Get('metadata/autocomplete')
+	@Post('metadata/autocomplete')
 	public async getMetadataAutocomplete(
 		@Body() queryDto: IeObjectsAutocompleteQueryDto | null
 	): Promise<string[]> {

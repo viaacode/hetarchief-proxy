@@ -1,5 +1,11 @@
-import { type CanActivate, type ExecutionContext, ForbiddenException, Injectable, Logger } from '@nestjs/common';
-// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
+import {
+	type CanActivate,
+	type ExecutionContext,
+	ForbiddenException,
+	Injectable,
+	Logger,
+} from '@nestjs/common';
+
 import { Reflector } from '@nestjs/core';
 import type { Observable } from 'rxjs';
 

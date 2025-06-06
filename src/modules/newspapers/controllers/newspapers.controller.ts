@@ -1,7 +1,15 @@
-// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
 import { PlayerTicketService } from '@meemoo/admin-core-api';
-import { Controller, ForbiddenException, Get, Header, Param, Query, Req, Res } from '@nestjs/common';
-// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
+import {
+	Controller,
+	ForbiddenException,
+	Get,
+	Header,
+	Param,
+	Query,
+	Req,
+	Res,
+} from '@nestjs/common';
+
 import { ConfigService } from '@nestjs/config';
 import { ApiTags } from '@nestjs/swagger';
 import archiver from 'archiver';
@@ -11,10 +19,9 @@ import { cloneDeep, isNil } from 'lodash';
 
 import type { Configuration } from '~config';
 
-// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
-// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
+
 import { IeObjectsController } from '~modules/ie-objects/controllers/ie-objects.controller';
 import { convertObjectToCsv } from '~modules/ie-objects/helpers/convert-objects-to-csv';
 import { convertObjectToXml } from '~modules/ie-objects/helpers/convert-objects-to-xml';
@@ -24,9 +31,9 @@ import {
 	NEWSPAPER_MIME_TYPE_BROWSE_COPY,
 	NEWSPAPER_MIME_TYPE_IMAGE_API,
 } from '~modules/newspapers/newspapers.consts';
-// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
+
 import { NewspapersService } from '~modules/newspapers/services/newspapers.service';
-import type { SessionUserEntity } from '~modules/users/classes/session-user';
+import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Ip } from '~shared/decorators/ip.decorator';
 import { Referer } from '~shared/decorators/referer.decorator';
 import { SessionUser } from '~shared/decorators/user.decorator';

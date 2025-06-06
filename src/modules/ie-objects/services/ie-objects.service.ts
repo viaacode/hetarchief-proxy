@@ -1,11 +1,10 @@
 import { randomUUID } from 'node:crypto';
 import fs from 'node:fs/promises';
 
-// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
 import { DataService, PlayerTicketService } from '@meemoo/admin-core-api';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Inject, Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
-// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
+
 import { ConfigService } from '@nestjs/config';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { mapLimit } from 'blend-promise-utils';
@@ -15,7 +14,7 @@ import { compact, find, isArray, isEmpty, isNil, kebabCase, omitBy, orderBy } fr
 
 import type { Configuration } from '~config';
 
-import type { IeObjectsQueryDto, IeObjectsSimilarQueryDto } from '../dto/ie-objects.dto';
+import { IeObjectsQueryDto, IeObjectsSimilarQueryDto } from '../dto/ie-objects.dto';
 import { QueryBuilder } from '../elasticsearch/queryBuilder';
 import { convertQueryToLiteralString } from '../helpers/convert-query-to-literal-string';
 import { getSearchEndpoint } from '../helpers/get-search-endpoint';
@@ -34,10 +33,10 @@ import {
 	type IeObjectPages,
 	type IeObjectRepresentation,
 	type IeObjectSector,
+	IeObjectType,
 	type IeObjectsSitemap,
 	type IeObjectsVisitorSpaceInfo,
 	type IeObjectsWithAggregations,
-	IeObjectType,
 	type IsPartOfKey,
 	type Mention,
 	type RelatedIeObject,
@@ -78,11 +77,14 @@ import {
 } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
 import { AND } from '~modules/ie-objects/elasticsearch/queryBuilder.helpers';
 import { convertSchemaIdentifierToId } from '~modules/ie-objects/helpers/convert-schema-identifier-to-id';
-import { convertStringToSearchTerms, type SearchTermParseResult } from '~modules/ie-objects/helpers/convert-string-to-search-terms';
+import {
+	type SearchTermParseResult,
+	convertStringToSearchTerms,
+} from '~modules/ie-objects/helpers/convert-string-to-search-terms';
 import { AUTOCOMPLETE_FIELD_TO_ES_FIELD_NAME } from '~modules/ie-objects/ie-objects.conts';
 import {
-	CACHE_KEY_PREFIX_IE_OBJECT_DETAIL,
 	CACHE_KEY_PREFIX_IE_OBJECTS_SEARCH,
+	CACHE_KEY_PREFIX_IE_OBJECT_DETAIL,
 	IE_OBJECT_DETAIL_QUERIES,
 } from '~modules/ie-objects/services/ie-objects.service.consts';
 import {
@@ -94,11 +96,11 @@ import {
 	type IeObjectDetailResponseTypes,
 } from '~modules/ie-objects/services/ie-objects.service.types';
 import { OrganisationPreference } from '~modules/organisations/organisations.types';
-// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
+
 import { SpacesService } from '~modules/spaces/services/spaces.service';
-import type { SessionUserEntity } from '~modules/users/classes/session-user';
+import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupName } from '~modules/users/types';
-// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
+
 import { VisitsService } from '~modules/visits/services/visits.service';
 import { VisitStatus, VisitTimeframe } from '~modules/visits/types';
 import { customError } from '~shared/helpers/custom-error';

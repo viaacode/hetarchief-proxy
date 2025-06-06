@@ -1,4 +1,3 @@
-// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
 import { AssetsService, TranslationsService } from '@meemoo/admin-core-api';
 import {
 	BadRequestException,
@@ -22,12 +21,12 @@ import type { IPagination } from '@studiohyperdrive/pagination';
 import { AssetType } from '@viaa/avo2-types';
 import { uniqBy } from 'lodash';
 
-import type { CreateSpaceDto, SpacesQueryDto, UpdateSpaceDto } from '../dto/spaces.dto';
-// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
+import { CreateSpaceDto, SpacesQueryDto, UpdateSpaceDto } from '../dto/spaces.dto';
+
 import { SpacesService } from '../services/spaces.service';
 import type { VisitorSpace } from '../spaces.types';
 
-import type { SessionUserEntity } from '~modules/users/classes/session-user';
+import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupName, Permission } from '~modules/users/types';
 import { RequireAnyPermissions } from '~shared/decorators/require-any-permissions.decorator';
 import { RequireAllPermissions } from '~shared/decorators/require-permissions.decorator';

@@ -23,23 +23,20 @@ import { isNil } from 'lodash';
 import { type Folder, type FolderShared, FolderStatus } from '../types';
 
 import { EmailTemplate } from '~modules/campaign-monitor/campaign-monitor.types';
-// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
+
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
-// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
+
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
-import type {
-	CreateOrUpdateFolderDto,
-	FolderObjectsQueryDto,
-} from '~modules/folders/dto/folders.dto';
-// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
+import { CreateOrUpdateFolderDto, FolderObjectsQueryDto } from '~modules/folders/dto/folders.dto';
+
 import { FoldersService } from '~modules/folders/services/folders.service';
 import { convertSchemaIdentifierToId } from '~modules/ie-objects/helpers/convert-schema-identifier-to-id';
 import { type IeObject, IeObjectLicense } from '~modules/ie-objects/ie-objects.types';
-// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
+
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
-import type { SessionUserEntity } from '~modules/users/classes/session-user';
-// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
+import { SessionUserEntity } from '~modules/users/classes/session-user';
+
 import { UsersService } from '~modules/users/services/users.service';
 import { Permission } from '~modules/users/types';
 import { Ip } from '~shared/decorators/ip.decorator';

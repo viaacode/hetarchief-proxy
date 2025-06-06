@@ -1,5 +1,5 @@
 import type { Logger } from '@nestjs/common';
-// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
+
 import { ConfigService } from '@nestjs/config';
 import got from 'got';
 import { get } from 'lodash';

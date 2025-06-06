@@ -1,4 +1,3 @@
-// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
 import { DataService } from '@meemoo/admin-core-api';
 import { Injectable, Logger } from '@nestjs/common';
 
@@ -9,7 +8,7 @@ import {
 	type GetFirstObjectIdQuery,
 } from '~generated/graphql-db-types-hetarchief';
 import { ALL_INDEXES } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
-// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
+
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 
 @Injectable()

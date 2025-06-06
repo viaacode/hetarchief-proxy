@@ -1,6 +1,5 @@
 import { randomUUID } from 'node:crypto';
 
-// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
 import { TranslationsService } from '@meemoo/admin-core-api';
 import {
 	BadRequestException,
@@ -25,21 +24,26 @@ import { isFuture } from 'date-fns';
 import type { Request } from 'express';
 import { uniqBy } from 'lodash';
 
-import type { CreateVisitDto, UpdateVisitDto, VisitsQueryDto } from '../dto/visits.dto';
-// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
-import { VisitsService } from '../services/visits.service';
-import { type AccessStatus, VisitAccessType, type VisitRequest, type VisitSpaceCount, VisitStatus } from '../types';
+import { CreateVisitDto, UpdateVisitDto, VisitsQueryDto } from '../dto/visits.dto';
 
-// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
+import { VisitsService } from '../services/visits.service';
+import {
+	type AccessStatus,
+	VisitAccessType,
+	type VisitRequest,
+	type VisitSpaceCount,
+	VisitStatus,
+} from '../types';
+
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
-// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
+
 import { NotificationsService } from '~modules/notifications/services/notifications.service';
 import { NotificationType } from '~modules/notifications/types';
-// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
+
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import type { VisitorSpace } from '~modules/spaces/spaces.types';
-import type { SessionUserEntity } from '~modules/users/classes/session-user';
+import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupName, Permission } from '~modules/users/types';
 import { getFakeVisitorRequest } from '~modules/visits/controllers/visits.controller.helpers';
 import { RequireAnyPermissions } from '~shared/decorators/require-any-permissions.decorator';

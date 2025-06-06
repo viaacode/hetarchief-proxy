@@ -2,7 +2,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-empty-function */
 
-// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
 import { LoggerService } from '@nestjs/common';
 
 export class TestingLogger implements LoggerService {

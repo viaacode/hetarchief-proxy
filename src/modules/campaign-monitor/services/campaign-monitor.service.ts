@@ -1,7 +1,12 @@
-// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
 import { TranslationsService } from '@meemoo/admin-core-api';
-import { BadRequestException, Injectable, InternalServerErrorException, Logger, type OnApplicationBootstrap } from '@nestjs/common';
-// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
+import {
+	BadRequestException,
+	Injectable,
+	InternalServerErrorException,
+	Logger,
+	type OnApplicationBootstrap,
+} from '@nestjs/common';
+
 import { ConfigService } from '@nestjs/config';
 import * as promiseUtils from 'blend-promise-utils';
 import { groupBy, head, isArray, isEmpty, isNil, toPairs } from 'lodash';
@@ -20,9 +25,9 @@ import {
 	type MaterialRequestEmailInfo,
 	type VisitEmailInfo,
 } from '../campaign-monitor.types';
-import type {
-	CampaignMonitorConfirmationData,
+import {
 	CampaignMonitorConfirmMailQueryDto,
+	CampaignMonitorConfirmationData,
 	CampaignMonitorData,
 	CampaignMonitorMaterialRequestData,
 	CampaignMonitorNewsletterUpdatePreferencesQueryDto,
@@ -32,7 +37,10 @@ import type {
 } from '../dto/campaign-monitor.dto';
 import { decryptData, encryptData } from '../helpers/crypto-helper';
 
-import { MaterialRequestRequesterCapacity, MaterialRequestType } from '~modules/material-requests/material-requests.types';
+import {
+	MaterialRequestRequesterCapacity,
+	MaterialRequestType,
+} from '~modules/material-requests/material-requests.types';
 import type { VisitRequest } from '~modules/visits/types';
 import { customError } from '~shared/helpers/custom-error';
 import { checkRequiredEnvs } from '~shared/helpers/env-check';

@@ -1,22 +1,35 @@
-import { Body, Controller, Get, InternalServerErrorException, Post, Query, Redirect, Req, UseGuards } from '@nestjs/common';
+import {
+	Body,
+	Controller,
+	Get,
+	InternalServerErrorException,
+	Post,
+	Query,
+	Redirect,
+	Req,
+	UseGuards,
+} from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import type { Request } from 'express';
 
-import { type CampaignMonitorNewsletterPreferences, EmailTemplate } from '../campaign-monitor.types';
-import type {
+import {
+	type CampaignMonitorNewsletterPreferences,
+	EmailTemplate,
+} from '../campaign-monitor.types';
+
+import {
 	CampaignMonitorConfirmMailQueryDto,
 	CampaignMonitorNewsletterPreferencesQueryDto,
 	CampaignMonitorNewsletterUpdatePreferencesQueryDto,
 	CampaignMonitorSendMailDto,
 } from '../dto/campaign-monitor.dto';
-// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
+
 import { CampaignMonitorService } from '../services/campaign-monitor.service';
 
-// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
-import type { SessionUserEntity } from '~modules/users/classes/session-user';
-// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
+import { SessionUserEntity } from '~modules/users/classes/session-user';
+
 import { UsersService } from '~modules/users/services/users.service';
 import { GroupName } from '~modules/users/types';
 import { SessionUser } from '~shared/decorators/user.decorator';

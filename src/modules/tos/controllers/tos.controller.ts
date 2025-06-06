@@ -1,7 +1,6 @@
 import { Controller, Get, Logger } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
-// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
 import { TosService } from '../services/tos.service';
 import type { Tos } from '../types';
 

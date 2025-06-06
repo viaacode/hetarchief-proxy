@@ -1,9 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
-// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
+
 import { ConfigService } from '@nestjs/config';
 import connectRedis from 'connect-redis';
 import session from 'express-session';
-import { createClient, type RedisClient } from 'redis';
+import { type RedisClient, createClient } from 'redis';
 import SessionFileStore from 'session-file-store';
 
 import type { Configuration } from '~config';

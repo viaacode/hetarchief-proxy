@@ -1,6 +1,6 @@
 import { find } from 'lodash';
 
-import type { IeObjectsQueryDto, SearchFilter } from '../dto/ie-objects.dto';
+import { IeObjectsQueryDto, SearchFilter } from '../dto/ie-objects.dto';
 
 import { IeObjectType } from '~modules/ie-objects/ie-objects.types';
 

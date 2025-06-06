@@ -21,19 +21,18 @@ import { isEmpty, isNil } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 
 import {
-	type CreateMaterialRequestDto,
+	CreateMaterialRequestDto,
 	MaterialRequestsQueryDto,
-	type SendRequestListDto,
-	type UpdateMaterialRequestDto,
+	SendRequestListDto,
+	UpdateMaterialRequestDto,
 } from '../dto/material-requests.dto';
 import type { MaterialRequest, MaterialRequestMaintainer } from '../material-requests.types';
-// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
+
 import { MaterialRequestsService } from '../services/material-requests.service';
 
-// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
 import { EventsService } from '~modules/events/services/events.service';
 import { type LogEvent, LogEventType } from '~modules/events/types';
-import type { SessionUserEntity } from '~modules/users/classes/session-user';
+import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupId, GroupName, Permission } from '~modules/users/types';
 import { RequireAnyPermissions } from '~shared/decorators/require-any-permissions.decorator';
 import { RequireAllPermissions } from '~shared/decorators/require-permissions.decorator';

@@ -1,10 +1,19 @@
-// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
 import { DataService } from '@meemoo/admin-core-api';
-import { BadRequestException, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
+import {
+	BadRequestException,
+	Injectable,
+	InternalServerErrorException,
+	Logger,
+	NotFoundException,
+} from '@nestjs/common';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { compact, groupBy, isArray, isEmpty, isNil, kebabCase, set } from 'lodash';
 
-import type { CreateMaterialRequestDto, MaterialRequestsQueryDto, SendRequestListDto } from '../dto/material-requests.dto';
+import {
+	CreateMaterialRequestDto,
+	MaterialRequestsQueryDto,
+	SendRequestListDto,
+} from '../dto/material-requests.dto';
 import { ORDER_PROP_TO_DB_PROP } from '../material-requests.consts';
 import type {
 	GqlMaterialRequest,
@@ -38,15 +47,18 @@ import {
 	type UpdateMaterialRequestMutation,
 	type UpdateMaterialRequestMutationVariables,
 } from '~generated/graphql-db-types-hetarchief';
-import { EmailTemplate, type MaterialRequestEmailInfo } from '~modules/campaign-monitor/campaign-monitor.types';
-// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
+import {
+	EmailTemplate,
+	type MaterialRequestEmailInfo,
+} from '~modules/campaign-monitor/campaign-monitor.types';
+
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 import { convertSchemaIdentifierToId } from '~modules/ie-objects/helpers/convert-schema-identifier-to-id';
 import type { IeObjectType } from '~modules/ie-objects/ie-objects.types';
 import type { Organisation } from '~modules/organisations/organisations.types';
-// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
+
 import { OrganisationsService } from '~modules/organisations/services/organisations.service';
-// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
+
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { GroupId } from '~modules/users/types';
 import { PaginationHelper } from '~shared/helpers/pagination';

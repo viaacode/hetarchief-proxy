@@ -1,5 +1,5 @@
 import { Controller, Headers, Post, Query, UseGuards } from '@nestjs/common';
-// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
+
 import { ConfigService } from '@nestjs/config';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import got from 'got';

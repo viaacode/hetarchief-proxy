@@ -1,4 +1,3 @@
-// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
 import { DataService } from '@meemoo/admin-core-api';
 import {
 	BadRequestException,
@@ -12,7 +11,7 @@ import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { addMinutes, isBefore, isFuture, isPast, parseISO } from 'date-fns';
 import { compact, isArray, isEmpty, set, uniq } from 'lodash';
 
-import type { CreateVisitDto, UpdateVisitDto, VisitsQueryDto } from '../dto/visits.dto';
+import { CreateVisitDto, UpdateVisitDto, VisitsQueryDto } from '../dto/visits.dto';
 import {
 	AccessStatus,
 	type GqlNote,
@@ -75,7 +74,7 @@ import {
 	type UpdateVisitMutation,
 	type UpdateVisitMutationVariables,
 } from '~generated/graphql-db-types-hetarchief';
-// biome-ignore lint/style/useImportType: We need the full class for dependency injection to work with nestJS
+
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { ORDER_PROP_TO_DB_PROP } from '~modules/visits/consts';
 import { convertToDate } from '~shared/helpers/format-belgian-date';
