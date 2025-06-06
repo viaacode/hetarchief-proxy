@@ -57,6 +57,7 @@ import {
 	ALL_INDEXES,
 	IeObjectsSearchFilterField,
 	Operator,
+	OrderProperty,
 } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
 import { convertSchemaIdentifierToId } from '~modules/ie-objects/helpers/convert-schema-identifier-to-id';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
@@ -66,6 +67,7 @@ import { Referer } from '~shared/decorators/referer.decorator';
 import { SessionUser } from '~shared/decorators/user.decorator';
 import { customError } from '~shared/helpers/custom-error';
 import { EventsHelper } from '~shared/helpers/events';
+import { SortDirection } from '~shared/types';
 
 @ApiTags('Ie Objects')
 @Controller('ie-objects')
@@ -550,6 +552,8 @@ export class IeObjectsController {
 			filters: queryDto.filters,
 			page: 1,
 			size: 4,
+			orderProp: OrderProperty.RELEVANCE,
+			orderDirection: SortDirection.desc,
 		});
 	}
 
