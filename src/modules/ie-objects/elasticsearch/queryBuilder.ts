@@ -1,6 +1,6 @@
 import { BadRequestException, InternalServerErrorException } from '@nestjs/common';
 import jsep from 'jsep';
-import { clamp, forEach, isArray, isNil } from 'lodash';
+import { clamp, forEach, isArray, isEmpty, isNil } from 'lodash';
 
 import { IeObjectsQueryDto, SearchFilter } from '../dto/ie-objects.dto';
 import {
@@ -93,10 +93,16 @@ export class QueryBuilder {
 					inputInfo,
 					MetadataAccessType.LIMITED
 				);
+				if (!isEmpty(queryFromMetadataLimitedFilters)) {
+					queryFromMetadataLimitedFilters._name = 'METADATA-LTD-FILTERS';
+				}
 			}
 
 			const queryFromMetadataAllFilters: ElasticsearchSubQuery | Record<string, never> | null =
 				QueryBuilder.buildFilterObject(filtersMetadataAll, inputInfo, MetadataAccessType.ALL);
+			if (!isEmpty(queryFromMetadataAllFilters)) {
+				queryFromMetadataAllFilters._name = 'METADATA-ALL-FILTERS';
+			}
 
 			// Build the license checks for the elastic search query in 6 parts:
 			// 1) Check schema_license contains "PUBLIC-METADATA-LTD"
@@ -539,6 +545,7 @@ export class QueryBuilder {
 				occurrenceType: 'filter',
 				query: [
 					{
+						_name: 'CONSULTABLE_ONLY_ON_LOCATION',
 						terms: {
 							[`${ElasticsearchField.schema_maintainer}.${ElasticsearchField.schema_identifier}`]:
 								inputInfo?.spacesIds,
@@ -567,6 +574,7 @@ export class QueryBuilder {
 				occurrenceType: 'filter',
 				query: AND([
 					{
+						_name: 'CONSULTABLE_MEDIA',
 						exists: {
 							field: 'schema_thumbnail_url',
 						},
@@ -598,6 +606,7 @@ export class QueryBuilder {
 				occurrenceType: 'filter',
 				query: [
 					{
+						_name: 'CONSULTABLE_PUBLIC_DOMAIN',
 						terms: {
 							[ElasticsearchField.schema_license]: [IeObjectLicense.PUBLIC_DOMAIN],
 						},
@@ -657,6 +666,7 @@ export class QueryBuilder {
 	private static buildLicensesFilterPublicLimited(): ElasticsearchSubQuery[] {
 		return [
 			{
+				_name: 'PUBLIC-METDATA_LTD',
 				terms: {
 					[ElasticsearchField.schema_license]: [IeObjectLicense.PUBLIEK_METADATA_LTD],
 				},
@@ -671,6 +681,7 @@ export class QueryBuilder {
 	private static buildLicensesFilterPublicAll(): ElasticsearchSubQuery[] {
 		return [
 			{
+				_name: 'PUBLIC-METDATA_ALL',
 				terms: {
 					[ElasticsearchField.schema_license]: [
 						IeObjectLicense.PUBLIEK_METADATA_ALL,
@@ -699,6 +710,7 @@ export class QueryBuilder {
 		return [
 			AND([
 				{
+					_name: 'BEZOEKERTOOL_METADATA_ALL',
 					terms: {
 						[`${ElasticsearchField.schema_maintainer}.${ElasticsearchField.schema_identifier}`]:
 							visitorSpaceInfo.visitorSpaceIds,
@@ -735,6 +747,7 @@ export class QueryBuilder {
 		return [
 			AND([
 				{
+					_name: 'BEZOEKERTOOL_FOLDER_ACCESS',
 					ids: {
 						values: visitorSpaceInfo.objectIds,
 					},
@@ -768,6 +781,7 @@ export class QueryBuilder {
 			return [
 				AND([
 					{
+						_name: 'KIOSK_OR_CP_ADMIN',
 						terms: {
 							[`${ElasticsearchField.schema_maintainer}.${ElasticsearchField.schema_identifier}`]:
 								isNil(user?.getOrganisationId()) ? [] : [user?.getOrganisationId()],
@@ -814,6 +828,7 @@ export class QueryBuilder {
 				subQueries.push(
 					// 6.2) Check if object is part of own organisation
 					{
+						_name: 'INTRA_CP_USERS',
 						bool: {
 							minimum_should_match: 2,
 							should: [
