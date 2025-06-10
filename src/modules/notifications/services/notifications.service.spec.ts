@@ -16,7 +16,12 @@ import {
 } from '~generated/graphql-db-types-hetarchief';
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 import { mockGqlNotification } from '~modules/notifications/services/__mocks__/app_notification';
-import { type GqlNotification, type Notification, NotificationStatus, NotificationType } from '~modules/notifications/types';
+import {
+	type GqlNotification,
+	type Notification,
+	NotificationStatus,
+	NotificationType,
+} from '~modules/notifications/types';
 import type { VisitorSpace } from '~modules/spaces/spaces.types';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupId, GroupName, Permission, type User } from '~modules/users/types';

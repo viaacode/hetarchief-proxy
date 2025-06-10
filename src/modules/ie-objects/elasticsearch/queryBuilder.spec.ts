@@ -74,14 +74,14 @@ describe('QueryBuilder', () => {
 					minimum_should_match: 1,
 					should: [
 						{
-							_name: 'PUBLIC-METDATA_LTD',
 							terms: {
+								_name: 'PUBLIC-METDATA_LTD',
 								schema_license: ['VIAA-PUBLIEK-METADATA-LTD'],
 							},
 						},
 						{
-							_name: 'PUBLIC-METDATA_ALL',
 							terms: {
+								_name: 'PUBLIC-METDATA_ALL',
 								schema_license: ['VIAA-PUBLIEK-METADATA-ALL', 'VIAA-PUBLIEK-CONTENT'],
 							},
 						},
@@ -109,14 +109,14 @@ describe('QueryBuilder', () => {
 					minimum_should_match: 1,
 					should: [
 						{
-							_name: 'PUBLIC-METDATA_LTD',
 							terms: {
+								_name: 'PUBLIC-METDATA_LTD',
 								schema_license: ['VIAA-PUBLIEK-METADATA-LTD'],
 							},
 						},
 						{
-							_name: 'PUBLIC-METDATA_ALL',
 							terms: {
+								_name: 'PUBLIC-METDATA_ALL',
 								schema_license: ['VIAA-PUBLIEK-METADATA-ALL', 'VIAA-PUBLIEK-CONTENT'],
 							},
 						},
@@ -635,10 +635,10 @@ describe('QueryBuilder', () => {
 			);
 			expect(queryObject.query?.bool?.should).toHaveLength(2);
 			const limitedMetadataFilters = queryObject.query?.bool?.should?.find(
-				(filter) => filter._name === 'METADATA-LTD-FILTERS'
+				(filter) => filter?.bool?._name === 'METADATA-LTD-FILTERS'
 			);
 			const allMetadataFilters = queryObject.query?.bool?.should?.find(
-				(filter) => filter._name === 'METADATA-ALL-FILTERS'
+				(filter) => filter?.bool?._name === 'METADATA-ALL-FILTERS'
 			);
 			expect(limitedMetadataFilters).toBeUndefined(); // When filtering on isConsultableMedia we should only filter on all metadata
 			expect(allMetadataFilters).toBeDefined();
