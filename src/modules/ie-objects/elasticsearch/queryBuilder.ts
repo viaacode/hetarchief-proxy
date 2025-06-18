@@ -104,6 +104,13 @@ export class QueryBuilder {
 				queryFromMetadataAllFilters.bool._name = 'METADATA-ALL-FILTERS';
 			}
 
+			// If the filter is set to only consultable media, we only return objects with the PUBLIEK_CONTENT license
+			// https://meemoo.atlassian.net/browse/ARC-3050
+			const containsOnlyConsultableFilter: boolean = !!searchRequest.filters.find(
+				(filter) =>
+					filter.field === IeObjectsSearchFilterField.CONSULTABLE_MEDIA && filter.value === 'true'
+			);
+
 			// Build the license checks for the elastic search query in 6 parts:
 			// 1) Check schema_license contains "PUBLIC-METADATA-LTD"
 			// 2) Check schema_license contains "PUBLIC-METADATA-ALL" or "PUBLIC-CONTENT"
@@ -114,15 +121,21 @@ export class QueryBuilder {
 			const licensesFilterPublicLimited: ElasticsearchSubQuery[] =
 				QueryBuilder.buildLicensesFilterPublicLimited();
 			const licensesFilterPublicAll: ElasticsearchSubQuery[] =
-				QueryBuilder.buildLicensesFilterPublicAll();
+				QueryBuilder.buildLicensesFilterPublicAll(containsOnlyConsultableFilter);
 			const licensesFilterVisitorSpaceFullAccess: ElasticsearchSubQuery[] =
-				QueryBuilder.buildLicensesFilterVisitorSpaceFullAccess(inputInfo);
+				QueryBuilder.buildLicensesFilterVisitorSpaceFullAccess(
+					inputInfo,
+					containsOnlyConsultableFilter
+				);
 			const licensesFilterVisitorSpaceFolderAccess: ElasticsearchSubQuery[] =
-				QueryBuilder.buildLicensesFilterVisitorSpaceFolderAccess(inputInfo);
+				QueryBuilder.buildLicensesFilterVisitorSpaceFolderAccess(
+					inputInfo,
+					containsOnlyConsultableFilter
+				);
 			const licensesFilterIntraCpFullAccess: ElasticsearchSubQuery[] =
-				QueryBuilder.buildLicensesFilterKioskAndCpAdmin(inputInfo);
+				QueryBuilder.buildLicensesFilterKioskAndCpAdmin(inputInfo, containsOnlyConsultableFilter);
 			const licensesFilterKeyUsers: ElasticsearchSubQuery[] =
-				QueryBuilder.buildLicensesFilterKeyUsers(inputInfo);
+				QueryBuilder.buildLicensesFilterKeyUsers(inputInfo, containsOnlyConsultableFilter);
 
 			const { offset, limit } = PaginationHelper.convertPagination(
 				searchRequest.page,
@@ -678,15 +691,21 @@ export class QueryBuilder {
 	 * 2) Check schema_license contains PUBLIC-METADATA-ALL"
 	 * @private
 	 */
-	private static buildLicensesFilterPublicAll(): ElasticsearchSubQuery[] {
+	private static buildLicensesFilterPublicAll(
+		containsOnlyConsultableFilter: boolean
+	): ElasticsearchSubQuery[] {
 		return [
 			{
 				terms: {
 					_name: 'PUBLIC-METDATA_ALL',
-					[ElasticsearchField.schema_license]: [
-						IeObjectLicense.PUBLIEK_METADATA_ALL,
-						IeObjectLicense.PUBLIEK_CONTENT, // Does this license contain PUBLIEK_METADATA_ALL?
-					],
+					// If the filter is set to only consultable media, we only return objects with the PUBLIEK_CONTENT license
+					// https://meemoo.atlassian.net/browse/ARC-3050
+					[ElasticsearchField.schema_license]: containsOnlyConsultableFilter
+						? [IeObjectLicense.PUBLIEK_CONTENT]
+						: [
+								IeObjectLicense.PUBLIEK_METADATA_ALL,
+								IeObjectLicense.PUBLIEK_CONTENT, // Does this license contain PUBLIEK_METADATA_ALL?
+							],
 				},
 			},
 		];
@@ -696,10 +715,12 @@ export class QueryBuilder {
 	 * 3) Check or-id is part of visitorSpaceIds
 	 * Remark: ES does not allow maintainer and schema license to be both under 1 terms object
 	 * @param inputInfo
+	 * @param containsOnlyConsultableFilter
 	 * @private
 	 */
 	private static buildLicensesFilterVisitorSpaceFullAccess(
-		inputInfo: QueryBuilderInputInfo
+		inputInfo: QueryBuilderInputInfo,
+		containsOnlyConsultableFilter: boolean
 	): ElasticsearchSubQuery[] {
 		const { visitorSpaceInfo } = inputInfo;
 
@@ -718,10 +739,11 @@ export class QueryBuilder {
 				},
 				{
 					terms: {
-						[ElasticsearchField.schema_license]: [
-							IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
-							IeObjectLicense.BEZOEKERTOOL_CONTENT,
-						],
+						// If the filter is set to only consultable media, we only return objects with the PUBLIEK_CONTENT license
+						// https://meemoo.atlassian.net/browse/ARC-3050
+						[ElasticsearchField.schema_license]: containsOnlyConsultableFilter
+							? [IeObjectLicense.BEZOEKERTOOL_CONTENT]
+							: [IeObjectLicense.BEZOEKERTOOL_METADATA_ALL, IeObjectLicense.BEZOEKERTOOL_CONTENT],
 					},
 				},
 			]),
@@ -732,10 +754,12 @@ export class QueryBuilder {
 	 * 4) Check object id is part of folderObjectIds
 	 * Remark: ES does not allow ids and should be added under bool should
 	 * @param inputInfo
+	 * @param containsOnlyConsultableFilter
 	 * @private
 	 */
 	private static buildLicensesFilterVisitorSpaceFolderAccess(
-		inputInfo: QueryBuilderInputInfo
+		inputInfo: QueryBuilderInputInfo,
+		containsOnlyConsultableFilter: boolean
 	): ElasticsearchSubQuery[] {
 		const { visitorSpaceInfo } = inputInfo;
 
@@ -749,10 +773,11 @@ export class QueryBuilder {
 				{
 					terms: {
 						_name: 'BEZOEKERTOOL_FOLDER_ACCESS',
-						[ElasticsearchField.schema_license]: [
-							IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
-							IeObjectLicense.BEZOEKERTOOL_CONTENT,
-						],
+						// If the filter is set to only consultable media, we only return objects with the PUBLIEK_CONTENT license
+						// https://meemoo.atlassian.net/browse/ARC-3050
+						[ElasticsearchField.schema_license]: containsOnlyConsultableFilter
+							? [IeObjectLicense.BEZOEKERTOOL_CONTENT]
+							: [IeObjectLicense.BEZOEKERTOOL_METADATA_ALL, IeObjectLicense.BEZOEKERTOOL_CONTENT],
 					},
 				},
 				{
@@ -767,10 +792,12 @@ export class QueryBuilder {
 	/**
 	 * 5) KIOSK users and CP_ADMINs always have access to the visitor space that they are linked to.
 	 * @param inputInfo
+	 * @param containsOnlyConsultableFilter
 	 * @private
 	 */
 	private static buildLicensesFilterKioskAndCpAdmin(
-		inputInfo: QueryBuilderInputInfo
+		inputInfo: QueryBuilderInputInfo,
+		containsOnlyConsultableFilter: boolean
 	): ElasticsearchSubQuery[] {
 		const { user } = inputInfo;
 
@@ -789,10 +816,11 @@ export class QueryBuilder {
 					},
 					{
 						terms: {
-							[ElasticsearchField.schema_license]: [
-								IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
-								IeObjectLicense.BEZOEKERTOOL_CONTENT,
-							],
+							// If the filter is set to only consultable media, we only return objects with the PUBLIEK_CONTENT license
+							// https://meemoo.atlassian.net/browse/ARC-3050
+							[ElasticsearchField.schema_license]: containsOnlyConsultableFilter
+								? [IeObjectLicense.BEZOEKERTOOL_CONTENT]
+								: [IeObjectLicense.BEZOEKERTOOL_METADATA_ALL, IeObjectLicense.BEZOEKERTOOL_CONTENT],
 						},
 					},
 				]),
@@ -805,10 +833,12 @@ export class QueryBuilder {
 	 * 6) Check that the user is a key user (intra cp) and what sector he belongs to and
 	 * that the object has the INTRA CP license
 	 * @param inputInfo
+	 * @param containsOnlyConsultableFilter
 	 * @private
 	 */
 	private static buildLicensesFilterKeyUsers(
-		inputInfo: QueryBuilderInputInfo
+		inputInfo: QueryBuilderInputInfo,
+		containsOnlyConsultableFilter: boolean
 	): ElasticsearchSubQuery[] {
 		const { user } = inputInfo;
 
@@ -817,10 +847,9 @@ export class QueryBuilder {
 				// 6.1) Check if object is part of organisation with favorable sector
 				{
 					terms: {
-						[ElasticsearchField.schema_license]: [
-							IeObjectLicense.INTRA_CP_METADATA_ALL,
-							IeObjectLicense.INTRA_CP_CONTENT,
-						],
+						[ElasticsearchField.schema_license]: containsOnlyConsultableFilter
+							? [IeObjectLicense.INTRA_CP_CONTENT]
+							: [IeObjectLicense.INTRA_CP_METADATA_ALL, IeObjectLicense.INTRA_CP_CONTENT],
 					},
 				},
 			];
@@ -840,10 +869,11 @@ export class QueryBuilder {
 								},
 								{
 									terms: {
-										[ElasticsearchField.schema_license]: [
-											IeObjectLicense.INTRA_CP_METADATA_ALL,
-											IeObjectLicense.INTRA_CP_CONTENT,
-										],
+										// If the filter is set to only consultable media, we only return objects with the PUBLIEK_CONTENT license
+										// https://meemoo.atlassian.net/browse/ARC-3050
+										[ElasticsearchField.schema_license]: containsOnlyConsultableFilter
+											? [IeObjectLicense.INTRA_CP_CONTENT]
+											: [IeObjectLicense.INTRA_CP_METADATA_ALL, IeObjectLicense.INTRA_CP_CONTENT],
 									},
 								},
 							],
