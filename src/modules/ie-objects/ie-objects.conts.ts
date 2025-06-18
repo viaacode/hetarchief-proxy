@@ -183,7 +183,6 @@ export const IE_OBJECT_PROPS_BY_METADATA_SET: Readonly<Record<string, string[]>>
 
 export const IE_OBJECT_PROPS_METADATA_EXPORT: Readonly<(keyof IeObject)[]> = [
 	// LTD
-	'iri',
 	'schemaIdentifier',
 	'meemooOriginalCp',
 	'meemooLocalId',
@@ -231,19 +230,21 @@ export const IE_OBJECT_PROPS_METADATA_EXPORT: Readonly<(keyof IeObject)[]> = [
 	'transcript',
 ];
 
-export type XmlNode =
-	| {
-			type: 'element';
-			name: string;
-			elements?: XmlNode[];
-			attributes?: Record<string, string>;
-	  }
-	| {
-			type: 'text';
-			text: string;
-	  };
+export type XmlNodeElement = {
+	type: 'element';
+	name: string;
+	elements?: XmlNode[];
+	attributes?: Record<string, string>;
+};
 
-type XmlNodeFactory = (value: any) => XmlNode[];
+export type XmlNodeText = {
+	type: 'text';
+	text: string;
+};
+
+export type XmlNode = XmlNodeElement | XmlNodeText;
+
+type XmlNodeFactory = (value: any) => XmlNodeElement[];
 
 function getXmlTextValue(value: any): XmlNode[] {
 	if (isEmpty(value)) {
@@ -265,7 +266,7 @@ function getXmlTextValue(value: any): XmlNode[] {
 	];
 }
 
-function getArrayXmlValue(name: string, values: string[]): XmlNode[] {
+function getArrayXmlValue(name: string, values: string[]): XmlNodeElement[] {
 	return uniq(values || []).flatMap((value: string) => {
 		if (Array.isArray(value)) {
 			return getArrayXmlValue(name, value);
@@ -281,13 +282,6 @@ function getArrayXmlValue(name: string, values: string[]): XmlNode[] {
 }
 
 export const IE_OBJECT_PROPERTY_TO_DUBLIN_CORE: Record<string, XmlNodeFactory> = {
-	iri: (value: string) => [
-		{
-			type: 'element',
-			name: 'dc:identifier',
-			elements: getXmlTextValue(value),
-		},
-	],
 	schemaIdentifier: (value: string) => [
 		{
 			type: 'element',
@@ -362,6 +356,7 @@ export const IE_OBJECT_PROPERTY_TO_DUBLIN_CORE: Record<string, XmlNodeFactory> =
 			type: 'element',
 			name: 'dcterms:isPartOf',
 			elements: getXmlTextValue(value?.[0]?.iri),
+			attributes: { note: 'Collection id' },
 		},
 	],
 	collectionName: (value) => [
@@ -369,6 +364,7 @@ export const IE_OBJECT_PROPERTY_TO_DUBLIN_CORE: Record<string, XmlNodeFactory> =
 			type: 'element',
 			name: 'dcterms:isPartOf',
 			elements: getXmlTextValue(value),
+			attributes: { note: 'Collection name' },
 		},
 	],
 	issueNumber: (value) => [
@@ -448,20 +444,22 @@ export const IE_OBJECT_PROPERTY_TO_DUBLIN_CORE: Record<string, XmlNodeFactory> =
 			attributes: { note: 'Number of pages' },
 		},
 	],
-	abrahamInfo: (value) => [
-		{
-			type: 'element',
-			name: 'dc:identifier',
-			elements: getXmlTextValue(value?.abraham_id),
-			attributes: { note: 'Abraham id' },
-		},
-		{
-			type: 'element',
-			name: 'dc:identifier',
-			elements: getXmlTextValue(value?.abraham_uri),
-			attributes: { note: 'Abraham uri' },
-		},
-	],
+	abrahamInfo: (value: IeObject['abrahamInfo']) => {
+		return [
+			{
+				type: 'element',
+				name: 'dc:identifier',
+				elements: getXmlTextValue(value?.id),
+				attributes: { note: 'Abraham id' },
+			},
+			{
+				type: 'element',
+				name: 'dc:identifier',
+				elements: getXmlTextValue(value?.uri),
+				attributes: { note: 'Abraham uri' },
+			},
+		];
+	},
 	spatial: (value) => [
 		{
 			type: 'element',

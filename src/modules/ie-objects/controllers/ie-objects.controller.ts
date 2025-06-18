@@ -283,17 +283,17 @@ export class IeObjectsController {
 		const visitorSpaceAccessInfo =
 			await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
 
-		const csvContent = convertObjectToCsv(
-			limitAccessToObjectDetails(objectMetadata, {
-				userId: user.getId(),
-				isKeyUser: user.getIsKeyUser(),
-				sector: user.getSector(),
-				groupId: user.getGroupId(),
-				maintainerId: user.getOrganisationId(),
-				accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
-				accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
-			})
-		);
+		const censoredObjectMetadata = limitAccessToObjectDetails(objectMetadata, {
+			userId: user.getId(),
+			isKeyUser: user.getIsKeyUser(),
+			sector: user.getSector(),
+			groupId: user.getGroupId(),
+			maintainerId: user.getOrganisationId(),
+			accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
+			accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
+		});
+
+		const csvContent = convertObjectToCsv(censoredObjectMetadata);
 		res.set({
 			'Content-Disposition': `attachment; filename=${
 				kebabCase(objectMetadata?.name) || 'metadata'

@@ -34,7 +34,7 @@
     "bump": "bump-package-versions --part=patch --strategy=highest ./package.json"
   },
   "dependencies": {
-    "@meemoo/admin-core-api": "4.4.15",
+    "@meemoo/admin-core-api": "4.4.16",
     "@nestjs/common": "9.4.3",
     "@nestjs/config": "3.2.3",
     "@nestjs/core": "9.4.3",
