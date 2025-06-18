@@ -303,7 +303,8 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 					Resubscribe: false,
 				};
 				const path = `/${this.subscriberEndpoint}/${this.newsletterListId}/import.json`;
-				await this.makeCmApiRequest(path, 'PUT', data, false); // Ignore errors if user cannot be found
+				const response = await this.makeCmApiRequest(path, 'POST', data, true); // Ignore errors if user cannot be found
+				console.log(response);
 			}
 		} catch (err) {
 			throw new InternalServerErrorException({
@@ -573,13 +574,16 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 			Name: `${userInfo.firstName} ${userInfo.lastName}`,
 			Resubscribe: resubscribe,
 			ConsentToTrack: resubscribe ? 'Yes' : 'Unchanged',
-			CustomFields: toPairs(customFields).map((pair) => {
-				return {
-					Key: pair[0],
-					Value: pair[1],
-					Clear: isNil(pair[1]) || pair[1] === '',
-				};
-			}),
+			CustomFields: toPairs(customFields)
+				// Only set values that have a value, otherwise we reset existing information of the user
+				.filter((pair) => !!pair[1])
+				.map((pair) => {
+					return {
+						Key: pair[0],
+						Value: pair[1],
+						Clear: isNil(pair[1]) || pair[1] === '',
+					};
+				}),
 		};
 	}
 
