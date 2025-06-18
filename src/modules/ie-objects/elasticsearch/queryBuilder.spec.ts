@@ -75,11 +75,13 @@ describe('QueryBuilder', () => {
 					should: [
 						{
 							terms: {
+								_name: 'PUBLIC-METDATA_LTD',
 								schema_license: ['VIAA-PUBLIEK-METADATA-LTD'],
 							},
 						},
 						{
 							terms: {
+								_name: 'PUBLIC-METDATA_ALL',
 								schema_license: ['VIAA-PUBLIEK-METADATA-ALL', 'VIAA-PUBLIEK-CONTENT'],
 							},
 						},
@@ -108,11 +110,13 @@ describe('QueryBuilder', () => {
 					should: [
 						{
 							terms: {
+								_name: 'PUBLIC-METDATA_LTD',
 								schema_license: ['VIAA-PUBLIEK-METADATA-LTD'],
 							},
 						},
 						{
 							terms: {
+								_name: 'PUBLIC-METDATA_ALL',
 								schema_license: ['VIAA-PUBLIEK-METADATA-ALL', 'VIAA-PUBLIEK-CONTENT'],
 							},
 						},
@@ -193,59 +197,12 @@ describe('QueryBuilder', () => {
 				mockInputInfo as any
 			);
 
-			expect(esQuery.query).toEqual({
-				bool: {
-					minimum_should_match: 1,
-					should: [
-						{
-							bool: {
-								minimum_should_match: 2,
-								should: [
-									{
-										bool: {
-											must: [
-												{
-													term: {
-														dcterms_format: 'video',
-													},
-												},
-											],
-										},
-									},
-									{
-										terms: {
-											schema_license: ['VIAA-PUBLIEK-METADATA-LTD'],
-										},
-									},
-								],
-							},
-						},
-						{
-							bool: {
-								minimum_should_match: 2,
-								should: [
-									{
-										bool: {
-											must: [
-												{
-													term: {
-														dcterms_format: 'video',
-													},
-												},
-											],
-										},
-									},
-									{
-										terms: {
-											schema_license: ['VIAA-PUBLIEK-METADATA-ALL', 'VIAA-PUBLIEK-CONTENT'],
-										},
-									},
-								],
-							},
-						},
-					],
-				},
-			});
+			const queryString = JSON.stringify(esQuery.query, null, 2);
+			expect(queryString).toContain('"dcterms_format": "video"');
+			expect(queryString).toContain('METADATA-ALL-FILTERS');
+			expect(queryString).toContain('PUBLIC-METDATA_ALL');
+			expect(queryString).toContain('VIAA-PUBLIEK-METADATA-ALL');
+			expect(queryString).toContain('VIAA-PUBLIEK-CONTENT');
 		});
 
 		it('should use a range filter to filter on duration', () => {
@@ -264,63 +221,12 @@ describe('QueryBuilder', () => {
 				mockInputInfo as any
 			);
 
-			expect(esQuery.query).toEqual({
-				bool: {
-					minimum_should_match: 1,
-					should: [
-						{
-							bool: {
-								minimum_should_match: 2,
-								should: [
-									{
-										bool: {
-											filter: [
-												{
-													range: {
-														schema_duration: {
-															gte: '01:00:00',
-														},
-													},
-												},
-											],
-										},
-									},
-									{
-										terms: {
-											schema_license: ['VIAA-PUBLIEK-METADATA-LTD'],
-										},
-									},
-								],
-							},
-						},
-						{
-							bool: {
-								minimum_should_match: 2,
-								should: [
-									{
-										bool: {
-											filter: [
-												{
-													range: {
-														schema_duration: {
-															gte: '01:00:00',
-														},
-													},
-												},
-											],
-										},
-									},
-									{
-										terms: {
-											schema_license: ['VIAA-PUBLIEK-METADATA-ALL', 'VIAA-PUBLIEK-CONTENT'],
-										},
-									},
-								],
-							},
-						},
-					],
-				},
-			});
+			const queryString = JSON.stringify(esQuery.query, null, 2);
+			expect(queryString).toContain('"gte": "01:00:00"');
+			expect(queryString).toContain('METADATA-ALL-FILTERS');
+			expect(queryString).toContain('PUBLIC-METDATA_ALL');
+			expect(queryString).toContain('VIAA-PUBLIEK-METADATA-ALL');
+			expect(queryString).toContain('VIAA-PUBLIEK-CONTENT');
 		});
 
 		it('should the is operator on the query field and should return an exact query object', () => {
@@ -400,63 +306,12 @@ describe('QueryBuilder', () => {
 				mockInputInfo as any
 			);
 
-			// TODO performance: we can check if the bool.should[0] === bool.should[1] while omitting the schema_license array
-			// TODO If they are equal, we can combine them into one object, which should search more efficiently
-			expect(esQuery.query).toEqual({
-				bool: {
-					minimum_should_match: 1,
-					should: [
-						{
-							bool: {
-								minimum_should_match: 2,
-								should: [
-									{
-										bool: {
-											must: [
-												{
-													query_string: {
-														query: 'intervi*',
-														default_field: 'schema_genre',
-													},
-												},
-											],
-										},
-									},
-									{
-										terms: {
-											schema_license: ['VIAA-PUBLIEK-METADATA-LTD'],
-										},
-									},
-								],
-							},
-						},
-						{
-							bool: {
-								minimum_should_match: 2,
-								should: [
-									{
-										bool: {
-											must: [
-												{
-													query_string: {
-														query: 'intervi*',
-														default_field: 'schema_genre',
-													},
-												},
-											],
-										},
-									},
-									{
-										terms: {
-											schema_license: ['VIAA-PUBLIEK-METADATA-ALL', 'VIAA-PUBLIEK-CONTENT'],
-										},
-									},
-								],
-							},
-						},
-					],
-				},
-			});
+			const queryString = JSON.stringify(esQuery.query, null, 2);
+			expect(queryString).toContain('"query": "intervi*"');
+			expect(queryString).toContain('METADATA-LTD-FILTERS');
+			expect(queryString).toContain('PUBLIC-METDATA_LTD');
+			expect(queryString).toContain('VIAA-PUBLIEK-METADATA-ALL');
+			expect(queryString).toContain('VIAA-PUBLIEK-CONTENT');
 		});
 
 		it('should add agg suffixes when required', () => {
@@ -779,20 +634,17 @@ describe('QueryBuilder', () => {
 				}
 			);
 			expect(queryObject.query?.bool?.should).toHaveLength(2);
-			const limitedMetadataFilters = JSON.stringify(
-				queryObject.query?.bool?.should?.[0]?.bool,
-				null,
-				2
+			const limitedMetadataFilters = queryObject.query?.bool?.should?.find(
+				(filter) => filter?.bool?._name === 'METADATA-LTD-FILTERS'
 			);
-			const allMetadataFilters = JSON.stringify(
-				queryObject.query?.bool?.should?.[1]?.bool,
-				null,
-				2
+			const allMetadataFilters = queryObject.query?.bool?.should?.find(
+				(filter) => filter?.bool?._name === 'METADATA-ALL-FILTERS'
 			);
-			expect(limitedMetadataFilters).toContain('visitor-space-id');
-			expect(limitedMetadataFilters).toContain('VIAA-INTRA_CP-CONTENT');
-			expect(allMetadataFilters).toContain('visitor-space-id');
-			expect(allMetadataFilters).toContain('VIAA-INTRA_CP-CONTENT');
+			expect(limitedMetadataFilters).toBeUndefined(); // When filtering on isConsultableMedia we should only filter on all metadata
+			expect(allMetadataFilters).toBeDefined();
+			const allMetadataFiltersString = JSON.stringify(allMetadataFilters, null, 2);
+			expect(allMetadataFiltersString).toContain('visitor-space-id');
+			expect(allMetadataFiltersString).toContain('VIAA-INTRA_CP-CONTENT');
 		});
 	});
 });

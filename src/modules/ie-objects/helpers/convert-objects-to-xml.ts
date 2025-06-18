@@ -13,10 +13,13 @@ export const convertObjectToXml = (object: Partial<IeObject>, clientHost: string
 	for (const key of IE_OBJECT_PROPS_METADATA_EXPORT) {
 		const value = object[key as keyof IeObject];
 		if (value) {
-			const dcField = IE_OBJECT_PROPERTY_TO_DUBLIN_CORE[key](value);
+			const dcFields = IE_OBJECT_PROPERTY_TO_DUBLIN_CORE[key](value);
+			const dcFieldsWithValues = dcFields.filter(
+				(field) => field && typeof field === 'object' && field.elements && field.elements.length > 0
+			);
 
-			if (dcField) {
-				dcElements.push(...dcField);
+			if (dcFieldsWithValues && dcFieldsWithValues.length > 0) {
+				dcElements.push(...dcFieldsWithValues);
 			}
 		}
 	}

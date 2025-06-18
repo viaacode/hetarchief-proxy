@@ -14,6 +14,10 @@ function mapIeObjectForExport(ieObject: Partial<IeObject>): any {
 	const ieObjectCopy = _.pick(ieObject, IE_OBJECT_PROPS_METADATA_EXPORT);
 	// biome-ignore lint/performance/noDelete: This property cannot be on the object, otherwise it will get exported as an empty string to csv
 	delete ieObjectCopy.isPartOf;
+	// Remove the IRI from the object metadata since it is not needed in the CSV export
+	// https://meemoo.atlassian.net/browse/ARC-3081
+	// biome-ignore lint/performance/noDelete: <explanation>
+	delete ieObjectCopy.iri;
 	return {
 		...ieObjectCopy,
 		...Object.fromEntries(

@@ -215,19 +215,16 @@ export class FoldersController {
 			throw new ForbiddenException('You can only add objects to your own folders');
 		}
 
+		const ieObjectId = convertSchemaIdentifierToId(objectSchemaIdentifier);
 		const folderObject = await this.foldersService.addObjectToFolder(
 			folderId,
-			convertSchemaIdentifierToId(objectSchemaIdentifier),
+			ieObjectId,
 			referer,
 			ip
 		);
 
 		// Log event
-		const ieObject = await this.ieObjectsService.findByIeObjectId(
-			convertSchemaIdentifierToId(objectSchemaIdentifier),
-			referer,
-			ip
-		);
+		const ieObject = await this.ieObjectsService.findByIeObjectId(ieObjectId, referer, ip);
 		this.eventsService.insertEvents([
 			{
 				id: EventsHelper.getEventId(request),
@@ -412,12 +409,20 @@ export class FoldersController {
 			);
 			// TODO: make it possible to insert all objects to the new collection at once
 			await promiseUtils.mapLimit(folderObjects?.items, 20, async (item) => {
-				await this.foldersService.addObjectToFolder(
-					createdFolder.id,
-					item?.schemaIdentifier,
-					referer,
-					ip
-				);
+				try {
+					const ieObjectId = item.iri;
+					await this.foldersService.addObjectToFolder(createdFolder.id, ieObjectId, referer, ip);
+				} catch (err) {
+					console.error(
+						new CustomError('Failed to add object from original folder to shared folder', null, {
+							item,
+							folderId: folder.id,
+							folderName: folder.name,
+							createdFolderId: createdFolder.id,
+							createdFolderName: createdFolder.name,
+						})
+					);
+				}
 			});
 		} catch (err) {
 			if (err?.name !== 'NotFoundException') {

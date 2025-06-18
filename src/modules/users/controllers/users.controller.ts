@@ -38,15 +38,20 @@ export class UsersController {
 		@Session() session: Record<string, any>
 	): Promise<Record<string, string>> {
 		try {
-			const sessionUser = SessionHelper.getArchiefUserInfo(session);
-			await this.usersService.updateUserLanguage(sessionUser.id, updateUserLangDto);
-			sessionUser.language = updateUserLangDto.language;
-			SessionHelper.setArchiefUserInfo(session, sessionUser);
+			const user = SessionHelper.getArchiefUserInfo(session);
+			await this.usersService.updateUserLanguage(user.id, updateUserLangDto);
+			user.language = updateUserLangDto.language;
+			SessionHelper.setArchiefUserInfo(session, user);
 			this.campaignMonitorService
 				.updateNewsletterPreferences({
-					email: sessionUser.email,
-					firstName: sessionUser.firstName,
-					lastName: sessionUser.lastName,
+					firstName: user.firstName,
+					lastName: user.lastName,
+					email: user.email,
+					is_key_user: user.isKeyUser,
+					usergroup: user.groupName,
+					created_date: user.createdAt,
+					last_access_date: user.lastAccessAt,
+					organisation: user.organisationName,
 					language: updateUserLangDto.language,
 				})
 				.then(() => {
@@ -55,10 +60,10 @@ export class UsersController {
 				.catch((err) => {
 					console.error(
 						customError('Failed to update the user language in Campaign Monitor', err, {
-							userId: sessionUser.id,
-							email: sessionUser.email,
-							firstName: sessionUser.firstName,
-							lastName: sessionUser.lastName,
+							userId: user.id,
+							email: user.email,
+							firstName: user.firstName,
+							lastName: user.lastName,
 							language: updateUserLangDto.language,
 						})
 					);
