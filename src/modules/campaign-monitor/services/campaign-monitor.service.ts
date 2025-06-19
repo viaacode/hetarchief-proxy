@@ -303,8 +303,7 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 					Resubscribe: false,
 				};
 				const path = `/${this.subscriberEndpoint}/${this.newsletterListId}/import.json`;
-				const response = await this.makeCmApiRequest(path, 'POST', data, true); // Ignore errors if user cannot be found
-				console.log(response);
+				await this.makeCmApiRequest(path, 'POST', data, true); // Ignore errors if user cannot be found
 			}
 		} catch (err) {
 			throw new InternalServerErrorException({
