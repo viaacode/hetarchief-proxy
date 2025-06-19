@@ -35,6 +35,9 @@ export const mockUser: User = {
 	permissions: [Permission.MANAGE_ALL_VISIT_REQUESTS, Permission.CREATE_VISIT_REQUEST],
 	idp: Idp.HETARCHIEF,
 	isKeyUser: false,
+	createdAt: '2023-10-01T12:00:00.000Z',
+	lastAccessAt: '2023-10-01T12:00:00.000Z',
+	organisationName: 'Test Organisation',
 };
 
 export const mockUserInfo: CampaignMonitorUserInfo = {
@@ -44,9 +47,9 @@ export const mockUserInfo: CampaignMonitorUserInfo = {
 	email: mockUser.email,
 	is_key_user: mockUser.isKeyUser,
 	usergroup: mockUser.groupName,
-	created_date: mockUser?.createdAt || null,
-	last_access_date: mockUser?.lastAccessAt || null,
-	organisation: mockUser?.organisationName || null,
+	created_date: mockUser.createdAt,
+	last_access_date: mockUser.lastAccessAt,
+	organisation: mockUser.organisationName,
 };
 
 export const mockNewsletterUpdatePreferencesQueryDto: CampaignMonitorNewsletterUpdatePreferencesQueryDto =
@@ -139,42 +142,34 @@ export const mockNewsletterTemplateDataWithNewsletter = {
 	ConsentToTrack: 'Yes',
 	CustomFields: [
 		{
-			Clear: false,
 			Key: CampaignMonitorCustomFieldName.usergroup,
 			Value: mockUserInfo.usergroup,
 		},
 		{
-			Clear: false,
 			Key: CampaignMonitorCustomFieldName.is_key_user,
 			Value: mockUserInfo.is_key_user,
 		},
 		{
-			Clear: false,
 			Key: CampaignMonitorCustomFieldName.firstname,
 			Value: mockUserInfo.firstName,
 		},
 		{
-			Clear: false,
 			Key: CampaignMonitorCustomFieldName.lastname,
 			Value: mockUserInfo.lastName,
 		},
 		{
-			Clear: true,
 			Key: CampaignMonitorCustomFieldName.created_date,
-			Value: null,
+			Value: '2023-10-01T12:00:00.000Z',
 		},
 		{
-			Clear: true,
 			Key: CampaignMonitorCustomFieldName.last_access_date,
-			Value: null,
+			Value: '2023-10-01T12:00:00.000Z',
 		},
 		{
-			Clear: true,
 			Key: CampaignMonitorCustomFieldName.organisation,
-			Value: null,
+			Value: 'Test Organisation',
 		},
 		{
-			Clear: false,
 			Key: CampaignMonitorCustomFieldName.language,
 			Value: mockUserInfo.language,
 		},

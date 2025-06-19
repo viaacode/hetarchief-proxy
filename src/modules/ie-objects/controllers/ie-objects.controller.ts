@@ -21,7 +21,6 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import type { IPagination } from '@studiohyperdrive/pagination';
-import { mapLimit } from 'blend-promise-utils';
 import type { Request, Response } from 'express';
 import { compact, intersection, isNil, kebabCase } from 'lodash';
 
@@ -51,6 +50,7 @@ import {
 
 import { IeObjectsService } from '../services/ie-objects.service';
 
+import { mapLimit } from 'blend-promise-utils';
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
 import {
