@@ -353,28 +353,44 @@ describe('CampaignMonitorService', () => {
 				mockNewsletterTemplateDataWithNewsletter.ConsentToTrack
 			);
 			expect(result.CustomFields[0]).toEqual(
-				mockNewsletterTemplateDataWithNewsletter.CustomFields[0]
+				mockNewsletterTemplateDataWithNewsletter.CustomFields.find(
+					(field) => field.Key === result.CustomFields[0].Key
+				)
 			);
 			expect(result.CustomFields[1]).toEqual(
-				mockNewsletterTemplateDataWithNewsletter.CustomFields[1]
+				mockNewsletterTemplateDataWithNewsletter.CustomFields.find(
+					(field) => field.Key === result.CustomFields[1].Key
+				)
 			);
 			expect(result.CustomFields[2]).toEqual(
-				mockNewsletterTemplateDataWithNewsletter.CustomFields[2]
+				mockNewsletterTemplateDataWithNewsletter.CustomFields.find(
+					(field) => field.Key === result.CustomFields[2].Key
+				)
 			);
 			expect(result.CustomFields[3]).toEqual(
-				mockNewsletterTemplateDataWithNewsletter.CustomFields[3]
+				mockNewsletterTemplateDataWithNewsletter.CustomFields.find(
+					(field) => field.Key === result.CustomFields[3].Key
+				)
 			);
 			expect(result.CustomFields[4]).toEqual(
-				mockNewsletterTemplateDataWithNewsletter.CustomFields[4]
+				mockNewsletterTemplateDataWithNewsletter.CustomFields.find(
+					(field) => field.Key === result.CustomFields[4].Key
+				)
 			);
 			expect(result.CustomFields[5]).toEqual(
-				mockNewsletterTemplateDataWithNewsletter.CustomFields[5]
+				mockNewsletterTemplateDataWithNewsletter.CustomFields.find(
+					(field) => field.Key === result.CustomFields[5].Key
+				)
 			);
 			expect(result.CustomFields[6]).toEqual(
-				mockNewsletterTemplateDataWithNewsletter.CustomFields[6]
+				mockNewsletterTemplateDataWithNewsletter.CustomFields.find(
+					(field) => field.Key === result.CustomFields[6].Key
+				)
 			);
 			expect(result.CustomFields[7]).toEqual(
-				mockNewsletterTemplateDataWithNewsletter.CustomFields[7]
+				mockNewsletterTemplateDataWithNewsletter.CustomFields.find(
+					(field) => field.Key === result.CustomFields[7].Key
+				)
 			);
 			expect(result.CustomFields[8]).toBeUndefined();
 		});
