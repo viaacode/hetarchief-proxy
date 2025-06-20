@@ -40,6 +40,7 @@ import type { Organisation } from '~modules/organisations/organisations.types';
 
 import { OrganisationsService } from '~modules/organisations/services/organisations.service';
 
+import { CreateOrUpdateUserDto } from '~modules/users/dto/users.dto';
 import { UsersService } from '~modules/users/services/users.service';
 import { Permission } from '~modules/users/types';
 import { LdapApp, type LdapUser } from '~shared/auth/auth.types';
@@ -85,38 +86,6 @@ export class HetArchiefController {
 			};
 		} catch (err) {
 			this.logger.error('Failed during hetarchief auth login route', err);
-		}
-		// TODO redirect user to error page (see AVO - redirectToClientErrorPage)
-	}
-
-	@Get('register')
-	@Redirect()
-	public async registerRoute(
-		@Session() session: Record<string, any>,
-		@Query('returnToUrl') returnToUrl: string,
-		@Query('locale') locale: Locale = Locale.Nl
-	) {
-		try {
-			const serverRedirectUrl = stringifyUrl({
-				url: `${this.configService.get('HOST')}/auth/hetarchief/login`,
-				query: { returnToUrl },
-			});
-			const url = stringifyUrl({
-				url: decodeURIComponent(this.configService.get('SSUM_REGISTRATION_PAGE')).replace(
-					'{locale}',
-					locale
-				),
-				query: {
-					redirect_to: serverRedirectUrl,
-					app_name: this.configService.get('SAML_SP_ENTITY_ID'),
-				},
-			});
-			return {
-				url,
-				statusCode: HttpStatus.TEMPORARY_REDIRECT,
-			};
-		} catch (err) {
-			this.logger.error('Failed during hetarchief auth register route', err);
 		}
 		// TODO redirect user to error page (see AVO - redirectToClientErrorPage)
 	}
@@ -168,15 +137,14 @@ export class HetArchiefController {
 				(archiefUser?.language || Locale.Nl) as Locale
 			);
 
-			const userDto = {
+			const userDto: CreateOrUpdateUserDto = {
 				firstName: ldapUser.attributes.givenName[0],
 				lastName: ldapUser.attributes.sn[0],
 				email: ldapUser.attributes.mail[0],
 				groupId: userGroup,
 				isKeyUser: apps.includes(LdapApp.CATALOGUS_PRO),
 				organisationId,
-				organisationName: organisation?.schemaName ?? null,
-				organisationSector: organisation?.sector ?? null,
+				language: info.language || Locale.Nl,
 			};
 
 			if (!archiefUser) {
@@ -228,6 +196,7 @@ export class HetArchiefController {
 							'groupId',
 							'isKeyUser',
 							'organisationId',
+							'language',
 						]),
 						pick(userDto, [
 							'firstName',
@@ -236,6 +205,7 @@ export class HetArchiefController {
 							'groupId',
 							'isKeyUser',
 							'organisationId',
+							'language',
 						])
 					)
 				) {
@@ -309,6 +279,38 @@ export class HetArchiefController {
 			);
 			// TODO redirect user to error page (see AVO - redirectToClientErrorPage)
 		}
+	}
+
+	@Get('register')
+	@Redirect()
+	public async registerRoute(
+		@Session() session: Record<string, any>,
+		@Query('returnToUrl') returnToUrl: string,
+		@Query('locale') locale: Locale = Locale.Nl
+	) {
+		try {
+			const serverRedirectUrl = stringifyUrl({
+				url: `${this.configService.get('HOST')}/auth/hetarchief/login`,
+				query: { returnToUrl },
+			});
+			const url = stringifyUrl({
+				url: decodeURIComponent(this.configService.get('SSUM_REGISTRATION_PAGE')).replace(
+					'{locale}',
+					locale
+				),
+				query: {
+					redirect_to: serverRedirectUrl,
+					app_name: this.configService.get('SAML_SP_ENTITY_ID'),
+				},
+			});
+			return {
+				url,
+				statusCode: HttpStatus.TEMPORARY_REDIRECT,
+			};
+		} catch (err) {
+			this.logger.error('Failed during hetarchief auth register route', err);
+		}
+		// TODO redirect user to error page (see AVO - redirectToClientErrorPage)
 	}
 
 	@Get('logout')

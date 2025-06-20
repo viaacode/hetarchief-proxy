@@ -43,17 +43,20 @@ export class UsersController {
 			user.language = updateUserLangDto.language;
 			SessionHelper.setArchiefUserInfo(session, user);
 			this.campaignMonitorService
-				.updateNewsletterPreferences({
-					firstName: user.firstName,
-					lastName: user.lastName,
-					email: user.email,
-					is_key_user: user.isKeyUser,
-					usergroup: user.groupName,
-					created_date: user.createdAt,
-					last_access_date: user.lastAccessAt,
-					organisation: user.organisationName,
-					language: updateUserLangDto.language,
-				})
+				.updateNewsletterPreferences(
+					{
+						firstName: user.firstName,
+						lastName: user.lastName,
+						email: user.email,
+						is_key_user: user.isKeyUser,
+						usergroup: user.groupName,
+						created_date: user.createdAt,
+						last_access_date: user.lastAccessAt,
+						organisation: user.organisationName,
+						language: updateUserLangDto.language,
+					},
+					null
+				)
 				.then(() => {
 					// do not wait for updates to the language to be applied in campaign monitor
 				})

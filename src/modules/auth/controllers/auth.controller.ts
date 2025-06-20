@@ -61,16 +61,20 @@ export class AuthController {
 						.then(() => {
 							// Sync the new last-access-date to the info in campaign monitor since we do not have a nightly sync for hetarchief
 							this.campaignMonitorService
-								.updateNewsletterPreferences({
-									firstName: user?.getFirstName(),
-									lastName: user?.getLastName(),
-									email: user?.getMail(),
-									is_key_user: user?.getIsKeyUser(),
-									usergroup: user?.getGroupName(),
-									created_date: user?.getCreatedAt(),
-									last_access_date: new Date().toISOString(),
-									organisation: user?.getOrganisationName(),
-								})
+								.updateNewsletterPreferences(
+									{
+										firstName: user?.getFirstName(),
+										lastName: user?.getLastName(),
+										email: user?.getMail(),
+										is_key_user: user?.getIsKeyUser(),
+										usergroup: user?.getGroupName(),
+										created_date: user?.getCreatedAt(),
+										last_access_date: new Date().toISOString(),
+										organisation: user?.getOrganisationName(),
+										language: user?.getLanguage(),
+									},
+									null
+								)
 								.catch((err) => {
 									this.logger.error(
 										`Failed to update user in campaign monitor. user: ${JSON.stringify(user)}   ${JSON.stringify(err)}`

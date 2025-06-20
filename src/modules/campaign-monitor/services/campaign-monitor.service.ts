@@ -107,12 +107,19 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 				if (!throwErrors) {
 					return null;
 				}
+				let errorBody: string | null = null;
+				try {
+					errorBody = await response.text();
+				} catch (err) {
+					// this.logger.error('Failed to read error body from Campaign Monitor API response', err);
+				}
 				throw customError('Failed to make request to campaign monitor api', null, {
 					path,
 					method,
 					data,
 					status: response.status,
 					statusText: response.statusText,
+					errorBody,
 				});
 			}
 			return (await response.json()) as T;
@@ -120,13 +127,11 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 			if (!throwErrors) {
 				return null;
 			}
-			const error = customError('Failed to make request to campaign monitor api', err, {
+			throw customError('Failed to make request to campaign monitor api', err, {
 				path,
 				method,
 				data,
 			});
-			this.logger.error(error);
-			throw error;
 		}
 	}
 
@@ -244,7 +249,7 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 
 	public async fetchNewsletterPreferences(
 		email: string
-	): Promise<CampaignMonitorNewsletterPreferences> {
+	): Promise<CampaignMonitorNewsletterPreferences | null> {
 		let url: string | null = null;
 
 		try {
@@ -259,10 +264,8 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 				newsletter: response.State === 'Active',
 			};
 		} catch (err) {
-			if (err?.code === 203) {
-				return {
-					newsletter: false,
-				};
+			if (err?.code === 203 || JSON.stringify(err).includes('Subscriber not in list')) {
+				return null;
 			}
 
 			this.logger.error(
@@ -276,9 +279,16 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 		}
 	}
 
+	/**
+	 * Subscribes the user to the newsletter list or unsubscribes them based on the preferences provided.
+	 * If no preferences are provided, it updates the user info in Campaign Monitor without changing their subscription status.
+	 * If they don't exist yet and preferences are not provided, it will create a user in Campaign Monitor, but not subscribe them to the newsletter.
+	 * @param userInfo
+	 * @param preferences
+	 */
 	public async updateNewsletterPreferences(
 		userInfo: CampaignMonitorUserInfo,
-		preferences?: CampaignMonitorNewsletterPreferences
+		preferences: CampaignMonitorNewsletterPreferences | null
 	) {
 		try {
 			if (!userInfo.email) {
@@ -295,15 +305,18 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 					await this.unsubscribeFromNewsletterList(this.newsletterListId, userInfo.email);
 				}
 			} else {
-				// Update user info in campaign monitor
-				const subscriberData = this.convertPreferencesToNewsletterTemplateData(userInfo, true);
+				const existingUserPreferences = await this.fetchNewsletterPreferences(userInfo.email);
+				if (existingUserPreferences) {
+					// Update user info in campaign monitor
+					const subscriberData = this.convertPreferencesToNewsletterTemplateData(userInfo, false);
 
-				const data = {
-					Subscribers: [subscriberData],
-					Resubscribe: false,
-				};
-				const path = `/${this.subscriberEndpoint}/${this.newsletterListId}/import.json`;
-				await this.makeCmApiRequest(path, 'POST', data, true); // Ignore errors if user cannot be found
+					const data = {
+						Subscribers: [subscriberData],
+						Resubscribe: false,
+					};
+					const path = `/${this.subscriberEndpoint}/${this.newsletterListId}/import.json`;
+					await this.makeCmApiRequest(path, 'POST', data, true); // Ignore errors if user cannot be found
+				}
 			}
 		} catch (err) {
 			throw new InternalServerErrorException({

@@ -3,7 +3,7 @@ import { IsBoolean, IsDateString, IsNotEmpty, IsOptional, IsString } from 'class
 
 import { Locale } from '~shared/types/types';
 
-export class CreateUserDto {
+export class CreateOrUpdateUserDto {
 	@IsString()
 	firstName: string;
 
@@ -25,30 +25,10 @@ export class CreateUserDto {
 	@IsString()
 	@IsOptional()
 	organisationId?: string;
-}
-
-export class UpdateUserDto {
-	@IsString()
-	firstName: string;
-
-	@IsString()
-	lastName: string;
-
-	@IsString()
-	@IsNotEmpty()
-	email: string;
-
-	@IsString()
-	@IsNotEmpty()
-	groupId: string;
-
-	@IsBoolean()
-	@IsOptional()
-	isKeyUser?: boolean;
 
 	@IsString()
 	@IsOptional()
-	organisationId?: string;
+	language?: string; // nl | en
 }
 
 export class UpdateAcceptedTosDto {

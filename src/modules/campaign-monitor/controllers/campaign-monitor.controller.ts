@@ -73,7 +73,14 @@ export class CampaignMonitorController {
 	async getPreferences(
 		@Query() preferencesQueryDto: CampaignMonitorNewsletterPreferencesQueryDto
 	): Promise<CampaignMonitorNewsletterPreferences> {
-		return await this.campaignMonitorService.fetchNewsletterPreferences(preferencesQueryDto.email);
+		const preferences = await this.campaignMonitorService.fetchNewsletterPreferences(
+			preferencesQueryDto.email
+		);
+		return (
+			preferences || {
+				newsletter: false,
+			}
+		);
 	}
 
 	@Post('preferences')

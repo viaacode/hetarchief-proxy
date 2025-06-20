@@ -484,7 +484,7 @@ describe('CampaignMonitorService', () => {
 			campaignMonitorService.makeCmApiRequest = jest.fn().mockResolvedValueOnce({});
 
 			try {
-				await campaignMonitorService.updateNewsletterPreferences(mockUserInfo);
+				await campaignMonitorService.updateNewsletterPreferences(mockUserInfo, null);
 			} catch (e) {
 				expect(e).toBeUndefined();
 			}

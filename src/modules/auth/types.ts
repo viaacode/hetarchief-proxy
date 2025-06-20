@@ -70,6 +70,7 @@ export interface SamlCallbackBody {
 
 export interface RelayState {
 	returnToUrl: string;
+	language: string; // nl | en
 }
 
 interface ResponseHeader {
