@@ -5,13 +5,15 @@ query getUserById($id: uuid!) {
 		last_name
 		full_name
 		mail
-		language
 		is_key_user
 		accepted_tos_at
+		last_access_at
 		language
+		created_at
+		updated_at
 		group_id
 		group {
-			permissions {
+			permissions(order_by: { permission: { name: asc } }) {
 				permission {
 					name
 				}

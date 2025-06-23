@@ -2,12 +2,7 @@ import { DataService, UserInfoType, convertUserInfoToCommonUser } from '@meemoo/
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import type { Avo, Idp } from '@viaa/avo2-types';
 
-import {
-	CreateUserDto,
-	UpdateAcceptedTosDto,
-	UpdateUserDto,
-	UpdateUserLangDto,
-} from '../dto/users.dto';
+import { CreateOrUpdateUserDto, UpdateAcceptedTosDto, UpdateUserLangDto } from '../dto/users.dto';
 import {
 	type GqlPermissionData,
 	type GqlUser,
@@ -33,6 +28,7 @@ import {
 	type InsertUserIdentityMutationVariables,
 	type InsertUserMutation,
 	type InsertUserMutationVariables,
+	Lookup_Languages_Enum,
 	UpdateUserLanguageDocument,
 	type UpdateUserLanguageMutation,
 	type UpdateUserLanguageMutationVariables,
@@ -42,6 +38,7 @@ import {
 	UpdateUserProfileDocument,
 	type UpdateUserProfileMutation,
 	type UpdateUserProfileMutationVariables,
+	Users_Profile_Set_Input,
 } from '~generated/graphql-db-types-hetarchief';
 import type { IeObjectSector } from '~modules/ie-objects/ie-objects.types';
 import { customError } from '~shared/helpers/custom-error';
@@ -156,7 +153,7 @@ export class UsersService {
 	}
 
 	public async createUserWithIdp(
-		createUserDto: CreateUserDto,
+		createUserDto: CreateOrUpdateUserDto,
 		idp: Idp,
 		idpId: string
 	): Promise<User> {
@@ -168,6 +165,7 @@ export class UsersService {
 			group_id: createUserDto.groupId,
 			is_key_user: createUserDto.isKeyUser,
 			organisation_schema_identifier: createUserDto.organisationId,
+			language: createUserDto.language as Lookup_Languages_Enum,
 		};
 		const { insert_users_profile_one: createdUser } = await this.dataService.execute<
 			InsertUserMutation,
@@ -199,14 +197,15 @@ export class UsersService {
 		});
 	}
 
-	public async updateUser(id: string, updateUserDto: UpdateUserDto): Promise<User> {
-		const updateUser = {
+	public async updateUser(id: string, updateUserDto: CreateOrUpdateUserDto): Promise<User> {
+		const updateUser: Users_Profile_Set_Input = {
 			first_name: updateUserDto.firstName,
 			last_name: updateUserDto.lastName,
 			mail: updateUserDto.email,
 			group_id: updateUserDto.groupId,
 			is_key_user: updateUserDto.isKeyUser,
 			organisation_schema_identifier: updateUserDto.organisationId,
+			language: updateUserDto.language as Lookup_Languages_Enum,
 		};
 
 		const { update_users_profile: updatedUser } = await this.dataService.execute<

@@ -143,6 +143,7 @@ describe('UsersService', () => {
 				groupId: GroupId.CP_ADMIN,
 				isKeyUser: false,
 				organisationId: 'test',
+				language: 'en',
 			});
 			expect(result).toEqual(archiefUser);
 		});

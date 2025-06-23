@@ -5,14 +5,13 @@ query getUserByIdentityId($identityId: String!) {
 		last_name
 		full_name
 		mail
-		language
 		is_key_user
 		accepted_tos_at
-		language
-		group_id
 		last_access_at
-		created_at
 		language
+		created_at
+		updated_at
+		group_id
 		group {
 			permissions(order_by: { permission: { name: asc } }) {
 				permission {

@@ -6,14 +6,15 @@ mutation updateUserProfile($id: uuid!, $updateUser: users_profile_set_input!) {
 			last_name
 			full_name
 			mail
-			language
 			is_key_user
 			accepted_tos_at
+			last_access_at
 			language
+			created_at
+			updated_at
 			group_id
-			language
 			group {
-				permissions {
+				permissions(order_by: { permission: { name: asc } }) {
 					permission {
 						name
 					}

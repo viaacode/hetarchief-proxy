@@ -49,10 +49,11 @@ const archiefUser = {
 	organisationId: 'OR-1v5bc86',
 	organisationName: 'VRT',
 	sector: 'Overheid',
+	language: 'en',
 };
 
 const samlResponse = {
-	RelayState: `{ "returnToUrl": "${hetArchiefLoginUrl}" }`,
+	RelayState: `{ "returnToUrl": "${hetArchiefLoginUrl}", "language": "${archiefUser.language}" }`,
 	SAMLResponse: 'dummy',
 };
 
