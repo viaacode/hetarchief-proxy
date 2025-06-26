@@ -1,3 +1,4 @@
+import './init-application-monitoring'; // Application monitoring must be the first import!
 import { ValidationPipe } from '@nestjs/common';
 import { ConfigService as NestConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
