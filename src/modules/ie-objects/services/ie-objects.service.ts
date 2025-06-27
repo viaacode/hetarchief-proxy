@@ -1261,8 +1261,10 @@ export class IeObjectsService {
 			bool: {
 				must: [
 					{
-						match_phrase_prefix: {
-							[`${esField}.sayt`]: query,
+						multi_match: {
+							query: query,
+							type: 'bool_prefix',
+							fields: [`${esField}.sayt`, `${esField}.sayt._2gram`, `${esField}.sayt._3gram`],
 						},
 					},
 					esQuery.query,
