@@ -9,7 +9,7 @@ import {
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { AssetType } from '@viaa/avo2-types';
 import { format } from 'date-fns';
-import { compact, kebabCase, uniqBy } from 'lodash';
+import { compact, kebabCase, round, uniqBy } from 'lodash';
 import xmlFormat from 'xml-formatter';
 
 import type { SitemapConfig, SitemapItemInfo } from '../sitemap.types';
@@ -24,6 +24,7 @@ import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.servic
 import { SITEMAP_XML_OBJECTS_SIZE } from '~modules/sitemap/sitemap.consts';
 
 import { SpacesService } from '~modules/spaces/services/spaces.service';
+import { customError } from '~shared/helpers/custom-error';
 import { Locale, VisitorSpaceStatus } from '~shared/types/types';
 
 @Injectable()
@@ -136,12 +137,14 @@ export class SitemapService {
 		const publicContentIeObjectXmlUrls = await this.createAndUploadIeObjectSitemapEntries(
 			[IeObjectLicense.PUBLIEK_CONTENT],
 			sitemapConfig,
-			0
+			0,
+			'public objects'
 		);
 		const publicMetadataIeObjectXmlUrls = await this.createAndUploadIeObjectSitemapEntries(
 			[IeObjectLicense.PUBLIEK_METADATA_LTD, IeObjectLicense.PUBLIEK_METADATA_ALL],
 			sitemapConfig,
-			publicContentIeObjectXmlUrls.length
+			publicContentIeObjectXmlUrls.length,
+			'metadata objects'
 		);
 		xmlUrls.push(...publicContentIeObjectXmlUrls);
 		xmlUrls.push(...publicMetadataIeObjectXmlUrls);
@@ -224,26 +227,45 @@ export class SitemapService {
 	private async createAndUploadIeObjectSitemapEntries(
 		licenses: IeObjectLicense[],
 		sitemapConfig: SitemapConfig,
-		pageOffset: number
+		pageOffset: number,
+		label: 'public objects' | 'metadata objects'
 	) {
-		const result = await this.ieObjectsService.findIeObjectsForSitemap(licenses, 0, 0);
-		const totalIeObjects = result.total;
-		const xmlUrls: string[] = [];
-		for (let i = 0; i < totalIeObjects; i += SITEMAP_XML_OBJECTS_SIZE) {
-			const ieObjectsResponse = await this.ieObjectsService.findIeObjectsForSitemap(
-				licenses,
-				i,
-				SITEMAP_XML_OBJECTS_SIZE
-			);
+		try {
+			const result = await this.ieObjectsService.findIeObjectsForSitemap(licenses, 0, 0);
+			const totalIeObjects = result.total;
+			const xmlUrls: string[] = [];
+			for (let i = 0; i < totalIeObjects; i += SITEMAP_XML_OBJECTS_SIZE) {
+				const ieObjectsResponse = await this.ieObjectsService.findIeObjectsForSitemap(
+					licenses,
+					i,
+					SITEMAP_XML_OBJECTS_SIZE
+				);
 
-			const xmlUrl = await this.formatAndUploadIeObjectAsSitemapXml(
-				ieObjectsResponse.items,
-				pageOffset + ieObjectsResponse.page,
-				sitemapConfig
-			);
-			xmlUrls.push(xmlUrl);
+				const xmlUrl = await this.formatAndUploadIeObjectAsSitemapXml(
+					ieObjectsResponse.items,
+					pageOffset + ieObjectsResponse.page,
+					sitemapConfig
+				);
+				const currentIndex = Math.min(
+					i + Math.min(ieObjectsResponse.size, ieObjectsResponse.total),
+					ieObjectsResponse.total
+				);
+				const percentage = round((currentIndex / totalIeObjects) * 100, 1);
+				console.info(
+					`Uploading sitemap for ${label}: ${percentage}% completed. ${currentIndex} / ${totalIeObjects} objects processed`
+				);
+				xmlUrls.push(xmlUrl);
+			}
+			return xmlUrls;
+		} catch (err) {
+			const error = customError('Failed to createAndUploadIeObjectSitemapEntries', err, {
+				licenses,
+				sitemapConfig,
+				pageOffset,
+			});
+			console.error(error);
+			throw error;
 		}
-		return xmlUrls;
 	}
 
 	private renderPage(pageInfo: SitemapItemInfo): string {
