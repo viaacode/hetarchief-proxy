@@ -1,4 +1,3 @@
-import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
 import {
 	Body,
 	Controller,
@@ -44,6 +43,7 @@ import { Referer } from '~shared/decorators/referer.decorator';
 import { RequireAllPermissions } from '~shared/decorators/require-permissions.decorator';
 import { SessionUser } from '~shared/decorators/user.decorator';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
+import { customError } from '~shared/helpers/custom-error';
 import { EventsHelper } from '~shared/helpers/events';
 import { Locale } from '~shared/types/types';
 
@@ -84,7 +84,7 @@ export class FoldersController {
 			folder.objects = (folder.objects ?? []).map((object) => {
 				if (!object) {
 					console.error(
-						new CustomError('Trying to limit metadata on null ie object in folder', null, {
+						customError('Trying to limit metadata on null ie object in folder', null, {
 							object,
 							folderId: folder.id,
 							folderName: folder.name,
@@ -414,7 +414,7 @@ export class FoldersController {
 					await this.foldersService.addObjectToFolder(createdFolder.id, ieObjectId, referer, ip);
 				} catch (err) {
 					console.error(
-						new CustomError('Failed to add object from original folder to shared folder', null, {
+						customError('Failed to add object from original folder to shared folder', null, {
 							item,
 							folderId: folder.id,
 							folderName: folder.name,
