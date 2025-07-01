@@ -14,6 +14,7 @@ query findFolderIeObjectsByFolderId(
 		limit: $limit
 	) {
 		created_at
+		ie_object_id
 		intellectualEntity {
 			id
 			schema_identifier

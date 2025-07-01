@@ -17,7 +17,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import * as promiseUtils from 'blend-promise-utils';
 import type { Request } from 'express';
-import { isNil } from 'lodash';
+import { compact, isNil } from 'lodash';
 
 import { type Folder, type FolderShared, FolderStatus } from '../types';
 
@@ -81,19 +81,21 @@ export class FoldersController {
 			await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
 
 		for (const folder of folders.items) {
-			folder.objects = (folder.objects ?? []).map((object) => {
-				if (!object) {
-					console.error(
-						customError('Trying to limit metadata on null ie object in folder', null, {
-							object,
-							folderId: folder.id,
-							folderName: folder.name,
-						})
-					);
-					return {}; // ieObject in folder no longer exists
-				}
-				return this.ieObjectsService.limitObjectInFolder(object, user, visitorSpaceAccessInfo);
-			});
+			folder.objects = compact(
+				(folder.objects ?? []).map((object) => {
+					if (!object) {
+						console.error(
+							customError('Folder object returned null', null, {
+								object,
+								folderId: folder.id,
+								folderName: folder.name,
+							})
+						);
+						return {}; // ieObject in folder no longer exists
+					}
+					return this.ieObjectsService.limitObjectInFolder(object, user, visitorSpaceAccessInfo);
+				})
+			);
 		}
 
 		return folders;
@@ -127,6 +129,15 @@ export class FoldersController {
 		// https://meemoo.atlassian.net/browse/ARC-1834
 		folderObjects.items = (folderObjects.items ?? [])
 			.filter((object) => {
+				if (!object) {
+					console.error(
+						customError('Folder object returned null', null, {
+							object,
+							folderId: folderId,
+						})
+					);
+					return false; // ieObject in folder no longer exists
+				}
 				// if user is no keyUser AND object has ONLY license INTRA_CP-CONTENT AND/OR INTRA_CP-METADATA_ALL, do not show object
 				const hasOnlyIntraCpLicenses =
 					(object.licenses || [])
@@ -142,6 +153,7 @@ export class FoldersController {
 				if (!isKeyUser && hasOnlyIntraCpLicenses) {
 					return false;
 				}
+				// Return true for all the rest
 				return true;
 			})
 			.map((object) => {
@@ -364,7 +376,7 @@ export class FoldersController {
 	/**
 	 * Accept a folder invite and copy the shared folder to the current user
 	 * @param referer
-	 * @param request
+	 * @param ip
 	 * @param folderId
 	 * @param user
 	 */
