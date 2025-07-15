@@ -10,7 +10,18 @@ import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { mapLimit } from 'blend-promise-utils';
 import type { Cache } from 'cache-manager';
 import got, { type Got } from 'got';
-import { compact, find, isArray, isEmpty, isNil, kebabCase, omitBy, orderBy, uniq } from 'lodash';
+import {
+	compact,
+	find,
+	isArray,
+	isEmpty,
+	isNil,
+	kebabCase,
+	omitBy,
+	orderBy,
+	take,
+	uniq,
+} from 'lodash';
 
 import type { Configuration } from '~config';
 
@@ -1256,7 +1267,7 @@ export class IeObjectsService {
 		const esField = AUTOCOMPLETE_FIELD_TO_ES_FIELD_NAME[field];
 		esQuery._source = false;
 		esQuery.fields = [`${esField}.sayt`];
-		esQuery.size = 20; // Load more results, so we can remove the non unique entries
+		esQuery.size = 200; // Load more results, so we can remove the non unique entries
 		esQuery.query = {
 			bool: {
 				must: [
@@ -1304,29 +1315,32 @@ export class IeObjectsService {
 		const queryParts = query.toLowerCase().split(' ');
 
 		// Map elasticsearch response to a list of unique strings
-		return uniq(
-			response.hits?.hits?.flatMap((hit): string[] => {
-				const value = hit.fields[`${esField}.sayt`];
-				if (isArray(value)) {
-					// List of strings
-					let relevantValues: string[];
-					if (value.length > 1) {
-						// If there are multiple values, filter them based on the query parts
-						relevantValues = value.filter((v) =>
-							queryParts.every((queryPart) => v.toLowerCase().includes(queryPart))
-						);
-					} else {
-						relevantValues = value;
-					}
+		return take(
+			uniq(
+				response.hits?.hits?.flatMap((hit): string[] => {
+					const value = hit.fields[`${esField}.sayt`];
+					if (isArray(value)) {
+						// List of strings
+						let relevantValues: string[];
+						if (value.length > 1) {
+							// If there are multiple values, filter them based on the query parts
+							relevantValues = value.filter((v) =>
+								queryParts.every((queryPart) => v.toLowerCase().includes(queryPart))
+							);
+						} else {
+							relevantValues = value;
+						}
 
-					return relevantValues.map((v) => {
-						return v.trim();
-					});
-				}
-				// Single string
-				return [value] as string[];
-			})
-		).slice(0, 4);
+						return relevantValues.map((v) => {
+							return v.trim();
+						});
+					}
+					// Single string
+					return [value] as string[];
+				})
+			),
+			200
+		);
 	}
 
 	public async getPreviousNextIeObject(collectionId: string, ieObjectIri: string) {
