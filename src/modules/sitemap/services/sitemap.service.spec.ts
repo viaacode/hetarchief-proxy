@@ -38,7 +38,7 @@ describe('SitemapService', () => {
 	const env = process.env;
 
 	beforeEach(async () => {
-		process.env.CLIENT_HOST = 'http://hetarchief.be';
+		process.env.CLIENT_HOST = 'https://v3.hetarchief.be';
 
 		const module: TestingModule = await Test.createTestingModule({
 			providers: [
@@ -199,12 +199,16 @@ describe('SitemapService', () => {
 			mockIeObjectsService.findIeObjectsForSitemap.mockResolvedValueOnce({ total: 1 });
 			mockIeObjectsService.findIeObjectsForSitemap.mockResolvedValueOnce({
 				items: [mockSitemapObject],
+				total: 1,
+				size: 1,
 			});
 
 			// Non-public ie objects
 			mockIeObjectsService.findIeObjectsForSitemap.mockResolvedValueOnce({ total: 1 });
 			mockIeObjectsService.findIeObjectsForSitemap.mockResolvedValueOnce({
 				items: [mockSitemapObject],
+				total: 1,
+				size: 1,
 			});
 
 			mockAssetsService.uploadAndTrack.mockResolvedValueOnce(
