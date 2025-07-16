@@ -349,7 +349,7 @@ export class FoldersController {
 
 		const shareUrl = {
 			nl: `${process.env.CLIENT_HOST}/account/map-delen/${folderId}`,
-			en: `${process.env.CLIENT_HOST}/account/map-share/${folderId}`,
+			en: `${process.env.CLIENT_HOST}/account/share-folder/${folderId}`,
 		};
 		await this.campaignMonitorService.sendTransactionalMail(
 			{
