@@ -898,18 +898,11 @@
 									<ul style="Margin-top: 20px;Margin-bottom: 0;Margin-left: 24px;padding: 0;list-style-type: disc;">
 										<li style="Margin-top: 20px;Margin-bottom: 0;Margin-left: 0;">Titel: {{ item.title }}</li>
 										<li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">Aanbieder:&nbsp;{{ item.cp_name }}</li>
-										<li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">Identifier bij aanbieder (optioneel):&nbsp;{{
-											item.local_cp_id }}
-										</li>
-										<li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">Meemoo identifier:&nbsp;{{ item.pid }}
-										</li>
-										<li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">Bekijk de pagina hier opnieuw: {{
-											item.page_url }}
-										</li>
+										<li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">Identifier bij aanbieder (optioneel):&nbsp;{{ item.local_cp_id }}</li>
+										<li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">Meemoo identifier:&nbsp;{{ item.pid }}</li>
+										<li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">Bekijk de pagina hier opnieuw: {{ item.page_url }}</li>
 										<li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">Jouw vraag: {{ item.request_type }}</li>
-										<li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">Meer informatie bij je
-											aanvraag:&nbsp;{{ item.request_description }}
-										</li>
+										<li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">Meer informatie bij je aanvraag:&nbsp;{{ item.request_description }}</li>
 									</ul>
 									<p style="color: #00C8AA">___</p>
 									{% endfor %}
@@ -921,11 +914,8 @@
 										<li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">Naam: {{ user_lastname }}</li>
 										<li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">E-mailadres: {{ user_email }}</li>
 										<li style="Margin-top: 0;Margin-bottom: 0;Margin-left:
-0;">Type:&nbsp;{{ user_request_context }}
-										</li>
-										<li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">Organisatie (optioneel): {{
-											user_organisation }}
-										</li>
+0;">Type:&nbsp;{{ user_request_context }}</li>
+										<li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">Organisatie (optioneel): {{ user_organisation }}</li>
 									</ul>
 								</div>
 							</div>
