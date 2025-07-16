@@ -19,7 +19,9 @@ export class ContentPartnersService {
 	/**
 	 * Adapt a content partner as returned by a graphQl response to our internal model
 	 */
-	public adapt(graphQlCp: FindContentPartnersQuery['graph_organization'][0]): ContentPartner {
+	public adapt(
+		graphQlCp: FindContentPartnersQuery['graph_organisations_with_objects'][0]
+	): ContentPartner {
 		return {
 			id: graphQlCp.org_identifier,
 			name: graphQlCp.skos_pref_label,
@@ -48,10 +50,10 @@ export class ContentPartnersService {
 		});
 
 		return Pagination<ContentPartner>({
-			items: contentPartners.graph_organization.map((cp) => this.adapt(cp)),
+			items: contentPartners.graph_organisations_with_objects.map((cp) => this.adapt(cp)),
 			page: 1,
-			size: contentPartners.graph_organization_aggregate.aggregate.count,
-			total: contentPartners.graph_organization_aggregate.aggregate.count,
+			size: contentPartners.graph_organisations_with_objects_aggregate.aggregate.count,
+			total: contentPartners.graph_organisations_with_objects_aggregate.aggregate.count,
 		});
 	}
 }
