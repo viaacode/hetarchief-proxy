@@ -24,14 +24,14 @@ export const limitAccessToObjectDetails = (
 		console.error(`Trying to limit metadata on null ie object: ${ieObject}`);
 		return {};
 	}
-	const licensesByUserGroup = [
+	const userGroupLicenses = [
 		...(IE_OBJECT_LICENSES_BY_USER_GROUP[
 			userInfo.groupId ?? IeObjectExtraUserGroupType.ANONYMOUS
 		] ?? []),
 	];
 	const ieObjectLicenses: IeObjectLicense[] = [...(ieObject.licenses || [])];
 
-	let accessibleLicenses: IeObjectLicense[] = [];
+	const userAccessibleLicenses: IeObjectLicense[] = [];
 
 	const objectIntraCpLicenses = intersection(ieObjectLicenses, IE_OBJECT_INTRA_CP_LICENSES);
 	const hasFolderAccess = userInfo.accessibleObjectIdsThroughFolders.includes(
@@ -65,7 +65,7 @@ export const limitAccessToObjectDetails = (
 		userInfo.groupId !== GroupId.KIOSK_VISITOR ||
 		ieObject.maintainerId === userInfo.maintainerId
 	) {
-		accessibleLicenses.push(...intersection(ieObjectLicenses, IE_OBJECT_PUBLIC_LICENSES));
+		userAccessibleLicenses.push(...intersection(ieObjectLicenses, IE_OBJECT_PUBLIC_LICENSES));
 	}
 
 	// Step 1b - Sector as extra filter on INTRA_CP_CONTENT, INTRA_CP_METADATA OR BOTH
@@ -96,21 +96,21 @@ export const limitAccessToObjectDetails = (
 		}
 
 		// Determine common ground between ie object licenses and user group licenses
-		accessibleLicenses.push(...licensesBySector);
+		userAccessibleLicenses.push(...licensesBySector);
 	}
 	// If user is part of VISITOR && has folder access -> add visitor metadata license to licenses
 	// If user is part of VISITOR && has full access -> add visitor content license to licenses
 	if (hasFolderAccess || hasFullVisitorSpaceAccess) {
-		licensesByUserGroup.push(
+		userGroupLicenses.push(
 			IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
 			IeObjectLicense.BEZOEKERTOOL_CONTENT
 		);
 
 		// Determine common ground between ie object licenses and user group licenses
-		accessibleLicenses.push(...licensesByUserGroup);
+		userAccessibleLicenses.push(...userGroupLicenses);
 	}
 
-	accessibleLicenses = uniq(intersection(ieObjectLicenses, accessibleLicenses));
+	const accessibleLicenses = uniq(intersection(ieObjectLicenses, userAccessibleLicenses));
 
 	// Step 2 - Determine ieObject limited props
 	// ---------------------------------------------------

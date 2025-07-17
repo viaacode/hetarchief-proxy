@@ -562,4 +562,34 @@ describe('Limit access to object details', () => {
 		);
 		expect(limitedAccessIeObject2f).toEqual(null);
 	});
+
+	it('KEY USER, LICENSES INTRA_CP - user should see the object (ARC-3139)', () => {
+		const mockUserInfoTestCase: LimitAccessUserInfo = {
+			...mockUserInfo,
+			isKeyUser: true,
+			groupId: GroupId.VISITOR,
+			sector: IeObjectSector.REGIONAL,
+			maintainerId: 'OR-sf2mb2h',
+			accessibleVisitorSpaceIds: [],
+			accessibleObjectIdsThroughFolders: [],
+		};
+		const limitedAccessIeObject = limitAccessToObjectDetails(
+			{
+				...mockIeObject1,
+				maintainerId: 'OR-mw28d4m',
+				sector: IeObjectSector.REGIONAL,
+				licenses: [
+					IeObjectLicense.BEZOEKERTOOL_CONTENT,
+					IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
+					IeObjectLicense.INTRA_CP_CONTENT,
+					IeObjectLicense.INTRA_CP_METADATA_ALL,
+					IeObjectLicense.PUBLIEK_METADATA_LTD,
+				],
+			},
+			// Visitor
+			mockUserInfoTestCase
+		);
+		// User can see the object with essence and all metadata
+		expect(limitedAccessIeObject.thumbnailUrl).toBeDefined();
+	});
 });
