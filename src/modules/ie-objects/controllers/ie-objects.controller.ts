@@ -551,7 +551,7 @@ export class IeObjectsController {
 		return this.ieObjectsService.getMetadataAutocomplete(queryDto.field, queryDto.query, {
 			filters: queryDto.filters,
 			page: 1,
-			size: 4,
+			size: 200,
 			orderProp: OrderProperty.RELEVANCE,
 			orderDirection: SortDirection.desc,
 		});
@@ -591,6 +591,7 @@ export class IeObjectsController {
 		} else {
 			ids = schemaIdentifiers;
 		}
+
 		const visitorSpaceAccessInfo =
 			await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
 

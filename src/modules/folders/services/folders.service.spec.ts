@@ -115,6 +115,7 @@ const mockGqlFolderObjectsResult: FindFolderIeObjectsByFolderIdQuery = {
 	users_folder_ie: [
 		{
 			created_at: '2022-02-02T10:55:16.542503',
+			ie_object_id: 'https://data-qas.hetarchief.be/id/entity/8s4jm2514q',
 			intellectualEntity: {
 				id: 'https://data-qas.hetarchief.be/id/entity/8s4jm2514q',
 				schema_identifier: '8s4jm2514q',

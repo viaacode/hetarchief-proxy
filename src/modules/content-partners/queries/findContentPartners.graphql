@@ -1,11 +1,11 @@
-query findContentPartners($where: graph_organization_bool_exp!) {
-	graph_organization(where: $where) {
+query findContentPartners($where: graph_organisations_with_objects_bool_exp!) {
+	graph_organisations_with_objects(where: $where) {
 		id
 		org_identifier
 		skos_pref_label
 		skos_alt_label
 	}
-	graph_organization_aggregate(where: $where) {
+	graph_organisations_with_objects_aggregate(where: $where) {
 		aggregate {
 			count
 		}

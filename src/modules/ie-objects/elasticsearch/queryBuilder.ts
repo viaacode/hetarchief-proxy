@@ -280,6 +280,7 @@ export class QueryBuilder {
 		elasticKey: string,
 		searchFilter: SearchFilter
 	): { occurrenceType: string; query: any } {
+		let elasticKeyResolved = elasticKey;
 		if (searchFilter.field === IeObjectsSearchFilterField.CREATOR) {
 			// Creator is always the full name, so we can collapse "contains" under "is" and collapse "contains_not" under "is_not"
 			// https://meemoo.atlassian.net/browse/ARC-1844?focusedCommentId=58372
@@ -292,6 +293,16 @@ export class QueryBuilder {
 				},
 			};
 		}
+		if (FLATTENED_FIELDS.includes(searchFilter.field)) {
+			// Flattened fields should be case-insensitive, so we always search on the lowercase value
+			searchFilter.value = searchFilter.value.toLowerCase();
+		}
+		if (
+			FLATTENED_FIELDS.includes(searchFilter.field) &&
+			(searchFilter.operator === Operator.IS || searchFilter.operator === Operator.IS_NOT)
+		) {
+			elasticKeyResolved = `${elasticKey}.keyword`;
+		}
 		if (
 			FLATTENED_FIELDS.includes(searchFilter.field) &&
 			[Operator.CONTAINS, Operator.CONTAINS_NOT].includes(searchFilter.operator)
@@ -301,8 +312,8 @@ export class QueryBuilder {
 				occurrenceType: OCCURRENCE_TYPE[searchFilter.operator],
 				query: {
 					wildcard: {
-						[elasticKey]: {
-							value: `*${searchFilter.value}*`,
+						[elasticKeyResolved]: {
+							value: `*${searchFilter.value.toLowerCase()}*`,
 							case_insensitive: true,
 						},
 					},

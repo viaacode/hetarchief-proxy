@@ -51,13 +51,13 @@ describe('ContentPartnersService', () => {
 	describe('getContentPartners', () => {
 		it('returns all content partners', async () => {
 			const mockData = {
-				graph_organization: [
+				graph_organisations_with_objects: [
 					{
 						org_identifier: 'OR-test',
 						skos_pref_label: 'Test org',
 					},
 				],
-				graph_organization_aggregate: {
+				graph_organisations_with_objects_aggregate: {
 					aggregate: {
 						count: 1,
 					},
@@ -73,13 +73,13 @@ describe('ContentPartnersService', () => {
 
 		it('filters on hasSpace', async () => {
 			const mockData = {
-				graph_organization: [
+				graph_organisations_with_objects: [
 					{
 						org_identifier: 'OR-test',
 						skos_pref_label: 'Test org',
 					},
 				],
-				graph_organization_aggregate: {
+				graph_organisations_with_objects_aggregate: {
 					aggregate: {
 						count: 1,
 					},

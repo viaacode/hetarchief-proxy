@@ -10,6 +10,8 @@ import {
 	ValidateNested,
 } from 'class-validator';
 
+import { LogEventType } from '~modules/events/types';
+import { Locale } from '~shared/types/types';
 import { type CampaignMonitorShareFolderInfo, EmailTemplate } from '../campaign-monitor.types';
 
 export class CampaignMonitorVisitData {
@@ -283,6 +285,20 @@ export class CampaignMonitorNewsletterUpdatePreferencesQueryDto {
 		},
 	})
 	preferences: CampaignMonitorNewsletterPreferencesDto;
+
+	@IsString()
+	@IsEnum(Locale, {
+		message: `Event type must be one of: ${Object.values(LogEventType).join(', ')}`,
+	})
+	@ApiProperty({
+		type: String,
+		description: `Log an event with this type. Possible types: ${Object.values(LogEventType).join(
+			', '
+		)}`,
+		example: Locale.En,
+		enum: Locale,
+	})
+	language?: Locale;
 }
 
 export class CampaignMonitorConfirmMailQueryDto {

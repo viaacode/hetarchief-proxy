@@ -211,7 +211,7 @@ export enum ElasticsearchField {
 	schema_keywords = 'schema_keywords',
 	schema_name = 'schema_name',
 	dcterms_format = 'dcterms_format',
-	schema_publisher = 'schema_publisher',
+	schema_publisher = 'schema_publisher_text',
 	schema_creator = 'schema_creator',
 	schema_creator_text = 'schema_creator_text',
 	schema_date_created = 'schema_date_created',
@@ -321,6 +321,8 @@ export const NEEDS_FILTER_SUFFIX: { [prop in IeObjectsSearchFilterField]?: strin
 	[IeObjectsSearchFilterField.OBJECT_TYPE]: 'keyword',
 	[IeObjectsSearchFilterField.NEWSPAPER_SERIES_NAME]: 'keyword',
 	[IeObjectsSearchFilterField.MENTIONS]: 'keyword',
+	[IeObjectsSearchFilterField.PUBLISHER]: 'keyword',
+	[IeObjectsSearchFilterField.CREATOR]: 'keyword',
 
 	// http://es-qas-hetarchief.private.cloud.meemoo.be/_mapping
 	// These are already type keyword:

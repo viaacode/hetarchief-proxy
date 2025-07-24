@@ -29,13 +29,20 @@ import { Locale, VisitorSpaceStatus } from '~shared/types/types';
 
 @Injectable()
 export class SitemapService {
+	private readonly CLIENT_HOST_RESOLVED: string;
+
 	constructor(
 		private dataService: DataService,
 		protected spacesService: SpacesService,
 		protected contentPagesService: ContentPagesService,
 		protected ieObjectsService: IeObjectsService,
 		protected assetsService: AssetsService
-	) {}
+	) {
+		this.CLIENT_HOST_RESOLVED = process.env.CLIENT_HOST.replace(
+			'://v3.hetarchief.be',
+			'://hetarchief.be'
+		);
+	}
 
 	public async generateSitemap(sitemapConfig: SitemapConfig) {
 		const staticPageSitemapEntries: SitemapItemInfo[] = [
@@ -125,7 +132,7 @@ export class SitemapService {
 			`
 			<?xml version="1.0" encoding="UTF-8"?>
 			<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
-			${generalSitemapEntries.map(this.renderPage).join('\n')}
+			${generalSitemapEntries.map((entry) => this.renderPage(entry)).join('\n')}
 			</urlset>
 		`,
 			{ lineSeparator: '\n' }
@@ -268,27 +275,29 @@ export class SitemapService {
 		}
 	}
 
-	private renderPage(pageInfo: SitemapItemInfo): string {
-		function renderPageLinks(links: { href: string; hreflang: Locale }[]) {
-			if (!links?.length) {
-				return '';
-			}
-			return links
-				.map((translatedPage) => {
-					const hreflang = translatedPage.hreflang;
-					const href =
-						process.env.CLIENT_HOST +
-						(translatedPage.hreflang === Locale.Nl ? '' : `/${translatedPage.hreflang}`) +
-						translatedPage.href;
-					return `<xhtml:link rel="alternate" hreflang="${hreflang}" href="${href}"/>`;
-				})
-				.join('\n');
+	private renderPageLinks(links: { href: string; hreflang: Locale }[]) {
+		if (!links?.length) {
+			return '';
 		}
+		return links
+			.map((translatedPage) => {
+				const hreflang = translatedPage.hreflang;
+				// Replace the v3 url with the production url, so the sitemap can be generated before the production release
+				// https://meemoo.atlassian.net/browse/ARC-3092
+				const href =
+					this.CLIENT_HOST_RESOLVED +
+					(translatedPage.hreflang === Locale.Nl ? '' : `/${translatedPage.hreflang}`) +
+					translatedPage.href;
+				return `<xhtml:link rel="alternate" hreflang="${hreflang}" href="${href}"/>`;
+			})
+			.join('\n');
+	}
 
+	private renderPage(pageInfo: SitemapItemInfo): string {
 		return `
 			<url>
-				<loc>${process.env.CLIENT_HOST}${pageInfo.loc}</loc>
-				${renderPageLinks(pageInfo.links)}
+				<loc>${this.CLIENT_HOST_RESOLVED}${pageInfo.loc}</loc>
+				${this.renderPageLinks(pageInfo.links)}
 				${pageInfo.lastmod ? `<lastmod>${pageInfo.lastmod}</lastmod>` : ''}
 				<changefreq>${pageInfo.changefreq}</changefreq>
 				${pageInfo.priority ? `<priority>${pageInfo.priority}</priority>` : ''}
@@ -377,7 +386,7 @@ export class SitemapService {
 			`
 				<?xml version="1.0" encoding="UTF-8"?>
 				<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
-					${ieObjectSitemapEntries.map(this.renderPage).join('\n')}
+					${ieObjectSitemapEntries.map((entry) => this.renderPage(entry)).join('\n')}
 				</urlset>
 			`,
 			{ lineSeparator: '\n' }

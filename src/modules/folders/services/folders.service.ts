@@ -171,6 +171,10 @@ export class FoldersService {
 		);
 		if (!objectIe) {
 			return null;
+			// TODO in a future version see if we want to show a card that this item is no longer available
+			// return {
+			// 	id: gqlFolderObjectLink.ie_object_id,
+			// };
 		}
 		return {
 			folderEntryCreatedAt: gqlFolderObjectLink?.created_at,

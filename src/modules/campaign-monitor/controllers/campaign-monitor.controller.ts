@@ -92,10 +92,12 @@ export class CampaignMonitorController {
 	): Promise<{ message: 'success' }> {
 		try {
 			if (!user?.getId()) {
-				// Logged out user requests to subscribe => send confirm email
-				await this.campaignMonitorService.sendConfirmationMail(preferences, Locale.Nl);
+				// Logged-out user requests to subscribe => send confirm email
+				// If user is not logged in, use the current website language for sending the confirmation email
+				const language = (preferences.language || Locale.Nl) as Locale;
+				await this.campaignMonitorService.sendConfirmationMail(preferences, language);
 			} else {
-				// Logged in user subscribes to the newsletter
+				// Logged-in user subscribes to the newsletter
 				const updatedUser = await this.usersService.getById(user.getId());
 				if (!updatedUser) {
 					throw new InternalServerErrorException({

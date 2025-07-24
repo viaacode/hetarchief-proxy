@@ -92,7 +92,9 @@ export const buildFreeTextFilter = (searchTemplate: any[], searchFilter: SearchF
 	const stringifiedSearchTemplate = JSON.stringify(searchTemplate);
 
 	const shouldArray = values.flatMap((value) => {
-		return JSON.parse(stringifiedSearchTemplate.replace(/\{\{query}}/g, value));
+		const stringifiedValue = JSON.stringify(value);
+		const valueWithoutQuotes = stringifiedValue.slice(1, -1);
+		return JSON.parse(stringifiedSearchTemplate.replace(/\{\{query}}/g, valueWithoutQuotes));
 	});
 
 	// At least one of the search patterns has to match, but not all of them

@@ -42,7 +42,6 @@ import { OrganisationsService } from '~modules/organisations/services/organisati
 
 import { CreateOrUpdateUserDto } from '~modules/users/dto/users.dto';
 import { UsersService } from '~modules/users/services/users.service';
-import { Permission } from '~modules/users/types';
 import { LdapApp, type LdapUser } from '~shared/auth/auth.types';
 import { SessionHelper } from '~shared/auth/session-helper';
 import { EventsHelper } from '~shared/helpers/events';
@@ -218,9 +217,6 @@ export class HetArchiefController {
 			if (!archiefUser) {
 				throw new Error('hetarchief user could not be found nor be created');
 			}
-
-			// Inject CAN_EDIT_PROFILE_INFO permission only for users in HetArchief IDP
-			archiefUser.permissions.push(Permission.CAN_EDIT_PROFILE_INFO);
 
 			SessionHelper.setArchiefUserInfo(session, archiefUser);
 
