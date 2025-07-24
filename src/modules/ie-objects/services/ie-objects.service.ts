@@ -583,7 +583,7 @@ export class IeObjectsService {
 			isPartOfResponse,
 			hasCarrierResponse,
 			meemooLocalIdResponse,
-			_premisIdentifierResponse,
+			_premisIdentifierResponse, // TODO remove this one => update all indexes in the array and tests
 			mhFragmentIdentifierResponse,
 			parentCollectionResponse,
 			schemaAlternateNameResponse,
@@ -615,6 +615,23 @@ export class IeObjectsService {
 			return null;
 		}
 
+		const licenses = compact(
+			schemaLicenseResponse?.schemaLicense.map((item) => item?.schema_license)
+		) as IeObjectLicense[];
+		const isPublicDomain: boolean =
+			licenses.includes(IeObjectLicense.PUBLIEK_CONTENT) &&
+			(licenses.includes(IeObjectLicense.PUBLIC_DOMAIN) ||
+				licenses.includes(IeObjectLicense.COPYRIGHT_UNDETERMINED));
+		// If the object is public domain, we generate a thumbnailUrl with a token that stays valid for 15 years
+		// https://meemoo.atlassian.net/browse/ARC-2891
+		const tokenValidDuration = isPublicDomain ? 15 * 365 * 24 * 60 * 60 : undefined; // 15 years in seconds
+		const thumbnailUrl = await this.getThumbnailUrlWithToken(
+			schemaThumbnailUrlResponse?.schemaThumbnailUrl?.[0]?.schema_thumbnail_url?.[0],
+			referer,
+			ip,
+			tokenValidDuration
+		);
+
 		const schemaMaintainer = ie?.schemaMaintainer;
 		const dctermsFormat = dctermsFormatResponse.dctermsFormat[0]?.dcterms_format as IeObjectType;
 		const premisIdentifiers = isPartOfResponse?.isPartOf?.[0]?.isPartOf?.premisIdentifier
@@ -626,13 +643,8 @@ export class IeObjectsService {
 			isRepresentedByResponse,
 			hasPartResponse,
 			referer,
-			ip
-		);
-
-		const thumbnailUrl: string | undefined = await this.getThumbnailUrlWithToken(
-			schemaThumbnailUrlResponse?.schemaThumbnailUrl?.[0]?.schema_thumbnail_url?.[0],
-			referer,
-			ip
+			ip,
+			tokenValidDuration
 		);
 
 		const isPartOfParentCollections = parentCollectionResponse?.parentCollection?.map((part) => {
@@ -662,9 +674,7 @@ export class IeObjectsService {
 			datePublished: ie?.schema_date_published,
 			description: ie?.schema_description,
 			duration: schemaDurationResponse?.graph__schema_duration?.[0]?.schema_duration,
-			licenses: compact(
-				schemaLicenseResponse?.schemaLicense.map((item) => item?.schema_license)
-			) as IeObjectLicense[],
+			licenses,
 			premisIdentifier: premisIdentifiers,
 			abrahamInfo: {
 				id: isPartOfParentCollections[0]?.schemaIdentifier,
@@ -965,7 +975,8 @@ export class IeObjectsService {
 		isRepresentedByResponse: GetIsRepresentedByQuery,
 		hasPartResponse: GetHasPartQuery,
 		referer: string,
-		ip: string
+		ip: string,
+		tokenValidDuration?: number
 	): Promise<IeObjectPages | null> {
 		const ieObjectSelf = isRepresentedByResponse?.graph__intellectual_entity[0];
 		const ieObjectParts = hasPartResponse?.graph_intellectual_entity || [];
@@ -1012,7 +1023,12 @@ export class IeObjectsService {
 									schemaTranscriptUrl,
 									edmIsNextInSequence: representation.edm_is_next_in_sequence,
 									updatedAt: representation.updated_at,
-									files: await this.adaptFiles(representation.includes, referer, ip),
+									files: await this.adaptFiles(
+										representation.includes,
+										referer,
+										ip,
+										tokenValidDuration
+									),
 								};
 							}
 						)
@@ -1041,7 +1057,12 @@ export class IeObjectsService {
 		};
 	}
 
-	public async adaptFiles(dbFiles: DbFile, referer: string, ip: string): Promise<IeObjectFile[]> {
+	public async adaptFiles(
+		dbFiles: DbFile,
+		referer: string,
+		ip: string,
+		tokenValidDuration?: number
+	): Promise<IeObjectFile[]> {
 		if (isEmpty(dbFiles)) {
 			return [];
 		}
@@ -1056,7 +1077,8 @@ export class IeObjectsService {
 				const thumbnailUrl: string | undefined = await this.getThumbnailUrlWithToken(
 					file.schema_thumbnail_url,
 					referer,
-					ip
+					ip,
+					tokenValidDuration
 				);
 
 				return {
@@ -1364,14 +1386,16 @@ export class IeObjectsService {
 	 * @param thumbnailUrl
 	 * @param referer site on which this thumbnail will be viewed. eg: https://hetarchief.be. Leave null for not resolving the url with a player ticket (faster)
 	 * @param ip
+	 * @param validDuration number of seconds the token is valid for. Defaults to 4 hours (14400 seconds) (env var: TICKET_SERVICE_MAXAGE)
 	 */
 	public async getThumbnailUrlWithToken(
 		thumbnailUrl: string | undefined | null,
 		referer: string | null,
-		ip: string
+		ip: string,
+		validDuration?: number
 	): Promise<string | undefined> {
 		if (thumbnailUrl && referer) {
-			return this.playerTicketService.resolveThumbnailUrl(thumbnailUrl, referer, ip);
+			return this.playerTicketService.resolveThumbnailUrl(thumbnailUrl, referer, ip, validDuration);
 		}
 		return thumbnailUrl || undefined;
 	}

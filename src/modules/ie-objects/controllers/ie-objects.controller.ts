@@ -591,6 +591,7 @@ export class IeObjectsController {
 		} else {
 			ids = schemaIdentifiers;
 		}
+
 		const visitorSpaceAccessInfo =
 			await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
 
