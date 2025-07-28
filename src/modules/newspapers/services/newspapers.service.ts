@@ -4,7 +4,6 @@ import { DataService } from '@meemoo/admin-core-api';
 import { Injectable } from '@nestjs/common';
 
 import { ConfigService } from '@nestjs/config';
-import { sortBy } from 'lodash';
 
 import type { Configuration } from '~config';
 
@@ -27,12 +26,9 @@ export class NewspapersService {
 			GetNewspaperTitlesDocument
 		);
 
-		return sortBy(
-			response.graph__newspaper_public_content.map((newspaperTitle) => ({
-				title: newspaperTitle.schema_name,
-			})),
-			(item) => item.title
-		);
+		return response.graph__newspaper_public_content.map((newspaperTitle) => ({
+			title: newspaperTitle.schema_name,
+		}));
 	}
 
 	public httpsGetAsync(options: RequestOptions): Promise<any> {
