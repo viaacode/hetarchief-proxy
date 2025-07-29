@@ -504,7 +504,7 @@ export class IeObjectsController {
 				message: "The provided url doesn't seem to be part of the whitelisted asset service urls.",
 				additionalInfo: {
 					altoJsonUrl,
-					WHITELISTED_DOMAINS,
+					WHITELISTED_DOMAINS: WHITELISTED_DOMAINS.map((regex) => regex.toString()),
 				},
 			});
 		}
