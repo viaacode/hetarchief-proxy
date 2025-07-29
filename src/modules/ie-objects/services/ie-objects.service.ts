@@ -1000,7 +1000,7 @@ export class IeObjectsService {
 					page: DbIeObjectWithRepresentations,
 					pageIndex: number
 				): Promise<IeObjectPage | null> => {
-					const representations: IeObjectRepresentation[] = compact(
+					let representations: IeObjectRepresentation[] = compact(
 						await mapLimit(
 							page?.isRepresentedBy || [],
 							20,
@@ -1033,6 +1033,9 @@ export class IeObjectsService {
 							}
 						)
 					).flat();
+
+					representations = this.cleanupRepresentations(representations);
+
 					// Avoid returning empty array representations
 					if (representations.length) {
 						const mentions = this.adaptMentions(
@@ -1438,5 +1441,48 @@ export class IeObjectsService {
 				};
 			})
 		);
+	}
+
+	/**
+	 * Cleanup the representations to avoid returning certain media files that are not playable
+	 * https://meemoo.atlassian.net/browse/ARC-3121
+	 * @param representations
+	 */
+	public cleanupRepresentations(
+		representations: IeObjectRepresentation[]
+	): IeObjectRepresentation[] {
+		let filteredRepresentations: IeObjectRepresentation[] = representations;
+
+		// Avoid returning certain representations that are not playable media files
+		// https://meemoo.atlassian.net/browse/ARC-3121
+		if (filteredRepresentations.length) {
+			// Remove m4a files from the representations
+			filteredRepresentations = filteredRepresentations.filter((representation) => {
+				const representationContainsM4aFile = representation.files.find(
+					(file) => file.mimeType === 'audio/m4a'
+				);
+				return !representationContainsM4aFile;
+			});
+
+			// Remove the mp3 file if both audio/mp4 and audio/mpeg files are present
+			if (
+				filteredRepresentations.some((representation) =>
+					representation.files.some((file) => file.mimeType === 'audio/mp4')
+				) &&
+				filteredRepresentations.some((representation) =>
+					representation.files.some((file) => file.mimeType === 'audio/mpeg')
+				)
+			) {
+				filteredRepresentations = filteredRepresentations.filter(
+					(representation) => !representation.files.some((file) => file.mimeType === 'audio/mpeg')
+				);
+			}
+
+			// Remove jpeg files from newspapers, since we only need to the jp2 image api urls and the alto json files
+			filteredRepresentations = filteredRepresentations.filter((representation) => {
+				return !representation.files.some((file) => file.mimeType === 'image/jpeg');
+			});
+		}
+		return filteredRepresentations;
 	}
 }

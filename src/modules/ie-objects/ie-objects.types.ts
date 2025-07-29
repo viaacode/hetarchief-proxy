@@ -59,8 +59,8 @@ export interface IeObjectFile {
 	name: string;
 	mimeType: string;
 	storedAt: string;
-	thumbnailUrl: string;
-	duration: string;
+	thumbnailUrl?: string;
+	duration: string | number | null;
 	edmIsNextInSequence: string;
 	createdAt: string;
 }
@@ -82,8 +82,8 @@ export interface IeObjectRepresentation {
 	schemaInLanguage: string;
 	schemaStartTime: string;
 	schemaEndTime: string;
-	schemaTranscript: string;
-	schemaTranscriptUrl: string | null;
+	schemaTranscript?: string;
+	schemaTranscriptUrl?: string | null;
 	edmIsNextInSequence: string;
 	updatedAt: string;
 	files: IeObjectFile[];
