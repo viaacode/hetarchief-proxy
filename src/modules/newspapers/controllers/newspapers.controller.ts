@@ -277,7 +277,7 @@ export class NewspapersController {
 		const selectionUrl = `${pageImageApi}/${Math.floor(startX)},${Math.floor(
 			startY
 		)},${Math.ceil(width)},${Math.ceil(height)}/full/0/default.jpg`;
-		const token = await this.playerTicketService.getPlayerToken(selectionUrl, referer, ip);
+		const token = await this.playerTicketService.getPlayerToken(selectionUrl, referer, ip, false);
 		const parsedUrl = new URL(selectionUrl);
 		const options = {
 			hostname: parsedUrl.hostname,
