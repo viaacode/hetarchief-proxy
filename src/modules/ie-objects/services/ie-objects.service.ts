@@ -622,14 +622,14 @@ export class IeObjectsService {
 			licenses.includes(IeObjectLicense.PUBLIEK_CONTENT) &&
 			(licenses.includes(IeObjectLicense.PUBLIC_DOMAIN) ||
 				licenses.includes(IeObjectLicense.COPYRIGHT_UNDETERMINED));
-		// If the object is public domain, we generate a thumbnailUrl with a token that stays valid for 15 years
-		// https://meemoo.atlassian.net/browse/ARC-2891
-		const tokenValidDuration = isPublicDomain ? 15 * 365 * 24 * 60 * 60 : undefined; // 15 years in seconds
+
 		const thumbnailUrl = await this.getThumbnailUrlWithToken(
 			schemaThumbnailUrlResponse?.schemaThumbnailUrl?.[0]?.schema_thumbnail_url?.[0],
 			referer,
 			ip,
-			tokenValidDuration
+			// If the object is public domain, we generate a thumbnailUrl with a token that stays valid for 15 years
+			// https://meemoo.atlassian.net/browse/ARC-2891
+			isPublicDomain
 		);
 
 		const schemaMaintainer = ie?.schemaMaintainer;
@@ -644,7 +644,7 @@ export class IeObjectsService {
 			hasPartResponse,
 			referer,
 			ip,
-			tokenValidDuration
+			isPublicDomain
 		);
 
 		const isPartOfParentCollections = parentCollectionResponse?.parentCollection?.map((part) => {
@@ -976,7 +976,7 @@ export class IeObjectsService {
 		hasPartResponse: GetHasPartQuery,
 		referer: string,
 		ip: string,
-		tokenValidDuration?: number
+		isPublicDomain: boolean
 	): Promise<IeObjectPages | null> {
 		const ieObjectSelf = isRepresentedByResponse?.graph__intellectual_entity[0];
 		const ieObjectParts = hasPartResponse?.graph_intellectual_entity || [];
@@ -1000,7 +1000,7 @@ export class IeObjectsService {
 					page: DbIeObjectWithRepresentations,
 					pageIndex: number
 				): Promise<IeObjectPage | null> => {
-					const representations: IeObjectRepresentation[] = compact(
+					let representations: IeObjectRepresentation[] = compact(
 						await mapLimit(
 							page?.isRepresentedBy || [],
 							20,
@@ -1027,12 +1027,15 @@ export class IeObjectsService {
 										representation.includes,
 										referer,
 										ip,
-										tokenValidDuration
+										isPublicDomain
 									),
 								};
 							}
 						)
 					).flat();
+
+					representations = this.cleanupRepresentations(representations);
+
 					// Avoid returning empty array representations
 					if (representations.length) {
 						const mentions = this.adaptMentions(
@@ -1061,7 +1064,7 @@ export class IeObjectsService {
 		dbFiles: DbFile,
 		referer: string,
 		ip: string,
-		tokenValidDuration?: number
+		isPublicDomain: boolean
 	): Promise<IeObjectFile[]> {
 		if (isEmpty(dbFiles)) {
 			return [];
@@ -1078,7 +1081,7 @@ export class IeObjectsService {
 					file.schema_thumbnail_url,
 					referer,
 					ip,
-					tokenValidDuration
+					isPublicDomain
 				);
 
 				return {
@@ -1384,18 +1387,23 @@ export class IeObjectsService {
 	/**
 	 * Get a thumbnailUrl with token if thumbnailUrl is defined and referer is defined
 	 * @param thumbnailUrl
-	 * @param referer site on which this thumbnail will be viewed. eg: https://hetarchief.be. Leave null for not resolving the url with a player ticket (faster)
-	 * @param ip
-	 * @param validDuration number of seconds the token is valid for. Defaults to 4 hours (14400 seconds) (env var: TICKET_SERVICE_MAXAGE)
+	 * @param referer domain of the website that is allowed to play the media
+	 * @param ip the ip address of the client that is allowed to play the media
+	 * @param isPublicDomain will generate a ticket that is valid for 15 years for any ip and any referer
 	 */
 	public async getThumbnailUrlWithToken(
 		thumbnailUrl: string | undefined | null,
 		referer: string | null,
 		ip: string,
-		validDuration?: number
+		isPublicDomain = false
 	): Promise<string | undefined> {
 		if (thumbnailUrl && referer) {
-			return this.playerTicketService.resolveThumbnailUrl(thumbnailUrl, referer, ip, validDuration);
+			return this.playerTicketService.resolveThumbnailUrl(
+				thumbnailUrl,
+				referer,
+				ip,
+				isPublicDomain
+			);
 		}
 		return thumbnailUrl || undefined;
 	}
@@ -1438,5 +1446,48 @@ export class IeObjectsService {
 				};
 			})
 		);
+	}
+
+	/**
+	 * Cleanup the representations to avoid returning certain media files that are not playable
+	 * https://meemoo.atlassian.net/browse/ARC-3121
+	 * @param representations
+	 */
+	public cleanupRepresentations(
+		representations: IeObjectRepresentation[]
+	): IeObjectRepresentation[] {
+		let filteredRepresentations: IeObjectRepresentation[] = representations;
+
+		// Avoid returning certain representations that are not playable media files
+		// https://meemoo.atlassian.net/browse/ARC-3121
+		if (filteredRepresentations.length) {
+			// Remove m4a files from the representations
+			filteredRepresentations = filteredRepresentations.filter((representation) => {
+				const representationContainsM4aFile = representation.files.find(
+					(file) => file.mimeType === 'audio/m4a'
+				);
+				return !representationContainsM4aFile;
+			});
+
+			// Remove the mp3 file if both audio/mp4 and audio/mpeg files are present
+			if (
+				filteredRepresentations.some((representation) =>
+					representation.files.some((file) => file.mimeType === 'audio/mp4')
+				) &&
+				filteredRepresentations.some((representation) =>
+					representation.files.some((file) => file.mimeType === 'audio/mpeg')
+				)
+			) {
+				filteredRepresentations = filteredRepresentations.filter(
+					(representation) => !representation.files.some((file) => file.mimeType === 'audio/mpeg')
+				);
+			}
+
+			// Remove jpeg files from newspapers, since we only need to the jp2 image api urls and the alto json files
+			filteredRepresentations = filteredRepresentations.filter((representation) => {
+				return !representation.files.some((file) => file.mimeType === 'image/jpeg');
+			});
+		}
+		return filteredRepresentations;
 	}
 }

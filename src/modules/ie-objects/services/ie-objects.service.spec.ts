@@ -10,6 +10,7 @@ import {
 	AutocompleteField,
 	type ElasticsearchResponse,
 	IeObjectLicense,
+	IeObjectRepresentation,
 	IeObjectType,
 } from '../ie-objects.types';
 import {
@@ -31,8 +32,14 @@ import { IeObjectsService } from './ie-objects.service';
 
 import type { FindIeObjectsForSitemapQuery } from '~generated/graphql-db-types-hetarchief';
 import {
+	cleanupRepresentations1,
+	cleanupRepresentations2,
+	cleanupRepresentations3,
+	cleanupRepresentations4,
+	cleanupRepresentations5,
 	mockAutocompleteQueryResponseCreators,
 	mockAutocompleteQueryResponseNewspaperSeries,
+	representationsNewspaper,
 } from '~modules/ie-objects/services/ie-objects.service.mocks';
 import {
 	IeObjectDetailResponseIndex,
@@ -541,6 +548,49 @@ describe('ieObjectsService', () => {
 				'Dirk Van Mechelen',
 				'Kabinet Dirk Van Mechelen, Vlaams minister van Financiën en Begroting en Ruimtelijk Ordening (2001-2009)',
 			]);
+		});
+	});
+
+	describe('cleanupRepresentations', () => {
+		it('should return a list of representations that can be played by the flowplayer with mp4 and without m4a and without mp3', () => {
+			const result: IeObjectRepresentation[] =
+				ieObjectsService.cleanupRepresentations(cleanupRepresentations1);
+			expect(result).toHaveLength(1);
+			expect(result[0].files[0].mimeType).toEqual('audio/mp4');
+		});
+
+		it('should return a list of representations that can be played by the flowplayer with mp4 and without m4a', () => {
+			const result: IeObjectRepresentation[] =
+				ieObjectsService.cleanupRepresentations(cleanupRepresentations2);
+			expect(result).toHaveLength(1);
+			expect(result[0].files[0].mimeType).toEqual('audio/mp4');
+		});
+
+		it('should return a list of representations that can be played by the flowplayer with mp3 and without m4a', () => {
+			const result: IeObjectRepresentation[] =
+				ieObjectsService.cleanupRepresentations(cleanupRepresentations3);
+			expect(result).toHaveLength(1);
+			expect(result[0].files[0].mimeType).toEqual('audio/mpeg');
+		});
+
+		it('should return a list of representations that can be played by the flowplayer with mp4 and without mp3', () => {
+			const result: IeObjectRepresentation[] =
+				ieObjectsService.cleanupRepresentations(cleanupRepresentations4);
+			expect(result).toHaveLength(1);
+			expect(result[0].files[0].mimeType).toEqual('audio/mp4');
+		});
+
+		it('should return a list of representations that can be played by the flowplayer with mp4', () => {
+			const result: IeObjectRepresentation[] =
+				ieObjectsService.cleanupRepresentations(cleanupRepresentations5);
+			expect(result).toHaveLength(1);
+			expect(result[0].files[0].mimeType).toEqual('audio/mp4');
+		});
+
+		it('should return a list of representations that can be played by the iiif viewer with jp2 and alto.xml and without jpeg', () => {
+			const result: IeObjectRepresentation[] =
+				ieObjectsService.cleanupRepresentations(representationsNewspaper);
+			expect(result).toHaveLength(2);
 		});
 	});
 });
