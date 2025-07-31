@@ -206,6 +206,11 @@ export interface IeObject {
 	mentions?: Mention[];
 }
 
+export type IeObjectForThumbnailOnly = Pick<
+	IeObject,
+	'thumbnailUrl' | 'schemaIdentifier' | 'licenses' | 'maintainerId' | 'sector' | 'dctermsFormat'
+>;
+
 export interface MediaSearchAggregation<T> {
 	buckets: {
 		key: T;

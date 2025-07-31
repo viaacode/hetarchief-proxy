@@ -1,0 +1,19 @@
+query getIeObjectForThumbnailUrlOnly($ieObjectId: String!) {
+	schemaThumbnailUrl: graph__schema_thumbnail_url(
+		where: { intellectual_entity_id: { _eq: $ieObjectId } }
+	) {
+		schema_thumbnail_url
+	}
+	schemaLicense: graph_schema_license(where: { intellectual_entity_id: { _eq: $ieObjectId } }) {
+		schema_license
+	}
+	ieObject: graph_intellectual_entity(where: { id: { _eq: $ieObjectId } }) {
+		dctermsFormat {
+			dcterms_format
+		}
+		schemaMaintainer {
+			org_identifier
+			ha_org_sector
+		}
+	}
+}
