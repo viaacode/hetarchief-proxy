@@ -43,6 +43,7 @@ import {
 	IeObjectAccessThrough,
 	IeObjectLicense,
 	type IeObjectSeo,
+	IeObjectType,
 	type IeObjectsWithAggregations,
 	type RelatedIeObject,
 	type RelatedIeObjects,
@@ -572,11 +573,122 @@ export class IeObjectsController {
 	}
 
 	/**
+	 * Get ie object thumbnail by their ids (schema identifiers)
+	 * @param schemaIdentifiers ie object schema_identifiers. eg: 086348mc8s, qstt4fps28
+	 * @param referer site making the request. eg: https://qas-v3.hetarchief.be
+	 * @param ip Ip of the client making the request. eg: 172.17.45.216
+	 * @param user Currently logged-in user
+	 */
+	@Get('thumbnails')
+	public async getIeObjectThumbnailsByIds(
+		@Query('ids') schemaIdentifiers: string[],
+		@Referer() referer: string | null,
+		@Ip() ip: string,
+		@SessionUser() user: SessionUserEntity
+	): Promise<
+		{
+			schemaIdentifier: string;
+			thumbnailUrl: string | null;
+		}[]
+	> {
+		let ids: string[];
+		if (typeof schemaIdentifiers === 'string') {
+			ids = [schemaIdentifiers];
+		} else {
+			ids = schemaIdentifiers;
+		}
+
+		const visitorSpaceAccessInfo =
+			await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
+
+		const thumbnailInfos: {
+			schemaIdentifier: string;
+			thumbnailUrl: string | null;
+		}[] = await mapLimit(
+			ids,
+			12,
+			async (
+				schemaIdentifier: string
+			): Promise<{
+				schemaIdentifier: string;
+				thumbnailUrl: string | null;
+			} | null> => {
+				if (
+					!schemaIdentifier ||
+					schemaIdentifier.length === 0 ||
+					schemaIdentifier.includes('.well-known')
+				) {
+					return null;
+				}
+
+				const ieObject = await this.ieObjectsService.findThumbnailByIeObjectId(
+					convertSchemaIdentifierToId(schemaIdentifier)
+				);
+
+				if (ieObject?.dctermsFormat === IeObjectType.AUDIO) {
+					return {
+						schemaIdentifier: ieObject.schemaIdentifier || null,
+						thumbnailUrl: null,
+					}; // Audio items only contain the ugly speaker, so we return null
+				}
+
+				// Censor the object based on the licenses and sector
+				// Only leave the properties that the current user can see of this object
+				const limitedObject = limitAccessToObjectDetails(ieObject, {
+					userId: user.getId(),
+					isKeyUser: user.getIsKeyUser(),
+					sector: user.getSector(),
+					groupId: user.getGroupId(),
+					maintainerId: user.getOrganisationId(),
+					accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
+					accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
+				});
+
+				if (!limitedObject) {
+					throw new ForbiddenException('You do not have access to this object');
+				}
+
+				if (!limitedObject.thumbnailUrl) {
+					return {
+						schemaIdentifier: limitedObject.schemaIdentifier || null,
+						thumbnailUrl: null,
+					}; // If you're not allowed to see the thumbnail, return null
+				}
+
+				// Meemoo admin user always has VISITOR_SPACE_FULL in accessThrough when object has BEZOEKERTOOL licences
+				if (
+					user.getGroupName() === GroupName.MEEMOO_ADMIN &&
+					visitorSpaceAccessInfo.visitorSpaceIds.includes(limitedObject.maintainerId) &&
+					intersection(limitedObject?.licenses, [
+						IeObjectLicense.BEZOEKERTOOL_CONTENT,
+						IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
+					]).length > 0
+				) {
+					limitedObject?.accessThrough.push(IeObjectAccessThrough.VISITOR_SPACE_FULL);
+				}
+
+				// Add token to the thumbnail URL
+				const thumbnailUrlWithToken = await this.ieObjectsService.getThumbnailUrlWithToken(
+					limitedObject.thumbnailUrl,
+					referer,
+					ip
+				);
+				return {
+					schemaIdentifier: limitedObject.schemaIdentifier || null,
+					thumbnailUrl: thumbnailUrlWithToken || null,
+				};
+			}
+		);
+
+		return thumbnailInfos;
+	}
+
+	/**
 	 * Get ie objects by their id (schema identifiers)
 	 * @param schemaIdentifiers ie object schema_identifiers. eg: 086348mc8s, qstt4fps28
 	 * @param referer site making the request. eg: https://qas-v3.hetarchief.be
 	 * @param ip Ip of the client making the request. eg: 172.17.45.216
-	 * @param user Currently logged in user
+	 * @param user Currently logged-in user
 	 */
 	@Get()
 	public async getIeObjectsByIds(
@@ -599,6 +711,14 @@ export class IeObjectsController {
 			ids,
 			12,
 			async (schemaIdentifier: string): Promise<Partial<IeObject> | null> => {
+				if (
+					!schemaIdentifier ||
+					schemaIdentifier.length === 0 ||
+					schemaIdentifier.includes('.well-known')
+				) {
+					return null;
+				}
+
 				const ieObject = await this.ieObjectsService.findByIeObjectId(
 					convertSchemaIdentifierToId(schemaIdentifier),
 					referer,

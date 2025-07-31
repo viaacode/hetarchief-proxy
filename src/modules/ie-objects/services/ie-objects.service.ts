@@ -39,6 +39,7 @@ import {
 	type GqlLimitedIeObject,
 	type IeObject,
 	type IeObjectFile,
+	IeObjectForThumbnailOnly,
 	IeObjectLicense,
 	type IeObjectPage,
 	type IeObjectPages,
@@ -67,6 +68,9 @@ import {
 	GetIeObjectChildrenIrisDocument,
 	type GetIeObjectChildrenIrisQuery,
 	type GetIeObjectChildrenIrisQueryVariables,
+	GetIeObjectForThumbnailUrlOnlyDocument,
+	GetIeObjectForThumbnailUrlOnlyQuery,
+	GetIeObjectForThumbnailUrlOnlyQueryVariables,
 	type GetIsPartOfQuery,
 	type GetIsRepresentedByQuery,
 	GetParentIeObjectDocument,
@@ -96,6 +100,7 @@ import { AUTOCOMPLETE_FIELD_TO_ES_FIELD_NAME } from '~modules/ie-objects/ie-obje
 import {
 	CACHE_KEY_PREFIX_IE_OBJECTS_SEARCH,
 	CACHE_KEY_PREFIX_IE_OBJECT_DETAIL,
+	CACHE_KEY_PREFIX_IE_OBJECT_THUMBNAIL,
 	IE_OBJECT_DETAIL_QUERIES,
 } from '~modules/ie-objects/services/ie-objects.service.consts';
 import {
@@ -482,6 +487,30 @@ export class IeObjectsService {
 		return responses;
 	}
 
+	private async getIeObjectThumbnailByIdFromDb(
+		objectId: string
+	): Promise<IeObjectForThumbnailOnly | null> {
+		const variables = {
+			ieObjectId: objectId,
+		};
+		const response = await this.dataService.execute<
+			GetIeObjectForThumbnailUrlOnlyQuery,
+			GetIeObjectForThumbnailUrlOnlyQueryVariables
+		>(GetIeObjectForThumbnailUrlOnlyDocument, variables);
+
+		return {
+			schemaIdentifier: objectId,
+			thumbnailUrl: response?.schemaThumbnailUrl?.[0]?.schema_thumbnail_url?.[0] || null,
+			dctermsFormat: (response?.ieObject?.[0]?.dctermsFormat?.[0]?.dcterms_format ||
+				null) as IeObjectType | null,
+			maintainerId: response?.ieObject?.[0]?.schemaMaintainer?.org_identifier || null,
+			sector: (response?.ieObject?.[0]?.schemaMaintainer?.ha_org_sector ||
+				null) as IeObjectSector | null,
+			licenses: (response?.schemaLicense?.map((license) => license.schema_license) ||
+				[]) as IeObjectLicense[],
+		};
+	}
+
 	/**
 	 * Get one Intellectual Entity object by its object id (eg: https://data.hetarchief.be/id/entity/086348mc8s)
 	 * (not all details are available in ES)
@@ -509,6 +538,23 @@ export class IeObjectsService {
 
 		const ieObject = await this.adaptFromDB(responses, parentIeObject, referer, ip);
 		return ieObject;
+	}
+
+	/**
+	 * Get one Intellectual Entity object thumbnail by its object id (eg: https://data.hetarchief.be/id/entity/086348mc8s)
+	 */
+	public async findThumbnailByIeObjectId(
+		objectId: string
+	): Promise<IeObjectForThumbnailOnly | null> {
+		// Cache the object thumbnail for 60 minutes since we need it once for server side rendering and once for client side rendering
+		return await this.cacheManager.wrap(
+			CACHE_KEY_PREFIX_IE_OBJECT_THUMBNAIL + objectId,
+			async (): Promise<IeObjectForThumbnailOnly> => {
+				return await this.getIeObjectThumbnailByIdFromDb(objectId);
+			},
+			// cache for 60 minutes
+			3_600_000
+		);
 	}
 
 	/**
