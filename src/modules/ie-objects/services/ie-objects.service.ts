@@ -1528,11 +1528,6 @@ export class IeObjectsService {
 					(representation) => !representation.files.some((file) => file.mimeType === 'audio/mpeg')
 				);
 			}
-
-			// Remove jpeg files from newspapers, since we only need to the jp2 image api urls and the alto json files
-			filteredRepresentations = filteredRepresentations.filter((representation) => {
-				return !representation.files.some((file) => file.mimeType === 'image/jpeg');
-			});
 		}
 		return filteredRepresentations;
 	}
