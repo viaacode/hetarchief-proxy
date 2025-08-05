@@ -10586,10 +10586,8 @@ export type Graph_Intellectual_Entity = {
   isRepresentedBy: Array<Graph_Representation>;
   /** An aggregate relationship */
   isRepresentedBy_aggregate: Graph_Representation_Aggregate;
-  /** An array relationship */
-  mhFragmentIdentifier: Array<Graph_Mh_Fragment_Identifier>;
-  /** An aggregate relationship */
-  mhFragmentIdentifier_aggregate: Graph_Mh_Fragment_Identifier_Aggregate;
+  /** An object relationship */
+  mhFragmentIdentifier?: Maybe<Graph_Mh_Fragment_Identifier>;
   /** An array relationship */
   premisIdentifier: Array<Graph_Premis_Identifier>;
   /** An aggregate relationship */
@@ -10718,26 +10716,6 @@ export type Graph_Intellectual_EntityIsRepresentedBy_AggregateArgs = {
   offset?: InputMaybe<Scalars['Int']['input']>;
   order_by?: InputMaybe<Array<Graph_Representation_Order_By>>;
   where?: InputMaybe<Graph_Representation_Bool_Exp>;
-};
-
-
-/** columns and relationships of "graph.intellectual_entity" */
-export type Graph_Intellectual_EntityMhFragmentIdentifierArgs = {
-  distinct_on?: InputMaybe<Array<Graph_Mh_Fragment_Identifier_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  order_by?: InputMaybe<Array<Graph_Mh_Fragment_Identifier_Order_By>>;
-  where?: InputMaybe<Graph_Mh_Fragment_Identifier_Bool_Exp>;
-};
-
-
-/** columns and relationships of "graph.intellectual_entity" */
-export type Graph_Intellectual_EntityMhFragmentIdentifier_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Graph_Mh_Fragment_Identifier_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  order_by?: InputMaybe<Array<Graph_Mh_Fragment_Identifier_Order_By>>;
-  where?: InputMaybe<Graph_Mh_Fragment_Identifier_Bool_Exp>;
 };
 
 
@@ -11063,7 +11041,6 @@ export type Graph_Intellectual_Entity_Bool_Exp = {
   isRepresentedBy?: InputMaybe<Graph_Representation_Bool_Exp>;
   isRepresentedBy_aggregate?: InputMaybe<Graph_Representation_Aggregate_Bool_Exp>;
   mhFragmentIdentifier?: InputMaybe<Graph_Mh_Fragment_Identifier_Bool_Exp>;
-  mhFragmentIdentifier_aggregate?: InputMaybe<Graph_Mh_Fragment_Identifier_Aggregate_Bool_Exp>;
   premisIdentifier?: InputMaybe<Graph_Premis_Identifier_Bool_Exp>;
   premisIdentifier_aggregate?: InputMaybe<Graph_Premis_Identifier_Aggregate_Bool_Exp>;
   relation_is_part_of?: InputMaybe<String_Comparison_Exp>;
@@ -11139,7 +11116,7 @@ export type Graph_Intellectual_Entity_Insert_Input = {
   id?: InputMaybe<Scalars['String']['input']>;
   isPartOf?: InputMaybe<Graph_Intellectual_Entity_Obj_Rel_Insert_Input>;
   isRepresentedBy?: InputMaybe<Graph_Representation_Arr_Rel_Insert_Input>;
-  mhFragmentIdentifier?: InputMaybe<Graph_Mh_Fragment_Identifier_Arr_Rel_Insert_Input>;
+  mhFragmentIdentifier?: InputMaybe<Graph_Mh_Fragment_Identifier_Obj_Rel_Insert_Input>;
   premisIdentifier?: InputMaybe<Graph_Premis_Identifier_Arr_Rel_Insert_Input>;
   relation_is_part_of?: InputMaybe<Scalars['String']['input']>;
   schemaAlternateName?: InputMaybe<Graph_Schema_Alternate_Name_Arr_Rel_Insert_Input>;
@@ -11341,7 +11318,7 @@ export type Graph_Intellectual_Entity_Order_By = {
   id?: InputMaybe<Order_By>;
   isPartOf?: InputMaybe<Graph_Intellectual_Entity_Order_By>;
   isRepresentedBy_aggregate?: InputMaybe<Graph_Representation_Aggregate_Order_By>;
-  mhFragmentIdentifier_aggregate?: InputMaybe<Graph_Mh_Fragment_Identifier_Aggregate_Order_By>;
+  mhFragmentIdentifier?: InputMaybe<Graph_Mh_Fragment_Identifier_Order_By>;
   premisIdentifier_aggregate?: InputMaybe<Graph_Premis_Identifier_Aggregate_Order_By>;
   relation_is_part_of?: InputMaybe<Order_By>;
   schemaAlternateName_aggregate?: InputMaybe<Graph_Schema_Alternate_Name_Aggregate_Order_By>;
@@ -11670,7 +11647,7 @@ export type Graph_Mh_Fragment_Identifier = {
   __typename?: 'graph_mh_fragment_identifier';
   created_at?: Maybe<Scalars['timestamptz']['output']>;
   /** An object relationship */
-  intellectual_entity: Graph_Intellectual_Entity;
+  intellectual_entity?: Maybe<Graph_Intellectual_Entity>;
   intellectual_entity_id: Scalars['String']['output'];
   is_deleted: Scalars['Boolean']['output'];
   mh_fragment_identifier: Scalars['String']['output'];
@@ -11682,33 +11659,6 @@ export type Graph_Mh_Fragment_Identifier_Aggregate = {
   __typename?: 'graph_mh_fragment_identifier_aggregate';
   aggregate?: Maybe<Graph_Mh_Fragment_Identifier_Aggregate_Fields>;
   nodes: Array<Graph_Mh_Fragment_Identifier>;
-};
-
-export type Graph_Mh_Fragment_Identifier_Aggregate_Bool_Exp = {
-  bool_and?: InputMaybe<Graph_Mh_Fragment_Identifier_Aggregate_Bool_Exp_Bool_And>;
-  bool_or?: InputMaybe<Graph_Mh_Fragment_Identifier_Aggregate_Bool_Exp_Bool_Or>;
-  count?: InputMaybe<Graph_Mh_Fragment_Identifier_Aggregate_Bool_Exp_Count>;
-};
-
-export type Graph_Mh_Fragment_Identifier_Aggregate_Bool_Exp_Bool_And = {
-  arguments: Graph_Mh_Fragment_Identifier_Select_Column_Graph_Mh_Fragment_Identifier_Aggregate_Bool_Exp_Bool_And_Arguments_Columns;
-  distinct?: InputMaybe<Scalars['Boolean']['input']>;
-  filter?: InputMaybe<Graph_Mh_Fragment_Identifier_Bool_Exp>;
-  predicate: Boolean_Comparison_Exp;
-};
-
-export type Graph_Mh_Fragment_Identifier_Aggregate_Bool_Exp_Bool_Or = {
-  arguments: Graph_Mh_Fragment_Identifier_Select_Column_Graph_Mh_Fragment_Identifier_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns;
-  distinct?: InputMaybe<Scalars['Boolean']['input']>;
-  filter?: InputMaybe<Graph_Mh_Fragment_Identifier_Bool_Exp>;
-  predicate: Boolean_Comparison_Exp;
-};
-
-export type Graph_Mh_Fragment_Identifier_Aggregate_Bool_Exp_Count = {
-  arguments?: InputMaybe<Array<Graph_Mh_Fragment_Identifier_Select_Column>>;
-  distinct?: InputMaybe<Scalars['Boolean']['input']>;
-  filter?: InputMaybe<Graph_Mh_Fragment_Identifier_Bool_Exp>;
-  predicate: Int_Comparison_Exp;
 };
 
 /** aggregate fields of "graph.mh_fragment_identifier" */
@@ -11724,20 +11674,6 @@ export type Graph_Mh_Fragment_Identifier_Aggregate_Fields = {
 export type Graph_Mh_Fragment_Identifier_Aggregate_FieldsCountArgs = {
   columns?: InputMaybe<Array<Graph_Mh_Fragment_Identifier_Select_Column>>;
   distinct?: InputMaybe<Scalars['Boolean']['input']>;
-};
-
-/** order by aggregate values of table "graph.mh_fragment_identifier" */
-export type Graph_Mh_Fragment_Identifier_Aggregate_Order_By = {
-  count?: InputMaybe<Order_By>;
-  max?: InputMaybe<Graph_Mh_Fragment_Identifier_Max_Order_By>;
-  min?: InputMaybe<Graph_Mh_Fragment_Identifier_Min_Order_By>;
-};
-
-/** input type for inserting array relation for remote table "graph.mh_fragment_identifier" */
-export type Graph_Mh_Fragment_Identifier_Arr_Rel_Insert_Input = {
-  data: Array<Graph_Mh_Fragment_Identifier_Insert_Input>;
-  /** upsert condition */
-  on_conflict?: InputMaybe<Graph_Mh_Fragment_Identifier_On_Conflict>;
 };
 
 /** Boolean expression to filter rows from the table "graph.mh_fragment_identifier". All fields are combined with a logical 'AND'. */
@@ -11778,14 +11714,6 @@ export type Graph_Mh_Fragment_Identifier_Max_Fields = {
   updated_at?: Maybe<Scalars['timestamptz']['output']>;
 };
 
-/** order by max() on columns of table "graph.mh_fragment_identifier" */
-export type Graph_Mh_Fragment_Identifier_Max_Order_By = {
-  created_at?: InputMaybe<Order_By>;
-  intellectual_entity_id?: InputMaybe<Order_By>;
-  mh_fragment_identifier?: InputMaybe<Order_By>;
-  updated_at?: InputMaybe<Order_By>;
-};
-
 /** aggregate min on columns */
 export type Graph_Mh_Fragment_Identifier_Min_Fields = {
   __typename?: 'graph_mh_fragment_identifier_min_fields';
@@ -11795,14 +11723,6 @@ export type Graph_Mh_Fragment_Identifier_Min_Fields = {
   updated_at?: Maybe<Scalars['timestamptz']['output']>;
 };
 
-/** order by min() on columns of table "graph.mh_fragment_identifier" */
-export type Graph_Mh_Fragment_Identifier_Min_Order_By = {
-  created_at?: InputMaybe<Order_By>;
-  intellectual_entity_id?: InputMaybe<Order_By>;
-  mh_fragment_identifier?: InputMaybe<Order_By>;
-  updated_at?: InputMaybe<Order_By>;
-};
-
 /** response of any mutation on the table "graph.mh_fragment_identifier" */
 export type Graph_Mh_Fragment_Identifier_Mutation_Response = {
   __typename?: 'graph_mh_fragment_identifier_mutation_response';
@@ -11810,6 +11730,13 @@ export type Graph_Mh_Fragment_Identifier_Mutation_Response = {
   affected_rows: Scalars['Int']['output'];
   /** data from the rows affected by the mutation */
   returning: Array<Graph_Mh_Fragment_Identifier>;
+};
+
+/** input type for inserting object relation for remote table "graph.mh_fragment_identifier" */
+export type Graph_Mh_Fragment_Identifier_Obj_Rel_Insert_Input = {
+  data: Graph_Mh_Fragment_Identifier_Insert_Input;
+  /** upsert condition */
+  on_conflict?: InputMaybe<Graph_Mh_Fragment_Identifier_On_Conflict>;
 };
 
 /** on_conflict condition type for table "graph.mh_fragment_identifier" */
@@ -11847,18 +11774,6 @@ export enum Graph_Mh_Fragment_Identifier_Select_Column {
   MhFragmentIdentifier = 'mh_fragment_identifier',
   /** column name */
   UpdatedAt = 'updated_at'
-}
-
-/** select "graph_mh_fragment_identifier_aggregate_bool_exp_bool_and_arguments_columns" columns of table "graph.mh_fragment_identifier" */
-export enum Graph_Mh_Fragment_Identifier_Select_Column_Graph_Mh_Fragment_Identifier_Aggregate_Bool_Exp_Bool_And_Arguments_Columns {
-  /** column name */
-  IsDeleted = 'is_deleted'
-}
-
-/** select "graph_mh_fragment_identifier_aggregate_bool_exp_bool_or_arguments_columns" columns of table "graph.mh_fragment_identifier" */
-export enum Graph_Mh_Fragment_Identifier_Select_Column_Graph_Mh_Fragment_Identifier_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns {
-  /** column name */
-  IsDeleted = 'is_deleted'
 }
 
 /** input type for updating data in table "graph.mh_fragment_identifier" */
@@ -33411,7 +33326,7 @@ export type GetIsPartOfQueryVariables = Exact<{
 }>;
 
 
-export type GetIsPartOfQuery = { __typename?: 'query_root', isPartOf: Array<{ __typename?: 'graph__intellectual_entity', isPartOf?: { __typename?: 'graph__intellectual_entity', schema_identifier?: string | null, id?: string | null, schema_is_part_of?: any | null, schema_duration?: any | null, schema_number_of_pages?: number | null, schema_position?: number | null, schema_date_published?: string | null, dcterms_available?: string | null, schema_name?: string | null, schema_description?: string | null, schema_creator?: any | null, dcterms_format?: string | null, dcterms_medium?: any | null, schema_thumbnail_url?: any | null, schema_license?: any | null, schema_date_created?: string | null, meemoo_local_id?: any | null, premis_is_part_of?: string | null, bibframe_edition?: string | null, schemaMaintainer?: { __typename?: 'graph_organization', org_identifier: string, skos_pref_label?: string | null, skos_alt_label?: string | null, ha_org_has_logo?: string | null, ha_org_request_form?: string | null, dcterms_description?: string | null, ha_org_sector?: string | null, foaf_homepage?: string | null, hasPreference: Array<{ __typename?: 'graph_organization_has_preference', ha_pref: string }> } | null, schemaInLanguage?: { __typename?: 'graph__schema_in_language', schema_in_language?: any | null } | null, schemaKeywords?: { __typename?: 'graph__schema_keywords', schema_keywords?: any | null } | null, premisIdentifier?: { __typename?: 'graph__premis_identifier', premis_identifier?: any | null } | null, schemaGenre?: { __typename?: 'graph__schema_genre', schema_genre?: any | null } | null, schemaSpatial?: { __typename?: 'graph__schema_spatial', schema_spatial?: any | null } | null, schemaPublisher?: { __typename?: 'graph__schema_publisher', schema_publisher_array?: Array<string> | null } | null, schemaTemporal?: { __typename?: 'graph__schema_temporal', schema_temporal?: any | null } | null, schemaCopyrightHolder: Array<{ __typename?: 'graph_schema_copyright_holder', schema_copyright_holder: string }>, intellectualEntity?: { __typename?: 'graph_intellectual_entity', schema_issue_number?: string | null, schema_credit_text?: string | null, schema_copyright_notice?: string | null, schema_abstract?: string | null, bibframe_edition?: string | null, ebucore_synopsis?: string | null, mhFragmentIdentifier: Array<{ __typename?: 'graph_mh_fragment_identifier', mh_fragment_identifier: string }>, hasCarrier?: { __typename?: 'graph_carrier', premis_medium?: string | null, schema_width?: string | null, schema_height?: string | null, bibframe_production_method?: string | null, created_at?: any | null, digitization_date?: any | null } | null, schemaAlternateName: Array<{ __typename?: 'graph_schema_alternate_name', schema_alternate_name: string }> } | null } | null }> };
+export type GetIsPartOfQuery = { __typename?: 'query_root', isPartOf: Array<{ __typename?: 'graph__intellectual_entity', isPartOf?: { __typename?: 'graph__intellectual_entity', schema_identifier?: string | null, id?: string | null, schema_is_part_of?: any | null, schema_duration?: any | null, schema_number_of_pages?: number | null, schema_position?: number | null, schema_date_published?: string | null, dcterms_available?: string | null, schema_name?: string | null, schema_description?: string | null, schema_creator?: any | null, dcterms_format?: string | null, dcterms_medium?: any | null, schema_thumbnail_url?: any | null, schema_license?: any | null, schema_date_created?: string | null, meemoo_local_id?: any | null, premis_is_part_of?: string | null, bibframe_edition?: string | null, schemaMaintainer?: { __typename?: 'graph_organization', org_identifier: string, skos_pref_label?: string | null, skos_alt_label?: string | null, ha_org_has_logo?: string | null, ha_org_request_form?: string | null, dcterms_description?: string | null, ha_org_sector?: string | null, foaf_homepage?: string | null, hasPreference: Array<{ __typename?: 'graph_organization_has_preference', ha_pref: string }> } | null, schemaInLanguage?: { __typename?: 'graph__schema_in_language', schema_in_language?: any | null } | null, schemaKeywords?: { __typename?: 'graph__schema_keywords', schema_keywords?: any | null } | null, premisIdentifier?: { __typename?: 'graph__premis_identifier', premis_identifier?: any | null } | null, schemaGenre?: { __typename?: 'graph__schema_genre', schema_genre?: any | null } | null, schemaSpatial?: { __typename?: 'graph__schema_spatial', schema_spatial?: any | null } | null, schemaPublisher?: { __typename?: 'graph__schema_publisher', schema_publisher_array?: Array<string> | null } | null, schemaTemporal?: { __typename?: 'graph__schema_temporal', schema_temporal?: any | null } | null, schemaCopyrightHolder: Array<{ __typename?: 'graph_schema_copyright_holder', schema_copyright_holder: string }>, intellectualEntity?: { __typename?: 'graph_intellectual_entity', schema_issue_number?: string | null, schema_credit_text?: string | null, schema_copyright_notice?: string | null, schema_abstract?: string | null, bibframe_edition?: string | null, ebucore_synopsis?: string | null, mhFragmentIdentifier?: { __typename?: 'graph_mh_fragment_identifier', mh_fragment_identifier: string } | null, hasCarrier?: { __typename?: 'graph_carrier', premis_medium?: string | null, schema_width?: string | null, schema_height?: string | null, bibframe_production_method?: string | null, created_at?: any | null, digitization_date?: any | null } | null, schemaAlternateName: Array<{ __typename?: 'graph_schema_alternate_name', schema_alternate_name: string }> } | null } | null }> };
 
 export type GetIsRepresentedByQueryVariables = Exact<{
   ieObjectId: Scalars['String']['input'];
@@ -33966,7 +33881,7 @@ export const GetSchemaCreatorDocument = {"kind":"Document","definitions":[{"kind
 export const GetSchemaDurationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getSchemaDuration"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"ieObjectId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"graph__schema_duration"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"intellectual_entity_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"ieObjectId"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_duration"}}]}}]}}]} as unknown as DocumentNode<GetSchemaDurationQuery, GetSchemaDurationQueryVariables>;
 export const GetSchemaGenreDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getSchemaGenre"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"ieObjectId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"schemaGenre"},"name":{"kind":"Name","value":"graph_schema_genre"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"intellectual_entity_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"ieObjectId"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_genre"}}]}}]}}]} as unknown as DocumentNode<GetSchemaGenreQuery, GetSchemaGenreQueryVariables>;
 export const GetSchemaInLanguageDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getSchemaInLanguage"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"ieObjectId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"schemaInLanguage"},"name":{"kind":"Name","value":"graph_schema_in_language"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"intellectual_entity_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"ieObjectId"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_in_language"}}]}}]}}]} as unknown as DocumentNode<GetSchemaInLanguageQuery, GetSchemaInLanguageQueryVariables>;
-export const GetSchemaIsPartOfDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getSchemaIsPartOf"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"ieObjectId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"graph_schema_is_part_of"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"intellectual_entity_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"ieObjectId"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"collection"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}}]}}]}}]}}]} as unknown as DocumentNode<GetSchemaIsPartOfQuery, GetSchemaIsPartOfQueryVariables>;
+export const GetSchemaIsPartOfDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getSchemaIsPartOf"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"ieObjectId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"graph_schema_is_part_of"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"intellectual_entity_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"ieObjectId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"type"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"StringValue","value":"newspaper","block":false}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"collection"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}}]}}]}}]}}]} as unknown as DocumentNode<GetSchemaIsPartOfQuery, GetSchemaIsPartOfQueryVariables>;
 export const GetSchemaKeywordsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getSchemaKeywords"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"ieObjectId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"schemaKeywords"},"name":{"kind":"Name","value":"graph_schema_keywords"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"intellectual_entity_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"ieObjectId"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_keywords"}}]}}]}}]} as unknown as DocumentNode<GetSchemaKeywordsQuery, GetSchemaKeywordsQueryVariables>;
 export const GetSchemaLicenseDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getSchemaLicense"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"ieObjectId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"schemaLicense"},"name":{"kind":"Name","value":"graph_schema_license"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"intellectual_entity_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"ieObjectId"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_license"}}]}}]}}]} as unknown as DocumentNode<GetSchemaLicenseQuery, GetSchemaLicenseQueryVariables>;
 export const GetSchemaMediumDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getSchemaMedium"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"ieObjectId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"schemaMedium"},"name":{"kind":"Name","value":"graph__premis_medium"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"intellectual_entity_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"ieObjectId"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"premis_medium"}}]}}]}}]} as unknown as DocumentNode<GetSchemaMediumQuery, GetSchemaMediumQueryVariables>;

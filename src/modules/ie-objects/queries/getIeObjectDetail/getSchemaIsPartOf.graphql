@@ -1,5 +1,7 @@
 query getSchemaIsPartOf($ieObjectId: String!) {
-	graph_schema_is_part_of(where: { intellectual_entity_id: { _eq: $ieObjectId } }) {
+	graph_schema_is_part_of(
+		where: { intellectual_entity_id: { _eq: $ieObjectId }, type: { _eq: "newspaper" } }
+	) {
 		type
 		collection {
 			schema_name

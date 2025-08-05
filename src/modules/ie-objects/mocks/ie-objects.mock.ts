@@ -554,12 +554,10 @@ export const mockIeObject2: IeObjectDetailResponseTypes = [
 					schemaCopyrightHolder: [],
 					intellectualEntity: {
 						schema_issue_number: null,
-						mhFragmentIdentifier: [
-							{
-								mh_fragment_identifier:
-									'71196954be3341e485bc37d5e56470871d138c7ff08d488cb9b55547ca21689203186ba7317b49bd97b6be0fda420f8a',
-							},
-						],
+						mhFragmentIdentifier: {
+							mh_fragment_identifier:
+								'71196954be3341e485bc37d5e56470871d138c7ff08d488cb9b55547ca21689203186ba7317b49bd97b6be0fda420f8a',
+						},
 						schema_credit_text: null,
 						schema_copyright_notice: null,
 						hasCarrier: null,
