@@ -722,10 +722,13 @@ export class IeObjectsService {
 			duration: schemaDurationResponse?.graph__schema_duration?.[0]?.schema_duration,
 			licenses,
 			premisIdentifier: premisIdentifiers,
-			abrahamInfo: {
-				id: isPartOfParentCollections[0]?.schemaIdentifier,
-				uri: isPartOfParentCollections[0]?.iri,
-			},
+			abrahamInfo:
+				dctermsFormat === IeObjectType.NEWSPAPER
+					? {
+							id: isPartOfParentCollections[0]?.schemaIdentifier,
+							uri: isPartOfParentCollections[0]?.iri,
+						}
+					: null,
 			abstract: ie?.schema_abstract,
 			genre: compact(schemaGenreResponse?.schemaGenre?.map((item) => item.schema_genre)),
 			inLanguage: compact(
