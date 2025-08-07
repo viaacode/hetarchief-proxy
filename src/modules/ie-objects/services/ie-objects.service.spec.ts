@@ -587,10 +587,10 @@ describe('ieObjectsService', () => {
 			expect(result[0].files[0].mimeType).toEqual('audio/mp4');
 		});
 
-		it('should return a list of representations that can be played by the iiif viewer with jp2 and alto.xml and without jpeg', () => {
+		it('should return a list of representations that can be played by the iiif viewer with jp2 and alto.xml and jpeg', () => {
 			const result: IeObjectRepresentation[] =
 				ieObjectsService.cleanupRepresentations(representationsNewspaper);
-			expect(result).toHaveLength(2);
+			expect(result).toHaveLength(3);
 		});
 	});
 });

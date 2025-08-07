@@ -722,10 +722,13 @@ export class IeObjectsService {
 			duration: schemaDurationResponse?.graph__schema_duration?.[0]?.schema_duration,
 			licenses,
 			premisIdentifier: premisIdentifiers,
-			abrahamInfo: {
-				id: isPartOfParentCollections[0]?.schemaIdentifier,
-				uri: isPartOfParentCollections[0]?.iri,
-			},
+			abrahamInfo:
+				dctermsFormat === IeObjectType.NEWSPAPER
+					? {
+							id: isPartOfParentCollections[0]?.schemaIdentifier,
+							uri: isPartOfParentCollections[0]?.iri,
+						}
+					: null,
 			abstract: ie?.schema_abstract,
 			genre: compact(schemaGenreResponse?.schemaGenre?.map((item) => item.schema_genre)),
 			inLanguage: compact(
@@ -1528,11 +1531,6 @@ export class IeObjectsService {
 					(representation) => !representation.files.some((file) => file.mimeType === 'audio/mpeg')
 				);
 			}
-
-			// Remove jpeg files from newspapers, since we only need to the jp2 image api urls and the alto json files
-			filteredRepresentations = filteredRepresentations.filter((representation) => {
-				return !representation.files.some((file) => file.mimeType === 'image/jpeg');
-			});
 		}
 		return filteredRepresentations;
 	}
