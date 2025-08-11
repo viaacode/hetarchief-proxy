@@ -299,12 +299,6 @@ export class QueryBuilder {
 		}
 		if (
 			FLATTENED_FIELDS.includes(searchFilter.field) &&
-			(searchFilter.operator === Operator.IS || searchFilter.operator === Operator.IS_NOT)
-		) {
-			elasticKeyResolved = `${elasticKey}.keyword`;
-		}
-		if (
-			FLATTENED_FIELDS.includes(searchFilter.field) &&
 			[Operator.CONTAINS, Operator.CONTAINS_NOT].includes(searchFilter.operator)
 		) {
 			// Publisher/Creator are a special cases since they are flattened fields
@@ -312,13 +306,19 @@ export class QueryBuilder {
 				occurrenceType: OCCURRENCE_TYPE[searchFilter.operator],
 				query: {
 					wildcard: {
-						[elasticKeyResolved]: {
+						[`${elasticKey}.keyword`]: {
 							value: `*${searchFilter.value.toLowerCase()}*`,
 							case_insensitive: true,
 						},
 					},
 				},
 			};
+		}
+		if (
+			FLATTENED_FIELDS.includes(searchFilter.field) &&
+			[Operator.IS, Operator.IS_NOT].includes(searchFilter.operator)
+		) {
+			elasticKeyResolved = `${elasticKey}.keyword`;
 		}
 
 		// Contains, ContainsNot
