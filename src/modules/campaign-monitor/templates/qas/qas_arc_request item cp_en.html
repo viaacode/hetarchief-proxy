@@ -514,12 +514,26 @@ div.preheader {
       <div style="mso-line-height-rule: exactly;mso-text-raise: 11px;vertical-align: middle;">
         <p style="Margin-top: 0;Margin-bottom: 0;"><strong>The requests concerns:</strong></p>
 {% for item in request_list %}
-        <ul style="Margin-top: 20px;Margin-bottom: 0;Margin-left: 24px;padding: 0;list-style-type: disc;"><li style="Margin-top: 20px;Margin-bottom: 0;Margin-left: 0;">Title: {{ item.title }}</li><li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">Local cp ID (optional):&nbsp;{{ item.local_cp_id }}</li><li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">Meemoo identifier:&nbsp;{{ item.pid }}</li><li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">Item URL: {{ item.page_url }}</li><li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">Gebruikersvraag: {{ item.request_type }}</li><li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">More information about the request:&nbsp;{{ item.request_description }}</li></ul>
+        <ul style="Margin-top: 20px;Margin-bottom: 0;Margin-left: 24px;padding: 0;list-style-type: disc;">
+            <li style="Margin-top: 20px;Margin-bottom: 0;Margin-left: 0;">Title: {{ item.title }}</li>
+            <li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">Local cp ID (optional): {{ item.local_cp_id }}</li>
+            <li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">Meemoo identifier: {{ item.pid }}</li>
+            <li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">Item URL: {{ item.page_url }}</li>
+            <li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">Gebruikersvraag: {{ item.request_type }}</li>
+            <li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">More information about the request: {{ item.request_description }}</li>
+        </ul>
 <p style="color: #00C8AA">___</p>
 {% endfor %}
 
-<p style="Margin-top: 20px;Margin-bottom: 0;">You can use these details to respond to the user’s request:&nbsp;</p><ul style="Margin-top: 20px;Margin-bottom: 20px;Margin-left: 24px;padding: 0;list-style-type: disc;"><li style="Margin-top: 20px;Margin-bottom: 0;Margin-left: 0;">First name: {{ user_firstname }}</li><li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">Surname: {{ user_lastname }}</li><li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">Email: {{ user_email }}</li><li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 
-0;">Type:&nbsp;{{ user_request_context }}</li><li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">Organisation (optional): {{ user_organisation }}</li></ul>
+<p style="Margin-top: 20px;Margin-bottom: 0;">You can use these details to respond to the user’s request: </p>
+          <ul style="Margin-top: 20px;Margin-bottom: 20px;Margin-left: 24px;padding: 0;list-style-type: disc;">
+          <li style="Margin-top: 20px;Margin-bottom: 0;Margin-left: 0;">First name: {{ user_firstname }}</li>
+          <li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">Surname: {{ user_lastname }}</li>
+          <li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">Email: {{ user_email }}</li>
+          <li style="Margin-top: 0;Margin-bottom: 0;Margin-left:
+0;">Type: {{ user_request_context }}</li>
+          <li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">Organisation (optional): {{ user_organisation }}</li>
+      </ul>
       </div>
     </div>
         

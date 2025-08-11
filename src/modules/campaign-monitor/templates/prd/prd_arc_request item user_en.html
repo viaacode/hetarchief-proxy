@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width"><style type="text/css">
 @media only screen and (min-width: 620px){.wrapper{min-width:600px !important}.wrapper h1{}.wrapper h1{font-size:26px !important;line-height:34px !important}.wrapper h2{}.wrapper h2{font-size:18px !important;line-height:26px !important}.wrapper h3{}.column{}.wrapper .size-8{font-size:8px !important;line-height:14px !important}.wrapper .size-9{font-size:9px !important;line-height:16px !important}.wrapper .size-10{font-size:10px !important;line-height:18px !important}.wrapper .size-11{font-size:11px !important;line-height:19px !important}.wrapper .size-12{font-size:12px !important;line-height:19px !important}.wrapper .size-13{font-size:13px !important;line-height:21px !important}.wrapper .size-14{font-size:14px !important;line-height:21px !important}.wrapper .size-15{font-size:15px !important;line-height:23px !important}.wrapper .size-16{font-size:16px !important;line-height:24px 
 !important}.wrapper .size-17{font-size:17px !important;line-height:26px !important}.wrapper .size-18{font-size:18px !important;line-height:26px !important}.wrapper .size-20{font-size:20px !important;line-height:28px !important}.wrapper .size-22{font-size:22px !important;line-height:31px !important}.wrapper .size-24{font-size:24px !important;line-height:32px !important}.wrapper .size-26{font-size:26px !important;line-height:34px !important}.wrapper .size-28{font-size:28px !important;line-height:36px !important}.wrapper .size-30{font-size:30px !important;line-height:38px !important}.wrapper .size-32{font-size:32px !important;line-height:40px !important}.wrapper .size-34{font-size:34px !important;line-height:43px !important}.wrapper .size-36{font-size:36px !important;line-height:43px !important}.wrapper .size-40{font-size:40px !important;line-height:47px !important}.wrapper 
-.size-44{font-size:44px !important;line-height:50px !important}.wrapper .size-48{font-size:48px !important;line-height:54px !important}.wrapper .size-56{font-size:56px !important;line-height:60px !important}.wrapper .size-64{font-size:64px !important;line-height:68px !important}.wrapper .size-72{font-size:72px !important;line-height:76px !important}.wrapper .size-80{font-size:80px !important;line-height:84px !important}.wrapper .size-96{font-size:96px !important;line-height:100px !important}.wrapper .size-112{font-size:112px !important;line-height:116px !important}.wrapper .size-128{font-size:128px !important;line-height:132px !important}.wrapper .size-144{font-size:144px !important;line-height:148px !important}}
+.size-44{font-size:44px !important;line-height:50px !important}.wrapper .size-48{font-size:48px !important;line-height:54px !important}.wrapper .size-56{font-size:56px !important;line-height:60px !important}.wrapper .size-64{font-size:64px !important;line-height:68px !important}.wrapper .size-72{font-size:72px !important;line-height:76px !important}.wrapper .size-80{font-size:80px !important;line-height:84px !important}.wrapper .size-96{font-size:96px !important;line-height:100px !important}.wrapper .size-112{font-size:112px !important;line-height:116px !important}.wrapper .size-128{font-size:128px !important;line-height:132px !important}.wrapper .size-144{font-size:144px !important;line-height:148px !important} }
 </style>
     <meta name="x-apple-disable-message-reformatting">
     <style type="text/css">
@@ -513,12 +513,27 @@ div.preheader {
       <div style="mso-line-height-rule: exactly;mso-text-raise: 11px;vertical-align: middle;">
         <p style="Margin-top: 0;Margin-bottom: 0;"><strong>Your request concerns:</strong></p>
 {% for item in request_list %}
-        <ul style="Margin-top: 20px;Margin-bottom: 0;Margin-left: 24px;padding: 0;list-style-type: disc;"><li style="Margin-top: 20px;Margin-bottom: 0;Margin-left: 0;">Title: {{ item.title }}</li><li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">Provider:&nbsp;{{ item.cp_name }}</li><li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">Local provider ID (optional):&nbsp;{{ item.local_cp_id }}</li><li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">Meemoo identifier:&nbsp;{{ item.pid }}</li><li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">Item URL: {{ item.page_url }}</li><li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">Your request type: {{ item.request_type }}</li><li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">More information:&nbsp;{{ item.request_description }}</li></ul>
+        <ul style="Margin-top: 20px;Margin-bottom: 0;Margin-left: 24px;padding: 0;list-style-type: disc;">
+            <li style="Margin-top: 20px;Margin-bottom: 0;Margin-left: 0;">Title: {{ item.title }}</li>
+            <li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">Provider: {{ item.cp_name }}</li>
+            <li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">Local provider ID (optional): {{ item.local_cp_id }}</li>
+            <li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">Meemoo identifier: {{ item.pid }}</li>
+            <li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">Item URL: {{ item.page_url }}</li>
+            <li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">Your request type: {{ item.request_type }}</li>
+            <li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">More information: {{ item.request_description }}</li>
+        </ul>
 <p style="color: #00C8AA">___</p>
 {% endfor %}
 
-<p style="Margin-top: 20px;Margin-bottom: 0;">You can use these details to respond to the user’s request:&nbsp;</p><ul style="Margin-top: 20px;Margin-bottom: 20px;Margin-left: 24px;padding: 0;list-style-type: disc;"><li style="Margin-top: 20px;Margin-bottom: 0;Margin-left: 0;">First name: {{ user_firstname }}</li><li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">Surname: {{ user_lastname }}</li><li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">Email: {{ user_email }}</li><li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 
-0;">Context:&nbsp;{{ user_request_context }}</li><li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">Organisation (optional): {{ user_organisation }}</li></ul>
+<p style="Margin-top: 20px;Margin-bottom: 0;">You can use these details to respond to the user’s request: </p>
+          <ul style="Margin-top: 20px;Margin-bottom: 20px;Margin-left: 24px;padding: 0;list-style-type: disc;">
+              <li style="Margin-top: 20px;Margin-bottom: 0;Margin-left: 0;">First name: {{ user_firstname }}</li>
+              <li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">Surname: {{ user_lastname }}</li>
+              <li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">Email: {{ user_email }}</li>
+              <li style="Margin-top: 0;Margin-bottom: 0;Margin-left:
+    0;">Context: {{ user_request_context }}</li>
+              <li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">Organisation (optional): {{ user_organisation }}</li>
+          </ul>
       </div>
     </div>
         
@@ -644,6 +659,6 @@ div.preheader {
     </td></tr></tbody></table>
   <style type="text/css">
 @media (max-width:619px){.email-flexible-footer .left-aligned-footer .column,.email-flexible-footer .center-aligned-footer,.email-flexible-footer .right-aligned-footer .column{max-width:100% !important;text-align:center !important;width:100% !important}.flexible-footer-logo{margin-left:0px !important;margin-right:0px !important}.email-flexible-footer .left-aligned-footer .flexible-footer__share-button__container,.email-flexible-footer .center-aligned-footer .flexible-footer__share-button__container,.email-flexible-footer .right-aligned-footer .flexible-footer__share-button__container{display:inline-block;margin-left:5px !important;margin-right:5px !important}.email-flexible-footer__additionalinfo--center{text-align:center !important}.email-flexible-footer .left-aligned-footer table,.email-flexible-footer .center-aligned-footer table,.email-flexible-footer .right-aligned-footer 
-table{display:table !important;width:100% !important}.email-flexible-footer .footer__share-button,.email-flexible-footer .email-footer__additional-info{margin-left:20px;margin-right:20px}}
+table{display:table !important;width:100% !important}.email-flexible-footer .footer__share-button,.email-flexible-footer .email-footer__additional-info{margin-left:20px;margin-right:20px} }
 </style><img style="visibility: hidden !important; display: block !important; height:1px !important; width:1px !important; border: 0 !important; margin: 0 !important; padding: 0 !important" src="https://hetarchief.cmail20.com/t/n/r-o-tjutthjl-l-r/o.gif" width="1" height="1" border="0" alt="">
 </body></html>

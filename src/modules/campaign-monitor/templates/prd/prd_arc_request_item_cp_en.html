@@ -883,8 +883,7 @@
 										lang="x-size-18"><strong>Your organisation has received an item request via thearchives.be
 									</strong></h3>
 									<p style="Margin-top: 12px;Margin-bottom: 20px;">Dear,</p>
-									<p style="Margin-top: 12px;Margin-bottom: 20px;">A user is interested in one or more items from {{
-										cp_name }}. Below is an overview of the item(s) and the user's contact details.&nbsp;</p>
+									<p style="Margin-top: 12px;Margin-bottom: 20px;">A user is interested in one or more items from {{ cp_name }}. Below is an overview of the item(s) and the user's contact details.&nbsp;</p>
 								</div>
 							</div>
 
@@ -894,23 +893,23 @@
 									{% for item in request_list %}
 									<ul style="Margin-top: 20px;Margin-bottom: 0;Margin-left: 24px;padding: 0;list-style-type: disc;">
 										<li style="Margin-top: 20px;Margin-bottom: 0;Margin-left: 0;">Title: {{ item.title }}</li>
-										<li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">Local cp ID (optional):&nbsp;{{item.local_cp_id }}</li>
-										<li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">Meemoo identifier:&nbsp;{{ item.pid }}</li>
+										<li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">Local cp ID (optional): {{item.local_cp_id }}</li>
+										<li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">Meemoo identifier: {{ item.pid }}</li>
 										<li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">Item URL: {{ item.page_url }}</li>
 										<li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">User question: {{ item.request_type }}</li>
-										<li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">More information about the request:&nbsp;{{ item.request_description }}</li>
+										<li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">More information about the request: {{ item.request_description }}</li>
 									</ul>
 									<p style="color: #00C8AA">___</p>
 									{% endfor %}
 
 									<p style="Margin-top: 20px;Margin-bottom: 0;">You can use these details to respond to the user's
-										request:&nbsp;</p>
+										request: </p>
 									<ul style="Margin-top: 20px;Margin-bottom: 20px;Margin-left: 24px;padding: 0;list-style-type: disc;">
 										<li style="Margin-top: 20px;Margin-bottom: 0;Margin-left: 0;">First name: {{ user_firstname }}</li>
 										<li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">Surname: {{ user_lastname }}</li>
 										<li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">Email: {{ user_email }}</li>
 										<li style="Margin-top: 0;Margin-bottom: 0;Margin-left:
-0;">Type:&nbsp;{{ user_request_context }}</li>
+0;">Type: {{ user_request_context }}</li>
 										<li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">Organisation (optional): {{ user_organisation }}</li>
 									</ul>
 								</div>
