@@ -41,7 +41,6 @@ export const configValidationSchema = Joi.object({
 	TEMP_ASSET_FOLDER: Joi.string().allow(''),
 	MEEMOO_ADMIN_ORGANIZATION_IDS: Joi.string(),
 	REROUTE_EMAILS_TO: Joi.string().allow(''),
-	ORGANIZATIONS_API_V2_URL: Joi.string(),
 	ELASTICSEARCH_LOG_QUERIES: Joi.boolean().default(false),
 	ELASTICSEARCH_CACHE_QUERIES: Joi.boolean().default(true),
 	GRAPHQL_LOG_QUERIES: Joi.boolean().default(false),
