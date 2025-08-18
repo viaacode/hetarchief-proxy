@@ -303,15 +303,34 @@ export class IeObjectsController {
 		res.send(csvContent);
 	}
 
-	@Get('schemaIdentifierLookup/:schemaIdentifierV2')
+	/**
+	 * Lookup hetarchief v3 id from the hetarchief v2 id
+	 * @param schemaIdentifierV2
+	 */
+	@Get('lookup/v2/:schemaIdentifierV2')
 	@ApiOperation({
 		description:
 			'Returns the new schema identifier for hetarchief v3 when given the old schema identifier from hetarchief v2.',
 	})
-	public async identifierLookup(
+	public async lookupV2Id(
 		@Param('schemaIdentifierV2') schemaIdentifierV2: string
 	): Promise<{ schemaIdentifierV3: string }> {
-		return this.ieObjectsService.convertSchemaIdentifierV2ToV3(schemaIdentifierV2);
+		return this.ieObjectsService.lookupSchemaIdentifierV2ToV3(schemaIdentifierV2);
+	}
+
+	/**
+	 * Lookup hetarchief v3 id from the mediamosa id from news of the great war website
+	 * @param mediaMosaId
+	 */
+	@Get('lookup/nvdgo/:mediaMosaId')
+	@ApiOperation({
+		description:
+			'Returns the new ie-object info for hetarchief v3 when given the old news of the great war media mosa id.',
+	})
+	public async lookupNvdgoId(
+		@Param('mediaMosaId') mediaMosaId: string
+	): Promise<{ schema_identifier: string; title: string; maintainerSlug: string }> {
+		return this.ieObjectsService.lookupMediaMosaIdToV3(mediaMosaId);
 	}
 
 	@Get('/related')
