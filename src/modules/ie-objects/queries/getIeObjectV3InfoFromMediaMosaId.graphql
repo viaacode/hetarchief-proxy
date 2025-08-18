@@ -1,0 +1,11 @@
+query getIeObjectV3InfoFromMediaMosaId($mediaMosaId: String) {
+	nvdgo_mediamosa_assets(where: { asset_id: { _eq: $mediaMosaId } }) {
+		ieObject {
+			schemaMaintainer {
+				skos_alt_label
+			}
+			schema_name
+			schema_identifier
+		}
+	}
+}

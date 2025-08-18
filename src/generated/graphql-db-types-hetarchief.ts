@@ -20693,6 +20693,10 @@ export type Mutation_Root = {
   delete_maintainer_visitor_space_request_note?: Maybe<Maintainer_Visitor_Space_Request_Note_Mutation_Response>;
   /** delete single row from the table: "maintainer.visitor_space_request_note" */
   delete_maintainer_visitor_space_request_note_by_pk?: Maybe<Maintainer_Visitor_Space_Request_Note>;
+  /** delete data from the table: "nvdgo.mediamosa_assets" */
+  delete_nvdgo_mediamosa_assets?: Maybe<Nvdgo_Mediamosa_Assets_Mutation_Response>;
+  /** delete single row from the table: "nvdgo.mediamosa_assets" */
+  delete_nvdgo_mediamosa_assets_by_pk?: Maybe<Nvdgo_Mediamosa_Assets>;
   /** delete data from the table: "users.folder" */
   delete_users_folder?: Maybe<Users_Folder_Mutation_Response>;
   /** delete single row from the table: "users.folder" */
@@ -20961,6 +20965,10 @@ export type Mutation_Root = {
   insert_maintainer_visitor_space_request_note_one?: Maybe<Maintainer_Visitor_Space_Request_Note>;
   /** insert a single row into the table: "maintainer.visitor_space_request" */
   insert_maintainer_visitor_space_request_one?: Maybe<Maintainer_Visitor_Space_Request>;
+  /** insert data into the table: "nvdgo.mediamosa_assets" */
+  insert_nvdgo_mediamosa_assets?: Maybe<Nvdgo_Mediamosa_Assets_Mutation_Response>;
+  /** insert a single row into the table: "nvdgo.mediamosa_assets" */
+  insert_nvdgo_mediamosa_assets_one?: Maybe<Nvdgo_Mediamosa_Assets>;
   /** insert data into the table: "users.folder" */
   insert_users_folder?: Maybe<Users_Folder_Mutation_Response>;
   /** insert data into the table: "users.folder_ie" */
@@ -21345,6 +21353,12 @@ export type Mutation_Root = {
   update_maintainer_visitor_space_request_note_by_pk?: Maybe<Maintainer_Visitor_Space_Request_Note>;
   /** update multiples rows of table: "maintainer.visitor_space_request_note" */
   update_maintainer_visitor_space_request_note_many?: Maybe<Array<Maybe<Maintainer_Visitor_Space_Request_Note_Mutation_Response>>>;
+  /** update data of the table: "nvdgo.mediamosa_assets" */
+  update_nvdgo_mediamosa_assets?: Maybe<Nvdgo_Mediamosa_Assets_Mutation_Response>;
+  /** update single row of the table: "nvdgo.mediamosa_assets" */
+  update_nvdgo_mediamosa_assets_by_pk?: Maybe<Nvdgo_Mediamosa_Assets>;
+  /** update multiples rows of table: "nvdgo.mediamosa_assets" */
+  update_nvdgo_mediamosa_assets_many?: Maybe<Array<Maybe<Nvdgo_Mediamosa_Assets_Mutation_Response>>>;
   /** update data of the table: "users.folder" */
   update_users_folder?: Maybe<Users_Folder_Mutation_Response>;
   /** update single row of the table: "users.folder" */
@@ -22124,6 +22138,18 @@ export type Mutation_RootDelete_Maintainer_Visitor_Space_Request_NoteArgs = {
 /** mutation root */
 export type Mutation_RootDelete_Maintainer_Visitor_Space_Request_Note_By_PkArgs = {
   id: Scalars['uuid']['input'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Nvdgo_Mediamosa_AssetsArgs = {
+  where: Nvdgo_Mediamosa_Assets_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Nvdgo_Mediamosa_Assets_By_PkArgs = {
+  asset_id: Scalars['String']['input'];
 };
 
 
@@ -23045,6 +23071,20 @@ export type Mutation_RootInsert_Maintainer_Visitor_Space_Request_Note_OneArgs = 
 export type Mutation_RootInsert_Maintainer_Visitor_Space_Request_OneArgs = {
   object: Maintainer_Visitor_Space_Request_Insert_Input;
   on_conflict?: InputMaybe<Maintainer_Visitor_Space_Request_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Nvdgo_Mediamosa_AssetsArgs = {
+  objects: Array<Nvdgo_Mediamosa_Assets_Insert_Input>;
+  on_conflict?: InputMaybe<Nvdgo_Mediamosa_Assets_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Nvdgo_Mediamosa_Assets_OneArgs = {
+  object: Nvdgo_Mediamosa_Assets_Insert_Input;
+  on_conflict?: InputMaybe<Nvdgo_Mediamosa_Assets_On_Conflict>;
 };
 
 
@@ -24412,6 +24452,26 @@ export type Mutation_RootUpdate_Maintainer_Visitor_Space_Request_Note_ManyArgs =
 
 
 /** mutation root */
+export type Mutation_RootUpdate_Nvdgo_Mediamosa_AssetsArgs = {
+  _set?: InputMaybe<Nvdgo_Mediamosa_Assets_Set_Input>;
+  where: Nvdgo_Mediamosa_Assets_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Nvdgo_Mediamosa_Assets_By_PkArgs = {
+  _set?: InputMaybe<Nvdgo_Mediamosa_Assets_Set_Input>;
+  pk_columns: Nvdgo_Mediamosa_Assets_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Nvdgo_Mediamosa_Assets_ManyArgs = {
+  updates: Array<Nvdgo_Mediamosa_Assets_Updates>;
+};
+
+
+/** mutation root */
 export type Mutation_RootUpdate_Users_FolderArgs = {
   _set?: InputMaybe<Users_Folder_Set_Input>;
   where: Users_Folder_Bool_Exp;
@@ -24581,6 +24641,239 @@ export type Numeric_Comparison_Exp = {
   _lte?: InputMaybe<Scalars['numeric']['input']>;
   _neq?: InputMaybe<Scalars['numeric']['input']>;
   _nin?: InputMaybe<Array<Scalars['numeric']['input']>>;
+};
+
+/** columns and relationships of "nvdgo.mediamosa_assets" */
+export type Nvdgo_Mediamosa_Assets = {
+  __typename?: 'nvdgo_mediamosa_assets';
+  asset_id: Scalars['String']['output'];
+  /** An object relationship */
+  ieObject?: Maybe<Graph_Intellectual_Entity>;
+  intellectual_entity_id?: Maybe<Scalars['String']['output']>;
+  issued?: Maybe<Scalars['date']['output']>;
+  mediafile_filename?: Maybe<Scalars['String']['output']>;
+  original_filename?: Maybe<Scalars['String']['output']>;
+  pid?: Maybe<Scalars['String']['output']>;
+  provider?: Maybe<Scalars['String']['output']>;
+  published?: Maybe<Scalars['Boolean']['output']>;
+  title?: Maybe<Scalars['String']['output']>;
+  type?: Maybe<Scalars['String']['output']>;
+};
+
+/** aggregated selection of "nvdgo.mediamosa_assets" */
+export type Nvdgo_Mediamosa_Assets_Aggregate = {
+  __typename?: 'nvdgo_mediamosa_assets_aggregate';
+  aggregate?: Maybe<Nvdgo_Mediamosa_Assets_Aggregate_Fields>;
+  nodes: Array<Nvdgo_Mediamosa_Assets>;
+};
+
+/** aggregate fields of "nvdgo.mediamosa_assets" */
+export type Nvdgo_Mediamosa_Assets_Aggregate_Fields = {
+  __typename?: 'nvdgo_mediamosa_assets_aggregate_fields';
+  count: Scalars['Int']['output'];
+  max?: Maybe<Nvdgo_Mediamosa_Assets_Max_Fields>;
+  min?: Maybe<Nvdgo_Mediamosa_Assets_Min_Fields>;
+};
+
+
+/** aggregate fields of "nvdgo.mediamosa_assets" */
+export type Nvdgo_Mediamosa_Assets_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Nvdgo_Mediamosa_Assets_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+/** Boolean expression to filter rows from the table "nvdgo.mediamosa_assets". All fields are combined with a logical 'AND'. */
+export type Nvdgo_Mediamosa_Assets_Bool_Exp = {
+  _and?: InputMaybe<Array<Nvdgo_Mediamosa_Assets_Bool_Exp>>;
+  _not?: InputMaybe<Nvdgo_Mediamosa_Assets_Bool_Exp>;
+  _or?: InputMaybe<Array<Nvdgo_Mediamosa_Assets_Bool_Exp>>;
+  asset_id?: InputMaybe<String_Comparison_Exp>;
+  ieObject?: InputMaybe<Graph_Intellectual_Entity_Bool_Exp>;
+  intellectual_entity_id?: InputMaybe<String_Comparison_Exp>;
+  issued?: InputMaybe<Date_Comparison_Exp>;
+  mediafile_filename?: InputMaybe<String_Comparison_Exp>;
+  original_filename?: InputMaybe<String_Comparison_Exp>;
+  pid?: InputMaybe<String_Comparison_Exp>;
+  provider?: InputMaybe<String_Comparison_Exp>;
+  published?: InputMaybe<Boolean_Comparison_Exp>;
+  title?: InputMaybe<String_Comparison_Exp>;
+  type?: InputMaybe<String_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "nvdgo.mediamosa_assets" */
+export enum Nvdgo_Mediamosa_Assets_Constraint {
+  /** unique or primary key constraint on columns "asset_id" */
+  AssetsPkey = 'assets_pkey'
+}
+
+/** input type for inserting data into table "nvdgo.mediamosa_assets" */
+export type Nvdgo_Mediamosa_Assets_Insert_Input = {
+  asset_id?: InputMaybe<Scalars['String']['input']>;
+  ieObject?: InputMaybe<Graph_Intellectual_Entity_Obj_Rel_Insert_Input>;
+  intellectual_entity_id?: InputMaybe<Scalars['String']['input']>;
+  issued?: InputMaybe<Scalars['date']['input']>;
+  mediafile_filename?: InputMaybe<Scalars['String']['input']>;
+  original_filename?: InputMaybe<Scalars['String']['input']>;
+  pid?: InputMaybe<Scalars['String']['input']>;
+  provider?: InputMaybe<Scalars['String']['input']>;
+  published?: InputMaybe<Scalars['Boolean']['input']>;
+  title?: InputMaybe<Scalars['String']['input']>;
+  type?: InputMaybe<Scalars['String']['input']>;
+};
+
+/** aggregate max on columns */
+export type Nvdgo_Mediamosa_Assets_Max_Fields = {
+  __typename?: 'nvdgo_mediamosa_assets_max_fields';
+  asset_id?: Maybe<Scalars['String']['output']>;
+  intellectual_entity_id?: Maybe<Scalars['String']['output']>;
+  issued?: Maybe<Scalars['date']['output']>;
+  mediafile_filename?: Maybe<Scalars['String']['output']>;
+  original_filename?: Maybe<Scalars['String']['output']>;
+  pid?: Maybe<Scalars['String']['output']>;
+  provider?: Maybe<Scalars['String']['output']>;
+  title?: Maybe<Scalars['String']['output']>;
+  type?: Maybe<Scalars['String']['output']>;
+};
+
+/** aggregate min on columns */
+export type Nvdgo_Mediamosa_Assets_Min_Fields = {
+  __typename?: 'nvdgo_mediamosa_assets_min_fields';
+  asset_id?: Maybe<Scalars['String']['output']>;
+  intellectual_entity_id?: Maybe<Scalars['String']['output']>;
+  issued?: Maybe<Scalars['date']['output']>;
+  mediafile_filename?: Maybe<Scalars['String']['output']>;
+  original_filename?: Maybe<Scalars['String']['output']>;
+  pid?: Maybe<Scalars['String']['output']>;
+  provider?: Maybe<Scalars['String']['output']>;
+  title?: Maybe<Scalars['String']['output']>;
+  type?: Maybe<Scalars['String']['output']>;
+};
+
+/** response of any mutation on the table "nvdgo.mediamosa_assets" */
+export type Nvdgo_Mediamosa_Assets_Mutation_Response = {
+  __typename?: 'nvdgo_mediamosa_assets_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int']['output'];
+  /** data from the rows affected by the mutation */
+  returning: Array<Nvdgo_Mediamosa_Assets>;
+};
+
+/** on_conflict condition type for table "nvdgo.mediamosa_assets" */
+export type Nvdgo_Mediamosa_Assets_On_Conflict = {
+  constraint: Nvdgo_Mediamosa_Assets_Constraint;
+  update_columns?: Array<Nvdgo_Mediamosa_Assets_Update_Column>;
+  where?: InputMaybe<Nvdgo_Mediamosa_Assets_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "nvdgo.mediamosa_assets". */
+export type Nvdgo_Mediamosa_Assets_Order_By = {
+  asset_id?: InputMaybe<Order_By>;
+  ieObject?: InputMaybe<Graph_Intellectual_Entity_Order_By>;
+  intellectual_entity_id?: InputMaybe<Order_By>;
+  issued?: InputMaybe<Order_By>;
+  mediafile_filename?: InputMaybe<Order_By>;
+  original_filename?: InputMaybe<Order_By>;
+  pid?: InputMaybe<Order_By>;
+  provider?: InputMaybe<Order_By>;
+  published?: InputMaybe<Order_By>;
+  title?: InputMaybe<Order_By>;
+  type?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: nvdgo.mediamosa_assets */
+export type Nvdgo_Mediamosa_Assets_Pk_Columns_Input = {
+  asset_id: Scalars['String']['input'];
+};
+
+/** select columns of table "nvdgo.mediamosa_assets" */
+export enum Nvdgo_Mediamosa_Assets_Select_Column {
+  /** column name */
+  AssetId = 'asset_id',
+  /** column name */
+  IntellectualEntityId = 'intellectual_entity_id',
+  /** column name */
+  Issued = 'issued',
+  /** column name */
+  MediafileFilename = 'mediafile_filename',
+  /** column name */
+  OriginalFilename = 'original_filename',
+  /** column name */
+  Pid = 'pid',
+  /** column name */
+  Provider = 'provider',
+  /** column name */
+  Published = 'published',
+  /** column name */
+  Title = 'title',
+  /** column name */
+  Type = 'type'
+}
+
+/** input type for updating data in table "nvdgo.mediamosa_assets" */
+export type Nvdgo_Mediamosa_Assets_Set_Input = {
+  asset_id?: InputMaybe<Scalars['String']['input']>;
+  intellectual_entity_id?: InputMaybe<Scalars['String']['input']>;
+  issued?: InputMaybe<Scalars['date']['input']>;
+  mediafile_filename?: InputMaybe<Scalars['String']['input']>;
+  original_filename?: InputMaybe<Scalars['String']['input']>;
+  pid?: InputMaybe<Scalars['String']['input']>;
+  provider?: InputMaybe<Scalars['String']['input']>;
+  published?: InputMaybe<Scalars['Boolean']['input']>;
+  title?: InputMaybe<Scalars['String']['input']>;
+  type?: InputMaybe<Scalars['String']['input']>;
+};
+
+/** Streaming cursor of the table "nvdgo_mediamosa_assets" */
+export type Nvdgo_Mediamosa_Assets_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: Nvdgo_Mediamosa_Assets_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type Nvdgo_Mediamosa_Assets_Stream_Cursor_Value_Input = {
+  asset_id?: InputMaybe<Scalars['String']['input']>;
+  intellectual_entity_id?: InputMaybe<Scalars['String']['input']>;
+  issued?: InputMaybe<Scalars['date']['input']>;
+  mediafile_filename?: InputMaybe<Scalars['String']['input']>;
+  original_filename?: InputMaybe<Scalars['String']['input']>;
+  pid?: InputMaybe<Scalars['String']['input']>;
+  provider?: InputMaybe<Scalars['String']['input']>;
+  published?: InputMaybe<Scalars['Boolean']['input']>;
+  title?: InputMaybe<Scalars['String']['input']>;
+  type?: InputMaybe<Scalars['String']['input']>;
+};
+
+/** update columns of table "nvdgo.mediamosa_assets" */
+export enum Nvdgo_Mediamosa_Assets_Update_Column {
+  /** column name */
+  AssetId = 'asset_id',
+  /** column name */
+  IntellectualEntityId = 'intellectual_entity_id',
+  /** column name */
+  Issued = 'issued',
+  /** column name */
+  MediafileFilename = 'mediafile_filename',
+  /** column name */
+  OriginalFilename = 'original_filename',
+  /** column name */
+  Pid = 'pid',
+  /** column name */
+  Provider = 'provider',
+  /** column name */
+  Published = 'published',
+  /** column name */
+  Title = 'title',
+  /** column name */
+  Type = 'type'
+}
+
+export type Nvdgo_Mediamosa_Assets_Updates = {
+  /** sets the columns of the filtered rows to the given values */
+  _set?: InputMaybe<Nvdgo_Mediamosa_Assets_Set_Input>;
+  /** filter the rows which have to be updated */
+  where: Nvdgo_Mediamosa_Assets_Bool_Exp;
 };
 
 /** column ordering options */
@@ -25097,6 +25390,12 @@ export type Query_Root = {
   maintainer_visitor_space_request_note_aggregate: Maintainer_Visitor_Space_Request_Note_Aggregate;
   /** fetch data from the table: "maintainer.visitor_space_request_note" using primary key columns */
   maintainer_visitor_space_request_note_by_pk?: Maybe<Maintainer_Visitor_Space_Request_Note>;
+  /** fetch data from the table: "nvdgo.mediamosa_assets" */
+  nvdgo_mediamosa_assets: Array<Nvdgo_Mediamosa_Assets>;
+  /** fetch aggregated fields from the table: "nvdgo.mediamosa_assets" */
+  nvdgo_mediamosa_assets_aggregate: Nvdgo_Mediamosa_Assets_Aggregate;
+  /** fetch data from the table: "nvdgo.mediamosa_assets" using primary key columns */
+  nvdgo_mediamosa_assets_by_pk?: Maybe<Nvdgo_Mediamosa_Assets>;
   /** fetch data from the table: "users.folder" */
   users_folder: Array<Users_Folder>;
   /** fetch aggregated fields from the table: "users.folder" */
@@ -27177,6 +27476,29 @@ export type Query_RootMaintainer_Visitor_Space_Request_Note_By_PkArgs = {
 };
 
 
+export type Query_RootNvdgo_Mediamosa_AssetsArgs = {
+  distinct_on?: InputMaybe<Array<Nvdgo_Mediamosa_Assets_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Nvdgo_Mediamosa_Assets_Order_By>>;
+  where?: InputMaybe<Nvdgo_Mediamosa_Assets_Bool_Exp>;
+};
+
+
+export type Query_RootNvdgo_Mediamosa_Assets_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Nvdgo_Mediamosa_Assets_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Nvdgo_Mediamosa_Assets_Order_By>>;
+  where?: InputMaybe<Nvdgo_Mediamosa_Assets_Bool_Exp>;
+};
+
+
+export type Query_RootNvdgo_Mediamosa_Assets_By_PkArgs = {
+  asset_id: Scalars['String']['input'];
+};
+
+
 export type Query_RootUsers_FolderArgs = {
   distinct_on?: InputMaybe<Array<Users_Folder_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -28062,6 +28384,14 @@ export type Subscription_Root = {
   maintainer_visitor_space_request_stream: Array<Maintainer_Visitor_Space_Request>;
   /** fetch data from the table in a streaming manner: "maintainer.visitor_space" */
   maintainer_visitor_space_stream: Array<Maintainer_Visitor_Space>;
+  /** fetch data from the table: "nvdgo.mediamosa_assets" */
+  nvdgo_mediamosa_assets: Array<Nvdgo_Mediamosa_Assets>;
+  /** fetch aggregated fields from the table: "nvdgo.mediamosa_assets" */
+  nvdgo_mediamosa_assets_aggregate: Nvdgo_Mediamosa_Assets_Aggregate;
+  /** fetch data from the table: "nvdgo.mediamosa_assets" using primary key columns */
+  nvdgo_mediamosa_assets_by_pk?: Maybe<Nvdgo_Mediamosa_Assets>;
+  /** fetch data from the table in a streaming manner: "nvdgo.mediamosa_assets" */
+  nvdgo_mediamosa_assets_stream: Array<Nvdgo_Mediamosa_Assets>;
   /** fetch data from the table: "users.folder" */
   users_folder: Array<Users_Folder>;
   /** fetch aggregated fields from the table: "users.folder" */
@@ -30823,6 +31153,36 @@ export type Subscription_RootMaintainer_Visitor_Space_StreamArgs = {
 };
 
 
+export type Subscription_RootNvdgo_Mediamosa_AssetsArgs = {
+  distinct_on?: InputMaybe<Array<Nvdgo_Mediamosa_Assets_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Nvdgo_Mediamosa_Assets_Order_By>>;
+  where?: InputMaybe<Nvdgo_Mediamosa_Assets_Bool_Exp>;
+};
+
+
+export type Subscription_RootNvdgo_Mediamosa_Assets_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Nvdgo_Mediamosa_Assets_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Nvdgo_Mediamosa_Assets_Order_By>>;
+  where?: InputMaybe<Nvdgo_Mediamosa_Assets_Bool_Exp>;
+};
+
+
+export type Subscription_RootNvdgo_Mediamosa_Assets_By_PkArgs = {
+  asset_id: Scalars['String']['input'];
+};
+
+
+export type Subscription_RootNvdgo_Mediamosa_Assets_StreamArgs = {
+  batch_size: Scalars['Int']['input'];
+  cursor: Array<InputMaybe<Nvdgo_Mediamosa_Assets_Stream_Cursor_Input>>;
+  where?: InputMaybe<Nvdgo_Mediamosa_Assets_Bool_Exp>;
+};
+
+
 export type Subscription_RootUsers_FolderArgs = {
   distinct_on?: InputMaybe<Array<Users_Folder_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -33475,6 +33835,13 @@ export type GetIeObjectIdsQueryVariables = Exact<{
 
 export type GetIeObjectIdsQuery = { __typename?: 'query_root', graph_intellectual_entity: Array<{ __typename?: 'graph_intellectual_entity', id: string, schema_identifier?: string | null }> };
 
+export type GetIeObjectV3InfoFromMediaMosaIdQueryVariables = Exact<{
+  mediaMosaId?: InputMaybe<Scalars['String']['input']>;
+}>;
+
+
+export type GetIeObjectV3InfoFromMediaMosaIdQuery = { __typename?: 'query_root', nvdgo_mediamosa_assets: Array<{ __typename?: 'nvdgo_mediamosa_assets', ieObject?: { __typename?: 'graph_intellectual_entity', schema_name?: string | null, schema_identifier?: string | null, schemaMaintainer?: { __typename?: 'graph_organization', skos_alt_label?: string | null } | null } | null }> };
+
 export type GetParentIeObjectQueryVariables = Exact<{
   currentObjectIri: Scalars['String']['input'];
 }>;
@@ -33891,6 +34258,7 @@ export const GetSchemaTemporalDocument = {"kind":"Document","definitions":[{"kin
 export const GetSchemaThumbnailUrlDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getSchemaThumbnailUrl"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"ieObjectId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"schemaThumbnailUrl"},"name":{"kind":"Name","value":"graph__schema_thumbnail_url"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"intellectual_entity_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"ieObjectId"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_thumbnail_url"}}]}}]}}]} as unknown as DocumentNode<GetSchemaThumbnailUrlQuery, GetSchemaThumbnailUrlQueryVariables>;
 export const GetIeObjectForThumbnailUrlOnlyDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getIeObjectForThumbnailUrlOnly"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"ieObjectId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"schemaThumbnailUrl"},"name":{"kind":"Name","value":"graph__schema_thumbnail_url"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"intellectual_entity_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"ieObjectId"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_thumbnail_url"}}]}},{"kind":"Field","alias":{"kind":"Name","value":"schemaLicense"},"name":{"kind":"Name","value":"graph_schema_license"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"intellectual_entity_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"ieObjectId"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_license"}}]}},{"kind":"Field","alias":{"kind":"Name","value":"ieObject"},"name":{"kind":"Name","value":"graph_intellectual_entity"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"ieObjectId"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"dctermsFormat"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"dcterms_format"}}]}},{"kind":"Field","name":{"kind":"Name","value":"schemaMaintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"org_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"ha_org_sector"}}]}}]}}]}}]} as unknown as DocumentNode<GetIeObjectForThumbnailUrlOnlyQuery, GetIeObjectForThumbnailUrlOnlyQueryVariables>;
 export const GetIeObjectIdsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getIeObjectIds"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"schemaIdentifier"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"graph_intellectual_entity"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"schemaIdentifier"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}}]}}]}}]} as unknown as DocumentNode<GetIeObjectIdsQuery, GetIeObjectIdsQueryVariables>;
+export const GetIeObjectV3InfoFromMediaMosaIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getIeObjectV3InfoFromMediaMosaId"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"mediaMosaId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nvdgo_mediamosa_assets"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"asset_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"mediaMosaId"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ieObject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schemaMaintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"skos_alt_label"}}]}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}}]}}]}}]}}]} as unknown as DocumentNode<GetIeObjectV3InfoFromMediaMosaIdQuery, GetIeObjectV3InfoFromMediaMosaIdQueryVariables>;
 export const GetParentIeObjectDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getParentIeObject"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"currentObjectIri"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"graph_intellectual_entity"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"currentObjectIri"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"dctermsFormat"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"dcterms_format"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_in"},"value":{"kind":"ListValue","values":[{"kind":"StringValue","value":"videofragment","block":false},{"kind":"StringValue","value":"audiofragment","block":false}]}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"isPartOf"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_available"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_created"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_published"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"dctermsFormat"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"dcterms_format"}}]}},{"kind":"Field","name":{"kind":"Name","value":"schemaDuration"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_duration"}}]}},{"kind":"Field","name":{"kind":"Name","value":"schemaLicense"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_license"}}]}},{"kind":"Field","name":{"kind":"Name","value":"schemaThumbnail"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_thumbnail_url"}}]}},{"kind":"Field","name":{"kind":"Name","value":"schemaMaintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"org_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"ha_org_sector"}},{"kind":"Field","name":{"kind":"Name","value":"skos_pref_label"}},{"kind":"Field","name":{"kind":"Name","value":"skos_alt_label"}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetParentIeObjectQuery, GetParentIeObjectQueryVariables>;
 export const GetPreviousNextIeObjectIdsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getPreviousNextIeObjectIds"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"ieObjectIri"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"graph__intellectual_entity_prev_and_next"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"collection_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"ieObjectIri"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"previousIeObject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}}]}},{"kind":"Field","name":{"kind":"Name","value":"nextIeObject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}}]}}]}}]}}]} as unknown as DocumentNode<GetPreviousNextIeObjectIdsQuery, GetPreviousNextIeObjectIdsQueryVariables>;
 export const GetVisitRequestForAccessDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getVisitRequestForAccess"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"maintainerOrId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"now"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"timestamp"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"maintainer_visitor_space_request"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"user_profile_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"visitor_space"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"schema_maintainer_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_ilike"},"value":{"kind":"Variable","name":{"kind":"Name","value":"maintainerOrId"}}}]}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"start_date"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_lte"},"value":{"kind":"Variable","name":{"kind":"Name","value":"now"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"end_date"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_gte"},"value":{"kind":"Variable","name":{"kind":"Name","value":"now"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"status"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"StringValue","value":"APPROVED","block":false}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<GetVisitRequestForAccessQuery, GetVisitRequestForAccessQueryVariables>;

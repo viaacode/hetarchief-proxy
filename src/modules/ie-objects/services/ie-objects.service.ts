@@ -71,6 +71,9 @@ import {
 	GetIeObjectForThumbnailUrlOnlyDocument,
 	GetIeObjectForThumbnailUrlOnlyQuery,
 	GetIeObjectForThumbnailUrlOnlyQueryVariables,
+	GetIeObjectV3InfoFromMediaMosaIdDocument,
+	GetIeObjectV3InfoFromMediaMosaIdQuery,
+	GetIeObjectV3InfoFromMediaMosaIdQueryVariables,
 	type GetIsPartOfQuery,
 	type GetIsRepresentedByQuery,
 	GetParentIeObjectDocument,
@@ -281,7 +284,7 @@ export class IeObjectsService {
 		}
 	}
 
-	public async convertSchemaIdentifierV2ToV3(
+	public async lookupSchemaIdentifierV2ToV3(
 		schemaIdentifierV2: string
 	): Promise<{ schemaIdentifierV3: string; id: string } | null> {
 		const response = await this.dataService.execute<
@@ -301,6 +304,27 @@ export class IeObjectsService {
 		return {
 			id,
 			schemaIdentifierV3,
+		};
+	}
+
+	public async lookupMediaMosaIdToV3(
+		mediaMosaId: string
+	): Promise<{ schema_identifier: string; title: string; maintainerSlug: string } | null> {
+		const response = await this.dataService.execute<
+			GetIeObjectV3InfoFromMediaMosaIdQuery,
+			GetIeObjectV3InfoFromMediaMosaIdQueryVariables
+		>(GetIeObjectV3InfoFromMediaMosaIdDocument, {
+			mediaMosaId,
+		});
+
+		const ieObjectInfo = response.nvdgo_mediamosa_assets[0].ieObject;
+		if (!ieObjectInfo) {
+			return null;
+		}
+		return {
+			schema_identifier: ieObjectInfo.schema_identifier,
+			title: ieObjectInfo.schema_name,
+			maintainerSlug: ieObjectInfo.schemaMaintainer.skos_alt_label,
 		};
 	}
 
