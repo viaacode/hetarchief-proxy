@@ -1,4 +1,6 @@
-import './init-application-monitoring'; // Application monitoring must be the first import!
+// Disable APM monitoring for now, since we don't have a license
+// https://meemoo.atlassian.net/browse/ARC-3175
+// import './init-application-monitoring'; // Application monitoring must be the first import!
 import { ValidationPipe } from '@nestjs/common';
 import { ConfigService as NestConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
