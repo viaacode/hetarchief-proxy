@@ -317,7 +317,7 @@ export class IeObjectsService {
 			mediaMosaId,
 		});
 
-		const ieObjectInfo = response.nvdgo_mediamosa_assets[0].ieObject;
+		const ieObjectInfo = response.nvdgo_mediamosa_assets?.[0]?.ieObject;
 		if (!ieObjectInfo) {
 			return null;
 		}

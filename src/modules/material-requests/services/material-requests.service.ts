@@ -231,8 +231,6 @@ export class MaterialRequestsService {
 				InsertMaterialRequestMutationVariables
 			>(InsertMaterialRequestDocument, variables);
 
-		this.logger.debug(`Material request ${createdMaterialRequest.id} created.`);
-
 		const organisations = await this.organisationsService.findOrganisationsBySchemaIdentifiers(
 			compact([createdMaterialRequest?.intellectualEntity?.schemaMaintainer?.org_identifier])
 		);
@@ -275,8 +273,6 @@ export class MaterialRequestsService {
 			);
 		}
 
-		this.logger.debug(`Material request ${updatedMaterialRequest.returning[0]?.id} updated.`);
-
 		const organisations = await this.organisationsService.findOrganisationsBySchemaIdentifiers(
 			compact([
 				updatedMaterialRequest?.returning?.[0]?.intellectualEntity?.schemaMaintainer
@@ -298,8 +294,6 @@ export class MaterialRequestsService {
 			materialRequestId,
 			userProfileId,
 		});
-
-		this.logger.debug(`Material request ${materialRequestId} deleted`);
 
 		return response.delete_app_material_requests.affected_rows;
 	}
