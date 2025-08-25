@@ -27,8 +27,6 @@ export const mockConfigService = {
 				return 'subscribers';
 			case 'CAMPAIGN_MONITOR_OPTIN_LIST_HETARCHIEF':
 				return 'fakeListId';
-			case 'CAMPAIGN_MONITOR_OPTIN_LIST_HETARCHIEF_NEWSLETTER':
-				return 'newsletter';
 			case 'REROUTE_EMAILS_TO':
 				return '';
 			case 'ENABLE_SEND_EMAIL':

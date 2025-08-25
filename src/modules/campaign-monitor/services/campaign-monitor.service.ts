@@ -66,7 +66,6 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 			'CAMPAIGN_MONITOR_API_ENDPOINT',
 			'CAMPAIGN_MONITOR_SUBSCRIBER_API_ENDPOINT',
 			'CAMPAIGN_MONITOR_OPTIN_LIST_HETARCHIEF',
-			'CAMPAIGN_MONITOR_OPTIN_LIST_HETARCHIEF_NEWSLETTER',
 		]);
 
 		this.isEnabled = this.configService.get('ENABLE_SEND_EMAIL');
