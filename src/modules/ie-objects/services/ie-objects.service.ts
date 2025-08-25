@@ -502,7 +502,10 @@ export class IeObjectsService {
 			})
 		)) as IeObjectDetailResponseTypes;
 
-		if (this.configService.get('NODE_ENV') !== 'test') {
+		if (
+			this.configService.get('NODE_ENV') !== 'test' &&
+			process.env.GRAPHQL_LOG_QUERY_METRICS === 'true'
+		) {
 			// log performance times of sub queries
 			const tableData = orderBy(performanceTimes, (performanceItem) => performanceItem[3], 'desc');
 			console.table(tableData);
