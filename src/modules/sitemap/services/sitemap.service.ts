@@ -1,5 +1,4 @@
-import { Readable } from 'node:stream';
-
+import fs from 'node:fs';
 import {
 	AssetsService,
 	ContentPagesService,
@@ -7,9 +6,8 @@ import {
 	DbContentPage,
 } from '@meemoo/admin-core-api';
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import { AssetType } from '@viaa/avo2-types';
 import { format } from 'date-fns';
-import { compact, kebabCase, round, uniqBy } from 'lodash';
+import { compact, kebabCase, uniq, uniqBy } from 'lodash';
 import xmlFormat from 'xml-formatter';
 
 import type { SitemapConfig, SitemapItemInfo } from '../sitemap.types';
@@ -20,9 +18,9 @@ import {
 } from '~generated/graphql-db-types-hetarchief';
 import { IeObjectLicense, type IeObjectsSitemap } from '~modules/ie-objects/ie-objects.types';
 
+import { retry } from 'blend-promise-utils';
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { SITEMAP_XML_OBJECTS_SIZE } from '~modules/sitemap/sitemap.consts';
-
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { customError } from '~shared/helpers/custom-error';
 import { Locale, VisitorSpaceStatus } from '~shared/types/types';
@@ -238,32 +236,46 @@ export class SitemapService {
 		label: 'public objects' | 'metadata objects'
 	) {
 		try {
-			const result = await this.ieObjectsService.findIeObjectsForSitemap(licenses, 0, 0);
-			const totalIeObjects = result.total;
 			const xmlUrls: string[] = [];
-			for (let i = 0; i < totalIeObjects; i += SITEMAP_XML_OBJECTS_SIZE) {
-				const ieObjectsResponse = await this.ieObjectsService.findIeObjectsForSitemap(
-					licenses,
-					i,
-					SITEMAP_XML_OBJECTS_SIZE
-				);
+			let hasMoreObjects = true;
+			let index = pageOffset + 1;
+			while (hasMoreObjects) {
+				const fileExists = fs.existsSync(`./data/item-detail-${index}.xml`);
+				let xmlUrl = `${process.env.ASSET_SERVER_ENDPOINT}/hetarchiefv3/SITEMAP/item-detail-${pageOffset}.xml`;
 
-				const xmlUrl = await this.formatAndUploadIeObjectAsSitemapXml(
-					ieObjectsResponse.items,
-					pageOffset + ieObjectsResponse.page,
-					sitemapConfig
-				);
-				const currentIndex = Math.min(
-					i + Math.min(ieObjectsResponse.size, ieObjectsResponse.total),
-					ieObjectsResponse.total
-				);
-				const percentage = round((currentIndex / totalIeObjects) * 100, 1);
-				console.info(
-					`Uploading sitemap for ${label}: ${percentage}% completed. ${currentIndex} / ${totalIeObjects} objects processed`
-				);
+				if (fileExists) {
+					const currentIndex = index * SITEMAP_XML_OBJECTS_SIZE;
+					console.info(`Uploading sitemap for ${label}: ${currentIndex} objects processed`);
+					hasMoreObjects = true;
+				} else {
+					const ieObjectsResponse = await retry(
+						() =>
+							this.ieObjectsService.findIeObjectsForSitemap(
+								licenses,
+								index * SITEMAP_XML_OBJECTS_SIZE,
+								SITEMAP_XML_OBJECTS_SIZE
+							),
+						{ delayMs: 100, maxAttempts: 5 }
+					)();
+
+					await this.formatAndUploadIeObjectAsSitemapXml(
+						ieObjectsResponse.items,
+						pageOffset + ieObjectsResponse.page,
+						sitemapConfig
+					);
+
+					const currentIndex = Math.min(
+						index + Math.min(ieObjectsResponse.size, ieObjectsResponse.total),
+						ieObjectsResponse.total
+					);
+					console.info(`Uploading sitemap for ${label}: ${currentIndex} objects processed`);
+					hasMoreObjects = ieObjectsResponse.size >= SITEMAP_XML_OBJECTS_SIZE;
+				}
 				xmlUrls.push(xmlUrl);
+				index++;
+				xmlUrl = `${process.env.ASSET_SERVER_ENDPOINT}/hetarchiefv3/SITEMAP/item-detail-${pageOffset + index}.xml`;
 			}
-			return xmlUrls;
+			return uniq(xmlUrls);
 		} catch (err) {
 			const error = customError('Failed to createAndUploadIeObjectSitemapEntries', err, {
 				licenses,
@@ -312,23 +324,25 @@ export class SitemapService {
 	}
 
 	private async uploadXml(xml: string, name: string): Promise<string> {
-		return this.assetsService.uploadAndTrack(
-			AssetType.SITEMAP,
-			{
-				fieldname: name,
-				originalname: name,
-				encoding: '',
-				mimetype: 'text/xml',
-				size: 0,
-				stream: new Readable(),
-				destination: '',
-				filename: name,
-				path: '',
-				buffer: Buffer.from(xml, 'utf-8'),
-			},
-			name,
-			name
-		);
+		fs.writeFileSync(`./data/${name}`, xml);
+		return `${process.env.ASSET_SERVER_ENDPOINT}/hetarchiefv3/SITEMAP/${name}`;
+		// return this.assetsService.uploadAndTrack(
+		// 	AssetType.SITEMAP,
+		// 	{
+		// 		fieldname: name,
+		// 		originalname: name,
+		// 		encoding: '',
+		// 		mimetype: 'text/xml',
+		// 		size: 0,
+		// 		stream: new Readable(),
+		// 		destination: '',
+		// 		filename: name,
+		// 		path: '',
+		// 		buffer: Buffer.from(xml, 'utf-8'),
+		// 	},
+		// 	name,
+		// 	name
+		// );
 	}
 
 	public blacklistAndPrioritizePages(

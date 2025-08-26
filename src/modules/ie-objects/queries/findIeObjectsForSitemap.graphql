@@ -13,11 +13,4 @@ query findIeObjectsForSitemap($licenses: [String!]!, $offset: Int!, $limit: Int)
 			skos_alt_label
 		}
 	}
-	graph_intellectual_entity_aggregate(
-		where: { schemaLicenses: { schema_license: { _in: $licenses } } }
-	) {
-		aggregate {
-			count
-		}
-	}
 }
