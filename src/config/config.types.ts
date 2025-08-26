@@ -9,8 +9,6 @@ export interface Configuration {
 	CLIENT_HOST: string;
 	PORT: number;
 	PROXY_API_KEY: string;
-	GRAPHQL_URL_HET_ARCHIEF: string;
-	GRAPHQL_SECRET_HET_ARCHIEF: string;
 	GRAPHQL_ENABLE_WHITELIST: boolean;
 	GRAPHQL_URL_LOGGING: string;
 	GRAPHQL_SECRET_LOGGING: string;
