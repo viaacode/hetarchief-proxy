@@ -317,7 +317,7 @@ export class IeObjectsService {
 			mediaMosaId,
 		});
 
-		const ieObjectInfo = response.nvdgo_mediamosa_assets[0].ieObject;
+		const ieObjectInfo = response.nvdgo_mediamosa_assets?.[0]?.ieObject;
 		if (!ieObjectInfo) {
 			return null;
 		}
@@ -502,7 +502,10 @@ export class IeObjectsService {
 			})
 		)) as IeObjectDetailResponseTypes;
 
-		if (this.configService.get('NODE_ENV') !== 'test') {
+		if (
+			this.configService.get('NODE_ENV') !== 'test' &&
+			process.env.GRAPHQL_LOG_QUERY_METRICS === 'true'
+		) {
 			// log performance times of sub queries
 			const tableData = orderBy(performanceTimes, (performanceItem) => performanceItem[3], 'desc');
 			console.table(tableData);

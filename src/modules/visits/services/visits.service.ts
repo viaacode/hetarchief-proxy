@@ -224,8 +224,6 @@ export class VisitsService {
 				{ newVisit }
 			);
 
-		this.logger.debug(`Visit ${createdVisit.id} created`);
-
 		return this.adapt(createdVisit);
 	}
 

@@ -41,8 +41,6 @@ const config = (): Configuration => {
 		CLIENT_HOST: getEnvValue('CLIENT_HOST', true),
 		PORT: Number.parseInt(getEnvValue('PORT', false), 10) || DEFAULT_CONFIG.port,
 		PROXY_API_KEY: getEnvValue('PROXY_API_KEY', true),
-		GRAPHQL_URL_HET_ARCHIEF: getEnvValue('GRAPHQL_URL_HET_ARCHIEF', true),
-		GRAPHQL_SECRET_HET_ARCHIEF: getEnvValue('GRAPHQL_SECRET_HET_ARCHIEF', env !== 'local'), // Not required on localhost
 		GRAPHQL_ENABLE_WHITELIST: getEnvValue('GRAPHQL_ENABLE_WHITELIST', false) === 'true',
 		GRAPHQL_URL_LOGGING: getEnvValue('GRAPHQL_URL_LOGGING', true),
 		GRAPHQL_SECRET_LOGGING: getEnvValue('GRAPHQL_SECRET_LOGGING', true),
@@ -149,10 +147,6 @@ const config = (): Configuration => {
 		),
 		CAMPAIGN_MONITOR_OPTIN_LIST_HETARCHIEF: getEnvValue(
 			'CAMPAIGN_MONITOR_OPTIN_LIST_HETARCHIEF',
-			false
-		),
-		CAMPAIGN_MONITOR_OPTIN_LIST_HETARCHIEF_NEWSLETTER: getEnvValue(
-			'CAMPAIGN_MONITOR_OPTIN_LIST_HETARCHIEF_NEWSLETTER',
 			false
 		),
 		ASSET_SERVER_ENDPOINT: getEnvValue('ASSET_SERVER_ENDPOINT', true),

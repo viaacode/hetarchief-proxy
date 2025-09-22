@@ -4,7 +4,7 @@ import {
 	MaintenanceAlertsService,
 	TranslationsService,
 } from '@meemoo/admin-core-api';
-import { HttpException, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { isPast } from 'date-fns';
 
@@ -47,8 +47,6 @@ import type { Recipient } from '~shared/types/types';
 
 @Injectable()
 export class NotificationsService {
-	private logger: Logger = new Logger(NotificationsService.name, { timestamp: true });
-
 	constructor(
 		private dataService: DataService,
 		protected campaignMonitorService: CampaignMonitorService,
@@ -138,8 +136,6 @@ export class NotificationsService {
 				'Notification not found or you are not the notifications recipient.'
 			);
 		}
-		this.logger.debug(`Notification ${updatedNotification.id} updated`);
-
 		return this.adaptNotification(updatedNotification);
 	}
 
@@ -155,10 +151,7 @@ export class NotificationsService {
 			notification,
 		});
 
-		const affectedRows = response.update_app_notification.affected_rows;
-		this.logger.debug(`All Notifications for user ${userProfileId} updated`);
-
-		return affectedRows;
+		return response.update_app_notification.affected_rows;
 	}
 
 	public async delete(visitId: string, deleteNotificationDto: DeleteNotificationDto) {
@@ -175,7 +168,6 @@ export class NotificationsService {
 		});
 
 		const affectedRows = response.delete_app_notification.affected_rows;
-		this.logger.debug(`${affectedRows} notifications deleted for visit ${visitId}`);
 
 		return affectedRows;
 	}

@@ -103,9 +103,10 @@ export class HetArchiefController {
 		let info: RelayState;
 		try {
 			info = body.RelayState ? JSON.parse(body.RelayState) : {};
-			this.logger.debug(`login-callback relay state: ${JSON.stringify(info, null, 2)}`);
 			const ldapUser: LdapUser = await this.hetArchiefService.assertSamlResponse(body);
-			this.logger.debug(`login-callback ldap info: ${JSON.stringify(ldapUser, null, 2)}`);
+			this.logger.debug(
+				`login-callback ldap info: ${JSON.stringify(ldapUser, null, process.env.SINGLE_LINE_LOGGING === 'true' ? 0 : 2)}`
+			);
 
 			SessionHelper.setIdpUserInfo(session, Idp.HETARCHIEF, ldapUser);
 
@@ -147,10 +148,6 @@ export class HetArchiefController {
 			};
 
 			if (!archiefUser) {
-				this.logger.log(
-					`User ${ldapUser.attributes.mail[0]} not found in our DB for ${Idp.HETARCHIEF}`
-				);
-
 				archiefUser = await this.usersService.createUserWithIdp(
 					userDto,
 					Idp.HETARCHIEF,
@@ -209,7 +206,6 @@ export class HetArchiefController {
 					)
 				) {
 					// update user
-					this.logger.debug(`User ${ldapUser.attributes.mail[0]} must be updated`);
 					archiefUser = await this.usersService.updateUser(archiefUser.id, userDto);
 				}
 			}

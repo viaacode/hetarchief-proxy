@@ -171,7 +171,6 @@ export class UsersService {
 			InsertUserMutation,
 			InsertUserMutationVariables
 		>(InsertUserDocument, { newUser });
-		this.logger.debug(`user ${createdUser.id} created`);
 
 		// Link the user with the identity
 		const newUserIdentity: InsertUserIdentityMutationVariables['newUserIdentity'] = {
@@ -185,7 +184,6 @@ export class UsersService {
 				newUserIdentity,
 			}
 		);
-		this.logger.debug(`user ${createdUser.id} linked with idp '${idp}'`);
 
 		return this.adapt({
 			...createdUser,

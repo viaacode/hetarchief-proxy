@@ -72,7 +72,6 @@ export class SessionService {
 		};
 
 		if (isProduction) {
-			this.logger.log('isProduction: initializing Redis Store...');
 			// We only set a session cookie
 			// For cross-site usage: sameSite should be set to 'none' and secure must be true
 			// In this case, session cookie, cross-site usage seems irrelevant
@@ -87,12 +86,9 @@ export class SessionService {
 			this.getRedisClient().on('connect', () => this.logger.log('Connected to redis successfully'));
 
 			sessionConfig.store = new redisStore({ client: this.getRedisClient() });
-
-			this.logger.log('isProduction: Redis Store ready');
 		} else if (process.platform !== 'win32') {
 			// Windows doesn't handle multithreaded file access very well
 			sessionConfig.store = new FileStore({});
-			this.logger.log('isDevelopment: File Store ready');
 		}
 
 		return sessionConfig;
