@@ -23,6 +23,7 @@ import { IeObjectLicense, type IeObjectsSitemap } from '~modules/ie-objects/ie-o
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { SITEMAP_XML_OBJECTS_SIZE } from '~modules/sitemap/sitemap.consts';
 
+import type { IPagination } from '@studiohyperdrive/pagination';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { customError } from '~shared/helpers/custom-error';
 import { Locale, VisitorSpaceStatus } from '~shared/types/types';
@@ -238,16 +239,16 @@ export class SitemapService {
 		label: 'public objects' | 'metadata objects'
 	) {
 		try {
-			const result = await this.ieObjectsService.findIeObjectsForSitemap(licenses, 0, 0);
-			const totalIeObjects = result.total;
 			const xmlUrls: string[] = [];
-			for (let i = 0; i < totalIeObjects; i += SITEMAP_XML_OBJECTS_SIZE) {
-				const ieObjectsResponse = await this.ieObjectsService.findIeObjectsForSitemap(
+			let i = 0;
+			let ieObjectsResponse: IPagination<IeObjectsSitemap>;
+
+			do {
+				ieObjectsResponse = await this.ieObjectsService.findIeObjectsForSitemap(
 					licenses,
 					i,
 					SITEMAP_XML_OBJECTS_SIZE
 				);
-
 				const xmlUrl = await this.formatAndUploadIeObjectAsSitemapXml(
 					ieObjectsResponse.items,
 					pageOffset + ieObjectsResponse.page,
@@ -257,12 +258,13 @@ export class SitemapService {
 					i + Math.min(ieObjectsResponse.size, ieObjectsResponse.total),
 					ieObjectsResponse.total
 				);
-				const percentage = round((currentIndex / totalIeObjects) * 100, 1);
+				const percentage = round((currentIndex / ieObjectsResponse.total) * 100, 1);
 				console.info(
-					`Uploading sitemap for ${label}: ${percentage}% completed. ${currentIndex} / ${totalIeObjects} objects processed`
+					`Uploading sitemap for ${label}: ${percentage}% completed. ${currentIndex} / ${ieObjectsResponse.total} objects processed`
 				);
 				xmlUrls.push(xmlUrl);
-			}
+				i += SITEMAP_XML_OBJECTS_SIZE;
+			} while (i < ieObjectsResponse.total);
 			return xmlUrls;
 		} catch (err) {
 			const error = customError('Failed to createAndUploadIeObjectSitemapEntries', err, {
