@@ -196,19 +196,37 @@ describe('SitemapService', () => {
 			mockSpacesService.findAll.mockResolvedValueOnce(mockSitemapSpaces);
 
 			// Public ie objects
-			mockIeObjectsService.findIeObjectsForSitemap.mockResolvedValueOnce({ total: 1 });
 			mockIeObjectsService.findIeObjectsForSitemap.mockResolvedValueOnce({
 				items: [mockSitemapObject],
 				total: 1,
 				size: 1,
 			});
-
-			// Non-public ie objects
-			mockIeObjectsService.findIeObjectsForSitemap.mockResolvedValueOnce({ total: 1 });
 			mockIeObjectsService.findIeObjectsForSitemap.mockResolvedValueOnce({
 				items: [mockSitemapObject],
 				total: 1,
 				size: 1,
+			});
+			mockIeObjectsService.findIeObjectsForSitemap.mockResolvedValueOnce({
+				items: [],
+				total: 0,
+				size: 0,
+			});
+
+			// Non-public ie objects
+			mockIeObjectsService.findIeObjectsForSitemap.mockResolvedValueOnce({
+				items: [mockSitemapObject],
+				total: 1,
+				size: 1,
+			});
+			mockIeObjectsService.findIeObjectsForSitemap.mockResolvedValueOnce({
+				items: [mockSitemapObject],
+				total: 1,
+				size: 1,
+			});
+			mockIeObjectsService.findIeObjectsForSitemap.mockResolvedValueOnce({
+				items: [],
+				total: 0,
+				size: 0,
 			});
 
 			mockAssetsService.uploadAndTrack.mockResolvedValueOnce(

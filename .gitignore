@@ -51,12 +51,14 @@ lerna-debug.log*
 # temp upload files
 tmp
 
+# IDE specific config files
 graphql.config.yml
-
 schema.graphql
-
 elasticsearch-local/license.txt
 
 # debug file to store last elasticsearch query for easy debugging
 query.json
 query-autocomplete.json
+
+# typescript cache file
+*.tsbuildinfo

@@ -25,7 +25,11 @@ import { LogEventType } from '~modules/events/types';
 import { IeObjectsController } from '~modules/ie-objects/controllers/ie-objects.controller';
 import { convertObjectToCsv } from '~modules/ie-objects/helpers/convert-objects-to-csv';
 import { convertObjectToXml } from '~modules/ie-objects/helpers/convert-objects-to-xml';
-import type { IeObjectPage, NewspaperTitle } from '~modules/ie-objects/ie-objects.types';
+import {
+	IeObjectPage,
+	NewspaperTitle,
+	SimpleIeObjectType,
+} from '~modules/ie-objects/ie-objects.types';
 import {
 	NEWSPAPER_MIME_TYPE_ALTO,
 	NEWSPAPER_MIME_TYPE_BROWSE_COPY,
@@ -206,7 +210,7 @@ export class NewspapersController {
 				time: new Date().toISOString(),
 				data: {
 					download_type: 'zip',
-					type: 'newspaper',
+					type: SimpleIeObjectType.NEWSPAPER,
 					user_group_name: user.getGroupName(),
 					user_group_id: user.getGroupId(),
 					pid: limitedObjectMetadata.schemaIdentifier,
@@ -300,7 +304,7 @@ export class NewspapersController {
 				subject: user.getId(),
 				time: new Date().toISOString(),
 				data: {
-					type: 'newspaper',
+					type: SimpleIeObjectType.NEWSPAPER,
 					user_group_name: user.getGroupName(),
 					user_group_id: user.getGroupId(),
 					pid: limitedObjectMetadata.schemaIdentifier,
