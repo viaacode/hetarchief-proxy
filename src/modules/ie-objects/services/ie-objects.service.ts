@@ -622,10 +622,7 @@ export class IeObjectsService {
 		limit: number
 	): Promise<IPagination<IeObjectsSitemap>> {
 		try {
-			const {
-				graph_intellectual_entity: ieObjects,
-				graph_intellectual_entity_aggregate: ieObjectAggregate,
-			} = await this.dataService.execute<
+			const { graph_intellectual_entity: ieObjects } = await this.dataService.execute<
 				FindIeObjectsForSitemapQuery,
 				FindIeObjectsForSitemapQueryVariables
 			>(FindIeObjectsForSitemapDocument, { licenses, limit, offset });
@@ -634,7 +631,7 @@ export class IeObjectsService {
 				items: ieObjects.map((ieObject) => this.adaptForSitemap(ieObject)),
 				page: Math.floor(offset / limit),
 				size: limit,
-				total: ieObjectAggregate?.aggregate?.count,
+				total: 0,
 			});
 		} catch (err) {
 			throw new InternalServerErrorException('Failed getting ieObjects for sitemap', err);

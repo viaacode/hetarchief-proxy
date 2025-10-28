@@ -335,11 +335,6 @@ describe('ieObjectsService', () => {
 		it('should successfully return all objects adapted for sitemap', async () => {
 			const mockData: FindIeObjectsForSitemapQuery = {
 				graph_intellectual_entity: [mockGqlSitemapObject],
-				graph_intellectual_entity_aggregate: {
-					aggregate: {
-						count: 1,
-					},
-				},
 			};
 
 			mockDataService.execute.mockResolvedValueOnce(mockData);

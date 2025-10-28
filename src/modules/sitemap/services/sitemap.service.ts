@@ -9,7 +9,7 @@ import {
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { AssetType } from '@viaa/avo2-types';
 import { format } from 'date-fns';
-import { compact, kebabCase, round, uniqBy } from 'lodash';
+import { compact, kebabCase, uniqBy } from 'lodash';
 import xmlFormat from 'xml-formatter';
 
 import type { SitemapConfig, SitemapItemInfo } from '../sitemap.types';
@@ -249,22 +249,22 @@ export class SitemapService {
 					i,
 					SITEMAP_XML_OBJECTS_SIZE
 				);
-				const xmlUrl = await this.formatAndUploadIeObjectAsSitemapXml(
-					ieObjectsResponse.items,
-					pageOffset + ieObjectsResponse.page,
-					sitemapConfig
-				);
-				const currentIndex = Math.min(
-					i + Math.min(ieObjectsResponse.size, ieObjectsResponse.total),
-					ieObjectsResponse.total
-				);
-				const percentage = round((currentIndex / ieObjectsResponse.total) * 100, 1);
-				console.info(
-					`Uploading sitemap for ${label}: ${percentage}% completed. ${currentIndex} / ${ieObjectsResponse.total} objects processed`
-				);
-				xmlUrls.push(xmlUrl);
+				if ((ieObjectsResponse.items?.length || 0) > 0) {
+					const responseCount = ieObjectsResponse.items.length;
+					const xmlUrl = await this.formatAndUploadIeObjectAsSitemapXml(
+						ieObjectsResponse.items,
+						pageOffset + ieObjectsResponse.page,
+						sitemapConfig
+					);
+					const currentIndex = Math.min(
+						i + Math.min(ieObjectsResponse.size, responseCount),
+						responseCount
+					);
+					console.info(`Uploading sitemap for ${label}: ${currentIndex} / ??? objects processed`);
+					xmlUrls.push(xmlUrl);
+				}
 				i += SITEMAP_XML_OBJECTS_SIZE;
-			} while (i < ieObjectsResponse.total);
+			} while ((ieObjectsResponse?.items?.length || 0) > 0);
 			return xmlUrls;
 		} catch (err) {
 			const error = customError('Failed to createAndUploadIeObjectSitemapEntries', err, {

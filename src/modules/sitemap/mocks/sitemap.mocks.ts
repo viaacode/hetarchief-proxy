@@ -34,6 +34,7 @@ export const mockContentPage: DbContentPage = {
 	path: '/mock-content-page-url',
 	isPublic: false,
 	publishedAt: null,
+	depublishedAt: null,
 	publishAt: null,
 	depublishAt: null,
 	publishedAtDisplay: null,
