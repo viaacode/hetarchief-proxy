@@ -168,6 +168,7 @@ export class SitemapService {
 			{ lineSeparator: '\n' }
 		);
 		await this.uploadXml(indexXml, 'index.xml');
+		console.info('Sitemap generation completed successfully');
 		return renderedGeneralXml; // This is returned for unit tests
 	}
 
@@ -260,7 +261,7 @@ export class SitemapService {
 						i + Math.min(ieObjectsResponse.size, responseCount),
 						responseCount
 					);
-					console.info(`Uploading sitemap for ${label}: ${currentIndex} / ??? objects processed`);
+					console.info(`Uploading sitemap for ${label}: ${currentIndex} objects processed`);
 					xmlUrls.push(xmlUrl);
 				}
 				i += SITEMAP_XML_OBJECTS_SIZE;
