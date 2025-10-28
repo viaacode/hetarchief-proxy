@@ -32,6 +32,7 @@ import { MaterialRequestsService } from '../services/material-requests.service';
 
 import { EventsService } from '~modules/events/services/events.service';
 import { type LogEvent, LogEventType } from '~modules/events/types';
+import { mapDcTermsFormatToSimpleType } from '~modules/ie-objects/helpers/map-dc-terms-format-to-simple-type';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupId, GroupName, Permission } from '~modules/users/types';
 import { RequireAnyPermissions } from '~shared/decorators/require-any-permissions.decorator';
@@ -221,7 +222,7 @@ export class MaterialRequestsController {
 						time: new Date().toISOString(),
 						data: {
 							material_request_group_id,
-							type: materialRequest.objectDctermsFormat,
+							type: mapDcTermsFormatToSimpleType(materialRequest.objectDctermsFormat),
 							external_id: materialRequest.objectSchemaIdentifier,
 							fragment_id: materialRequest.objectSchemaIdentifier,
 							idp: Idp.HETARCHIEF,

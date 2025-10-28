@@ -120,11 +120,20 @@ export interface IsPartOfCollection {
 
 export enum IeObjectType {
 	VIDEO = 'video',
-	FILM = 'film', // This is considered video
-	VIDEO_FRAGMENT = 'videofragment', // This is considered video
+	VIDEO_FRAGMENT = 'videofragment',
 	AUDIO = 'audio',
-	AUDIO_FRAGMENT = 'audiofragment', // This is considered audio
+	AUDIO_FRAGMENT = 'audiofragment',
+	FILM = 'film',
 	NEWSPAPER = 'newspaper',
+	NEWSPAPER_PAGE = 'newspaperpage', // Should never be used, but does seem to pop up some times
+	IMAGE = 'image', // Should never be used, but does seem to pop up some times
+}
+
+export enum SimpleIeObjectType {
+	VIDEO = 'video',
+	AUDIO = 'audio',
+	NEWSPAPER = 'newspaper',
+	IMAGE = 'image',
 }
 
 export interface IeObject {

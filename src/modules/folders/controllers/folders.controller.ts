@@ -36,6 +36,7 @@ import { type IeObject, IeObjectLicense } from '~modules/ie-objects/ie-objects.t
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 
+import { mapDcTermsFormatToSimpleType } from '~modules/ie-objects/helpers/map-dc-terms-format-to-simple-type';
 import { UsersService } from '~modules/users/services/users.service';
 import { Permission } from '~modules/users/types';
 import { Ip } from '~shared/decorators/ip.decorator';
@@ -245,7 +246,7 @@ export class FoldersController {
 				subject: user.getId(),
 				time: new Date().toISOString(),
 				data: {
-					type: ieObject.dctermsFormat,
+					type: mapDcTermsFormatToSimpleType(ieObject.dctermsFormat),
 					pid: ieObject.schemaIdentifier,
 					fragment_id: objectSchemaIdentifier,
 					folder_id: folderId,

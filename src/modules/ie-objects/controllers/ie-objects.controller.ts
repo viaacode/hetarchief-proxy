@@ -61,6 +61,7 @@ import {
 	OrderProperty,
 } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
 import { convertSchemaIdentifierToId } from '~modules/ie-objects/helpers/convert-schema-identifier-to-id';
+import { mapDcTermsFormatToSimpleType } from '~modules/ie-objects/helpers/map-dc-terms-format-to-simple-type';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupName } from '~modules/users/types';
 import { Ip } from '~shared/decorators/ip.decorator';
@@ -205,7 +206,7 @@ export class IeObjectsController {
 					user_group_name: user.getGroupName(),
 					user_group_id: user.getGroupId(),
 					or_id: objectMetadata.maintainerId,
-					type: objectMetadata?.dctermsFormat,
+					type: mapDcTermsFormatToSimpleType(objectMetadata?.dctermsFormat),
 				},
 			},
 		]);
@@ -276,7 +277,7 @@ export class IeObjectsController {
 					user_group_name: user.getGroupName(),
 					user_group_id: user.getGroupId(),
 					or_id: objectMetadata.maintainerId,
-					type: objectMetadata?.dctermsFormat,
+					type: mapDcTermsFormatToSimpleType(objectMetadata?.dctermsFormat),
 				},
 			},
 		]);
