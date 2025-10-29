@@ -6,7 +6,10 @@ export type IeObjectSectorLicenseMatrix = Readonly<
 	Record<IeObjectSector, Readonly<IeObjectLicense[]>>
 >;
 
-export type IeObjectSeo = Pick<IeObject, 'name' | 'description' | 'thumbnailUrl'>;
+export type IeObjectSeo = Pick<
+	IeObject,
+	'name' | 'description' | 'thumbnailUrl' | 'maintainerSlug'
+>;
 
 export type GqlLimitedIeObject = FindAllIeObjectsByFolderIdQuery['users_folder_ie'][0];
 

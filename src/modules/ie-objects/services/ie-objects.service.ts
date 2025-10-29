@@ -622,6 +622,8 @@ export class IeObjectsService {
 		limit: number
 	): Promise<IPagination<IeObjectsSitemap>> {
 		try {
+			// Excludes ie-objects where dcterms_format === newspaperpage, since those pages don't load the newspaper images correctly
+			// https://meemoo.atlassian.net/browse/ARC-3202
 			const { graph_intellectual_entity: ieObjects } = await this.dataService.execute<
 				FindIeObjectsForSitemapQuery,
 				FindIeObjectsForSitemapQueryVariables

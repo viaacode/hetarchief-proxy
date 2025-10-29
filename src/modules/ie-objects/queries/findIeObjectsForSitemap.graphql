@@ -1,6 +1,9 @@
 query findIeObjectsForSitemap($licenses: [String!]!, $offset: Int!, $limit: Int) {
 	graph_intellectual_entity(
-		where: { schemaLicenses: { schema_license: { _in: $licenses } } }
+		where: {
+			schemaLicenses: { schema_license: { _in: $licenses } }
+			dctermsFormat: { dcterms_format: { _neq: "newspaperpage" } }
+		}
 		offset: $offset
 		limit: $limit
 	) {
