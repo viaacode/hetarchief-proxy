@@ -159,6 +159,7 @@ export class IeObjectsController {
 		return {
 			name: hasPublicAccess ? ieObject?.name : null,
 			description: hasPublicAccess ? ieObject?.description : null,
+			maintainerSlug: ieObject?.maintainerSlug || null,
 			thumbnailUrl: hasPublicAccessThumbnail ? ieObject.thumbnailUrl : null,
 		};
 	}
@@ -331,7 +332,11 @@ export class IeObjectsController {
 	public async lookupNvdgoId(
 		@Param('mediaMosaId') mediaMosaId: string
 	): Promise<{ schema_identifier: string; title: string; maintainerSlug: string }> {
-		return this.ieObjectsService.lookupMediaMosaIdToV3(mediaMosaId);
+		const response = await this.ieObjectsService.lookupMediaMosaIdToV3(mediaMosaId);
+		if (!response) {
+			throw new NotFoundException(`No ie-object found for the given mediaMosaId: ${mediaMosaId}`);
+		}
+		return response;
 	}
 
 	@Get('/related')

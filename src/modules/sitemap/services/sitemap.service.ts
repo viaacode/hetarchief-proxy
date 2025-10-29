@@ -42,7 +42,7 @@ export class SitemapService {
 		this.CLIENT_HOST_RESOLVED = process.env.CLIENT_HOST.replace(
 			'://v3.hetarchief.be',
 			'://hetarchief.be'
-		);
+		).replace('http://', 'https://');
 	}
 
 	public async generateSitemap(sitemapConfig: SitemapConfig) {
