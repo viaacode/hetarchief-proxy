@@ -313,6 +313,7 @@ describe('IeObjectsController', () => {
 				name: mockIeObject1.name,
 				description: mockIeObject1.description,
 				thumbnailUrl: null,
+				maintainerSlug: 'vrt',
 			});
 		});
 
@@ -329,6 +330,7 @@ describe('IeObjectsController', () => {
 				name: mockIeObject1.name,
 				description: mockIeObject1.description,
 				thumbnailUrl: mockIeObject1.thumbnailUrl,
+				maintainerSlug: 'vrt',
 			});
 		});
 
@@ -345,6 +347,7 @@ describe('IeObjectsController', () => {
 				name: null,
 				description: null,
 				thumbnailUrl: null,
+				maintainerSlug: 'vrt',
 			});
 		});
 	});
