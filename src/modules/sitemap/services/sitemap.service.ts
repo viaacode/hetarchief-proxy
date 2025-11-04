@@ -17,13 +17,13 @@ import type { SitemapConfig, SitemapItemInfo } from '../sitemap.types';
 import {
 	GetSitemapConfigDocument,
 	type GetSitemapConfigQuery,
+	Lookup_App_Content_Type_Enum,
 } from '~generated/graphql-db-types-hetarchief';
 import { IeObjectLicense, type IeObjectsSitemap } from '~modules/ie-objects/ie-objects.types';
 
+import type { IPagination } from '@studiohyperdrive/pagination';
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { SITEMAP_XML_OBJECTS_SIZE } from '~modules/sitemap/sitemap.consts';
-
-import type { IPagination } from '@studiohyperdrive/pagination';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { customError } from '~shared/helpers/custom-error';
 import { Locale, VisitorSpaceStatus } from '~shared/types/types';
@@ -196,9 +196,12 @@ export class SitemapService {
 				'asc',
 				'',
 				{
-					content_type: { _eq: 'PAGINA' },
+					content_type: {
+						_in: [Lookup_App_Content_Type_Enum.Pagina, Lookup_App_Content_Type_Enum.BlogPost],
+					},
 					language: { _eq: Locale.Nl },
 					is_public: { _eq: true },
+					is_deleted: { _eq: false },
 				}
 			);
 
