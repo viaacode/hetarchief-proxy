@@ -197,7 +197,12 @@ export class SitemapService {
 				'',
 				{
 					content_type: {
-						_in: [Lookup_App_Content_Type_Enum.Pagina, Lookup_App_Content_Type_Enum.BlogPost],
+						_in: [
+							Lookup_App_Content_Type_Enum.Pagina,
+							Lookup_App_Content_Type_Enum.BlogPost,
+							Lookup_App_Content_Type_Enum.FaqItem,
+							Lookup_App_Content_Type_Enum.Collection,
+						],
 					},
 					language: { _eq: Locale.Nl },
 					is_public: { _eq: true },
