@@ -153,14 +153,16 @@ export class IeObjectsController {
 			].includes(license)
 		);
 
-		const hasPublicAccessThumbnail = ieObject?.licenses.some((license: IeObjectLicense) =>
-			[IeObjectLicense.PUBLIEK_METADATA_ALL, IeObjectLicense.PUBLIEK_CONTENT].includes(license)
-		);
+		const isPublicDomain: boolean =
+			ieObject?.licenses.includes(IeObjectLicense.PUBLIEK_CONTENT) &&
+			ieObject?.licenses.includes(IeObjectLicense.PUBLIC_DOMAIN);
 		return {
 			name: hasPublicAccess ? ieObject?.name : null,
 			description: hasPublicAccess ? ieObject?.description : null,
 			maintainerSlug: ieObject?.maintainerSlug || null,
-			thumbnailUrl: hasPublicAccessThumbnail ? ieObject.thumbnailUrl : null,
+			thumbnailUrl: isPublicDomain
+				? ieObject.thumbnailUrl
+				: `${process.env.CLIENT_HOST}/images/og.jpg`,
 		};
 	}
 

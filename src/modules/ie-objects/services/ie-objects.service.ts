@@ -692,8 +692,7 @@ export class IeObjectsService {
 		) as IeObjectLicense[];
 		const isPublicDomain: boolean =
 			licenses.includes(IeObjectLicense.PUBLIEK_CONTENT) &&
-			(licenses.includes(IeObjectLicense.PUBLIC_DOMAIN) ||
-				licenses.includes(IeObjectLicense.COPYRIGHT_UNDETERMINED));
+			licenses.includes(IeObjectLicense.PUBLIC_DOMAIN);
 
 		const thumbnailUrl = await this.getThumbnailUrlWithToken(
 			schemaThumbnailUrlResponse?.schemaThumbnailUrl?.[0]?.schema_thumbnail_url?.[0],
