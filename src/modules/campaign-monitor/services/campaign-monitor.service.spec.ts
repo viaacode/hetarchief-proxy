@@ -132,6 +132,7 @@ describe('CampaignMonitorService', () => {
 
 			await campaignMonitorService.sendForVisit({
 				to: [{ id: visit.visitorId, email: null, language: Locale.Nl }],
+				replyTo: null,
 				template: EmailTemplate.VISIT_APPROVED,
 				visitRequest: visit,
 			});
@@ -194,6 +195,7 @@ describe('CampaignMonitorService', () => {
 							language: visitRequest.visitorLanguage,
 						},
 					],
+					replyTo: null,
 				});
 			} catch (err) {
 				expect(err.name).toEqual('BadRequestException');
@@ -206,6 +208,7 @@ describe('CampaignMonitorService', () => {
 				template: EmailTemplate.VISIT_APPROVED,
 				visitRequest: getMockVisitRequest(),
 				to: [],
+				replyTo: null,
 			});
 
 			expect(response).toBeUndefined();

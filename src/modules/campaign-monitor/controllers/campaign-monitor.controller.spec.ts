@@ -11,7 +11,10 @@ import { CampaignMonitorService } from '../services/campaign-monitor.service';
 
 import { CampaignMonitorController } from './campaign-monitor.controller';
 
-import { EmailTemplate } from '~modules/campaign-monitor/campaign-monitor.types';
+import {
+	ConsentToTrackOption,
+	EmailTemplate,
+} from '~modules/campaign-monitor/campaign-monitor.types';
 import { EventsService } from '~modules/events/services/events.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { UsersService } from '~modules/users/services/users.service';
@@ -88,7 +91,8 @@ describe('CampaignMonitorController', () => {
 				template: EmailTemplate.VISIT_REQUEST_CP,
 				data: {
 					to: 'test@studiohyperdrive.be',
-					consentToTrack: 'unchanged',
+					replyTo: null,
+					consentToTrack: ConsentToTrackOption.UNCHANGED,
 					data: {},
 				},
 			});

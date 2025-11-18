@@ -1,4 +1,8 @@
-import { CampaignMonitorVisitData } from './dto/campaign-monitor.dto';
+import {
+	CampaignMonitorConfirmationData,
+	CampaignMonitorMaterialRequestData,
+	CampaignMonitorVisitData,
+} from './dto/campaign-monitor.dto';
 
 import { SendRequestListDto } from '~modules/material-requests/dto/material-requests.dto';
 import type { MaterialRequest } from '~modules/material-requests/material-requests.types';
@@ -17,12 +21,14 @@ export enum EmailTemplate {
 
 export interface VisitEmailInfo {
 	to: Recipient[];
+	replyTo: string;
 	template: EmailTemplate;
 	visitRequest: VisitRequest;
 }
 
 export interface MaterialRequestEmailInfo {
 	to?: string;
+	replyTo: string;
 	template: EmailTemplate;
 	materialRequests: MaterialRequest[];
 	sendRequestListDto: SendRequestListDto;
@@ -84,4 +90,29 @@ export interface CmSubscriberResponse {
 		Value: string;
 	}[];
 	ReadsEmailWith: string;
+}
+
+export enum ConsentToTrackOption {
+	YES = 'Yes',
+	NO = 'No',
+	UNCHANGED = 'Unchanged',
+}
+
+export interface CmSendEmailInfo {
+	To: string[];
+	CC?: string[];
+	BCC?: string[];
+	Attachments?: {
+		Content: string;
+		Name: string;
+		Type: string;
+	}[];
+	Data?: (
+		| CampaignMonitorVisitData
+		| CampaignMonitorShareFolderInfo
+		| CampaignMonitorMaterialRequestData
+		| CampaignMonitorConfirmationData
+	) & { reply_to_email?: string };
+	AddRecipientsToList?: boolean;
+	ConsentToTrack?: ConsentToTrackOption;
 }

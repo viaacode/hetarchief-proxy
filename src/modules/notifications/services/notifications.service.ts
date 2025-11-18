@@ -184,6 +184,7 @@ export class NotificationsService {
 			const newVisitRequestEmail = visitRequest.spaceMail || recipients[0]?.email;
 
 			const name = user.getFullName();
+			const userEmail = user.getMail();
 			const userLanguage = user.getLanguage();
 			const [notifications] = await Promise.all([
 				this.create(
@@ -216,6 +217,7 @@ export class NotificationsService {
 							language: Locale.Nl, // Visitor spaces are always contacted in dutch: ARC-2117
 						},
 					],
+					replyTo: userEmail,
 					template: EmailTemplate.VISIT_REQUEST_CP,
 					visitRequest: visitRequest,
 				}),
@@ -270,6 +272,7 @@ export class NotificationsService {
 						language: visitRequest.visitorLanguage,
 					},
 				],
+				replyTo: visitRequest.spaceMail,
 				template: EmailTemplate.VISIT_APPROVED,
 				visitRequest: visitRequest,
 			}),
@@ -323,6 +326,7 @@ export class NotificationsService {
 						language: visitRequest.visitorLanguage,
 					},
 				],
+				replyTo: visitRequest.spaceMail,
 				template: EmailTemplate.VISIT_DENIED,
 				visitRequest: visitRequest,
 			}),

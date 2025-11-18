@@ -20,7 +20,9 @@ import {
 	CampaignMonitorCustomFieldName,
 	type CampaignMonitorNewsletterPreferences,
 	type CampaignMonitorUserInfo,
+	CmSendEmailInfo,
 	type CmSubscriberResponse,
+	ConsentToTrackOption,
 	EmailTemplate,
 	type MaterialRequestEmailInfo,
 	type VisitEmailInfo,
@@ -157,7 +159,8 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 			}
 			const data: CampaignMonitorData = {
 				to: recipientsForLanguage,
-				consentToTrack: 'unchanged',
+				replyTo: emailInfo.replyTo,
+				consentToTrack: ConsentToTrackOption.UNCHANGED,
 				data: this.convertVisitToEmailTemplateData(emailInfo.visitRequest),
 			};
 
@@ -182,7 +185,8 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 
 		const data: CampaignMonitorData = {
 			to: recipients,
-			consentToTrack: 'unchanged',
+			replyTo: emailInfo.replyTo,
+			consentToTrack: ConsentToTrackOption.UNCHANGED,
 			data: this.convertMaterialRequestsToEmailTemplateData(emailInfo),
 		};
 
@@ -195,6 +199,11 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 		);
 	}
 
+	/**
+	 * Send confirmation email for user wanting to subscribe to the newsletter
+	 * @param preferences
+	 * @param language
+	 */
 	public async sendConfirmationMail(
 		preferences: CampaignMonitorNewsletterUpdatePreferencesQueryDto,
 		language: Locale
@@ -214,7 +223,8 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 
 		const data: CampaignMonitorData = {
 			to: recipients,
-			consentToTrack: 'unchanged',
+			replyTo: null,
+			consentToTrack: ConsentToTrackOption.UNCHANGED,
 			data: this.convertToConfirmationEmailTemplateData(preferences),
 		};
 
@@ -397,7 +407,13 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 				'CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_ENDPOINT'
 			)}/${cmTemplateId}/send`;
 
-			const data: any = emailInfo.data;
+			const data: Partial<CmSendEmailInfo> = {
+				ConsentToTrack: emailInfo.data.consentToTrack,
+				Data: {
+					...emailInfo.data.data,
+					...(emailInfo.data.replyTo ? { reply_to_email: emailInfo.data.replyTo } : {}),
+				},
+			};
 
 			// If env variable REROUTE_EMAILS_TO is set to a value
 			// Then set data.To prop to that value
@@ -424,7 +440,7 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 			} else {
 				this.logger.log(
 					`Mock email sent. To: '${
-						data.to
+						data.To
 					}'. Template: ${emailInfo?.template}, data: ${JSON.stringify(data)}`
 				);
 			}

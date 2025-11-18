@@ -12,7 +12,11 @@ import {
 
 import { LogEventType } from '~modules/events/types';
 import { Locale } from '~shared/types/types';
-import { type CampaignMonitorShareFolderInfo, EmailTemplate } from '../campaign-monitor.types';
+import {
+	type CampaignMonitorShareFolderInfo,
+	ConsentToTrackOption,
+	EmailTemplate,
+} from '../campaign-monitor.types';
 
 export class CampaignMonitorVisitData {
 	@IsString()
@@ -181,13 +185,23 @@ export class CampaignMonitorData {
 	to: string | Array<string>;
 
 	@IsString()
+	// @IsOptional()
+	@ApiProperty({
+		type: String,
+		// required: false,
+		description: 'The email address that is used when the recipient replies to the email',
+	})
+	replyTo: string;
+
+	@IsString()
 	@IsNotEmpty()
 	@ApiProperty({
 		type: String,
 		description: 'Consent to track setting for CM. Possible values: yes/no/unchanged',
-		default: 'unchanged',
+		default: 'Unchanged',
+		enum: ConsentToTrackOption,
 	})
-	consentToTrack: string;
+	consentToTrack: ConsentToTrackOption;
 
 	@IsObject()
 	@ApiProperty({
@@ -221,6 +235,7 @@ export class CampaignMonitorSendMailDto {
 		description: 'The data object with placeholder values for Campaign Monitor',
 		example: {
 			to: 'test.testers@meemoo.be',
+			replyTo: 'cp@maintainer.be',
 			consentToTrack: 'unchanged',
 			data: {
 				custom_field_key_a: 'custom_field_value_a',

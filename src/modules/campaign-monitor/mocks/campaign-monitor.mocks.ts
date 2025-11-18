@@ -83,6 +83,7 @@ export const mockSendRequestListDto: SendRequestListDto = {
 
 export const mockMaterialRequestEmailInfo: MaterialRequestEmailInfo = {
 	to: 'test@example.com',
+	replyTo: 'test-cp@maintainer.be',
 	template: EmailTemplate.MATERIAL_REQUEST_MAINTAINER,
 	materialRequests: [mockMaterialRequest1],
 	sendRequestListDto: mockSendRequestListDto,

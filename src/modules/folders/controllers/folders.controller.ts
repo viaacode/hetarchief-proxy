@@ -21,7 +21,10 @@ import { compact, isNil } from 'lodash';
 
 import { type Folder, type FolderShared, FolderStatus } from '../types';
 
-import { EmailTemplate } from '~modules/campaign-monitor/campaign-monitor.types';
+import {
+	ConsentToTrackOption,
+	EmailTemplate,
+} from '~modules/campaign-monitor/campaign-monitor.types';
 
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 
@@ -323,10 +326,9 @@ export class FoldersController {
 	}
 
 	/**
-	 * Create an invite to share a folder
+	 * Create an invitation to receive a shared folder
 	 * @param referer
 	 * @param ip
-	 * @param request
 	 * @param emailInfo
 	 * @param folderId
 	 * @param user
@@ -357,7 +359,8 @@ export class FoldersController {
 				template: EmailTemplate.SHARE_FOLDER,
 				data: {
 					to: emailInfo.to,
-					consentToTrack: 'unchanged',
+					replyTo: user.getMail(),
+					consentToTrack: ConsentToTrackOption.UNCHANGED,
 					data: {
 						sharer_email: user.getMail(),
 						sharer_name: user.getFullName(),
