@@ -40,6 +40,8 @@ query findMaterialRequests(
 			schemaThumbnail {
 				schema_thumbnail_url
 			}
+			schema_date_published
+			created_at
 			schemaMaintainer {
 				org_identifier
 				skos_pref_label
