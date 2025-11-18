@@ -2,7 +2,7 @@ import { TranslationsService } from '@meemoo/admin-core-api';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Test, type TestingModule } from '@nestjs/testing';
 
-import { EmailTemplate } from '../campaign-monitor.types';
+import { ConsentToTrackOption, EmailTemplate } from '../campaign-monitor.types';
 import {
 	mockCampaignMonitorMaterialRequestDataToMaintainer,
 	mockCampaignMonitorMaterialRequestDataToRequester,
@@ -141,7 +141,8 @@ describe('CampaignMonitorService', () => {
 					template: EmailTemplate.VISIT_APPROVED,
 					data: {
 						to: ['MEEMOO_MAINTAINER_MISSING_EMAIL_FALLBACK'],
-						consentToTrack: 'unchanged',
+						replyTo: null,
+						consentToTrack: ConsentToTrackOption.UNCHANGED,
 						data: {
 							client_firstname: 'Tom',
 							client_lastname: 'Testerom',
