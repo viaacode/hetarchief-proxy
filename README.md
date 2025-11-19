@@ -162,8 +162,8 @@ Has been worked on by:
 - Ian Emsens: ian.emsens@studiohyperdrive.be
 - Bavo Vanderghote: bavo.vanderghote@studiohyperdrive.be
 - Brecht Tourlousse: brecht.tourlousse@studiohyperdrive.be
+- Robbe Bierebeeck: robbe.bierebeeck@studiohyperdrive.be
 
 It is currently maintained by:
 
-- Robbe Bierebeeck: robbe.bierebeeck@studiohyperdrive.be
 - Bert Verhelst: bert.verhelst@studiohyperdrive.be
