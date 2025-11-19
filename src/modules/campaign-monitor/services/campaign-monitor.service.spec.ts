@@ -141,7 +141,8 @@ describe('CampaignMonitorService', () => {
 					template: EmailTemplate.VISIT_APPROVED,
 					data: {
 						to: ['MEEMOO_MAINTAINER_MISSING_EMAIL_FALLBACK'],
-						consentToTrack: 'unchanged',
+						consentToTrack: 'Unchanged',
+						replyTo: null,
 						data: {
 							client_firstname: 'Tom',
 							client_lastname: 'Testerom',
