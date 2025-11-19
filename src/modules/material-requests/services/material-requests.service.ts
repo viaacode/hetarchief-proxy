@@ -19,7 +19,6 @@ import type {
 	GqlMaterialRequest,
 	GqlMaterialRequestMaintainer,
 	MaterialRequest,
-	MaterialRequestFindAllExtraParameters,
 	MaterialRequestMaintainer,
 	MaterialRequestSendRequestListUserInfo,
 } from '../material-requests.types';
@@ -59,8 +58,10 @@ import type { Organisation } from '~modules/organisations/organisations.types';
 
 import { OrganisationsService } from '~modules/organisations/services/organisations.service';
 
+import { limitAccessToObjectDetails } from '~modules/ie-objects/helpers/limit-access-to-object-details';
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
+import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupId } from '~modules/users/types';
 import { PaginationHelper } from '~shared/helpers/pagination';
 import { SortDirection } from '~shared/types';
@@ -79,7 +80,8 @@ export class MaterialRequestsService {
 
 	public async findAll(
 		inputQuery: MaterialRequestsQueryDto,
-		parameters: MaterialRequestFindAllExtraParameters,
+		isPersonal: boolean,
+		user: SessionUserEntity,
 		referer: string,
 		ip: string
 	): Promise<IPagination<MaterialRequest>> {
@@ -97,7 +99,7 @@ export class MaterialRequestsService {
 				{ requested_by: { mail: { _ilike: query } } },
 			];
 
-			if (parameters.userGroup === GroupId.MEEMOO_ADMIN) {
+			if (user.getGroupId() === GroupId.MEEMOO_ADMIN) {
 				where._or = [
 					...where._or,
 					{
@@ -108,13 +110,13 @@ export class MaterialRequestsService {
 				];
 			}
 
-			if (parameters.userGroup === GroupId.VISITOR) {
+			if (user.getGroupId() === GroupId.VISITOR) {
 				where._or = [...where._or, { intellectualEntity: { schema_name: { _ilike: query } } }];
 			}
 		}
 
-		if (parameters.isPersonal && !isEmpty(parameters.userProfileId)) {
-			where.profile_id = { _eq: parameters.userProfileId };
+		if (isPersonal && !isEmpty(user.getId())) {
+			where.profile_id = { _eq: user.getId() };
 		}
 
 		if (!isEmpty(type)) {
@@ -163,7 +165,7 @@ export class MaterialRequestsService {
 		return Pagination<MaterialRequest>({
 			items: await Promise.all(
 				materialRequestsResponse.app_material_requests.map((mr) =>
-					this.adapt(mr, organisations, referer, ip)
+					this.adapt(mr, organisations, user, referer, ip)
 				)
 			),
 			page,
@@ -172,7 +174,12 @@ export class MaterialRequestsService {
 		});
 	}
 
-	public async findById(id: string, referer: string, ip: string): Promise<MaterialRequest> {
+	public async findById(
+		id: string,
+		user: SessionUserEntity,
+		referer: string,
+		ip: string
+	): Promise<MaterialRequest> {
 		const materialRequestResponse = await this.dataService.execute<
 			FindMaterialRequestsByIdQuery,
 			FindMaterialRequestsByIdQueryVariables
@@ -190,7 +197,13 @@ export class MaterialRequestsService {
 			)
 		);
 
-		return this.adapt(materialRequestResponse.app_material_requests[0], organisations, referer, ip);
+		return this.adapt(
+			materialRequestResponse.app_material_requests[0],
+			organisations,
+			user,
+			referer,
+			ip
+		);
 	}
 
 	public async findMaintainers(): Promise<MaterialRequestMaintainer[] | []> {
@@ -211,16 +224,14 @@ export class MaterialRequestsService {
 
 	public async createMaterialRequest(
 		createMaterialRequestDto: CreateMaterialRequestDto,
-		parameters: {
-			userProfileId: string;
-		},
+		user: SessionUserEntity,
 		referer: string,
 		ip: string
 	): Promise<MaterialRequest> {
 		const variables: InsertMaterialRequestMutationVariables = {
 			newMaterialRequest: {
 				ie_object_id: convertSchemaIdentifierToId(createMaterialRequestDto.objectSchemaIdentifier),
-				profile_id: parameters.userProfileId,
+				profile_id: user.getId(),
 				reason: createMaterialRequestDto.reason,
 				type: createMaterialRequestDto.type,
 				created_at: new Date().toISOString(),
@@ -243,12 +254,12 @@ export class MaterialRequestsService {
 			compact([createdMaterialRequest?.intellectualEntity?.schemaMaintainer?.org_identifier])
 		);
 
-		return this.adapt(createdMaterialRequest, organisations, referer, ip);
+		return this.adapt(createdMaterialRequest, organisations, user, referer, ip);
 	}
 
 	public async updateMaterialRequest(
 		materialRequestId: string,
-		userProfileId: string,
+		user: SessionUserEntity,
 		materialRequestInfo: Pick<
 			App_Material_Requests_Set_Input,
 			'type' | 'reason' | 'organisation' | 'requester_capacity' | 'is_pending' | 'updated_at'
@@ -273,7 +284,7 @@ export class MaterialRequestsService {
 			UpdateMaterialRequestMutationVariables
 		>(UpdateMaterialRequestDocument, {
 			materialRequestId,
-			userProfileId,
+			userProfileId: user.getId(),
 			updateMaterialRequest,
 		});
 
@@ -290,7 +301,7 @@ export class MaterialRequestsService {
 			])
 		);
 
-		return this.adapt(updatedMaterialRequest.returning[0], organisations, referer, ip);
+		return this.adapt(updatedMaterialRequest.returning[0], organisations, user, referer, ip);
 	}
 
 	public async deleteMaterialRequest(
@@ -373,6 +384,7 @@ export class MaterialRequestsService {
 	public async adapt(
 		graphQlMaterialRequest: GqlMaterialRequest,
 		organisations: Organisation[],
+		user: SessionUserEntity,
 		referer: string,
 		ip: string
 	): Promise<MaterialRequest | null> {
@@ -404,6 +416,7 @@ export class MaterialRequestsService {
 			objectPublishedOrCreatedDate:
 				graphQlMaterialRequest.intellectualEntity?.schema_date_published ||
 				graphQlMaterialRequest.intellectualEntity?.created_at,
+			objectAccessThrough: [],
 			profileId: graphQlMaterialRequest.profile_id,
 			reason: graphQlMaterialRequest.reason,
 			createdAt: graphQlMaterialRequest.created_at,
@@ -437,7 +450,7 @@ export class MaterialRequestsService {
 					?.intellectualEntity?.premisIdentifier?.[0]?.value || null,
 		};
 
-		return transformedMaterialRequest;
+		return this.updateRequestWithAccessThrough(transformedMaterialRequest, user, ip);
 	}
 
 	public adaptMaintainers(
@@ -446,6 +459,36 @@ export class MaterialRequestsService {
 		return {
 			id: graphQlMaterialRequestMaintainer.org_identifier,
 			name: graphQlMaterialRequestMaintainer.skos_pref_label,
+		};
+	}
+
+	public async updateRequestWithAccessThrough(
+		materialRequest: MaterialRequest,
+		user: SessionUserEntity,
+		ip: string
+	): Promise<MaterialRequest | null> {
+		const objectMetadata = await this.ieObjectsService.findMetadataByIeObjectId(
+			convertSchemaIdentifierToId(materialRequest.objectSchemaIdentifier),
+			null,
+			ip
+		);
+
+		const visitorSpaceAccessInfo =
+			await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
+
+		const censoredObjectMetadata = limitAccessToObjectDetails(objectMetadata, {
+			userId: user.getId(),
+			isKeyUser: user.getIsKeyUser(),
+			sector: user.getSector(),
+			groupId: user.getGroupId(),
+			maintainerId: user.getOrganisationId(),
+			accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
+			accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
+		});
+
+		return {
+			...materialRequest,
+			objectAccessThrough: censoredObjectMetadata.accessThrough,
 		};
 	}
 }

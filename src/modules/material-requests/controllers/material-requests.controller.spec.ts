@@ -103,7 +103,12 @@ describe('MaterialRequestsController', () => {
 	describe('getMaterialRequestById', () => {
 		it('should return a material request by id', async () => {
 			mockMaterialRequestsService.findById.mockResolvedValueOnce(mockMaterialRequest1);
-			const response = await materialRequestsController.getMaterialRequestById('1', 'referer', '');
+			const response = await materialRequestsController.getMaterialRequestById(
+				'1',
+				new SessionUserEntity(mockUser),
+				'referer',
+				''
+			);
 			expect(response).toEqual(mockMaterialRequest1);
 		});
 	});
