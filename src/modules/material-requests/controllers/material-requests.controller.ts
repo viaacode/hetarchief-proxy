@@ -35,6 +35,8 @@ import { type LogEvent, LogEventType } from '~modules/events/types';
 import { mapDcTermsFormatToSimpleType } from '~modules/ie-objects/helpers/map-dc-terms-format-to-simple-type';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupId, GroupName, Permission } from '~modules/users/types';
+import { Ip } from '~shared/decorators/ip.decorator';
+import { Referer } from '~shared/decorators/referer.decorator';
 import { RequireAnyPermissions } from '~shared/decorators/require-any-permissions.decorator';
 import { RequireAllPermissions } from '~shared/decorators/require-permissions.decorator';
 import { SessionUser } from '~shared/decorators/user.decorator';
@@ -58,16 +60,23 @@ export class MaterialRequestsController {
 	@RequireAnyPermissions(Permission.VIEW_ANY_MATERIAL_REQUESTS)
 	public async getMaterialRequests(
 		@Query() queryDto: MaterialRequestsQueryDto,
-		@SessionUser() user: SessionUserEntity
+		@SessionUser() user: SessionUserEntity,
+		@Referer() referer: string,
+		@Ip() ip: string
 	): Promise<IPagination<MaterialRequest>> {
 		// ARC-1472 Validate the user group if the request has maintainerIds
 		const validatedQueryDto = this.validateMaintainerIdsWithUserGroup(user, queryDto);
 
-		return await this.materialRequestsService.findAll(validatedQueryDto, {
-			userProfileId: user.getId(),
-			userGroup: user.getGroupId(),
-			isPersonal: false,
-		});
+		return await this.materialRequestsService.findAll(
+			validatedQueryDto,
+			{
+				userProfileId: user.getId(),
+				userGroup: user.getGroupId(),
+				isPersonal: false,
+			},
+			referer,
+			ip
+		);
 	}
 
 	@Get('personal')
@@ -77,16 +86,23 @@ export class MaterialRequestsController {
 	@RequireAllPermissions(Permission.VIEW_OWN_MATERIAL_REQUESTS, Permission.MANAGE_ACCOUNT)
 	public async getPersonalMaterialRequests(
 		@Query() queryDto: MaterialRequestsQueryDto,
-		@SessionUser() user: SessionUserEntity
+		@SessionUser() user: SessionUserEntity,
+		@Referer() referer: string,
+		@Ip() ip: string
 	): Promise<IPagination<MaterialRequest>> {
 		// ARC-1472 Validate the user group if the request has maintainerIds
 		const validatedQueryDto = this.validateMaintainerIdsWithUserGroup(user, queryDto);
 
-		return this.materialRequestsService.findAll(validatedQueryDto, {
-			userProfileId: user.getId(),
-			userGroup: user.getGroupId(),
-			isPersonal: true,
-		});
+		return this.materialRequestsService.findAll(
+			validatedQueryDto,
+			{
+				userProfileId: user.getId(),
+				userGroup: user.getGroupId(),
+				isPersonal: true,
+			},
+			referer,
+			ip
+		);
 	}
 
 	@Get('maintainers')
@@ -101,9 +117,11 @@ export class MaterialRequestsController {
 		Permission.VIEW_OWN_MATERIAL_REQUESTS
 	)
 	public async getMaterialRequestById(
-		@Param('id', ParseUUIDPipe) id: string
+		@Param('id', ParseUUIDPipe) id: string,
+		@Referer() referer: string,
+		@Ip() ip: string
 	): Promise<MaterialRequest> {
-		return await this.materialRequestsService.findById(id);
+		return await this.materialRequestsService.findById(id, referer, ip);
 	}
 
 	@Put()
@@ -113,11 +131,18 @@ export class MaterialRequestsController {
 	@RequireAnyPermissions(Permission.CREATE_MATERIAL_REQUESTS)
 	public async createMaterialRequest(
 		@Body() createMaterialRequestDto: CreateMaterialRequestDto,
-		@SessionUser() user: SessionUserEntity
+		@SessionUser() user: SessionUserEntity,
+		@Referer() referer: string,
+		@Ip() ip: string
 	): Promise<MaterialRequest> {
-		return await this.materialRequestsService.createMaterialRequest(createMaterialRequestDto, {
-			userProfileId: user.getId(),
-		});
+		return await this.materialRequestsService.createMaterialRequest(
+			createMaterialRequestDto,
+			{
+				userProfileId: user.getId(),
+			},
+			referer,
+			ip
+		);
 	}
 
 	@Patch(':id')
@@ -128,12 +153,16 @@ export class MaterialRequestsController {
 	public async updateMaterialRequest(
 		@Param('id', ParseUUIDPipe) materialRequestId: string,
 		@Body() updateMaterialRequestDto: UpdateMaterialRequestDto,
-		@SessionUser() user: SessionUserEntity
+		@SessionUser() user: SessionUserEntity,
+		@Referer() referer: string,
+		@Ip() ip: string
 	): Promise<MaterialRequest> {
 		return await this.materialRequestsService.updateMaterialRequest(
 			materialRequestId,
 			user.getId(),
-			updateMaterialRequestDto
+			updateMaterialRequestDto,
+			referer,
+			ip
 		);
 	}
 
@@ -164,18 +193,25 @@ export class MaterialRequestsController {
 	public async sendRequestList(
 		@Body() sendRequestListDto: SendRequestListDto,
 		@SessionUser() user: SessionUserEntity,
-		@Req() request: Request
+		@Req() request: Request,
+		@Referer() referer: string,
+		@Ip() ip: string
 	): Promise<{ message: 'success' }> {
 		const dto = new MaterialRequestsQueryDto();
 		dto.isPending = true;
 		dto.size = 100;
 
 		try {
-			const materialRequests = await this.materialRequestsService.findAll(dto, {
-				userProfileId: user.getId(),
-				userGroup: user.getGroupId(),
-				isPersonal: true,
-			});
+			const materialRequests = await this.materialRequestsService.findAll(
+				dto,
+				{
+					userProfileId: user.getId(),
+					userGroup: user.getGroupId(),
+					isPersonal: true,
+				},
+				referer,
+				ip
+			);
 
 			for (const materialRequest of materialRequests.items) {
 				// If the email does not exist, the campaign monitor service will default to process.env.MEEMOO_MAINTAINER_MISSING_EMAIL_FALLBACK
@@ -205,7 +241,9 @@ export class MaterialRequestsController {
 							requester_capacity: materialRequest.requesterCapacity,
 							is_pending: false,
 							updated_at: new Date().toISOString(),
-						}
+						},
+						referer,
+						ip
 					);
 				})
 			);

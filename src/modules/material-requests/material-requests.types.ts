@@ -16,6 +16,7 @@ export interface MaterialRequest {
 	objectMeemooLocalId?: string;
 	objectDctermsFormat: IeObjectType;
 	objectThumbnailUrl: string;
+	objectPublishedOrCreatedDate?: string;
 	profileId: string;
 	reason: string;
 	createdAt: string;

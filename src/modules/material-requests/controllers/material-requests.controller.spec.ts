@@ -73,7 +73,9 @@ describe('MaterialRequestsController', () => {
 				new SessionUserEntity({
 					...mockUser,
 					permissions: [Permission.VIEW_ANY_MATERIAL_REQUESTS],
-				})
+				}),
+				'referer',
+				''
 			);
 
 			expect(materialRequests).toEqual(mockMaterialRequestsResponse);
@@ -89,7 +91,9 @@ describe('MaterialRequestsController', () => {
 				new SessionUserEntity({
 					...mockUser,
 					permissions: [Permission.VIEW_OWN_MATERIAL_REQUESTS],
-				})
+				}),
+				'referer',
+				''
 			);
 
 			expect(materialRequests).toEqual(mockMaterialRequestsResponse);
@@ -99,7 +103,7 @@ describe('MaterialRequestsController', () => {
 	describe('getMaterialRequestById', () => {
 		it('should return a material request by id', async () => {
 			mockMaterialRequestsService.findById.mockResolvedValueOnce(mockMaterialRequest1);
-			const response = await materialRequestsController.getMaterialRequestById('1');
+			const response = await materialRequestsController.getMaterialRequestById('1', 'referer', '');
 			expect(response).toEqual(mockMaterialRequest1);
 		});
 	});
@@ -127,7 +131,9 @@ describe('MaterialRequestsController', () => {
 				new SessionUserEntity({
 					...mockUser,
 					permissions: [Permission.CREATE_MATERIAL_REQUESTS],
-				})
+				}),
+				'referer',
+				''
 			);
 			expect(createdMaterialRequest).toEqual(mockMaterialRequest1);
 		});
@@ -142,7 +148,9 @@ describe('MaterialRequestsController', () => {
 					type: MaterialRequestType.REUSE,
 					reason: 'test',
 				},
-				new SessionUserEntity(mockUser)
+				new SessionUserEntity(mockUser),
+				'referer',
+				''
 			);
 			expect(updatedMaterialRequest).toEqual(mockMaterialRequest1);
 		});

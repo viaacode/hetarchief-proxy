@@ -21,6 +21,7 @@ import type {
 	InsertMaterialRequestMutation,
 	UpdateMaterialRequestMutation,
 } from '~generated/graphql-db-types-hetarchief';
+import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { mockOrganisations } from '~modules/organisations/mocks/organisations.mocks';
 import { OrganisationsService } from '~modules/organisations/services/organisations.service';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
@@ -55,6 +56,10 @@ const getDefaultMaterialRequestsResponse = (): {
 		},
 	},
 });
+
+const mockIeObjectsService: Partial<Record<keyof IeObjectsService, jest.SpyInstance>> = {
+	getThumbnailUrlWithToken: jest.fn((thumbnail) => thumbnail),
+};
 
 const getDefaultMaterialRequestByIdResponse = (): {
 	app_material_requests: FindMaterialRequestsByIdQuery[];
@@ -103,6 +108,14 @@ describe('MaterialRequestsService', () => {
 					provide: SpacesService,
 					useValue: mockSpacesService,
 				},
+				{
+					provide: SpacesService,
+					useValue: mockSpacesService,
+				},
+				{
+					provide: IeObjectsService,
+					useValue: mockIeObjectsService,
+				},
 			],
 		})
 			.setLogger(new TestingLogger())
@@ -120,8 +133,13 @@ describe('MaterialRequestsService', () => {
 	});
 
 	describe('adapt', () => {
-		it('can adapt a FindMaterialRequestsQuery hasura response to our material request interface', () => {
-			const adapted = materialRequestsService.adapt(mockGqlMaterialRequest1, mockOrganisations);
+		it('can adapt a FindMaterialRequestsQuery hasura response to our material request interface', async () => {
+			const adapted = await materialRequestsService.adapt(
+				mockGqlMaterialRequest1,
+				mockOrganisations,
+				'referer',
+				''
+			);
 			// test some sample keys
 			expect(adapted.id).toEqual(mockGqlMaterialRequest1.id);
 			expect(adapted.objectId).toEqual(mockGqlMaterialRequest1.ie_object_id);
@@ -143,8 +161,13 @@ describe('MaterialRequestsService', () => {
 			);
 		});
 
-		it('can adapt a FindMaterialRequestsByIdQuery hasura response to our material request interface', () => {
-			const adapted = materialRequestsService.adapt(mockGqlMaterialRequest2, mockOrganisations);
+		it('can adapt a FindMaterialRequestsByIdQuery hasura response to our material request interface', async () => {
+			const adapted = await materialRequestsService.adapt(
+				mockGqlMaterialRequest2,
+				mockOrganisations,
+				'referer',
+				''
+			);
 			// test some sample keys
 			expect(adapted.id).toEqual(mockGqlMaterialRequest2.id);
 			expect(adapted.objectId).toEqual(mockGqlMaterialRequest2.ie_object_id);
@@ -190,14 +213,19 @@ describe('MaterialRequestsService', () => {
 			);
 		});
 
-		it('should return null when the material request does not exist', () => {
-			const adapted = materialRequestsService.adapt(undefined, mockOrganisations);
+		it('should return null when the material request does not exist', async () => {
+			const adapted = await materialRequestsService.adapt(
+				undefined,
+				mockOrganisations,
+				'referer',
+				''
+			);
 			// test some sample keys
 			expect(adapted).toBeNull();
 		});
 
-		it('returns null on invalid input', () => {
-			const adapted = materialRequestsService.adapt(null, mockOrganisations);
+		it('returns null on invalid input', async () => {
+			const adapted = await materialRequestsService.adapt(null, mockOrganisations, 'referer', '');
 			expect(adapted).toBeNull();
 		});
 	});
@@ -213,7 +241,9 @@ describe('MaterialRequestsService', () => {
 					page: 1,
 					size: 10,
 				},
-				{}
+				{},
+				'referer',
+				''
 			);
 			expect(response.items.length).toBe(1);
 			expect(response.page).toBe(1);
@@ -232,7 +262,9 @@ describe('MaterialRequestsService', () => {
 					page: 1,
 					size: 10,
 				},
-				{}
+				{},
+				'referer',
+				''
 			);
 			expect(response.items.length).toBe(1);
 			expect(response.items[0]?.requesterFullName).toContain('Ilya Korsakov');
@@ -253,7 +285,9 @@ describe('MaterialRequestsService', () => {
 					page: 1,
 					size: 10,
 				},
-				{}
+				{},
+				'referer',
+				''
 			);
 			expect(response.items.length).toBe(1);
 			expect(response.items[0]?.type).toContain(MaterialRequestType.REUSE);
@@ -273,7 +307,9 @@ describe('MaterialRequestsService', () => {
 					page: 1,
 					size: 10,
 				},
-				{}
+				{},
+				'referer',
+				''
 			);
 			expect(response.items.length).toBe(1);
 			expect(response.items[0]?.maintainerName).toEqual('VRT');
@@ -289,7 +325,9 @@ describe('MaterialRequestsService', () => {
 					page: 1,
 					size: 10,
 				},
-				{ userProfileId: mockUserProfileId }
+				{ userProfileId: mockUserProfileId },
+				'referer',
+				''
 			);
 			expect(response.items.length).toBe(1);
 			expect(response.page).toBe(1);
@@ -301,7 +339,7 @@ describe('MaterialRequestsService', () => {
 	describe('findById', () => {
 		it('returns a single material request', async () => {
 			mockDataService.execute.mockResolvedValueOnce(getDefaultMaterialRequestByIdResponse());
-			const response = await materialRequestsService.findById('1');
+			const response = await materialRequestsService.findById('1', 'referer', '');
 			expect(response.id).toBe(mockGqlMaterialRequest2.id);
 		});
 
@@ -320,7 +358,7 @@ describe('MaterialRequestsService', () => {
 			mockDataService.execute.mockResolvedValueOnce(mockData);
 
 			try {
-				await materialRequestsService.findById('unknown-id');
+				await materialRequestsService.findById('unknown-id', 'referer', '');
 			} catch (error) {
 				expect(error.response).toEqual({
 					error: 'Not Found',
@@ -359,7 +397,9 @@ describe('MaterialRequestsService', () => {
 					type: mockGqlMaterialRequest1.type,
 					requesterCapacity: mockGqlMaterialRequest1.requester_capacity,
 				},
-				{ userProfileId: 'e1d792cc-4624-48cb-aab3-80ef90521b54' }
+				{ userProfileId: 'e1d792cc-4624-48cb-aab3-80ef90521b54' },
+				'referer',
+				''
 			);
 			expect(response.id).toBe(mockGqlMaterialRequest1.id);
 		});
@@ -385,7 +425,9 @@ describe('MaterialRequestsService', () => {
 				{
 					type: mockGqlMaterialRequest1.type,
 					reason: mockGqlMaterialRequest1.reason,
-				}
+				},
+				'referer',
+				''
 			);
 			expect(response.id).toBe(mockGqlMaterialRequest1.id);
 		});
