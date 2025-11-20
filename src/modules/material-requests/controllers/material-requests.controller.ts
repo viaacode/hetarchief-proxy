@@ -67,16 +67,7 @@ export class MaterialRequestsController {
 		// ARC-1472 Validate the user group if the request has maintainerIds
 		const validatedQueryDto = this.validateMaintainerIdsWithUserGroup(user, queryDto);
 
-		return await this.materialRequestsService.findAll(
-			validatedQueryDto,
-			{
-				userProfileId: user.getId(),
-				userGroup: user.getGroupId(),
-				isPersonal: false,
-			},
-			referer,
-			ip
-		);
+		return await this.materialRequestsService.findAll(validatedQueryDto, false, user, referer, ip);
 	}
 
 	@Get('personal')
@@ -93,16 +84,7 @@ export class MaterialRequestsController {
 		// ARC-1472 Validate the user group if the request has maintainerIds
 		const validatedQueryDto = this.validateMaintainerIdsWithUserGroup(user, queryDto);
 
-		return this.materialRequestsService.findAll(
-			validatedQueryDto,
-			{
-				userProfileId: user.getId(),
-				userGroup: user.getGroupId(),
-				isPersonal: true,
-			},
-			referer,
-			ip
-		);
+		return this.materialRequestsService.findAll(validatedQueryDto, true, user, referer, ip);
 	}
 
 	@Get('maintainers')
@@ -118,10 +100,11 @@ export class MaterialRequestsController {
 	)
 	public async getMaterialRequestById(
 		@Param('id', ParseUUIDPipe) id: string,
+		@SessionUser() user: SessionUserEntity,
 		@Referer() referer: string,
 		@Ip() ip: string
 	): Promise<MaterialRequest> {
-		return await this.materialRequestsService.findById(id, referer, ip);
+		return await this.materialRequestsService.findById(id, user, referer, ip);
 	}
 
 	@Put()
@@ -137,9 +120,7 @@ export class MaterialRequestsController {
 	): Promise<MaterialRequest> {
 		return await this.materialRequestsService.createMaterialRequest(
 			createMaterialRequestDto,
-			{
-				userProfileId: user.getId(),
-			},
+			user,
 			referer,
 			ip
 		);
@@ -159,7 +140,7 @@ export class MaterialRequestsController {
 	): Promise<MaterialRequest> {
 		return await this.materialRequestsService.updateMaterialRequest(
 			materialRequestId,
-			user.getId(),
+			user,
 			updateMaterialRequestDto,
 			referer,
 			ip
@@ -204,11 +185,8 @@ export class MaterialRequestsController {
 		try {
 			const materialRequests = await this.materialRequestsService.findAll(
 				dto,
-				{
-					userProfileId: user.getId(),
-					userGroup: user.getGroupId(),
-					isPersonal: true,
-				},
+				true,
+				user,
 				referer,
 				ip
 			);
@@ -233,7 +211,7 @@ export class MaterialRequestsController {
 				materialRequests.items.map(async (materialRequest: MaterialRequest) => {
 					await this.materialRequestsService.updateMaterialRequest(
 						materialRequest.id,
-						user.getId(),
+						user,
 						{
 							type: materialRequest.type,
 							reason: materialRequest.reason,

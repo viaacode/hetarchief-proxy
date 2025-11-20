@@ -303,7 +303,7 @@ describe('IeObjectsController', () => {
 		it('should return the ieObjectSeo when object has license: PUBLIEK_METADATA_LTD', async () => {
 			const mockResponse = {
 				...mockIeObject1,
-				licenses: [IeObjectLicense.PUBLIEK_METADATA_LTD],
+				licenses: [IeObjectLicense.PUBLIEK_METADATA_LTD, IeObjectLicense.PUBLIC_DOMAIN],
 			};
 			mockIeObjectsService.findByIeObjectId.mockResolvedValueOnce(mockResponse);
 
@@ -312,15 +312,15 @@ describe('IeObjectsController', () => {
 			expect(result).toEqual({
 				name: mockIeObject1.name,
 				description: mockIeObject1.description,
-				thumbnailUrl: null,
+				thumbnailUrl: 'undefined/images/og.jpg',
 				maintainerSlug: 'vrt',
 			});
 		});
 
-		it('should return the ieObjectSeo when object has license: PUBLIEK_METADATA_ALL', async () => {
+		it('should return the ieObjectSeo when object has license: PUBLIEK_CONTENT', async () => {
 			const mockResponse = {
 				...mockIeObject1,
-				licenses: [IeObjectLicense.PUBLIEK_METADATA_ALL],
+				licenses: [IeObjectLicense.PUBLIEK_CONTENT, IeObjectLicense.PUBLIC_DOMAIN],
 			};
 			mockIeObjectsService.findByIeObjectId.mockResolvedValueOnce(mockResponse);
 
@@ -337,7 +337,7 @@ describe('IeObjectsController', () => {
 		it('should return name = null when object has no valid licence', async () => {
 			const mockResponse = {
 				...mockIeObject1,
-				licenses: [IeObjectLicense.BEZOEKERTOOL_CONTENT],
+				licenses: [IeObjectLicense.PUBLIC_DOMAIN],
 			};
 			mockIeObjectsService.findByIeObjectId.mockResolvedValueOnce(mockResponse);
 
@@ -346,7 +346,7 @@ describe('IeObjectsController', () => {
 			expect(result).toEqual({
 				name: null,
 				description: null,
-				thumbnailUrl: null,
+				thumbnailUrl: 'undefined/images/og.jpg',
 				maintainerSlug: 'vrt',
 			});
 		});

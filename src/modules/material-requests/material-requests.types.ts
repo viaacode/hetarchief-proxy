@@ -5,7 +5,11 @@ import type {
 	Lookup_App_Material_Request_Requester_Capacity_Enum,
 	Lookup_App_Material_Request_Type_Enum,
 } from '~generated/graphql-db-types-hetarchief';
-import type { IeObjectType } from '~modules/ie-objects/ie-objects.types';
+import {
+	IeObjectAccessThrough,
+	IeObjectLicense,
+	IeObjectType,
+} from '~modules/ie-objects/ie-objects.types';
 import type { Locale } from '~shared/types/types';
 
 export interface MaterialRequest {
@@ -17,6 +21,8 @@ export interface MaterialRequest {
 	objectDctermsFormat: IeObjectType;
 	objectThumbnailUrl: string;
 	objectPublishedOrCreatedDate?: string;
+	objectAccessThrough: IeObjectAccessThrough[];
+	objectLicences: IeObjectLicense[];
 	profileId: string;
 	reason: string;
 	createdAt: string;
@@ -42,12 +48,6 @@ export interface MaterialRequest {
 export interface MaterialRequestMaintainer {
 	id: string;
 	name: string;
-}
-
-export interface MaterialRequestFindAllExtraParameters {
-	userProfileId?: string;
-	userGroup?: string;
-	isPersonal?: boolean;
 }
 
 export interface MaterialRequestSendRequestListUserInfo {

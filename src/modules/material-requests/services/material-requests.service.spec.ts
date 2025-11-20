@@ -8,6 +8,7 @@ import {
 	mockGqlMaterialRequest1,
 	mockGqlMaterialRequest2,
 	mockMaintainerWithMaterialRequest,
+	mockUser,
 	mockUserProfileId,
 } from '../mocks/material-requests.mocks';
 
@@ -21,10 +22,12 @@ import type {
 	InsertMaterialRequestMutation,
 	UpdateMaterialRequestMutation,
 } from '~generated/graphql-db-types-hetarchief';
+import { IeObjectLicense } from '~modules/ie-objects/ie-objects.types';
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { mockOrganisations } from '~modules/organisations/mocks/organisations.mocks';
 import { OrganisationsService } from '~modules/organisations/services/organisations.service';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
+import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {
@@ -59,6 +62,10 @@ const getDefaultMaterialRequestsResponse = (): {
 
 const mockIeObjectsService: Partial<Record<keyof IeObjectsService, jest.SpyInstance>> = {
 	getThumbnailUrlWithToken: jest.fn((thumbnail) => thumbnail),
+	findMetadataByIeObjectId: jest.fn(() => ({
+		licenses: [IeObjectLicense.PUBLIC_DOMAIN, IeObjectLicense.PUBLIEK_CONTENT],
+	})),
+	getVisitorSpaceAccessInfoFromUser: jest.fn(() => ({ objectIds: [], visitorSpaceIds: [] })),
 };
 
 const getDefaultMaterialRequestByIdResponse = (): {
@@ -137,6 +144,7 @@ describe('MaterialRequestsService', () => {
 			const adapted = await materialRequestsService.adapt(
 				mockGqlMaterialRequest1,
 				mockOrganisations,
+				new SessionUserEntity(mockUser),
 				'referer',
 				''
 			);
@@ -165,6 +173,7 @@ describe('MaterialRequestsService', () => {
 			const adapted = await materialRequestsService.adapt(
 				mockGqlMaterialRequest2,
 				mockOrganisations,
+				new SessionUserEntity(mockUser),
 				'referer',
 				''
 			);
@@ -217,6 +226,7 @@ describe('MaterialRequestsService', () => {
 			const adapted = await materialRequestsService.adapt(
 				undefined,
 				mockOrganisations,
+				new SessionUserEntity(mockUser),
 				'referer',
 				''
 			);
@@ -225,7 +235,13 @@ describe('MaterialRequestsService', () => {
 		});
 
 		it('returns null on invalid input', async () => {
-			const adapted = await materialRequestsService.adapt(null, mockOrganisations, 'referer', '');
+			const adapted = await materialRequestsService.adapt(
+				null,
+				mockOrganisations,
+				new SessionUserEntity(mockUser),
+				'referer',
+				''
+			);
 			expect(adapted).toBeNull();
 		});
 	});
@@ -241,7 +257,8 @@ describe('MaterialRequestsService', () => {
 					page: 1,
 					size: 10,
 				},
-				{},
+				false,
+				new SessionUserEntity(mockUser),
 				'referer',
 				''
 			);
@@ -262,7 +279,8 @@ describe('MaterialRequestsService', () => {
 					page: 1,
 					size: 10,
 				},
-				{},
+				false,
+				new SessionUserEntity(mockUser),
 				'referer',
 				''
 			);
@@ -285,7 +303,8 @@ describe('MaterialRequestsService', () => {
 					page: 1,
 					size: 10,
 				},
-				{},
+				false,
+				new SessionUserEntity(mockUser),
 				'referer',
 				''
 			);
@@ -307,7 +326,8 @@ describe('MaterialRequestsService', () => {
 					page: 1,
 					size: 10,
 				},
-				{},
+				false,
+				new SessionUserEntity(mockUser),
 				'referer',
 				''
 			);
@@ -325,7 +345,11 @@ describe('MaterialRequestsService', () => {
 					page: 1,
 					size: 10,
 				},
-				{ userProfileId: mockUserProfileId },
+				false,
+				new SessionUserEntity({
+					...mockUser,
+					id: mockUserProfileId,
+				}),
 				'referer',
 				''
 			);
@@ -339,7 +363,12 @@ describe('MaterialRequestsService', () => {
 	describe('findById', () => {
 		it('returns a single material request', async () => {
 			mockDataService.execute.mockResolvedValueOnce(getDefaultMaterialRequestByIdResponse());
-			const response = await materialRequestsService.findById('1', 'referer', '');
+			const response = await materialRequestsService.findById(
+				'1',
+				new SessionUserEntity(mockUser),
+				'referer',
+				''
+			);
 			expect(response.id).toBe(mockGqlMaterialRequest2.id);
 		});
 
@@ -358,7 +387,12 @@ describe('MaterialRequestsService', () => {
 			mockDataService.execute.mockResolvedValueOnce(mockData);
 
 			try {
-				await materialRequestsService.findById('unknown-id', 'referer', '');
+				await materialRequestsService.findById(
+					'unknown-id',
+					new SessionUserEntity(mockUser),
+					'referer',
+					''
+				);
 			} catch (error) {
 				expect(error.response).toEqual({
 					error: 'Not Found',
@@ -397,7 +431,10 @@ describe('MaterialRequestsService', () => {
 					type: mockGqlMaterialRequest1.type,
 					requesterCapacity: mockGqlMaterialRequest1.requester_capacity,
 				},
-				{ userProfileId: 'e1d792cc-4624-48cb-aab3-80ef90521b54' },
+				new SessionUserEntity({
+					...mockUser,
+					id: 'e1d792cc-4624-48cb-aab3-80ef90521b54',
+				}),
 				'referer',
 				''
 			);
@@ -421,7 +458,10 @@ describe('MaterialRequestsService', () => {
 			);
 			const response = await materialRequestsService.updateMaterialRequest(
 				mockGqlMaterialRequest1.id,
-				mockGqlMaterialRequest1.profile_id,
+				new SessionUserEntity({
+					...mockUser,
+					id: mockGqlMaterialRequest1.profile_id,
+				}),
 				{
 					type: mockGqlMaterialRequest1.type,
 					reason: mockGqlMaterialRequest1.reason,
