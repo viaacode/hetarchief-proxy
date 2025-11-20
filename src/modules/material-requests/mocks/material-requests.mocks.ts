@@ -130,6 +130,7 @@ export const mockMaterialRequest1: MaterialRequest = {
 	objectThumbnailUrl:
 		'VRT/b1f60efadf5243d78c7c91512adaa6cefe52723ff35848268894c7861d852b79/keyframes/keyframes_1_1/keyframe1.jpg',
 	objectAccessThrough: [],
+	objectLicences: [],
 };
 
 const mockMaterialRequest2: MaterialRequest = {
@@ -160,6 +161,7 @@ const mockMaterialRequest2: MaterialRequest = {
 	objectThumbnailUrl:
 		'VRT/b1f60efadf5243d78c7c91512adaa6cefe52723ff35848268894c7861d852b79/keyframes/keyframes_1_1/keyframe1.jpg',
 	objectAccessThrough: [],
+	objectLicences: [],
 };
 
 export const mockMaterialRequestsResponse = {

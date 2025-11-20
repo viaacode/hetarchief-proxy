@@ -417,6 +417,7 @@ export class MaterialRequestsService {
 				graphQlMaterialRequest.intellectualEntity?.schema_date_published ||
 				graphQlMaterialRequest.intellectualEntity?.created_at,
 			objectAccessThrough: [],
+			objectLicences: [],
 			profileId: graphQlMaterialRequest.profile_id,
 			reason: graphQlMaterialRequest.reason,
 			createdAt: graphQlMaterialRequest.created_at,
@@ -450,7 +451,7 @@ export class MaterialRequestsService {
 					?.intellectualEntity?.premisIdentifier?.[0]?.value || null,
 		};
 
-		return this.updateRequestWithAccessThrough(transformedMaterialRequest, user, ip);
+		return this.updateRequestWithAccessThroughAndLicences(transformedMaterialRequest, user, ip);
 	}
 
 	public adaptMaintainers(
@@ -462,7 +463,7 @@ export class MaterialRequestsService {
 		};
 	}
 
-	public async updateRequestWithAccessThrough(
+	public async updateRequestWithAccessThroughAndLicences(
 		materialRequest: MaterialRequest,
 		user: SessionUserEntity,
 		ip: string
@@ -489,6 +490,7 @@ export class MaterialRequestsService {
 		return {
 			...materialRequest,
 			objectAccessThrough: censoredObjectMetadata.accessThrough,
+			objectLicences: censoredObjectMetadata.licenses,
 		};
 	}
 }
