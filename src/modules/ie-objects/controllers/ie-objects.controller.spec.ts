@@ -91,6 +91,8 @@ describe('IeObjectsController', () => {
 	let ieObjectsController: IeObjectsController;
 
 	beforeEach(async () => {
+		process.env.CLIENT_HOST = 'fakeClientHost';
+
 		const module: TestingModule = await Test.createTestingModule({
 			controllers: [IeObjectsController],
 			providers: [
@@ -303,7 +305,7 @@ describe('IeObjectsController', () => {
 		it('should return the ieObjectSeo when object has license: PUBLIEK_METADATA_LTD', async () => {
 			const mockResponse = {
 				...mockIeObject1,
-				licenses: [IeObjectLicense.PUBLIEK_METADATA_LTD, IeObjectLicense.PUBLIC_DOMAIN],
+				licenses: [IeObjectLicense.PUBLIEK_METADATA_LTD],
 			};
 			mockIeObjectsService.findByIeObjectId.mockResolvedValueOnce(mockResponse);
 
@@ -312,17 +314,34 @@ describe('IeObjectsController', () => {
 			expect(result).toEqual({
 				name: mockIeObject1.name,
 				description: mockIeObject1.description,
-				thumbnailUrl: 'undefined/images/og.jpg',
+				thumbnailUrl: 'fakeClientHost/images/og.jpg',
 				maintainerSlug: 'vrt',
 			});
 		});
 
-		it('should return the ieObjectSeo when object has license: PUBLIEK_CONTENT', async () => {
+		it('should return the ieObjectSeo when object has license: PUBLIEK_METADATA_ALL', async () => {
+			const mockResponse = {
+				...mockIeObject1,
+				licenses: [IeObjectLicense.PUBLIEK_METADATA_ALL],
+			};
+			mockIeObjectsService.findByIeObjectId.mockResolvedValueOnce(mockResponse);
+
+			const result = await ieObjectsController.getIeObjectSeoById('referer', '127.0.0.1', '1');
+
+			expect(result).toEqual({
+				name: mockIeObject1.name,
+				description: mockIeObject1.description,
+				thumbnailUrl: 'fakeClientHost/images/og.jpg',
+				maintainerSlug: 'vrt',
+			});
+		});
+
+		it('should return the ieObjectSeo with thumbnail when object has license: PUBLIEK_CONTENT and PUBLIC_DOMAIN', async () => {
 			const mockResponse = {
 				...mockIeObject1,
 				licenses: [IeObjectLicense.PUBLIEK_CONTENT, IeObjectLicense.PUBLIC_DOMAIN],
 			};
-			mockIeObjectsService.findByIeObjectId.mockResolvedValueOnce(mockResponse);
+			mockIeObjectsService.findByIeObjectId.mockResolvedValue(mockResponse);
 
 			const result = await ieObjectsController.getIeObjectSeoById('referer', '127.0.0.1', '1');
 
@@ -337,7 +356,7 @@ describe('IeObjectsController', () => {
 		it('should return name = null when object has no valid licence', async () => {
 			const mockResponse = {
 				...mockIeObject1,
-				licenses: [IeObjectLicense.PUBLIC_DOMAIN],
+				licenses: [IeObjectLicense.BEZOEKERTOOL_CONTENT],
 			};
 			mockIeObjectsService.findByIeObjectId.mockResolvedValueOnce(mockResponse);
 
@@ -346,7 +365,7 @@ describe('IeObjectsController', () => {
 			expect(result).toEqual({
 				name: null,
 				description: null,
-				thumbnailUrl: 'undefined/images/og.jpg',
+				thumbnailUrl: 'fakeClientHost/images/og.jpg',
 				maintainerSlug: 'vrt',
 			});
 		});

@@ -609,7 +609,7 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 			EmailAddress: userInfo.email,
 			Name: `${userInfo.firstName} ${userInfo.lastName}`,
 			Resubscribe: resubscribe,
-			ConsentToTrack: resubscribe ? 'Yes' : 'Unchanged',
+			ConsentToTrack: resubscribe ? ConsentToTrackOption.YES : ConsentToTrackOption.UNCHANGED,
 			CustomFields: customFieldsArr,
 		};
 	}
