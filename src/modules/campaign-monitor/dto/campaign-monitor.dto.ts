@@ -198,7 +198,7 @@ export class CampaignMonitorData {
 	@ApiProperty({
 		type: String,
 		description: 'Consent to track setting for CM. Possible values: yes/no/unchanged',
-		default: 'Unchanged',
+		default: ConsentToTrackOption.UNCHANGED,
 		enum: ConsentToTrackOption,
 	})
 	consentToTrack: ConsentToTrackOption;
@@ -236,7 +236,7 @@ export class CampaignMonitorSendMailDto {
 		example: {
 			to: 'test.testers@meemoo.be',
 			replyTo: 'cp@maintainer.be',
-			consentToTrack: 'unchanged',
+			consentToTrack: ConsentToTrackOption.UNCHANGED,
 			data: {
 				custom_field_key_a: 'custom_field_value_a',
 			},
