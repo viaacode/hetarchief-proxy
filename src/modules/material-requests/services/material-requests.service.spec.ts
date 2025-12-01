@@ -167,6 +167,7 @@ describe('MaterialRequestsService', () => {
 			expect(adapted.maintainerSlug).toEqual(
 				mockGqlMaterialRequest1.intellectualEntity.schemaMaintainer.visitorSpace.slug
 			);
+			expect(adapted.reuseForm).toEqual(mockGqlMaterialRequest1.material_request_reuse_form_values);
 		});
 
 		it('can adapt a FindMaterialRequestsByIdQuery hasura response to our material request interface', async () => {
@@ -220,6 +221,21 @@ describe('MaterialRequestsService', () => {
 			expect(adapted.objectThumbnailUrl).toEqual(
 				mockGqlMaterialRequest2.intellectualEntity.schemaThumbnail.schema_thumbnail_url[0]
 			);
+			expect(adapted.reuseForm).toEqual({
+				representationId: mockGqlMaterialRequest2.material_request_reuse_form_values[0].value,
+				startTime: null,
+				endTime: 2000,
+				downloadQuality: mockGqlMaterialRequest2.material_request_reuse_form_values[3].value,
+				intendedUsage: mockGqlMaterialRequest2.material_request_reuse_form_values[4].value,
+				intendedUsageDescription:
+					mockGqlMaterialRequest2.material_request_reuse_form_values[5].value,
+				distributionAccess: mockGqlMaterialRequest2.material_request_reuse_form_values[6].value,
+				distributionType: mockGqlMaterialRequest2.material_request_reuse_form_values[7].value,
+				materialEditing: mockGqlMaterialRequest2.material_request_reuse_form_values[8].value,
+				geographicalUsage: mockGqlMaterialRequest2.material_request_reuse_form_values[9].value,
+				timeUsageType: mockGqlMaterialRequest2.material_request_reuse_form_values[10].value,
+				copyrightDisplay: mockGqlMaterialRequest2.material_request_reuse_form_values[11].value,
+			});
 		});
 
 		it('should return null when the material request does not exist', async () => {
@@ -430,6 +446,7 @@ describe('MaterialRequestsService', () => {
 					reason: mockGqlMaterialRequest1.reason,
 					type: mockGqlMaterialRequest1.type,
 					requesterCapacity: mockGqlMaterialRequest1.requester_capacity,
+					reuseForm: undefined,
 				},
 				new SessionUserEntity({
 					...mockUser,

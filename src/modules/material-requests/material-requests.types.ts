@@ -23,6 +23,7 @@ export interface MaterialRequest {
 	objectPublishedOrCreatedDate?: string;
 	objectAccessThrough: IeObjectAccessThrough[];
 	objectLicences: IeObjectLicense[];
+	reuseForm?: MaterialRequestReuseForm | null;
 	profileId: string;
 	reason: string;
 	createdAt: string;
@@ -43,6 +44,26 @@ export interface MaterialRequest {
 	maintainerLogo?: string;
 	contactMail?: string;
 	organisation?: string | null;
+}
+
+export interface MaterialRequestReuseForm {
+	representationId?: string;
+	startTime?: number;
+	endTime?: number;
+	downloadQuality?: string;
+	intendedUsageDescription?: string;
+	intendedUsage?: string;
+	distributionAccess?: string;
+	distributionType?: string;
+	distributionTypeDigitalOnline?: string;
+	distributionTypeOtherExplanation?: string;
+	materialEditing?: string;
+	geographicalUsage?: string;
+	geographicalUsageDescription?: string;
+	timeUsageType?: string;
+	timeUsageFrom?: string;
+	timeUsageTo?: string;
+	copyrightDisplay?: string;
 }
 
 export interface MaterialRequestMaintainer {

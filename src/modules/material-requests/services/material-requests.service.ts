@@ -41,6 +41,9 @@ import {
 	InsertMaterialRequestDocument,
 	type InsertMaterialRequestMutation,
 	type InsertMaterialRequestMutationVariables,
+	InsertMaterialRequestReuseFormDocument,
+	InsertMaterialRequestReuseFormMutation,
+	InsertMaterialRequestReuseFormMutationVariables,
 	Lookup_App_Material_Request_Requester_Capacity_Enum,
 	UpdateMaterialRequestDocument,
 	type UpdateMaterialRequestMutation,
@@ -250,6 +253,26 @@ export class MaterialRequestsService {
 				InsertMaterialRequestMutationVariables
 			>(InsertMaterialRequestDocument, variables);
 
+		if (createMaterialRequestDto.reuseForm) {
+			const keys = Object.keys(createMaterialRequestDto.reuseForm);
+			const reuseFormVariables: InsertMaterialRequestReuseFormMutationVariables = {
+				keyValues: keys.map((key) => ({
+					material_request_id: createdMaterialRequest.id,
+					key,
+					value: createMaterialRequestDto.reuseForm[key]?.toString(),
+				})),
+			};
+
+			const { insert_app_material_request_reuse_form_values: createdMaterialRequestFormValues } =
+				await this.dataService.execute<
+					InsertMaterialRequestReuseFormMutation,
+					InsertMaterialRequestReuseFormMutationVariables
+				>(InsertMaterialRequestReuseFormDocument, reuseFormVariables);
+
+			createdMaterialRequest.material_request_reuse_form_values =
+				createdMaterialRequestFormValues.returning;
+		}
+
 		const organisations = await this.organisationsService.findOrganisationsBySchemaIdentifiers(
 			compact([createdMaterialRequest?.intellectualEntity?.schemaMaintainer?.org_identifier])
 		);
@@ -405,6 +428,20 @@ export class MaterialRequestsService {
 				ip
 			);
 
+		let reuseForm: MaterialRequest['reuseForm'] = {};
+		try {
+			for (const keyValue of graphQlMaterialRequest.material_request_reuse_form_values) {
+				if (keyValue.key === 'startTime' || keyValue.key === 'endTime') {
+					const parsed = Number.parseInt(keyValue.value);
+					reuseForm[keyValue.key] = Number.isNaN(parsed) ? null : parsed;
+				} else {
+					reuseForm[keyValue.key] = keyValue.value;
+				}
+			}
+		} catch (_) {
+			reuseForm = null;
+		}
+
 		const transformedMaterialRequest: MaterialRequest = {
 			id: graphQlMaterialRequest.id,
 			objectId: graphQlMaterialRequest.ie_object_id,
@@ -418,6 +455,7 @@ export class MaterialRequestsService {
 				graphQlMaterialRequest.intellectualEntity?.created_at,
 			objectAccessThrough: [],
 			objectLicences: [],
+			reuseForm,
 			profileId: graphQlMaterialRequest.profile_id,
 			reason: graphQlMaterialRequest.reason,
 			createdAt: graphQlMaterialRequest.created_at,

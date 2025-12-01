@@ -1,0 +1,10 @@
+mutation insertMaterialRequestReuseForm($keyValues: [app_material_request_reuse_form_values_insert_input!]!) {
+	insert_app_material_request_reuse_form_values(objects: $keyValues) {
+		returning {
+			key
+			value
+			id
+			material_request_id
+		}
+	}
+}

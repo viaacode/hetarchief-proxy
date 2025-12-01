@@ -44,6 +44,10 @@ mutation updateMaterialRequest(
 					}
 				}
 			}
+			material_request_reuse_form_values{
+				key
+				value
+			}
 		}
 	}
 }

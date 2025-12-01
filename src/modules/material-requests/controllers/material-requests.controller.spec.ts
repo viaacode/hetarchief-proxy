@@ -132,6 +132,7 @@ describe('MaterialRequestsController', () => {
 					reason: 'voor mijn onderzoek en studie',
 					type: MaterialRequestType.VIEW,
 					requesterCapacity: Lookup_App_Material_Request_Requester_Capacity_Enum.Education,
+					reuseForm: undefined,
 				},
 				new SessionUserEntity({
 					...mockUser,
