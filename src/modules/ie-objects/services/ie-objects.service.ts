@@ -1,5 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import fs from 'node:fs/promises';
+import { retry } from 'async';
 
 import { DataService, PlayerTicketService } from '@meemoo/admin-core-api';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
@@ -624,10 +625,19 @@ export class IeObjectsService {
 		try {
 			// Excludes ie-objects where dcterms_format === newspaperpage, since those pages don't load the newspaper images correctly
 			// https://meemoo.atlassian.net/browse/ARC-3202
-			const { graph_intellectual_entity: ieObjects } = await this.dataService.execute<
-				FindIeObjectsForSitemapQuery,
-				FindIeObjectsForSitemapQueryVariables
-			>(FindIeObjectsForSitemapDocument, { licenses, limit, offset });
+			const fetchObjectsFunc = async () =>
+				this.dataService.execute<
+					FindIeObjectsForSitemapQuery,
+					FindIeObjectsForSitemapQueryVariables
+				>(FindIeObjectsForSitemapDocument, { licenses, limit, offset });
+			const response = await retry(
+				{
+					interval: 60000,
+					times: 10,
+				},
+				fetchObjectsFunc
+			);
+			const ieObjects = response.graph_intellectual_entity;
 
 			return Pagination<IeObjectsSitemap>({
 				items: ieObjects.map((ieObject) => this.adaptForSitemap(ieObject)),

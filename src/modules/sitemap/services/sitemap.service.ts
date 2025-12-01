@@ -259,17 +259,12 @@ export class SitemapService {
 					SITEMAP_XML_OBJECTS_SIZE
 				);
 				if ((ieObjectsResponse.items?.length || 0) > 0) {
-					const responseCount = ieObjectsResponse.items.length;
 					const xmlUrl = await this.formatAndUploadIeObjectAsSitemapXml(
 						ieObjectsResponse.items,
 						pageOffset + ieObjectsResponse.page,
 						sitemapConfig
 					);
-					const currentIndex = Math.min(
-						i + Math.min(ieObjectsResponse.size, responseCount),
-						responseCount
-					);
-					console.info(`Uploading sitemap for ${label}: ${currentIndex} objects processed`);
+					console.info(`Uploading sitemap for ${label}: ${i} objects processed`);
 					xmlUrls.push(xmlUrl);
 				}
 				i += SITEMAP_XML_OBJECTS_SIZE;
