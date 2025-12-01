@@ -57,6 +57,7 @@ export const mockGqlMaterialRequest1: FindMaterialRequestsQuery['app_material_re
 				'VRT/b1f60efadf5243d78c7c91512adaa6cefe52723ff35848268894c7861d852b79/keyframes/keyframes_1_1/keyframe1.jpg',
 		},
 	},
+	material_request_reuse_form_values: [],
 };
 
 export const mockGqlMaterialRequest2: FindMaterialRequestsByIdQuery['app_material_requests'][0] = {
@@ -105,6 +106,7 @@ export const mockGqlMaterialRequest2: FindMaterialRequestsByIdQuery['app_materia
 			],
 		},
 	},
+	material_request_reuse_form_values: [],
 };
 
 export const mockMaterialRequest1: MaterialRequest = {
@@ -131,6 +133,7 @@ export const mockMaterialRequest1: MaterialRequest = {
 		'VRT/b1f60efadf5243d78c7c91512adaa6cefe52723ff35848268894c7861d852b79/keyframes/keyframes_1_1/keyframe1.jpg',
 	objectAccessThrough: [],
 	objectLicences: [],
+	reuseForm: undefined,
 };
 
 const mockMaterialRequest2: MaterialRequest = {

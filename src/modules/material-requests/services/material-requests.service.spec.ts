@@ -430,6 +430,7 @@ describe('MaterialRequestsService', () => {
 					reason: mockGqlMaterialRequest1.reason,
 					type: mockGqlMaterialRequest1.type,
 					requesterCapacity: mockGqlMaterialRequest1.requester_capacity,
+					reuseForm: undefined,
 				},
 				new SessionUserEntity({
 					...mockUser,

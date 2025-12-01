@@ -36,5 +36,9 @@ mutation insertMaterialRequest($newMaterialRequest: app_material_requests_insert
 				}
 			}
 		}
+		material_request_reuse_form_values{
+			key
+			value
+		}
 	}
 }
