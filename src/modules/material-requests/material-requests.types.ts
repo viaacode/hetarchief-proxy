@@ -23,7 +23,7 @@ export interface MaterialRequest {
 	objectPublishedOrCreatedDate?: string;
 	objectAccessThrough: IeObjectAccessThrough[];
 	objectLicences: IeObjectLicense[];
-	reuseForm?: MaterialRequestReuseForm;
+	reuseForm?: MaterialRequestReuseForm | null;
 	profileId: string;
 	reason: string;
 	createdAt: string;

@@ -57,7 +57,7 @@ export const mockGqlMaterialRequest1: FindMaterialRequestsQuery['app_material_re
 				'VRT/b1f60efadf5243d78c7c91512adaa6cefe52723ff35848268894c7861d852b79/keyframes/keyframes_1_1/keyframe1.jpg',
 		},
 	},
-	material_request_reuse_form_values: [],
+	material_request_reuse_form_values: null,
 };
 
 export const mockGqlMaterialRequest2: FindMaterialRequestsByIdQuery['app_material_requests'][0] = {
@@ -106,7 +106,23 @@ export const mockGqlMaterialRequest2: FindMaterialRequestsByIdQuery['app_materia
 			],
 		},
 	},
-	material_request_reuse_form_values: [],
+	material_request_reuse_form_values: [
+		{
+			key: 'representationId',
+			value: 'https://data-int.hetarchief.be/id/entity/600ca4a485e3ddc2cb4aaa70f1b25036',
+		},
+		{ key: 'startTime', value: undefined },
+		{ key: 'endTime', value: '2000' },
+		{ key: 'downloadQuality', value: 'NORMAL' },
+		{ key: 'intendedUsage', value: 'INTERN' },
+		{ key: 'intendedUsageDescription', value: 'Some custom text' },
+		{ key: 'distributionAccess', value: 'INTERN' },
+		{ key: 'distributionType', value: 'DIGITAL_OFFLINE' },
+		{ key: 'materialEditing', value: 'NONE' },
+		{ key: 'geographicalUsage', value: 'COMPLETELY_LOCAL' },
+		{ key: 'timeUsageType', value: 'UNLIMITED' },
+		{ key: 'copyrightDisplay', value: 'SAME_TIME_WITH_OBJECT' },
+	],
 };
 
 export const mockMaterialRequest1: MaterialRequest = {

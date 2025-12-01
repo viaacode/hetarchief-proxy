@@ -428,13 +428,18 @@ export class MaterialRequestsService {
 				ip
 			);
 
-		const reuseForm = {};
-		for (const keyValue of graphQlMaterialRequest.material_request_reuse_form_values) {
-			if (keyValue.key === 'startTime' || keyValue.key === 'endTime') {
-				reuseForm[keyValue.key] = Number.parseInt(keyValue.value);
-			} else {
-				reuseForm[keyValue.key] = keyValue.value;
+		let reuseForm: MaterialRequest['reuseForm'] = {};
+		try {
+			for (const keyValue of graphQlMaterialRequest.material_request_reuse_form_values) {
+				if (keyValue.key === 'startTime' || keyValue.key === 'endTime') {
+					const parsed = Number.parseInt(keyValue.value);
+					reuseForm[keyValue.key] = Number.isNaN(parsed) ? null : parsed;
+				} else {
+					reuseForm[keyValue.key] = keyValue.value;
+				}
 			}
+		} catch (_) {
+			reuseForm = null;
 		}
 
 		const transformedMaterialRequest: MaterialRequest = {
