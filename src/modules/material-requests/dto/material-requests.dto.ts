@@ -157,9 +157,11 @@ export class CreateMaterialRequestDto {
 	organisation?: string | null = null;
 
 	@IsObject()
-	@ApiProperty({
+	@IsOptional()
+	@ApiPropertyOptional({
 		type: Object,
 		description: 'The data object with all key-value pairs of the reuse form',
+		default: null,
 	})
 	reuseForm: Record<string, string>;
 }

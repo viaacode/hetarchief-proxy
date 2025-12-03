@@ -48,6 +48,7 @@ export interface MaterialRequest {
 
 export interface MaterialRequestReuseForm {
 	representationId?: string;
+	thumbnailUrl?: string;
 	startTime?: number;
 	endTime?: number;
 	downloadQuality?: string;

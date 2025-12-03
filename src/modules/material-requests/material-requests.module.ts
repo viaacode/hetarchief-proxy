@@ -1,4 +1,4 @@
-import { DataModule } from '@meemoo/admin-core-api';
+import { DataModule, PlayerTicketModule, VideoStillsModule } from '@meemoo/admin-core-api';
 import { Module } from '@nestjs/common';
 
 import { MaterialRequestsController } from './controllers/material-requests.controller';
@@ -20,6 +20,7 @@ import { SpacesModule } from '~modules/spaces';
 		EventsModule,
 		SpacesModule,
 		IeObjectsModule,
+		VideoStillsModule,
 	],
 	exports: [MaterialRequestsService],
 })
