@@ -1,4 +1,4 @@
-import { DataService } from '@meemoo/admin-core-api';
+import { DataService, VideoStillsService } from '@meemoo/admin-core-api';
 import {
 	BadRequestException,
 	Injectable,
@@ -61,6 +61,7 @@ import type { Organisation } from '~modules/organisations/organisations.types';
 
 import { OrganisationsService } from '~modules/organisations/services/organisations.service';
 
+import { VideoStillInfo } from '@viaa/avo2-types/types/video-stills';
 import { limitAccessToObjectDetails } from '~modules/ie-objects/helpers/limit-access-to-object-details';
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
@@ -78,7 +79,8 @@ export class MaterialRequestsService {
 		private campaignMonitorService: CampaignMonitorService,
 		private organisationsService: OrganisationsService,
 		private spacesService: SpacesService,
-		private ieObjectsService: IeObjectsService
+		private ieObjectsService: IeObjectsService,
+		private videoStillsService: VideoStillsService
 	) {}
 
 	public async findAll(
@@ -256,11 +258,18 @@ export class MaterialRequestsService {
 		if (createMaterialRequestDto.reuseForm) {
 			const keys = Object.keys(createMaterialRequestDto.reuseForm);
 			const reuseFormVariables: InsertMaterialRequestReuseFormMutationVariables = {
-				keyValues: keys.map((key) => ({
-					material_request_id: createdMaterialRequest.id,
-					key,
-					value: createMaterialRequestDto.reuseForm[key]?.toString(),
-				})),
+				keyValues: [
+					...keys.map((key) => ({
+						material_request_id: createdMaterialRequest.id,
+						key,
+						value: createMaterialRequestDto.reuseForm[key]?.toString(),
+					})),
+					{
+						material_request_id: createdMaterialRequest.id,
+						key: 'thumbnailUrl',
+						value: await this.findVideoStillForMaterialRequest(createMaterialRequestDto.reuseForm),
+					},
+				],
 			};
 
 			const { insert_app_material_request_reuse_form_values: createdMaterialRequestFormValues } =
@@ -401,6 +410,28 @@ export class MaterialRequestsService {
 		}
 	}
 
+	private async findVideoStillForMaterialRequest(
+		reuseForm: Record<string, string>
+	): Promise<string | null> {
+		const startTime = Number.parseInt(reuseForm.startTime);
+
+		if (startTime && startTime > 0 && reuseForm.representationId) {
+			const stillInfo = await this.videoStillsService.getFirstVideoStills([
+				{
+					externalId: reuseForm.representationId,
+					startTime: startTime * 1000,
+				},
+			]);
+			const filteredInfo = (stillInfo?.filter((item) => !isNil(item)) || []) as VideoStillInfo[];
+
+			if (filteredInfo.length) {
+				return filteredInfo[0].thumbnailImagePath;
+			}
+		}
+
+		return null;
+	}
+
 	/**
 	 * Adapt a material request as returned by a graphQl response to our internal model
 	 */
@@ -421,13 +452,6 @@ export class MaterialRequestsService {
 				graphQlMaterialRequest.intellectualEntity?.schemaMaintainer?.org_identifier
 		);
 
-		const objectThumbnailUrl: string | undefined =
-			await this.ieObjectsService.getThumbnailUrlWithToken(
-				graphQlMaterialRequest.intellectualEntity?.schemaThumbnail?.schema_thumbnail_url?.[0],
-				referer,
-				ip
-			);
-
 		let reuseForm: MaterialRequest['reuseForm'] = {};
 		try {
 			for (const keyValue of graphQlMaterialRequest.material_request_reuse_form_values) {
@@ -441,6 +465,14 @@ export class MaterialRequestsService {
 		} catch (_) {
 			reuseForm = null;
 		}
+
+		const objectThumbnailUrl: string | undefined =
+			await this.ieObjectsService.getThumbnailUrlWithToken(
+				reuseForm?.thumbnailUrl ||
+					graphQlMaterialRequest.intellectualEntity?.schemaThumbnail?.schema_thumbnail_url?.[0],
+				referer,
+				ip
+			);
 
 		const transformedMaterialRequest: MaterialRequest = {
 			id: graphQlMaterialRequest.id,
