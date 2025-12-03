@@ -416,16 +416,16 @@ export class MaterialRequestsService {
 		const startTime = Number.parseInt(reuseForm.startTime);
 
 		if (startTime && startTime > 0 && reuseForm.representationId) {
-			const stillInfo = await this.videoStillsService.getFirstVideoStills([
+			const stillInfos = await this.videoStillsService.getFirstVideoStills([
 				{
 					externalId: reuseForm.representationId,
 					startTime: startTime * 1000,
 				},
 			]);
-			const filteredInfo = (stillInfo?.filter((item) => !isNil(item)) || []) as VideoStillInfo[];
+			const filteredInfos = (stillInfos?.filter((item) => !isNil(item)) || []) as VideoStillInfo[];
 
-			if (filteredInfo.length) {
-				return filteredInfo[0].thumbnailImagePath;
+			if (filteredInfos.length) {
+				return filteredInfos[0].thumbnailImagePath;
 			}
 		}
 
