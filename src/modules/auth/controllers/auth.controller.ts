@@ -57,7 +57,7 @@ export class AuthController {
 				if (user.getUser().acceptedTosAt) {
 					// update last access
 					this.usersService
-						.updateLastAccessDate(user.getId())
+						.updateLastAccessDate(user?.getId())
 						.then(() => {
 							// Sync the new last-access-date to the info in campaign monitor since we do not have a nightly sync for hetarchief
 							this.campaignMonitorService
@@ -82,7 +82,7 @@ export class AuthController {
 								});
 						})
 						.catch(() => {
-							this.logger.error(`Failed to update user lastAccessAt date. id: ${user.getId()}`);
+							this.logger.error(`Failed to update user lastAccessAt date. id: ${user?.getId()}`);
 						});
 				}
 			}

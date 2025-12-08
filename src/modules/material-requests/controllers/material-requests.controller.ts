@@ -64,7 +64,7 @@ export class MaterialRequestsController {
 		const validatedQueryDto = this.validateMaintainerIdsWithUserGroup(user, queryDto);
 
 		return await this.materialRequestsService.findAll(validatedQueryDto, {
-			userProfileId: user.getId(),
+			userProfileId: user?.getId(),
 			userGroup: user.getGroupId(),
 			isPersonal: false,
 		});
@@ -83,7 +83,7 @@ export class MaterialRequestsController {
 		const validatedQueryDto = this.validateMaintainerIdsWithUserGroup(user, queryDto);
 
 		return this.materialRequestsService.findAll(validatedQueryDto, {
-			userProfileId: user.getId(),
+			userProfileId: user?.getId(),
 			userGroup: user.getGroupId(),
 			isPersonal: true,
 		});
@@ -116,7 +116,7 @@ export class MaterialRequestsController {
 		@SessionUser() user: SessionUserEntity
 	): Promise<MaterialRequest> {
 		return await this.materialRequestsService.createMaterialRequest(createMaterialRequestDto, {
-			userProfileId: user.getId(),
+			userProfileId: user?.getId(),
 		});
 	}
 
@@ -132,7 +132,7 @@ export class MaterialRequestsController {
 	): Promise<MaterialRequest> {
 		return await this.materialRequestsService.updateMaterialRequest(
 			materialRequestId,
-			user.getId(),
+			user?.getId(),
 			updateMaterialRequestDto
 		);
 	}
@@ -148,7 +148,7 @@ export class MaterialRequestsController {
 	): Promise<{ status: string }> {
 		const affectedRows = await this.materialRequestsService.deleteMaterialRequest(
 			materialRequestId,
-			user.getId()
+			user?.getId()
 		);
 
 		if (affectedRows > 0) {
@@ -172,7 +172,7 @@ export class MaterialRequestsController {
 
 		try {
 			const materialRequests = await this.materialRequestsService.findAll(dto, {
-				userProfileId: user.getId(),
+				userProfileId: user?.getId(),
 				userGroup: user.getGroupId(),
 				isPersonal: true,
 			});
@@ -197,7 +197,7 @@ export class MaterialRequestsController {
 				materialRequests.items.map(async (materialRequest: MaterialRequest) => {
 					await this.materialRequestsService.updateMaterialRequest(
 						materialRequest.id,
-						user.getId(),
+						user?.getId(),
 						{
 							type: materialRequest.type,
 							reason: materialRequest.reason,
@@ -218,7 +218,7 @@ export class MaterialRequestsController {
 						id: EventsHelper.getEventId(request),
 						type: LogEventType.ITEM_REQUEST,
 						source: request.path,
-						subject: user.getId(),
+						subject: user?.getId(),
 						time: new Date().toISOString(),
 						data: {
 							material_request_group_id,

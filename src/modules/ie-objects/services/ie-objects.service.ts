@@ -168,7 +168,7 @@ export class IeObjectsService {
 						page: 1,
 						size: 1000,
 					},
-					user.getId()
+					user?.getId()
 				);
 
 				spacesIds = spaces.items.map((space) => space.maintainerId);
@@ -1238,7 +1238,7 @@ export class IeObjectsService {
 				status: VisitStatus.APPROVED,
 			},
 			{
-				userProfileId: user.getId(),
+				userProfileId: user?.getId(),
 				// a visitor can see visit requests that have been approved for visitor spaces with status requested and active
 				// https://meemoo.atlassian.net/browse/ARC-1949
 				visitorSpaceStatuses: [VisitorSpaceStatus.Requested, VisitorSpaceStatus.Active],
@@ -1267,7 +1267,7 @@ export class IeObjectsService {
 					page: 1,
 					size: 100,
 				},
-				user.getId()
+				user?.getId()
 			);
 			accessibleVisitorSpaceIds = compact([
 				...spaces.items.map((space) => space.maintainerId),
@@ -1308,7 +1308,7 @@ export class IeObjectsService {
 		visitorSpaceAccessInfo: IeObjectsVisitorSpaceInfo
 	): Partial<IeObject> {
 		const limitedObjectDetails = limitAccessToObjectDetails(folderObjectItem, {
-			userId: user.getId(),
+			userId: user?.getId(),
 			sector: user.getSector(),
 			maintainerId: user.getOrganisationId(),
 			groupId: user.getGroupId(),

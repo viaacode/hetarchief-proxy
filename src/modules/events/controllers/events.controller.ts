@@ -34,7 +34,7 @@ export class EventsController {
 			id: EventsHelper.getEventId(request),
 			type: createEventsDto.type,
 			source: createEventsDto.path,
-			subject: user.getId() || null,
+			subject: user?.getId() || null,
 			time: new Date().toISOString(),
 		};
 

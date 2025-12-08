@@ -70,7 +70,7 @@ export class SpacesController {
 			// If someone requests all spaces but doesn't have access to all spaces, we only return the active spaces
 			queryDto.status = [VisitorSpaceStatus.Active];
 		}
-		const spaces = await this.spacesService.findAll(queryDto, user.getId());
+		const spaces = await this.spacesService.findAll(queryDto, user?.getId());
 
 		// CP ADMINS always have access to their own space
 		if (user.getGroupName() === GroupName.CP_ADMIN) {

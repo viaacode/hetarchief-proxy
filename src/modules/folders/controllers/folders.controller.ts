@@ -69,7 +69,7 @@ export class FoldersController {
 		@SessionUser() user: SessionUserEntity
 	): Promise<IPagination<Folder>> {
 		// For Anonymous users, it should return an empty array
-		if (isNil(user.getId())) {
+		if (isNil(user?.getId())) {
 			return Pagination<Folder>({
 				items: [],
 				page: 1,
@@ -78,7 +78,13 @@ export class FoldersController {
 			});
 		}
 
-		const folders = await this.foldersService.findFoldersByUser(user.getId(), referer, ip, 1, 1000);
+		const folders = await this.foldersService.findFoldersByUser(
+			user?.getId(),
+			referer,
+			ip,
+			1,
+			1000
+		);
 
 		// Limit access to the objects in the folders
 		const visitorSpaceAccessInfo =
@@ -118,7 +124,7 @@ export class FoldersController {
 		const folderObjects: IPagination<Partial<IeObject>> =
 			await this.foldersService.findObjectsByFolderId(
 				folderId,
-				user.getId(),
+				user?.getId(),
 				queryDto,
 				referer,
 				ip
@@ -180,7 +186,7 @@ export class FoldersController {
 			{
 				name: createFolderDto.name,
 				description: createFolderDto.description,
-				user_profile_id: user.getId(),
+				user_profile_id: user?.getId(),
 				is_default: false,
 			},
 			referer,
@@ -198,7 +204,7 @@ export class FoldersController {
 		@Body() updateFolderDto: CreateOrUpdateFolderDto,
 		@SessionUser() user: SessionUserEntity
 	): Promise<Folder> {
-		return await this.foldersService.update(folderId, user.getId(), updateFolderDto, referer, ip);
+		return await this.foldersService.update(folderId, user?.getId(), updateFolderDto, referer, ip);
 	}
 
 	@Delete(':folderId')
@@ -208,7 +214,7 @@ export class FoldersController {
 		@Param('folderId') folderId: string,
 		@SessionUser() user: SessionUserEntity
 	): Promise<{ status: string }> {
-		const affectedRows = await this.foldersService.delete(folderId, user.getId());
+		const affectedRows = await this.foldersService.delete(folderId, user?.getId());
 		if (affectedRows > 0) {
 			return { status: 'the folder has been deleted' };
 		}
@@ -227,7 +233,7 @@ export class FoldersController {
 		@SessionUser() user: SessionUserEntity
 	): Promise<Partial<IeObject> & { folderEntryCreatedAt: string }> {
 		const collection = await this.foldersService.findFolderById(folderId, referer, ip);
-		if (collection.userProfileId !== user.getId()) {
+		if (collection.userProfileId !== user?.getId()) {
 			throw new ForbiddenException('You can only add objects to your own folders');
 		}
 
@@ -246,7 +252,7 @@ export class FoldersController {
 				id: EventsHelper.getEventId(request),
 				type: LogEventType.ITEM_BOOKMARK,
 				source: request.path,
-				subject: user.getId(),
+				subject: user?.getId(),
 				time: new Date().toISOString(),
 				data: {
 					type: mapDcTermsFormatToSimpleType(ieObject.dctermsFormat),
@@ -274,13 +280,13 @@ export class FoldersController {
 		@SessionUser() user: SessionUserEntity
 	): Promise<{ status: string }> {
 		const collection = await this.foldersService.findFolderById(folderId, referer, ip);
-		if (collection.userProfileId !== user.getId()) {
+		if (collection.userProfileId !== user?.getId()) {
 			throw new ForbiddenException('You can only delete objects from your own folders');
 		}
 		const affectedRows = await this.foldersService.removeObjectFromFolder(
 			folderId,
 			convertSchemaIdentifierToId(objectSchemaIdentifier),
-			user.getId()
+			user?.getId()
 		);
 		if (affectedRows > 0) {
 			return { status: 'the object has been deleted' };
@@ -304,10 +310,10 @@ export class FoldersController {
 			this.foldersService.findFolderById(oldFolderId, referer, ip),
 			this.foldersService.findFolderById(newFolderId, referer, ip),
 		]);
-		if (oldFolder.userProfileId !== user.getId()) {
+		if (oldFolder.userProfileId !== user?.getId()) {
 			throw new ForbiddenException('You can only move objects from your own folders');
 		}
-		if (newFolder.userProfileId !== user.getId()) {
+		if (newFolder.userProfileId !== user?.getId()) {
 			throw new ForbiddenException('You can only move objects to your own folders');
 		}
 
@@ -320,7 +326,7 @@ export class FoldersController {
 		await this.foldersService.removeObjectFromFolder(
 			oldFolderId,
 			convertSchemaIdentifierToId(objectSchemaIdentifier),
-			user.getId()
+			user?.getId()
 		);
 		return folderObject;
 	}
@@ -395,7 +401,7 @@ export class FoldersController {
 	): Promise<FolderShared> {
 		const folder = await this.foldersService.findFolderById(folderId, referer, ip);
 
-		if (folder?.userProfileId === user.getId()) {
+		if (folder?.userProfileId === user?.getId()) {
 			return {
 				status: FolderStatus.ALREADY_OWNER,
 				folderId: folder.id,
@@ -406,7 +412,7 @@ export class FoldersController {
 		const createdFolder = await this.foldersService.create(
 			{
 				name: folder?.name,
-				user_profile_id: user.getId(),
+				user_profile_id: user?.getId(),
 				is_default: false,
 			},
 			referer,
