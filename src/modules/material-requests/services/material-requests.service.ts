@@ -452,9 +452,13 @@ export class MaterialRequestsService {
 				graphQlMaterialRequest.intellectualEntity?.schemaMaintainer?.org_identifier
 		);
 
-		let reuseForm: MaterialRequest['reuseForm'] = {};
+		let reuseForm: MaterialRequest['reuseForm'];
 		try {
 			for (const keyValue of graphQlMaterialRequest.material_request_reuse_form_values) {
+				if (!reuseForm) {
+					reuseForm = {};
+				}
+
 				if (keyValue.key === 'startTime' || keyValue.key === 'endTime') {
 					const parsed = Number.parseInt(keyValue.value);
 					reuseForm[keyValue.key] = Number.isNaN(parsed) ? null : parsed;
