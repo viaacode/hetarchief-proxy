@@ -98,13 +98,13 @@ export class CampaignMonitorController {
 				await this.campaignMonitorService.sendConfirmationMail(preferences, language);
 			} else {
 				// Logged-in user subscribes to the newsletter
-				const updatedUser = await this.usersService.getById(user.getId());
+				const updatedUser = await this.usersService.getById(user?.getId());
 				if (!updatedUser) {
 					throw new InternalServerErrorException({
 						message: 'Failed to update preferences for campaign monitor. User was not found',
 						additionalInfo: {
 							preferences,
-							userId: user.getId(),
+							userId: user?.getId(),
 						},
 					});
 				}
@@ -128,7 +128,7 @@ export class CampaignMonitorController {
 						id: EventsHelper.getEventId(request),
 						type: LogEventType.NEWSLETTER_SUBSCRIBE,
 						source: request.path,
-						subject: user.getId(),
+						subject: user?.getId(),
 						time: new Date().toISOString(),
 						data: {
 							user_group_id: user.getGroupId(),

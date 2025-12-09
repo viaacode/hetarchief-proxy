@@ -219,7 +219,7 @@ export class IeObjectsController {
 
 		const xmlContent = convertObjectToXml(
 			limitAccessToObjectDetails(objectMetadata, {
-				userId: user.getId(),
+				userId: user?.getId(),
 				isKeyUser: user.getIsKeyUser(),
 				sector: user.getSector(),
 				groupId: user.getGroupId(),
@@ -289,7 +289,7 @@ export class IeObjectsController {
 			await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
 
 		const censoredObjectMetadata = limitAccessToObjectDetails(objectMetadata, {
-			userId: user.getId(),
+			userId: user?.getId(),
 			isKeyUser: user.getIsKeyUser(),
 			sector: user.getSector(),
 			groupId: user.getGroupId(),
@@ -362,7 +362,7 @@ export class IeObjectsController {
 		// Limit the amount of props returned for an ie object based on licenses and sector
 		const censoredParentIeObject: Partial<RelatedIeObject> | null = parentIeObject
 			? limitAccessToObjectDetails(parentIeObject, {
-					userId: user.getId(),
+					userId: user?.getId(),
 					isKeyUser: user.getIsKeyUser(),
 					sector: user.getSector(),
 					groupId: user.getGroupId(),
@@ -374,7 +374,7 @@ export class IeObjectsController {
 		const censoredChildIeObjects: Partial<RelatedIeObject>[] = (childIeObjects || []).map(
 			(childIeObject) =>
 				limitAccessToObjectDetails(childIeObject, {
-					userId: user.getId(),
+					userId: user?.getId(),
 					isKeyUser: user.getIsKeyUser(),
 					sector: user.getSector(),
 					groupId: user.getGroupId(),
@@ -425,7 +425,7 @@ export class IeObjectsController {
 			const similarIeObjects = compact(
 				(similarIeObjectsResponse.items || []).map((item) =>
 					limitAccessToObjectDetails(item, {
-						userId: user.getId(),
+						userId: user?.getId(),
 						isKeyUser: user.getIsKeyUser(),
 						sector: user.getSector(),
 						groupId: user.getGroupId(),
@@ -493,7 +493,7 @@ export class IeObjectsController {
 			...searchResult,
 			items: searchResult.items.map((item) =>
 				limitAccessToObjectDetails(item, {
-					userId: user.getId(),
+					userId: user?.getId(),
 					isKeyUser: user.getIsKeyUser(),
 					sector: user.getSector(),
 					groupId: user.getGroupId(),
@@ -662,7 +662,7 @@ export class IeObjectsController {
 				// Censor the object based on the licenses and sector
 				// Only leave the properties that the current user can see of this object
 				const limitedObject = limitAccessToObjectDetails(ieObject, {
-					userId: user.getId(),
+					userId: user?.getId(),
 					isKeyUser: user.getIsKeyUser(),
 					sector: user.getSector(),
 					groupId: user.getGroupId(),
@@ -759,7 +759,7 @@ export class IeObjectsController {
 				// Censor the object based on the licenses and sector
 				// Only leave the properties that the current user can see of this object
 				const limitedObject = limitAccessToObjectDetails(ieObject, {
-					userId: user.getId(),
+					userId: user?.getId(),
 					isKeyUser: user.getIsKeyUser(),
 					sector: user.getSector(),
 					groupId: user.getGroupId(),

@@ -159,7 +159,7 @@ export class MaterialRequestsController {
 	): Promise<{ status: string }> {
 		const affectedRows = await this.materialRequestsService.deleteMaterialRequest(
 			materialRequestId,
-			user.getId()
+			user?.getId()
 		);
 
 		if (affectedRows > 0) {
@@ -236,7 +236,7 @@ export class MaterialRequestsController {
 						id: EventsHelper.getEventId(request),
 						type: LogEventType.ITEM_REQUEST,
 						source: request.path,
-						subject: user.getId(),
+						subject: user?.getId(),
 						time: new Date().toISOString(),
 						data: {
 							material_request_group_id,

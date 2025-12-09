@@ -47,11 +47,11 @@ export class NotificationsController {
 		@Query() queryDto: NotificationsQueryDto,
 		@SessionUser() user: SessionUserEntity
 	): Promise<IPagination<Notification>> {
-		if (!user.getId()) {
+		if (!user?.getId()) {
 			throw new ForbiddenException('You need to be logged in to get your notifications');
 		}
 		return await this.notificationsService.findNotificationsByUser(
-			user.getId(),
+			user?.getId(),
 			addMonths(new Date(), -1).toISOString(),
 			queryDto.page,
 			queryDto.size
@@ -64,7 +64,7 @@ export class NotificationsController {
 		@Param('notificationId') notificationId: string,
 		@SessionUser() user: SessionUserEntity
 	): Promise<Notification> {
-		return await this.notificationsService.update(notificationId, user.getId(), {
+		return await this.notificationsService.update(notificationId, user?.getId(), {
 			status: NotificationStatus.READ,
 		});
 	}
@@ -74,7 +74,7 @@ export class NotificationsController {
 	public async markAllAsRead(
 		@SessionUser() user: SessionUserEntity
 	): Promise<{ status: string; total: number }> {
-		const amountUpdated = await this.notificationsService.updateAll(user.getId(), {
+		const amountUpdated = await this.notificationsService.updateAll(user?.getId(), {
 			status: NotificationStatus.READ,
 		});
 		return { status: `updated ${amountUpdated} notifications`, total: amountUpdated };
@@ -289,7 +289,7 @@ export class NotificationsController {
 	): Promise<{ message: 'success' }> {
 		await this.notificationsService.createFromMaintenanceAlert(
 			createFromMaintenanceAlert.id,
-			user.getId()
+			user?.getId()
 		);
 		return { message: 'success' };
 	}

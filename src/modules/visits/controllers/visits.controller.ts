@@ -132,7 +132,7 @@ export class VisitsController {
 					page: 1,
 					size: 100,
 				},
-				user.getId()
+				user?.getId()
 			);
 
 			const visits = visitorSpaces.items.map((visitorSpace: VisitorSpace) => {
@@ -148,7 +148,7 @@ export class VisitsController {
 		}
 
 		const visitRequests = await this.visitsService.findAll(queryDto, {
-			userProfileId: user.getId(),
+			userProfileId: user?.getId(),
 			// a visitor can see visit requests that have been approved for visitor spaces with status requested and active
 			// https://meemoo.atlassian.net/browse/ARC-1949
 			visitorSpaceStatuses: [VisitorSpaceStatus.Requested, VisitorSpaceStatus.Active],
@@ -180,7 +180,7 @@ export class VisitsController {
 		@Param('slug') slug: string,
 		@SessionUser() user: SessionUserEntity
 	): Promise<{ status: AccessStatus }> {
-		return { status: await this.visitsService.getAccessStatus(slug, user.getId()) };
+		return { status: await this.visitsService.getAccessStatus(slug, user?.getId()) };
 	}
 
 	@Get(':id')
@@ -232,7 +232,7 @@ export class VisitsController {
 				reason: 'permanent access',
 				visitorFirstName: user.getFirstName(),
 				visitorLastName: user.getLastName(),
-				visitorId: user.getId(),
+				visitorId: user?.getId(),
 				visitorMail: user.getMail(),
 				visitorLanguage: user.getLanguage(),
 				spaceMail: spaceInfo.contactInfo.email,
@@ -242,7 +242,7 @@ export class VisitsController {
 				spaceSlug: spaceInfo.slug,
 				timeframe: '',
 				updatedAt: new Date().toISOString(),
-				userProfileId: user.getId(),
+				userProfileId: user?.getId(),
 				accessType: VisitAccessType.Full,
 				accessibleFolderIds: null,
 			};
@@ -250,7 +250,7 @@ export class VisitsController {
 
 		// Find visit request that is approved for the current time
 		const activeVisit = await this.visitsService.getActiveVisitForUserAndSpace(
-			user.getId(),
+			user?.getId(),
 			visitorSpaceSlug
 		);
 
@@ -301,7 +301,7 @@ export class VisitsController {
 		@Param('slug') slug: string,
 		@SessionUser() user: SessionUserEntity
 	): Promise<VisitSpaceCount> {
-		const count = await this.visitsService.getPendingVisitCountForUserBySlug(user.getId(), slug);
+		const count = await this.visitsService.getPendingVisitCountForUserBySlug(user?.getId(), slug);
 		return count;
 	}
 
@@ -347,7 +347,7 @@ export class VisitsController {
 				...createVisitDto,
 				visitorSpaceId: visitorSpace.id,
 			},
-			user.getId()
+			user?.getId()
 		);
 
 		// Send notifications
@@ -360,7 +360,7 @@ export class VisitsController {
 				id: EventsHelper.getEventId(request),
 				type: LogEventType.VISIT_REQUEST,
 				source: request.path,
-				subject: user.getId(),
+				subject: user?.getId(),
 				time: new Date().toISOString(),
 				data: {
 					visitor_space_id: visitorSpace.id,
@@ -398,7 +398,7 @@ export class VisitsController {
 			user.hasNot(Permission.MANAGE_CP_VISIT_REQUESTS)
 		) {
 			if (
-				originalVisit.userProfileId !== user.getId() ||
+				originalVisit.userProfileId !== user?.getId() ||
 				updateVisitDtoValidated.status !== VisitStatus.CANCELLED_BY_VISITOR
 			) {
 				const userLanguage = user.getLanguage();
@@ -418,7 +418,7 @@ export class VisitsController {
 		}
 
 		// update the Visit
-		const visit = await this.visitsService.update(id, updateVisitDtoValidated, user.getId());
+		const visit = await this.visitsService.update(id, updateVisitDtoValidated, user?.getId());
 
 		// Post-processing for notifications
 		if (updateVisitDtoValidated.status) {
@@ -457,7 +457,7 @@ export class VisitsController {
 					id: EventsHelper.getEventId(request),
 					type: LogEventType.VISIT_REQUEST_APPROVED,
 					source: request.path,
-					subject: user.getId(),
+					subject: user?.getId(),
 					time: new Date().toISOString(),
 					data: {
 						visitor_space_request_id: visit.id,
@@ -480,7 +480,7 @@ export class VisitsController {
 							? LogEventType.VISIT_REQUEST_REVOKED
 							: LogEventType.VISIT_REQUEST_DENIED,
 					source: request.path,
-					subject: user.getId(),
+					subject: user?.getId(),
 					time: new Date().toISOString(),
 					data: {
 						visitor_space_request_id: visit.id,
@@ -502,7 +502,7 @@ export class VisitsController {
 					id: EventsHelper.getEventId(request),
 					type: LogEventType.VISIT_REQUEST_CANCELLED_BY_VISITOR,
 					source: request.path,
-					subject: user.getId(),
+					subject: user?.getId(),
 					time: new Date().toISOString(),
 					data: {
 						visitor_space_request_id: visit.id,

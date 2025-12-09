@@ -206,7 +206,7 @@ export class NewspapersController {
 				id: EventsHelper.getEventId(request),
 				type: LogEventType.DOWNLOAD,
 				source: currentPageUrl || referer || request.path,
-				subject: user.getId(),
+				subject: user?.getId(),
 				time: new Date().toISOString(),
 				data: {
 					download_type: 'zip',
@@ -301,7 +301,7 @@ export class NewspapersController {
 				id: EventsHelper.getEventId(request),
 				type: LogEventType.DOWNLOAD,
 				source: currentPageUrl || referer || request.path,
-				subject: user.getId(),
+				subject: user?.getId(),
 				time: new Date().toISOString(),
 				data: {
 					type: SimpleIeObjectType.NEWSPAPER,

@@ -1,6 +1,6 @@
 {
   "name": "hetarchief-proxy",
-  "version": "3.3.3",
+  "version": "3.3.8",
   "description": "",
   "author": "",
   "private": true,
@@ -30,11 +30,12 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.config.js",
+    "install-pre-commit-hook": "lefthook install",
     "generate-database-types": "dotenv -e ./.env/.env.local graphql-codegen -- --config codegen-hetarchief.yml",
     "bump": "bump-package-versions --part=patch --strategy=highest ./package.json"
   },
   "dependencies": {
-    "@meemoo/admin-core-api": "4.6.19",
+    "@meemoo/admin-core-api": "4.6.26",
     "@nestjs/common": "9.4.3",
     "@nestjs/config": "3.2.3",
     "@nestjs/core": "9.4.3",
@@ -45,6 +46,7 @@
     "@viaa/avo2-types": "3.3.0",
     "app-root-path": "3.0.0",
     "archiver": "7.0.1",
+    "async": "^3.2.6",
     "blend-promise-utils": "1.28.0",
     "class-transformer": "0.5.1",
     "class-validator": "0.14.1",
@@ -100,6 +102,7 @@
     "@swc/cli": "^0.6.0",
     "@swc/core": "^1.11.7",
     "@types/archiver": "6.0.2",
+    "@types/async": "^3.2.25",
     "@types/cache-manager": "3.4.3",
     "@types/connect-redis": "0.0.18",
     "@types/cron": "1.7.3",
