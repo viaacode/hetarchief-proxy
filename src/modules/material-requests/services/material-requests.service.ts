@@ -56,7 +56,11 @@ import {
 
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 import { convertSchemaIdentifierToId } from '~modules/ie-objects/helpers/convert-schema-identifier-to-id';
-import type { IeObjectType } from '~modules/ie-objects/ie-objects.types';
+import {
+	IeObjectAccessThrough,
+	IeObjectLicense,
+	IeObjectType,
+} from '~modules/ie-objects/ie-objects.types';
 import type { Organisation } from '~modules/organisations/organisations.types';
 
 import { OrganisationsService } from '~modules/organisations/services/organisations.service';
@@ -246,6 +250,7 @@ export class MaterialRequestsService {
 				requester_capacity:
 					createMaterialRequestDto?.requesterCapacity ||
 					Lookup_App_Material_Request_Requester_Capacity_Enum.Other,
+				ie_object_representation_id: createMaterialRequestDto.objectRepresentationId,
 			},
 		};
 
@@ -255,32 +260,11 @@ export class MaterialRequestsService {
 				InsertMaterialRequestMutationVariables
 			>(InsertMaterialRequestDocument, variables);
 
-		if (createMaterialRequestDto.reuseForm) {
-			const keys = Object.keys(createMaterialRequestDto.reuseForm);
-			const reuseFormVariables: InsertMaterialRequestReuseFormMutationVariables = {
-				keyValues: [
-					...keys.map((key) => ({
-						material_request_id: createdMaterialRequest.id,
-						key,
-						value: createMaterialRequestDto.reuseForm[key]?.toString(),
-					})),
-					{
-						material_request_id: createdMaterialRequest.id,
-						key: 'thumbnailUrl',
-						value: await this.findVideoStillForMaterialRequest(createMaterialRequestDto.reuseForm),
-					},
-				],
-			};
-
-			const { insert_app_material_request_reuse_form_values: createdMaterialRequestFormValues } =
-				await this.dataService.execute<
-					InsertMaterialRequestReuseFormMutation,
-					InsertMaterialRequestReuseFormMutationVariables
-				>(InsertMaterialRequestReuseFormDocument, reuseFormVariables);
-
-			createdMaterialRequest.material_request_reuse_form_values =
-				createdMaterialRequestFormValues.returning;
-		}
+		createdMaterialRequest.material_request_reuse_form_values =
+			await this.insertReuseFormForMaterialRequest(
+				createdMaterialRequest.id,
+				createMaterialRequestDto.reuseForm
+			);
 
 		const organisations = await this.organisationsService.findOrganisationsBySchemaIdentifiers(
 			compact([createdMaterialRequest?.intellectualEntity?.schemaMaintainer?.org_identifier])
@@ -410,6 +394,37 @@ export class MaterialRequestsService {
 		}
 	}
 
+	private insertReuseFormForMaterialRequest = async (
+		materialRequestId: string,
+		reuseForm: Record<string, string>
+	) => {
+		if (reuseForm) {
+			const keys = Object.keys(reuseForm);
+			const reuseFormVariables: InsertMaterialRequestReuseFormMutationVariables = {
+				keyValues: [
+					...keys.map((key) => ({
+						material_request_id: materialRequestId,
+						key,
+						value: reuseForm[key]?.toString(),
+					})),
+					{
+						material_request_id: materialRequestId,
+						key: 'thumbnailUrl',
+						value: await this.findVideoStillForMaterialRequest(reuseForm),
+					},
+				],
+			};
+
+			const { insert_app_material_request_reuse_form_values: createdMaterialRequestFormValues } =
+				await this.dataService.execute<
+					InsertMaterialRequestReuseFormMutation,
+					InsertMaterialRequestReuseFormMutationVariables
+				>(InsertMaterialRequestReuseFormDocument, reuseFormVariables);
+
+			return createdMaterialRequestFormValues.returning;
+		}
+	};
+
 	private async findVideoStillForMaterialRequest(
 		reuseForm: Record<string, string>
 	): Promise<string | null> {
@@ -470,18 +485,37 @@ export class MaterialRequestsService {
 			reuseForm = null;
 		}
 
+		const objectSchemaIdentifier = graphQlMaterialRequest.intellectualEntity?.schema_identifier;
+		const { objectAccessThrough, objectLicences } = await this.getAccessThroughAndLicences(
+			objectSchemaIdentifier,
+			user,
+			ip
+		);
+
+		const isPublicDomain: boolean =
+			objectLicences?.includes(IeObjectLicense.PUBLIEK_CONTENT) &&
+			objectLicences?.includes(IeObjectLicense.PUBLIC_DOMAIN);
+
 		const objectThumbnailUrl: string | undefined =
 			await this.ieObjectsService.getThumbnailUrlWithToken(
 				reuseForm?.thumbnailUrl ||
 					graphQlMaterialRequest.intellectualEntity?.schemaThumbnail?.schema_thumbnail_url?.[0],
 				referer,
-				ip
+				ip,
+				isPublicDomain
 			);
 
-		const transformedMaterialRequest: MaterialRequest = {
+		const objectRepresentations = await this.ieObjectsService.adaptRepresentations(
+			[graphQlMaterialRequest.objectRepresentation],
+			referer,
+			ip,
+			isPublicDomain
+		);
+
+		return {
 			id: graphQlMaterialRequest.id,
 			objectId: graphQlMaterialRequest.ie_object_id,
-			objectSchemaIdentifier: graphQlMaterialRequest.intellectualEntity?.schema_identifier,
+			objectSchemaIdentifier,
 			objectSchemaName: graphQlMaterialRequest.intellectualEntity?.schema_name,
 			objectDctermsFormat: graphQlMaterialRequest.intellectualEntity?.dctermsFormat?.[0]
 				?.dcterms_format as IeObjectType,
@@ -489,8 +523,10 @@ export class MaterialRequestsService {
 			objectPublishedOrCreatedDate:
 				graphQlMaterialRequest.intellectualEntity?.schema_date_published ||
 				graphQlMaterialRequest.intellectualEntity?.created_at,
-			objectAccessThrough: [],
-			objectLicences: [],
+			objectAccessThrough,
+			objectLicences,
+			objectRepresentationId: graphQlMaterialRequest.ie_object_representation_id,
+			objectRepresentation: objectRepresentations?.[0],
 			reuseForm,
 			profileId: graphQlMaterialRequest.profile_id,
 			reason: graphQlMaterialRequest.reason,
@@ -524,8 +560,6 @@ export class MaterialRequestsService {
 				(graphQlMaterialRequest as FindMaterialRequestsQuery['app_material_requests'][0])
 					?.intellectualEntity?.premisIdentifier?.[0]?.value || null,
 		};
-
-		return this.updateRequestWithAccessThroughAndLicences(transformedMaterialRequest, user, ip);
 	}
 
 	public adaptMaintainers(
@@ -537,13 +571,16 @@ export class MaterialRequestsService {
 		};
 	}
 
-	public async updateRequestWithAccessThroughAndLicences(
-		materialRequest: MaterialRequest,
+	public async getAccessThroughAndLicences(
+		objectSchemaIdentifier: string,
 		user: SessionUserEntity,
 		ip: string
-	): Promise<MaterialRequest | null> {
+	): Promise<{
+		objectAccessThrough: IeObjectAccessThrough[];
+		objectLicences: IeObjectLicense[];
+	}> {
 		const objectMetadata = await this.ieObjectsService.findMetadataByIeObjectId(
-			convertSchemaIdentifierToId(materialRequest.objectSchemaIdentifier),
+			convertSchemaIdentifierToId(objectSchemaIdentifier),
 			null,
 			ip
 		);
@@ -562,7 +599,6 @@ export class MaterialRequestsService {
 		});
 
 		return {
-			...materialRequest,
 			objectAccessThrough: censoredObjectMetadata.accessThrough,
 			objectLicences: censoredObjectMetadata.licenses,
 		};

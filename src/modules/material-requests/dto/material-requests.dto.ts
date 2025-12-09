@@ -118,6 +118,15 @@ export class CreateMaterialRequestDto {
 	objectSchemaIdentifier: string;
 
 	@IsString()
+	@IsOptional()
+	@ApiProperty({
+		type: String,
+		description: 'The representation id of the object which the user wants to use',
+		example: 'https://data-int.hetarchief.be/id/entity/078a64bd61a8f4edb35c0af1fe062b32',
+	})
+	objectRepresentationId?: string = '';
+
+	@IsString()
 	@IsEnum(MaterialRequestType)
 	@ApiProperty({
 		type: String,

@@ -8,6 +8,7 @@ import type {
 import {
 	IeObjectAccessThrough,
 	IeObjectLicense,
+	IeObjectRepresentation,
 	IeObjectType,
 } from '~modules/ie-objects/ie-objects.types';
 import type { Locale } from '~shared/types/types';
@@ -23,6 +24,8 @@ export interface MaterialRequest {
 	objectPublishedOrCreatedDate?: string;
 	objectAccessThrough: IeObjectAccessThrough[];
 	objectLicences: IeObjectLicense[];
+	objectRepresentationId?: string;
+	objectRepresentation?: IeObjectRepresentation;
 	reuseForm?: MaterialRequestReuseForm | null;
 	profileId: string;
 	reason: string;
@@ -47,7 +50,6 @@ export interface MaterialRequest {
 }
 
 export interface MaterialRequestReuseForm {
-	representationId?: string;
 	thumbnailUrl?: string;
 	startTime?: number;
 	endTime?: number;
