@@ -142,6 +142,7 @@ export class MaterialRequestsController {
 			materialRequestId,
 			user,
 			updateMaterialRequestDto,
+			updateMaterialRequestDto.reuseForm,
 			referer,
 			ip
 		);
@@ -220,6 +221,7 @@ export class MaterialRequestsController {
 							is_pending: false,
 							updated_at: new Date().toISOString(),
 						},
+						materialRequest.reuseForm,
 						referer,
 						ip
 					);

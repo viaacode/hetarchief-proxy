@@ -20,6 +20,7 @@ import type {
 	GqlMaterialRequestMaintainer,
 	MaterialRequest,
 	MaterialRequestMaintainer,
+	MaterialRequestReuseForm,
 	MaterialRequestSendRequestListUserInfo,
 } from '../material-requests.types';
 
@@ -45,6 +46,7 @@ import {
 	InsertMaterialRequestReuseFormMutation,
 	InsertMaterialRequestReuseFormMutationVariables,
 	Lookup_App_Material_Request_Requester_Capacity_Enum,
+	Lookup_App_Material_Request_Type_Enum,
 	UpdateMaterialRequestDocument,
 	type UpdateMaterialRequestMutation,
 	type UpdateMaterialRequestMutationVariables,
@@ -263,6 +265,7 @@ export class MaterialRequestsService {
 		createdMaterialRequest.material_request_reuse_form_values =
 			await this.insertReuseFormForMaterialRequest(
 				createdMaterialRequest.id,
+				createdMaterialRequest.ie_object_representation_id,
 				createMaterialRequestDto.reuseForm
 			);
 
@@ -280,6 +283,7 @@ export class MaterialRequestsService {
 			App_Material_Requests_Set_Input,
 			'type' | 'reason' | 'organisation' | 'requester_capacity' | 'is_pending' | 'updated_at'
 		>,
+		reuseForm: Record<string, string> | MaterialRequestReuseForm | undefined,
 		referer: string,
 		ip: string
 	): Promise<MaterialRequest> {
@@ -304,20 +308,26 @@ export class MaterialRequestsService {
 			updateMaterialRequest,
 		});
 
-		if (isEmpty(updatedMaterialRequest.returning[0])) {
+		const updatedRequest = updatedMaterialRequest.returning?.[0];
+
+		if (isEmpty(updatedRequest)) {
 			throw new BadRequestException(
 				`Material request (${materialRequestId}) could not be updated.`
 			);
 		}
 
+		updatedRequest.material_request_reuse_form_values =
+			await this.insertReuseFormForMaterialRequest(
+				materialRequestId,
+				updatedRequest.ie_object_representation_id,
+				type === Lookup_App_Material_Request_Type_Enum.Reuse ? reuseForm : undefined
+			);
+
 		const organisations = await this.organisationsService.findOrganisationsBySchemaIdentifiers(
-			compact([
-				updatedMaterialRequest?.returning?.[0]?.intellectualEntity?.schemaMaintainer
-					?.org_identifier,
-			])
+			compact([updatedRequest?.intellectualEntity?.schemaMaintainer?.org_identifier])
 		);
 
-		return this.adapt(updatedMaterialRequest.returning[0], organisations, user, referer, ip);
+		return this.adapt(updatedRequest, organisations, user, referer, ip);
 	}
 
 	public async deleteMaterialRequest(
@@ -396,7 +406,8 @@ export class MaterialRequestsService {
 
 	private insertReuseFormForMaterialRequest = async (
 		materialRequestId: string,
-		reuseForm: Record<string, string>
+		representationId: string,
+		reuseForm: Record<string, string> | MaterialRequestReuseForm
 	) => {
 		if (reuseForm) {
 			const keys = Object.keys(reuseForm);
@@ -410,7 +421,7 @@ export class MaterialRequestsService {
 					{
 						material_request_id: materialRequestId,
 						key: 'thumbnailUrl',
-						value: await this.findVideoStillForMaterialRequest(reuseForm),
+						value: await this.findVideoStillForMaterialRequest(representationId, reuseForm),
 					},
 				],
 			};
@@ -426,14 +437,15 @@ export class MaterialRequestsService {
 	};
 
 	private async findVideoStillForMaterialRequest(
-		reuseForm: Record<string, string>
+		representationId: string,
+		reuseForm: Record<string, string> | MaterialRequestReuseForm
 	): Promise<string | null> {
-		const startTime = Number.parseInt(reuseForm.startTime);
+		const startTime = Number.parseInt(reuseForm?.startTime.toString());
 
-		if (startTime && startTime > 0 && reuseForm.representationId) {
+		if (startTime && startTime > 0 && representationId) {
 			const stillInfos = await this.videoStillsService.getFirstVideoStills([
 				{
-					externalId: reuseForm.representationId,
+					externalId: representationId,
 					startTime: startTime * 1000,
 				},
 			]);

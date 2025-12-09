@@ -215,6 +215,15 @@ export class UpdateMaterialRequestDto {
 		description: 'To which organisation the user belongs to',
 	})
 	organisation?: string | null;
+
+	@IsObject()
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: Object,
+		description: 'The data object with all key-value pairs of the reuse form',
+		default: null,
+	})
+	reuseForm: Record<string, string>;
 }
 
 export class SendRequestListDto {
