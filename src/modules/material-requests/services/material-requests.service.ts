@@ -410,7 +410,8 @@ export class MaterialRequestsService {
 		reuseForm: Record<string, string> | MaterialRequestReuseForm
 	) => {
 		if (reuseForm) {
-			const keys = Object.keys(reuseForm);
+			// Avoid duplicate thumbnails so filtering the original in favor of a more accurate one
+			const keys = Object.keys(reuseForm).filter((key) => key !== 'thumbnailUrl');
 			const reuseFormVariables: InsertMaterialRequestReuseFormMutationVariables = {
 				keyValues: [
 					...keys.map((key) => ({
