@@ -710,7 +710,7 @@ export class IeObjectsService {
 			| Record<string, string>
 			| { abraham_id: string; abraham_uri: string; code_number: string }
 		)[];
-		const ieObjectByPages: IeObjectPages | null = await this.adaptRepresentations(
+		const ieObjectByPages: IeObjectPages | null = await this.adaptRepresentationsPaged(
 			isRepresentedByResponse,
 			hasPartResponse,
 			referer,
@@ -1045,7 +1045,7 @@ export class IeObjectsService {
 		return ieObject;
 	}
 
-	public async adaptRepresentations(
+	public async adaptRepresentationsPaged(
 		isRepresentedByResponse: GetIsRepresentedByQuery,
 		hasPartResponse: GetHasPartQuery,
 		referer: string,
@@ -1074,41 +1074,12 @@ export class IeObjectsService {
 					page: DbIeObjectWithRepresentations,
 					pageIndex: number
 				): Promise<IeObjectPage | null> => {
-					let representations: IeObjectRepresentation[] = compact(
-						await mapLimit(
-							page?.isRepresentedBy || [],
-							20,
-							async (representation: DbRepresentation): Promise<IeObjectRepresentation> => {
-								if (!representation) {
-									return null;
-								}
-								const transcriptInfo = representation.schemaTranscriptUrls?.[0];
-								const schemaTranscript = transcriptInfo?.schema_transcript;
-								const schemaTranscriptUrl = transcriptInfo?.schema_transcript_url || null;
-
-								return {
-									id: representation.id,
-									schemaName: representation.schema_name,
-									isMediaFragmentOf: representation.is_media_fragment_of,
-									schemaInLanguage: representation.schema_in_language,
-									schemaStartTime: representation.schema_start_time,
-									schemaEndTime: representation.schema_end_time,
-									schemaTranscript,
-									schemaTranscriptUrl,
-									edmIsNextInSequence: representation.edm_is_next_in_sequence,
-									updatedAt: representation.updated_at,
-									files: await this.adaptFiles(
-										representation.includes,
-										referer,
-										ip,
-										isPublicDomain
-									),
-								};
-							}
-						)
-					).flat();
-
-					representations = this.cleanupRepresentations(representations);
+					const representations = await this.adaptRepresentations(
+						page?.isRepresentedBy,
+						referer,
+						ip,
+						isPublicDomain
+					);
 
 					// Avoid returning empty array representations
 					if (representations.length) {
@@ -1132,6 +1103,44 @@ export class IeObjectsService {
 			pages,
 			mentions: allMentions,
 		};
+	}
+
+	public async adaptRepresentations(
+		isRepresentedBy: DbIeObjectWithRepresentations['isRepresentedBy'] | undefined,
+		referer: string,
+		ip: string,
+		isPublicDomain: boolean
+	): Promise<IeObjectRepresentation[]> {
+		const representations = compact(
+			await mapLimit(
+				isRepresentedBy || [],
+				20,
+				async (representation: DbRepresentation): Promise<IeObjectRepresentation> => {
+					if (!representation) {
+						return null;
+					}
+					const transcriptInfo = representation.schemaTranscriptUrls?.[0];
+					const schemaTranscript = transcriptInfo?.schema_transcript;
+					const schemaTranscriptUrl = transcriptInfo?.schema_transcript_url || null;
+
+					return {
+						id: representation.id,
+						schemaName: representation.schema_name,
+						isMediaFragmentOf: representation.is_media_fragment_of,
+						schemaInLanguage: representation.schema_in_language,
+						schemaStartTime: representation.schema_start_time,
+						schemaEndTime: representation.schema_end_time,
+						schemaTranscript,
+						schemaTranscriptUrl,
+						edmIsNextInSequence: representation.edm_is_next_in_sequence,
+						updatedAt: representation.updated_at,
+						files: await this.adaptFiles(representation.includes, referer, ip, isPublicDomain),
+					};
+				}
+			)
+		).flat();
+
+		return this.cleanupRepresentations(representations);
 	}
 
 	public async adaptFiles(

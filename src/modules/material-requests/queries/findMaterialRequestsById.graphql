@@ -44,7 +44,35 @@ query findMaterialRequestsById($id: uuid!) {
 				}
 			}
 		}
-		material_request_reuse_form_values{
+		ie_object_representation_id
+		objectRepresentation {
+			id
+			schema_name
+			is_media_fragment_of
+			schema_in_language
+			schema_start_time
+			schema_end_time
+			schema_transcript
+			schemaTranscriptUrls {
+				schema_transcript
+				schema_transcript_url
+			}
+			edm_is_next_in_sequence
+			updated_at
+			includes {
+				file {
+					id
+					schema_name
+					ebucore_has_mime_type
+					premis_stored_at
+					schema_thumbnail_url
+					schema_duration
+					edm_is_next_in_sequence
+					created_at
+				}
+			}
+		}
+		material_request_reuse_form_values {
 			key
 			value
 		}

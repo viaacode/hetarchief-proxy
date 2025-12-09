@@ -10,6 +10,7 @@ import {
 	Lookup_App_Material_Request_Type_Enum,
 } from '~generated/graphql-db-types-hetarchief';
 import { IeObjectType } from '~modules/ie-objects/ie-objects.types';
+import { representationMp3 } from '~modules/ie-objects/services/ie-objects.service.mocks';
 import { GroupId, GroupName, Permission, type User } from '~modules/users/types';
 import { Locale } from '~shared/types/types';
 
@@ -150,6 +151,7 @@ export const mockMaterialRequest1: MaterialRequest = {
 	objectAccessThrough: [],
 	objectLicences: [],
 	reuseForm: undefined,
+	objectRepresentation: representationMp3,
 };
 
 const mockMaterialRequest2: MaterialRequest = {
@@ -181,6 +183,7 @@ const mockMaterialRequest2: MaterialRequest = {
 		'VRT/b1f60efadf5243d78c7c91512adaa6cefe52723ff35848268894c7861d852b79/keyframes/keyframes_1_1/keyframe1.jpg',
 	objectAccessThrough: [],
 	objectLicences: [],
+	objectRepresentation: representationMp3,
 };
 
 export const mockMaterialRequestsResponse = {

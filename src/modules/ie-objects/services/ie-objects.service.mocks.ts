@@ -116,7 +116,7 @@ export const mockAutocompleteQueryResponseCreators = {
 	},
 };
 
-const representationMp3: IeObjectRepresentation = {
+export const representationMp3: IeObjectRepresentation = {
 	id: 'https://data.hetarchief.be/id/entity/41ed99a7cab4918da5536322c05a9162',
 	schemaName:
 		"Lageresolutiekopie (mp3): 'Interview met leerlingen van de Europaklassen (week 69)  4-10 februari 1996\n\tschool Anderlecht' (mg7fr16t33)",
