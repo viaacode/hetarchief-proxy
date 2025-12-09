@@ -1,4 +1,4 @@
-import { DataService } from '@meemoo/admin-core-api';
+import { DataService, VideoStillsService } from '@meemoo/admin-core-api';
 import { Test, type TestingModule } from '@nestjs/testing';
 
 import { CampaignMonitorService } from '../../campaign-monitor/services/campaign-monitor.service';
@@ -66,6 +66,11 @@ const mockIeObjectsService: Partial<Record<keyof IeObjectsService, jest.SpyInsta
 		licenses: [IeObjectLicense.PUBLIC_DOMAIN, IeObjectLicense.PUBLIEK_CONTENT],
 	})),
 	getVisitorSpaceAccessInfoFromUser: jest.fn(() => ({ objectIds: [], visitorSpaceIds: [] })),
+	adaptRepresentations: jest.fn(() => []),
+};
+
+const mockVideoStillsService: Partial<Record<keyof VideoStillsService, jest.SpyInstance>> = {
+	getFirstVideoStills: jest.fn(() => []),
 };
 
 const getDefaultMaterialRequestByIdResponse = (): {
@@ -122,6 +127,14 @@ describe('MaterialRequestsService', () => {
 				{
 					provide: IeObjectsService,
 					useValue: mockIeObjectsService,
+				},
+				{
+					provide: IeObjectsService,
+					useValue: mockIeObjectsService,
+				},
+				{
+					provide: VideoStillsService,
+					useValue: mockVideoStillsService,
 				},
 			],
 		})
@@ -483,6 +496,7 @@ describe('MaterialRequestsService', () => {
 					type: mockGqlMaterialRequest1.type,
 					reason: mockGqlMaterialRequest1.reason,
 				},
+				undefined,
 				'referer',
 				''
 			);

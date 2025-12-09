@@ -25,6 +25,7 @@ describe('MaterialRequestsDto', () => {
 				requesterCapacity: undefined,
 				type: undefined,
 				reason: '',
+				objectRepresentationId: '',
 			});
 		});
 	});

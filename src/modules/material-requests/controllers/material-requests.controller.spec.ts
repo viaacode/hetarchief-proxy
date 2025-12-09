@@ -153,6 +153,7 @@ describe('MaterialRequestsController', () => {
 				{
 					type: MaterialRequestType.REUSE,
 					reason: 'test',
+					reuseForm: undefined,
 				},
 				new SessionUserEntity(mockUser),
 				'referer',
