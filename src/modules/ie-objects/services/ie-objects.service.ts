@@ -1114,7 +1114,7 @@ export class IeObjectsService {
 		const representations = compact(
 			await mapLimit(
 				isRepresentedBy || [],
-				20,
+				5,
 				async (representation: DbRepresentation): Promise<IeObjectRepresentation> => {
 					if (!representation) {
 						return null;
