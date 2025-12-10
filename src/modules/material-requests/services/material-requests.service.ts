@@ -488,7 +488,7 @@ export class MaterialRequestsService {
 				}
 
 				if (keyValue.key === 'startTime' || keyValue.key === 'endTime') {
-					const parsed = Number.parseInt(keyValue.value);
+					const parsed = Number.parseFloat(keyValue.value);
 					reuseForm[keyValue.key] = Number.isNaN(parsed) ? null : parsed;
 				} else {
 					reuseForm[keyValue.key] = keyValue.value;
