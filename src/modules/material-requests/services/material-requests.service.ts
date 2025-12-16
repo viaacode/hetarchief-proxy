@@ -510,13 +510,15 @@ export class MaterialRequestsService {
 			objectLicences?.includes(IeObjectLicense.PUBLIC_DOMAIN);
 
 		const objectThumbnailUrl: string | undefined =
-			await this.ieObjectsService.getThumbnailUrlWithToken(
-				reuseForm?.thumbnailUrl ||
-					graphQlMaterialRequest.intellectualEntity?.schemaThumbnail?.schema_thumbnail_url?.[0],
-				referer,
-				ip,
-				isPublicDomain
-			);
+			graphQlMaterialRequest.ie_object_representation_id
+				? await this.ieObjectsService.getThumbnailUrlWithToken(
+						reuseForm?.thumbnailUrl ||
+							graphQlMaterialRequest.intellectualEntity?.schemaThumbnail?.schema_thumbnail_url?.[0],
+						referer,
+						ip,
+						isPublicDomain
+					)
+				: undefined;
 
 		const objectRepresentations = await this.ieObjectsService.adaptRepresentations(
 			[graphQlMaterialRequest.objectRepresentation],
