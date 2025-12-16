@@ -231,9 +231,7 @@ describe('MaterialRequestsService', () => {
 			expect(adapted.objectDctermsFormat).toEqual(
 				mockGqlMaterialRequest2.intellectualEntity.dctermsFormat[0].dcterms_format
 			);
-			expect(adapted.objectThumbnailUrl).toEqual(
-				mockGqlMaterialRequest2.intellectualEntity.schemaThumbnail.schema_thumbnail_url[0]
-			);
+			expect(adapted.objectThumbnailUrl).toEqual(undefined);
 			expect(adapted.reuseForm).toEqual({
 				representationId: mockGqlMaterialRequest2.material_request_reuse_form_values[0].value,
 				startTime: null,
