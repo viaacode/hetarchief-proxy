@@ -21,6 +21,8 @@ mutation updateMaterialRequest(
 			created_at
 			updated_at
 			is_pending
+			status
+			name
 			requester_capacity
 			organisation
 			requested_by {

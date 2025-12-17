@@ -281,13 +281,20 @@ export class MaterialRequestsService {
 		user: SessionUserEntity,
 		materialRequestInfo: Pick<
 			App_Material_Requests_Set_Input,
-			'type' | 'reason' | 'organisation' | 'requester_capacity' | 'is_pending' | 'updated_at'
+			| 'type'
+			| 'reason'
+			| 'organisation'
+			| 'requester_capacity'
+			| 'is_pending'
+			| 'status'
+			| 'name'
+			| 'updated_at'
 		>,
 		reuseForm: Record<string, string> | MaterialRequestReuseForm | undefined,
 		referer: string,
 		ip: string
 	): Promise<MaterialRequest> {
-		const { type, reason, organisation, requester_capacity, is_pending, updated_at } =
+		const { type, reason, organisation, requester_capacity, is_pending, status, name, updated_at } =
 			materialRequestInfo;
 
 		const updateMaterialRequest = {
@@ -296,6 +303,8 @@ export class MaterialRequestsService {
 			organisation,
 			requester_capacity,
 			is_pending,
+			status,
+			name,
 			updated_at,
 		};
 
@@ -549,6 +558,8 @@ export class MaterialRequestsService {
 			updatedAt: graphQlMaterialRequest.updated_at,
 			type: graphQlMaterialRequest.type,
 			isPending: graphQlMaterialRequest.is_pending,
+			status: graphQlMaterialRequest.status,
+			requestName: graphQlMaterialRequest.name,
 			requesterId: graphQlMaterialRequest.requested_by.id,
 			requesterFullName: graphQlMaterialRequest.requested_by.full_name,
 			requesterMail: graphQlMaterialRequest.requested_by.mail,

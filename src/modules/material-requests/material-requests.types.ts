@@ -1,8 +1,9 @@
-import type {
+import {
 	FindMaintainersWithMaterialRequestsQuery,
 	FindMaterialRequestsByIdQuery,
 	FindMaterialRequestsQuery,
 	Lookup_App_Material_Request_Requester_Capacity_Enum,
+	Lookup_App_Material_Request_Status_Enum,
 	Lookup_App_Material_Request_Type_Enum,
 } from '~generated/graphql-db-types-hetarchief';
 import {
@@ -27,12 +28,14 @@ export interface MaterialRequest {
 	objectRepresentationId?: string;
 	objectRepresentation?: IeObjectRepresentation;
 	reuseForm?: MaterialRequestReuseForm | null;
+	requestName?: string;
 	profileId: string;
 	reason: string;
 	createdAt: string;
 	updatedAt: string;
 	type: Lookup_App_Material_Request_Type_Enum;
 	isPending: boolean;
+	status: Lookup_App_Material_Request_Status_Enum;
 	requesterId: string;
 	requesterFullName: string;
 	requesterMail: string;
@@ -84,6 +87,15 @@ export enum MaterialRequestType {
 	REUSE = 'REUSE',
 	MORE_INFO = 'MORE_INFO',
 	VIEW = 'VIEW',
+}
+
+export enum MaterialRequestStatus {
+	NEW = 'NEW',
+	PENDING = 'PENDING',
+	APPROVED = 'APPROVED',
+	DENIED = 'DENIED',
+	CANCELLED = 'CANCELLED',
+	NONE = 'NONE',
 }
 
 export enum MaterialRequestRequesterCapacity {

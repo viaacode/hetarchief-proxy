@@ -1,6 +1,10 @@
 import { Idp } from '@viaa/avo2-types';
 
-import { type MaterialRequest, MaterialRequestType } from '../material-requests.types';
+import {
+	type MaterialRequest,
+	MaterialRequestStatus,
+	MaterialRequestType,
+} from '../material-requests.types';
 
 import {
 	type FindMaintainersWithMaterialRequestsQuery,
@@ -25,6 +29,7 @@ export const mockGqlMaterialRequest1: FindMaterialRequestsQuery['app_material_re
 	updated_at: '2022-03-18T08:32:57.256264',
 	type: MaterialRequestType.REUSE as any,
 	is_pending: true,
+	status: MaterialRequestStatus.NONE as any,
 	organisation: null,
 	requester_capacity: Lookup_App_Material_Request_Requester_Capacity_Enum.Education as any,
 	requested_by: {
@@ -70,6 +75,7 @@ export const mockGqlMaterialRequest2: FindMaterialRequestsByIdQuery['app_materia
 	updated_at: '2022-03-18T08:32:57.256264',
 	type: MaterialRequestType.REUSE as any,
 	is_pending: true,
+	status: MaterialRequestStatus.NONE as any,
 	organisation: null,
 	requester_capacity: Lookup_App_Material_Request_Requester_Capacity_Enum.Education as any,
 	requested_by: {
@@ -136,6 +142,7 @@ export const mockMaterialRequest1: MaterialRequest = {
 	updatedAt: '2022-03-18T08:32:57.256264',
 	type: Lookup_App_Material_Request_Type_Enum.Reuse,
 	isPending: true,
+	status: MaterialRequestStatus.NONE as any,
 	organisation: null,
 	requesterCapacity: Lookup_App_Material_Request_Requester_Capacity_Enum.Education,
 	requesterId: 'b6c5419f-6a19-4a41-a400-e0bbc0429c4f',
@@ -164,6 +171,7 @@ const mockMaterialRequest2: MaterialRequest = {
 	updatedAt: '2022-02-18T08:32:57.256264',
 	type: Lookup_App_Material_Request_Type_Enum.MoreInfo,
 	isPending: true,
+	status: MaterialRequestStatus.NONE as any,
 	organisation: null,
 	requesterCapacity: Lookup_App_Material_Request_Requester_Capacity_Enum.Education,
 	requesterId: 'df8024f9-ebdc-4f45-8390-72980a3f29f6',
