@@ -50,7 +50,7 @@ export class MaterialRequestsQueryDto {
 	@ApiPropertyOptional({
 		type: String,
 		isArray: true,
-		description: 'Which status of material request is requested',
+		description: 'Which statuses of material requests are requested',
 		default: undefined,
 		enum: MaterialRequestStatus,
 	})
