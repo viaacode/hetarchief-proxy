@@ -11,7 +11,11 @@ import {
 	IsString,
 } from 'class-validator';
 
-import { MaterialRequestOrderProp, MaterialRequestType } from '../material-requests.types';
+import {
+	MaterialRequestOrderProp,
+	MaterialRequestStatus,
+	MaterialRequestType,
+} from '../material-requests.types';
 
 import { commaSeparatedStringToArray } from '~shared/helpers/comma-separated-string-to-array';
 import { SortDirection } from '~shared/types';
@@ -39,6 +43,19 @@ export class MaterialRequestsQueryDto {
 	})
 	@Transform(commaSeparatedStringToArray)
 	type? = undefined;
+
+	@IsArray()
+	@IsEnum(MaterialRequestStatus, { each: true })
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		isArray: true,
+		description: 'Which statuses of material requests are requested',
+		default: undefined,
+		enum: MaterialRequestStatus,
+	})
+	@Transform(commaSeparatedStringToArray)
+	status? = undefined;
 
 	@IsArray()
 	@IsString({ each: true })
