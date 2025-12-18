@@ -242,4 +242,12 @@ export class SendRequestListDto {
 		description: 'The name of the organisation to which the user belongs',
 	})
 	organisation?: string | null = null;
+
+	@IsString()
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		description: 'The name the user gave this list of requests (key users only)',
+	})
+	requestName?: string | null = null;
 }

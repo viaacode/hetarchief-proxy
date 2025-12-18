@@ -8,6 +8,8 @@ query findMaterialRequestsById($id: uuid!) {
 		updated_at
 		type
 		is_pending
+		status
+		name
 		requester_capacity
 		organisation
 		requested_by {

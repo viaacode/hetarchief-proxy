@@ -8,6 +8,8 @@ mutation insertMaterialRequest($newMaterialRequest: app_material_requests_insert
 		created_at
 		updated_at
 		is_pending
+		status
+		name
 		requester_capacity
 		organisation
 		requested_by {

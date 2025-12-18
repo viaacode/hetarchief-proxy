@@ -30,6 +30,7 @@ import type { MaterialRequest, MaterialRequestMaintainer } from '../material-req
 
 import { MaterialRequestsService } from '../services/material-requests.service';
 
+import { Lookup_App_Material_Request_Status_Enum } from '~generated/graphql-db-types-hetarchief';
 import { EventsService } from '~modules/events/services/events.service';
 import { type LogEvent, LogEventType } from '~modules/events/types';
 import { mapDcTermsFormatToSimpleType } from '~modules/ie-objects/helpers/map-dc-terms-format-to-simple-type';
@@ -196,6 +197,7 @@ export class MaterialRequestsController {
 				// If the email does not exist, the campaign monitor service will default to process.env.MEEMOO_MAINTAINER_MISSING_EMAIL_FALLBACK
 				materialRequest.requesterCapacity = sendRequestListDto.type;
 				materialRequest.organisation = sendRequestListDto?.organisation;
+				materialRequest.requestName = sendRequestListDto?.requestName;
 			}
 
 			await this.materialRequestsService.sendRequestList(
@@ -219,6 +221,10 @@ export class MaterialRequestsController {
 							organisation: materialRequest.organisation,
 							requester_capacity: materialRequest.requesterCapacity,
 							is_pending: false,
+							status: materialRequest.reuseForm
+								? Lookup_App_Material_Request_Status_Enum.New
+								: Lookup_App_Material_Request_Status_Enum.None,
+							name: materialRequest.reuseForm ? materialRequest.requestName : undefined,
 							updated_at: new Date().toISOString(),
 						},
 						materialRequest.reuseForm,
