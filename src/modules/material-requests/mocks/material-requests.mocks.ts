@@ -159,6 +159,8 @@ export const mockMaterialRequest1: MaterialRequest = {
 	objectLicences: [],
 	reuseForm: undefined,
 	objectRepresentation: representationMp3,
+	requestName: null,
+	downloadUrl: null,
 };
 
 const mockMaterialRequest2: MaterialRequest = {
@@ -192,6 +194,8 @@ const mockMaterialRequest2: MaterialRequest = {
 	objectAccessThrough: [],
 	objectLicences: [],
 	objectRepresentation: representationMp3,
+	requestName: null,
+	downloadUrl: null,
 };
 
 export const mockMaterialRequestsResponse = {

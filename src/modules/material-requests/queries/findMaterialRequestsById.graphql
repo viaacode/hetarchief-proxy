@@ -10,6 +10,7 @@ query findMaterialRequestsById($id: uuid!) {
 		is_pending
 		status
 		name
+		download_url
 		requester_capacity
 		organisation
 		requested_by {

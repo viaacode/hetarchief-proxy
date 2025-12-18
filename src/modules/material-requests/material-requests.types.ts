@@ -28,7 +28,8 @@ export interface MaterialRequest {
 	objectRepresentationId?: string;
 	objectRepresentation?: IeObjectRepresentation;
 	reuseForm?: MaterialRequestReuseForm | null;
-	requestName?: string;
+	requestName: string;
+	downloadUrl: string;
 	profileId: string;
 	reason: string;
 	createdAt: string;
@@ -110,6 +111,8 @@ export enum MaterialRequestOrderProp {
 	CREATED_AT = 'createdAt',
 	UPDATED_AT = 'updatedAt',
 	TYPE = 'type',
+	STATUS = 'status',
+	REQUEST_NAME = 'requestName',
 	REQUESTER_FULL_NAME = 'requesterFullName',
 	REQUESTER_MAIL = 'requesterMail',
 	MAINTAINER_NAME = 'maintainerName',

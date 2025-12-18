@@ -15,11 +15,12 @@ import {
 	SendRequestListDto,
 } from '../dto/material-requests.dto';
 import { ORDER_PROP_TO_DB_PROP } from '../material-requests.consts';
-import type {
+import {
 	GqlMaterialRequest,
 	GqlMaterialRequestMaintainer,
 	MaterialRequest,
 	MaterialRequestMaintainer,
+	MaterialRequestOrderProp,
 	MaterialRequestReuseForm,
 	MaterialRequestSendRequestListUserInfo,
 } from '../material-requests.types';
@@ -152,6 +153,18 @@ export class MaterialRequestsService {
 			};
 		}
 
+		const orderBy = [
+			set(
+				{},
+				ORDER_PROP_TO_DB_PROP[orderProp] || ORDER_PROP_TO_DB_PROP.createdAt,
+				orderDirection || SortDirection.desc
+			),
+		];
+
+		if (orderProp === MaterialRequestOrderProp.STATUS) {
+			orderBy.push(set({}, ORDER_PROP_TO_DB_PROP.createdAt, SortDirection.desc));
+		}
+
 		const materialRequestsResponse = await this.dataService.execute<
 			FindMaterialRequestsQuery,
 			FindMaterialRequestsQueryVariables
@@ -159,11 +172,7 @@ export class MaterialRequestsService {
 			where,
 			offset,
 			limit,
-			orderBy: set(
-				{},
-				ORDER_PROP_TO_DB_PROP[orderProp] || ORDER_PROP_TO_DB_PROP.createdAt,
-				orderDirection || SortDirection.desc
-			),
+			orderBy,
 		});
 		const organisations = await this.organisationsService.findOrganisationsBySchemaIdentifiers(
 			compact(
@@ -559,7 +568,8 @@ export class MaterialRequestsService {
 			type: graphQlMaterialRequest.type,
 			isPending: graphQlMaterialRequest.is_pending,
 			status: graphQlMaterialRequest.status,
-			requestName: graphQlMaterialRequest.name,
+			downloadUrl: graphQlMaterialRequest.download_url ?? null,
+			requestName: graphQlMaterialRequest.name ?? null,
 			requesterId: graphQlMaterialRequest.requested_by.id,
 			requesterFullName: graphQlMaterialRequest.requested_by.full_name,
 			requesterMail: graphQlMaterialRequest.requested_by.mail,
