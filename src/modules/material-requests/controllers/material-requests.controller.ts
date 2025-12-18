@@ -221,8 +221,10 @@ export class MaterialRequestsController {
 							organisation: materialRequest.organisation,
 							requester_capacity: materialRequest.requesterCapacity,
 							is_pending: false,
-							status: Lookup_App_Material_Request_Status_Enum.New,
-							name: materialRequest.requestName,
+							status: materialRequest.reuseForm
+								? Lookup_App_Material_Request_Status_Enum.New
+								: Lookup_App_Material_Request_Status_Enum.None,
+							name: materialRequest.reuseForm ? materialRequest.requestName : undefined,
 							updated_at: new Date().toISOString(),
 						},
 						materialRequest.reuseForm,
