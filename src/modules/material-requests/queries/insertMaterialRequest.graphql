@@ -10,6 +10,7 @@ mutation insertMaterialRequest($newMaterialRequest: app_material_requests_insert
 		is_pending
 		status
 		name
+		download_url
 		requester_capacity
 		organisation
 		requested_by {
