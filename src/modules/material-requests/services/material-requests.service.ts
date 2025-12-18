@@ -97,7 +97,7 @@ export class MaterialRequestsService {
 		referer: string,
 		ip: string
 	): Promise<IPagination<MaterialRequest>> {
-		const { query, type, maintainerIds, isPending, page, size, orderProp, orderDirection } =
+		const { query, type, status, maintainerIds, isPending, page, size, orderProp, orderDirection } =
 			inputQuery;
 		const { offset, limit } = PaginationHelper.convertPagination(page, size);
 
@@ -134,6 +134,12 @@ export class MaterialRequestsService {
 		if (!isEmpty(type)) {
 			where.type = {
 				_in: isArray(type) ? type : [type],
+			};
+		}
+
+		if (!isEmpty(status)) {
+			where.status = {
+				_in: isArray(status) ? status : [status],
 			};
 		}
 
