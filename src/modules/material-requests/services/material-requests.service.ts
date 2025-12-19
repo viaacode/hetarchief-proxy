@@ -47,6 +47,7 @@ import {
 	InsertMaterialRequestReuseFormMutation,
 	InsertMaterialRequestReuseFormMutationVariables,
 	Lookup_App_Material_Request_Requester_Capacity_Enum,
+	Lookup_App_Material_Request_Status_Enum,
 	Lookup_App_Material_Request_Type_Enum,
 	UpdateMaterialRequestDocument,
 	type UpdateMaterialRequestMutation,
@@ -73,7 +74,6 @@ import { limitAccessToObjectDetails } from '~modules/ie-objects/helpers/limit-ac
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
-import { GroupId } from '~modules/users/types';
 import { PaginationHelper } from '~shared/helpers/pagination';
 import { SortDirection } from '~shared/types';
 
@@ -97,21 +97,29 @@ export class MaterialRequestsService {
 		referer: string,
 		ip: string
 	): Promise<IPagination<MaterialRequest>> {
-		const { query, type, status, maintainerIds, isPending, page, size, orderProp, orderDirection } =
-			inputQuery;
+		const {
+			query,
+			type,
+			status,
+			hasDownloadUrl,
+			maintainerIds,
+			isPending,
+			page,
+			size,
+			orderProp,
+			orderDirection,
+		} = inputQuery;
 		const { offset, limit } = PaginationHelper.convertPagination(page, size);
 
 		/** Dynamically build the where object  */
 		const where: App_Material_Requests_Bool_Exp = {};
 
 		if (!isEmpty(query) && query !== '%' && query !== '%%') {
-			where._or = [
-				{ requested_by: { full_name: { _ilike: query } } },
-				{ requested_by: { full_name_reversed: { _ilike: query } } },
-				{ requested_by: { mail: { _ilike: query } } },
-			];
+			// Everyone should be able to search on the IE Objects name
+			where._or = [{ intellectualEntity: { schema_name: { _ilike: query } } }];
 
-			if (user.getGroupId() === GroupId.MEEMOO_ADMIN) {
+			if (isPersonal) {
+				// So these are outgoing requests
 				where._or = [
 					...where._or,
 					{
@@ -119,11 +127,16 @@ export class MaterialRequestsService {
 							schemaMaintainer: { skos_pref_label: { _ilike: query } },
 						},
 					},
+					{ name: { _ilike: query } },
 				];
-			}
-
-			if (user.getGroupId() === GroupId.VISITOR) {
-				where._or = [...where._or, { intellectualEntity: { schema_name: { _ilike: query } } }];
+			} else {
+				// Incoming requests
+				where._or = [
+					...where._or,
+					{ requested_by: { full_name: { _ilike: query } } },
+					{ requested_by: { full_name_reversed: { _ilike: query } } },
+					{ requested_by: { mail: { _ilike: query } } },
+				];
 			}
 		}
 
@@ -157,6 +170,36 @@ export class MaterialRequestsService {
 			where.is_pending = {
 				_eq: isPending,
 			};
+		}
+
+		if (!isNil(hasDownloadUrl)) {
+			const downloadUrlQuery = [];
+
+			if (hasDownloadUrl.includes('true')) {
+				downloadUrlQuery.push({ download_url: { _is_null: false } });
+			}
+
+			if (hasDownloadUrl.includes('false')) {
+				downloadUrlQuery.push({
+					_and: [
+						{ download_url: { _is_null: true } },
+						{
+							status: {
+								_in: [
+									Lookup_App_Material_Request_Status_Enum.Approved,
+									Lookup_App_Material_Request_Status_Enum.Denied,
+								],
+							},
+						},
+					],
+				});
+			}
+
+			where._and = [
+				...(where._and || []),
+				{ type: { _eq: Lookup_App_Material_Request_Type_Enum.Reuse } },
+				{ _or: downloadUrlQuery },
+			];
 		}
 
 		const orderBy = [

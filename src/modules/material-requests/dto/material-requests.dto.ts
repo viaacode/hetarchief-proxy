@@ -62,6 +62,19 @@ export class MaterialRequestsQueryDto {
 	@Type(() => String)
 	@IsOptional()
 	@ApiPropertyOptional({
+		type: String,
+		isArray: true,
+		description: 'Does the material requests contain a download URL?',
+		default: undefined,
+	})
+	@Transform(commaSeparatedStringToArray)
+	hasDownloadUrl? = undefined;
+
+	@IsArray()
+	@IsString({ each: true })
+	@Type(() => String)
+	@IsOptional()
+	@ApiPropertyOptional({
 		isArray: true,
 		description: 'List of maintainer ids',
 		default: [],
