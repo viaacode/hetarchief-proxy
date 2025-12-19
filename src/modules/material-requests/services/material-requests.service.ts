@@ -211,7 +211,17 @@ export class MaterialRequestsService {
 		];
 
 		if (orderProp === MaterialRequestOrderProp.STATUS) {
+			// In case we have requested without a requestedAt, we sort them on creation date
 			orderBy.push(set({}, ORDER_PROP_TO_DB_PROP.requestedAt, SortDirection.desc));
+			orderBy.push(set({}, ORDER_PROP_TO_DB_PROP.createdAt, SortDirection.desc));
+		}
+
+		if (
+			(ORDER_PROP_TO_DB_PROP[orderProp] || ORDER_PROP_TO_DB_PROP.requestedAt) ===
+			ORDER_PROP_TO_DB_PROP.requestedAt
+		) {
+			// In case we have requested without a requestedAt, we sort them on creation date
+			orderBy.push(set({}, ORDER_PROP_TO_DB_PROP.createdAt, orderDirection || SortDirection.desc));
 		}
 
 		const materialRequestsResponse = await this.dataService.execute<
