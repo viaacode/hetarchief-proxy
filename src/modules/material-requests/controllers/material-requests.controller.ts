@@ -225,7 +225,7 @@ export class MaterialRequestsController {
 								? Lookup_App_Material_Request_Status_Enum.New
 								: Lookup_App_Material_Request_Status_Enum.None,
 							name: materialRequest.reuseForm ? materialRequest.requestName : undefined,
-							updated_at: new Date().toISOString(),
+							requested_at: new Date().toISOString(),
 						},
 						materialRequest.reuseForm,
 						referer,

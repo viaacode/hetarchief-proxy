@@ -34,6 +34,10 @@ export interface MaterialRequest {
 	reason: string;
 	createdAt: string;
 	updatedAt: string;
+	requestedAt: string;
+	approvedAt: string;
+	deniedAt: string;
+	cancelledAt: string;
 	type: Lookup_App_Material_Request_Type_Enum;
 	isPending: boolean;
 	status: Lookup_App_Material_Request_Status_Enum;

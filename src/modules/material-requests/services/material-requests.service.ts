@@ -205,13 +205,13 @@ export class MaterialRequestsService {
 		const orderBy = [
 			set(
 				{},
-				ORDER_PROP_TO_DB_PROP[orderProp] || ORDER_PROP_TO_DB_PROP.createdAt,
+				ORDER_PROP_TO_DB_PROP[orderProp] || ORDER_PROP_TO_DB_PROP.requestedAt,
 				orderDirection || SortDirection.desc
 			),
 		];
 
 		if (orderProp === MaterialRequestOrderProp.STATUS) {
-			orderBy.push(set({}, ORDER_PROP_TO_DB_PROP.createdAt, SortDirection.desc));
+			orderBy.push(set({}, ORDER_PROP_TO_DB_PROP.requestedAt, SortDirection.desc));
 		}
 
 		const materialRequestsResponse = await this.dataService.execute<
@@ -346,14 +346,22 @@ export class MaterialRequestsService {
 			| 'is_pending'
 			| 'status'
 			| 'name'
-			| 'updated_at'
+			| 'requested_at'
 		>,
 		reuseForm: Record<string, string> | MaterialRequestReuseForm | undefined,
 		referer: string,
 		ip: string
 	): Promise<MaterialRequest> {
-		const { type, reason, organisation, requester_capacity, is_pending, status, name, updated_at } =
-			materialRequestInfo;
+		const {
+			type,
+			reason,
+			organisation,
+			requester_capacity,
+			is_pending,
+			status,
+			name,
+			requested_at,
+		} = materialRequestInfo;
 
 		const updateMaterialRequest = {
 			type,
@@ -363,7 +371,8 @@ export class MaterialRequestsService {
 			is_pending,
 			status,
 			name,
-			updated_at,
+			requested_at,
+			updated_at: requested_at,
 		};
 
 		const { update_app_material_requests: updatedMaterialRequest } = await this.dataService.execute<
@@ -614,6 +623,10 @@ export class MaterialRequestsService {
 			reason: graphQlMaterialRequest.reason,
 			createdAt: graphQlMaterialRequest.created_at,
 			updatedAt: graphQlMaterialRequest.updated_at,
+			requestedAt: graphQlMaterialRequest.requested_at,
+			approvedAt: graphQlMaterialRequest.approved_at,
+			deniedAt: graphQlMaterialRequest.denied_at,
+			cancelledAt: graphQlMaterialRequest.cancelled_at,
 			type: graphQlMaterialRequest.type,
 			isPending: graphQlMaterialRequest.is_pending,
 			status: graphQlMaterialRequest.status,
