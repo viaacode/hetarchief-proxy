@@ -192,7 +192,7 @@ pipeline {
 }
 
 void getImageFromDockerfile() {
-	return 'node:24-alpine'
+	return 'node:24'
 }
 
 void getBaseImageName() {
