@@ -2,12 +2,12 @@
 
 ## General
 
-This repository contains the NodeJS backend proxy for Het Archief.
+This repository contains the NodeJS backend proxy for hetarchief.be.
 
 It is build with:
 
-- node: `v20.x.x` ( ~ `lts/20.4`)
-- npm: `v9.x.x`
+- node: `v24.x.x` ( ~ `lts/24-alpine`)
+- npm: `v11.x.x`
 - Nest: `v9.5.0`
 
 For a complete list of packages and version check out the `package.json` file.

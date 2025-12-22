@@ -62,3 +62,6 @@ query-autocomplete.json
 
 # typescript cache file
 *.tsbuildinfo
+
+# husky pre-commit files
+/husky
