@@ -2,7 +2,7 @@ import { TranslationsService } from '@meemoo/admin-core-api';
 import { HttpStatus } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Test, type TestingModule } from '@nestjs/testing';
-import { Idp } from '@viaa/avo2-types';
+import { AvoAuthIdpType } from '@viaa/avo2-types';
 import type { Request, Response } from 'express';
 import { noop } from 'lodash';
 
@@ -104,7 +104,7 @@ const mockCampaignMonitorService: Partial<Record<keyof CampaignMonitorService, j
 const mockRequest = { path: '/auth/hetarchief', headers: {} } as unknown as Request;
 
 const getNewMockSession = () => ({
-	idp: Idp.HETARCHIEF,
+	idp: AvoAuthIdpType.HETARCHIEF,
 	idpUserInfo: {
 		session_not_on_or_after: new Date(new Date().getTime() + 3600 * 1000).toISOString(), // one hour from now
 	},

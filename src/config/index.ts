@@ -1,6 +1,6 @@
 import { ForbiddenException } from '@nestjs/common';
 import { NotImplementedException } from '@nestjs/common/exceptions/not-implemented.exception';
-import type { DatabaseType } from '@viaa/avo2-types';
+import type { AvoCoreDatabaseType } from '@viaa/avo2-types';
 
 import { DEFAULT_CONFIG } from './config.const';
 import type { Configuration } from './config.types';
@@ -44,7 +44,10 @@ const config = (): Configuration => {
 		GRAPHQL_ENABLE_WHITELIST: getEnvValue('GRAPHQL_ENABLE_WHITELIST', false) === 'true',
 		GRAPHQL_URL_LOGGING: getEnvValue('GRAPHQL_URL_LOGGING', true),
 		GRAPHQL_SECRET_LOGGING: getEnvValue('GRAPHQL_SECRET_LOGGING', true),
-		DATABASE_APPLICATION_TYPE: getEnvValue('DATABASE_APPLICATION_TYPE', true) as DatabaseType,
+		DATABASE_APPLICATION_TYPE: getEnvValue(
+			'DATABASE_APPLICATION_TYPE',
+			true
+		) as AvoCoreDatabaseType,
 		COOKIE_SECRET: getEnvValue('COOKIE_SECRET', true),
 		COOKIE_MAX_AGE: Number.parseInt(getEnvValue('COOKIE_MAX_AGE', true), 10),
 		REDIS_CONNECTION_STRING: getEnvValue('REDIS_CONNECTION_STRING', false),

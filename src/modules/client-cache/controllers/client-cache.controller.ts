@@ -5,9 +5,8 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import got from 'got';
 import { stringifyUrl } from 'query-string';
 
+import { PermissionName } from '@viaa/avo2-types';
 import type { Configuration } from '~config';
-
-import { Permission } from '~modules/users/types';
 import { RequireAnyPermissions } from '~shared/decorators/require-any-permissions.decorator';
 import { APIKEY } from '~shared/guards/api-key.guard';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
@@ -23,7 +22,10 @@ export class ClientCacheController {
 	})
 	@Post('clear-cache')
 	@UseGuards(LoggedInGuard)
-	@RequireAnyPermissions(Permission.EDIT_ANY_CONTENT_PAGES, Permission.EDIT_OWN_CONTENT_PAGES)
+	@RequireAnyPermissions(
+		PermissionName.EDIT_ANY_CONTENT_PAGES,
+		PermissionName.EDIT_OWN_CONTENT_PAGES
+	)
 	async getOrganisationElementsForUser(
 		@Query('language') language: Locale,
 		@Query('path') path: string,

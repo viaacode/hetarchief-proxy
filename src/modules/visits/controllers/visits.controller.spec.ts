@@ -1,6 +1,6 @@
 import { TranslationsService } from '@meemoo/admin-core-api';
 import { Test, type TestingModule } from '@nestjs/testing';
-import { Idp } from '@viaa/avo2-types';
+import { AvoAuthIdpType, PermissionName } from '@viaa/avo2-types';
 import { addHours } from 'date-fns';
 import type { Request } from 'express';
 
@@ -20,7 +20,7 @@ import {
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import type { VisitorSpace } from '~modules/spaces/spaces.types';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
-import { GroupId, GroupName, Permission, type User } from '~modules/users/types';
+import { GroupId, GroupName, type User } from '~modules/users/types';
 import { SessionHelper } from '~shared/auth/session-helper';
 import { getProxyNlTranslations } from '~shared/helpers/get-proxy-nl-translations';
 import { mockTranslationsService } from '~shared/helpers/mockTranslationsService';
@@ -113,8 +113,8 @@ const mockUser: User = {
 	acceptedTosAt: '1997-01-01T00:00:00.000Z',
 	groupId: GroupId.CP_ADMIN,
 	groupName: GroupName.CP_ADMIN,
-	permissions: [Permission.MANAGE_ALL_VISIT_REQUESTS, Permission.CREATE_VISIT_REQUEST],
-	idp: Idp.HETARCHIEF,
+	permissions: [PermissionName.MANAGE_ALL_VISIT_REQUESTS, PermissionName.CREATE_VISIT_REQUEST],
+	idp: AvoAuthIdpType.HETARCHIEF,
 	isKeyUser: false,
 };
 
@@ -241,7 +241,7 @@ describe('VisitsController', () => {
 				null,
 				new SessionUserEntity({
 					...mockUser,
-					permissions: [Permission.MANAGE_ALL_VISIT_REQUESTS],
+					permissions: [PermissionName.MANAGE_ALL_VISIT_REQUESTS],
 				})
 			);
 
@@ -256,7 +256,7 @@ describe('VisitsController', () => {
 				null,
 				new SessionUserEntity({
 					...mockUser,
-					permissions: [Permission.MANAGE_CP_VISIT_REQUESTS],
+					permissions: [PermissionName.MANAGE_CP_VISIT_REQUESTS],
 				})
 			);
 
@@ -273,7 +273,7 @@ describe('VisitsController', () => {
 					null,
 					new SessionUserEntity({
 						...mockUser,
-						permissions: [Permission.MANAGE_CP_VISIT_REQUESTS],
+						permissions: [PermissionName.MANAGE_CP_VISIT_REQUESTS],
 					})
 				);
 			} catch (err) {
@@ -301,7 +301,7 @@ describe('VisitsController', () => {
 				null,
 				new SessionUserEntity({
 					...mockUser,
-					permissions: [Permission.READ_PERSONAL_APPROVED_VISIT_REQUESTS],
+					permissions: [PermissionName.READ_PERSONAL_APPROVED_VISIT_REQUESTS],
 				})
 			);
 
@@ -317,7 +317,7 @@ describe('VisitsController', () => {
 				'space-1',
 				new SessionUserEntity({
 					...mockUser,
-					permissions: [Permission.READ_PERSONAL_APPROVED_VISIT_REQUESTS],
+					permissions: [PermissionName.READ_PERSONAL_APPROVED_VISIT_REQUESTS],
 				})
 			);
 
@@ -594,7 +594,7 @@ describe('VisitsController', () => {
 					},
 					new SessionUserEntity({
 						...mockUser,
-						permissions: [Permission.CANCEL_OWN_VISIT_REQUEST],
+						permissions: [PermissionName.CANCEL_OWN_VISIT_REQUEST],
 					})
 				);
 			} catch (e) {
@@ -620,7 +620,7 @@ describe('VisitsController', () => {
 				new SessionUserEntity({
 					...mockUser,
 					id: mockVisit1.userProfileId,
-					permissions: [Permission.CANCEL_OWN_VISIT_REQUEST],
+					permissions: [PermissionName.CANCEL_OWN_VISIT_REQUEST],
 				})
 			);
 			expect(visit).toEqual(mockVisit1);

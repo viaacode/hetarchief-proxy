@@ -1,19 +1,9 @@
 import { DataService, VideoStillsService } from '@meemoo/admin-core-api';
-import {
-	BadRequestException,
-	Injectable,
-	InternalServerErrorException,
-	Logger,
-	NotFoundException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { compact, groupBy, isArray, isEmpty, isNil, kebabCase, set } from 'lodash';
 
-import {
-	CreateMaterialRequestDto,
-	MaterialRequestsQueryDto,
-	SendRequestListDto,
-} from '../dto/material-requests.dto';
+import { CreateMaterialRequestDto, MaterialRequestsQueryDto, SendRequestListDto } from '../dto/material-requests.dto';
 import { ORDER_PROP_TO_DB_PROP } from '../material-requests.consts';
 import {
 	GqlMaterialRequest,
@@ -53,23 +43,16 @@ import {
 	type UpdateMaterialRequestMutation,
 	type UpdateMaterialRequestMutationVariables,
 } from '~generated/graphql-db-types-hetarchief';
-import {
-	EmailTemplate,
-	type MaterialRequestEmailInfo,
-} from '~modules/campaign-monitor/campaign-monitor.types';
+import { EmailTemplate, type MaterialRequestEmailInfo } from '~modules/campaign-monitor/campaign-monitor.types';
 
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 import { convertSchemaIdentifierToId } from '~modules/ie-objects/helpers/convert-schema-identifier-to-id';
-import {
-	IeObjectAccessThrough,
-	IeObjectLicense,
-	IeObjectType,
-} from '~modules/ie-objects/ie-objects.types';
+import { IeObjectAccessThrough, IeObjectLicense, IeObjectType } from '~modules/ie-objects/ie-objects.types';
 import type { Organisation } from '~modules/organisations/organisations.types';
 
 import { OrganisationsService } from '~modules/organisations/services/organisations.service';
 
-import { VideoStillInfo } from '@viaa/avo2-types/types/video-stills';
+import { AvoStillsStillInfo } from '@viaa/avo2-types';
 import { limitAccessToObjectDetails } from '~modules/ie-objects/helpers/limit-access-to-object-details';
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
@@ -536,7 +519,8 @@ export class MaterialRequestsService {
 					startTime: startTime * 1000,
 				},
 			]);
-			const filteredInfos = (stillInfos?.filter((item) => !isNil(item)) || []) as VideoStillInfo[];
+			const filteredInfos = (stillInfos?.filter((item) => !isNil(item)) ||
+				[]) as AvoStillsStillInfo[];
 
 			if (filteredInfos.length) {
 				return filteredInfos[0].thumbnailImagePath;

@@ -1,22 +1,9 @@
 import { TranslationsService } from '@meemoo/admin-core-api';
-import {
-	Body,
-	Controller,
-	Get,
-	HttpException,
-	HttpStatus,
-	Logger,
-	Post,
-	Query,
-	Redirect,
-	Req,
-	Res,
-	Session,
-} from '@nestjs/common';
+import { Body, Controller, Get, HttpException, HttpStatus, Logger, Post, Query, Redirect, Req, Res, Session } from '@nestjs/common';
 
 import { ConfigService } from '@nestjs/config';
 import { ApiTags } from '@nestjs/swagger';
-import { Idp } from '@viaa/avo2-types';
+import { AvoAuthIdpType } from '@viaa/avo2-types';
 import type { Request, Response } from 'express';
 import { get, isEmpty, isEqual, pick } from 'lodash';
 import { stringifyUrl } from 'query-string';
@@ -108,7 +95,7 @@ export class HetArchiefController {
 				`login-callback ldap info: ${JSON.stringify(ldapUser, null, process.env.SINGLE_LINE_LOGGING === 'true' ? 0 : 2)}`
 			);
 
-			SessionHelper.setIdpUserInfo(session, Idp.HETARCHIEF, ldapUser);
+			SessionHelper.setIdpUserInfo(session, AvoAuthIdpType.HETARCHIEF, ldapUser);
 
 			const apps = ldapUser?.attributes?.apps ?? [];
 
@@ -150,7 +137,7 @@ export class HetArchiefController {
 			if (!archiefUser) {
 				archiefUser = await this.usersService.createUserWithIdp(
 					userDto,
-					Idp.HETARCHIEF,
+					AvoAuthIdpType.HETARCHIEF,
 					ldapUser.attributes.entryUUID[0]
 				);
 				const locale = (archiefUser?.language || Locale.Nl) as Locale;
@@ -172,7 +159,7 @@ export class HetArchiefController {
 					{
 						source: '/',
 						data: {
-							idp: Idp.HETARCHIEF,
+							idp: AvoAuthIdpType.HETARCHIEF,
 							user_group_id: archiefUser.groupId,
 							user_group_name: archiefUser.groupName,
 						},
@@ -225,7 +212,7 @@ export class HetArchiefController {
 					subject: archiefUser.id,
 					time: new Date().toISOString(),
 					data: {
-						idp: Idp.HETARCHIEF,
+						idp: AvoAuthIdpType.HETARCHIEF,
 						user_group_name: archiefUser.groupName,
 						user_group_id: archiefUser.groupId,
 					},
@@ -254,7 +241,7 @@ export class HetArchiefController {
 				return orgNotLinkedLogoutAndRedirectToErrorPage(
 					response,
 					proxyHost,
-					Idp.HETARCHIEF,
+					AvoAuthIdpType.HETARCHIEF,
 					`${err.message}`.replace(NO_ORG_LINKED, ''),
 					this.translationsService.tText(
 						'modules/auth/controllers/het-archief___account-configuratie',
@@ -313,7 +300,10 @@ export class HetArchiefController {
 		@Query('forceLogout') forceLogout: 'true' | 'false' = 'false'
 	) {
 		try {
-			if (forceLogout === 'true' || SessionHelper.isLoggedInWithIdp(Idp.HETARCHIEF, session)) {
+			if (
+				forceLogout === 'true' ||
+				SessionHelper.isLoggedInWithIdp(AvoAuthIdpType.HETARCHIEF, session)
+			) {
 				const idpUser = SessionHelper.getIdpUserInfo(session);
 				const idpLogoutUrl = await this.hetArchiefService.createLogoutRequestUrl(
 					idpUser?.name_id || 'kiosk',

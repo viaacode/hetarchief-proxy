@@ -41,10 +41,11 @@ import { LogEventType } from '~modules/events/types';
 import { NotificationsService } from '~modules/notifications/services/notifications.service';
 import { NotificationType } from '~modules/notifications/types';
 
+import { PermissionName } from '@viaa/avo2-types';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import type { VisitorSpace } from '~modules/spaces/spaces.types';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
-import { GroupName, Permission } from '~modules/users/types';
+import { GroupName } from '~modules/users/types';
 import { getFakeVisitorRequest } from '~modules/visits/controllers/visits.controller.helpers';
 import { RequireAnyPermissions } from '~shared/decorators/require-any-permissions.decorator';
 import { RequireAllPermissions } from '~shared/decorators/require-permissions.decorator';
@@ -70,12 +71,15 @@ export class VisitsController {
 		description:
 			'Get Visits endpoint for Meemoo Admins and CP Admins. Visitors should use the /personal endpoint. ',
 	})
-	@RequireAnyPermissions(Permission.MANAGE_ALL_VISIT_REQUESTS, Permission.MANAGE_CP_VISIT_REQUESTS)
+	@RequireAnyPermissions(
+		PermissionName.MANAGE_ALL_VISIT_REQUESTS,
+		PermissionName.MANAGE_CP_VISIT_REQUESTS
+	)
 	public async getVisits(
 		@Query() queryDto: VisitsQueryDto,
 		@SessionUser() user: SessionUserEntity
 	): Promise<IPagination<VisitRequest>> {
-		if (user.has(Permission.MANAGE_ALL_VISIT_REQUESTS)) {
+		if (user.has(PermissionName.MANAGE_ALL_VISIT_REQUESTS)) {
 			return await this.visitsService.findAll(queryDto, {
 				...(queryDto?.visitorSpaceSlug ? { visitorSpaceSlug: queryDto.visitorSpaceSlug } : {}),
 				...(queryDto?.requesterId ? { userProfileId: queryDto.requesterId } : {}),
@@ -173,8 +177,8 @@ export class VisitsController {
 			'Get Access status. Returns the highest status (APPROVED>PENDING>..) for a current active visit request. DENIED if no active visit request was found.',
 	})
 	@RequireAllPermissions(
-		Permission.READ_PERSONAL_APPROVED_VISIT_REQUESTS,
-		Permission.MANAGE_ACCOUNT
+		PermissionName.READ_PERSONAL_APPROVED_VISIT_REQUESTS,
+		PermissionName.MANAGE_ACCOUNT
 	)
 	public async getAccessStatus(
 		@Param('slug') slug: string,
@@ -185,9 +189,9 @@ export class VisitsController {
 
 	@Get(':id')
 	@RequireAnyPermissions(
-		Permission.MANAGE_ALL_VISIT_REQUESTS,
-		Permission.MANAGE_CP_VISIT_REQUESTS,
-		Permission.READ_PERSONAL_APPROVED_VISIT_REQUESTS
+		PermissionName.MANAGE_ALL_VISIT_REQUESTS,
+		PermissionName.MANAGE_CP_VISIT_REQUESTS,
+		PermissionName.READ_PERSONAL_APPROVED_VISIT_REQUESTS
 	)
 	public async getVisitById(@Param('id', ParseUUIDPipe) id: string): Promise<VisitRequest> {
 		return await this.visitsService.findById(id);
@@ -309,7 +313,7 @@ export class VisitsController {
 	@ApiOperation({
 		description: 'Create a Visit request. Requires the CREATE_VISIT_REQUEST permission.',
 	})
-	@RequireAllPermissions(Permission.CREATE_VISIT_REQUEST)
+	@RequireAllPermissions(PermissionName.CREATE_VISIT_REQUEST)
 	public async createVisitRequest(
 		@Req() request: Request,
 		@Body() createVisitDto: CreateVisitDto,
@@ -379,9 +383,9 @@ export class VisitsController {
 		description: 'Update a Visit request.',
 	})
 	@RequireAnyPermissions(
-		Permission.MANAGE_ALL_VISIT_REQUESTS,
-		Permission.MANAGE_CP_VISIT_REQUESTS,
-		Permission.CANCEL_OWN_VISIT_REQUEST
+		PermissionName.MANAGE_ALL_VISIT_REQUESTS,
+		PermissionName.MANAGE_CP_VISIT_REQUESTS,
+		PermissionName.CANCEL_OWN_VISIT_REQUEST
 	)
 	public async update(
 		@Req() request: Request,
@@ -393,9 +397,9 @@ export class VisitsController {
 		const originalVisit = await this.visitsService.findById(id);
 
 		if (
-			user.has(Permission.CANCEL_OWN_VISIT_REQUEST) &&
-			user.hasNot(Permission.MANAGE_ALL_VISIT_REQUESTS) &&
-			user.hasNot(Permission.MANAGE_CP_VISIT_REQUESTS)
+			user.has(PermissionName.CANCEL_OWN_VISIT_REQUEST) &&
+			user.hasNot(PermissionName.MANAGE_ALL_VISIT_REQUESTS) &&
+			user.hasNot(PermissionName.MANAGE_CP_VISIT_REQUESTS)
 		) {
 			if (
 				originalVisit.userProfileId !== user?.getId() ||

@@ -1,5 +1,5 @@
 import { Lookup_App_Material_Request_Requester_Capacity_Enum } from '@meemoo/admin-core-api/dist/src/modules/shared/generated/graphql-db-types-hetarchief';
-import { Idp } from '@viaa/avo2-types';
+import { AvoAuthIdpType, PermissionName } from '@viaa/avo2-types';
 
 import {
 	CampaignMonitorCustomFieldName,
@@ -18,7 +18,7 @@ import {
 
 import type { SendRequestListDto } from '~modules/material-requests/dto/material-requests.dto';
 import { mockMaterialRequest1 } from '~modules/material-requests/mocks/material-requests.mocks';
-import { GroupId, GroupName, Permission, type User } from '~modules/users/types';
+import { GroupId, GroupName, type User } from '~modules/users/types';
 import { mockConfigService } from '~shared/test/mock-config-service';
 import { Locale } from '~shared/types/types';
 
@@ -32,8 +32,8 @@ export const mockUser: User = {
 	acceptedTosAt: '1997-01-01T00:00:00.000Z',
 	groupId: GroupId.CP_ADMIN,
 	groupName: GroupName.CP_ADMIN,
-	permissions: [Permission.MANAGE_ALL_VISIT_REQUESTS, Permission.CREATE_VISIT_REQUEST],
-	idp: Idp.HETARCHIEF,
+	permissions: [PermissionName.MANAGE_ALL_VISIT_REQUESTS, PermissionName.CREATE_VISIT_REQUEST],
+	idp: AvoAuthIdpType.HETARCHIEF,
 	isKeyUser: false,
 	createdAt: '2023-10-01T12:00:00.000Z',
 	lastAccessAt: '2023-10-01T12:00:00.000Z',

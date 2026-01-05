@@ -15,7 +15,7 @@ import {
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import type { IPagination } from '@studiohyperdrive/pagination';
-import { Idp } from '@viaa/avo2-types';
+import { AvoAuthIdpType, PermissionName } from '@viaa/avo2-types';
 import type { Request } from 'express';
 import { isEmpty, isNil } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
@@ -35,7 +35,7 @@ import { EventsService } from '~modules/events/services/events.service';
 import { type LogEvent, LogEventType } from '~modules/events/types';
 import { mapDcTermsFormatToSimpleType } from '~modules/ie-objects/helpers/map-dc-terms-format-to-simple-type';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
-import { GroupId, GroupName, Permission } from '~modules/users/types';
+import { GroupId, GroupName } from '~modules/users/types';
 import { Ip } from '~shared/decorators/ip.decorator';
 import { Referer } from '~shared/decorators/referer.decorator';
 import { RequireAnyPermissions } from '~shared/decorators/require-any-permissions.decorator';
@@ -58,7 +58,7 @@ export class MaterialRequestsController {
 		description:
 			'Get materials requests endpoint for meemoo admins and CP admins. Visitors should use the /personal endpoint.',
 	})
-	@RequireAnyPermissions(Permission.VIEW_ANY_MATERIAL_REQUESTS)
+	@RequireAnyPermissions(PermissionName.VIEW_ANY_MATERIAL_REQUESTS)
 	public async getMaterialRequests(
 		@Query() queryDto: MaterialRequestsQueryDto,
 		@SessionUser() user: SessionUserEntity,
@@ -75,7 +75,7 @@ export class MaterialRequestsController {
 	@ApiOperation({
 		description: 'Get material requests for the logged in user.',
 	})
-	@RequireAllPermissions(Permission.VIEW_OWN_MATERIAL_REQUESTS, Permission.MANAGE_ACCOUNT)
+	@RequireAllPermissions(PermissionName.VIEW_OWN_MATERIAL_REQUESTS, PermissionName.MANAGE_ACCOUNT)
 	public async getPersonalMaterialRequests(
 		@Query() queryDto: MaterialRequestsQueryDto,
 		@SessionUser() user: SessionUserEntity,
@@ -89,15 +89,15 @@ export class MaterialRequestsController {
 	}
 
 	@Get('maintainers')
-	@RequireAnyPermissions(Permission.VIEW_ANY_MATERIAL_REQUESTS)
+	@RequireAnyPermissions(PermissionName.VIEW_ANY_MATERIAL_REQUESTS)
 	public async getMaintainers(): Promise<MaterialRequestMaintainer[] | []> {
 		return await this.materialRequestsService.findMaintainers();
 	}
 
 	@Get(':id')
 	@RequireAnyPermissions(
-		Permission.VIEW_ANY_MATERIAL_REQUESTS,
-		Permission.VIEW_OWN_MATERIAL_REQUESTS
+		PermissionName.VIEW_ANY_MATERIAL_REQUESTS,
+		PermissionName.VIEW_OWN_MATERIAL_REQUESTS
 	)
 	public async getMaterialRequestById(
 		@Param('id', ParseUUIDPipe) id: string,
@@ -112,7 +112,7 @@ export class MaterialRequestsController {
 	@ApiOperation({
 		description: 'Create a material request',
 	})
-	@RequireAnyPermissions(Permission.CREATE_MATERIAL_REQUESTS)
+	@RequireAnyPermissions(PermissionName.CREATE_MATERIAL_REQUESTS)
 	public async createMaterialRequest(
 		@Body() createMaterialRequestDto: CreateMaterialRequestDto,
 		@SessionUser() user: SessionUserEntity,
@@ -131,7 +131,7 @@ export class MaterialRequestsController {
 	@ApiOperation({
 		description: 'Update a material request',
 	})
-	@RequireAnyPermissions(Permission.EDIT_OWN_MATERIAL_REQUESTS)
+	@RequireAnyPermissions(PermissionName.EDIT_OWN_MATERIAL_REQUESTS)
 	public async updateMaterialRequest(
 		@Param('id', ParseUUIDPipe) materialRequestId: string,
 		@Body() updateMaterialRequestDto: UpdateMaterialRequestDto,
@@ -153,7 +153,7 @@ export class MaterialRequestsController {
 	@ApiOperation({
 		description: 'Delete a material request',
 	})
-	@RequireAnyPermissions(Permission.DELETE_OWN_MATERIAL_REQUESTS)
+	@RequireAnyPermissions(PermissionName.DELETE_OWN_MATERIAL_REQUESTS)
 	public async deleteMaterialRequest(
 		@Param('id', ParseUUIDPipe) materialRequestId: string,
 		@SessionUser() user: SessionUserEntity
@@ -249,7 +249,7 @@ export class MaterialRequestsController {
 							type: mapDcTermsFormatToSimpleType(materialRequest.objectDctermsFormat),
 							external_id: materialRequest.objectSchemaIdentifier,
 							fragment_id: materialRequest.objectSchemaIdentifier,
-							idp: Idp.HETARCHIEF,
+							idp: AvoAuthIdpType.HETARCHIEF,
 							user_group_name: user.getGroupName(),
 							user_group_id: user.getGroupId(),
 							or_id: materialRequest.maintainerId,

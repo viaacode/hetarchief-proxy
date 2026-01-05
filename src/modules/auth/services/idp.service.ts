@@ -2,7 +2,7 @@ import { Locale, TranslationsService } from '@meemoo/admin-core-api';
 import { Injectable } from '@nestjs/common';
 
 import { ConfigService } from '@nestjs/config';
-import { Idp } from '@viaa/avo2-types';
+import { AvoAuthIdpType } from '@viaa/avo2-types';
 import { intersection } from 'lodash';
 import queryString from 'query-string';
 
@@ -18,7 +18,7 @@ import { LdapApp, type LdapUser } from '~shared/auth/auth.types';
 
 @Injectable()
 export class IdpService {
-	private idpsWithSpecificLogoutPage = [Idp.HETARCHIEF];
+	private idpsWithSpecificLogoutPage = [AvoAuthIdpType.HETARCHIEF];
 
 	protected meemooAdminOrganizationIds: string[];
 
@@ -30,11 +30,11 @@ export class IdpService {
 		this.meemooAdminOrganizationIds = configService.get('MEEMOO_ADMIN_ORGANIZATION_IDS').split(',');
 	}
 
-	public hasSpecificLogoutPage(idp: Idp): boolean {
+	public hasSpecificLogoutPage(idp: AvoAuthIdpType): boolean {
 		return this.idpsWithSpecificLogoutPage.includes(idp);
 	}
 
-	public getSpecificLogoutUrl(idp: Idp, queryParams: Record<string, string>): string {
+	public getSpecificLogoutUrl(idp: AvoAuthIdpType, queryParams: Record<string, string>): string {
 		const host = this.configService.get('HOST');
 
 		const url = queryString.stringifyUrl({

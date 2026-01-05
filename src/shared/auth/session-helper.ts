@@ -1,9 +1,9 @@
 import { InternalServerErrorException, Logger, type LoggerService } from '@nestjs/common';
-import { Idp } from '@viaa/avo2-types';
 import { addDays, getHours, setHours, setMilliseconds, setMinutes, setSeconds } from 'date-fns/fp';
 import { get } from 'lodash';
 import flow from 'lodash/fp/flow';
 
+import { AvoAuthIdpType } from '@viaa/avo2-types';
 import type { User } from '~modules/users/types';
 import type { LdapUser } from '~shared/auth/auth.types';
 import { SpecialPermissionGroups } from '~shared/types/types';
@@ -44,7 +44,7 @@ export class SessionHelper {
 
 		return !!(
 			(
-				Idp[session[IDP]] && // IDP is set and known
+				AvoAuthIdpType[session[IDP]] && // IDP is set and known
 				session[IDP_USER_INFO_PATH] && // IDP user is set
 				SessionHelper.isIdpUserSessionValid(session) && // IDP session is valid
 				session[ARCHIEF_USER_INFO_PATH]
@@ -57,7 +57,7 @@ export class SessionHelper {
 	 * @param session
 	 * @returns if the user is logged in with the given idp
 	 */
-	public static isLoggedInWithIdp(idp: Idp, session: Record<string, any>) {
+	public static isLoggedInWithIdp(idp: AvoAuthIdpType, session: Record<string, any>) {
 		return SessionHelper.isLoggedIn(session) && session[IDP] === idp;
 	}
 
@@ -67,7 +67,11 @@ export class SessionHelper {
 	 * @param idp
 	 * @param user
 	 */
-	public static setIdpUserInfo(session: Record<string, any>, idp: Idp, user: LdapUser): void {
+	public static setIdpUserInfo(
+		session: Record<string, any>,
+		idp: AvoAuthIdpType,
+		user: LdapUser
+	): void {
 		SessionHelper.ensureValidSession(session);
 		session[IDP] = idp;
 		session[IDP_USER_INFO_PATH] = user;
@@ -119,7 +123,7 @@ export class SessionHelper {
 		return session[IDP_USER_INFO_PATH];
 	}
 
-	public static getIdp(session: Record<string, any>): Idp | null {
+	public static getIdp(session: Record<string, any>): AvoAuthIdpType | null {
 		if (!session) {
 			return null;
 		}

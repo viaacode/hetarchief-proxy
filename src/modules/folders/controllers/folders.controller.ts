@@ -21,10 +21,7 @@ import { compact, isNil } from 'lodash';
 
 import { type Folder, type FolderShared, FolderStatus } from '../types';
 
-import {
-	ConsentToTrackOption,
-	EmailTemplate,
-} from '~modules/campaign-monitor/campaign-monitor.types';
+import { ConsentToTrackOption, EmailTemplate } from '~modules/campaign-monitor/campaign-monitor.types';
 
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 
@@ -39,9 +36,9 @@ import { type IeObject, IeObjectLicense } from '~modules/ie-objects/ie-objects.t
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 
+import { PermissionName } from '@viaa/avo2-types';
 import { mapDcTermsFormatToSimpleType } from '~modules/ie-objects/helpers/map-dc-terms-format-to-simple-type';
 import { UsersService } from '~modules/users/services/users.service';
-import { Permission } from '~modules/users/types';
 import { Ip } from '~shared/decorators/ip.decorator';
 import { Referer } from '~shared/decorators/referer.decorator';
 import { RequireAllPermissions } from '~shared/decorators/require-permissions.decorator';
@@ -113,7 +110,7 @@ export class FoldersController {
 
 	@Get(':folderId')
 	@UseGuards(LoggedInGuard)
-	@RequireAllPermissions(Permission.MANAGE_FOLDERS)
+	@RequireAllPermissions(PermissionName.MANAGE_FOLDERS)
 	public async getFolderObjects(
 		@Referer() referer: string,
 		@Ip() ip: string,
@@ -175,7 +172,7 @@ export class FoldersController {
 
 	@Post()
 	@UseGuards(LoggedInGuard)
-	@RequireAllPermissions(Permission.MANAGE_FOLDERS)
+	@RequireAllPermissions(PermissionName.MANAGE_FOLDERS)
 	public async createFolder(
 		@Referer() referer: string,
 		@Ip() ip: string,
@@ -196,7 +193,7 @@ export class FoldersController {
 
 	@Patch(':folderId')
 	@UseGuards(LoggedInGuard)
-	@RequireAllPermissions(Permission.MANAGE_FOLDERS)
+	@RequireAllPermissions(PermissionName.MANAGE_FOLDERS)
 	public async updateFolder(
 		@Referer() referer: string,
 		@Ip() ip: string,
@@ -209,7 +206,7 @@ export class FoldersController {
 
 	@Delete(':folderId')
 	@UseGuards(LoggedInGuard)
-	@RequireAllPermissions(Permission.MANAGE_FOLDERS)
+	@RequireAllPermissions(PermissionName.MANAGE_FOLDERS)
 	public async deleteFolder(
 		@Param('folderId') folderId: string,
 		@SessionUser() user: SessionUserEntity
@@ -223,7 +220,7 @@ export class FoldersController {
 
 	@Post(':folderId/objects/:objectSchemaIdentifier')
 	@UseGuards(LoggedInGuard)
-	@RequireAllPermissions(Permission.MANAGE_FOLDERS)
+	@RequireAllPermissions(PermissionName.MANAGE_FOLDERS)
 	public async addObjectToFolder(
 		@Req() request: Request,
 		@Referer() referer: string,
@@ -271,7 +268,7 @@ export class FoldersController {
 
 	@Delete(':folderId/objects/:objectSchemaIdentifier')
 	@UseGuards(LoggedInGuard)
-	@RequireAllPermissions(Permission.MANAGE_FOLDERS)
+	@RequireAllPermissions(PermissionName.MANAGE_FOLDERS)
 	public async removeObjectFromFolder(
 		@Referer() referer: string,
 		@Ip() ip: string,
@@ -296,7 +293,7 @@ export class FoldersController {
 
 	@Patch(':oldFolderId/objects/:objectSchemaIdentifier/move')
 	@UseGuards(LoggedInGuard)
-	@RequireAllPermissions(Permission.MANAGE_FOLDERS)
+	@RequireAllPermissions(PermissionName.MANAGE_FOLDERS)
 	public async moveObjectToAnotherFolder(
 		@Referer() referer: string,
 		@Ip() ip: string,
@@ -341,7 +338,7 @@ export class FoldersController {
 	 */
 	@Post('/share/:folderId/create')
 	@UseGuards(LoggedInGuard)
-	@RequireAllPermissions(Permission.MANAGE_FOLDERS)
+	@RequireAllPermissions(PermissionName.MANAGE_FOLDERS)
 	public async createSharedFolder(
 		@Referer() referer: string,
 		@Ip() ip: string,
@@ -392,7 +389,7 @@ export class FoldersController {
 	 */
 	@Post('/share/:folderId')
 	@UseGuards(LoggedInGuard)
-	@RequireAllPermissions(Permission.MANAGE_FOLDERS)
+	@RequireAllPermissions(PermissionName.MANAGE_FOLDERS)
 	public async acceptSharedFolder(
 		@Referer() referer: string,
 		@Ip() ip: string,

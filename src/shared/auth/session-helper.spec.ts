@@ -1,10 +1,10 @@
-import { Idp } from '@viaa/avo2-types';
+import { AvoAuthIdpType, PermissionName } from '@viaa/avo2-types';
 import { addDays, setHours, setMilliseconds, setMinutes, setSeconds } from 'date-fns/fp';
 import flow from 'lodash/fp/flow';
 
 import { LdapApp } from './auth.types';
 
-import { GroupId, GroupName, Permission, type User } from '~modules/users/types';
+import { GroupId, GroupName, type User } from '~modules/users/types';
 import { SessionHelper } from '~shared/auth/session-helper';
 import { TestingLogger } from '~shared/logging/test-logger';
 import { Locale, SpecialPermissionGroups } from '~shared/types/types';
@@ -39,8 +39,8 @@ const mockArchiefUser: User = {
 	acceptedTosAt: '2022-02-21T14:00:00',
 	groupId: GroupId.CP_ADMIN,
 	groupName: GroupName.CP_ADMIN,
-	permissions: [Permission.MANAGE_ALL_VISIT_REQUESTS],
-	idp: Idp.HETARCHIEF,
+	permissions: [PermissionName.MANAGE_ALL_VISIT_REQUESTS],
+	idp: AvoAuthIdpType.HETARCHIEF,
 	isKeyUser: false,
 };
 
@@ -92,7 +92,7 @@ describe('SessionHelper', () => {
 
 		it('should return true when the session is valid', () => {
 			const valid = SessionHelper.isLoggedIn({
-				idp: Idp.HETARCHIEF,
+				idp: AvoAuthIdpType.HETARCHIEF,
 				idpUserInfo: {
 					session_not_on_or_after: new Date(new Date().getTime() + 60000).toISOString(), // one minute from now
 				},
@@ -114,7 +114,7 @@ describe('SessionHelper', () => {
 
 		it('should return false when there is no IDP user set', () => {
 			const valid = SessionHelper.isLoggedIn({
-				idp: Idp.HETARCHIEF,
+				idp: AvoAuthIdpType.HETARCHIEF,
 				idpUserInfo: null,
 				archiefUserInfo: {},
 			});
@@ -123,7 +123,7 @@ describe('SessionHelper', () => {
 
 		it('should return false when the IDP session is no longer valid', () => {
 			const valid = SessionHelper.isLoggedIn({
-				idp: Idp.HETARCHIEF,
+				idp: AvoAuthIdpType.HETARCHIEF,
 				idpUserInfo: {
 					session_not_on_or_after: new Date(new Date().getTime() - 1000).toISOString(), // one second ago
 				},
@@ -134,7 +134,7 @@ describe('SessionHelper', () => {
 
 		it('should return false when the Archief user is not set', () => {
 			const valid = SessionHelper.isLoggedIn({
-				idp: Idp.HETARCHIEF,
+				idp: AvoAuthIdpType.HETARCHIEF,
 				idpUserInfo: {
 					session_not_on_or_after: new Date(new Date().getTime() + 60000).toISOString(), // one minute from now
 				},
@@ -146,8 +146,8 @@ describe('SessionHelper', () => {
 
 	describe('isLoggedInWithIdp', () => {
 		it('should return true when the correct IDP is given', () => {
-			const valid = SessionHelper.isLoggedInWithIdp(Idp.HETARCHIEF, {
-				idp: Idp.HETARCHIEF,
+			const valid = SessionHelper.isLoggedInWithIdp(AvoAuthIdpType.HETARCHIEF, {
+				idp: AvoAuthIdpType.HETARCHIEF,
 				idpUserInfo: {
 					session_not_on_or_after: new Date(new Date().getTime() + 60000).toISOString(), // one minute from now
 				},
@@ -160,7 +160,7 @@ describe('SessionHelper', () => {
 	describe('setIdpUserInfo', () => {
 		it('should set the IDP user on the session', () => {
 			const session: Record<string, any> = {};
-			SessionHelper.setIdpUserInfo(session, Idp.HETARCHIEF, mockLdapUser);
+			SessionHelper.setIdpUserInfo(session, AvoAuthIdpType.HETARCHIEF, mockLdapUser);
 			expect(session.idpUserInfo).toBeDefined();
 			expect(session.idp).toBeDefined();
 		});
@@ -168,7 +168,7 @@ describe('SessionHelper', () => {
 		it('should throw an exception when an invalid session was passed', () => {
 			let exception: any;
 			try {
-				SessionHelper.setIdpUserInfo(null, Idp.HETARCHIEF, mockLdapUser);
+				SessionHelper.setIdpUserInfo(null, AvoAuthIdpType.HETARCHIEF, mockLdapUser);
 			} catch (e) {
 				exception = e.response;
 			}
@@ -275,16 +275,16 @@ describe('SessionHelper', () => {
 
 		it('should return the Idp user info', () => {
 			const result = SessionHelper.getIdp({
-				idp: Idp.HETARCHIEF,
+				idp: AvoAuthIdpType.HETARCHIEF,
 			});
-			expect(result).toEqual(Idp.HETARCHIEF);
+			expect(result).toEqual(AvoAuthIdpType.HETARCHIEF);
 		});
 	});
 
 	describe('logout', () => {
 		it('should clear a valid session', () => {
 			const session: Record<string, any> = {
-				idp: Idp.HETARCHIEF,
+				idp: AvoAuthIdpType.HETARCHIEF,
 				idpUserInfo: {
 					session_not_on_or_after: new Date(new Date().getTime() + 60000).toISOString(), // one minute from now
 				},

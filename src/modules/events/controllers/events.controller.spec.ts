@@ -1,5 +1,5 @@
 import { Test, type TestingModule } from '@nestjs/testing';
-import { Idp } from '@viaa/avo2-types';
+import { AvoAuthIdpType, PermissionName } from '@viaa/avo2-types';
 import type { Request } from 'express';
 
 import { EventsService } from '../services/events.service';
@@ -8,7 +8,7 @@ import { LogEventType } from '../types';
 import { EventsController } from './events.controller';
 
 import { SessionUserEntity } from '~modules/users/classes/session-user';
-import { GroupId, GroupName, Permission, type User } from '~modules/users/types';
+import { GroupId, GroupName, type User } from '~modules/users/types';
 import { Locale } from '~shared/types/types';
 
 const mockEventsService: Partial<Record<keyof EventsService, jest.SpyInstance>> = {
@@ -25,8 +25,8 @@ const mockUser: User = {
 	acceptedTosAt: '2022-02-21T14:00:00',
 	groupId: GroupId.CP_ADMIN,
 	groupName: GroupName.CP_ADMIN,
-	permissions: [Permission.MANAGE_CP_VISIT_REQUESTS],
-	idp: Idp.HETARCHIEF,
+	permissions: [PermissionName.MANAGE_CP_VISIT_REQUESTS],
+	idp: AvoAuthIdpType.HETARCHIEF,
 	isKeyUser: false,
 };
 const mockRequest = { path: '/events', headers: {} } as unknown as Request;
