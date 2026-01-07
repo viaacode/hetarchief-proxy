@@ -640,6 +640,7 @@ export class MaterialRequestsService {
 			type: graphQlMaterialRequest.type,
 			isPending: graphQlMaterialRequest.is_pending,
 			status: graphQlMaterialRequest.status,
+			statusMotivation: graphQlMaterialRequest.status_motivation,
 			downloadUrl: graphQlMaterialRequest.download_url ?? null,
 			requestName: graphQlMaterialRequest.name ?? null,
 			requesterId: graphQlMaterialRequest.requested_by.id,

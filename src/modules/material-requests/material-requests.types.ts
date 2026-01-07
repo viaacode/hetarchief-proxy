@@ -41,6 +41,7 @@ export interface MaterialRequest {
 	type: Lookup_App_Material_Request_Type_Enum;
 	isPending: boolean;
 	status: Lookup_App_Material_Request_Status_Enum;
+	statusMotivation?: string;
 	requesterId: string;
 	requesterFullName: string;
 	requesterMail: string;
