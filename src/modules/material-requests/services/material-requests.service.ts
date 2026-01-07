@@ -52,6 +52,9 @@ import {
 	UpdateMaterialRequestDocument,
 	type UpdateMaterialRequestMutation,
 	type UpdateMaterialRequestMutationVariables,
+	UpdateMaterialRequestStatusDocument,
+	UpdateMaterialRequestStatusMutation,
+	UpdateMaterialRequestStatusMutationVariables,
 } from '~generated/graphql-db-types-hetarchief';
 import {
 	EmailTemplate,
@@ -448,35 +451,65 @@ export class MaterialRequestsService {
 			);
 		}
 
-		const updatedRequest = await this.updateMaterialRequest(
+		const { update_app_material_requests: updatedMaterialRequest } = await this.dataService.execute<
+			UpdateMaterialRequestStatusMutation,
+			UpdateMaterialRequestStatusMutationVariables
+		>(UpdateMaterialRequestStatusDocument, {
 			materialRequestId,
-			user,
-			{
+			userProfileId: user.getId(),
+			updateMaterialRequest: {
 				status: Lookup_App_Material_Request_Status_Enum.Cancelled,
 				cancelled_at: new Date().toISOString(),
+				updated_at: new Date().toISOString(),
 			},
-			currentRequest.reuseForm,
+		});
+
+		const graphQlMaterialRequest = updatedMaterialRequest.returning?.[0];
+
+		if (isEmpty(graphQlMaterialRequest)) {
+			throw new BadRequestException(
+				`Material request (${materialRequestId}) could not be cancelled.`
+			);
+		}
+
+		const organisations = await this.organisationsService.findOrganisationsBySchemaIdentifiers(
+			compact([graphQlMaterialRequest?.intellectualEntity?.schemaMaintainer?.org_identifier])
+		);
+
+		const updatedRequest = await this.adapt(
+			graphQlMaterialRequest,
+			organisations,
+			user,
 			referer,
 			ip
 		);
 
-		if (updatedRequest) {
-			const emailInfo: MaterialRequestEmailInfo = {
-				to: updatedRequest.contactMail,
-				replyTo: updatedRequest?.requesterMail,
-				template: EmailTemplate.MATERIAL_REQUEST_REQUESTER_CANCELLED,
-				materialRequests: [updatedRequest],
-				sendRequestListDto: {
-					type: updatedRequest.requesterCapacity,
-					organisation: updatedRequest.organisation,
-					requestName: updatedRequest.requestName,
-				},
-				firstName: user.getFirstName(),
-				lastName: user.getLastName(),
-				language: user.getLanguage(),
-			};
+		try {
+			if (updatedRequest) {
+				const emailInfo: MaterialRequestEmailInfo = {
+					to: updatedRequest.contactMail,
+					replyTo: updatedRequest?.requesterMail,
+					template: EmailTemplate.MATERIAL_REQUEST_REQUESTER_CANCELLED,
+					materialRequests: [updatedRequest],
+					sendRequestListDto: {
+						type: updatedRequest.requesterCapacity,
+						organisation: updatedRequest.organisation,
+						requestName: updatedRequest.requestName,
+					},
+					firstName: user.getFirstName(),
+					lastName: user.getLastName(),
+					language: user.getLanguage(),
+				};
 
-			await this.campaignMonitorService.sendForMaterialRequest(emailInfo);
+				await this.campaignMonitorService.sendForMaterialRequest(emailInfo);
+			}
+		} catch (err) {
+			const error = {
+				message: 'Failed to send email to maintainer that the material request was cancelled',
+				innerException: err,
+			};
+			console.error(error);
+			throw new InternalServerErrorException(error);
 		}
 
 		return updatedRequest;
