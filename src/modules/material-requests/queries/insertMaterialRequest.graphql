@@ -13,6 +13,7 @@ mutation insertMaterialRequest($newMaterialRequest: app_material_requests_insert
 		cancelled_at
 		is_pending
 		status
+		status_motivation
 		name
 		download_url
 		requester_capacity

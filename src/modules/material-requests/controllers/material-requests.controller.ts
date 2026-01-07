@@ -1,4 +1,5 @@
 import {
+	BadRequestException,
 	Body,
 	Controller,
 	Delete,
@@ -144,6 +145,25 @@ export class MaterialRequestsController {
 			user,
 			updateMaterialRequestDto,
 			updateMaterialRequestDto.reuseForm,
+			referer,
+			ip
+		);
+	}
+
+	@Post(':id/cancel')
+	@ApiOperation({
+		description: 'Cancel the material request',
+	})
+	@RequireAnyPermissions(Permission.EDIT_OWN_MATERIAL_REQUESTS)
+	public async cancelMaterialRequest(
+		@Param('id', ParseUUIDPipe) materialRequestId: string,
+		@SessionUser() user: SessionUserEntity,
+		@Referer() referer: string,
+		@Ip() ip: string
+	): Promise<MaterialRequest> {
+		return await this.materialRequestsService.cancelMaterialRequest(
+			materialRequestId,
+			user,
 			referer,
 			ip
 		);
