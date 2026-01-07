@@ -357,6 +357,7 @@ export class MaterialRequestsService {
 			| 'status'
 			| 'name'
 			| 'requested_at'
+			| 'cancelled_at'
 		>,
 		reuseForm: Record<string, string> | MaterialRequestReuseForm | undefined,
 		referer: string,
@@ -371,6 +372,7 @@ export class MaterialRequestsService {
 			status,
 			name,
 			requested_at,
+			cancelled_at,
 		} = materialRequestInfo;
 
 		const updateMaterialRequest = {
@@ -382,7 +384,8 @@ export class MaterialRequestsService {
 			status,
 			name,
 			requested_at,
-			updated_at: requested_at,
+			cancelled_at,
+			updated_at: new Date().toISOString(),
 		};
 
 		const { update_app_material_requests: updatedMaterialRequest } = await this.dataService.execute<
@@ -429,6 +432,54 @@ export class MaterialRequestsService {
 		});
 
 		return response.delete_app_material_requests.affected_rows;
+	}
+
+	public async cancelMaterialRequest(
+		materialRequestId: string,
+		user: SessionUserEntity,
+		referer: string,
+		ip: string
+	): Promise<MaterialRequest> {
+		const currentRequest = await this.findById(materialRequestId, user, referer, ip);
+
+		if (currentRequest.status !== Lookup_App_Material_Request_Status_Enum.New) {
+			throw new BadRequestException(
+				`Material request (${materialRequestId}) could not be ${Lookup_App_Material_Request_Status_Enum.Cancelled}.`
+			);
+		}
+
+		const updatedRequest = await this.updateMaterialRequest(
+			materialRequestId,
+			user,
+			{
+				status: Lookup_App_Material_Request_Status_Enum.Cancelled,
+				cancelled_at: new Date().toISOString(),
+			},
+			currentRequest.reuseForm,
+			referer,
+			ip
+		);
+
+		if (updatedRequest) {
+			const emailInfo: MaterialRequestEmailInfo = {
+				to: updatedRequest.contactMail,
+				replyTo: updatedRequest?.requesterMail,
+				template: EmailTemplate.MATERIAL_REQUEST_REQUESTER_CANCELLED,
+				materialRequests: [updatedRequest],
+				sendRequestListDto: {
+					type: updatedRequest.requesterCapacity,
+					organisation: updatedRequest.organisation,
+					requestName: updatedRequest.requestName,
+				},
+				firstName: user.getFirstName(),
+				lastName: user.getLastName(),
+				language: user.getLanguage(),
+			};
+
+			await this.campaignMonitorService.sendForMaterialRequest(emailInfo);
+		}
+
+		return updatedRequest;
 	}
 
 	/**
