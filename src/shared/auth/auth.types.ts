@@ -5,6 +5,7 @@ export enum LdapApp {
 	ADMINS = 'admins',
 	AVO = 'avo',
 	ACCOUNT_MANAGER = 'account-manager',
+	ROL_BEOORDELAAR = 'uitwisseling-beoordeler',
 }
 
 interface LdapAttributes {

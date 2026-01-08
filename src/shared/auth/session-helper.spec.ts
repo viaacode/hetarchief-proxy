@@ -42,6 +42,7 @@ const mockArchiefUser: User = {
 	permissions: [Permission.MANAGE_ALL_VISIT_REQUESTS],
 	idp: Idp.HETARCHIEF,
 	isKeyUser: false,
+	isEvaluator: false,
 };
 
 describe('SessionHelper', () => {

@@ -35,6 +35,7 @@ export const mockUser: User = {
 	permissions: [Permission.MANAGE_ALL_VISIT_REQUESTS, Permission.CREATE_VISIT_REQUEST],
 	idp: Idp.HETARCHIEF,
 	isKeyUser: false,
+	isEvaluator: false,
 	createdAt: '2023-10-01T12:00:00.000Z',
 	lastAccessAt: '2023-10-01T12:00:00.000Z',
 	organisationName: 'Test Organisation',

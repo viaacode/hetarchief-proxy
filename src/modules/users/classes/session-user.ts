@@ -79,6 +79,10 @@ export class SessionUserEntity {
 		return this.user?.isKeyUser || false;
 	}
 
+	public getIsEvaluator(): boolean {
+		return this.user?.isEvaluator || false;
+	}
+
 	public getLastAccessAt(): string {
 		return this.user?.lastAccessAt || null;
 	}

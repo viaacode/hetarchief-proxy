@@ -28,6 +28,7 @@ const mockUser: User = {
 	permissions: [Permission.MANAGE_CP_VISIT_REQUESTS],
 	idp: Idp.HETARCHIEF,
 	isKeyUser: false,
+	isEvaluator: false,
 };
 const mockRequest = { path: '/events', headers: {} } as unknown as Request;
 

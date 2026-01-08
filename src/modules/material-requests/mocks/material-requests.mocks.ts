@@ -223,6 +223,7 @@ export const mockUser: User = {
 	permissions: [Permission.MANAGE_ALL_VISIT_REQUESTS, Permission.CREATE_VISIT_REQUEST],
 	idp: Idp.HETARCHIEF,
 	isKeyUser: false,
+	isEvaluator: false,
 };
 
 export const mockGqlMaintainers: FindMaintainersWithMaterialRequestsQuery['graph_organisations_with_material_requests'][0] =

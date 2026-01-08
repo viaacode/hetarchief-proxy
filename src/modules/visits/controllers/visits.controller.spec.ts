@@ -116,6 +116,7 @@ const mockUser: User = {
 	permissions: [Permission.MANAGE_ALL_VISIT_REQUESTS, Permission.CREATE_VISIT_REQUEST],
 	idp: Idp.HETARCHIEF,
 	isKeyUser: false,
+	isEvaluator: false,
 };
 
 const mockVisitorSpace: VisitorSpace = {
