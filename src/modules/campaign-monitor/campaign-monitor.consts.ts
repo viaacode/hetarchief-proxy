@@ -19,6 +19,9 @@ export const getTemplateId = (template: string, language: Locale): string => {
 		[EmailTemplate.MATERIAL_REQUEST_REQUESTER]: process.env[
 			`CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_REQUESTER__${language.toUpperCase()}`
 		] as string,
+		[EmailTemplate.MATERIAL_REQUEST_REQUESTER_CANCELLED]: process.env[
+			`CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_REQUESTER_CANCELLED__${language.toUpperCase()}`
+		] as string,
 		[EmailTemplate.MATERIAL_REQUEST_MAINTAINER]: process.env[
 			`CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_MAINTAINER__${language.toUpperCase()}`
 		] as string,

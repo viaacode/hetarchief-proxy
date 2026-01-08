@@ -15,11 +15,12 @@ import {
 	SendRequestListDto,
 } from '../dto/material-requests.dto';
 import { ORDER_PROP_TO_DB_PROP } from '../material-requests.consts';
-import type {
+import {
 	GqlMaterialRequest,
 	GqlMaterialRequestMaintainer,
 	MaterialRequest,
 	MaterialRequestMaintainer,
+	MaterialRequestOrderProp,
 	MaterialRequestReuseForm,
 	MaterialRequestSendRequestListUserInfo,
 } from '../material-requests.types';
@@ -46,10 +47,14 @@ import {
 	InsertMaterialRequestReuseFormMutation,
 	InsertMaterialRequestReuseFormMutationVariables,
 	Lookup_App_Material_Request_Requester_Capacity_Enum,
+	Lookup_App_Material_Request_Status_Enum,
 	Lookup_App_Material_Request_Type_Enum,
 	UpdateMaterialRequestDocument,
 	type UpdateMaterialRequestMutation,
 	type UpdateMaterialRequestMutationVariables,
+	UpdateMaterialRequestStatusDocument,
+	UpdateMaterialRequestStatusMutation,
+	UpdateMaterialRequestStatusMutationVariables,
 } from '~generated/graphql-db-types-hetarchief';
 import {
 	EmailTemplate,
@@ -72,7 +77,7 @@ import { limitAccessToObjectDetails } from '~modules/ie-objects/helpers/limit-ac
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
-import { GroupId } from '~modules/users/types';
+import { customError } from '~shared/helpers/custom-error';
 import { PaginationHelper } from '~shared/helpers/pagination';
 import { SortDirection } from '~shared/types';
 
@@ -96,21 +101,29 @@ export class MaterialRequestsService {
 		referer: string,
 		ip: string
 	): Promise<IPagination<MaterialRequest>> {
-		const { query, type, maintainerIds, isPending, page, size, orderProp, orderDirection } =
-			inputQuery;
+		const {
+			query,
+			type,
+			status,
+			hasDownloadUrl,
+			maintainerIds,
+			isPending,
+			page,
+			size,
+			orderProp,
+			orderDirection,
+		} = inputQuery;
 		const { offset, limit } = PaginationHelper.convertPagination(page, size);
 
 		/** Dynamically build the where object  */
 		const where: App_Material_Requests_Bool_Exp = {};
 
 		if (!isEmpty(query) && query !== '%' && query !== '%%') {
-			where._or = [
-				{ requested_by: { full_name: { _ilike: query } } },
-				{ requested_by: { full_name_reversed: { _ilike: query } } },
-				{ requested_by: { mail: { _ilike: query } } },
-			];
+			// Everyone should be able to search on the IE Objects name
+			where._or = [{ intellectualEntity: { schema_name: { _ilike: query } } }];
 
-			if (user.getGroupId() === GroupId.MEEMOO_ADMIN) {
+			if (isPersonal) {
+				// So these are outgoing requests
 				where._or = [
 					...where._or,
 					{
@@ -118,11 +131,16 @@ export class MaterialRequestsService {
 							schemaMaintainer: { skos_pref_label: { _ilike: query } },
 						},
 					},
+					{ name: { _ilike: query } },
 				];
-			}
-
-			if (user.getGroupId() === GroupId.VISITOR) {
-				where._or = [...where._or, { intellectualEntity: { schema_name: { _ilike: query } } }];
+			} else {
+				// Incoming requests
+				where._or = [
+					...where._or,
+					{ requested_by: { full_name: { _ilike: query } } },
+					{ requested_by: { full_name_reversed: { _ilike: query } } },
+					{ requested_by: { mail: { _ilike: query } } },
+				];
 			}
 		}
 
@@ -133,6 +151,12 @@ export class MaterialRequestsService {
 		if (!isEmpty(type)) {
 			where.type = {
 				_in: isArray(type) ? type : [type],
+			};
+		}
+
+		if (!isEmpty(status)) {
+			where.status = {
+				_in: isArray(status) ? status : [status],
 			};
 		}
 
@@ -152,6 +176,58 @@ export class MaterialRequestsService {
 			};
 		}
 
+		if (!isNil(hasDownloadUrl)) {
+			const downloadUrlQuery = [];
+
+			if (hasDownloadUrl.includes('true')) {
+				downloadUrlQuery.push({ download_url: { _is_null: false } });
+			}
+
+			if (hasDownloadUrl.includes('false')) {
+				downloadUrlQuery.push({
+					_and: [
+						{ download_url: { _is_null: true } },
+						{
+							status: {
+								_in: [
+									Lookup_App_Material_Request_Status_Enum.Approved,
+									Lookup_App_Material_Request_Status_Enum.Denied,
+								],
+							},
+						},
+					],
+				});
+			}
+
+			where._and = [
+				...(where._and || []),
+				{ type: { _eq: Lookup_App_Material_Request_Type_Enum.Reuse } },
+				{ _or: downloadUrlQuery },
+			];
+		}
+
+		const orderBy = [
+			set(
+				{},
+				ORDER_PROP_TO_DB_PROP[orderProp] || ORDER_PROP_TO_DB_PROP.requestedAt,
+				orderDirection || SortDirection.desc
+			),
+		];
+
+		if (orderProp === MaterialRequestOrderProp.STATUS) {
+			// In case we have requested without a requestedAt, we sort them on creation date
+			orderBy.push(set({}, ORDER_PROP_TO_DB_PROP.requestedAt, SortDirection.desc));
+			orderBy.push(set({}, ORDER_PROP_TO_DB_PROP.createdAt, SortDirection.desc));
+		}
+
+		if (
+			(ORDER_PROP_TO_DB_PROP[orderProp] || ORDER_PROP_TO_DB_PROP.requestedAt) ===
+			ORDER_PROP_TO_DB_PROP.requestedAt
+		) {
+			// In case we have requested without a requestedAt, we sort them on creation date
+			orderBy.push(set({}, ORDER_PROP_TO_DB_PROP.createdAt, orderDirection || SortDirection.desc));
+		}
+
 		const materialRequestsResponse = await this.dataService.execute<
 			FindMaterialRequestsQuery,
 			FindMaterialRequestsQueryVariables
@@ -159,11 +235,7 @@ export class MaterialRequestsService {
 			where,
 			offset,
 			limit,
-			orderBy: set(
-				{},
-				ORDER_PROP_TO_DB_PROP[orderProp] || ORDER_PROP_TO_DB_PROP.createdAt,
-				orderDirection || SortDirection.desc
-			),
+			orderBy,
 		});
 		const organisations = await this.organisationsService.findOrganisationsBySchemaIdentifiers(
 			compact(
@@ -281,14 +353,31 @@ export class MaterialRequestsService {
 		user: SessionUserEntity,
 		materialRequestInfo: Pick<
 			App_Material_Requests_Set_Input,
-			'type' | 'reason' | 'organisation' | 'requester_capacity' | 'is_pending' | 'updated_at'
+			| 'type'
+			| 'reason'
+			| 'organisation'
+			| 'requester_capacity'
+			| 'is_pending'
+			| 'status'
+			| 'name'
+			| 'requested_at'
+			| 'cancelled_at'
 		>,
 		reuseForm: Record<string, string> | MaterialRequestReuseForm | undefined,
 		referer: string,
 		ip: string
 	): Promise<MaterialRequest> {
-		const { type, reason, organisation, requester_capacity, is_pending, updated_at } =
-			materialRequestInfo;
+		const {
+			type,
+			reason,
+			organisation,
+			requester_capacity,
+			is_pending,
+			status,
+			name,
+			requested_at,
+			cancelled_at,
+		} = materialRequestInfo;
 
 		const updateMaterialRequest = {
 			type,
@@ -296,7 +385,11 @@ export class MaterialRequestsService {
 			organisation,
 			requester_capacity,
 			is_pending,
-			updated_at,
+			status,
+			name,
+			requested_at,
+			cancelled_at,
+			updated_at: new Date().toISOString(),
 		};
 
 		const { update_app_material_requests: updatedMaterialRequest } = await this.dataService.execute<
@@ -343,6 +436,90 @@ export class MaterialRequestsService {
 		});
 
 		return response.delete_app_material_requests.affected_rows;
+	}
+
+	public async cancelMaterialRequest(
+		materialRequestId: string,
+		user: SessionUserEntity,
+		referer: string,
+		ip: string
+	): Promise<MaterialRequest> {
+		const currentRequest = await this.findById(materialRequestId, user, referer, ip);
+
+		if (currentRequest.status !== Lookup_App_Material_Request_Status_Enum.New) {
+			throw new BadRequestException(
+				`Material request (${materialRequestId}) could not be ${Lookup_App_Material_Request_Status_Enum.Cancelled}.`
+			);
+		}
+
+		const updateMaterialRequestStatusResponse = await this.dataService.execute<
+			UpdateMaterialRequestStatusMutation,
+			UpdateMaterialRequestStatusMutationVariables
+		>(UpdateMaterialRequestStatusDocument, {
+			materialRequestId,
+			userProfileId: user.getId(),
+			updateMaterialRequest: {
+				status: Lookup_App_Material_Request_Status_Enum.Cancelled,
+				cancelled_at: new Date().toISOString(),
+				updated_at: new Date().toISOString(),
+			},
+		});
+
+		const graphQlMaterialRequest =
+			updateMaterialRequestStatusResponse.update_app_material_requests.returning?.[0];
+
+		if (isEmpty(graphQlMaterialRequest)) {
+			const error = customError('Failed to cancel material request', null, {
+				response: updateMaterialRequestStatusResponse,
+			});
+			console.error(error);
+			throw new BadRequestException(
+				`Material request (${materialRequestId}) could not be cancelled.`
+			);
+		}
+
+		const organisations = await this.organisationsService.findOrganisationsBySchemaIdentifiers(
+			compact([graphQlMaterialRequest?.intellectualEntity?.schemaMaintainer?.org_identifier])
+		);
+
+		const updatedRequest = await this.adapt(
+			graphQlMaterialRequest,
+			organisations,
+			user,
+			referer,
+			ip
+		);
+
+		try {
+			if (updatedRequest) {
+				const emailInfo: MaterialRequestEmailInfo = {
+					to: updatedRequest.contactMail,
+					replyTo: updatedRequest?.requesterMail,
+					template: EmailTemplate.MATERIAL_REQUEST_REQUESTER_CANCELLED,
+					materialRequests: [updatedRequest],
+					sendRequestListDto: {
+						type: updatedRequest.requesterCapacity,
+						organisation: updatedRequest.organisation,
+						requestName: updatedRequest.requestName,
+					},
+					firstName: user.getFirstName(),
+					lastName: user.getLastName(),
+					language: user.getLanguage(),
+				};
+
+				await this.campaignMonitorService.sendForMaterialRequest(emailInfo);
+			}
+		} catch (err) {
+			const error = customError(
+				'Failed to send email to maintainer that the material request was cancelled',
+				err,
+				{ materialRequestId, user, referer, ip }
+			);
+			console.error(error);
+			throw error;
+		}
+
+		return updatedRequest;
 	}
 
 	/**
@@ -547,8 +724,16 @@ export class MaterialRequestsService {
 			reason: graphQlMaterialRequest.reason,
 			createdAt: graphQlMaterialRequest.created_at,
 			updatedAt: graphQlMaterialRequest.updated_at,
+			requestedAt: graphQlMaterialRequest.requested_at,
+			approvedAt: graphQlMaterialRequest.approved_at,
+			deniedAt: graphQlMaterialRequest.denied_at,
+			cancelledAt: graphQlMaterialRequest.cancelled_at,
 			type: graphQlMaterialRequest.type,
 			isPending: graphQlMaterialRequest.is_pending,
+			status: graphQlMaterialRequest.status,
+			statusMotivation: graphQlMaterialRequest.status_motivation,
+			downloadUrl: graphQlMaterialRequest.download_url ?? null,
+			requestName: graphQlMaterialRequest.name ?? null,
 			requesterId: graphQlMaterialRequest.requested_by.id,
 			requesterFullName: graphQlMaterialRequest.requested_by.full_name,
 			requesterMail: graphQlMaterialRequest.requested_by.mail,

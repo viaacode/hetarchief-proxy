@@ -1,13 +1,8 @@
-mutation updateMaterialRequest(
+mutation updateMaterialRequestStatus(
 	$materialRequestId: uuid
 	$userProfileId: uuid
 	$updateMaterialRequest: app_material_requests_set_input
 ) {
-	delete_app_material_request_reuse_form_values(
-		where: { material_request_id: { _eq: $materialRequestId } }
-	) {
-		affected_rows
-	}
 	update_app_material_requests(
 		where: { id: { _eq: $materialRequestId }, profile_id: { _eq: $userProfileId } }
 		_set: $updateMaterialRequest

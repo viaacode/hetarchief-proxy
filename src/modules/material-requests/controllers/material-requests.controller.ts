@@ -1,4 +1,5 @@
 import {
+	BadRequestException,
 	Body,
 	Controller,
 	Delete,
@@ -30,6 +31,7 @@ import type { MaterialRequest, MaterialRequestMaintainer } from '../material-req
 
 import { MaterialRequestsService } from '../services/material-requests.service';
 
+import { Lookup_App_Material_Request_Status_Enum } from '~generated/graphql-db-types-hetarchief';
 import { EventsService } from '~modules/events/services/events.service';
 import { type LogEvent, LogEventType } from '~modules/events/types';
 import { mapDcTermsFormatToSimpleType } from '~modules/ie-objects/helpers/map-dc-terms-format-to-simple-type';
@@ -148,6 +150,25 @@ export class MaterialRequestsController {
 		);
 	}
 
+	@Post(':id/cancel')
+	@ApiOperation({
+		description: 'Cancel the material request',
+	})
+	@RequireAnyPermissions(Permission.EDIT_OWN_MATERIAL_REQUESTS)
+	public async cancelMaterialRequest(
+		@Param('id', ParseUUIDPipe) materialRequestId: string,
+		@SessionUser() user: SessionUserEntity,
+		@Referer() referer: string,
+		@Ip() ip: string
+	): Promise<MaterialRequest> {
+		return await this.materialRequestsService.cancelMaterialRequest(
+			materialRequestId,
+			user,
+			referer,
+			ip
+		);
+	}
+
 	@Delete(':id')
 	@ApiOperation({
 		description: 'Delete a material request',
@@ -196,6 +217,7 @@ export class MaterialRequestsController {
 				// If the email does not exist, the campaign monitor service will default to process.env.MEEMOO_MAINTAINER_MISSING_EMAIL_FALLBACK
 				materialRequest.requesterCapacity = sendRequestListDto.type;
 				materialRequest.organisation = sendRequestListDto?.organisation;
+				materialRequest.requestName = sendRequestListDto?.requestName;
 			}
 
 			await this.materialRequestsService.sendRequestList(
@@ -219,7 +241,11 @@ export class MaterialRequestsController {
 							organisation: materialRequest.organisation,
 							requester_capacity: materialRequest.requesterCapacity,
 							is_pending: false,
-							updated_at: new Date().toISOString(),
+							status: materialRequest.reuseForm
+								? Lookup_App_Material_Request_Status_Enum.New
+								: Lookup_App_Material_Request_Status_Enum.None,
+							name: materialRequest.reuseForm ? materialRequest.requestName : undefined,
+							requested_at: new Date().toISOString(),
 						},
 						materialRequest.reuseForm,
 						referer,

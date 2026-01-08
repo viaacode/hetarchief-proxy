@@ -6,8 +6,16 @@ query findMaterialRequestsById($id: uuid!) {
 		reason
 		created_at
 		updated_at
+		requested_at
+		approved_at
+		denied_at
+		cancelled_at
 		type
 		is_pending
+		status
+		status_motivation
+		name
+		download_url
 		requester_capacity
 		organisation
 		requested_by {

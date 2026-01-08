@@ -11,7 +11,11 @@ import {
 	IsString,
 } from 'class-validator';
 
-import { MaterialRequestOrderProp, MaterialRequestType } from '../material-requests.types';
+import {
+	MaterialRequestOrderProp,
+	MaterialRequestStatus,
+	MaterialRequestType,
+} from '../material-requests.types';
 
 import { commaSeparatedStringToArray } from '~shared/helpers/comma-separated-string-to-array';
 import { SortDirection } from '~shared/types';
@@ -39,6 +43,32 @@ export class MaterialRequestsQueryDto {
 	})
 	@Transform(commaSeparatedStringToArray)
 	type? = undefined;
+
+	@IsArray()
+	@IsEnum(MaterialRequestStatus, { each: true })
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		isArray: true,
+		description: 'Which statuses of material requests are requested',
+		default: undefined,
+		enum: MaterialRequestStatus,
+	})
+	@Transform(commaSeparatedStringToArray)
+	status? = undefined;
+
+	@IsArray()
+	@IsString({ each: true })
+	@Type(() => String)
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		isArray: true,
+		description: 'Does the material requests contain a download URL?',
+		default: undefined,
+	})
+	@Transform(commaSeparatedStringToArray)
+	hasDownloadUrl? = undefined;
 
 	@IsArray()
 	@IsString({ each: true })
@@ -242,4 +272,12 @@ export class SendRequestListDto {
 		description: 'The name of the organisation to which the user belongs',
 	})
 	organisation?: string | null = null;
+
+	@IsString()
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		description: 'The name the user gave this list of requests (key users only)',
+	})
+	requestName?: string | null = null;
 }
