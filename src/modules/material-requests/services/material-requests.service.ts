@@ -77,6 +77,7 @@ import { limitAccessToObjectDetails } from '~modules/ie-objects/helpers/limit-ac
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
+import { customError } from '~shared/helpers/custom-error';
 import { PaginationHelper } from '~shared/helpers/pagination';
 import { SortDirection } from '~shared/types';
 
@@ -451,7 +452,7 @@ export class MaterialRequestsService {
 			);
 		}
 
-		const { update_app_material_requests: updatedMaterialRequest } = await this.dataService.execute<
+		const updateMaterialRequestStatusResponse = await this.dataService.execute<
 			UpdateMaterialRequestStatusMutation,
 			UpdateMaterialRequestStatusMutationVariables
 		>(UpdateMaterialRequestStatusDocument, {
@@ -464,9 +465,14 @@ export class MaterialRequestsService {
 			},
 		});
 
-		const graphQlMaterialRequest = updatedMaterialRequest.returning?.[0];
+		const graphQlMaterialRequest =
+			updateMaterialRequestStatusResponse.update_app_material_requests.returning?.[0];
 
 		if (isEmpty(graphQlMaterialRequest)) {
+			const error = customError('Failed to cancel material request', null, {
+				response: updateMaterialRequestStatusResponse,
+			});
+			console.error(error);
 			throw new BadRequestException(
 				`Material request (${materialRequestId}) could not be cancelled.`
 			);
@@ -504,12 +510,13 @@ export class MaterialRequestsService {
 				await this.campaignMonitorService.sendForMaterialRequest(emailInfo);
 			}
 		} catch (err) {
-			const error = {
-				message: 'Failed to send email to maintainer that the material request was cancelled',
-				innerException: err,
-			};
+			const error = customError(
+				'Failed to send email to maintainer that the material request was cancelled',
+				err,
+				{ materialRequestId, user, referer, ip }
+			);
 			console.error(error);
-			throw new InternalServerErrorException(error);
+			throw error;
 		}
 
 		return updatedRequest;
