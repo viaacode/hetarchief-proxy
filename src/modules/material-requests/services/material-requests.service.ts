@@ -452,39 +452,9 @@ export class MaterialRequestsService {
 			);
 		}
 
-		const updateMaterialRequestStatusResponse = await this.dataService.execute<
-			UpdateMaterialRequestStatusMutation,
-			UpdateMaterialRequestStatusMutationVariables
-		>(UpdateMaterialRequestStatusDocument, {
-			materialRequestId,
-			userProfileId: user.getId(),
-			updateMaterialRequest: {
-				status: Lookup_App_Material_Request_Status_Enum.Cancelled,
-				cancelled_at: new Date().toISOString(),
-				updated_at: new Date().toISOString(),
-			},
-		});
-
-		const graphQlMaterialRequest =
-			updateMaterialRequestStatusResponse.update_app_material_requests.returning?.[0];
-
-		if (isEmpty(graphQlMaterialRequest)) {
-			const error = customError('Failed to cancel material request', null, {
-				response: updateMaterialRequestStatusResponse,
-			});
-			console.error(error);
-			throw new BadRequestException(
-				`Material request (${materialRequestId}) could not be cancelled.`
-			);
-		}
-
-		const organisations = await this.organisationsService.findOrganisationsBySchemaIdentifiers(
-			compact([graphQlMaterialRequest?.intellectualEntity?.schemaMaintainer?.org_identifier])
-		);
-
-		const updatedRequest = await this.adapt(
-			graphQlMaterialRequest,
-			organisations,
+		const updatedRequest = await this.updateMaterialRequestStatus(
+			currentRequest,
+			Lookup_App_Material_Request_Status_Enum.Cancelled,
 			user,
 			referer,
 			ip
@@ -520,6 +490,56 @@ export class MaterialRequestsService {
 		}
 
 		return updatedRequest;
+	}
+
+	public async updateMaterialRequestStatus(
+		currentRequest: MaterialRequest,
+		status: Lookup_App_Material_Request_Status_Enum,
+		user: SessionUserEntity,
+		referer: string,
+		ip: string
+	): Promise<MaterialRequest> {
+		const updateMaterialRequestStatusResponse = await this.dataService.execute<
+			UpdateMaterialRequestStatusMutation,
+			UpdateMaterialRequestStatusMutationVariables
+		>(UpdateMaterialRequestStatusDocument, {
+			materialRequestId: currentRequest.id,
+			updateMaterialRequest: {
+				status,
+				cancelled_at:
+					status === Lookup_App_Material_Request_Status_Enum.Cancelled
+						? new Date().toISOString()
+						: currentRequest.cancelledAt,
+				approved_at:
+					status === Lookup_App_Material_Request_Status_Enum.Approved
+						? new Date().toISOString()
+						: currentRequest.approvedAt,
+				denied_at:
+					status === Lookup_App_Material_Request_Status_Enum.Denied
+						? new Date().toISOString()
+						: currentRequest.deniedAt,
+				updated_at: new Date().toISOString(),
+			},
+		});
+
+		const graphQlMaterialRequest =
+			updateMaterialRequestStatusResponse.update_app_material_requests.returning?.[0];
+
+		if (isEmpty(graphQlMaterialRequest)) {
+			const error = customError('Failed to update material request status', null, {
+				response: updateMaterialRequestStatusResponse,
+			});
+			console.error(error);
+			throw new BadRequestException(
+				`Material request (${currentRequest.id}) could not be set to ${status}.`
+			);
+		}
+
+		const organisations = await this.organisationsService.findOrganisationsBySchemaIdentifiers(
+			compact([graphQlMaterialRequest?.intellectualEntity?.schemaMaintainer?.org_identifier])
+		);
+
+		return await this.adapt(graphQlMaterialRequest, organisations, user, referer, ip);
 	}
 
 	/**
