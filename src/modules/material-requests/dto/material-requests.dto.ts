@@ -281,3 +281,13 @@ export class SendRequestListDto {
 	})
 	requestName?: string | null = null;
 }
+
+export class ApproveOrDenyRequestDto {
+	@IsString()
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		description: 'The motivation to approve the request',
+	})
+	motivation?: string | null = null;
+}

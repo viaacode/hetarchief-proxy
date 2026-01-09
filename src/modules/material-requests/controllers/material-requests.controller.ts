@@ -22,6 +22,7 @@ import { isEmpty, isNil } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 
 import {
+	ApproveOrDenyRequestDto,
 	CreateMaterialRequestDto,
 	MaterialRequestsQueryDto,
 	SendRequestListDto,
@@ -161,8 +162,24 @@ export class MaterialRequestsController {
 		@Referer() referer: string,
 		@Ip() ip: string
 	): Promise<MaterialRequest> {
-		return await this.materialRequestsService.cancelMaterialRequest(
+		const currentRequest = await this.materialRequestsService.findById(
 			materialRequestId,
+			user,
+			referer,
+			ip
+		);
+
+		if (currentRequest.status !== Lookup_App_Material_Request_Status_Enum.New) {
+			throw new BadRequestException(
+				`Material request (${materialRequestId}) could not be ${Lookup_App_Material_Request_Status_Enum.Cancelled}.`
+			);
+		}
+
+		return await this.materialRequestsService.updateMaterialRequestStatus(
+			currentRequest,
+			{
+				status: Lookup_App_Material_Request_Status_Enum.Cancelled,
+			},
 			user,
 			referer,
 			ip
@@ -196,7 +213,83 @@ export class MaterialRequestsController {
 
 		return this.materialRequestsService.updateMaterialRequestStatus(
 			currentRequest,
-			Lookup_App_Material_Request_Status_Enum.Pending,
+			{
+				status: Lookup_App_Material_Request_Status_Enum.Pending,
+			},
+			user,
+			referer,
+			ip
+		);
+	}
+
+	@Post(':id/approve')
+	@ApiOperation({
+		description: 'Approve the material request',
+	})
+	@RequireAnyPermissions(Permission.VIEW_ANY_MATERIAL_REQUESTS)
+	public async approveMaterialRequest(
+		@Param('id', ParseUUIDPipe) materialRequestId: string,
+		@Body() approveOrDenyRequestDto: ApproveOrDenyRequestDto,
+		@SessionUser() user: SessionUserEntity,
+		@Referer() referer: string,
+		@Ip() ip: string
+	): Promise<MaterialRequest> {
+		const currentRequest = await this.materialRequestsService.findById(
+			materialRequestId,
+			user,
+			referer,
+			ip
+		);
+
+		if (currentRequest.status !== Lookup_App_Material_Request_Status_Enum.Pending) {
+			throw new BadRequestException(
+				`Material request (${materialRequestId}) could not be ${Lookup_App_Material_Request_Status_Enum.Approved}.`
+			);
+		}
+
+		return await this.materialRequestsService.updateMaterialRequestStatus(
+			currentRequest,
+			{
+				status: Lookup_App_Material_Request_Status_Enum.Approved,
+				motivation: approveOrDenyRequestDto.motivation,
+			},
+			user,
+			referer,
+			ip
+		);
+	}
+
+	@Post(':id/deny')
+	@ApiOperation({
+		description: 'Deny the material request',
+	})
+	@RequireAnyPermissions(Permission.VIEW_ANY_MATERIAL_REQUESTS)
+	public async denyMaterialRequest(
+		@Param('id', ParseUUIDPipe) materialRequestId: string,
+		@Body() approveOrDenyRequestDto: ApproveOrDenyRequestDto,
+		@SessionUser() user: SessionUserEntity,
+		@Referer() referer: string,
+		@Ip() ip: string
+	): Promise<MaterialRequest> {
+		const currentRequest = await this.materialRequestsService.findById(
+			materialRequestId,
+			user,
+			referer,
+			ip
+		);
+
+		if (currentRequest.status !== Lookup_App_Material_Request_Status_Enum.Pending) {
+			throw new BadRequestException(
+				`Material request (${materialRequestId}) could not be ${Lookup_App_Material_Request_Status_Enum.Denied}.`
+			);
+		}
+
+		return await this.materialRequestsService.updateMaterialRequestStatus(
+			currentRequest,
+			{
+				status: Lookup_App_Material_Request_Status_Enum.Denied,
+				motivation: approveOrDenyRequestDto.motivation,
+			},
 			user,
 			referer,
 			ip
