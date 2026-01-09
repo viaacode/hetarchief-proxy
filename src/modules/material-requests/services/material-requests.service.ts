@@ -439,7 +439,7 @@ export class MaterialRequestsService {
 	}
 
 	public async updateMaterialRequestStatus(
-		currentRequest: MaterialRequest,
+		materialRequestId: string,
 		statusOptions: {
 			status: Lookup_App_Material_Request_Status_Enum;
 			motivation?: string;
@@ -448,7 +448,36 @@ export class MaterialRequestsService {
 		referer: string,
 		ip: string
 	): Promise<MaterialRequest> {
+		const currentRequest = await this.findById(materialRequestId, user, referer, ip);
+
 		const { status, motivation } = statusOptions;
+
+		if (currentRequest.status === Lookup_App_Material_Request_Status_Enum.New) {
+			// The current status is still NEW, and we are not trying to set the status to cancelled or pending => Not allowed
+			if (
+				status !== Lookup_App_Material_Request_Status_Enum.Cancelled &&
+				status !== Lookup_App_Material_Request_Status_Enum.Pending
+			) {
+				throw new BadRequestException(
+					`Material request (${materialRequestId}) could not be set to ${status}.`
+				);
+			}
+		} else if (currentRequest.status === Lookup_App_Material_Request_Status_Enum.Pending) {
+			// The current status is PENDING, and we are not trying to set the status to APPROVED or DENIED => Not allowed
+			if (
+				status !== Lookup_App_Material_Request_Status_Enum.Approved &&
+				status !== Lookup_App_Material_Request_Status_Enum.Denied
+			) {
+				throw new BadRequestException(
+					`Material request (${materialRequestId}) could not be set to ${status}.`
+				);
+			}
+		} else {
+			// No other status updates are allowed
+			throw new BadRequestException(
+				`Material request (${materialRequestId}) could not be set to ${status}.`
+			);
+		}
 
 		const updateMaterialRequestStatusResponse = await this.dataService.execute<
 			UpdateMaterialRequestStatusMutation,
@@ -499,7 +528,7 @@ export class MaterialRequestsService {
 			ip
 		);
 
-		let emailTemplateToSend: EmailTemplate | undefined = undefined;
+		let emailTemplateToSend: EmailTemplate | undefined;
 
 		switch (status) {
 			case Lookup_App_Material_Request_Status_Enum.Cancelled:

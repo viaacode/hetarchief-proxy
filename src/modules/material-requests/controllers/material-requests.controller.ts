@@ -1,5 +1,4 @@
 import {
-	BadRequestException,
 	Body,
 	Controller,
 	Delete,
@@ -162,21 +161,8 @@ export class MaterialRequestsController {
 		@Referer() referer: string,
 		@Ip() ip: string
 	): Promise<MaterialRequest> {
-		const currentRequest = await this.materialRequestsService.findById(
-			materialRequestId,
-			user,
-			referer,
-			ip
-		);
-
-		if (currentRequest.status !== Lookup_App_Material_Request_Status_Enum.New) {
-			throw new BadRequestException(
-				`Material request (${materialRequestId}) could not be ${Lookup_App_Material_Request_Status_Enum.Cancelled}.`
-			);
-		}
-
 		return await this.materialRequestsService.updateMaterialRequestStatus(
-			currentRequest,
+			materialRequestId,
 			{
 				status: Lookup_App_Material_Request_Status_Enum.Cancelled,
 			},
@@ -198,21 +184,8 @@ export class MaterialRequestsController {
 		@Referer() referer: string,
 		@Ip() ip: string
 	): Promise<MaterialRequest> {
-		const currentRequest = await this.materialRequestsService.findById(
-			materialRequestId,
-			user,
-			referer,
-			ip
-		);
-
-		if (currentRequest.status !== Lookup_App_Material_Request_Status_Enum.New) {
-			throw new BadRequestException(
-				`Material request (${materialRequestId}) could not be set to ${Lookup_App_Material_Request_Status_Enum.Pending}.`
-			);
-		}
-
 		return this.materialRequestsService.updateMaterialRequestStatus(
-			currentRequest,
+			materialRequestId,
 			{
 				status: Lookup_App_Material_Request_Status_Enum.Pending,
 			},
@@ -234,21 +207,8 @@ export class MaterialRequestsController {
 		@Referer() referer: string,
 		@Ip() ip: string
 	): Promise<MaterialRequest> {
-		const currentRequest = await this.materialRequestsService.findById(
-			materialRequestId,
-			user,
-			referer,
-			ip
-		);
-
-		if (currentRequest.status !== Lookup_App_Material_Request_Status_Enum.Pending) {
-			throw new BadRequestException(
-				`Material request (${materialRequestId}) could not be ${Lookup_App_Material_Request_Status_Enum.Approved}.`
-			);
-		}
-
 		return await this.materialRequestsService.updateMaterialRequestStatus(
-			currentRequest,
+			materialRequestId,
 			{
 				status: Lookup_App_Material_Request_Status_Enum.Approved,
 				motivation: approveOrDenyRequestDto.motivation,
@@ -271,21 +231,8 @@ export class MaterialRequestsController {
 		@Referer() referer: string,
 		@Ip() ip: string
 	): Promise<MaterialRequest> {
-		const currentRequest = await this.materialRequestsService.findById(
-			materialRequestId,
-			user,
-			referer,
-			ip
-		);
-
-		if (currentRequest.status !== Lookup_App_Material_Request_Status_Enum.Pending) {
-			throw new BadRequestException(
-				`Material request (${materialRequestId}) could not be ${Lookup_App_Material_Request_Status_Enum.Denied}.`
-			);
-		}
-
 		return await this.materialRequestsService.updateMaterialRequestStatus(
-			currentRequest,
+			materialRequestId,
 			{
 				status: Lookup_App_Material_Request_Status_Enum.Denied,
 				motivation: approveOrDenyRequestDto.motivation,
