@@ -13,8 +13,12 @@ import {
 	CreateMaterialRequestDto,
 	MaterialRequestsQueryDto,
 	SendRequestListDto,
+	UpdateMaterialRequestStatusDto,
 } from '../dto/material-requests.dto';
-import { ORDER_PROP_TO_DB_PROP } from '../material-requests.consts';
+import {
+	MAP_MATERIAL_REQUEST_STATUS_TO_EMAIL_TEMPLATE,
+	ORDER_PROP_TO_DB_PROP,
+} from '../material-requests.consts';
 import {
 	GqlMaterialRequest,
 	GqlMaterialRequestMaintainer,
@@ -440,10 +444,7 @@ export class MaterialRequestsService {
 
 	public async updateMaterialRequestStatus(
 		materialRequestId: string,
-		statusOptions: {
-			status: Lookup_App_Material_Request_Status_Enum;
-			motivation?: string;
-		},
+		statusOptions: UpdateMaterialRequestStatusDto,
 		user: SessionUserEntity,
 		referer: string,
 		ip: string
@@ -457,6 +458,16 @@ export class MaterialRequestsService {
 			if (
 				status !== Lookup_App_Material_Request_Status_Enum.Cancelled &&
 				status !== Lookup_App_Material_Request_Status_Enum.Pending
+			) {
+				throw new BadRequestException(
+					`Material request (${materialRequestId}) could not be set to ${status}.`
+				);
+			}
+
+			// Trying to update the status to cancelled, but user is not the one who made the request
+			if (
+				status === Lookup_App_Material_Request_Status_Enum.Cancelled &&
+				currentRequest.requesterId !== user.getId()
 			) {
 				throw new BadRequestException(
 					`Material request (${materialRequestId}) could not be set to ${status}.`
@@ -480,6 +491,7 @@ export class MaterialRequestsService {
 		}
 
 		const updateMaterialRequest: Partial<GqlMaterialRequest> = {
+			status: status,
 			updated_at: new Date().toISOString(),
 		};
 
@@ -526,21 +538,7 @@ export class MaterialRequestsService {
 			ip
 		);
 
-		let emailTemplateToSend: EmailTemplate | undefined;
-
-		switch (status) {
-			case Lookup_App_Material_Request_Status_Enum.Cancelled:
-				emailTemplateToSend = EmailTemplate.MATERIAL_REQUEST_REQUESTER_CANCELLED;
-				break;
-			case Lookup_App_Material_Request_Status_Enum.Approved:
-				emailTemplateToSend = EmailTemplate.MATERIAL_REQUEST_MAINTAINER_APPROVED;
-				break;
-			case Lookup_App_Material_Request_Status_Enum.Denied:
-				emailTemplateToSend = EmailTemplate.MATERIAL_REQUEST_MAINTAINER_DENIED;
-				break;
-			default:
-				emailTemplateToSend = undefined;
-		}
+		const emailTemplateToSend = MAP_MATERIAL_REQUEST_STATUS_TO_EMAIL_TEMPLATE[status];
 
 		if (updatedRequest && emailTemplateToSend) {
 			await this.sentStatusUpdateEmail(emailTemplateToSend, updatedRequest, user);
@@ -576,11 +574,11 @@ export class MaterialRequestsService {
 
 			await this.campaignMonitorService.sendForMaterialRequest(emailInfo);
 		} catch (err) {
-			const error = customError(
-				`Failed to send email to maintainer that the material request was ${request.status}`,
-				err,
-				{ request, user }
-			);
+			const error = customError('Failed to send email about material request status update', err, {
+				template,
+				request,
+				user,
+			});
 			console.error(error);
 			throw error;
 		}
