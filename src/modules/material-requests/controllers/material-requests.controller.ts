@@ -150,7 +150,7 @@ export class MaterialRequestsController {
 		);
 	}
 
-	@Post(':id/status')
+	@Patch(':id/status')
 	@ApiOperation({
 		description: 'Update the status of the material request',
 	})
