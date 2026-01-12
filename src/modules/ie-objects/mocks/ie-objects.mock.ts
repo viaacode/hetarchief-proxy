@@ -422,6 +422,7 @@ export const mockUser = Object.freeze({
 	groupName: GroupName.CP_ADMIN,
 	permissions: [Permission.EDIT_ANY_CONTENT_PAGES],
 	isKeyUser: false,
+	isEvaluator: false,
 });
 
 export const mockUserInfo: Readonly<{

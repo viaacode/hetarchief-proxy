@@ -7,6 +7,7 @@ mutation updateUserProfile($id: uuid!, $updateUser: users_profile_set_input!) {
 			full_name
 			mail
 			is_key_user
+			is_evaluator
 			accepted_tos_at
 			last_access_at
 			language

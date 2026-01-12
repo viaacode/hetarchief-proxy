@@ -13,8 +13,12 @@ import {
 	CreateMaterialRequestDto,
 	MaterialRequestsQueryDto,
 	SendRequestListDto,
+	UpdateMaterialRequestStatusDto,
 } from '../dto/material-requests.dto';
-import { ORDER_PROP_TO_DB_PROP } from '../material-requests.consts';
+import {
+	MAP_MATERIAL_REQUEST_STATUS_TO_EMAIL_TEMPLATE,
+	ORDER_PROP_TO_DB_PROP,
+} from '../material-requests.consts';
 import {
 	GqlMaterialRequest,
 	GqlMaterialRequestMaintainer,
@@ -438,43 +442,87 @@ export class MaterialRequestsService {
 		return response.delete_app_material_requests.affected_rows;
 	}
 
-	public async cancelMaterialRequest(
+	public async updateMaterialRequestStatus(
 		materialRequestId: string,
+		statusOptions: UpdateMaterialRequestStatusDto,
 		user: SessionUserEntity,
 		referer: string,
 		ip: string
 	): Promise<MaterialRequest> {
 		const currentRequest = await this.findById(materialRequestId, user, referer, ip);
 
-		if (currentRequest.status !== Lookup_App_Material_Request_Status_Enum.New) {
+		const { status, motivation } = statusOptions;
+
+		if (currentRequest.status === Lookup_App_Material_Request_Status_Enum.New) {
+			// The current status is still NEW, and we are not trying to set the status to cancelled or pending => Not allowed
+			if (
+				status !== Lookup_App_Material_Request_Status_Enum.Cancelled &&
+				status !== Lookup_App_Material_Request_Status_Enum.Pending
+			) {
+				throw new BadRequestException(
+					`Material request (${materialRequestId}) could not be set to ${status}.`
+				);
+			}
+
+			// Trying to update the status to cancelled, but user is not the one who made the request
+			if (
+				status === Lookup_App_Material_Request_Status_Enum.Cancelled &&
+				currentRequest.requesterId !== user.getId()
+			) {
+				throw new BadRequestException(
+					`Material request (${materialRequestId}) could not be set to ${status}.`
+				);
+			}
+		} else if (currentRequest.status === Lookup_App_Material_Request_Status_Enum.Pending) {
+			// The current status is PENDING, and we are not trying to set the status to APPROVED or DENIED => Not allowed
+			if (
+				status !== Lookup_App_Material_Request_Status_Enum.Approved &&
+				status !== Lookup_App_Material_Request_Status_Enum.Denied
+			) {
+				throw new BadRequestException(
+					`Material request (${materialRequestId}) could not be set to ${status}.`
+				);
+			}
+		} else {
+			// No other status updates are allowed
 			throw new BadRequestException(
-				`Material request (${materialRequestId}) could not be ${Lookup_App_Material_Request_Status_Enum.Cancelled}.`
+				`Material request (${materialRequestId}) could not be set to ${status}.`
 			);
+		}
+
+		const updateMaterialRequest: Partial<GqlMaterialRequest> = {
+			status: status,
+			updated_at: new Date().toISOString(),
+		};
+
+		if (status === Lookup_App_Material_Request_Status_Enum.Cancelled) {
+			updateMaterialRequest.cancelled_at = new Date().toISOString();
+		} else if (status === Lookup_App_Material_Request_Status_Enum.Approved) {
+			updateMaterialRequest.status_motivation = motivation;
+			updateMaterialRequest.approved_at = new Date().toISOString();
+		} else if (status === Lookup_App_Material_Request_Status_Enum.Denied) {
+			updateMaterialRequest.status_motivation = motivation;
+			updateMaterialRequest.denied_at = new Date().toISOString();
 		}
 
 		const updateMaterialRequestStatusResponse = await this.dataService.execute<
 			UpdateMaterialRequestStatusMutation,
 			UpdateMaterialRequestStatusMutationVariables
 		>(UpdateMaterialRequestStatusDocument, {
-			materialRequestId,
-			userProfileId: user.getId(),
-			updateMaterialRequest: {
-				status: Lookup_App_Material_Request_Status_Enum.Cancelled,
-				cancelled_at: new Date().toISOString(),
-				updated_at: new Date().toISOString(),
-			},
+			materialRequestId: currentRequest.id,
+			updateMaterialRequest,
 		});
 
 		const graphQlMaterialRequest =
 			updateMaterialRequestStatusResponse.update_app_material_requests.returning?.[0];
 
 		if (isEmpty(graphQlMaterialRequest)) {
-			const error = customError('Failed to cancel material request', null, {
+			const error = customError('Failed to update material request status', null, {
 				response: updateMaterialRequestStatusResponse,
 			});
 			console.error(error);
 			throw new BadRequestException(
-				`Material request (${materialRequestId}) could not be cancelled.`
+				`Material request (${currentRequest.id}) could not be set to ${status}.`
 			);
 		}
 
@@ -490,36 +538,50 @@ export class MaterialRequestsService {
 			ip
 		);
 
-		try {
-			if (updatedRequest) {
-				const emailInfo: MaterialRequestEmailInfo = {
-					to: updatedRequest.contactMail,
-					replyTo: updatedRequest?.requesterMail,
-					template: EmailTemplate.MATERIAL_REQUEST_REQUESTER_CANCELLED,
-					materialRequests: [updatedRequest],
-					sendRequestListDto: {
-						type: updatedRequest.requesterCapacity,
-						organisation: updatedRequest.organisation,
-						requestName: updatedRequest.requestName,
-					},
-					firstName: user.getFirstName(),
-					lastName: user.getLastName(),
-					language: user.getLanguage(),
-				};
+		const emailTemplateToSend = MAP_MATERIAL_REQUEST_STATUS_TO_EMAIL_TEMPLATE[status];
 
-				await this.campaignMonitorService.sendForMaterialRequest(emailInfo);
-			}
-		} catch (err) {
-			const error = customError(
-				'Failed to send email to maintainer that the material request was cancelled',
-				err,
-				{ materialRequestId, user, referer, ip }
-			);
-			console.error(error);
-			throw error;
+		if (updatedRequest && emailTemplateToSend) {
+			await this.sentStatusUpdateEmail(emailTemplateToSend, updatedRequest, user);
 		}
 
 		return updatedRequest;
+	}
+
+	public async sentStatusUpdateEmail(
+		template: EmailTemplate,
+		request: MaterialRequest,
+		user: SessionUserEntity
+	): Promise<void> {
+		try {
+			// Sent an email to maintainer when the requester cancelled their request
+			// Sent an email to the requester when the maintainer approved or denied the request
+			const sentToMaintainer = template === EmailTemplate.MATERIAL_REQUEST_REQUESTER_CANCELLED;
+
+			const emailInfo: MaterialRequestEmailInfo = {
+				to: sentToMaintainer ? request.contactMail : request.requesterMail,
+				replyTo: sentToMaintainer ? request.requesterMail : null,
+				template,
+				materialRequests: [request],
+				sendRequestListDto: {
+					type: request.requesterCapacity,
+					organisation: request.organisation,
+					requestName: request.requestName,
+				},
+				firstName: user.getFirstName(),
+				lastName: user.getLastName(),
+				language: user.getLanguage(),
+			};
+
+			await this.campaignMonitorService.sendForMaterialRequest(emailInfo);
+		} catch (err) {
+			const error = customError('Failed to send email about material request status update', err, {
+				template,
+				request,
+				user,
+			});
+			console.error(error);
+			throw error;
+		}
 	}
 
 	/**
@@ -799,8 +861,8 @@ export class MaterialRequestsService {
 		});
 
 		return {
-			objectAccessThrough: censoredObjectMetadata.accessThrough,
-			objectLicences: censoredObjectMetadata.licenses,
+			objectAccessThrough: censoredObjectMetadata?.accessThrough,
+			objectLicences: censoredObjectMetadata?.licenses,
 		};
 	}
 }

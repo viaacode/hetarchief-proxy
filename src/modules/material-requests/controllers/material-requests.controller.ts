@@ -1,5 +1,4 @@
 import {
-	BadRequestException,
 	Body,
 	Controller,
 	Delete,
@@ -26,6 +25,7 @@ import {
 	MaterialRequestsQueryDto,
 	SendRequestListDto,
 	UpdateMaterialRequestDto,
+	UpdateMaterialRequestStatusDto,
 } from '../dto/material-requests.dto';
 import type { MaterialRequest, MaterialRequestMaintainer } from '../material-requests.types';
 
@@ -150,19 +150,24 @@ export class MaterialRequestsController {
 		);
 	}
 
-	@Post(':id/cancel')
+	@Patch(':id/status')
 	@ApiOperation({
-		description: 'Cancel the material request',
+		description: 'Update the status of the material request',
 	})
-	@RequireAnyPermissions(Permission.EDIT_OWN_MATERIAL_REQUESTS)
-	public async cancelMaterialRequest(
+	@RequireAnyPermissions(
+		Permission.VIEW_OWN_MATERIAL_REQUESTS,
+		Permission.VIEW_ANY_MATERIAL_REQUESTS
+	)
+	public async updateMaterialRequestStatus(
 		@Param('id', ParseUUIDPipe) materialRequestId: string,
+		@Body() updateMaterialRequestStatusDto: UpdateMaterialRequestStatusDto,
 		@SessionUser() user: SessionUserEntity,
 		@Referer() referer: string,
 		@Ip() ip: string
 	): Promise<MaterialRequest> {
-		return await this.materialRequestsService.cancelMaterialRequest(
+		return await this.materialRequestsService.updateMaterialRequestStatus(
 			materialRequestId,
+			updateMaterialRequestStatusDto,
 			user,
 			referer,
 			ip
@@ -308,7 +313,10 @@ export class MaterialRequestsController {
 				queryDto.maintainerIds = [];
 			}
 
-			if (user.getGroupId() === GroupId.CP_ADMIN) {
+			if (
+				user.getGroupId() === GroupId.CP_ADMIN ||
+				(user.getIsKeyUser() && user.getIsEvaluator())
+			) {
 				queryDto.maintainerIds = [user.getOrganisationId()];
 			}
 		}

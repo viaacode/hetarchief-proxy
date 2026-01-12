@@ -33,6 +33,7 @@ const archiefUser: User = {
 	idp: Idp.HETARCHIEF,
 	permissions: [Permission.MANAGE_ALL_VISIT_REQUESTS],
 	isKeyUser: true,
+	isEvaluator: false,
 	lastAccessAt: null,
 	createdAt: null,
 };
@@ -120,6 +121,7 @@ describe('UsersService', () => {
 					email: 'test@studiohypderdrive.be',
 					groupId: GroupId.CP_ADMIN,
 					isKeyUser: false,
+					isEvaluator: false,
 					organisationId: 'test',
 				},
 				Idp.HETARCHIEF,
@@ -142,6 +144,7 @@ describe('UsersService', () => {
 				email: 'test@studiohypderdrive.be',
 				groupId: GroupId.CP_ADMIN,
 				isKeyUser: false,
+				isEvaluator: false,
 				organisationId: 'test',
 				language: 'en',
 			});
