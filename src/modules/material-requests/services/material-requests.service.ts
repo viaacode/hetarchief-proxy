@@ -446,7 +446,11 @@ export class MaterialRequestsService {
 	): Promise<MaterialRequest> {
 		const currentRequest = await this.findById(materialRequestId, user, referer, ip);
 
-		if (currentRequest.status !== Lookup_App_Material_Request_Status_Enum.New) {
+		// TODO: clean up logic with ARC-3281
+		if (
+			currentRequest.status !== Lookup_App_Material_Request_Status_Enum.New ||
+			currentRequest.requesterId !== user.getId()
+		) {
 			throw new BadRequestException(
 				`Material request (${materialRequestId}) could not be ${Lookup_App_Material_Request_Status_Enum.Cancelled}.`
 			);
@@ -499,27 +503,26 @@ export class MaterialRequestsService {
 		referer: string,
 		ip: string
 	): Promise<MaterialRequest> {
+		const updateMaterialRequest: Partial<GqlMaterialRequest> = {
+			updated_at: new Date().toISOString(),
+		};
+
+		if (status === Lookup_App_Material_Request_Status_Enum.Cancelled) {
+			updateMaterialRequest.cancelled_at = new Date().toISOString();
+		}
+		if (status === Lookup_App_Material_Request_Status_Enum.Approved) {
+			updateMaterialRequest.approved_at = new Date().toISOString();
+		}
+		if (status === Lookup_App_Material_Request_Status_Enum.Denied) {
+			updateMaterialRequest.denied_at = new Date().toISOString();
+		}
+
 		const updateMaterialRequestStatusResponse = await this.dataService.execute<
 			UpdateMaterialRequestStatusMutation,
 			UpdateMaterialRequestStatusMutationVariables
 		>(UpdateMaterialRequestStatusDocument, {
 			materialRequestId: currentRequest.id,
-			updateMaterialRequest: {
-				status,
-				cancelled_at:
-					status === Lookup_App_Material_Request_Status_Enum.Cancelled
-						? new Date().toISOString()
-						: currentRequest.cancelledAt,
-				approved_at:
-					status === Lookup_App_Material_Request_Status_Enum.Approved
-						? new Date().toISOString()
-						: currentRequest.approvedAt,
-				denied_at:
-					status === Lookup_App_Material_Request_Status_Enum.Denied
-						? new Date().toISOString()
-						: currentRequest.deniedAt,
-				updated_at: new Date().toISOString(),
-			},
+			updateMaterialRequest,
 		});
 
 		const graphQlMaterialRequest =

@@ -175,7 +175,7 @@ export class MaterialRequestsController {
 			'Set the status of the material request to pending when a maintainer has viewed the request',
 	})
 	@RequireAnyPermissions(Permission.VIEW_ANY_MATERIAL_REQUESTS)
-	public async processMaterialRequest(
+	public async setMaterialRequestStatusToPending(
 		@Param('id', ParseUUIDPipe) materialRequestId: string,
 		@SessionUser() user: SessionUserEntity,
 		@Referer() referer: string,
