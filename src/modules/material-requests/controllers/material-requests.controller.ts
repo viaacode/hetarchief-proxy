@@ -1,5 +1,4 @@
 import {
-	BadRequestException,
 	Body,
 	Controller,
 	Delete,
@@ -26,6 +25,7 @@ import {
 	MaterialRequestsQueryDto,
 	SendRequestListDto,
 	UpdateMaterialRequestDto,
+	UpdateMaterialRequestStatusDto,
 } from '../dto/material-requests.dto';
 import type { MaterialRequest, MaterialRequestMaintainer } from '../material-requests.types';
 
@@ -150,53 +150,24 @@ export class MaterialRequestsController {
 		);
 	}
 
-	@Post(':id/cancel')
+	@Patch(':id/status')
 	@ApiOperation({
-		description: 'Cancel the material request',
+		description: 'Update the status of the material request',
 	})
-	@RequireAnyPermissions(Permission.EDIT_OWN_MATERIAL_REQUESTS)
-	public async cancelMaterialRequest(
+	@RequireAnyPermissions(
+		Permission.VIEW_OWN_MATERIAL_REQUESTS,
+		Permission.VIEW_ANY_MATERIAL_REQUESTS
+	)
+	public async updateMaterialRequestStatus(
 		@Param('id', ParseUUIDPipe) materialRequestId: string,
+		@Body() updateMaterialRequestStatusDto: UpdateMaterialRequestStatusDto,
 		@SessionUser() user: SessionUserEntity,
 		@Referer() referer: string,
 		@Ip() ip: string
 	): Promise<MaterialRequest> {
-		return await this.materialRequestsService.cancelMaterialRequest(
+		return await this.materialRequestsService.updateMaterialRequestStatus(
 			materialRequestId,
-			user,
-			referer,
-			ip
-		);
-	}
-
-	@Post(':id/viewed')
-	@ApiOperation({
-		description:
-			'Set the status of the material request to pending when a maintainer has viewed the request',
-	})
-	@RequireAnyPermissions(Permission.VIEW_ANY_MATERIAL_REQUESTS)
-	public async setMaterialRequestStatusToPending(
-		@Param('id', ParseUUIDPipe) materialRequestId: string,
-		@SessionUser() user: SessionUserEntity,
-		@Referer() referer: string,
-		@Ip() ip: string
-	): Promise<MaterialRequest> {
-		const currentRequest = await this.materialRequestsService.findById(
-			materialRequestId,
-			user,
-			referer,
-			ip
-		);
-
-		if (currentRequest.status !== Lookup_App_Material_Request_Status_Enum.New) {
-			throw new BadRequestException(
-				`Material request (${materialRequestId}) could not be set to ${Lookup_App_Material_Request_Status_Enum.Pending}.`
-			);
-		}
-
-		return this.materialRequestsService.updateMaterialRequestStatus(
-			currentRequest,
-			Lookup_App_Material_Request_Status_Enum.Pending,
+			updateMaterialRequestStatusDto,
 			user,
 			referer,
 			ip

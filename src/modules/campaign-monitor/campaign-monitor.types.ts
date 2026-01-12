@@ -16,7 +16,9 @@ export enum EmailTemplate {
 	SHARE_FOLDER = 'shareFolder',
 	MATERIAL_REQUEST_REQUESTER = 'materialRequestRequester',
 	MATERIAL_REQUEST_MAINTAINER = 'materialRequestMaintainer',
-	MATERIAL_REQUEST_REQUESTER_CANCELLED = 'materialRequestRequestCancelled',
+	MATERIAL_REQUEST_REQUESTER_CANCELLED = 'materialRequestRequesterCancelled',
+	MATERIAL_REQUEST_MAINTAINER_APPROVED = 'materialRequestMaintainerApproved',
+	MATERIAL_REQUEST_MAINTAINER_DENIED = 'materialRequestMaintainerDenied',
 	NEWSLETTER_CONFIRMATION = 'newsletterConfirmation',
 }
 
