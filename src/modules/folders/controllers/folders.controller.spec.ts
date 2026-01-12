@@ -84,6 +84,7 @@ const mockUser: User = {
 	groupName: GroupName.CP_ADMIN,
 	permissions: [Permission.EDIT_ANY_CONTENT_PAGES],
 	isKeyUser: false,
+	isEvaluator: false,
 };
 
 const mockFoldersService: Partial<Record<keyof FoldersService, jest.SpyInstance>> = {

@@ -1,5 +1,4 @@
 import {
-	BadRequestException,
 	Body,
 	Controller,
 	Delete,
@@ -308,7 +307,10 @@ export class MaterialRequestsController {
 				queryDto.maintainerIds = [];
 			}
 
-			if (user.getGroupId() === GroupId.CP_ADMIN) {
+			if (
+				user.getGroupId() === GroupId.CP_ADMIN ||
+				(user.getIsKeyUser() && user.getIsEvaluator())
+			) {
 				queryDto.maintainerIds = [user.getOrganisationId()];
 			}
 		}

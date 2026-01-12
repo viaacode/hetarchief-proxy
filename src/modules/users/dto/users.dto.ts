@@ -22,6 +22,10 @@ export class CreateOrUpdateUserDto {
 	@IsOptional()
 	isKeyUser?: boolean;
 
+	@IsBoolean()
+	@IsOptional()
+	isEvaluator?: boolean;
+
 	@IsString()
 	@IsOptional()
 	organisationId?: string;

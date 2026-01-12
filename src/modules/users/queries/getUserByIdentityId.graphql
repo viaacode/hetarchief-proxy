@@ -6,6 +6,7 @@ query getUserByIdentityId($identityId: String!) {
 		full_name
 		mail
 		is_key_user
+		is_evaluator
 		accepted_tos_at
 		last_access_at
 		language

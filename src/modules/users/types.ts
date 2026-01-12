@@ -95,6 +95,7 @@ export interface User {
 	permissions: Permission[];
 	idp: Idp;
 	isKeyUser: boolean;
+	isEvaluator: boolean;
 	visitorSpaceSlug?: string;
 	sector?: IeObjectSector | null;
 	organisationName?: string | null;

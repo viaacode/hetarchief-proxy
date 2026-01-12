@@ -105,6 +105,7 @@ const mockUser: User = {
 	groupName: GroupName.CP_ADMIN,
 	permissions: [Permission.EDIT_ANY_CONTENT_PAGES],
 	isKeyUser: false,
+	isEvaluator: false,
 };
 const mockNotificationsService: Partial<Record<keyof NotificationsService, jest.SpyInstance>> = {
 	findNotificationsByUser: jest.fn(),

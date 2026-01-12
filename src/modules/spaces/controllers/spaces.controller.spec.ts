@@ -50,6 +50,7 @@ const mockUser: User = {
 	organisationId: 'OR-rf5kf25',
 	organisationName: 'VRT',
 	isKeyUser: false,
+	isEvaluator: false,
 };
 const mockSpacesService: Partial<Record<keyof SpacesService, jest.SpyInstance>> = {
 	findAll: jest.fn(),

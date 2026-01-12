@@ -1050,8 +1050,10 @@ export class IeObjectsService {
 
 	public adaptMetadata(ieObject: Partial<IeObject>): Partial<IeObject> {
 		// unset thumbnail and representations
-		ieObject.pages = undefined;
-		ieObject.thumbnailUrl = undefined;
+		if (ieObject) {
+			ieObject.pages = undefined;
+			ieObject.thumbnailUrl = undefined;
+		}
 		return ieObject;
 	}
 

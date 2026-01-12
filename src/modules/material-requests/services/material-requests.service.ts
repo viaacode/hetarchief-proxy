@@ -799,8 +799,8 @@ export class MaterialRequestsService {
 		});
 
 		return {
-			objectAccessThrough: censoredObjectMetadata.accessThrough,
-			objectLicences: censoredObjectMetadata.licenses,
+			objectAccessThrough: censoredObjectMetadata?.accessThrough,
+			objectLicences: censoredObjectMetadata?.licenses,
 		};
 	}
 }
