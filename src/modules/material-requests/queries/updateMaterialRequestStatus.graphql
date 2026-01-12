@@ -1,10 +1,9 @@
 mutation updateMaterialRequestStatus(
 	$materialRequestId: uuid
-	$userProfileId: uuid
 	$updateMaterialRequest: app_material_requests_set_input
 ) {
 	update_app_material_requests(
-		where: { id: { _eq: $materialRequestId }, profile_id: { _eq: $userProfileId } }
+		where: { id: { _eq: $materialRequestId } }
 		_set: $updateMaterialRequest
 	) {
 		returning {

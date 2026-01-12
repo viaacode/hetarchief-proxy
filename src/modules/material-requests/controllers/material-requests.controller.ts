@@ -1,4 +1,5 @@
 import {
+	BadRequestException,
 	Body,
 	Controller,
 	Delete,
@@ -162,6 +163,40 @@ export class MaterialRequestsController {
 	): Promise<MaterialRequest> {
 		return await this.materialRequestsService.cancelMaterialRequest(
 			materialRequestId,
+			user,
+			referer,
+			ip
+		);
+	}
+
+	@Post(':id/viewed')
+	@ApiOperation({
+		description:
+			'Set the status of the material request to pending when a maintainer has viewed the request',
+	})
+	@RequireAnyPermissions(Permission.VIEW_ANY_MATERIAL_REQUESTS)
+	public async setMaterialRequestStatusToPending(
+		@Param('id', ParseUUIDPipe) materialRequestId: string,
+		@SessionUser() user: SessionUserEntity,
+		@Referer() referer: string,
+		@Ip() ip: string
+	): Promise<MaterialRequest> {
+		const currentRequest = await this.materialRequestsService.findById(
+			materialRequestId,
+			user,
+			referer,
+			ip
+		);
+
+		if (currentRequest.status !== Lookup_App_Material_Request_Status_Enum.New) {
+			throw new BadRequestException(
+				`Material request (${materialRequestId}) could not be set to ${Lookup_App_Material_Request_Status_Enum.Pending}.`
+			);
+		}
+
+		return this.materialRequestsService.updateMaterialRequestStatus(
+			currentRequest,
+			Lookup_App_Material_Request_Status_Enum.Pending,
 			user,
 			referer,
 			ip
