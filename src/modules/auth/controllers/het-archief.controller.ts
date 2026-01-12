@@ -143,7 +143,7 @@ export class HetArchiefController {
 				email: ldapUser.attributes.mail[0],
 				groupId: userGroup,
 				isKeyUser: apps.includes(LdapApp.CATALOGUS_PRO),
-				isEvaluator: apps.includes(LdapApp.ROL_BEOORDELAAR),
+				isEvaluator: apps.includes(LdapApp.EVALUATOR_ROLE),
 				organisationId,
 				language: info.language || Locale.Nl,
 			};

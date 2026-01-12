@@ -479,28 +479,26 @@ export class MaterialRequestsService {
 			);
 		}
 
+		const updateMaterialRequest: Partial<GqlMaterialRequest> = {
+			updated_at: new Date().toISOString(),
+		};
+
+		if (status === Lookup_App_Material_Request_Status_Enum.Cancelled) {
+			updateMaterialRequest.cancelled_at = new Date().toISOString();
+		} else if (status === Lookup_App_Material_Request_Status_Enum.Approved) {
+			updateMaterialRequest.status_motivation = motivation;
+			updateMaterialRequest.approved_at = new Date().toISOString();
+		} else if (status === Lookup_App_Material_Request_Status_Enum.Denied) {
+			updateMaterialRequest.status_motivation = motivation;
+			updateMaterialRequest.denied_at = new Date().toISOString();
+		}
+
 		const updateMaterialRequestStatusResponse = await this.dataService.execute<
 			UpdateMaterialRequestStatusMutation,
 			UpdateMaterialRequestStatusMutationVariables
 		>(UpdateMaterialRequestStatusDocument, {
 			materialRequestId: currentRequest.id,
-			updateMaterialRequest: {
-				status,
-				status_motivation: motivation ?? undefined,
-				cancelled_at:
-					status === Lookup_App_Material_Request_Status_Enum.Cancelled
-						? new Date().toISOString()
-						: currentRequest.cancelledAt,
-				approved_at:
-					status === Lookup_App_Material_Request_Status_Enum.Approved
-						? new Date().toISOString()
-						: currentRequest.approvedAt,
-				denied_at:
-					status === Lookup_App_Material_Request_Status_Enum.Denied
-						? new Date().toISOString()
-						: currentRequest.deniedAt,
-				updated_at: new Date().toISOString(),
-			},
+			updateMaterialRequest,
 		});
 
 		const graphQlMaterialRequest =

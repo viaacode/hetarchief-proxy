@@ -5,7 +5,9 @@ export enum LdapApp {
 	ADMINS = 'admins',
 	AVO = 'avo',
 	ACCOUNT_MANAGER = 'account-manager',
-	ROL_BEOORDELAAR = 'uitwisseling-beoordeler',
+	// in the meemoo account manager this is stored as a group with name "uitwisseling-beoordeler"
+	// But we receive groups and apps together in the ldap user object under the "app" property array
+	EVALUATOR_ROLE = 'uitwisseling-beoordeler',
 }
 
 interface LdapAttributes {
