@@ -44,6 +44,7 @@ const mockUser: User = {
 	permissions: [PermissionName.MANAGE_CP_VISIT_REQUESTS],
 	idp: AvoAuthIdpType.HETARCHIEF,
 	isKeyUser: false,
+	isEvaluator: false,
 };
 const mockCreateSpace: CreateSpaceDto = {
 	orId: 'test',

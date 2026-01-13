@@ -30,6 +30,7 @@ const mockInputInfo = {
 		permissions: [],
 		idp: null,
 		isKeyUser: false,
+		isEvaluator: false,
 		sector: IeObjectSector.CULTURE,
 		organisationId: null,
 		organisationName: 'vrt',

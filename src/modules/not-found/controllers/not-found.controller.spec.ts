@@ -22,6 +22,7 @@ const mockUser: User = {
 	permissions: [PermissionName.MANAGE_ALL_VISIT_REQUESTS, PermissionName.CREATE_VISIT_REQUEST],
 	idp: AvoAuthIdpType.HETARCHIEF,
 	isKeyUser: false,
+	isEvaluator: false,
 };
 
 describe('NotFoundController', () => {

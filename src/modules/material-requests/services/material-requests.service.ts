@@ -1,10 +1,15 @@
 import { DataService, VideoStillsService } from '@meemoo/admin-core-api';
-import { BadRequestException, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { compact, groupBy, isArray, isEmpty, isNil, kebabCase, set } from 'lodash';
 
-import { CreateMaterialRequestDto, MaterialRequestsQueryDto, SendRequestListDto } from '../dto/material-requests.dto';
-import { ORDER_PROP_TO_DB_PROP } from '../material-requests.consts';
+import {
+	CreateMaterialRequestDto,
+	MaterialRequestsQueryDto,
+	SendRequestListDto,
+	UpdateMaterialRequestStatusDto,
+} from '../dto/material-requests.dto';
+import { MAP_MATERIAL_REQUEST_STATUS_TO_EMAIL_TEMPLATE, ORDER_PROP_TO_DB_PROP } from '../material-requests.consts';
 import {
 	GqlMaterialRequest,
 	GqlMaterialRequestMaintainer,
@@ -42,6 +47,9 @@ import {
 	UpdateMaterialRequestDocument,
 	type UpdateMaterialRequestMutation,
 	type UpdateMaterialRequestMutationVariables,
+	UpdateMaterialRequestStatusDocument,
+	UpdateMaterialRequestStatusMutation,
+	UpdateMaterialRequestStatusMutationVariables,
 } from '~generated/graphql-db-types-hetarchief';
 import { EmailTemplate, type MaterialRequestEmailInfo } from '~modules/campaign-monitor/campaign-monitor.types';
 
@@ -57,13 +65,12 @@ import { limitAccessToObjectDetails } from '~modules/ie-objects/helpers/limit-ac
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
+import { customError } from '~shared/helpers/custom-error';
 import { PaginationHelper } from '~shared/helpers/pagination';
 import { SortDirection } from '~shared/types';
 
 @Injectable()
 export class MaterialRequestsService {
-	private logger: Logger = new Logger(MaterialRequestsService.name, { timestamp: true });
-
 	constructor(
 		private dataService: DataService,
 		private campaignMonitorService: CampaignMonitorService,
@@ -340,6 +347,7 @@ export class MaterialRequestsService {
 			| 'status'
 			| 'name'
 			| 'requested_at'
+			| 'cancelled_at'
 		>,
 		reuseForm: Record<string, string> | MaterialRequestReuseForm | undefined,
 		referer: string,
@@ -354,6 +362,7 @@ export class MaterialRequestsService {
 			status,
 			name,
 			requested_at,
+			cancelled_at,
 		} = materialRequestInfo;
 
 		const updateMaterialRequest = {
@@ -365,7 +374,8 @@ export class MaterialRequestsService {
 			status,
 			name,
 			requested_at,
-			updated_at: requested_at,
+			cancelled_at,
+			updated_at: new Date().toISOString(),
 		};
 
 		const { update_app_material_requests: updatedMaterialRequest } = await this.dataService.execute<
@@ -412,6 +422,148 @@ export class MaterialRequestsService {
 		});
 
 		return response.delete_app_material_requests.affected_rows;
+	}
+
+	public async updateMaterialRequestStatus(
+		materialRequestId: string,
+		statusOptions: UpdateMaterialRequestStatusDto,
+		user: SessionUserEntity,
+		referer: string,
+		ip: string
+	): Promise<MaterialRequest> {
+		const currentRequest = await this.findById(materialRequestId, user, referer, ip);
+
+		const { status, motivation } = statusOptions;
+
+		if (currentRequest.status === Lookup_App_Material_Request_Status_Enum.New) {
+			// The current status is still NEW, and we are not trying to set the status to canceled or pending => Not allowed
+			if (
+				status !== Lookup_App_Material_Request_Status_Enum.Cancelled &&
+				status !== Lookup_App_Material_Request_Status_Enum.Pending
+			) {
+				throw new BadRequestException(
+					`Material request (${materialRequestId}) could not be set to ${status}.`
+				);
+			}
+
+			// Trying to update the status to canceled, but user is not the one who made the request
+			if (
+				status === Lookup_App_Material_Request_Status_Enum.Cancelled &&
+				currentRequest.requesterId !== user.getId()
+			) {
+				throw new BadRequestException(
+					`Material request (${materialRequestId}) could not be set to ${status}.`
+				);
+			}
+		} else if (currentRequest.status === Lookup_App_Material_Request_Status_Enum.Pending) {
+			// The current status is PENDING, and we are not trying to set the status to APPROVED or DENIED => Not allowed
+			if (
+				status !== Lookup_App_Material_Request_Status_Enum.Approved &&
+				status !== Lookup_App_Material_Request_Status_Enum.Denied
+			) {
+				throw new BadRequestException(
+					`Material request (${materialRequestId}) could not be set to ${status}.`
+				);
+			}
+		} else {
+			// No other status updates are allowed
+			throw new BadRequestException(
+				`Material request (${materialRequestId}) could not be set to ${status}.`
+			);
+		}
+
+		const updateMaterialRequest: Partial<GqlMaterialRequest> = {
+			status: status,
+			updated_at: new Date().toISOString(),
+		};
+
+		if (status === Lookup_App_Material_Request_Status_Enum.Cancelled) {
+			updateMaterialRequest.cancelled_at = new Date().toISOString();
+		} else if (status === Lookup_App_Material_Request_Status_Enum.Approved) {
+			updateMaterialRequest.status_motivation = motivation;
+			updateMaterialRequest.approved_at = new Date().toISOString();
+		} else if (status === Lookup_App_Material_Request_Status_Enum.Denied) {
+			updateMaterialRequest.status_motivation = motivation;
+			updateMaterialRequest.denied_at = new Date().toISOString();
+		}
+
+		const updateMaterialRequestStatusResponse = await this.dataService.execute<
+			UpdateMaterialRequestStatusMutation,
+			UpdateMaterialRequestStatusMutationVariables
+		>(UpdateMaterialRequestStatusDocument, {
+			materialRequestId: currentRequest.id,
+			updateMaterialRequest,
+		});
+
+		const graphQlMaterialRequest =
+			updateMaterialRequestStatusResponse.update_app_material_requests.returning?.[0];
+
+		if (isEmpty(graphQlMaterialRequest)) {
+			const error = customError('Failed to update material request status', null, {
+				response: updateMaterialRequestStatusResponse,
+			});
+			console.error(error);
+			throw new BadRequestException(
+				`Material request (${currentRequest.id}) could not be set to ${status}.`
+			);
+		}
+
+		const organisations = await this.organisationsService.findOrganisationsBySchemaIdentifiers(
+			compact([graphQlMaterialRequest?.intellectualEntity?.schemaMaintainer?.org_identifier])
+		);
+
+		const updatedRequest = await this.adapt(
+			graphQlMaterialRequest,
+			organisations,
+			user,
+			referer,
+			ip
+		);
+
+		const emailTemplateToSend = MAP_MATERIAL_REQUEST_STATUS_TO_EMAIL_TEMPLATE[status];
+
+		if (updatedRequest && emailTemplateToSend) {
+			await this.sentStatusUpdateEmail(emailTemplateToSend, updatedRequest, user);
+		}
+
+		return updatedRequest;
+	}
+
+	public async sentStatusUpdateEmail(
+		template: EmailTemplate,
+		request: MaterialRequest,
+		user: SessionUserEntity
+	): Promise<void> {
+		try {
+			// Emailed maintainer when the requester canceled their request
+			// Emailed the requester when the maintainer approved or denied the request
+			const sentToMaintainer = template === EmailTemplate.MATERIAL_REQUEST_REQUESTER_CANCELLED;
+
+			const emailInfo: MaterialRequestEmailInfo = {
+				to: sentToMaintainer ? request.contactMail : request.requesterMail,
+				replyTo: sentToMaintainer ? request.requesterMail : null,
+				template,
+				materialRequests: [request],
+				sendRequestListDto: {
+					type: request.requesterCapacity,
+					organisation: request.organisation,
+					requestName: request.requestName,
+				},
+				firstName: user.getFirstName(),
+				lastName: user.getLastName(),
+				language: user.getLanguage(),
+			};
+
+			await this.campaignMonitorService.sendForMaterialRequest(emailInfo);
+		} catch (err) {
+			const error = customError('Failed to send email about material request status update', err, {
+				template,
+				request,
+				user,
+			});
+			console.error(error);
+			throw error;
+		}
 	}
 
 	/**
@@ -624,6 +776,7 @@ export class MaterialRequestsService {
 			type: graphQlMaterialRequest.type,
 			isPending: graphQlMaterialRequest.is_pending,
 			status: graphQlMaterialRequest.status,
+			statusMotivation: graphQlMaterialRequest.status_motivation,
 			downloadUrl: graphQlMaterialRequest.download_url ?? null,
 			requestName: graphQlMaterialRequest.name ?? null,
 			requesterId: graphQlMaterialRequest.requested_by.id,
@@ -691,8 +844,8 @@ export class MaterialRequestsService {
 		});
 
 		return {
-			objectAccessThrough: censoredObjectMetadata.accessThrough,
-			objectLicences: censoredObjectMetadata.licenses,
+			objectAccessThrough: censoredObjectMetadata?.accessThrough,
+			objectLicences: censoredObjectMetadata?.licenses,
 		};
 	}
 }

@@ -26,6 +26,7 @@ export interface User {
 	permissions: PermissionName[];
 	idp: AvoAuthIdpType;
 	isKeyUser: boolean;
+	isEvaluator: boolean;
 	visitorSpaceSlug?: string;
 	sector?: IeObjectSector | null;
 	organisationName?: string | null;

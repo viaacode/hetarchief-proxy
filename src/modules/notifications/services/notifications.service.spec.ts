@@ -109,6 +109,7 @@ const mockUser: User = {
 	permissions: [PermissionName.MANAGE_CP_VISIT_REQUESTS],
 	idp: AvoAuthIdpType.HETARCHIEF,
 	isKeyUser: false,
+	isEvaluator: false,
 };
 const mockVisitRequest: VisitRequest = {
 	id: '93eedf1a-a508-4657-a942-9d66ed6934c2',

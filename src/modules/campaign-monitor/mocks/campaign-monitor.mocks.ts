@@ -35,6 +35,7 @@ export const mockUser: User = {
 	permissions: [PermissionName.MANAGE_ALL_VISIT_REQUESTS, PermissionName.CREATE_VISIT_REQUEST],
 	idp: AvoAuthIdpType.HETARCHIEF,
 	isKeyUser: false,
+	isEvaluator: false,
 	createdAt: '2023-10-01T12:00:00.000Z',
 	lastAccessAt: '2023-10-01T12:00:00.000Z',
 	organisationName: 'Test Organisation',

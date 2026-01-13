@@ -15,6 +15,7 @@ export const mockUserResponse: { users_profile: GqlUser[] } = {
 			accepted_tos_at: null,
 			group_id: '0213c8d4-f459-45ef-8bbc-96268ab56d01',
 			is_key_user: true,
+			is_evaluator: false,
 			group: {
 				permissions: [
 					{

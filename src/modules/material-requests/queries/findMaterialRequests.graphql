@@ -18,6 +18,7 @@ query findMaterialRequests(
 		type
 		is_pending
 		status
+		status_motivation
 		name
 		download_url
 		requester_capacity

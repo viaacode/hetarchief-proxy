@@ -36,6 +36,7 @@ const mockUser: User = {
 	groupName: GroupName.CP_ADMIN,
 	permissions: [PermissionName.EDIT_ANY_CONTENT_PAGES],
 	isKeyUser: false,
+	isEvaluator: false,
 	lastAccessAt: undefined,
 };
 

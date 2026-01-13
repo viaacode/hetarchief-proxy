@@ -70,6 +70,7 @@ export class UsersService {
 			),
 			idp: graphQlUser?.identities?.[0]?.identity_provider_name as AvoAuthIdpType,
 			isKeyUser: graphQlUser?.is_key_user,
+			isEvaluator: graphQlUser?.is_evaluator,
 			lastAccessAt:
 				(graphQlUser as GetUserByIdentityIdQuery['users_profile'][0])?.last_access_at || null,
 			createdAt: (graphQlUser as GetUserByIdentityIdQuery['users_profile'][0])?.created_at || null,
@@ -164,6 +165,7 @@ export class UsersService {
 			mail: createUserDto.email,
 			group_id: createUserDto.groupId,
 			is_key_user: createUserDto.isKeyUser,
+			is_evaluator: createUserDto.isEvaluator,
 			organisation_schema_identifier: createUserDto.organisationId,
 			language: createUserDto.language as Lookup_Languages_Enum,
 		};
@@ -202,6 +204,7 @@ export class UsersService {
 			mail: updateUserDto.email,
 			group_id: updateUserDto.groupId,
 			is_key_user: updateUserDto.isKeyUser,
+			is_evaluator: updateUserDto.isEvaluator,
 			organisation_schema_identifier: updateUserDto.organisationId,
 			language: updateUserDto.language as Lookup_Languages_Enum,
 		};

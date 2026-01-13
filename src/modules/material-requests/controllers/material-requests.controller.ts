@@ -25,6 +25,7 @@ import {
 	MaterialRequestsQueryDto,
 	SendRequestListDto,
 	UpdateMaterialRequestDto,
+	UpdateMaterialRequestStatusDto,
 } from '../dto/material-requests.dto';
 import type { MaterialRequest, MaterialRequestMaintainer } from '../material-requests.types';
 
@@ -144,6 +145,30 @@ export class MaterialRequestsController {
 			user,
 			updateMaterialRequestDto,
 			updateMaterialRequestDto.reuseForm,
+			referer,
+			ip
+		);
+	}
+
+	@Patch(':id/status')
+	@ApiOperation({
+		description: 'Update the status of the material request',
+	})
+	@RequireAnyPermissions(
+		PermissionName.VIEW_OWN_MATERIAL_REQUESTS,
+		PermissionName.VIEW_ANY_MATERIAL_REQUESTS
+	)
+	public async updateMaterialRequestStatus(
+		@Param('id', ParseUUIDPipe) materialRequestId: string,
+		@Body() updateMaterialRequestStatusDto: UpdateMaterialRequestStatusDto,
+		@SessionUser() user: SessionUserEntity,
+		@Referer() referer: string,
+		@Ip() ip: string
+	): Promise<MaterialRequest> {
+		return await this.materialRequestsService.updateMaterialRequestStatus(
+			materialRequestId,
+			updateMaterialRequestStatusDto,
+			user,
 			referer,
 			ip
 		);
@@ -288,7 +313,10 @@ export class MaterialRequestsController {
 				queryDto.maintainerIds = [];
 			}
 
-			if (user.getGroupId() === GroupId.CP_ADMIN) {
+			if (
+				user.getGroupId() === GroupId.CP_ADMIN ||
+				(user.getIsKeyUser() && user.getIsEvaluator())
+			) {
 				queryDto.maintainerIds = [user.getOrganisationId()];
 			}
 		}

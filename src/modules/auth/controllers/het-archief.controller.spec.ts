@@ -46,6 +46,7 @@ const archiefUser = {
 	groupId: GroupId.CP_ADMIN,
 	permissions: [],
 	isKeyUser: false,
+	isEvaluator: false,
 	organisationId: 'OR-1v5bc86',
 	organisationName: 'VRT',
 	sector: 'Overheid',

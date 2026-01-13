@@ -17,6 +17,7 @@ import {
 	MaterialRequestType,
 } from '../material-requests.types';
 
+import { Lookup_App_Material_Request_Status_Enum } from '~generated/graphql-db-types-hetarchief';
 import { commaSeparatedStringToArray } from '~shared/helpers/comma-separated-string-to-array';
 import { SortDirection } from '~shared/types';
 
@@ -280,4 +281,24 @@ export class SendRequestListDto {
 		description: 'The name the user gave this list of requests (key users only)',
 	})
 	requestName?: string | null = null;
+}
+
+export class UpdateMaterialRequestStatusDto {
+	@IsString()
+	@IsEnum(Lookup_App_Material_Request_Status_Enum)
+	@ApiPropertyOptional({
+		type: String,
+		description: 'The new status of the request',
+		default: undefined,
+		enum: Lookup_App_Material_Request_Status_Enum,
+	})
+	status: Lookup_App_Material_Request_Status_Enum;
+
+	@IsString()
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		description: 'The motivation to approve or deny the request',
+	})
+	motivation?: string | null = null;
 }

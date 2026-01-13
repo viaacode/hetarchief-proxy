@@ -1,7 +1,7 @@
 import { Logger } from '@nestjs/common';
-import type { PermissionName } from '@viaa/avo2-types';
+import { PermissionName } from '@viaa/avo2-types';
 
-import type { GroupName, User } from '../types';
+import { GroupName, User } from '../types';
 
 import type { IeObjectSector } from '~modules/ie-objects/ie-objects.types';
 import { Locale } from '~shared/types/types';
@@ -19,6 +19,16 @@ export class SessionUserEntity {
 	protected permissions: Array<PermissionName>;
 
 	public constructor(user: User) {
+		// Add permission to view any material request when the user is a key user and evaluator
+		// Otherwise this user won't be able to approve/deny request for its organisation
+		if (
+			user?.isKeyUser &&
+			user?.isEvaluator &&
+			!user.permissions.includes(PermissionName.VIEW_ANY_MATERIAL_REQUESTS)
+		) {
+			user.permissions.push(PermissionName.VIEW_ANY_MATERIAL_REQUESTS);
+		}
+
 		this.user = user;
 		// can be archief-user or avo-user, where permissions are stored differently
 		// merge them into 1 unified array
@@ -78,6 +88,10 @@ export class SessionUserEntity {
 
 	public getIsKeyUser(): boolean {
 		return this.user?.isKeyUser || false;
+	}
+
+	public getIsEvaluator(): boolean {
+		return this.user?.isEvaluator || false;
 	}
 
 	public getLastAccessAt(): string {
