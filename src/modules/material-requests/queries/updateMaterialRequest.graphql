@@ -27,6 +27,7 @@ mutation updateMaterialRequest(
 			is_pending
 			status
 			status_motivation
+			group_id
 			name
 			download_url
 			requester_capacity
