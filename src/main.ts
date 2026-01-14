@@ -22,6 +22,18 @@ async function bootstrap() {
 	const configService = app.get<ConfigService>(NestConfigService);
 	const port = configService.get('PORT');
 
+	/** Logging */
+	if (process.env.NODE_ENV === 'local') {
+		app.use((req, res, next) => {
+			if (req.path === '/admin/content-pages/by-language-and-path') {
+				console.info(`${req.method} ${req.url}`);
+			} else {
+				console.info(`${req.method} ${req.path}`);
+			}
+			next();
+		});
+	}
+
 	/** Security */
 	app.enableCors(configService.get('CORS_OPTIONS'));
 	app.use(helmet());
