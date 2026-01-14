@@ -106,7 +106,7 @@ export class SpacesController {
 		}
 		if (
 			space.status === VisitorSpaceStatus.Inactive &&
-			!user.has(PermissionName.UPDATE_ALL_SPACES)
+			user.hasNot(PermissionName.UPDATE_ALL_SPACES)
 		) {
 			throw new GoneException(
 				this.translationsService.tText(

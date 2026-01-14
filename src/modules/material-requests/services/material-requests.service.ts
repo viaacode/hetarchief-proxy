@@ -419,7 +419,7 @@ export class MaterialRequestsService {
 		const { status, motivation } = statusOptions;
 
 		if (currentRequest.status === Lookup_App_Material_Request_Status_Enum.New) {
-			// The current status is still NEW, and we are not trying to set the status to canceled or pending => Not allowed
+			// The current status is still NEW, and we are not trying to set the status to cancelled or pending => Not allowed
 			if (
 				status !== Lookup_App_Material_Request_Status_Enum.Cancelled &&
 				status !== Lookup_App_Material_Request_Status_Enum.Pending
@@ -429,7 +429,7 @@ export class MaterialRequestsService {
 				);
 			}
 
-			// Trying to update the status to canceled, but user is not the one who made the request
+			// Trying to update the status to cancelled, but user is not the one who made the request
 			if (
 				status === Lookup_App_Material_Request_Status_Enum.Cancelled &&
 				currentRequest.requesterId !== user.getId()
@@ -518,7 +518,7 @@ export class MaterialRequestsService {
 		user: SessionUserEntity
 	): Promise<void> {
 		try {
-			// Emailed maintainer when the requester canceled their request
+			// Emailed maintainer when the requester cancelled their request
 			// Emailed the requester when the maintainer approved or denied the request
 			const sentToMaintainer = template === EmailTemplate.MATERIAL_REQUEST_REQUESTER_CANCELLED;
 
