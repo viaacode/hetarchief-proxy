@@ -280,7 +280,7 @@ export class SendRequestListDto {
 		type: String,
 		description: 'The name the user gave this list of requests (key users only)',
 	})
-	requestName?: string | null = null;
+	requestGroupName?: string | null = null;
 }
 
 export class UpdateMaterialRequestStatusDto {

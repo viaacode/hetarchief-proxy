@@ -35,6 +35,11 @@ import { Lookup_App_Material_Request_Status_Enum } from '~generated/graphql-db-t
 import { EventsService } from '~modules/events/services/events.service';
 import { type LogEvent, LogEventType } from '~modules/events/types';
 import { mapDcTermsFormatToSimpleType } from '~modules/ie-objects/helpers/map-dc-terms-format-to-simple-type';
+import {
+	MAP_MATERIAL_REQUEST_STATUS_TO_EVENT_TYPE,
+	getAdditionEventDate,
+	mapUserToGroupNameAndKeyUser,
+} from '~modules/material-requests/material-requests.consts';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupId, GroupName, Permission } from '~modules/users/types';
 import { Ip } from '~shared/decorators/ip.decorator';
@@ -161,17 +166,42 @@ export class MaterialRequestsController {
 	public async updateMaterialRequestStatus(
 		@Param('id', ParseUUIDPipe) materialRequestId: string,
 		@Body() updateMaterialRequestStatusDto: UpdateMaterialRequestStatusDto,
+		@Req() request: Request,
 		@SessionUser() user: SessionUserEntity,
 		@Referer() referer: string,
 		@Ip() ip: string
 	): Promise<MaterialRequest> {
-		return await this.materialRequestsService.updateMaterialRequestStatus(
+		const materialRequest = await this.materialRequestsService.updateMaterialRequestStatus(
 			materialRequestId,
 			updateMaterialRequestStatusDto,
 			user,
 			referer,
 			ip
 		);
+
+		const eventType = MAP_MATERIAL_REQUEST_STATUS_TO_EVENT_TYPE[materialRequest.status];
+
+		// Is this a trackable event? (Approved, Denied, Cancelled)
+		if (eventType) {
+			await this.eventsService.insertEvents([
+				{
+					id: EventsHelper.getEventId(request),
+					type: eventType,
+					source: request.path,
+					subject: user?.getId(),
+					time: new Date().toISOString(),
+					data: {
+						type: mapDcTermsFormatToSimpleType(materialRequest.objectDctermsFormat),
+						or_id: materialRequest.maintainerId,
+						pid: materialRequest.objectSchemaIdentifier,
+						material_request_group_id: materialRequest.requestGroupId,
+						...getAdditionEventDate(eventType, materialRequest),
+					},
+				},
+			]);
+		}
+
+		return materialRequest;
 	}
 
 	@Delete(':id')
@@ -222,7 +252,7 @@ export class MaterialRequestsController {
 				// If the email does not exist, the campaign monitor service will default to process.env.MEEMOO_MAINTAINER_MISSING_EMAIL_FALLBACK
 				materialRequest.requesterCapacity = sendRequestListDto.type;
 				materialRequest.organisation = sendRequestListDto?.organisation;
-				materialRequest.requestName = sendRequestListDto?.requestName;
+				materialRequest.requestGroupName = sendRequestListDto?.requestGroupName;
 			}
 
 			await this.materialRequestsService.sendRequestList(
@@ -251,7 +281,7 @@ export class MaterialRequestsController {
 								? Lookup_App_Material_Request_Status_Enum.New
 								: Lookup_App_Material_Request_Status_Enum.None,
 							group_id: material_request_group_id,
-							name: materialRequest.reuseForm ? materialRequest.requestName : undefined,
+							name: materialRequest.reuseForm ? materialRequest.requestGroupName : undefined,
 							requested_at: new Date().toISOString(),
 						},
 						materialRequest.reuseForm,
@@ -276,7 +306,7 @@ export class MaterialRequestsController {
 							external_id: materialRequest.objectSchemaIdentifier,
 							fragment_id: materialRequest.objectSchemaIdentifier,
 							idp: Idp.HETARCHIEF,
-							user_group_name: user.getGroupName(),
+							user_group_name: mapUserToGroupNameAndKeyUser(user),
 							user_group_id: user.getGroupId(),
 							or_id: materialRequest.maintainerId,
 							contact_form: {

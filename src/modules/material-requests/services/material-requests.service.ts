@@ -16,6 +16,7 @@ import {
 	UpdateMaterialRequestStatusDto,
 } from '../dto/material-requests.dto';
 import {
+	DOWNLOAD_AVAILABILITY_DAYS,
 	MAP_MATERIAL_REQUEST_STATUS_TO_EMAIL_TEMPLATE,
 	ORDER_PROP_TO_DB_PROP,
 } from '../material-requests.consts';
@@ -77,6 +78,7 @@ import type { Organisation } from '~modules/organisations/organisations.types';
 import { OrganisationsService } from '~modules/organisations/services/organisations.service';
 
 import { VideoStillInfo } from '@viaa/avo2-types/types/video-stills';
+import { addDays } from 'date-fns';
 import { limitAccessToObjectDetails } from '~modules/ie-objects/helpers/limit-access-to-object-details';
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
@@ -548,7 +550,7 @@ export class MaterialRequestsService {
 				sendRequestListDto: {
 					type: request.requesterCapacity,
 					organisation: request.organisation,
-					requestName: request.requestName,
+					requestGroupName: request.requestGroupName,
 				},
 				firstName: user.getFirstName(),
 				lastName: user.getLastName(),
@@ -778,7 +780,14 @@ export class MaterialRequestsService {
 			status: graphQlMaterialRequest.status,
 			statusMotivation: graphQlMaterialRequest.status_motivation,
 			downloadUrl: graphQlMaterialRequest.download_url ?? null,
-			requestName: graphQlMaterialRequest.name ?? null,
+			downloadAvailableAt: graphQlMaterialRequest.download_available_at,
+			downloadExpiresAt: graphQlMaterialRequest.download_available_at
+				? addDays(
+						new Date(graphQlMaterialRequest.download_available_at),
+						DOWNLOAD_AVAILABILITY_DAYS
+					).toISOString()
+				: null,
+			requestGroupName: graphQlMaterialRequest.name ?? null,
 			requestGroupId: graphQlMaterialRequest.group_id ?? null,
 			requesterId: graphQlMaterialRequest.requested_by.id,
 			requesterFullName: graphQlMaterialRequest.requested_by.full_name,
