@@ -1,6 +1,6 @@
 import { DataService, MaintenanceAlertsService, TranslationsService } from '@meemoo/admin-core-api';
 import { Test, type TestingModule } from '@nestjs/testing';
-import { Idp } from '@viaa/avo2-types';
+import { AvoAuthIdpType, PermissionName } from '@viaa/avo2-types';
 import { addHours, addMonths, subHours } from 'date-fns';
 
 import { NotificationsService } from './notifications.service';
@@ -24,7 +24,7 @@ import {
 } from '~modules/notifications/types';
 import type { VisitorSpace } from '~modules/spaces/spaces.types';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
-import { GroupId, GroupName, Permission, type User } from '~modules/users/types';
+import { GroupId, GroupName, type User } from '~modules/users/types';
 import { type VisitRequest, VisitStatus } from '~modules/visits/types';
 import { mockTranslationsService } from '~shared/helpers/mockTranslationsService';
 import { TestingLogger } from '~shared/logging/test-logger';
@@ -106,8 +106,8 @@ const mockUser: User = {
 	acceptedTosAt: '2022-01-24T17:21:58.937169+00:00',
 	groupId: GroupId.CP_ADMIN,
 	groupName: GroupName.CP_ADMIN,
-	permissions: [Permission.MANAGE_CP_VISIT_REQUESTS],
-	idp: Idp.HETARCHIEF,
+	permissions: [PermissionName.MANAGE_CP_VISIT_REQUESTS],
+	idp: AvoAuthIdpType.HETARCHIEF,
 	isKeyUser: false,
 	isEvaluator: false,
 };

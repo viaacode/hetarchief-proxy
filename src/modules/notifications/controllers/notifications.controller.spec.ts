@@ -2,7 +2,7 @@ import { TranslationsService } from '@meemoo/admin-core-api';
 import { ConfigService } from '@nestjs/config';
 import { Test, type TestingModule } from '@nestjs/testing';
 import type { IPagination } from '@studiohyperdrive/pagination';
-import { Idp } from '@viaa/avo2-types';
+import { AvoAuthIdpType, PermissionName } from '@viaa/avo2-types';
 
 import { NotificationsService } from '../services/notifications.service';
 
@@ -15,7 +15,7 @@ import {
 	NotificationType,
 } from '~modules/notifications/types';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
-import { GroupId, GroupName, Permission, type User } from '~modules/users/types';
+import { GroupId, GroupName, type User } from '~modules/users/types';
 import { VisitsService } from '~modules/visits/services/visits.service';
 import { type VisitRequest, VisitStatus } from '~modules/visits/types';
 import { SessionHelper } from '~shared/auth/session-helper';
@@ -99,11 +99,11 @@ const mockUser: User = {
 	fullName: 'Test Testers',
 	email: 'test.testers@meemoo.be',
 	language: Locale.Nl,
-	idp: Idp.HETARCHIEF,
+	idp: AvoAuthIdpType.HETARCHIEF,
 	acceptedTosAt: '1997-01-01T00:00:00.000Z',
 	groupId: GroupId.CP_ADMIN,
 	groupName: GroupName.CP_ADMIN,
-	permissions: [Permission.EDIT_ANY_CONTENT_PAGES],
+	permissions: [PermissionName.EDIT_ANY_CONTENT_PAGES],
 	isKeyUser: false,
 	isEvaluator: false,
 };

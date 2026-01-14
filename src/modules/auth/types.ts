@@ -1,5 +1,4 @@
-import type { Avo } from '@viaa/avo2-types';
-
+import { AvoUserCommonUser } from '@viaa/avo2-types';
 import type { User } from '~modules/users/types';
 import type { LdapUser } from '~shared/auth/auth.types';
 
@@ -109,7 +108,7 @@ export enum LoginMessage {
 export type LoginResponse = {
 	message: LoginMessage;
 	userInfo?: User;
-	commonUserInfo?: Avo.User.CommonUser;
+	commonUserInfo?: AvoUserCommonUser;
 	acceptedConditions?: boolean;
 	sessionExpiresAt?: string;
 };

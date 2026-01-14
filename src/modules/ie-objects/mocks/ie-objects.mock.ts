@@ -1,4 +1,4 @@
-import { Idp } from '@viaa/avo2-types';
+import { AvoAuthIdpType, PermissionName } from '@viaa/avo2-types';
 
 import {
 	type IeObject,
@@ -17,7 +17,7 @@ import type {
 	GetParentIeObjectQuery,
 } from '~generated/graphql-db-types-hetarchief';
 import type { IeObjectDetailResponseTypes } from '~modules/ie-objects/services/ie-objects.service.types';
-import { GroupId, GroupName, Permission } from '~modules/users/types';
+import { GroupId, GroupName } from '~modules/users/types';
 import { mockConfigService } from '~shared/test/mock-config-service';
 import { Locale } from '~shared/types/types';
 
@@ -416,11 +416,11 @@ export const mockUser = Object.freeze({
 	fullName: 'Test Testers',
 	email: 'test.testers@meemoo.be',
 	language: Locale.Nl,
-	idp: Idp.HETARCHIEF,
+	idp: AvoAuthIdpType.HETARCHIEF,
 	acceptedTosAt: '1997-01-01T00:00:00.000Z',
 	groupId: GroupId.CP_ADMIN,
 	groupName: GroupName.CP_ADMIN,
-	permissions: [Permission.EDIT_ANY_CONTENT_PAGES],
+	permissions: [PermissionName.EDIT_ANY_CONTENT_PAGES],
 	isKeyUser: false,
 	isEvaluator: false,
 });

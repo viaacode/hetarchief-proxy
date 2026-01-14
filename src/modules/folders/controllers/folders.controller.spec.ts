@@ -1,6 +1,6 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 import type { IPagination } from '@studiohyperdrive/pagination';
-import { Idp } from '@viaa/avo2-types';
+import { AvoAuthIdpType, PermissionName } from '@viaa/avo2-types';
 import type { Request } from 'express';
 
 import { FoldersService } from '../services/folders.service';
@@ -15,7 +15,7 @@ import { mockIeObject1 } from '~modules/ie-objects/mocks/ie-objects.mock';
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { UsersService } from '~modules/users/services/users.service';
-import { GroupId, GroupName, Permission, type User } from '~modules/users/types';
+import { GroupId, GroupName, type User } from '~modules/users/types';
 import { VisitsService } from '~modules/visits/services/visits.service';
 import { TestingLogger } from '~shared/logging/test-logger';
 import { Locale } from '~shared/types/types';
@@ -78,11 +78,11 @@ const mockUser: User = {
 	fullName: 'Test Testers',
 	email: 'test.testers@meemoo.be',
 	language: Locale.Nl,
-	idp: Idp.HETARCHIEF,
+	idp: AvoAuthIdpType.HETARCHIEF,
 	acceptedTosAt: '1997-01-01T00:00:00.000Z',
 	groupId: GroupId.CP_ADMIN,
 	groupName: GroupName.CP_ADMIN,
-	permissions: [Permission.EDIT_ANY_CONTENT_PAGES],
+	permissions: [PermissionName.EDIT_ANY_CONTENT_PAGES],
 	isKeyUser: false,
 	isEvaluator: false,
 };

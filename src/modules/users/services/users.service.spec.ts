@@ -1,6 +1,6 @@
 import { DataService } from '@meemoo/admin-core-api';
 import { Test, type TestingModule } from '@nestjs/testing';
-import { Idp } from '@viaa/avo2-types';
+import { AvoAuthIdpType, PermissionName } from '@viaa/avo2-types';
 
 import { UsersService } from './users.service';
 
@@ -11,7 +11,7 @@ import type {
 	UpdateUserProfileMutation,
 } from '~generated/graphql-db-types-hetarchief';
 import { mockUserResponse } from '~modules/users/services/__mock__/user.mock';
-import { GroupId, GroupName, Permission, type User } from '~modules/users/types';
+import { GroupId, GroupName, type User } from '~modules/users/types';
 import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {
@@ -30,8 +30,8 @@ const archiefUser: User = {
 	fullName: mockUser.full_name,
 	groupId: mockUser.group_id,
 	groupName: GroupName.VISITOR,
-	idp: Idp.HETARCHIEF,
-	permissions: [Permission.MANAGE_ALL_VISIT_REQUESTS],
+	idp: AvoAuthIdpType.HETARCHIEF,
+	permissions: [PermissionName.MANAGE_ALL_VISIT_REQUESTS],
 	isKeyUser: true,
 	isEvaluator: false,
 	lastAccessAt: null,
@@ -124,7 +124,7 @@ describe('UsersService', () => {
 					isEvaluator: false,
 					organisationId: 'test',
 				},
-				Idp.HETARCHIEF,
+				AvoAuthIdpType.HETARCHIEF,
 				'idp-1'
 			);
 			expect(result).toEqual(archiefUser);

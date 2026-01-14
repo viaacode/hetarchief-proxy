@@ -9,8 +9,8 @@ import {
 import { Reflector } from '@nestjs/core';
 import type { Observable } from 'rxjs';
 
+import type { PermissionName } from '@viaa/avo2-types';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
-import type { Permission } from '~modules/users/types';
 import { SessionHelper } from '~shared/auth/session-helper';
 
 @Injectable()
@@ -22,15 +22,15 @@ export class PermissionGuard implements CanActivate {
 	canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
 		// required permissions
 		const requiredPermissionsClass =
-			this.reflector.get<Permission[]>('requiredPermissions', context.getClass()) || [];
+			this.reflector.get<PermissionName[]>('requiredPermissions', context.getClass()) || [];
 		const requiredPermissions =
-			this.reflector.get<Permission[]>('requiredPermissions', context.getHandler()) || [];
+			this.reflector.get<PermissionName[]>('requiredPermissions', context.getHandler()) || [];
 
 		// any permissions
 		const anyPermissionsClass =
-			this.reflector.get<Permission[]>('requireAnyPermissions', context.getClass()) || [];
+			this.reflector.get<PermissionName[]>('requireAnyPermissions', context.getClass()) || [];
 		const anyPermissions =
-			this.reflector.get<Permission[]>('requireAnyPermissions', context.getHandler()) || [];
+			this.reflector.get<PermissionName[]>('requireAnyPermissions', context.getHandler()) || [];
 
 		const allRequiredPermissions = [...requiredPermissionsClass, ...requiredPermissions];
 		const allAnyPermissions = [...anyPermissionsClass, ...anyPermissions];

@@ -1,11 +1,5 @@
 import { DataService, VideoStillsService } from '@meemoo/admin-core-api';
-import {
-	BadRequestException,
-	Injectable,
-	InternalServerErrorException,
-	Logger,
-	NotFoundException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { compact, groupBy, isArray, isEmpty, isNil, kebabCase, set } from 'lodash';
 
@@ -15,10 +9,7 @@ import {
 	SendRequestListDto,
 	UpdateMaterialRequestStatusDto,
 } from '../dto/material-requests.dto';
-import {
-	MAP_MATERIAL_REQUEST_STATUS_TO_EMAIL_TEMPLATE,
-	ORDER_PROP_TO_DB_PROP,
-} from '../material-requests.consts';
+import { MAP_MATERIAL_REQUEST_STATUS_TO_EMAIL_TEMPLATE, ORDER_PROP_TO_DB_PROP } from '../material-requests.consts';
 import {
 	GqlMaterialRequest,
 	GqlMaterialRequestMaintainer,
@@ -60,23 +51,16 @@ import {
 	UpdateMaterialRequestStatusMutation,
 	UpdateMaterialRequestStatusMutationVariables,
 } from '~generated/graphql-db-types-hetarchief';
-import {
-	EmailTemplate,
-	type MaterialRequestEmailInfo,
-} from '~modules/campaign-monitor/campaign-monitor.types';
+import { EmailTemplate, type MaterialRequestEmailInfo } from '~modules/campaign-monitor/campaign-monitor.types';
 
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 import { convertSchemaIdentifierToId } from '~modules/ie-objects/helpers/convert-schema-identifier-to-id';
-import {
-	IeObjectAccessThrough,
-	IeObjectLicense,
-	IeObjectType,
-} from '~modules/ie-objects/ie-objects.types';
+import { IeObjectAccessThrough, IeObjectLicense, IeObjectType } from '~modules/ie-objects/ie-objects.types';
 import type { Organisation } from '~modules/organisations/organisations.types';
 
 import { OrganisationsService } from '~modules/organisations/services/organisations.service';
 
-import { VideoStillInfo } from '@viaa/avo2-types/types/video-stills';
+import { AvoStillsStillInfo } from '@viaa/avo2-types';
 import { limitAccessToObjectDetails } from '~modules/ie-objects/helpers/limit-access-to-object-details';
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
@@ -87,8 +71,6 @@ import { SortDirection } from '~shared/types';
 
 @Injectable()
 export class MaterialRequestsService {
-	private logger: Logger = new Logger(MaterialRequestsService.name, { timestamp: true });
-
 	constructor(
 		private dataService: DataService,
 		private campaignMonitorService: CampaignMonitorService,
@@ -536,8 +518,8 @@ export class MaterialRequestsService {
 		user: SessionUserEntity
 	): Promise<void> {
 		try {
-			// Sent an email to maintainer when the requester cancelled their request
-			// Sent an email to the requester when the maintainer approved or denied the request
+			// Emailed maintainer when the requester cancelled their request
+			// Emailed the requester when the maintainer approved or denied the request
 			const sentToMaintainer = template === EmailTemplate.MATERIAL_REQUEST_REQUESTER_CANCELLED;
 
 			const emailInfo: MaterialRequestEmailInfo = {
@@ -672,7 +654,8 @@ export class MaterialRequestsService {
 					startTime: startTime * 1000,
 				},
 			]);
-			const filteredInfos = (stillInfos?.filter((item) => !isNil(item)) || []) as VideoStillInfo[];
+			const filteredInfos = (stillInfos?.filter((item) => !isNil(item)) ||
+				[]) as AvoStillsStillInfo[];
 
 			if (filteredInfos.length) {
 				return filteredInfos[0].thumbnailImagePath;

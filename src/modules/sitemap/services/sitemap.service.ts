@@ -1,13 +1,7 @@
 import { Readable } from 'node:stream';
 
-import {
-	AssetsService,
-	ContentPagesService,
-	DataService,
-	DbContentPage,
-} from '@meemoo/admin-core-api';
+import { AssetsService, ContentPagesService, DataService, DbContentPage } from '@meemoo/admin-core-api';
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import { AssetType } from '@viaa/avo2-types';
 import { format } from 'date-fns';
 import { compact, kebabCase, uniqBy } from 'lodash';
 import xmlFormat from 'xml-formatter';
@@ -22,6 +16,7 @@ import {
 import { IeObjectLicense, type IeObjectsSitemap } from '~modules/ie-objects/ie-objects.types';
 
 import type { IPagination } from '@studiohyperdrive/pagination';
+import { AvoFileUploadAssetType, AvoSearchOrderDirection } from '@viaa/avo2-types';
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { SITEMAP_XML_OBJECTS_SIZE } from '~modules/sitemap/sitemap.consts';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
@@ -193,7 +188,7 @@ export class SitemapService {
 				0,
 				50000,
 				'title',
-				'asc',
+				AvoSearchOrderDirection.ASC,
 				'',
 				{
 					content_type: {
@@ -319,7 +314,7 @@ export class SitemapService {
 
 	private async uploadXml(xml: string, name: string): Promise<string> {
 		return this.assetsService.uploadAndTrack(
-			AssetType.SITEMAP,
+			AvoFileUploadAssetType.SITEMAP,
 			{
 				fieldname: name,
 				originalname: name,

@@ -2,7 +2,7 @@ import { TranslationsService } from '@meemoo/admin-core-api';
 import { HttpStatus } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Test, type TestingModule } from '@nestjs/testing';
-import { Idp } from '@viaa/avo2-types';
+import { AvoAuthIdpType, PermissionName } from '@viaa/avo2-types';
 import { isFuture } from 'date-fns';
 
 import { IdpService } from '../services/idp.service';
@@ -15,7 +15,7 @@ import { CampaignMonitorService } from '~modules/campaign-monitor/services/campa
 import { SpacesModule } from '~modules/spaces';
 import { UsersModule } from '~modules/users';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
-import { GroupId, GroupName, Permission, type User } from '~modules/users/types';
+import { GroupId, GroupName, type User } from '~modules/users/types';
 import { mockTranslationsService } from '~shared/helpers/mockTranslationsService';
 import { sleep } from '~shared/helpers/sleep';
 import { TestingLogger } from '~shared/logging/test-logger';
@@ -30,18 +30,18 @@ const mockUser: User = {
 	fullName: 'Test Testers',
 	email: 'test.testers@meemoo.be',
 	language: Locale.Nl,
-	idp: Idp.HETARCHIEF,
+	idp: AvoAuthIdpType.HETARCHIEF,
 	acceptedTosAt: '1997-01-01T00:00:00.000Z',
 	groupId: GroupId.CP_ADMIN,
 	groupName: GroupName.CP_ADMIN,
-	permissions: [Permission.EDIT_ANY_CONTENT_PAGES],
+	permissions: [PermissionName.EDIT_ANY_CONTENT_PAGES],
 	isKeyUser: false,
 	isEvaluator: false,
 	lastAccessAt: undefined,
 };
 
 const getNewMockSession = () => ({
-	idp: Idp.HETARCHIEF,
+	idp: AvoAuthIdpType.HETARCHIEF,
 	idpUserInfo: {
 		session_not_on_or_after: new Date(new Date().getTime() + 3600 * 1000).toISOString(), // one hour from now
 	},
