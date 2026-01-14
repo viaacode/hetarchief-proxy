@@ -30,6 +30,7 @@ export const mockContentPage: DbContentPage = {
 	thumbnailPath: null,
 	title: 'mock content page',
 	description: '<p></p>',
+	seo_image_path: null,
 	seoDescription: null,
 	metaDescription: null,
 	path: '/mock-content-page-url',
