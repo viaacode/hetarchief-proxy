@@ -2550,6 +2550,7 @@ export type App_Material_Requests = {
   cancelled_at?: Maybe<Scalars['timestamp']['output']>;
   created_at: Scalars['timestamp']['output'];
   denied_at?: Maybe<Scalars['timestamp']['output']>;
+  download_available_at?: Maybe<Scalars['timestamp']['output']>;
   download_url?: Maybe<Scalars['String']['output']>;
   group_id?: Maybe<Scalars['uuid']['output']>;
   id: Scalars['uuid']['output'];
@@ -2631,6 +2632,7 @@ export type App_Material_Requests_Bool_Exp = {
   cancelled_at?: InputMaybe<Timestamp_Comparison_Exp>;
   created_at?: InputMaybe<Timestamp_Comparison_Exp>;
   denied_at?: InputMaybe<Timestamp_Comparison_Exp>;
+  download_available_at?: InputMaybe<Timestamp_Comparison_Exp>;
   download_url?: InputMaybe<String_Comparison_Exp>;
   group_id?: InputMaybe<Uuid_Comparison_Exp>;
   id?: InputMaybe<Uuid_Comparison_Exp>;
@@ -2667,6 +2669,7 @@ export type App_Material_Requests_Insert_Input = {
   cancelled_at?: InputMaybe<Scalars['timestamp']['input']>;
   created_at?: InputMaybe<Scalars['timestamp']['input']>;
   denied_at?: InputMaybe<Scalars['timestamp']['input']>;
+  download_available_at?: InputMaybe<Scalars['timestamp']['input']>;
   download_url?: InputMaybe<Scalars['String']['input']>;
   group_id?: InputMaybe<Scalars['uuid']['input']>;
   id?: InputMaybe<Scalars['uuid']['input']>;
@@ -2697,6 +2700,7 @@ export type App_Material_Requests_Max_Fields = {
   cancelled_at?: Maybe<Scalars['timestamp']['output']>;
   created_at?: Maybe<Scalars['timestamp']['output']>;
   denied_at?: Maybe<Scalars['timestamp']['output']>;
+  download_available_at?: Maybe<Scalars['timestamp']['output']>;
   download_url?: Maybe<Scalars['String']['output']>;
   group_id?: Maybe<Scalars['uuid']['output']>;
   id?: Maybe<Scalars['uuid']['output']>;
@@ -2718,6 +2722,7 @@ export type App_Material_Requests_Min_Fields = {
   cancelled_at?: Maybe<Scalars['timestamp']['output']>;
   created_at?: Maybe<Scalars['timestamp']['output']>;
   denied_at?: Maybe<Scalars['timestamp']['output']>;
+  download_available_at?: Maybe<Scalars['timestamp']['output']>;
   download_url?: Maybe<Scalars['String']['output']>;
   group_id?: Maybe<Scalars['uuid']['output']>;
   id?: Maybe<Scalars['uuid']['output']>;
@@ -2754,6 +2759,7 @@ export type App_Material_Requests_Order_By = {
   cancelled_at?: InputMaybe<Order_By>;
   created_at?: InputMaybe<Order_By>;
   denied_at?: InputMaybe<Order_By>;
+  download_available_at?: InputMaybe<Order_By>;
   download_url?: InputMaybe<Order_By>;
   group_id?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
@@ -2792,6 +2798,8 @@ export enum App_Material_Requests_Select_Column {
   CreatedAt = 'created_at',
   /** column name */
   DeniedAt = 'denied_at',
+  /** column name */
+  DownloadAvailableAt = 'download_available_at',
   /** column name */
   DownloadUrl = 'download_url',
   /** column name */
@@ -2832,6 +2840,7 @@ export type App_Material_Requests_Set_Input = {
   cancelled_at?: InputMaybe<Scalars['timestamp']['input']>;
   created_at?: InputMaybe<Scalars['timestamp']['input']>;
   denied_at?: InputMaybe<Scalars['timestamp']['input']>;
+  download_available_at?: InputMaybe<Scalars['timestamp']['input']>;
   download_url?: InputMaybe<Scalars['String']['input']>;
   group_id?: InputMaybe<Scalars['uuid']['input']>;
   id?: InputMaybe<Scalars['uuid']['input']>;
@@ -2864,6 +2873,7 @@ export type App_Material_Requests_Stream_Cursor_Value_Input = {
   cancelled_at?: InputMaybe<Scalars['timestamp']['input']>;
   created_at?: InputMaybe<Scalars['timestamp']['input']>;
   denied_at?: InputMaybe<Scalars['timestamp']['input']>;
+  download_available_at?: InputMaybe<Scalars['timestamp']['input']>;
   download_url?: InputMaybe<Scalars['String']['input']>;
   group_id?: InputMaybe<Scalars['uuid']['input']>;
   id?: InputMaybe<Scalars['uuid']['input']>;
@@ -2892,6 +2902,8 @@ export enum App_Material_Requests_Update_Column {
   CreatedAt = 'created_at',
   /** column name */
   DeniedAt = 'denied_at',
+  /** column name */
+  DownloadAvailableAt = 'download_available_at',
   /** column name */
   DownloadUrl = 'download_url',
   /** column name */
