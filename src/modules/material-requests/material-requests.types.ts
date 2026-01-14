@@ -28,7 +28,8 @@ export interface MaterialRequest {
 	objectRepresentationId?: string;
 	objectRepresentation?: IeObjectRepresentation;
 	reuseForm?: MaterialRequestReuseForm | null;
-	requestName: string;
+	requestName: string; // The name of all the requests send at the same time
+	requestGroupId?: string; // The uuid of all the requests send at the same time
 	downloadUrl: string;
 	profileId: string;
 	reason: string;

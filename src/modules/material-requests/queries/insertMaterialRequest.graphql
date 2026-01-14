@@ -14,6 +14,7 @@ mutation insertMaterialRequest($newMaterialRequest: app_material_requests_insert
 		is_pending
 		status
 		status_motivation
+		group_id
 		name
 		download_url
 		requester_capacity

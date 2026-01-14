@@ -346,6 +346,7 @@ export class MaterialRequestsService {
 			| 'is_pending'
 			| 'status'
 			| 'name'
+			| 'group_id'
 			| 'requested_at'
 			| 'cancelled_at'
 		>,
@@ -353,28 +354,8 @@ export class MaterialRequestsService {
 		referer: string,
 		ip: string
 	): Promise<MaterialRequest> {
-		const {
-			type,
-			reason,
-			organisation,
-			requester_capacity,
-			is_pending,
-			status,
-			name,
-			requested_at,
-			cancelled_at,
-		} = materialRequestInfo;
-
 		const updateMaterialRequest = {
-			type,
-			reason,
-			organisation,
-			requester_capacity,
-			is_pending,
-			status,
-			name,
-			requested_at,
-			cancelled_at,
+			...materialRequestInfo,
 			updated_at: new Date().toISOString(),
 		};
 
@@ -399,7 +380,9 @@ export class MaterialRequestsService {
 			await this.insertReuseFormForMaterialRequest(
 				materialRequestId,
 				updatedRequest.ie_object_representation_id,
-				type === Lookup_App_Material_Request_Type_Enum.Reuse ? reuseForm : undefined
+				materialRequestInfo.type === Lookup_App_Material_Request_Type_Enum.Reuse
+					? reuseForm
+					: undefined
 			);
 
 		const organisations = await this.organisationsService.findOrganisationsBySchemaIdentifiers(
@@ -779,6 +762,7 @@ export class MaterialRequestsService {
 			statusMotivation: graphQlMaterialRequest.status_motivation,
 			downloadUrl: graphQlMaterialRequest.download_url ?? null,
 			requestName: graphQlMaterialRequest.name ?? null,
+			requestGroupId: graphQlMaterialRequest.group_id ?? null,
 			requesterId: graphQlMaterialRequest.requested_by.id,
 			requesterFullName: graphQlMaterialRequest.requested_by.full_name,
 			requesterMail: graphQlMaterialRequest.requested_by.mail,

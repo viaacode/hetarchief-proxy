@@ -235,6 +235,7 @@ export class MaterialRequestsController {
 				}
 			);
 
+			const material_request_group_id = uuidv4();
 			await Promise.all(
 				materialRequests.items.map(async (materialRequest: MaterialRequest) => {
 					await this.materialRequestsService.updateMaterialRequest(
@@ -249,6 +250,7 @@ export class MaterialRequestsController {
 							status: materialRequest.reuseForm
 								? Lookup_App_Material_Request_Status_Enum.New
 								: Lookup_App_Material_Request_Status_Enum.None,
+							group_id: material_request_group_id,
 							name: materialRequest.reuseForm ? materialRequest.requestName : undefined,
 							requested_at: new Date().toISOString(),
 						},
@@ -260,7 +262,6 @@ export class MaterialRequestsController {
 			);
 
 			// Log events for each material request
-			const material_request_group_id = uuidv4();
 			this.eventsService.insertEvents(
 				materialRequests.items.map(
 					(materialRequest): LogEvent => ({
@@ -270,7 +271,7 @@ export class MaterialRequestsController {
 						subject: user?.getId(),
 						time: new Date().toISOString(),
 						data: {
-							material_request_group_id,
+							material_request_group_id: materialRequest.requestGroupId,
 							type: mapDcTermsFormatToSimpleType(materialRequest.objectDctermsFormat),
 							external_id: materialRequest.objectSchemaIdentifier,
 							fragment_id: materialRequest.objectSchemaIdentifier,
