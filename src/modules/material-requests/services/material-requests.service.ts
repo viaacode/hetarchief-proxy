@@ -3,7 +3,6 @@ import {
 	BadRequestException,
 	Injectable,
 	InternalServerErrorException,
-	Logger,
 	NotFoundException,
 } from '@nestjs/common';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
@@ -77,7 +76,7 @@ import type { Organisation } from '~modules/organisations/organisations.types';
 
 import { OrganisationsService } from '~modules/organisations/services/organisations.service';
 
-import { VideoStillInfo } from '@viaa/avo2-types/types/video-stills';
+import { AvoStillsStillInfo } from '@viaa/avo2-types';
 import { addDays } from 'date-fns';
 import { limitAccessToObjectDetails } from '~modules/ie-objects/helpers/limit-access-to-object-details';
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
@@ -89,8 +88,6 @@ import { SortDirection } from '~shared/types';
 
 @Injectable()
 export class MaterialRequestsService {
-	private logger: Logger = new Logger(MaterialRequestsService.name, { timestamp: true });
-
 	constructor(
 		private dataService: DataService,
 		private campaignMonitorService: CampaignMonitorService,
@@ -538,8 +535,8 @@ export class MaterialRequestsService {
 		user: SessionUserEntity
 	): Promise<void> {
 		try {
-			// Sent an email to maintainer when the requester cancelled their request
-			// Sent an email to the requester when the maintainer approved or denied the request
+			// Emailed maintainer when the requester cancelled their request
+			// Emailed the requester when the maintainer approved or denied the request
 			const sentToMaintainer = template === EmailTemplate.MATERIAL_REQUEST_REQUESTER_CANCELLED;
 
 			const emailInfo: MaterialRequestEmailInfo = {
@@ -674,7 +671,8 @@ export class MaterialRequestsService {
 					startTime: startTime * 1000,
 				},
 			]);
-			const filteredInfos = (stillInfos?.filter((item) => !isNil(item)) || []) as VideoStillInfo[];
+			const filteredInfos = (stillInfos?.filter((item) => !isNil(item)) ||
+				[]) as AvoStillsStillInfo[];
 
 			if (filteredInfos.length) {
 				return filteredInfos[0].thumbnailImagePath;

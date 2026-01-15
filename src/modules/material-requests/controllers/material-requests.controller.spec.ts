@@ -12,9 +12,9 @@ import { MaterialRequestsService } from '../services/material-requests.service';
 
 import { MaterialRequestsController } from './material-requests.controller';
 
+import { PermissionName } from '@viaa/avo2-types';
 import { EventsService } from '~modules/events/services/events.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
-import { Permission } from '~modules/users/types';
 import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockMaterialRequestsService: Partial<
@@ -72,7 +72,7 @@ describe('MaterialRequestsController', () => {
 				null,
 				new SessionUserEntity({
 					...mockUser,
-					permissions: [Permission.VIEW_ANY_MATERIAL_REQUESTS],
+					permissions: [PermissionName.VIEW_ANY_MATERIAL_REQUESTS],
 				}),
 				'referer',
 				''
@@ -90,7 +90,7 @@ describe('MaterialRequestsController', () => {
 				null,
 				new SessionUserEntity({
 					...mockUser,
-					permissions: [Permission.VIEW_OWN_MATERIAL_REQUESTS],
+					permissions: [PermissionName.VIEW_OWN_MATERIAL_REQUESTS],
 				}),
 				'referer',
 				''
@@ -136,7 +136,7 @@ describe('MaterialRequestsController', () => {
 				},
 				new SessionUserEntity({
 					...mockUser,
-					permissions: [Permission.CREATE_MATERIAL_REQUESTS],
+					permissions: [PermissionName.CREATE_MATERIAL_REQUESTS],
 				}),
 				'referer',
 				''

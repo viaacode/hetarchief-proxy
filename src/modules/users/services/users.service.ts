@@ -1,6 +1,6 @@
 import { DataService, UserInfoType, convertUserInfoToCommonUser } from '@meemoo/admin-core-api';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
-import type { Avo, Idp } from '@viaa/avo2-types';
+import { PermissionName } from '@viaa/avo2-types';
 
 import { CreateOrUpdateUserDto, UpdateAcceptedTosDto, UpdateUserLangDto } from '../dto/users.dto';
 import {
@@ -8,10 +8,10 @@ import {
 	type GqlUser,
 	GroupIdToName,
 	type GroupName,
-	type Permission,
 	type User,
 } from '../types';
 
+import { AvoAuthIdpType, AvoUserCommonUser, AvoUserHetArchiefUser } from '@viaa/avo2-types';
 import {
 	GetUserByEmailDocument,
 	type GetUserByEmailQuery,
@@ -66,9 +66,9 @@ export class UsersService {
 			groupId: graphQlUser?.group_id,
 			groupName: this.groupIdToName(graphQlUser?.group_id) as GroupName,
 			permissions: (graphQlUser?.group?.permissions || []).map(
-				(permData: GqlPermissionData) => permData.permission.name as Permission
+				(permData: GqlPermissionData) => permData.permission.name as PermissionName
 			),
-			idp: graphQlUser?.identities?.[0]?.identity_provider_name as Idp,
+			idp: graphQlUser?.identities?.[0]?.identity_provider_name as AvoAuthIdpType,
 			isKeyUser: graphQlUser?.is_key_user,
 			isEvaluator: graphQlUser?.is_evaluator,
 			lastAccessAt:
@@ -114,7 +114,7 @@ export class UsersService {
 		return this.adapt(userResponse.users_profile[0]);
 	}
 
-	public async getById(profileId: string): Promise<Avo.User.CommonUser> {
+	public async getById(profileId: string): Promise<AvoUserCommonUser> {
 		try {
 			const response = await this.dataService.execute<GetUserByIdQuery, GetUserByIdQueryVariables>(
 				GetUserByIdDocument,
@@ -128,7 +128,7 @@ export class UsersService {
 			}
 
 			return convertUserInfoToCommonUser(
-				this.adapt(response.users_profile[0]) as Avo.User.HetArchiefUser,
+				this.adapt(response.users_profile[0]) as unknown as AvoUserHetArchiefUser,
 				UserInfoType.HetArchiefUser
 			);
 		} catch (err: any) {
@@ -155,7 +155,7 @@ export class UsersService {
 
 	public async createUserWithIdp(
 		createUserDto: CreateOrUpdateUserDto,
-		idp: Idp,
+		idp: AvoAuthIdpType,
 		idpId: string
 	): Promise<User> {
 		// TODO duplicate user handling

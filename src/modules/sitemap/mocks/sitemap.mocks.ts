@@ -1,5 +1,6 @@
 import { type DbContentPage, Locale } from '@meemoo/admin-core-api';
 
+import { AvoContentPageType } from '@viaa/avo2-types';
 import type { SitemapConfig } from '../sitemap.types';
 
 export const mockSitemapConfig: SitemapConfig = {
@@ -29,6 +30,7 @@ export const mockContentPage: DbContentPage = {
 	thumbnailPath: null,
 	title: 'mock content page',
 	description: '<p></p>',
+	seo_image_path: null,
 	seoDescription: null,
 	metaDescription: null,
 	path: '/mock-content-page-url',
@@ -41,7 +43,7 @@ export const mockContentPage: DbContentPage = {
 	createdAt: '2023-04-18T09:51:27.509',
 	updatedAt: '2023-04-18T09:54:16.675',
 	isProtected: false,
-	contentType: 'PAGINA',
+	contentType: AvoContentPageType.PAGINA,
 	contentWidth: 'MEDIUM',
 	owner: {
 		id: undefined,

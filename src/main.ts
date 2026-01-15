@@ -13,14 +13,29 @@ import { ConfigService } from '~config';
 
 import packageJson from '../package.json';
 
-import { AppModule } from './app.module';
-
 import { SessionService } from '~shared/services/session.service';
+import { AppModule } from './app.module';
 
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule);
 	const configService = app.get<ConfigService>(NestConfigService);
 	const port = configService.get('PORT');
+
+	/** Logging */
+	if (process.env.NODE_ENV === 'local') {
+		app.use((req, _res, next) => {
+			if (!['GET', 'POST', 'PATCH', 'PUT', 'DELETE'].includes(req.method)) {
+				next();
+				return;
+			}
+			if (req.path === '/admin/content-pages/by-language-and-path') {
+				console.info(`${req.method} ${req.url}`);
+			} else {
+				console.info(`${req.method} ${req.path}`);
+			}
+			next();
+		});
+	}
 
 	/** Security */
 	app.enableCors(configService.get('CORS_OPTIONS'));

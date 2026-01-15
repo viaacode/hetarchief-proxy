@@ -14,7 +14,6 @@ import {
 
 import { ConfigService } from '@nestjs/config';
 import { ApiTags } from '@nestjs/swagger';
-import type { Avo } from '@viaa/avo2-types';
 import { isToday, parseISO } from 'date-fns';
 
 import type { Configuration } from '~config';
@@ -30,6 +29,7 @@ import { SessionHelper } from '~shared/auth/session-helper';
 import { SessionUser } from '~shared/decorators/user.decorator';
 import { APIKEY, ApiKeyGuard } from '~shared/guards/api-key.guard';
 
+import { AvoUserCommonUser, AvoUserHetArchiefUser } from '@viaa/avo2-types';
 import { SessionService } from '~shared/services/session.service';
 
 @ApiTags('Auth')
@@ -90,9 +90,9 @@ export class AuthController {
 			const response = {
 				userInfo: user.getUser(),
 				commonUserInfo: convertUserInfoToCommonUser(
-					user.getUser() as Avo.User.HetArchiefUser,
+					user.getUser() as unknown as AvoUserHetArchiefUser,
 					UserInfoType.HetArchiefUser
-				) as Avo.User.CommonUser,
+				) as AvoUserCommonUser,
 				message: LoginMessage.LOGGED_IN,
 				sessionExpiresAt: SessionHelper.getExpiresAt(new Date()),
 			};

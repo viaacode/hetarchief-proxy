@@ -1,7 +1,7 @@
 import { DataService, TranslationsService } from '@meemoo/admin-core-api';
 import { InternalServerErrorException } from '@nestjs/common';
 import { Test, type TestingModule } from '@nestjs/testing';
-import { Idp } from '@viaa/avo2-types';
+import { AvoAuthIdpType, PermissionName } from '@viaa/avo2-types';
 import { cloneDeep } from 'lodash';
 
 import { CreateSpaceDto } from '../dto/spaces.dto';
@@ -23,7 +23,7 @@ import {
 	OrganisationContactPointType,
 } from '~modules/organisations/organisations.types';
 import { AccessType, VisitorSpaceOrderProps } from '~modules/spaces/spaces.types';
-import { GroupId, GroupName, Permission, type User } from '~modules/users/types';
+import { GroupId, GroupName, type User } from '~modules/users/types';
 import { DuplicateKeyException } from '~shared/exceptions/duplicate-key.exception';
 import { getProxyNlTranslations } from '~shared/helpers/get-proxy-nl-translations';
 import { mockTranslationsService } from '~shared/helpers/mockTranslationsService';
@@ -41,8 +41,8 @@ const mockUser: User = {
 	acceptedTosAt: '2022-02-21T14:00:00',
 	groupId: GroupId.CP_ADMIN,
 	groupName: GroupName.CP_ADMIN,
-	permissions: [Permission.MANAGE_CP_VISIT_REQUESTS],
-	idp: Idp.HETARCHIEF,
+	permissions: [PermissionName.MANAGE_CP_VISIT_REQUESTS],
+	idp: AvoAuthIdpType.HETARCHIEF,
 	isKeyUser: false,
 	isEvaluator: false,
 };

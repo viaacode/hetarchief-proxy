@@ -1,4 +1,4 @@
-import type { Idp } from '@viaa/avo2-types';
+import type { AvoAuthIdpType } from '@viaa/avo2-types';
 import type { Response } from 'express';
 import queryString from 'query-string';
 
@@ -13,7 +13,7 @@ import queryString from 'query-string';
 export function orgNotLinkedLogoutAndRedirectToErrorPage(
 	res: Response,
 	proxyHost: string,
-	idp: Idp,
+	idp: AvoAuthIdpType,
 	message: string,
 	title: string
 ): { url: string } {

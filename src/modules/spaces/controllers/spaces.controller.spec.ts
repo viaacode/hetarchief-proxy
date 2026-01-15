@@ -1,13 +1,13 @@
 import { AssetsService, TranslationsService } from '@meemoo/admin-core-api';
 import { Test, type TestingModule } from '@nestjs/testing';
-import { Idp } from '@viaa/avo2-types';
+import { AvoAuthIdpType, PermissionName } from '@viaa/avo2-types';
 
 import { SpacesService } from '../services/spaces.service';
 
 import { SpacesController } from './spaces.controller';
 
 import { SessionUserEntity } from '~modules/users/classes/session-user';
-import { GroupId, GroupName, Permission, type User } from '~modules/users/types';
+import { GroupId, GroupName, type User } from '~modules/users/types';
 import { getProxyNlTranslations } from '~shared/helpers/get-proxy-nl-translations';
 import { mockTranslationsService } from '~shared/helpers/mockTranslationsService';
 import { TestingLogger } from '~shared/logging/test-logger';
@@ -45,8 +45,8 @@ const mockUser: User = {
 	acceptedTosAt: '2022-02-21T14:00:00',
 	groupId: GroupId.CP_ADMIN,
 	groupName: GroupName.CP_ADMIN,
-	permissions: [Permission.MANAGE_CP_VISIT_REQUESTS],
-	idp: Idp.HETARCHIEF,
+	permissions: [PermissionName.MANAGE_CP_VISIT_REQUESTS],
+	idp: AvoAuthIdpType.HETARCHIEF,
 	organisationId: 'OR-rf5kf25',
 	organisationName: 'VRT',
 	isKeyUser: false,
@@ -251,7 +251,7 @@ describe('SpacesController', () => {
 
 		it('throws an ForbiddenException when updating another maintainers space', async () => {
 			mockSpacesService.findById.mockResolvedValueOnce(mockSpacesResponse.items[1]);
-			mockUser.permissions.push(Permission.UPDATE_OWN_SPACE);
+			mockUser.permissions.push(PermissionName.UPDATE_OWN_SPACE);
 			let error: any;
 			try {
 				await spacesController.updateSpace('1', {}, null, new SessionUserEntity(mockUser));
@@ -268,7 +268,7 @@ describe('SpacesController', () => {
 
 		it('throws an ForbiddenException when not allowed to update the slug', async () => {
 			mockSpacesService.findById.mockResolvedValueOnce(mockSpacesResponse.items[0]);
-			mockUser.permissions.push(Permission.UPDATE_OWN_SPACE);
+			mockUser.permissions.push(PermissionName.UPDATE_OWN_SPACE);
 			let error: any;
 			try {
 				await spacesController.updateSpace(

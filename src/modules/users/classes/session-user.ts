@@ -1,6 +1,7 @@
 import { Logger } from '@nestjs/common';
+import { PermissionName } from '@viaa/avo2-types';
 
-import { GroupName, Permission, User } from '../types';
+import { GroupName, User } from '../types';
 
 import type { IeObjectSector } from '~modules/ie-objects/ie-objects.types';
 import { Locale } from '~shared/types/types';
@@ -15,7 +16,7 @@ export class SessionUserEntity {
 	protected mail: string;
 	protected maintainerId: string;
 	protected visitorSpaceSlug: string;
-	protected permissions: Array<Permission>;
+	protected permissions: Array<PermissionName>;
 
 	public constructor(user: User) {
 		// Add permission to view any material request when the user is a key user and evaluator
@@ -23,9 +24,9 @@ export class SessionUserEntity {
 		if (
 			user?.isKeyUser &&
 			user?.isEvaluator &&
-			!user.permissions.includes(Permission.VIEW_ANY_MATERIAL_REQUESTS)
+			!user.permissions.includes(PermissionName.VIEW_ANY_MATERIAL_REQUESTS)
 		) {
-			user.permissions.push(Permission.VIEW_ANY_MATERIAL_REQUESTS);
+			user.permissions.push(PermissionName.VIEW_ANY_MATERIAL_REQUESTS);
 		}
 
 		this.user = user;
@@ -105,15 +106,15 @@ export class SessionUserEntity {
 		return this.user?.organisationName || null;
 	}
 
-	public has(permission: Permission): boolean {
+	public has(permission: PermissionName): boolean {
 		return this.permissions.includes(permission);
 	}
 
-	public hasNot(permission: Permission): boolean {
+	public hasNot(permission: PermissionName): boolean {
 		return !this.has(permission);
 	}
 
-	public hasAny(permissions: Permission[]): boolean {
+	public hasAny(permissions: PermissionName[]): boolean {
 		if (permissions.length === 0) {
 			return true;
 		}
@@ -121,7 +122,7 @@ export class SessionUserEntity {
 		return permissions.some((permission) => this.has(permission));
 	}
 
-	public hasAll(permissions: Permission[]): boolean {
+	public hasAll(permissions: PermissionName[]): boolean {
 		if (permissions.length === 0) {
 			return true;
 		}

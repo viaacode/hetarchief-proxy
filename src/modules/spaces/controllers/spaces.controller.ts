@@ -18,7 +18,6 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBody, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
 import type { IPagination } from '@studiohyperdrive/pagination';
-import { AssetType } from '@viaa/avo2-types';
 import { uniqBy } from 'lodash';
 
 import { CreateSpaceDto, SpacesQueryDto, UpdateSpaceDto } from '../dto/spaces.dto';
@@ -26,8 +25,9 @@ import { CreateSpaceDto, SpacesQueryDto, UpdateSpaceDto } from '../dto/spaces.dt
 import { SpacesService } from '../services/spaces.service';
 import type { VisitorSpace } from '../spaces.types';
 
+import { AvoFileUploadAssetType, PermissionName } from '@viaa/avo2-types';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
-import { GroupName, Permission } from '~modules/users/types';
+import { GroupName } from '~modules/users/types';
 import { RequireAnyPermissions } from '~shared/decorators/require-any-permissions.decorator';
 import { RequireAllPermissions } from '~shared/decorators/require-permissions.decorator';
 import { SessionUser } from '~shared/decorators/user.decorator';
@@ -55,7 +55,7 @@ export class SpacesController {
 			queryDto.status &&
 			(queryDto.status.includes(VisitorSpaceStatus.Inactive) ||
 				queryDto.status.includes(VisitorSpaceStatus.Requested)) &&
-			!user.has(Permission.READ_ALL_SPACES)
+			!user.has(PermissionName.READ_ALL_SPACES)
 		) {
 			const userLanguage = user.getLanguage();
 			throw new ForbiddenException(
@@ -66,7 +66,7 @@ export class SpacesController {
 				)
 			);
 		}
-		if (!queryDto.status && !user.has(Permission.READ_ALL_SPACES)) {
+		if (!queryDto.status && !user.has(PermissionName.READ_ALL_SPACES)) {
 			// If someone requests all spaces but doesn't have access to all spaces, we only return the active spaces
 			queryDto.status = [VisitorSpaceStatus.Active];
 		}
@@ -104,7 +104,10 @@ export class SpacesController {
 				)
 			);
 		}
-		if (space.status === VisitorSpaceStatus.Inactive && !user.has(Permission.UPDATE_ALL_SPACES)) {
+		if (
+			space.status === VisitorSpaceStatus.Inactive &&
+			user.hasNot(PermissionName.UPDATE_ALL_SPACES)
+		) {
 			throw new GoneException(
 				this.translationsService.tText(
 					'modules/spaces/controllers/spaces___space-with-slug-slug-is-inactive',
@@ -140,7 +143,7 @@ export class SpacesController {
 			},
 		},
 	})
-	@RequireAnyPermissions(Permission.UPDATE_OWN_SPACE, Permission.UPDATE_ALL_SPACES)
+	@RequireAnyPermissions(PermissionName.UPDATE_OWN_SPACE, PermissionName.UPDATE_ALL_SPACES)
 	public async updateSpace(
 		@Param('id', ParseUUIDPipe) id: string,
 		@Body() updateSpaceDto: UpdateSpaceDto,
@@ -149,20 +152,20 @@ export class SpacesController {
 	): Promise<VisitorSpace> {
 		const visitorSpace = await this.spacesService.findById(id);
 		if (
-			user.has(Permission.UPDATE_OWN_SPACE) &&
-			user.hasNot(Permission.UPDATE_ALL_SPACES) &&
+			user.has(PermissionName.UPDATE_OWN_SPACE) &&
+			user.hasNot(PermissionName.UPDATE_ALL_SPACES) &&
 			user.getOrganisationId() !== visitorSpace.maintainerId
 		) {
 			throw new ForbiddenException('You are not authorized to update this visitorSpace');
 		}
 
-		if (updateSpaceDto.slug && user.hasNot(Permission.UPDATE_ALL_SPACES)) {
+		if (updateSpaceDto.slug && user.hasNot(PermissionName.UPDATE_ALL_SPACES)) {
 			throw new ForbiddenException('You are not allowed to update the slug');
 		}
 
 		if (file) {
 			updateSpaceDto.image = await this.assetsService.uploadAndTrack(
-				AssetType.SPACE_IMAGE,
+				AvoFileUploadAssetType.SPACE_IMAGE,
 				file,
 				visitorSpace.maintainerId
 			);
@@ -204,7 +207,7 @@ export class SpacesController {
 			},
 		},
 	})
-	@RequireAllPermissions(Permission.CREATE_SPACES)
+	@RequireAllPermissions(PermissionName.CREATE_SPACES)
 	public async createSpace(
 		@Body() createSpaceDto: CreateSpaceDto,
 		@UploadedFile() file: Express.Multer.File,
@@ -218,7 +221,7 @@ export class SpacesController {
 
 		if (file) {
 			createSpaceDto.image = await this.assetsService.uploadAndTrack(
-				AssetType.SPACE_IMAGE,
+				AvoFileUploadAssetType.SPACE_IMAGE,
 				file,
 				createSpaceDto.orId
 			);

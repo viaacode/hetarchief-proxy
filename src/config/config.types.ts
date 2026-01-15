@@ -1,6 +1,6 @@
 import { ConfigService as NestConfigService } from '@nestjs/config';
 import type { MulterOptions } from '@nestjs/platform-express/multer/interfaces/multer-options.interface';
-import type { DatabaseType } from '@viaa/avo2-types';
+import type { AvoCoreDatabaseType } from '@viaa/avo2-types';
 
 export interface Configuration {
 	NODE_ENV: string;
@@ -12,7 +12,7 @@ export interface Configuration {
 	GRAPHQL_ENABLE_WHITELIST: boolean;
 	GRAPHQL_URL_LOGGING: string;
 	GRAPHQL_SECRET_LOGGING: string;
-	DATABASE_APPLICATION_TYPE: DatabaseType;
+	DATABASE_APPLICATION_TYPE: AvoCoreDatabaseType;
 	COOKIE_SECRET: string;
 	COOKIE_MAX_AGE: number;
 	REDIS_CONNECTION_STRING: string;

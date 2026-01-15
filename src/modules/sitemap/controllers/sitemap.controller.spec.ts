@@ -1,6 +1,6 @@
 import { ConfigService } from '@nestjs/config';
 import { Test, type TestingModule } from '@nestjs/testing';
-import { AssetType } from '@viaa/avo2-types';
+import { AvoFileUploadAssetType } from '@viaa/avo2-types';
 
 import { mockSitemapConfig } from '../mocks/sitemap.mocks';
 import { SitemapService } from '../services/sitemap.service';
@@ -63,7 +63,7 @@ describe('SitemapController', () => {
 			);
 
 			expect(result).toEqual(
-				`${process.env.ASSET_SERVER_ENDPOINT}/${process.env.ASSET_SERVER_BUCKET_NAME}/${AssetType.SITEMAP}/index.xml`
+				`${process.env.ASSET_SERVER_ENDPOINT}/${process.env.ASSET_SERVER_BUCKET_NAME}/${AvoFileUploadAssetType.SITEMAP}/index.xml`
 			);
 		});
 	});

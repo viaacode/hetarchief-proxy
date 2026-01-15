@@ -1,6 +1,6 @@
-import { Idp } from '@viaa/avo2-types';
+import { AvoAuthIdpType, PermissionName } from '@viaa/avo2-types';
 
-import { type GqlUser, Permission } from '~modules/users/types';
+import { type GqlUser } from '~modules/users/types';
 import { Locale } from '~shared/types/types';
 
 export const mockUserResponse: { users_profile: GqlUser[] } = {
@@ -20,14 +20,14 @@ export const mockUserResponse: { users_profile: GqlUser[] } = {
 				permissions: [
 					{
 						permission: {
-							name: Permission.MANAGE_ALL_VISIT_REQUESTS,
+							name: PermissionName.MANAGE_ALL_VISIT_REQUESTS,
 						},
 					},
 				],
 			},
 			identities: [
 				{
-					identity_provider_name: Idp.HETARCHIEF,
+					identity_provider_name: AvoAuthIdpType.HETARCHIEF,
 				},
 			],
 		},
