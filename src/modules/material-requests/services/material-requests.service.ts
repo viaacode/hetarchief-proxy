@@ -14,6 +14,8 @@ import {
 	GqlMaterialRequest,
 	GqlMaterialRequestMaintainer,
 	MaterialRequest,
+	MaterialRequestExportQuality,
+	MaterialRequestForDownload,
 	MaterialRequestMaintainer,
 	MaterialRequestOrderProp,
 	MaterialRequestReuseForm,
@@ -35,6 +37,8 @@ import {
 	FindMaterialRequestsDocument,
 	type FindMaterialRequestsQuery,
 	type FindMaterialRequestsQueryVariables,
+	FindMaterialRequestsWithUnresolvedDownloadStatusDocument,
+	FindMaterialRequestsWithUnresolvedDownloadStatusQuery,
 	InsertMaterialRequestDocument,
 	type InsertMaterialRequestMutation,
 	type InsertMaterialRequestMutationVariables,
@@ -45,6 +49,9 @@ import {
 	Lookup_App_Material_Request_Status_Enum,
 	Lookup_App_Material_Request_Type_Enum,
 	UpdateMaterialRequestDocument,
+	UpdateMaterialRequestForUserDocument,
+	UpdateMaterialRequestForUserMutation,
+	UpdateMaterialRequestForUserMutationVariables,
 	type UpdateMaterialRequestMutation,
 	type UpdateMaterialRequestMutationVariables,
 	UpdateMaterialRequestStatusDocument,
@@ -60,6 +67,7 @@ import type { Organisation } from '~modules/organisations/organisations.types';
 
 import { OrganisationsService } from '~modules/organisations/services/organisations.service';
 
+import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
 import { AvoStillsStillInfo } from '@viaa/avo2-types';
 import { limitAccessToObjectDetails } from '~modules/ie-objects/helpers/limit-access-to-object-details';
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
@@ -334,7 +342,7 @@ export class MaterialRequestsService {
 		return this.adapt(createdMaterialRequest, organisations, user, referer, ip);
 	}
 
-	public async updateMaterialRequest(
+	public async updateMaterialRequestForUser(
 		materialRequestId: string,
 		user: SessionUserEntity,
 		materialRequestInfo: Pick<
@@ -360,9 +368,9 @@ export class MaterialRequestsService {
 		};
 
 		const { update_app_material_requests: updatedMaterialRequest } = await this.dataService.execute<
-			UpdateMaterialRequestMutation,
-			UpdateMaterialRequestMutationVariables
-		>(UpdateMaterialRequestDocument, {
+			UpdateMaterialRequestForUserMutation,
+			UpdateMaterialRequestForUserMutationVariables
+		>(UpdateMaterialRequestForUserDocument, {
 			materialRequestId,
 			userProfileId: user.getId(),
 			updateMaterialRequest,
@@ -670,16 +678,16 @@ export class MaterialRequestsService {
 	 */
 	public async adapt(
 		graphQlMaterialRequest: GqlMaterialRequest,
-		organisations: Organisation[],
-		user: SessionUserEntity,
-		referer: string,
-		ip: string
+		organisations?: Organisation[],
+		user?: SessionUserEntity,
+		referer?: string,
+		ip?: string
 	): Promise<MaterialRequest | null> {
 		if (!graphQlMaterialRequest) {
 			return null;
 		}
 
-		const organisation = organisations.find(
+		const organisation = organisations?.find(
 			(org) =>
 				org.schemaIdentifier ===
 				graphQlMaterialRequest.intellectualEntity?.schemaMaintainer?.org_identifier
@@ -704,11 +712,13 @@ export class MaterialRequestsService {
 		}
 
 		const objectSchemaIdentifier = graphQlMaterialRequest.intellectualEntity?.schema_identifier;
-		const { objectAccessThrough, objectLicences } = await this.getAccessThroughAndLicences(
-			objectSchemaIdentifier,
-			user,
-			ip
-		);
+		let objectAccessThrough: IeObjectAccessThrough[] = [];
+		let objectLicences: IeObjectLicense[] = [];
+		if (user) {
+			const licenses = await this.getAccessThroughAndLicences(objectSchemaIdentifier, user, ip);
+			objectAccessThrough = licenses.objectAccessThrough;
+			objectLicences = licenses.objectLicences;
+		}
 
 		const isPublicDomain: boolean =
 			objectLicences?.includes(IeObjectLicense.PUBLIEK_CONTENT) &&
@@ -791,6 +801,27 @@ export class MaterialRequestsService {
 		};
 	}
 
+	public adaptMaterialRequestsForDownloadJobs(
+		materialRequests: FindMaterialRequestsWithUnresolvedDownloadStatusQuery['app_material_requests'][0]
+	): MaterialRequestForDownload {
+		return {
+			id: materialRequests.id,
+			type: materialRequests.type,
+			status: materialRequests.status,
+			approvedAt: materialRequests.approved_at,
+			downloadJobId: materialRequests.download_job_id || null,
+			downloadRetries: materialRequests.download_retries,
+			downloadStatus: materialRequests.download_status || null,
+			ieObjectRepresentationId: materialRequests.ie_object_representation_id || null,
+			ieObjectId: materialRequests.ie_object_id,
+			updatedAt: materialRequests.updated_at,
+			reuseForm: {
+				downloadQuality: materialRequests.material_request_reuse_form_values?.[0]
+					?.value as MaterialRequestExportQuality,
+			},
+		};
+	}
+
 	public adaptMaintainers(
 		graphQlMaterialRequestMaintainer: GqlMaterialRequestMaintainer
 	): MaterialRequestMaintainer {
@@ -831,5 +862,43 @@ export class MaterialRequestsService {
 			objectAccessThrough: censoredObjectMetadata?.accessThrough,
 			objectLicences: censoredObjectMetadata?.licenses,
 		};
+	}
+
+	public async findAllWithUnresolvedDownload(): Promise<MaterialRequestForDownload[]> {
+		const response =
+			await this.dataService.execute<FindMaterialRequestsWithUnresolvedDownloadStatusQuery>(
+				FindMaterialRequestsWithUnresolvedDownloadStatusDocument
+			);
+
+		return response.app_material_requests?.map(this.adaptMaterialRequestsForDownloadJobs);
+	}
+
+	/**
+	 * Update the download job id for a material request
+	 * also increments the download retries
+	 * and set the download status
+	 * @param materialRequestId
+	 * @param setFields the fields of the material request to update
+	 */
+	async updateMaterialRequest(
+		materialRequestId: string,
+		setFields: App_Material_Requests_Set_Input
+	) {
+		const response = await this.dataService.execute<
+			UpdateMaterialRequestMutation,
+			UpdateMaterialRequestMutationVariables
+		>(UpdateMaterialRequestDocument, {
+			materialRequestId,
+			materialRequestFields: setFields,
+		});
+		const materialRequest = response?.update_app_material_requests?.returning?.[0];
+		if (!materialRequest) {
+			throw new CustomError('Could not update material request. Material request not found', null, {
+				materialRequestId,
+				setFields,
+				response,
+			});
+		}
+		return this.adapt(materialRequest);
 	}
 }

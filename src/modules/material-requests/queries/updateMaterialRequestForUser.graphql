@@ -1,10 +1,16 @@
-mutation updateMaterialRequest(
+mutation updateMaterialRequestForUser(
 	$materialRequestId: uuid
-	$materialRequestFields: app_material_requests_set_input
+	$userProfileId: uuid
+	$updateMaterialRequest: app_material_requests_set_input
 ) {
+	delete_app_material_request_reuse_form_values(
+		where: { material_request_id: { _eq: $materialRequestId } }
+	) {
+		affected_rows
+	}
 	update_app_material_requests(
-		where: { id: { _eq: $materialRequestId } }
-		_set: $materialRequestFields
+		where: { id: { _eq: $materialRequestId }, profile_id: { _eq: $userProfileId } }
+		_set: $updateMaterialRequest
 	) {
 		returning {
 			id
@@ -26,11 +32,6 @@ mutation updateMaterialRequest(
 			download_url
 			requester_capacity
 			organisation
-			download_url
-			download_status
-			download_retries
-			download_available_at
-			download_job_id
 			requested_by {
 				id
 				full_name

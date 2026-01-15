@@ -1,0 +1,14 @@
+mutation updateMaterialRequestDownloadJob(
+	$materialRequestId: uuid!
+	$jobId: String!
+	$downloadStatus: lookup_app_material_request_download_status_enum!
+	$updatedAt: timestamp!
+) {
+	update_app_material_requests(
+		where: { id: { _eq: $materialRequestId } }
+		_set: { download_job_id: $jobId, download_status: $downloadStatus, updated_at: $updatedAt }
+		_inc: { download_retries: 1 }
+	) {
+		affected_rows
+	}
+}

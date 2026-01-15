@@ -1,0 +1,8 @@
+query getMhIdentifiersFromPartialMhIdentifier($partialMhIdentifierStartsWith: String!) {
+	graph_mh_fragment_identifier(
+		where: { mh_fragment_identifier: { _ilike: $partialMhIdentifierStartsWith } }
+		limit: 1
+	) {
+		mh_fragment_identifier
+	}
+}

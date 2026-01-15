@@ -477,14 +477,14 @@ describe('MaterialRequestsService', () => {
 			);
 			const mockData: UpdateMaterialRequestMutation = {
 				update_app_material_requests: {
-					returning: [mockGqlMaterialRequest1],
+					returning: [mockGqlMaterialRequest1 as any],
 				},
 			};
 			mockDataService.execute.mockResolvedValueOnce(mockData);
 			mockOrganisationsService.findOrganisationsBySchemaIdentifiers.mockResolvedValue(
 				mockOrganisations
 			);
-			const response = await materialRequestsService.updateMaterialRequest(
+			const response = await materialRequestsService.updateMaterialRequestForUser(
 				mockGqlMaterialRequest1.id,
 				new SessionUserEntity({
 					...mockUser,
