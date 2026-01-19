@@ -14,6 +14,7 @@ import { EventsModule } from '~modules/events';
 import { FoldersModule } from '~modules/folders';
 import { IeObjectsModule } from '~modules/ie-objects';
 import { MaterialRequestsModule } from '~modules/material-requests';
+import { MediahavenJobsWatcherModule } from '~modules/mediahaven-jobs-watcher/mediahaven-jobs-watcher.module';
 import { NewspapersModule } from '~modules/newspapers';
 import { NotFoundModule } from '~modules/not-found/not-found.module';
 import { NotificationsModule } from '~modules/notifications';
@@ -63,6 +64,7 @@ checkRequiredEnvs(['ADMIN_CORE_ROUTES_PREFIX']);
 		NewspapersModule,
 		ZendeskModule,
 		SitemapModule,
+		MediahavenJobsWatcherModule,
 	],
 	controllers: [],
 	providers: [

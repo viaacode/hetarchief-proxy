@@ -2,16 +2,13 @@ import {
 	FindMaintainersWithMaterialRequestsQuery,
 	FindMaterialRequestsByIdQuery,
 	FindMaterialRequestsQuery,
+	Lookup_App_Material_Request_Download_Status_Enum,
 	Lookup_App_Material_Request_Requester_Capacity_Enum,
 	Lookup_App_Material_Request_Status_Enum,
 	Lookup_App_Material_Request_Type_Enum,
+	type UpdateMaterialRequestMutation,
 } from '~generated/graphql-db-types-hetarchief';
-import {
-	IeObjectAccessThrough,
-	IeObjectLicense,
-	IeObjectRepresentation,
-	IeObjectType,
-} from '~modules/ie-objects/ie-objects.types';
+import { IeObjectAccessThrough, IeObjectLicense, IeObjectRepresentation, IeObjectType } from '~modules/ie-objects/ie-objects.types';
 import type { Locale } from '~shared/types/types';
 
 export interface MaterialRequest {
@@ -30,7 +27,6 @@ export interface MaterialRequest {
 	reuseForm?: MaterialRequestReuseForm | null;
 	requestGroupName: string; // The name of all the requests send at the same time
 	requestGroupId?: string; // The uuid of all the requests send at the same time
-	downloadUrl: string;
 	profileId: string;
 	reason: string;
 	createdAt: string;
@@ -59,13 +55,38 @@ export interface MaterialRequest {
 	maintainerLogo?: string;
 	contactMail?: string;
 	organisation?: string | null;
+
+	downloadUrl?: string;
+	downloadRetries?: number;
+	downloadStatus?: Lookup_App_Material_Request_Download_Status_Enum;
+	downloadJobId?: string;
+}
+
+export type MaterialRequestForDownload = Pick<
+	MaterialRequest,
+	| 'id'
+	| 'type'
+	| 'status'
+	| 'approvedAt'
+	| 'downloadJobId'
+	| 'downloadRetries'
+	| 'downloadStatus'
+	| 'objectId'
+	| 'objectRepresentationId'
+	| 'updatedAt'
+	| 'reuseForm'
+>;
+
+export enum MaterialRequestExportQuality {
+	NORMAL = 'NORMAL',
+	HIGH = 'HIGH',
 }
 
 export interface MaterialRequestReuseForm {
 	thumbnailUrl?: string;
 	startTime?: number;
 	endTime?: number;
-	downloadQuality?: string;
+	downloadQuality?: MaterialRequestExportQuality;
 	intendedUsageDescription?: string;
 	intendedUsage?: string;
 	distributionAccess?: string;
@@ -129,7 +150,8 @@ export enum MaterialRequestOrderProp {
 
 export type GqlMaterialRequest =
 	| FindMaterialRequestsQuery['app_material_requests'][0]
-	| FindMaterialRequestsByIdQuery['app_material_requests'][0];
+	| FindMaterialRequestsByIdQuery['app_material_requests'][0]
+	| UpdateMaterialRequestMutation['update_app_material_requests']['returning'][0];
 
 export type GqlMaterialRequestMaintainer =
 	FindMaintainersWithMaterialRequestsQuery['graph_organisations_with_material_requests'][0];

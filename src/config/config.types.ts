@@ -68,6 +68,14 @@ export interface Configuration {
 	ZENDESK_ENDPOINT: string;
 	ZENDESK_USERNAME: string;
 	ZENDESK_TOKEN: string;
+	MEDIAHAVEN_API_ENDPOINT: string;
+	MEDIAHAVEN_TOKEN_ENDPOINT: string;
+	MEDIAHAVEN_TOKEN_USERNAME: string;
+	MEDIAHAVEN_TOKEN_PASSWORD: string;
+	MEDIAHAVEN_TOKEN_CLIENT_ID: string;
+	MEDIAHAVEN_TOKEN_CLIENT_SECRET: string;
+	MEDIAHAVEN_EXPORT_LOCATION_ID: string;
+	MEDIAHAVEN_EXPORT_JOBS_TAG: string;
 }
 
 export type ConfigService = NestConfigService<Configuration>;

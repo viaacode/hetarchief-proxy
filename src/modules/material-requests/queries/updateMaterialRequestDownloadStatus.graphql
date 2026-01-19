@@ -1,0 +1,12 @@
+mutation updateMaterialRequestDownloadStatus(
+	$materialRequestId: uuid!
+	$downloadStatus: lookup_app_material_request_download_status_enum!
+	$updatedAt: timestamp!
+) {
+	update_app_material_requests(
+		where: { id: { _eq: $materialRequestId } }
+		_set: { download_status: $downloadStatus, updated_at: $updatedAt }
+	) {
+		affected_rows
+	}
+}

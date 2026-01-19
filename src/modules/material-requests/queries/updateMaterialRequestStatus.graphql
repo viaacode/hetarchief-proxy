@@ -32,11 +32,22 @@ mutation updateMaterialRequestStatus(
 				full_name
 				mail
 				language
+				group {
+					name
+					label
+					description
+					id
+				}
 			}
 			intellectualEntity {
 				schema_identifier
 				schema_name
 				id
+				schema_date_published
+				created_at
+				premisIdentifier(limit: 1) {
+					value
+				}
 				dctermsFormat(limit: 1) {
 					dcterms_format
 				}
@@ -48,6 +59,11 @@ mutation updateMaterialRequestStatus(
 					skos_pref_label
 					ha_org_has_logo
 					skos_alt_label
+					schemaContactPoint {
+						schema_contact_type
+						schema_email
+						schema_telephone
+					}
 					visitorSpace {
 						slug
 					}

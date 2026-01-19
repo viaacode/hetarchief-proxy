@@ -145,7 +145,7 @@ export class MaterialRequestsController {
 		@Referer() referer: string,
 		@Ip() ip: string
 	): Promise<MaterialRequest> {
-		return await this.materialRequestsService.updateMaterialRequest(
+		return await this.materialRequestsService.updateMaterialRequestForUser(
 			materialRequestId,
 			user,
 			{
@@ -277,7 +277,7 @@ export class MaterialRequestsController {
 			const material_request_group_id = uuidv4();
 			await Promise.all(
 				materialRequests.items.map(async (materialRequest: MaterialRequest) => {
-					await this.materialRequestsService.updateMaterialRequest(
+					await this.materialRequestsService.updateMaterialRequestForUser(
 						materialRequest.id,
 						user,
 						{
