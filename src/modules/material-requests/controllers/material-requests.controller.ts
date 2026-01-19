@@ -148,7 +148,16 @@ export class MaterialRequestsController {
 		return await this.materialRequestsService.updateMaterialRequest(
 			materialRequestId,
 			user,
-			updateMaterialRequestDto,
+			{
+				...(updateMaterialRequestDto.type ? { type: updateMaterialRequestDto.type } : {}),
+				...(updateMaterialRequestDto.reason ? { reason: updateMaterialRequestDto.reason } : {}),
+				...(updateMaterialRequestDto.requesterCapacity
+					? { requester_capacity: updateMaterialRequestDto.requesterCapacity }
+					: {}),
+				...(updateMaterialRequestDto.organisation
+					? { organisation: updateMaterialRequestDto.organisation }
+					: {}),
+			},
 			updateMaterialRequestDto.reuseForm,
 			referer,
 			ip
