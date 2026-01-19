@@ -28,17 +28,19 @@ export interface MaterialRequest {
 	objectRepresentationId?: string;
 	objectRepresentation?: IeObjectRepresentation;
 	reuseForm?: MaterialRequestReuseForm | null;
-	requestName: string; // The name of all the requests send at the same time
+	requestGroupName: string; // The name of all the requests send at the same time
 	requestGroupId?: string; // The uuid of all the requests send at the same time
 	downloadUrl: string;
 	profileId: string;
 	reason: string;
 	createdAt: string;
 	updatedAt: string;
-	requestedAt: string;
-	approvedAt: string;
-	deniedAt: string;
-	cancelledAt: string;
+	requestedAt?: string;
+	approvedAt?: string;
+	deniedAt?: string;
+	cancelledAt?: string;
+	downloadAvailableAt?: string;
+	downloadExpiresAt?: string | null;
 	type: Lookup_App_Material_Request_Type_Enum;
 	isPending: boolean;
 	status: Lookup_App_Material_Request_Status_Enum;
@@ -118,7 +120,7 @@ export enum MaterialRequestOrderProp {
 	UPDATED_AT = 'updatedAt',
 	TYPE = 'type',
 	STATUS = 'status',
-	REQUEST_NAME = 'requestName',
+	REQUEST_GROUP_NAME = 'requestGroupName',
 	REQUESTER_FULL_NAME = 'requesterFullName',
 	REQUESTER_MAIL = 'requesterMail',
 	MAINTAINER_NAME = 'maintainerName',

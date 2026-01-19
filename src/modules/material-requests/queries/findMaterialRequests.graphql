@@ -22,6 +22,7 @@ query findMaterialRequests(
 		group_id
 		name
 		download_url
+		download_available_at
 		requester_capacity
 		organisation
 		requested_by {
