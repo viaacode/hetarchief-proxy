@@ -54,9 +54,6 @@ export interface MaterialRequest {
 	contactMail?: string;
 	organisation?: string | null;
 
-	ieObjectRepresentationId?: string;
-	ieObjectId?: string;
-
 	downloadUrl?: string;
 	downloadRetries?: number;
 	downloadStatus?: Lookup_App_Material_Request_Download_Status_Enum;
@@ -72,8 +69,8 @@ export type MaterialRequestForDownload = Pick<
 	| 'downloadJobId'
 	| 'downloadRetries'
 	| 'downloadStatus'
-	| 'ieObjectId'
-	| 'ieObjectRepresentationId'
+	| 'objectId'
+	| 'objectRepresentationId'
 	| 'updatedAt'
 	| 'reuseForm'
 >;

@@ -812,8 +812,8 @@ export class MaterialRequestsService {
 			downloadJobId: materialRequests.download_job_id || null,
 			downloadRetries: materialRequests.download_retries,
 			downloadStatus: materialRequests.download_status || null,
-			ieObjectRepresentationId: materialRequests.ie_object_representation_id || null,
-			ieObjectId: materialRequests.ie_object_id,
+			objectRepresentationId: materialRequests.ie_object_representation_id || null,
+			objectId: materialRequests.ie_object_id,
 			updatedAt: materialRequests.updated_at,
 			reuseForm: {
 				downloadQuality: materialRequests.material_request_reuse_form_values?.[0]

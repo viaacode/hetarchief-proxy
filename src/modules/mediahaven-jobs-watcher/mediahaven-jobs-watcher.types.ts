@@ -46,7 +46,11 @@ export interface GetMamExportsResponse {
 }
 
 export enum MamExportQuality {
+	// Shown in the UI as "High quality"
+	// Original refers to the original file as uploaded to Mediahaven
 	ORIGINAL = 'ORIGINAL',
+	// Shown in the UI as "Normal quality"
+	// Access refers to the accessible copy for showing on the website
 	ACCESS = 'ACCESS',
 }
 

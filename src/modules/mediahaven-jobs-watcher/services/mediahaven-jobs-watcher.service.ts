@@ -42,12 +42,12 @@ export class MediahavenJobsWatcherService {
 
 	private async getAccessToken(): Promise<MamAccessToken> {
 		const existingToken = MediahavenJobsWatcherService.accessToken;
-		const isTokenStillValid = existingToken
-			? addSeconds(
-					existingToken.createdAt,
-					existingToken.token?.expires_in - MEDIAHAVEN_TOKEN_EXPIRE_MARGIN
-				) > new Date()
-			: false;
+		const isTokenStillValid =
+			existingToken &&
+			addSeconds(
+				existingToken.createdAt,
+				existingToken.token?.expires_in - MEDIAHAVEN_TOKEN_EXPIRE_MARGIN
+			) > new Date();
 		if (isTokenStillValid) {
 			return existingToken;
 		}
@@ -183,10 +183,10 @@ export class MediahavenJobsWatcherService {
 			url = stringifyUrl({
 				url: `${this.configService.get('MEDIAHAVEN_API_ENDPOINT')}/exports`,
 			});
-			if (materialRequest.ieObjectRepresentationId) {
+			if (materialRequest.objectRepresentationId) {
 				// User has access to essence of the ie object, and wants to export a specific video (representation)
 				const mhFragmentId = await this.getMhFragmentIdByRepresentationId(
-					materialRequest.ieObjectRepresentationId
+					materialRequest.objectRepresentationId
 				);
 				body = {
 					Records: [
@@ -211,9 +211,7 @@ export class MediahavenJobsWatcherService {
 				};
 			} else {
 				// User does not have access to the essence of the ie object, export all materials linked to the ie object
-				const mhFragmentIds = await this.getAllMhFragmentIdsByIeObjectId(
-					materialRequest.ieObjectId
-				);
+				const mhFragmentIds = await this.getAllMhFragmentIdsByIeObjectId(materialRequest.objectId);
 				body = {
 					Records: mhFragmentIds.map((mhFragmentId) => ({
 						RecordId: mhFragmentId,
