@@ -277,6 +277,7 @@ export class MediahavenJobsWatcherService {
 	 * @returns The Mediahaven fragment ID
 	 */
 	private async getMhFragmentIdByRepresentationId(representationId: string): Promise<string> {
+		// TODO check if video/mp4 is the correct media type to fetch audio files, or we need to switch to audio/mp3 for audio
 		const responseFileInfo = await this.dataService.execute<
 			GetFileStoredAtByRepresentationIdQuery,
 			GetFileStoredAtByRepresentationIdQueryVariables
@@ -316,6 +317,7 @@ export class MediahavenJobsWatcherService {
 	 */
 	private async getAllMhFragmentIdsByIeObjectId(ieObjectId: string): Promise<string[]> {
 		try {
+			// TODO check if video/mp4 is the correct media type to fetch audio files, or we need to switch to audio/mp3 for audio
 			const responseFileInfo = await this.dataService.execute<
 				GetFileStoredAtByIeObjectIdQuery,
 				GetFileStoredAtByIeObjectIdQueryVariables
