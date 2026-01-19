@@ -1,8 +1,8 @@
-import { DataService } from '@meemoo/admin-core-api';
+import { DataService, MediahavenService } from '@meemoo/admin-core-api';
 import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { addSeconds, isAfter, subHours } from 'date-fns';
+import { isAfter, subHours } from 'date-fns';
 import { compact } from 'lodash';
 import { stringifyUrl } from 'query-string';
 import { Configuration } from '~config';
@@ -26,65 +26,26 @@ import {
 	MamAccessToken,
 	MamExportQuality,
 	MamJobStatus,
-	MEDIAHAVEN_TOKEN_EXPIRE_MARGIN,
 	MediahavenJobInfo,
 } from '~modules/mediahaven-jobs-watcher/mediahaven-jobs-watcher.types';
 
 @Injectable()
 export class MediahavenJobsWatcherService {
-	private static accessToken: MamAccessToken | null = null;
-
 	constructor(
 		private configService: ConfigService<Configuration>,
 		private materialRequestsService: MaterialRequestsService,
-		private dataService: DataService
+		private dataService: DataService,
+		private mediahavenService: MediahavenService
 	) {}
 
 	private async getAccessToken(): Promise<MamAccessToken> {
-		const existingToken = MediahavenJobsWatcherService.accessToken;
-		const isTokenStillValid =
-			existingToken &&
-			addSeconds(
-				existingToken.createdAt,
-				existingToken.token?.expires_in - MEDIAHAVEN_TOKEN_EXPIRE_MARGIN
-			) > new Date();
-		if (isTokenStillValid) {
-			return existingToken;
-		}
-
-		// Fetch a new token
-		const url = this.configService.get('MEDIAHAVEN_TOKEN_ENDPOINT');
-		const response = await fetch(url, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/x-www-form-urlencoded',
-				Accept: 'application/json',
-			},
-			body: new URLSearchParams({
-				username: this.configService.get('MEDIAHAVEN_TOKEN_USERNAME'),
-				password: this.configService.get('MEDIAHAVEN_TOKEN_PASSWORD'),
-				client_id: this.configService.get('MEDIAHAVEN_TOKEN_CLIENT_ID'),
-				client_secret: this.configService.get('MEDIAHAVEN_TOKEN_CLIENT_SECRET'),
-			}).toString(),
+		return this.mediahavenService.getAccessToken({
+			tokenEndpoint: this.configService.get('MEDIAHAVEN_TOKEN_ENDPOINT'),
+			username: this.configService.get('MEDIAHAVEN_TOKEN_USERNAME'),
+			password: this.configService.get('MEDIAHAVEN_TOKEN_PASSWORD'),
+			clientId: this.configService.get('MEDIAHAVEN_TOKEN_CLIENT_ID'),
+			clientSecret: this.configService.get('MEDIAHAVEN_TOKEN_CLIENT_SECRET'),
 		});
-		if (response.status < 200 || response.status >= 400) {
-			throw new CustomError(
-				'Error received when fetching an access token for the mediahaven jobs api',
-				response?.statusText,
-				{
-					status: response.status,
-					statusText: response.statusText,
-					responseBody: response.body,
-				}
-			);
-		}
-		const token = (await response.json()) as MamAccessToken['token'];
-		const newToken: MamAccessToken = {
-			token,
-			createdAt: new Date(),
-		};
-		MediahavenJobsWatcherService.accessToken = newToken;
-		return newToken;
 	}
 
 	private async retryDownloadJobOrFail(materialRequest: MaterialRequestForDownload): Promise<void> {
