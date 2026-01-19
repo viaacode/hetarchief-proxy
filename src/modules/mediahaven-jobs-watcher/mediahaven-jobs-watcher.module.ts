@@ -1,4 +1,4 @@
-import { DataModule } from '@meemoo/admin-core-api';
+import { DataModule, MediahavenModule } from '@meemoo/admin-core-api';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { MaterialRequestsModule } from '~modules/material-requests';
@@ -8,7 +8,7 @@ import { MediahavenJobsWatcherService } from '~modules/mediahaven-jobs-watcher/s
 @Module({
 	controllers: [MediahavenJobsWatcherController],
 	providers: [MediahavenJobsWatcherService],
-	imports: [MaterialRequestsModule, ConfigModule, DataModule],
+	imports: [MaterialRequestsModule, ConfigModule, DataModule, MediahavenModule],
 	exports: [MediahavenJobsWatcherService],
 })
 export class MediahavenJobsWatcherModule {}
