@@ -1,5 +1,18 @@
 import { TranslationsService } from '@meemoo/admin-core-api';
-import { Body, Controller, Get, HttpException, HttpStatus, Logger, Post, Query, Redirect, Req, Res, Session } from '@nestjs/common';
+import {
+	Body,
+	Controller,
+	Get,
+	HttpException,
+	HttpStatus,
+	Logger,
+	Post,
+	Query,
+	Redirect,
+	Req,
+	Res,
+	Session,
+} from '@nestjs/common';
 
 import { ConfigService } from '@nestjs/config';
 import { ApiTags } from '@nestjs/swagger';
