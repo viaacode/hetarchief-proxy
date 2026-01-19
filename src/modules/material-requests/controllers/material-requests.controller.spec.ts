@@ -24,7 +24,7 @@ const mockMaterialRequestsService: Partial<
 	findById: jest.fn(),
 	findMaintainers: jest.fn(),
 	createMaterialRequest: jest.fn(),
-	updateMaterialRequest: jest.fn(),
+	updateMaterialRequestForUser: jest.fn(),
 	deleteMaterialRequest: jest.fn(),
 };
 
@@ -147,7 +147,9 @@ describe('MaterialRequestsController', () => {
 
 	describe('updateMaterialRequest', () => {
 		it('should update a material request by id', async () => {
-			mockMaterialRequestsService.updateMaterialRequest.mockResolvedValueOnce(mockMaterialRequest1);
+			mockMaterialRequestsService.updateMaterialRequestForUser.mockResolvedValueOnce(
+				mockMaterialRequest1
+			);
 			const updatedMaterialRequest = await materialRequestsController.updateMaterialRequest(
 				mockMaterialRequest1.id,
 				{
