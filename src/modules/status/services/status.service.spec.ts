@@ -1,3 +1,4 @@
+import { vi, type MockInstance } from 'vitest';
 import { DataService } from '@meemoo/admin-core-api';
 import { Test, type TestingModule } from '@nestjs/testing';
 
@@ -8,16 +9,16 @@ import type { GetFirstObjectIdQuery } from '~generated/graphql-db-types-hetarchi
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { TestingLogger } from '~shared/logging/test-logger';
 
-const mockIeObjectsService: Partial<Record<keyof IeObjectsService, jest.SpyInstance>> = {
-	executeQuery: jest.fn(),
-	getVisitorSpaceAccessInfoFromUser: jest.fn(() => ({
+const mockIeObjectsService: Partial<Record<keyof IeObjectsService, MockInstance>> = {
+	executeQuery: vi.fn(),
+	getVisitorSpaceAccessInfoFromUser: vi.fn(() => ({
 		objectIds: [],
 		visitorSpaceIds: [],
 	})),
 };
 
-const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {
-	execute: jest.fn(),
+const mockDataService: Partial<Record<keyof DataService, MockInstance>> = {
+	execute: vi.fn(),
 };
 
 const mockStatus = {

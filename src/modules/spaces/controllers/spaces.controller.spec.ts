@@ -1,3 +1,4 @@
+import { vi, type MockInstance } from 'vitest';
 import { AssetsService, TranslationsService } from '@meemoo/admin-core-api';
 import { Test, type TestingModule } from '@nestjs/testing';
 import { AvoAuthIdpType, PermissionName } from '@viaa/avo2-types';
@@ -52,19 +53,19 @@ const mockUser: User = {
 	isKeyUser: false,
 	isEvaluator: false,
 };
-const mockSpacesService: Partial<Record<keyof SpacesService, jest.SpyInstance>> = {
-	findAll: jest.fn(),
-	findById: jest.fn(),
-	findSpaceByOrganisationId: jest.fn(),
-	getMaintainerProfiles: jest.fn(),
-	findBySlug: jest.fn(),
-	update: jest.fn(),
-	create: jest.fn(),
+const mockSpacesService: Partial<Record<keyof SpacesService, MockInstance>> = {
+	findAll: vi.fn(),
+	findById: vi.fn(),
+	findSpaceByOrganisationId: vi.fn(),
+	getMaintainerProfiles: vi.fn(),
+	findBySlug: vi.fn(),
+	update: vi.fn(),
+	create: vi.fn(),
 };
 
-const mockAssetsService: Partial<Record<keyof AssetsService, jest.SpyInstance>> = {
-	uploadAndTrack: jest.fn(),
-	delete: jest.fn(),
+const mockAssetsService: Partial<Record<keyof AssetsService, MockInstance>> = {
+	uploadAndTrack: vi.fn(),
+	delete: vi.fn(),
 };
 
 describe('SpacesController', () => {

@@ -1,3 +1,4 @@
+import { vi, type MockInstance } from 'vitest';
 import { DataService, TranslationsService } from '@meemoo/admin-core-api';
 import { InternalServerErrorException } from '@nestjs/common';
 import { Test, type TestingModule } from '@nestjs/testing';
@@ -58,8 +59,8 @@ const mockCreateSpace: CreateSpaceDto = {
 	status: VisitorSpaceStatus.Active,
 };
 
-const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {
-	execute: jest.fn(),
+const mockDataService: Partial<Record<keyof DataService, MockInstance>> = {
+	execute: vi.fn(),
 };
 
 const mockFindSpacesResponse: FindSpacesQuery = {

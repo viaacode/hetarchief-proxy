@@ -1,3 +1,4 @@
+import { vi, type MockInstance } from 'vitest';
 import { Test, type TestingModule } from '@nestjs/testing';
 import type { IPagination } from '@studiohyperdrive/pagination';
 import { AvoAuthIdpType, PermissionName } from '@viaa/avo2-types';
@@ -87,42 +88,42 @@ const mockUser: User = {
 	isEvaluator: false,
 };
 
-const mockFoldersService: Partial<Record<keyof FoldersService, jest.SpyInstance>> = {
-	findFoldersByUser: jest.fn(),
-	findFolderById: jest.fn(),
-	findObjectInFolderById: jest.fn(),
-	findObjectsByFolderId: jest.fn(),
-	create: jest.fn(),
-	update: jest.fn(),
-	delete: jest.fn(),
-	addObjectToFolder: jest.fn(),
-	removeObjectFromFolder: jest.fn(),
+const mockFoldersService: Partial<Record<keyof FoldersService, MockInstance>> = {
+	findFoldersByUser: vi.fn(),
+	findFolderById: vi.fn(),
+	findObjectInFolderById: vi.fn(),
+	findObjectsByFolderId: vi.fn(),
+	create: vi.fn(),
+	update: vi.fn(),
+	delete: vi.fn(),
+	addObjectToFolder: vi.fn(),
+	removeObjectFromFolder: vi.fn(),
 };
 
-const mockEventsService: Partial<Record<keyof EventsService, jest.SpyInstance>> = {
-	insertEvents: jest.fn(),
+const mockEventsService: Partial<Record<keyof EventsService, MockInstance>> = {
+	insertEvents: vi.fn(),
 };
 
-const mockCampaignMonitorService: Partial<Record<keyof CampaignMonitorService, jest.SpyInstance>> =
+const mockCampaignMonitorService: Partial<Record<keyof CampaignMonitorService, MockInstance>> =
 	{
-		sendTransactionalMail: jest.fn(),
+		sendTransactionalMail: vi.fn(),
 	};
 
-const mockUserService: Partial<Record<keyof UsersService, jest.SpyInstance>> = {
-	getUserByEmail: jest.fn(),
+const mockUserService: Partial<Record<keyof UsersService, MockInstance>> = {
+	getUserByEmail: vi.fn(),
 };
 
 const mockRequest = { path: '/folders', headers: {} } as unknown as Request;
 
-const mockIeObjectsService: Partial<Record<keyof IeObjectsService, jest.SpyInstance>> = {
-	findAllIeObjectMetadataByFolderId: jest.fn(),
-	findByIeObjectId: jest.fn(),
-	getVisitorSpaceAccessInfoFromUser: jest.fn(),
-	limitObjectInFolder: jest.fn((folderObjectItem: Partial<IeObject>) => folderObjectItem),
+const mockIeObjectsService: Partial<Record<keyof IeObjectsService, MockInstance>> = {
+	findAllIeObjectMetadataByFolderId: vi.fn(),
+	findByIeObjectId: vi.fn(),
+	getVisitorSpaceAccessInfoFromUser: vi.fn(),
+	limitObjectInFolder: vi.fn((folderObjectItem: Partial<IeObject>) => folderObjectItem),
 };
 
-const mockVisitsService: Partial<Record<keyof VisitsService, jest.SpyInstance>> = {
-	findAll: jest.fn().mockReturnValue({ items: [] }),
+const mockVisitsService: Partial<Record<keyof VisitsService, MockInstance>> = {
+	findAll: vi.fn().mockReturnValue({ items: [] }),
 };
 
 describe('FoldersController', () => {
@@ -166,7 +167,7 @@ describe('FoldersController', () => {
 	});
 
 	afterEach(() => {
-		jest.resetAllMocks();
+		vi.resetAllMocks();
 	});
 
 	it('should be defined', () => {

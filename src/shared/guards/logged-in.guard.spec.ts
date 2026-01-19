@@ -1,11 +1,12 @@
+import { vi } from 'vitest';
 import type { ExecutionContext } from '@nestjs/common';
 
 import { LoggedInGuard } from './logged-in.guard';
 
 const mockExecutionContextWithSession = (session) =>
 	({
-		switchToHttp: jest.fn().mockReturnValue({
-			getRequest: jest.fn().mockReturnValue({
+		switchToHttp: vi.fn().mockReturnValue({
+			getRequest: vi.fn().mockReturnValue({
 				session,
 			}),
 		}),

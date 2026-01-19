@@ -1,3 +1,4 @@
+import { vi, type MockInstance } from 'vitest';
 import { TranslationsService } from '@meemoo/admin-core-api';
 import { HttpStatus } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -64,42 +65,42 @@ const samlLogoutResponse = {
 };
 
 const mockResponseObject = {
-	redirect: jest.fn(),
+	redirect: vi.fn(),
 } as unknown as Response;
 
-const mockArchiefService: Partial<Record<keyof HetArchiefService, jest.SpyInstance>> = {
-	createLoginRequestUrl: jest.fn(),
-	assertSamlResponse: jest.fn(),
-	createLogoutRequestUrl: jest.fn(),
-	createLogoutResponseUrl: jest.fn(),
+const mockArchiefService: Partial<Record<keyof HetArchiefService, MockInstance>> = {
+	createLoginRequestUrl: vi.fn(),
+	assertSamlResponse: vi.fn(),
+	createLogoutRequestUrl: vi.fn(),
+	createLogoutResponseUrl: vi.fn(),
 };
 
-const mockUsersService: Partial<Record<keyof UsersService, jest.SpyInstance>> = {
-	getUserByIdentityId: jest.fn(),
-	createUserWithIdp: jest.fn(),
-	updateUser: jest.fn(),
+const mockUsersService: Partial<Record<keyof UsersService, MockInstance>> = {
+	getUserByIdentityId: vi.fn(),
+	createUserWithIdp: vi.fn(),
+	updateUser: vi.fn(),
 };
 
-const mockFoldersService: Partial<Record<keyof FoldersService, jest.SpyInstance>> = {
-	create: jest.fn(),
+const mockFoldersService: Partial<Record<keyof FoldersService, MockInstance>> = {
+	create: vi.fn(),
 };
 
-const mockIdpService: Partial<Record<keyof IdpService, jest.SpyInstance>> = {
-	determineUserGroup: jest.fn(),
-	userGroupRequiresMaintainerLink: jest.fn(),
+const mockIdpService: Partial<Record<keyof IdpService, MockInstance>> = {
+	determineUserGroup: vi.fn(),
+	userGroupRequiresMaintainerLink: vi.fn(),
 };
 
-const mockEventsService: Partial<Record<keyof EventsService, jest.SpyInstance>> = {
-	insertEvents: jest.fn(),
+const mockEventsService: Partial<Record<keyof EventsService, MockInstance>> = {
+	insertEvents: vi.fn(),
 };
 
-const mockOrganisationsService: Partial<Record<keyof OrganisationsService, jest.SpyInstance>> = {
-	findOrganisationsBySchemaIdentifiers: jest.fn(),
+const mockOrganisationsService: Partial<Record<keyof OrganisationsService, MockInstance>> = {
+	findOrganisationsBySchemaIdentifiers: vi.fn(),
 };
 
-const mockCampaignMonitorService: Partial<Record<keyof CampaignMonitorService, jest.SpyInstance>> =
+const mockCampaignMonitorService: Partial<Record<keyof CampaignMonitorService, MockInstance>> =
 	{
-		updateNewsletterPreferences: jest.fn(),
+		updateNewsletterPreferences: vi.fn(),
 	};
 
 const mockRequest = { path: '/auth/hetarchief', headers: {} } as unknown as Request;
@@ -161,7 +162,7 @@ describe('HetArchiefController', () => {
 	});
 
 	afterEach(() => {
-		(mockResponseObject.redirect as jest.Mock).mockRestore();
+		(mockResponseObject.redirect as vi.Mock).mockRestore();
 		mockArchiefService.createLogoutResponseUrl.mockRestore();
 		mockUsersService.getUserByIdentityId.mockRestore();
 		mockUsersService.createUserWithIdp.mockRestore();

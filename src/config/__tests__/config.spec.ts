@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 // import config, { DEFAULT_CONFIG } from '~config';
 
 import config, { DEFAULT_CONFIG } from '~config';
@@ -8,7 +9,7 @@ describe('Configuration', () => {
 	const originalEnv = process.env;
 
 	beforeEach(() => {
-		jest.resetModules();
+		vi.resetModules();
 	});
 
 	afterEach(() => {

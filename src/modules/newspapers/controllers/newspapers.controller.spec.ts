@@ -1,3 +1,4 @@
+import { vi, type MockInstance } from 'vitest';
 /* eslint-disable @typescript-eslint/consistent-type-imports */
 // Disable consistent imports since they try to import IeObjectsQueryDto as a type
 // But that breaks the endpoint body validation
@@ -15,7 +16,7 @@ import { IeObjectsController } from '~modules/ie-objects/controllers/ie-objects.
 import { TestingLogger } from '~shared/logging/test-logger';
 import { mockConfigService } from '~shared/test/mock-config-service';
 
-const mockNewspapersService: Partial<Record<keyof NewspapersService, jest.SpyInstance>> = {};
+const mockNewspapersService: Partial<Record<keyof NewspapersService, MockInstance>> = {};
 
 describe('NewspapersController', () => {
 	let newspapersController: NewspapersController;

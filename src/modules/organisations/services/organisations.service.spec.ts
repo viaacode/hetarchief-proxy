@@ -1,3 +1,4 @@
+import { vi, type MockInstance } from 'vitest';
 import { DataService } from '@meemoo/admin-core-api';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Test, type TestingModule } from '@nestjs/testing';
@@ -10,12 +11,12 @@ import { OrganisationsService } from './organisations.service';
 import type { FindOrganisationsBySchemaIdsQuery } from '~generated/graphql-db-types-hetarchief';
 import { TestingLogger } from '~shared/logging/test-logger';
 
-const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {
-	execute: jest.fn(),
+const mockDataService: Partial<Record<keyof DataService, MockInstance>> = {
+	execute: vi.fn(),
 };
 
-const mockCacheService: Partial<Record<keyof Cache, jest.SpyInstance>> = {
-	wrap: jest.fn().mockImplementation((key, cb) => cb()),
+const mockCacheService: Partial<Record<keyof Cache, MockInstance>> = {
+	wrap: vi.fn().mockImplementation((key, cb) => cb()),
 };
 
 describe('OrganisationService', () => {

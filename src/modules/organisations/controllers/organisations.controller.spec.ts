@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { Test, type TestingModule } from '@nestjs/testing';
 
 import type { Organisation } from '../organisations.types';
@@ -7,12 +8,12 @@ import { OrganisationsController } from './organisations.controller';
 
 describe('OrganisationsController', () => {
 	let organisationsController: OrganisationsController;
-	let organisationsService: Partial<Record<keyof OrganisationsService, jest.Mock>>;
+	let organisationsService: Partial<Record<keyof OrganisationsService, vi.Mock>>;
 
 	beforeEach(async () => {
 		organisationsService = {
-			findOrganisationBySlug: jest.fn(),
-			fetchRandomContentPartnersForMaintainerGrid: jest.fn(),
+			findOrganisationBySlug: vi.fn(),
+			fetchRandomContentPartnersForMaintainerGrid: vi.fn(),
 		};
 
 		const module: TestingModule = await Test.createTestingModule({

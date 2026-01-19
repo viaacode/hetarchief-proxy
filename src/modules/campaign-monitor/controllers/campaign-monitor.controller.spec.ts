@@ -1,3 +1,4 @@
+import { vi, type MockInstance } from 'vitest';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Test, type TestingModule } from '@nestjs/testing';
 import type { Request } from 'express';
@@ -21,21 +22,21 @@ import { UsersService } from '~modules/users/services/users.service';
 import { TestingLogger } from '~shared/logging/test-logger';
 import { mockConfigService } from '~shared/test/mock-config-service';
 
-const mockCampaignMonitorService: Partial<Record<keyof CampaignMonitorService, jest.SpyInstance>> =
+const mockCampaignMonitorService: Partial<Record<keyof CampaignMonitorService, MockInstance>> =
 	{
-		sendTransactionalMail: jest.fn(),
-		fetchNewsletterPreferences: jest.fn(),
-		updateNewsletterPreferences: jest.fn(),
-		sendConfirmationMail: jest.fn(),
-		confirmEmail: jest.fn(),
+		sendTransactionalMail: vi.fn(),
+		fetchNewsletterPreferences: vi.fn(),
+		updateNewsletterPreferences: vi.fn(),
+		sendConfirmationMail: vi.fn(),
+		confirmEmail: vi.fn(),
 	};
 
-const mockEventsService: Partial<Record<keyof EventsService, jest.SpyInstance>> = {
-	insertEvents: jest.fn(),
+const mockEventsService: Partial<Record<keyof EventsService, MockInstance>> = {
+	insertEvents: vi.fn(),
 };
 
-const mockUsersService: Partial<Record<keyof UsersService, jest.SpyInstance>> = {
-	getById: jest.fn(),
+const mockUsersService: Partial<Record<keyof UsersService, MockInstance>> = {
+	getById: vi.fn(),
 };
 
 const mockRequest = { path: '/campaign-monitor/preferences', headers: {} } as unknown as Request;

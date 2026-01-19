@@ -138,4 +138,5 @@ export const mockVisitApproved: VisitRequest = {
 	updatedById: null,
 	updatedByName: null,
 	accessType: Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum.Folders,
+	accessibleObjectIds: [],
 };

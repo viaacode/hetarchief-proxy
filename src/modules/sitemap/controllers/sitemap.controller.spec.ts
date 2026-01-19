@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { ConfigService } from '@nestjs/config';
 import { Test, type TestingModule } from '@nestjs/testing';
 import { AvoFileUploadAssetType } from '@viaa/avo2-types';
@@ -11,8 +12,8 @@ import { TestingLogger } from '~shared/logging/test-logger';
 import { mockConfigService } from '~shared/test/mock-config-service';
 
 const mockSitemapService = {
-	generateSitemap: jest.fn(),
-	getSitemapConfig: jest.fn(),
+	generateSitemap: vi.fn(),
+	getSitemapConfig: vi.fn(),
 };
 
 describe('SitemapController', () => {

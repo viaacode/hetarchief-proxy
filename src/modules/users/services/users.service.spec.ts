@@ -1,3 +1,4 @@
+import { vi, type MockInstance } from 'vitest';
 import { DataService } from '@meemoo/admin-core-api';
 import { Test, type TestingModule } from '@nestjs/testing';
 import { AvoAuthIdpType, PermissionName } from '@viaa/avo2-types';
@@ -14,8 +15,8 @@ import { mockUserResponse } from '~modules/users/services/__mock__/user.mock';
 import { GroupId, GroupName, type User } from '~modules/users/types';
 import { TestingLogger } from '~shared/logging/test-logger';
 
-const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {
-	execute: jest.fn(),
+const mockDataService: Partial<Record<keyof DataService, MockInstance>> = {
+	execute: vi.fn(),
 };
 
 const mockUser = mockUserResponse.users_profile[0];

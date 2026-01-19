@@ -1,3 +1,4 @@
+import { vi, type MockInstance } from 'vitest';
 import { DataService, VideoStillsService } from '@meemoo/admin-core-api';
 import { Test, type TestingModule } from '@nestjs/testing';
 
@@ -30,22 +31,22 @@ import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { TestingLogger } from '~shared/logging/test-logger';
 
-const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {
-	execute: jest.fn(),
+const mockDataService: Partial<Record<keyof DataService, MockInstance>> = {
+	execute: vi.fn(),
 };
 
-const mockCampaignMonitorService: Partial<Record<keyof CampaignMonitorService, jest.SpyInstance>> =
+const mockCampaignMonitorService: Partial<Record<keyof CampaignMonitorService, MockInstance>> =
 	{
-		sendTransactionalMail: jest.fn(),
+		sendTransactionalMail: vi.fn(),
 	};
 
-const mockOrganisationsService: Partial<Record<keyof OrganisationsService, jest.SpyInstance>> = {
-	findOrganisationsBySchemaIdentifiers: jest.fn(),
+const mockOrganisationsService: Partial<Record<keyof OrganisationsService, MockInstance>> = {
+	findOrganisationsBySchemaIdentifiers: vi.fn(),
 };
 
-const mockSpacesService: Partial<Record<keyof SpacesService, jest.SpyInstance>> = {
-	adaptEmail: jest.fn(() => 'test@email.be'),
-	adaptTelephone: jest.fn(() => '555 55 55 55'),
+const mockSpacesService: Partial<Record<keyof SpacesService, MockInstance>> = {
+	adaptEmail: vi.fn(() => 'test@email.be'),
+	adaptTelephone: vi.fn(() => '555 55 55 55'),
 };
 
 const getDefaultMaterialRequestsResponse = (): {
@@ -60,17 +61,17 @@ const getDefaultMaterialRequestsResponse = (): {
 	},
 });
 
-const mockIeObjectsService: Partial<Record<keyof IeObjectsService, jest.SpyInstance>> = {
-	getThumbnailUrlWithToken: jest.fn((thumbnail) => thumbnail),
-	findMetadataByIeObjectId: jest.fn(() => ({
+const mockIeObjectsService: Partial<Record<keyof IeObjectsService, MockInstance>> = {
+	getThumbnailUrlWithToken: vi.fn((thumbnail) => thumbnail),
+	findMetadataByIeObjectId: vi.fn(() => ({
 		licenses: [IeObjectLicense.PUBLIC_DOMAIN, IeObjectLicense.PUBLIEK_CONTENT],
 	})),
-	getVisitorSpaceAccessInfoFromUser: jest.fn(() => ({ objectIds: [], visitorSpaceIds: [] })),
-	adaptRepresentations: jest.fn(() => []),
+	getVisitorSpaceAccessInfoFromUser: vi.fn(() => ({ objectIds: [], visitorSpaceIds: [] })),
+	adaptRepresentations: vi.fn(() => []),
 };
 
-const mockVideoStillsService: Partial<Record<keyof VideoStillsService, jest.SpyInstance>> = {
-	getFirstVideoStills: jest.fn(() => []),
+const mockVideoStillsService: Partial<Record<keyof VideoStillsService, MockInstance>> = {
+	getFirstVideoStills: vi.fn(() => []),
 };
 
 const getDefaultMaterialRequestByIdResponse = (): {

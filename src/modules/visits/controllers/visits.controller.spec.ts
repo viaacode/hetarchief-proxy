@@ -1,3 +1,4 @@
+import { vi, type MockInstance } from 'vitest';
 import { TranslationsService } from '@meemoo/admin-core-api';
 import { Test, type TestingModule } from '@nestjs/testing';
 import { AvoAuthIdpType, PermissionName } from '@viaa/avo2-types';
@@ -149,36 +150,36 @@ const mockCount: VisitSpaceCount = {
 	id: '123-456-789',
 };
 
-const mockVisitsService: Partial<Record<keyof VisitsService, jest.SpyInstance>> = {
-	findAll: jest.fn(),
-	findById: jest.fn(),
-	create: jest.fn(),
-	update: jest.fn(),
-	getActiveVisitForUserAndSpace: jest.fn(),
-	getPendingVisitCountForUserBySlug: jest.fn(),
-	getAccessStatus: jest.fn(),
+const mockVisitsService: Partial<Record<keyof VisitsService, MockInstance>> = {
+	findAll: vi.fn(),
+	findById: vi.fn(),
+	create: vi.fn(),
+	update: vi.fn(),
+	getActiveVisitForUserAndSpace: vi.fn(),
+	getPendingVisitCountForUserBySlug: vi.fn(),
+	getAccessStatus: vi.fn(),
 };
 
-const mockNotificationsService: Partial<Record<keyof NotificationsService, jest.SpyInstance>> = {
-	create: jest.fn(),
-	onCreateVisit: jest.fn(),
-	onApproveVisitRequest: jest.fn(),
-	onDenyVisitRequest: jest.fn(),
-	delete: jest.fn(),
-	onCancelVisitRequest: jest.fn(),
+const mockNotificationsService: Partial<Record<keyof NotificationsService, MockInstance>> = {
+	create: vi.fn(),
+	onCreateVisit: vi.fn(),
+	onApproveVisitRequest: vi.fn(),
+	onDenyVisitRequest: vi.fn(),
+	delete: vi.fn(),
+	onCancelVisitRequest: vi.fn(),
 };
 
-const mockSpacesService: Partial<Record<keyof SpacesService, jest.SpyInstance>> = {
-	getMaintainerProfiles: jest.fn(),
-	findBySlug: jest.fn(),
-	findById: jest.fn(),
-	findSpaceByOrganisationId: jest.fn(),
-	adaptEmail: jest.fn(() => 'test@email.be'),
-	adaptTelephone: jest.fn(() => '555 55 55 55'),
+const mockSpacesService: Partial<Record<keyof SpacesService, MockInstance>> = {
+	getMaintainerProfiles: vi.fn(),
+	findBySlug: vi.fn(),
+	findById: vi.fn(),
+	findSpaceByOrganisationId: vi.fn(),
+	adaptEmail: vi.fn(() => 'test@email.be'),
+	adaptTelephone: vi.fn(() => '555 55 55 55'),
 };
 
-const mockEventsService: Partial<Record<keyof EventsService, jest.SpyInstance>> = {
-	insertEvents: jest.fn(),
+const mockEventsService: Partial<Record<keyof EventsService, MockInstance>> = {
+	insertEvents: vi.fn(),
 };
 
 const mockRequest = { path: '/visits', headers: {} } as unknown as Request;
@@ -450,8 +451,7 @@ describe('VisitsController', () => {
 				{ id: '2', email: '2@shd.be' },
 			]);
 			mockSpacesService.findBySlug.mockResolvedValueOnce([{ id: mockVisit1.spaceId }]);
-			const sessionHelperSpy = jest
-				.spyOn(SessionHelper, 'getArchiefUserInfo')
+			const sessionHelperSpy = vi				.spyOn(SessionHelper, 'getArchiefUserInfo')
 				.mockReturnValue(mockUser);
 
 			const visitRequest = await visitsController.createVisitRequest(
@@ -480,8 +480,7 @@ describe('VisitsController', () => {
 				{ id: '1', email: '1@shd.be' },
 				{ id: '2', email: '2@shd.be' },
 			]);
-			const sessionHelperSpy = jest
-				.spyOn(SessionHelper, 'getArchiefUserInfo')
+			const sessionHelperSpy = vi				.spyOn(SessionHelper, 'getArchiefUserInfo')
 				.mockReturnValue(mockUser);
 			const SITE_TRANSLATIONS = await getProxyNlTranslations();
 
@@ -521,8 +520,7 @@ describe('VisitsController', () => {
 				{ id: '1', email: '1@shd.be' },
 				{ id: '2', email: '2@shd.be' },
 			]);
-			const sessionHelperSpy = jest
-				.spyOn(SessionHelper, 'getArchiefUserInfo')
+			const sessionHelperSpy = vi				.spyOn(SessionHelper, 'getArchiefUserInfo')
 				.mockReturnValue(mockUser);
 			mockSpacesService.findBySlug.mockResolvedValueOnce(null);
 			const SITE_TRANSLATIONS = await getProxyNlTranslations();
@@ -562,8 +560,7 @@ describe('VisitsController', () => {
 			mockVisitsService.findById.mockResolvedValueOnce(mockVisit1);
 			mockVisitsService.update.mockResolvedValueOnce(mockVisit1);
 			mockSpacesService.findById.mockResolvedValueOnce(mockVisitorSpace);
-			const sessionHelperSpy = jest
-				.spyOn(SessionHelper, 'getArchiefUserInfo')
+			const sessionHelperSpy = vi				.spyOn(SessionHelper, 'getArchiefUserInfo')
 				.mockReturnValue(mockUser);
 
 			const visit = await visitsController.update(
@@ -631,8 +628,7 @@ describe('VisitsController', () => {
 			mockVisitsService.findById.mockResolvedValueOnce(mockVisit1);
 			mockVisitsService.update.mockResolvedValueOnce(mockVisit1);
 			mockSpacesService.findById.mockResolvedValueOnce(mockVisitorSpace);
-			const sessionHelperSpy = jest
-				.spyOn(SessionHelper, 'getArchiefUserInfo')
+			const sessionHelperSpy = vi				.spyOn(SessionHelper, 'getArchiefUserInfo')
 				.mockReturnValue(mockUser);
 
 			const visit = await visitsController.update(
@@ -655,8 +651,7 @@ describe('VisitsController', () => {
 			mockVisitsService.findById.mockResolvedValueOnce(mockVisit2);
 			mockVisitsService.update.mockResolvedValueOnce(mockVisit3);
 			mockSpacesService.findById.mockResolvedValueOnce(mockVisitorSpace);
-			const sessionHelperSpy = jest
-				.spyOn(SessionHelper, 'getArchiefUserInfo')
+			const sessionHelperSpy = vi				.spyOn(SessionHelper, 'getArchiefUserInfo')
 				.mockReturnValue(mockUser);
 
 			const visit = await visitsController.update(
@@ -679,8 +674,7 @@ describe('VisitsController', () => {
 			mockVisitsService.findById.mockResolvedValueOnce(mockVisit1);
 			mockVisitsService.update.mockResolvedValueOnce(mockVisit3);
 			mockSpacesService.findById.mockResolvedValueOnce(mockVisitorSpace);
-			const sessionHelperSpy = jest
-				.spyOn(SessionHelper, 'getArchiefUserInfo')
+			const sessionHelperSpy = vi				.spyOn(SessionHelper, 'getArchiefUserInfo')
 				.mockReturnValue(mockUser);
 
 			const visit = await visitsController.update(
@@ -703,8 +697,7 @@ describe('VisitsController', () => {
 			mockVisitsService.findById.mockResolvedValueOnce(mockVisit1);
 			mockVisitsService.update.mockResolvedValueOnce(mockVisit3);
 			mockSpacesService.findById.mockResolvedValueOnce(mockVisitorSpace);
-			const sessionHelperSpy = jest
-				.spyOn(SessionHelper, 'getArchiefUserInfo')
+			const sessionHelperSpy = vi				.spyOn(SessionHelper, 'getArchiefUserInfo')
 				.mockReturnValue(mockUser);
 
 			const visit = await visitsController.update(

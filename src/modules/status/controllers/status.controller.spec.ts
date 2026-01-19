@@ -1,12 +1,13 @@
+import { vi, type MockInstance } from 'vitest';
 import { Test, type TestingModule } from '@nestjs/testing';
 
 import { StatusService } from '../services/status.service';
 
 import { StatusController } from './status.controller';
 
-const mockStatusService: Partial<Record<keyof StatusService, jest.SpyInstance>> = {
-	getStatus: jest.fn(),
-	getStatusFull: jest.fn(),
+const mockStatusService: Partial<Record<keyof StatusService, MockInstance>> = {
+	getStatus: vi.fn(),
+	getStatusFull: vi.fn(),
 };
 
 const mockStatus = {

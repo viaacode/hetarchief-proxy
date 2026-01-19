@@ -1,3 +1,4 @@
+import { vi, type MockInstance } from 'vitest';
 import { TranslationsService } from '@meemoo/admin-core-api';
 import { HttpStatus } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -50,14 +51,14 @@ const getNewMockSession = () => ({
 	},
 });
 
-const mockSessionService: Partial<Record<keyof SessionService, jest.SpyInstance>> = {
-	clearRedis: jest.fn(),
-	getSessionConfig: jest.fn(),
+const mockSessionService: Partial<Record<keyof SessionService, MockInstance>> = {
+	clearRedis: vi.fn(),
+	getSessionConfig: vi.fn(),
 };
 
-const mockCampaignMonitorService: Partial<Record<keyof CampaignMonitorService, jest.SpyInstance>> =
+const mockCampaignMonitorService: Partial<Record<keyof CampaignMonitorService, MockInstance>> =
 	{
-		updateNewsletterPreferences: jest.fn(),
+		updateNewsletterPreferences: vi.fn(),
 	};
 
 describe('AuthController', () => {

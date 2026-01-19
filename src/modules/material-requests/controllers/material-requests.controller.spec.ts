@@ -1,3 +1,4 @@
+import { vi, type MockInstance } from 'vitest';
 import { Lookup_App_Material_Request_Requester_Capacity_Enum } from '@meemoo/admin-core-api/dist/src/modules/shared/generated/graphql-db-types-hetarchief';
 import { Test, type TestingModule } from '@nestjs/testing';
 
@@ -18,18 +19,18 @@ import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockMaterialRequestsService: Partial<
-	Record<keyof MaterialRequestsService, jest.SpyInstance>
+	Record<keyof MaterialRequestsService, MockInstance>
 > = {
-	findAll: jest.fn(),
-	findById: jest.fn(),
-	findMaintainers: jest.fn(),
-	createMaterialRequest: jest.fn(),
-	updateMaterialRequestForUser: jest.fn(),
-	deleteMaterialRequest: jest.fn(),
+	findAll: vi.fn(),
+	findById: vi.fn(),
+	findMaintainers: vi.fn(),
+	createMaterialRequest: vi.fn(),
+	updateMaterialRequestForUser: vi.fn(),
+	deleteMaterialRequest: vi.fn(),
 };
 
-const mockEventsService: Partial<Record<keyof EventsService, jest.SpyInstance>> = {
-	insertEvents: jest.fn(),
+const mockEventsService: Partial<Record<keyof EventsService, MockInstance>> = {
+	insertEvents: vi.fn(),
 };
 
 describe('MaterialRequestsController', () => {

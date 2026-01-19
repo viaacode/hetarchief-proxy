@@ -1,3 +1,4 @@
+import { vi, type MockInstance } from 'vitest';
 import { DataService } from '@meemoo/admin-core-api';
 import { Test, type TestingModule } from '@nestjs/testing';
 
@@ -6,8 +7,8 @@ import { ContentPartnersService } from './content-partners.service';
 import type { FindContentPartnersQuery } from '~generated/graphql-db-types-hetarchief';
 import { TestingLogger } from '~shared/logging/test-logger';
 
-const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {
-	execute: jest.fn(),
+const mockDataService: Partial<Record<keyof DataService, MockInstance>> = {
+	execute: vi.fn(),
 };
 
 describe('ContentPartnersService', () => {
