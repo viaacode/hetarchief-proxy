@@ -1,6 +1,10 @@
 import { AvoAuthIdpType, PermissionName } from '@viaa/avo2-types';
 
-import { type MaterialRequest, MaterialRequestStatus, MaterialRequestType } from '../material-requests.types';
+import {
+	type MaterialRequest,
+	MaterialRequestStatus,
+	MaterialRequestType,
+} from '../material-requests.types';
 
 import {
 	type FindMaintainersWithMaterialRequestsQuery,

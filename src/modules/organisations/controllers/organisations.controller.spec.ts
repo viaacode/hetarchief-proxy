@@ -1,5 +1,5 @@
-import { vi } from 'vitest';
 import { Test, type TestingModule } from '@nestjs/testing';
+import { Mock, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { Organisation } from '../organisations.types';
 import { OrganisationsService } from '../services/organisations.service';
@@ -8,7 +8,7 @@ import { OrganisationsController } from './organisations.controller';
 
 describe('OrganisationsController', () => {
 	let organisationsController: OrganisationsController;
-	let organisationsService: Partial<Record<keyof OrganisationsService, vi.Mock>>;
+	let organisationsService: Partial<Record<keyof OrganisationsService, Mock>>;
 
 	beforeEach(async () => {
 		organisationsService = {

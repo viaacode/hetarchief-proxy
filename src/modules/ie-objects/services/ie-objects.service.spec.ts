@@ -1,10 +1,10 @@
-import { vi, type MockInstance } from 'vitest';
 import { DataService, PlayerTicketService } from '@meemoo/admin-core-api';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { ConfigService } from '@nestjs/config';
 import { Test, type TestingModule } from '@nestjs/testing';
 import type { Cache } from 'cache-manager';
 import { cloneDeep } from 'lodash';
+import { type MockInstance, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { IeObjectsSearchFilterField, Operator } from '../elasticsearch/elasticsearch.consts';
 import {
@@ -507,7 +507,8 @@ describe('ieObjectsService', () => {
 
 	describe('getMetadataAutocomplete', () => {
 		it('should return a list of autocomplete strings for newspaper series', async () => {
-			ieObjectsService.executeQuery = vi				.fn()
+			ieObjectsService.executeQuery = vi
+				.fn()
 				.mockResolvedValue(mockAutocompleteQueryResponseNewspaperSeries);
 			const result = await ieObjectsService.getMetadataAutocomplete(
 				AutocompleteField.newspaperSeriesName,
@@ -527,7 +528,8 @@ describe('ieObjectsService', () => {
 		});
 
 		it('should return a list of autocomplete strings for creator names', async () => {
-			ieObjectsService.executeQuery = vi				.fn()
+			ieObjectsService.executeQuery = vi
+				.fn()
 				.mockResolvedValue(mockAutocompleteQueryResponseCreators);
 			const result = await ieObjectsService.getMetadataAutocomplete(
 				AutocompleteField.creator,

@@ -1,5 +1,6 @@
 import type { Request } from 'express';
 
+import { describe, expect, it } from 'vitest';
 import { EventsHelper } from './events';
 
 describe('getEventId', () => {

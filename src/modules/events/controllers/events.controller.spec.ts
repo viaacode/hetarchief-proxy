@@ -1,7 +1,7 @@
-import { vi, type MockInstance } from 'vitest';
 import { Test, type TestingModule } from '@nestjs/testing';
 import { AvoAuthIdpType, PermissionName } from '@viaa/avo2-types';
 import type { Request } from 'express';
+import { type MockInstance, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { EventsService } from '../services/events.service';
 import { LogEventType } from '../types';

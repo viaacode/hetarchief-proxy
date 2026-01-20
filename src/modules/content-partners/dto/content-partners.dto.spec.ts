@@ -1,3 +1,4 @@
+import { describe, expect, it } from 'vitest';
 import { ContentPartnersQueryDto } from './content-partners.dto';
 
 describe('ContentPartnersQueryDto', () => {

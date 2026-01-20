@@ -1,7 +1,7 @@
-import { vi, type MockInstance } from 'vitest';
 import { DataService } from '@meemoo/admin-core-api';
 import { ConfigService } from '@nestjs/config';
 import { Test, type TestingModule } from '@nestjs/testing';
+import { type MockInstance, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { NewspapersService } from './newspapers.service';
 

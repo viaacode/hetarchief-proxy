@@ -1,7 +1,7 @@
-import { vi, type MockInstance } from 'vitest';
 import { TranslationsService } from '@meemoo/admin-core-api';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Test, type TestingModule } from '@nestjs/testing';
+import { type MockInstance, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { Configuration } from '~config';
 

@@ -1,7 +1,7 @@
-import { vi, type MockInstance } from 'vitest';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Test, type TestingModule } from '@nestjs/testing';
 import type { Request } from 'express';
+import { type MockInstance, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
 	mockNewsletterUpdatePreferencesQueryDto,
@@ -22,14 +22,13 @@ import { UsersService } from '~modules/users/services/users.service';
 import { TestingLogger } from '~shared/logging/test-logger';
 import { mockConfigService } from '~shared/test/mock-config-service';
 
-const mockCampaignMonitorService: Partial<Record<keyof CampaignMonitorService, MockInstance>> =
-	{
-		sendTransactionalMail: vi.fn(),
-		fetchNewsletterPreferences: vi.fn(),
-		updateNewsletterPreferences: vi.fn(),
-		sendConfirmationMail: vi.fn(),
-		confirmEmail: vi.fn(),
-	};
+const mockCampaignMonitorService: Partial<Record<keyof CampaignMonitorService, MockInstance>> = {
+	sendTransactionalMail: vi.fn(),
+	fetchNewsletterPreferences: vi.fn(),
+	updateNewsletterPreferences: vi.fn(),
+	sendConfirmationMail: vi.fn(),
+	confirmEmail: vi.fn(),
+};
 
 const mockEventsService: Partial<Record<keyof EventsService, MockInstance>> = {
 	insertEvents: vi.fn(),

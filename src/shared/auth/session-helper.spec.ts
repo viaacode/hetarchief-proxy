@@ -4,6 +4,7 @@ import flow from 'lodash/fp/flow';
 
 import { LdapApp } from './auth.types';
 
+import { beforeAll, describe, expect, it } from 'vitest';
 import { GroupId, GroupName, type User } from '~modules/users/types';
 import { SessionHelper } from '~shared/auth/session-helper';
 import { TestingLogger } from '~shared/logging/test-logger';

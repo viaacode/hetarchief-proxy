@@ -1,7 +1,7 @@
-import { vi, type MockInstance } from 'vitest';
 import { ConfigService } from '@nestjs/config';
 import { SchedulerRegistry } from '@nestjs/schedule';
 import { Test, type TestingModule } from '@nestjs/testing';
+import { type MockInstance, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { TestingLogger } from '~shared/logging/test-logger';
 import { SessionService } from '~shared/services/session.service';

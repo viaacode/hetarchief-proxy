@@ -1,6 +1,6 @@
-import { vi, type MockInstance } from 'vitest';
 import { Lookup_App_Material_Request_Requester_Capacity_Enum } from '@meemoo/admin-core-api/dist/src/modules/shared/generated/graphql-db-types-hetarchief';
 import { Test, type TestingModule } from '@nestjs/testing';
+import { type MockInstance, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { MaterialRequestType } from '../material-requests.types';
 import {
@@ -18,9 +18,7 @@ import { EventsService } from '~modules/events/services/events.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { TestingLogger } from '~shared/logging/test-logger';
 
-const mockMaterialRequestsService: Partial<
-	Record<keyof MaterialRequestsService, MockInstance>
-> = {
+const mockMaterialRequestsService: Partial<Record<keyof MaterialRequestsService, MockInstance>> = {
 	findAll: vi.fn(),
 	findById: vi.fn(),
 	findMaintainers: vi.fn(),

@@ -1,4 +1,4 @@
-import { vi, type MockInstance } from 'vitest';
+import { type MockInstance, beforeEach, describe, expect, it } from 'vitest';
 /* eslint-disable @typescript-eslint/consistent-type-imports */
 // Disable consistent imports since they try to import IeObjectsQueryDto as a type
 // But that breaks the endpoint body validation

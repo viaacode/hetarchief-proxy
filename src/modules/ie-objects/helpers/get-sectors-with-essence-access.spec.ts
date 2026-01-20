@@ -1,5 +1,6 @@
 import { IeObjectSector } from '../ie-objects.types';
 
+import { describe, expect, it } from 'vitest';
 import { getSectorsWithEssenceAccess } from './get-sectors-with-essence-access';
 
 describe('GetSectorsWithEssenceAccess', () => {

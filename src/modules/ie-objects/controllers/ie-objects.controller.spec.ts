@@ -1,4 +1,3 @@
-import { vi, type MockInstance } from 'vitest';
 import {
 	PlayerTicketController,
 	PlayerTicketService,
@@ -10,6 +9,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import type { IPagination } from '@studiohyperdrive/pagination';
 import type { Request, Response } from 'express';
 import { cloneDeep } from 'lodash';
+import { type MockInstance, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { type IeObject, IeObjectLicense, type RelatedIeObject } from '../ie-objects.types';
 import {
@@ -66,12 +66,11 @@ const mockPlayerTicketService: Partial<Record<keyof PlayerTicketService, MockIns
 	getThumbnailUrl: vi.fn(),
 };
 
-const mockPlayerTicketController: Partial<Record<keyof PlayerTicketController, MockInstance>> =
-	{
-		getPlayableUrl: vi.fn(),
-		getPlayableUrlFromBrowsePath: vi.fn(),
-		getPlayableUrlByExternalId: vi.fn(),
-	};
+const mockPlayerTicketController: Partial<Record<keyof PlayerTicketController, MockInstance>> = {
+	getPlayableUrl: vi.fn(),
+	getPlayableUrlFromBrowsePath: vi.fn(),
+	getPlayableUrlByExternalId: vi.fn(),
+};
 
 const mockEventsService: Partial<Record<keyof EventsService, MockInstance>> = {
 	insertEvents: vi.fn(),

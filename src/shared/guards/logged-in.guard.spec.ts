@@ -1,5 +1,5 @@
-import { vi } from 'vitest';
 import type { ExecutionContext } from '@nestjs/common';
+import { describe, expect, it, vi } from 'vitest';
 
 import { LoggedInGuard } from './logged-in.guard';
 

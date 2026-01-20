@@ -1,3 +1,4 @@
+import { describe, expect, it } from 'vitest';
 import { CreateOrUpdateFolderDto, FolderObjectsQueryDto } from '~modules/folders/dto/folders.dto';
 
 describe('FoldersDto', () => {

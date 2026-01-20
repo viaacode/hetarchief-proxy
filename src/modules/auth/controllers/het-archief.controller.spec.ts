@@ -1,4 +1,3 @@
-import { vi, type MockInstance } from 'vitest';
 import { TranslationsService } from '@meemoo/admin-core-api';
 import { HttpStatus } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -6,6 +5,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { AvoAuthIdpType } from '@viaa/avo2-types';
 import type { Request, Response } from 'express';
 import { noop } from 'lodash';
+import { Mock, type MockInstance, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { HetArchiefService } from '../services/het-archief.service';
 import { IdpService } from '../services/idp.service';
@@ -98,10 +98,9 @@ const mockOrganisationsService: Partial<Record<keyof OrganisationsService, MockI
 	findOrganisationsBySchemaIdentifiers: vi.fn(),
 };
 
-const mockCampaignMonitorService: Partial<Record<keyof CampaignMonitorService, MockInstance>> =
-	{
-		updateNewsletterPreferences: vi.fn(),
-	};
+const mockCampaignMonitorService: Partial<Record<keyof CampaignMonitorService, MockInstance>> = {
+	updateNewsletterPreferences: vi.fn(),
+};
 
 const mockRequest = { path: '/auth/hetarchief', headers: {} } as unknown as Request;
 
@@ -162,7 +161,7 @@ describe('HetArchiefController', () => {
 	});
 
 	afterEach(() => {
-		(mockResponseObject.redirect as vi.Mock).mockRestore();
+		(mockResponseObject.redirect as Mock).mockRestore();
 		mockArchiefService.createLogoutResponseUrl.mockRestore();
 		mockUsersService.getUserByIdentityId.mockRestore();
 		mockUsersService.createUserWithIdp.mockRestore();

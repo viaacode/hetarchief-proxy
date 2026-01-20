@@ -1,3 +1,4 @@
+import { describe, expect, it } from 'vitest';
 import { convertStringToSearchTerms } from '~modules/ie-objects/helpers/convert-string-to-search-terms';
 
 describe('convertNodeToSearchStrings', () => {

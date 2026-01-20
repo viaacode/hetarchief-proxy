@@ -11,6 +11,7 @@ import {
 import { limitAccessToObjectDetails } from './limit-access-to-object-details';
 import type { LimitAccessUserInfo } from './limit-access-to-object-details.types';
 
+import { describe, expect, it } from 'vitest';
 import { GroupId } from '~modules/users/types';
 
 describe('Limit access to object details', () => {

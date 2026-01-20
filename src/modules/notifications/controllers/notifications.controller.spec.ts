@@ -1,9 +1,9 @@
-import { vi, type MockInstance } from 'vitest';
 import { TranslationsService } from '@meemoo/admin-core-api';
 import { ConfigService } from '@nestjs/config';
 import { Test, type TestingModule } from '@nestjs/testing';
 import type { IPagination } from '@studiohyperdrive/pagination';
 import { AvoAuthIdpType, PermissionName } from '@viaa/avo2-types';
+import { type MockInstance, afterAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { NotificationsService } from '../services/notifications.service';
 

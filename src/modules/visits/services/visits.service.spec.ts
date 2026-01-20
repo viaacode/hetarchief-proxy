@@ -1,7 +1,7 @@
-import { vi, type MockInstance } from 'vitest';
 import { DataService } from '@meemoo/admin-core-api';
 import { Test, type TestingModule } from '@nestjs/testing';
 import { addHours, subHours } from 'date-fns';
+import { type MockInstance, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { mockGqlVisitRequest, mockVisitApproved } from './__mocks__/cp_visit';
 import { VisitsService } from './visits.service';
@@ -460,8 +460,7 @@ describe('VisitsService', () => {
 		});
 
 		it('can deny approval for visit request that was previously approved with folders', async () => {
-			const findVisitSpy = vi				.spyOn(visitsService, 'findById')
-				.mockResolvedValue(mockVisitApproved);
+			const findVisitSpy = vi.spyOn(visitsService, 'findById').mockResolvedValue(mockVisitApproved);
 			mockDataService.execute
 				.mockResolvedValueOnce(getDefaultVisitsResponse())
 				.mockResolvedValueOnce({

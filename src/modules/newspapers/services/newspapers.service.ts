@@ -42,6 +42,7 @@ export class NewspapersService {
 							customError('https request failed', null, {
 								hostname: options.hostname,
 								path: options.path,
+								// @ts-ignore
 								referer: options.headers?.Referer,
 								statusMessage: urlStream.statusMessage,
 								statusCode: urlStream.statusCode,

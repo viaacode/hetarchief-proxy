@@ -1,3 +1,4 @@
+import { describe, expect, it } from 'vitest';
 import { CreateOrUpdateUserDto, UpdateAcceptedTosDto } from '~modules/users/dto/users.dto';
 
 describe('UsersDto', () => {

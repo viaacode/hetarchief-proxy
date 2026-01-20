@@ -1,9 +1,9 @@
-import { vi, type MockInstance } from 'vitest';
 import { TranslationsService } from '@meemoo/admin-core-api';
 import { Test, type TestingModule } from '@nestjs/testing';
 import { AvoAuthIdpType, PermissionName } from '@viaa/avo2-types';
 import { addHours } from 'date-fns';
 import type { Request } from 'express';
+import { type MockInstance, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { VisitsService } from '../services/visits.service';
 import { type VisitRequest, type VisitSpaceCount, VisitStatus } from '../types';
@@ -451,7 +451,8 @@ describe('VisitsController', () => {
 				{ id: '2', email: '2@shd.be' },
 			]);
 			mockSpacesService.findBySlug.mockResolvedValueOnce([{ id: mockVisit1.spaceId }]);
-			const sessionHelperSpy = vi				.spyOn(SessionHelper, 'getArchiefUserInfo')
+			const sessionHelperSpy = vi
+				.spyOn(SessionHelper, 'getArchiefUserInfo')
 				.mockReturnValue(mockUser);
 
 			const visitRequest = await visitsController.createVisitRequest(
@@ -480,7 +481,8 @@ describe('VisitsController', () => {
 				{ id: '1', email: '1@shd.be' },
 				{ id: '2', email: '2@shd.be' },
 			]);
-			const sessionHelperSpy = vi				.spyOn(SessionHelper, 'getArchiefUserInfo')
+			const sessionHelperSpy = vi
+				.spyOn(SessionHelper, 'getArchiefUserInfo')
 				.mockReturnValue(mockUser);
 			const SITE_TRANSLATIONS = await getProxyNlTranslations();
 
@@ -520,7 +522,8 @@ describe('VisitsController', () => {
 				{ id: '1', email: '1@shd.be' },
 				{ id: '2', email: '2@shd.be' },
 			]);
-			const sessionHelperSpy = vi				.spyOn(SessionHelper, 'getArchiefUserInfo')
+			const sessionHelperSpy = vi
+				.spyOn(SessionHelper, 'getArchiefUserInfo')
 				.mockReturnValue(mockUser);
 			mockSpacesService.findBySlug.mockResolvedValueOnce(null);
 			const SITE_TRANSLATIONS = await getProxyNlTranslations();
@@ -560,7 +563,8 @@ describe('VisitsController', () => {
 			mockVisitsService.findById.mockResolvedValueOnce(mockVisit1);
 			mockVisitsService.update.mockResolvedValueOnce(mockVisit1);
 			mockSpacesService.findById.mockResolvedValueOnce(mockVisitorSpace);
-			const sessionHelperSpy = vi				.spyOn(SessionHelper, 'getArchiefUserInfo')
+			const sessionHelperSpy = vi
+				.spyOn(SessionHelper, 'getArchiefUserInfo')
 				.mockReturnValue(mockUser);
 
 			const visit = await visitsController.update(
@@ -628,7 +632,8 @@ describe('VisitsController', () => {
 			mockVisitsService.findById.mockResolvedValueOnce(mockVisit1);
 			mockVisitsService.update.mockResolvedValueOnce(mockVisit1);
 			mockSpacesService.findById.mockResolvedValueOnce(mockVisitorSpace);
-			const sessionHelperSpy = vi				.spyOn(SessionHelper, 'getArchiefUserInfo')
+			const sessionHelperSpy = vi
+				.spyOn(SessionHelper, 'getArchiefUserInfo')
 				.mockReturnValue(mockUser);
 
 			const visit = await visitsController.update(
@@ -651,7 +656,8 @@ describe('VisitsController', () => {
 			mockVisitsService.findById.mockResolvedValueOnce(mockVisit2);
 			mockVisitsService.update.mockResolvedValueOnce(mockVisit3);
 			mockSpacesService.findById.mockResolvedValueOnce(mockVisitorSpace);
-			const sessionHelperSpy = vi				.spyOn(SessionHelper, 'getArchiefUserInfo')
+			const sessionHelperSpy = vi
+				.spyOn(SessionHelper, 'getArchiefUserInfo')
 				.mockReturnValue(mockUser);
 
 			const visit = await visitsController.update(
@@ -674,7 +680,8 @@ describe('VisitsController', () => {
 			mockVisitsService.findById.mockResolvedValueOnce(mockVisit1);
 			mockVisitsService.update.mockResolvedValueOnce(mockVisit3);
 			mockSpacesService.findById.mockResolvedValueOnce(mockVisitorSpace);
-			const sessionHelperSpy = vi				.spyOn(SessionHelper, 'getArchiefUserInfo')
+			const sessionHelperSpy = vi
+				.spyOn(SessionHelper, 'getArchiefUserInfo')
 				.mockReturnValue(mockUser);
 
 			const visit = await visitsController.update(
@@ -697,7 +704,8 @@ describe('VisitsController', () => {
 			mockVisitsService.findById.mockResolvedValueOnce(mockVisit1);
 			mockVisitsService.update.mockResolvedValueOnce(mockVisit3);
 			mockSpacesService.findById.mockResolvedValueOnce(mockVisitorSpace);
-			const sessionHelperSpy = vi				.spyOn(SessionHelper, 'getArchiefUserInfo')
+			const sessionHelperSpy = vi
+				.spyOn(SessionHelper, 'getArchiefUserInfo')
 				.mockReturnValue(mockUser);
 
 			const visit = await visitsController.update(

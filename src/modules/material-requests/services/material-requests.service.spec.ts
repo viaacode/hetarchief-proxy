@@ -1,6 +1,6 @@
-import { vi, type MockInstance } from 'vitest';
 import { DataService, VideoStillsService } from '@meemoo/admin-core-api';
 import { Test, type TestingModule } from '@nestjs/testing';
+import { type MockInstance, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { CampaignMonitorService } from '../../campaign-monitor/services/campaign-monitor.service';
 import { MaterialRequestType } from '../material-requests.types';
@@ -35,10 +35,9 @@ const mockDataService: Partial<Record<keyof DataService, MockInstance>> = {
 	execute: vi.fn(),
 };
 
-const mockCampaignMonitorService: Partial<Record<keyof CampaignMonitorService, MockInstance>> =
-	{
-		sendTransactionalMail: vi.fn(),
-	};
+const mockCampaignMonitorService: Partial<Record<keyof CampaignMonitorService, MockInstance>> = {
+	sendTransactionalMail: vi.fn(),
+};
 
 const mockOrganisationsService: Partial<Record<keyof OrganisationsService, MockInstance>> = {
 	findOrganisationsBySchemaIdentifiers: vi.fn(),

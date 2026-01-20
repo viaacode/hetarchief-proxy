@@ -1,8 +1,8 @@
-import { vi, type MockInstance } from 'vitest';
 import { Test, type TestingModule } from '@nestjs/testing';
 import type { IPagination } from '@studiohyperdrive/pagination';
 import { AvoAuthIdpType, PermissionName } from '@viaa/avo2-types';
 import type { Request } from 'express';
+import { type MockInstance, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { FoldersService } from '../services/folders.service';
 
@@ -104,10 +104,9 @@ const mockEventsService: Partial<Record<keyof EventsService, MockInstance>> = {
 	insertEvents: vi.fn(),
 };
 
-const mockCampaignMonitorService: Partial<Record<keyof CampaignMonitorService, MockInstance>> =
-	{
-		sendTransactionalMail: vi.fn(),
-	};
+const mockCampaignMonitorService: Partial<Record<keyof CampaignMonitorService, MockInstance>> = {
+	sendTransactionalMail: vi.fn(),
+};
 
 const mockUserService: Partial<Record<keyof UsersService, MockInstance>> = {
 	getUserByEmail: vi.fn(),

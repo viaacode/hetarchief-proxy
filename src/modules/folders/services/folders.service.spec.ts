@@ -1,7 +1,7 @@
-import { vi, type MockInstance } from 'vitest';
 import { DataService } from '@meemoo/admin-core-api';
 import { Test, type TestingModule } from '@nestjs/testing';
 import { format } from 'date-fns';
+import { type MockInstance, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { FoldersService } from './folders.service';
 
@@ -487,9 +487,11 @@ describe('FoldersService', () => {
 
 	describe('addObjectToFolder', () => {
 		it('can add object to a folder', async () => {
-			const findObjectInFolderSpy = vi				.spyOn(foldersService, 'findObjectInFolderById')
+			const findObjectInFolderSpy = vi
+				.spyOn(foldersService, 'findObjectInFolderById')
 				.mockResolvedValueOnce(null);
-			const findObjectByIdSpy = vi				.spyOn(foldersService, 'findObjectById')
+			const findObjectByIdSpy = vi
+				.spyOn(foldersService, 'findObjectById')
 				.mockResolvedValueOnce(mockFolderObject);
 			const mockData: InsertIeObjectIntoFolderMutation = {
 				insert_users_folder_ie: {
@@ -514,7 +516,8 @@ describe('FoldersService', () => {
 		});
 
 		it('can not add object to a folder if it already exists', async () => {
-			const findObjectInFolderSpy = vi				.spyOn(foldersService, 'findObjectInFolderById')
+			const findObjectInFolderSpy = vi
+				.spyOn(foldersService, 'findObjectInFolderById')
 				.mockResolvedValueOnce(mockFolderObject);
 
 			let error: any;
@@ -537,9 +540,11 @@ describe('FoldersService', () => {
 		});
 
 		it('throws a NotFoundException when the objectInfo was not found', async () => {
-			const findObjectInFolderSpy = vi				.spyOn(foldersService, 'findObjectInFolderById')
+			const findObjectInFolderSpy = vi
+				.spyOn(foldersService, 'findObjectInFolderById')
 				.mockResolvedValueOnce(null);
-			const findObjectByIdSpy = vi				.spyOn(foldersService, 'findObjectById')
+			const findObjectByIdSpy = vi
+				.spyOn(foldersService, 'findObjectById')
 				.mockResolvedValueOnce(null);
 
 			let error: any;

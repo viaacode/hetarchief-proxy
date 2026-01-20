@@ -1,7 +1,7 @@
-import { vi } from 'vitest';
 import { TranslationsService } from '@meemoo/admin-core-api';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Test, type TestingModule } from '@nestjs/testing';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { ConsentToTrackOption, EmailTemplate } from '../campaign-monitor.types';
 import {
@@ -298,9 +298,7 @@ describe('CampaignMonitorService', () => {
 				materialRequestEmailInfo.template = EmailTemplate.MATERIAL_REQUEST_REQUESTER;
 				materialRequestEmailInfo.to = 'test@example.com';
 				await campaignMonitorService.sendForMaterialRequest(materialRequestEmailInfo);
-				fail(
-					new Error('sendForMaterialRequest should have thrown an error when CM throws an error')
-				);
+				fail('sendForMaterialRequest should have thrown an error when CM throws an error');
 			} catch (e) {
 				expect(e).toBeDefined();
 			}
@@ -422,11 +420,7 @@ describe('CampaignMonitorService', () => {
 			campaignMonitorService.makeCmApiRequest = vi.fn().mockRejectedValueOnce('');
 			try {
 				await campaignMonitorService.fetchNewsletterPreferences(mockUser.email);
-				fail(
-					new Error(
-						'fetchNewsletterPreferences should have thrown an error when CM throws an error'
-					)
-				);
+				fail('fetchNewsletterPreferences should have thrown an error when CM throws an error');
 			} catch (e) {
 				expect(e).toBeDefined();
 			}
@@ -451,11 +445,7 @@ describe('CampaignMonitorService', () => {
 				await campaignMonitorService.updateNewsletterPreferences(mockUserInfo, {
 					newsletter: true,
 				});
-				fail(
-					new Error(
-						'updateNewsletterPreferences should have thrown an error when CM throws an error'
-					)
-				);
+				fail('updateNewsletterPreferences should have thrown an error when CM throws an error');
 			} catch (e) {
 				expect(e).toBeDefined();
 			}

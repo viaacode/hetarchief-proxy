@@ -1,3 +1,4 @@
+import { describe, expect, it } from 'vitest';
 import { SpacesQueryDto } from '~modules/spaces/dto/spaces.dto';
 import { VisitorSpaceOrderProps } from '~modules/spaces/spaces.types';
 import { VisitorSpaceStatus } from '~shared/types/types';
