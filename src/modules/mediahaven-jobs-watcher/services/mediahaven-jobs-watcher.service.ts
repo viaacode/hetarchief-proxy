@@ -287,7 +287,6 @@ export class MediahavenJobsWatcherService {
 		const fileStoredAtUrl = responseFileInfo.graph_includes?.[0]?.file?.premis_stored_at;
 		// Get second to last part of the URL
 		// https://media-qas.viaa.be/play/v2/SBS/aaf815a5a39e414291c14603edbe336a0cf599d0da2146c7a9578def535362cd/browse.mp4 => aaf815a5a39e414291c14603edbe336a0cf599d0da2146c7a9578def535362cd
-		// @ts-ignore: TODO: Fix this .at(-2) stuff since the method does not exist
 		const partialMhFragmentIdentifier = fileStoredAtUrl.split('/').at(-2);
 
 		if (!partialMhFragmentIdentifier) {
@@ -333,7 +332,6 @@ export class MediahavenJobsWatcherService {
 			// Get second to last part of the URL
 			// https://media-qas.viaa.be/play/v2/SBS/aaf815a5a39e414291c14603edbe336a0cf599d0da2146c7a9578def535362cd/browse.mp4 => aaf815a5a39e414291c14603edbe336a0cf599d0da2146c7a9578def535362cd
 			const partialMhFragmentIdentifiers = compact(
-				// @ts-ignore: TODO: Fix this .at(-2) stuff since the method does not exist
 				fileStoredAtUrls.map((fileStoredAtUrl) => fileStoredAtUrl.split('/').at(-2).trim())
 			);
 
