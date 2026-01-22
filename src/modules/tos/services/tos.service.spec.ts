@@ -1,13 +1,14 @@
 import { DataService } from '@meemoo/admin-core-api';
 import { Test, type TestingModule } from '@nestjs/testing';
+import { type MockInstance, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { TosService } from './tos.service';
 
 import type { GetTosLastUpdatedAtQuery } from '~generated/graphql-db-types-hetarchief';
 import { TestingLogger } from '~shared/logging/test-logger';
 
-const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {
-	execute: jest.fn(),
+const mockDataService: Partial<Record<keyof DataService, MockInstance>> = {
+	execute: vi.fn(),
 };
 
 const updatedAtIsoDate = '1997-01-01T00:00:00.000Z';

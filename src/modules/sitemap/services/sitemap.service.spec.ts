@@ -1,5 +1,6 @@
 import { AssetsService, ContentPagesService, DataService } from '@meemoo/admin-core-api';
 import { Test, type TestingModule } from '@nestjs/testing';
+import { type MockInstance, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
 	mockContentPage,
@@ -17,20 +18,20 @@ import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { TestingLogger } from '~shared/logging/test-logger';
 import { Locale } from '~shared/types/types';
 
-const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {
-	execute: jest.fn(),
+const mockDataService: Partial<Record<keyof DataService, MockInstance>> = {
+	execute: vi.fn(),
 };
-const mockSpacesService: Partial<Record<keyof SpacesService, jest.SpyInstance>> = {
-	findAll: jest.fn(),
+const mockSpacesService: Partial<Record<keyof SpacesService, MockInstance>> = {
+	findAll: vi.fn(),
 };
-const mockContentPagesService: Partial<Record<keyof ContentPagesService, jest.SpyInstance>> = {
-	fetchContentPages: jest.fn(),
+const mockContentPagesService: Partial<Record<keyof ContentPagesService, MockInstance>> = {
+	fetchContentPages: vi.fn(),
 };
-const mockIeObjectsService: Partial<Record<keyof IeObjectsService, jest.SpyInstance>> = {
-	findIeObjectsForSitemap: jest.fn(),
+const mockIeObjectsService: Partial<Record<keyof IeObjectsService, MockInstance>> = {
+	findIeObjectsForSitemap: vi.fn(),
 };
-const mockAssetsService: Partial<Record<keyof AssetsService, jest.SpyInstance>> = {
-	uploadAndTrack: jest.fn(),
+const mockAssetsService: Partial<Record<keyof AssetsService, MockInstance>> = {
+	uploadAndTrack: vi.fn(),
 };
 
 describe('SitemapService', () => {

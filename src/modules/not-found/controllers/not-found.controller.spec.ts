@@ -4,6 +4,7 @@ import { AvoAuthIdpType, PermissionName } from '@viaa/avo2-types';
 
 import { NotFoundController } from './not-found.controller';
 
+import { afterAll, beforeEach, describe, expect, it } from 'vitest';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupId, GroupName, type User } from '~modules/users/types';
 import { mockTranslationsService } from '~shared/helpers/mockTranslationsService';

@@ -1,6 +1,7 @@
 import { DataService } from '@meemoo/admin-core-api';
 import { Test, type TestingModule } from '@nestjs/testing';
 import { addHours, subHours } from 'date-fns';
+import { type MockInstance, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { mockGqlVisitRequest, mockVisitApproved } from './__mocks__/cp_visit';
 import { VisitsService } from './visits.service';
@@ -25,13 +26,13 @@ import {
 import { TestingLogger } from '~shared/logging/test-logger';
 import { Locale } from '~shared/types/types';
 
-const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {
-	execute: jest.fn(),
+const mockDataService: Partial<Record<keyof DataService, MockInstance>> = {
+	execute: vi.fn(),
 };
 
-const mockSpacesService: Partial<Record<keyof SpacesService, jest.SpyInstance>> = {
-	adaptEmail: jest.fn(() => 'test@email.be'),
-	adaptTelephone: jest.fn(() => '555 55 55 55'),
+const mockSpacesService: Partial<Record<keyof SpacesService, MockInstance>> = {
+	adaptEmail: vi.fn(() => 'test@email.be'),
+	adaptTelephone: vi.fn(() => '555 55 55 55'),
 };
 
 const getDefaultVisitsResponse = (): FindVisitsQuery => ({
@@ -391,7 +392,7 @@ describe('VisitsService', () => {
 
 	describe('update', () => {
 		it('throws an exception if the visit request was not found', async () => {
-			const findVisitSpy = jest.spyOn(visitsService, 'findById').mockResolvedValue(null);
+			const findVisitSpy = vi.spyOn(visitsService, 'findById').mockResolvedValue(null);
 			const mockData: UpdateVisitMutation = {
 				update_maintainer_visitor_space_request: null,
 			};
@@ -415,7 +416,7 @@ describe('VisitsService', () => {
 		});
 
 		it('can update a visit with startAt, endAt and status', async () => {
-			const findVisitSpy = jest.spyOn(visitsService, 'findById').mockResolvedValue(mockVisit);
+			const findVisitSpy = vi.spyOn(visitsService, 'findById').mockResolvedValue(mockVisit);
 			mockDataService.execute
 				.mockResolvedValueOnce(getDefaultVisitsResponse())
 				.mockResolvedValueOnce({
@@ -438,7 +439,7 @@ describe('VisitsService', () => {
 		});
 
 		it('can update a visit with a status', async () => {
-			const findVisitSpy = jest.spyOn(visitsService, 'findById').mockResolvedValue(mockVisit);
+			const findVisitSpy = vi.spyOn(visitsService, 'findById').mockResolvedValue(mockVisit);
 			mockDataService.execute
 				.mockResolvedValueOnce(getDefaultVisitsResponse())
 				.mockResolvedValueOnce({
@@ -459,9 +460,7 @@ describe('VisitsService', () => {
 		});
 
 		it('can deny approval for visit request that was previously approved with folders', async () => {
-			const findVisitSpy = jest
-				.spyOn(visitsService, 'findById')
-				.mockResolvedValue(mockVisitApproved);
+			const findVisitSpy = vi.spyOn(visitsService, 'findById').mockResolvedValue(mockVisitApproved);
 			mockDataService.execute
 				.mockResolvedValueOnce(getDefaultVisitsResponse())
 				.mockResolvedValueOnce({
@@ -503,7 +502,7 @@ describe('VisitsService', () => {
 		});
 
 		it('throws an error when you update a visit that does not exist', async () => {
-			const findVisitSpy = jest.spyOn(visitsService, 'findById').mockResolvedValueOnce(null);
+			const findVisitSpy = vi.spyOn(visitsService, 'findById').mockResolvedValueOnce(null);
 
 			let error: any;
 			try {
@@ -535,7 +534,7 @@ describe('VisitsService', () => {
 					},
 				} as InsertNoteMutation)
 				.mockResolvedValueOnce(getDefaultVisitsResponse());
-			const findVisitSpy = jest.spyOn(visitsService, 'findById').mockResolvedValue(mockVisit);
+			const findVisitSpy = vi.spyOn(visitsService, 'findById').mockResolvedValue(mockVisit);
 
 			const response = await visitsService.update(
 				mockGqlVisitRequest.id,

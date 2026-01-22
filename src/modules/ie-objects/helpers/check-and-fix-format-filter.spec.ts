@@ -1,6 +1,7 @@
 import { IeObjectsSearchFilterField, Operator } from '../elasticsearch/elasticsearch.consts';
 import { IeObjectType } from '../ie-objects.types';
 
+import { describe, expect, it } from 'vitest';
 import { checkAndFixFormatFilter } from './check-and-fix-format-filter';
 
 describe('checkAndFixFormatFilter', () => {

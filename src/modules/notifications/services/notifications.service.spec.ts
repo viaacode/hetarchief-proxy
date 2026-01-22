@@ -2,6 +2,7 @@ import { DataService, MaintenanceAlertsService, TranslationsService } from '@mee
 import { Test, type TestingModule } from '@nestjs/testing';
 import { AvoAuthIdpType, PermissionName } from '@viaa/avo2-types';
 import { addHours, addMonths, subHours } from 'date-fns';
+import { type MockInstance, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { NotificationsService } from './notifications.service';
 
@@ -169,29 +170,27 @@ const mockSpace: VisitorSpace = {
 	updatedAt: '2022-01-13T13:10:14.41978',
 };
 
-const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {
-	execute: jest.fn(),
+const mockDataService: Partial<Record<keyof DataService, MockInstance>> = {
+	execute: vi.fn(),
 };
 
-const mockCampaignMonitorService: Partial<Record<keyof CampaignMonitorService, jest.SpyInstance>> =
+const mockCampaignMonitorService: Partial<Record<keyof CampaignMonitorService, MockInstance>> = {
+	sendForVisit: vi.fn().mockResolvedValue(true),
+	getAdminEmail: vi.fn().mockImplementation((email) => email),
+};
+
+const mockMaintenanceAlertsService: Partial<Record<keyof MaintenanceAlertsService, MockInstance>> =
 	{
-		sendForVisit: jest.fn().mockResolvedValue(true),
-		getAdminEmail: jest.fn().mockImplementation((email) => email),
+		findById: vi.fn().mockResolvedValue({
+			id: '0e6e26aa-55e5-4c61-891c-8c3644f93301',
+			title: 'Test',
+			message: 'Test message',
+			type: 'info',
+			fromDate: '2023-03-08T08:00:00',
+			untilDate: '2023-03-08T16:00:00',
+			userGroups: ['MEEMOO_ADMIN'],
+		}),
 	};
-
-const mockMaintenanceAlertsService: Partial<
-	Record<keyof MaintenanceAlertsService, jest.SpyInstance>
-> = {
-	findById: jest.fn().mockResolvedValue({
-		id: '0e6e26aa-55e5-4c61-891c-8c3644f93301',
-		title: 'Test',
-		message: 'Test message',
-		type: 'info',
-		fromDate: '2023-03-08T08:00:00',
-		untilDate: '2023-03-08T16:00:00',
-		userGroups: ['MEEMOO_ADMIN'],
-	}),
-};
 
 describe('NotificationsService', () => {
 	let notificationsService: NotificationsService;
@@ -277,7 +276,7 @@ describe('NotificationsService', () => {
 
 	describe('createForMultipleRecipients', () => {
 		it('can create multiple notifications for multiple recipients', async () => {
-			const createNotificationsSpy = jest
+			const createNotificationsSpy = vi
 				.spyOn(notificationsService, 'create')
 				.mockResolvedValueOnce([mockNotification, mockNotification]);
 
@@ -306,7 +305,7 @@ describe('NotificationsService', () => {
 			const originalSpaceMail = mockVisitRequest.spaceMail;
 			mockVisitRequest.spaceMail = null;
 
-			const createForMultipleRecipientsSpy = jest
+			const createForMultipleRecipientsSpy = vi
 				.spyOn(notificationsService, 'create')
 				.mockResolvedValue([mockNotification]);
 
@@ -335,7 +334,7 @@ describe('NotificationsService', () => {
 			const originalSpaceMail = mockVisitRequest.spaceMail;
 			mockVisitRequest.spaceMail = null;
 
-			const createForMultipleRecipientsSpy = jest
+			const createForMultipleRecipientsSpy = vi
 				.spyOn(notificationsService, 'create')
 				.mockResolvedValueOnce([mockNotification]);
 
@@ -361,7 +360,7 @@ describe('NotificationsService', () => {
 		});
 
 		it('should send a notification about a visit request creation', async () => {
-			const createForMultipleRecipientsSpy = jest
+			const createForMultipleRecipientsSpy = vi
 				.spyOn(notificationsService, 'create')
 				.mockResolvedValueOnce([mockNotification]);
 
@@ -382,7 +381,7 @@ describe('NotificationsService', () => {
 			const visit = { ...mockVisitRequest };
 			visit.startAt = addHours(new Date(), 1).toISOString();
 			visit.endAt = addHours(new Date(), 2).toISOString();
-			const createNotificationSpy = jest
+			const createNotificationSpy = vi
 				.spyOn(notificationsService, 'create')
 				.mockResolvedValueOnce([mockNotification]);
 
@@ -395,7 +394,7 @@ describe('NotificationsService', () => {
 		it('should create a read notification if the visit already started', async () => {
 			const visit = { ...mockVisitRequest };
 			visit.startAt = subHours(new Date(), 1).toISOString();
-			const createNotificationSpy = jest
+			const createNotificationSpy = vi
 				.spyOn(notificationsService, 'create')
 				.mockResolvedValueOnce([mockNotification]);
 
@@ -410,7 +409,7 @@ describe('NotificationsService', () => {
 
 	describe('onDenyVisitRequest', () => {
 		it('should send a notification about a visit request denial', async () => {
-			const createNotificationSpy = jest
+			const createNotificationSpy = vi
 				.spyOn(notificationsService, 'create')
 				.mockResolvedValueOnce([mockNotification]);
 
@@ -423,7 +422,7 @@ describe('NotificationsService', () => {
 
 	describe('onCancelVisitRequest', () => {
 		it('should send a notification about a visit request cancellation', async () => {
-			const createForMultipleRecipientsSpy = jest
+			const createForMultipleRecipientsSpy = vi
 				.spyOn(notificationsService, 'create')
 				.mockResolvedValueOnce([mockNotification]);
 

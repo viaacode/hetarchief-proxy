@@ -1,21 +1,22 @@
 import { ConfigService } from '@nestjs/config';
 import { SchedulerRegistry } from '@nestjs/schedule';
 import { Test, type TestingModule } from '@nestjs/testing';
+import { type MockInstance, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { TestingLogger } from '~shared/logging/test-logger';
 import { SessionService } from '~shared/services/session.service';
 import { mockConfigService } from '~shared/test/mock-config-service';
 
-const mockSchedulerRegistry: Partial<Record<keyof SchedulerRegistry, jest.SpyInstance>> = {
-	addCronJob: jest.fn(),
+const mockSchedulerRegistry: Partial<Record<keyof SchedulerRegistry, MockInstance>> = {
+	addCronJob: vi.fn(),
 };
 
 const mockCronJob = {
-	start: jest.fn(),
+	start: vi.fn(),
 };
 
-jest.mock('cron', () => ({
-	CronJob: jest.fn(() => mockCronJob),
+vi.mock('cron', () => ({
+	CronJob: vi.fn(() => mockCronJob),
 }));
 
 describe('SessionService', () => {
@@ -47,10 +48,10 @@ describe('SessionService', () => {
 
 	describe('getSessionConfig', () => {
 		it('should return the session config', async () => {
-			jest.mock('connect-redis', () => {
+			vi.mock('connect-redis', () => {
 				return {
-					default: jest.fn(() => {
-						return jest.fn(); // RedisStore
+					default: vi.fn(() => {
+						return vi.fn(); // RedisStore
 					}),
 				};
 			});

@@ -1,4 +1,5 @@
 import type { ExecutionContext } from '@nestjs/common';
+import { describe, expect, it, vi } from 'vitest';
 
 import { ConfigService } from '@nestjs/config';
 
@@ -9,7 +10,7 @@ import { APIKEY, API_KEY_EXCEPTION, ApiKeyGuard } from '~shared/guards/api-key.g
 const mockApiKey = 'MySecretApiKey';
 
 const mockConfigService: ConfigService<Configuration> = {
-	get: jest.fn((key: keyof Configuration): string | boolean => {
+	get: vi.fn((key: keyof Configuration): string | boolean => {
 		if (key === 'PROXY_API_KEY') {
 			return mockApiKey;
 		}
@@ -18,8 +19,8 @@ const mockConfigService: ConfigService<Configuration> = {
 } as unknown as ConfigService<Configuration>;
 
 const mockExecutionContextCorrect = {
-	switchToHttp: jest.fn().mockReturnValue({
-		getRequest: jest.fn().mockReturnValue({
+	switchToHttp: vi.fn().mockReturnValue({
+		getRequest: vi.fn().mockReturnValue({
 			header: (headerName: string) => {
 				if (headerName === APIKEY) {
 					return mockApiKey;
@@ -31,8 +32,8 @@ const mockExecutionContextCorrect = {
 } as unknown as ExecutionContext;
 
 const mockExecutionContextNotSet = {
-	switchToHttp: jest.fn().mockReturnValue({
-		getRequest: jest.fn().mockReturnValue({
+	switchToHttp: vi.fn().mockReturnValue({
+		getRequest: vi.fn().mockReturnValue({
 			header: () => {
 				return undefined;
 			},
@@ -41,8 +42,8 @@ const mockExecutionContextNotSet = {
 } as unknown as ExecutionContext;
 
 const mockExecutionContextWrong = {
-	switchToHttp: jest.fn().mockReturnValue({
-		getRequest: jest.fn().mockReturnValue({
+	switchToHttp: vi.fn().mockReturnValue({
+		getRequest: vi.fn().mockReturnValue({
 			header: (headerName: string) => {
 				if (headerName === APIKEY) {
 					return 'wrongApiKey';

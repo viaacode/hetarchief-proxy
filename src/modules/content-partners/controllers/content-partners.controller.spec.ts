@@ -1,4 +1,5 @@
 import { Test, type TestingModule } from '@nestjs/testing';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { ContentPartnersService } from '../services/content-partners.service';
 
@@ -20,7 +21,7 @@ const mockContentPartnerResponse = {
 };
 
 const mockContentPartnersService = {
-	getContentPartners: jest.fn(),
+	getContentPartners: vi.fn(),
 };
 
 describe('ContentPartnersController', () => {

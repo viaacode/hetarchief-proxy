@@ -1,3 +1,4 @@
+import { describe, expect, it } from 'vitest';
 import { NotificationsQueryDto } from '~modules/notifications/dto/notifications.dto';
 
 describe('NotificationsDto', () => {

@@ -9,6 +9,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import type { IPagination } from '@studiohyperdrive/pagination';
 import type { Request, Response } from 'express';
 import { cloneDeep } from 'lodash';
+import { type MockInstance, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { type IeObject, IeObjectLicense, type RelatedIeObject } from '../ie-objects.types';
 import {
@@ -46,43 +47,42 @@ const getMockMediaResponse = (): IPagination<Partial<IeObject>> =>
 
 const mockSessionUser: SessionUserEntity = new SessionUserEntity(mockUser);
 
-const mockIeObjectsService: Partial<Record<keyof IeObjectsService, jest.SpyInstance>> = {
-	findAll: jest.fn(),
-	findByIeObjectId: jest.fn(),
-	findMetadataByIeObjectId: jest.fn(),
-	getParentIeObject: jest.fn(),
-	getChildIeObjects: jest.fn(),
-	getSimilar: jest.fn(),
-	getVisitorSpaceAccessInfoFromUser: jest.fn(() => ({
+const mockIeObjectsService: Partial<Record<keyof IeObjectsService, MockInstance>> = {
+	findAll: vi.fn(),
+	findByIeObjectId: vi.fn(),
+	findMetadataByIeObjectId: vi.fn(),
+	getParentIeObject: vi.fn(),
+	getChildIeObjects: vi.fn(),
+	getSimilar: vi.fn(),
+	getVisitorSpaceAccessInfoFromUser: vi.fn(() => ({
 		objectIds: [],
 		visitorSpaceIds: [],
 	})),
 };
 
-const mockPlayerTicketService: Partial<Record<keyof PlayerTicketService, jest.SpyInstance>> = {
-	getPlayableUrl: jest.fn(),
-	getEmbedUrl: jest.fn(),
-	getThumbnailUrl: jest.fn(),
+const mockPlayerTicketService: Partial<Record<keyof PlayerTicketService, MockInstance>> = {
+	getPlayableUrl: vi.fn(),
+	getEmbedUrl: vi.fn(),
+	getThumbnailUrl: vi.fn(),
 };
 
-const mockPlayerTicketController: Partial<Record<keyof PlayerTicketController, jest.SpyInstance>> =
-	{
-		getPlayableUrl: jest.fn(),
-		getPlayableUrlFromBrowsePath: jest.fn(),
-		getPlayableUrlByExternalId: jest.fn(),
-	};
-
-const mockEventsService: Partial<Record<keyof EventsService, jest.SpyInstance>> = {
-	insertEvents: jest.fn(),
+const mockPlayerTicketController: Partial<Record<keyof PlayerTicketController, MockInstance>> = {
+	getPlayableUrl: vi.fn(),
+	getPlayableUrlFromBrowsePath: vi.fn(),
+	getPlayableUrlByExternalId: vi.fn(),
 };
 
-const mockVisitsService: Partial<Record<keyof VisitsService, jest.SpyInstance>> = {
-	hasAccess: jest.fn(),
-	findAll: jest.fn(),
+const mockEventsService: Partial<Record<keyof EventsService, MockInstance>> = {
+	insertEvents: vi.fn(),
 };
 
-const mockOrganisationsService: Partial<Record<keyof OrganisationsService, jest.SpyInstance>> = {
-	findOrganisationsBySchemaIdentifiers: jest.fn(),
+const mockVisitsService: Partial<Record<keyof VisitsService, MockInstance>> = {
+	hasAccess: vi.fn(),
+	findAll: vi.fn(),
+};
+
+const mockOrganisationsService: Partial<Record<keyof OrganisationsService, MockInstance>> = {
+	findOrganisationsBySchemaIdentifiers: vi.fn(),
 };
 
 const mockRequest = { path: '/ie-objects/export', headers: {} } as unknown as Request;
@@ -377,8 +377,8 @@ describe('IeObjectsController', () => {
 			mockVisitsService.hasAccess.mockResolvedValueOnce(true);
 
 			const mockResponseObject = {
-				set: jest.fn(),
-				send: jest.fn(),
+				set: vi.fn(),
+				send: vi.fn(),
 			} as unknown as Response;
 
 			await ieObjectsController.exportXml(
@@ -400,8 +400,8 @@ describe('IeObjectsController', () => {
 			mockVisitsService.hasAccess.mockResolvedValueOnce(true);
 
 			const mockResponseObject = {
-				set: jest.fn(),
-				send: jest.fn(),
+				set: vi.fn(),
+				send: vi.fn(),
 			} as unknown as Response;
 
 			await ieObjectsController.exportCsv(

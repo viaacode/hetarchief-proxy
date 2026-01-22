@@ -1,3 +1,4 @@
+import { describe, expect, it } from 'vitest';
 import { IeObjectSector, IeObjectType } from '../ie-objects.types';
 
 import {

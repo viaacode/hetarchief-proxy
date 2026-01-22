@@ -1,6 +1,7 @@
 import { TranslationsService } from '@meemoo/admin-core-api';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Test, type TestingModule } from '@nestjs/testing';
+import { type MockInstance, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { Configuration } from '~config';
 
@@ -17,8 +18,8 @@ import {
 } from '~shared/test/mock-config-service';
 import { Locale } from '~shared/types/types';
 
-const mockSpacesService: Partial<Record<keyof SpacesService, jest.SpyInstance>> = {
-	findByMaintainerId: jest.fn(),
+const mockSpacesService: Partial<Record<keyof SpacesService, MockInstance>> = {
+	findByMaintainerId: vi.fn(),
 };
 
 const mockOrganisation: Organisation = {

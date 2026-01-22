@@ -10,6 +10,7 @@ import {
 
 import { convertObjectToXml } from './convert-objects-to-xml';
 
+import { describe, expect, it } from 'vitest';
 import { mockConfigService } from '~shared/test/mock-config-service';
 
 describe('convertObjectToXml', () => {

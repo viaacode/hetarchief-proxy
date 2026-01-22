@@ -1,6 +1,7 @@
 import { TranslationsService } from '@meemoo/admin-core-api';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Test, type TestingModule } from '@nestjs/testing';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { ConsentToTrackOption, EmailTemplate } from '../campaign-monitor.types';
 import {
@@ -127,7 +128,7 @@ describe('CampaignMonitorService', () => {
 	describe('sendForVisit', () => {
 		it('should use fallback email if email address is undefined for a maintainer', async () => {
 			const visit = getMockVisitRequest();
-			const sendTransactionalMailSpy = jest.spyOn(campaignMonitorService, 'sendTransactionalMail');
+			const sendTransactionalMailSpy = vi.spyOn(campaignMonitorService, 'sendTransactionalMail');
 			sendTransactionalMailSpy.mockResolvedValueOnce(undefined);
 
 			await campaignMonitorService.sendForVisit({
@@ -238,7 +239,7 @@ describe('CampaignMonitorService', () => {
 			const materialRequestEmailInfo = mockMaterialRequestEmailInfo;
 			materialRequestEmailInfo.template = EmailTemplate.MATERIAL_REQUEST_REQUESTER;
 			materialRequestEmailInfo.to = null;
-			const sendTransactionalMailSpy = jest.spyOn(campaignMonitorService, 'sendTransactionalMail');
+			const sendTransactionalMailSpy = vi.spyOn(campaignMonitorService, 'sendTransactionalMail');
 			sendTransactionalMailSpy.mockResolvedValueOnce(undefined);
 			try {
 				await campaignMonitorService.sendForMaterialRequest(materialRequestEmailInfo);
@@ -274,7 +275,7 @@ describe('CampaignMonitorService', () => {
 		});
 
 		it('should successfully send mail when emailInfo has valid fields', async () => {
-			campaignMonitorService.makeCmApiRequest = jest.fn().mockResolvedValueOnce({
+			campaignMonitorService.makeCmApiRequest = vi.fn().mockResolvedValueOnce({
 				Status: 'Accepted',
 				MessageID: '91206192-c71c-11ed-8c12-c59c777888d7',
 				Recipient: 'test@example.com',
@@ -291,15 +292,13 @@ describe('CampaignMonitorService', () => {
 		});
 
 		it('should throw an error when CM throws an error', async () => {
-			campaignMonitorService.makeCmApiRequest = jest.fn().mockRejectedValueOnce('');
+			campaignMonitorService.makeCmApiRequest = vi.fn().mockRejectedValueOnce('');
 			try {
 				const materialRequestEmailInfo = mockMaterialRequestEmailInfo;
 				materialRequestEmailInfo.template = EmailTemplate.MATERIAL_REQUEST_REQUESTER;
 				materialRequestEmailInfo.to = 'test@example.com';
 				await campaignMonitorService.sendForMaterialRequest(materialRequestEmailInfo);
-				fail(
-					new Error('sendForMaterialRequest should have thrown an error when CM throws an error')
-				);
+				fail('sendForMaterialRequest should have thrown an error when CM throws an error');
 			} catch (e) {
 				expect(e).toBeDefined();
 			}
@@ -402,7 +401,7 @@ describe('CampaignMonitorService', () => {
 
 	describe('fetchNewsletterPreferences', () => {
 		it('should return newsletter = true when user is subscribed to "newsletter"', async () => {
-			campaignMonitorService.makeCmApiRequest = jest.fn().mockResolvedValueOnce({
+			campaignMonitorService.makeCmApiRequest = vi.fn().mockResolvedValueOnce({
 				State: 'Active',
 			});
 			const result = await campaignMonitorService.fetchNewsletterPreferences(mockUser.email);
@@ -410,7 +409,7 @@ describe('CampaignMonitorService', () => {
 		});
 
 		it('should return newsletter = false when user is not subscribed to newsletter', async () => {
-			campaignMonitorService.makeCmApiRequest = jest.fn().mockResolvedValueOnce({
+			campaignMonitorService.makeCmApiRequest = vi.fn().mockResolvedValueOnce({
 				State: 'Inactive',
 			});
 			const result = await campaignMonitorService.fetchNewsletterPreferences(mockUser.email);
@@ -418,14 +417,10 @@ describe('CampaignMonitorService', () => {
 		});
 
 		it('should throw error when CM throws error other than 203', async () => {
-			campaignMonitorService.makeCmApiRequest = jest.fn().mockRejectedValueOnce('');
+			campaignMonitorService.makeCmApiRequest = vi.fn().mockRejectedValueOnce('');
 			try {
 				await campaignMonitorService.fetchNewsletterPreferences(mockUser.email);
-				fail(
-					new Error(
-						'fetchNewsletterPreferences should have thrown an error when CM throws an error'
-					)
-				);
+				fail('fetchNewsletterPreferences should have thrown an error when CM throws an error');
 			} catch (e) {
 				expect(e).toBeDefined();
 			}
@@ -444,24 +439,20 @@ describe('CampaignMonitorService', () => {
 		});
 
 		it('should throw an error when CM throws an error', async () => {
-			campaignMonitorService.makeCmApiRequest = jest.fn().mockRejectedValueOnce('');
+			campaignMonitorService.makeCmApiRequest = vi.fn().mockRejectedValueOnce('');
 
 			try {
 				await campaignMonitorService.updateNewsletterPreferences(mockUserInfo, {
 					newsletter: true,
 				});
-				fail(
-					new Error(
-						'updateNewsletterPreferences should have thrown an error when CM throws an error'
-					)
-				);
+				fail('updateNewsletterPreferences should have thrown an error when CM throws an error');
 			} catch (e) {
 				expect(e).toBeDefined();
 			}
 		});
 
 		it('should succesfully update newsletterPrefferences when newsletter is false', async () => {
-			campaignMonitorService.makeCmApiRequest = jest.fn().mockResolvedValueOnce({});
+			campaignMonitorService.makeCmApiRequest = vi.fn().mockResolvedValueOnce({});
 
 			try {
 				await campaignMonitorService.updateNewsletterPreferences(mockUserInfo, {
@@ -473,7 +464,7 @@ describe('CampaignMonitorService', () => {
 		});
 
 		it('should succesfully update newsletterPrefferences when newsletter is true', async () => {
-			campaignMonitorService.makeCmApiRequest = jest.fn().mockResolvedValueOnce({});
+			campaignMonitorService.makeCmApiRequest = vi.fn().mockResolvedValueOnce({});
 
 			try {
 				await campaignMonitorService.updateNewsletterPreferences(mockUserInfo, {
@@ -485,7 +476,7 @@ describe('CampaignMonitorService', () => {
 		});
 
 		it('should succesfully update newsletterPrefferences when no preferences are given (sync on login)', async () => {
-			campaignMonitorService.makeCmApiRequest = jest.fn().mockResolvedValueOnce({});
+			campaignMonitorService.makeCmApiRequest = vi.fn().mockResolvedValueOnce({});
 
 			try {
 				await campaignMonitorService.updateNewsletterPreferences(mockUserInfo, null);
@@ -528,7 +519,7 @@ describe('CampaignMonitorService', () => {
 		});
 
 		it('should successfully send confirmation mail when all data is valid', async () => {
-			campaignMonitorService.makeCmApiRequest = jest.fn().mockResolvedValueOnce([
+			campaignMonitorService.makeCmApiRequest = vi.fn().mockResolvedValueOnce([
 				{
 					Status: 'Accepted',
 					MessageID: '91206192-c71c-11ed-8c12-c59c777888d7',
@@ -562,7 +553,7 @@ describe('CampaignMonitorService', () => {
 		});
 
 		it('should update newsletter preferences when token and email match', async () => {
-			campaignMonitorService.makeCmApiRequest = jest.fn().mockResolvedValueOnce({});
+			campaignMonitorService.makeCmApiRequest = vi.fn().mockResolvedValueOnce({});
 
 			try {
 				await campaignMonitorService.confirmEmail(mockSendMailQueryDto);

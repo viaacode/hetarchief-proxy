@@ -1,6 +1,8 @@
+import { describe, expect, it } from 'vitest';
+
 import {
-	CampaignMonitorConfirmationData,
 	CampaignMonitorConfirmMailQueryDto,
+	CampaignMonitorConfirmationData,
 	CampaignMonitorData,
 	CampaignMonitorMaterialRequestData,
 	CampaignMonitorNewsletterPreferencesDto,

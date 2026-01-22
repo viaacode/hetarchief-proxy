@@ -1,6 +1,7 @@
 import { ConfigService } from '@nestjs/config';
 import { Test, type TestingModule } from '@nestjs/testing';
 import got from 'got';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { Configuration } from '~config';
 
@@ -13,7 +14,7 @@ describe('HetArchiefService', () => {
 	let configService: ConfigService<Configuration>;
 
 	beforeEach(async () => {
-		jest.spyOn(got, 'post').mockResolvedValue(IDP_XML_RESPONSE);
+		vi.spyOn(got, 'post').mockResolvedValue(IDP_XML_RESPONSE);
 
 		const archiefServiceFactory = {
 			provide: HetArchiefService,

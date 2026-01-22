@@ -3,6 +3,7 @@ import { InternalServerErrorException } from '@nestjs/common';
 import { Test, type TestingModule } from '@nestjs/testing';
 import { AvoAuthIdpType, PermissionName } from '@viaa/avo2-types';
 import { cloneDeep } from 'lodash';
+import { type MockInstance, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { CreateSpaceDto } from '../dto/spaces.dto';
 
@@ -58,8 +59,8 @@ const mockCreateSpace: CreateSpaceDto = {
 	status: VisitorSpaceStatus.Active,
 };
 
-const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {
-	execute: jest.fn(),
+const mockDataService: Partial<Record<keyof DataService, MockInstance>> = {
+	execute: vi.fn(),
 };
 
 const mockFindSpacesResponse: FindSpacesQuery = {

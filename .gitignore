@@ -65,3 +65,5 @@ query-autocomplete.json
 
 # husky pre-commit files
 /husky
+
+.claude/

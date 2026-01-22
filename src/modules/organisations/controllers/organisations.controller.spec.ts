@@ -1,4 +1,5 @@
 import { Test, type TestingModule } from '@nestjs/testing';
+import { Mock, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { Organisation } from '../organisations.types';
 import { OrganisationsService } from '../services/organisations.service';
@@ -7,12 +8,12 @@ import { OrganisationsController } from './organisations.controller';
 
 describe('OrganisationsController', () => {
 	let organisationsController: OrganisationsController;
-	let organisationsService: Partial<Record<keyof OrganisationsService, jest.Mock>>;
+	let organisationsService: Partial<Record<keyof OrganisationsService, Mock>>;
 
 	beforeEach(async () => {
 		organisationsService = {
-			findOrganisationBySlug: jest.fn(),
-			fetchRandomContentPartnersForMaintainerGrid: jest.fn(),
+			findOrganisationBySlug: vi.fn(),
+			fetchRandomContentPartnersForMaintainerGrid: vi.fn(),
 		};
 
 		const module: TestingModule = await Test.createTestingModule({

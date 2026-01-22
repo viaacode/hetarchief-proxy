@@ -1,3 +1,4 @@
+import { describe, expect, it } from 'vitest';
 import { IeObjectsQueryDto, PlayerTicketsQueryDto, SearchFilter } from './ie-objects.dto';
 
 describe('IeObjectsDto', () => {

@@ -1,14 +1,15 @@
 import type { IeObject } from '../ie-objects.types';
 import {
 	mockIeObjectWithMetadataSetALL,
-	mockIeObjectWithMetadataSetAllCsv,
 	mockIeObjectWithMetadataSetALLWithEssence,
+	mockIeObjectWithMetadataSetAllCsv,
 	mockIeObjectWithMetadataSetAllWithEssenceCsv,
 	mockIeObjectWithMetadataSetLTD,
 	mockIeObjectWithMetadataSetLtdCsv,
 } from '../mocks/ie-objects.mock';
 
-import { convertObjectsToCsv, convertObjectToCsv } from './convert-objects-to-csv';
+import { describe, expect, it } from 'vitest';
+import { convertObjectToCsv, convertObjectsToCsv } from './convert-objects-to-csv';
 
 describe('convertObjectToCsv', () => {
 	it('returns the csv version of an object', () => {

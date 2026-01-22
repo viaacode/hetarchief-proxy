@@ -1,5 +1,6 @@
 import { DataService } from '@meemoo/admin-core-api';
 import { Test, type TestingModule } from '@nestjs/testing';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { UsersService } from '../services/users.service';
 
@@ -21,15 +22,15 @@ const getNewMockSession = () => ({
 });
 
 const mockUsersService = {
-	updateAcceptedTos: jest.fn(),
+	updateAcceptedTos: vi.fn(),
 };
 
 const mockDataService = {
-	execute: jest.fn(),
+	execute: vi.fn(),
 };
 
 const mockCampaignMonitorService = {
-	updateNewsletterPreferences: jest.fn(),
+	updateNewsletterPreferences: vi.fn(),
 };
 
 describe('UsersController', () => {

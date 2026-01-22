@@ -1,4 +1,5 @@
 import { Test, type TestingModule } from '@nestjs/testing';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { TosService } from '../services/tos.service';
 import type { Tos } from '../types';
@@ -12,9 +13,9 @@ const mockTosResponse: Tos = {
 };
 
 const mockTosService = {
-	findFirst: jest.fn(),
-	getTos: jest.fn(),
-	getTosLastUpdatedAt: jest.fn(),
+	findFirst: vi.fn(),
+	getTos: vi.fn(),
+	getTosLastUpdatedAt: vi.fn(),
 };
 
 describe('TosController', () => {

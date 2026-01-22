@@ -4,6 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { Test, type TestingModule } from '@nestjs/testing';
 import type { Cache } from 'cache-manager';
 import { cloneDeep } from 'lodash';
+import { type MockInstance, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { IeObjectsSearchFilterField, Operator } from '../elasticsearch/elasticsearch.consts';
 import {
@@ -54,30 +55,30 @@ import { VisitAccessType } from '~modules/visits/types';
 import { TestingLogger } from '~shared/logging/test-logger';
 import { mockConfigService } from '~shared/test/mock-config-service';
 
-const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {
-	execute: jest.fn(),
+const mockDataService: Partial<Record<keyof DataService, MockInstance>> = {
+	execute: vi.fn(),
 };
 
-const mockPlayerTicketService: Partial<Record<keyof PlayerTicketService, jest.SpyInstance>> = {
-	getPlayerToken: jest.fn(),
-	getPlayableUrl: jest.fn(),
-	getEmbedUrl: jest.fn(),
-	resolveThumbnailUrl: jest.fn(),
-	getThumbnailUrl: jest.fn(),
-	getThumbnailPath: jest.fn(),
+const mockPlayerTicketService: Partial<Record<keyof PlayerTicketService, MockInstance>> = {
+	getPlayerToken: vi.fn(),
+	getPlayableUrl: vi.fn(),
+	getEmbedUrl: vi.fn(),
+	resolveThumbnailUrl: vi.fn(),
+	getThumbnailUrl: vi.fn(),
+	getThumbnailPath: vi.fn(),
 };
 
-const mockVisitsService: Partial<Record<keyof VisitsService, jest.SpyInstance>> = {
-	hasAccess: jest.fn(),
-	findAll: jest.fn(),
+const mockVisitsService: Partial<Record<keyof VisitsService, MockInstance>> = {
+	hasAccess: vi.fn(),
+	findAll: vi.fn(),
 };
 
-const mockSpacesService: Partial<Record<keyof SpacesService, jest.SpyInstance>> = {
-	findAll: jest.fn(),
+const mockSpacesService: Partial<Record<keyof SpacesService, MockInstance>> = {
+	findAll: vi.fn(),
 };
 
-const mockCacheService: Partial<Record<keyof Cache, jest.SpyInstance>> = {
-	wrap: jest.fn().mockImplementation((key, cb) => cb()),
+const mockCacheService: Partial<Record<keyof Cache, MockInstance>> = {
+	wrap: vi.fn().mockImplementation((key, cb) => cb()),
 };
 
 const mockIeObject2Metadata =
@@ -173,7 +174,7 @@ describe('ieObjectsService', () => {
 
 	describe('findMetadataBySchemaIdentifier', () => {
 		it('returns the metadata object details', async () => {
-			const mockFindByIeObjectIdFunc = jest.fn();
+			const mockFindByIeObjectIdFunc = vi.fn();
 			mockFindByIeObjectIdFunc.mockResolvedValueOnce(mockIeObject1);
 			ieObjectsService.findByIeObjectId = mockFindByIeObjectIdFunc;
 			const response = await ieObjectsService.findMetadataByIeObjectId(
@@ -425,7 +426,7 @@ describe('ieObjectsService', () => {
 			);
 
 			expect(result).toEqual({
-				objectIds: [mockVisitApproved?.accessibleObjectIds],
+				objectIds: mockVisitApproved?.accessibleObjectIds ?? [],
 				visitorSpaceIds: [mockVisitApproved?.spaceMaintainerId],
 			});
 		});
@@ -506,7 +507,7 @@ describe('ieObjectsService', () => {
 
 	describe('getMetadataAutocomplete', () => {
 		it('should return a list of autocomplete strings for newspaper series', async () => {
-			ieObjectsService.executeQuery = jest
+			ieObjectsService.executeQuery = vi
 				.fn()
 				.mockResolvedValue(mockAutocompleteQueryResponseNewspaperSeries);
 			const result = await ieObjectsService.getMetadataAutocomplete(
@@ -527,7 +528,7 @@ describe('ieObjectsService', () => {
 		});
 
 		it('should return a list of autocomplete strings for creator names', async () => {
-			ieObjectsService.executeQuery = jest
+			ieObjectsService.executeQuery = vi
 				.fn()
 				.mockResolvedValue(mockAutocompleteQueryResponseCreators);
 			const result = await ieObjectsService.getMetadataAutocomplete(

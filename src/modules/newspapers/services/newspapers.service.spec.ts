@@ -1,14 +1,15 @@
 import { DataService } from '@meemoo/admin-core-api';
 import { ConfigService } from '@nestjs/config';
 import { Test, type TestingModule } from '@nestjs/testing';
+import { type MockInstance, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { NewspapersService } from './newspapers.service';
 
 import { TestingLogger } from '~shared/logging/test-logger';
 import { mockConfigService } from '~shared/test/mock-config-service';
 
-const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {
-	execute: jest.fn(),
+const mockDataService: Partial<Record<keyof DataService, MockInstance>> = {
+	execute: vi.fn(),
 };
 
 describe('NewspapersService', () => {

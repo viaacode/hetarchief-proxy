@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { Test, type TestingModule } from '@nestjs/testing';
 import type { IPagination } from '@studiohyperdrive/pagination';
 import { AvoAuthIdpType, PermissionName } from '@viaa/avo2-types';
+import { type MockInstance, afterAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { NotificationsService } from '../services/notifications.service';
 
@@ -107,30 +108,30 @@ const mockUser: User = {
 	isKeyUser: false,
 	isEvaluator: false,
 };
-const mockNotificationsService: Partial<Record<keyof NotificationsService, jest.SpyInstance>> = {
-	findNotificationsByUser: jest.fn(),
-	create: jest.fn(),
-	update: jest.fn(),
-	updateAll: jest.fn(),
-	onCancelVisitRequest: jest.fn(),
+const mockNotificationsService: Partial<Record<keyof NotificationsService, MockInstance>> = {
+	findNotificationsByUser: vi.fn(),
+	create: vi.fn(),
+	update: vi.fn(),
+	updateAll: vi.fn(),
+	onCancelVisitRequest: vi.fn(),
 };
 
-const mockTranslationsService: Partial<Record<keyof TranslationsService, jest.SpyInstance>> = {
-	getTranslations: jest.fn(),
-	tText: jest.fn((translationKey: string) => nlJson[translationKey]),
-	refreshBackendTranslations: jest.fn(),
-	onApplicationBootstrap: jest.fn(),
+const mockTranslationsService: Partial<Record<keyof TranslationsService, MockInstance>> = {
+	getTranslations: vi.fn(),
+	tText: vi.fn((translationKey: string) => nlJson[translationKey]),
+	refreshBackendTranslations: vi.fn(),
+	onApplicationBootstrap: vi.fn(),
 };
 
-const mockVisitsService: Partial<Record<keyof VisitsService, jest.SpyInstance>> = {
-	getApprovedAndStartedVisitsWithoutNotification: jest.fn(),
-	getApprovedAndAlmostEndedVisitsWithoutNotification: jest.fn(),
-	getApprovedAndEndedVisitsWithoutNotification: jest.fn(),
+const mockVisitsService: Partial<Record<keyof VisitsService, MockInstance>> = {
+	getApprovedAndStartedVisitsWithoutNotification: vi.fn(),
+	getApprovedAndAlmostEndedVisitsWithoutNotification: vi.fn(),
+	getApprovedAndEndedVisitsWithoutNotification: vi.fn(),
 };
 
 describe('NotificationsController', () => {
 	let notificationsController: NotificationsController;
-	let sessionHelperSpy: jest.SpyInstance;
+	let sessionHelperSpy: MockInstance;
 
 	beforeEach(async () => {
 		const module: TestingModule = await Test.createTestingModule({
@@ -160,7 +161,7 @@ describe('NotificationsController', () => {
 
 		notificationsController = module.get<NotificationsController>(NotificationsController);
 
-		sessionHelperSpy = jest.spyOn(SessionHelper, 'getArchiefUserInfo').mockReturnValue(mockUser);
+		sessionHelperSpy = vi.spyOn(SessionHelper, 'getArchiefUserInfo').mockReturnValue(mockUser);
 	});
 
 	afterAll(async () => {

@@ -1,3 +1,4 @@
+import { describe, expect, it } from 'vitest';
 import { IeObjectAccessThrough, IeObjectLicense } from './../ie-objects.types';
 import { getAccessThrough } from './get-access-through';
 

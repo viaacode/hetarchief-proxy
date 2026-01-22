@@ -1,6 +1,7 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 import { AvoAuthIdpType, PermissionName } from '@viaa/avo2-types';
 import type { Request } from 'express';
+import { type MockInstance, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { EventsService } from '../services/events.service';
 import { LogEventType } from '../types';
@@ -11,8 +12,8 @@ import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupId, GroupName, type User } from '~modules/users/types';
 import { Locale } from '~shared/types/types';
 
-const mockEventsService: Partial<Record<keyof EventsService, jest.SpyInstance>> = {
-	insertEvents: jest.fn(),
+const mockEventsService: Partial<Record<keyof EventsService, MockInstance>> = {
+	insertEvents: vi.fn(),
 };
 
 const mockUser: User = {

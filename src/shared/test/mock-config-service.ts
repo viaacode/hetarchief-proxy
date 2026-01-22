@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import type { Configuration } from '~config';
 
 export const MOCK_MEEMOO_ADMIN_ORGANIZATION_IDS = 'OR-1,OR-2';
@@ -5,7 +6,7 @@ export const MOCK_API_KEY = 'MySecretApiKey';
 export const MOCK_SSUM_REGISTRATION_PAGE = 'http://meemoo.be/dummy-ssum-registration-page';
 
 export const mockConfigService = {
-	get: jest.fn((key: keyof Configuration): string | boolean => {
+	get: vi.fn((key: keyof Configuration): string | boolean => {
 		switch (key) {
 			case 'NODE_ENV':
 				return 'test';
