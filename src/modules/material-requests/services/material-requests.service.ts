@@ -1,12 +1,7 @@
 import { DataService, VideoStillsService } from '@meemoo/admin-core-api';
-import {
-	BadRequestException,
-	Injectable,
-	InternalServerErrorException,
-	NotFoundException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
-import { compact, groupBy, isArray, isEmpty, isNil, kebabCase, set } from 'lodash';
+import { compact, groupBy, intersection, isArray, isEmpty, isNil, kebabCase, set } from 'lodash';
 
 import {
 	CreateMaterialRequestDto,
@@ -67,18 +62,11 @@ import {
 	UpdateMaterialRequestStatusMutation,
 	UpdateMaterialRequestStatusMutationVariables,
 } from '~generated/graphql-db-types-hetarchief';
-import {
-	EmailTemplate,
-	type MaterialRequestEmailInfo,
-} from '~modules/campaign-monitor/campaign-monitor.types';
+import { EmailTemplate, type MaterialRequestEmailInfo } from '~modules/campaign-monitor/campaign-monitor.types';
 
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 import { convertSchemaIdentifierToId } from '~modules/ie-objects/helpers/convert-schema-identifier-to-id';
-import {
-	IeObjectAccessThrough,
-	IeObjectLicense,
-	IeObjectType,
-} from '~modules/ie-objects/ie-objects.types';
+import { IeObjectAccessThrough, IeObjectLicense, IeObjectType, SimpleIeObjectType } from '~modules/ie-objects/ie-objects.types';
 import type { Organisation } from '~modules/organisations/organisations.types';
 
 import { OrganisationsService } from '~modules/organisations/services/organisations.service';
@@ -87,6 +75,8 @@ import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/help
 import { AvoStillsStillInfo } from '@viaa/avo2-types';
 import { addDays } from 'date-fns';
 import { limitAccessToObjectDetails } from '~modules/ie-objects/helpers/limit-access-to-object-details';
+import { mapDcTermsFormatToSimpleType } from '~modules/ie-objects/helpers/map-dc-terms-format-to-simple-type';
+import { IE_OBJECT_INTRA_CP_LICENSES } from '~modules/ie-objects/ie-objects.conts';
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
@@ -741,16 +731,40 @@ export class MaterialRequestsService {
 			objectLicences?.includes(IeObjectLicense.PUBLIEK_CONTENT) &&
 			objectLicences?.includes(IeObjectLicense.PUBLIC_DOMAIN);
 
-		const objectThumbnailUrl: string | undefined =
-			graphQlMaterialRequest.ie_object_representation_id
+		const simpleType = mapDcTermsFormatToSimpleType(
+			graphQlMaterialRequest.intellectualEntity.dctermsFormat[0].dcterms_format as IeObjectType
+		);
+		const isComplexReuseFlow =
+			(simpleType === SimpleIeObjectType.AUDIO || simpleType === SimpleIeObjectType.VIDEO) &&
+			!!user?.getUser()?.isKeyUser &&
+			intersection(objectLicences, IE_OBJECT_INTRA_CP_LICENSES).length > 0;
+
+		let objectThumbnailUrl: string | undefined;
+		const ieObjectThumbnailUrl =
+			graphQlMaterialRequest.intellectualEntity?.schemaThumbnail?.schema_thumbnail_url?.[0];
+		if (isComplexReuseFlow) {
+			// New material request with reuse form flow
+			objectThumbnailUrl = graphQlMaterialRequest.ie_object_representation_id
 				? await this.ieObjectsService.getThumbnailUrlWithToken(
-						reuseForm?.thumbnailUrl ||
-							graphQlMaterialRequest.intellectualEntity?.schemaThumbnail?.schema_thumbnail_url?.[0],
+						reuseForm?.thumbnailUrl || ieObjectThumbnailUrl,
 						referer,
 						ip,
 						isPublicDomain
 					)
 				: undefined;
+		} else {
+			// Old material request flow
+			if (ieObjectThumbnailUrl) {
+				objectThumbnailUrl = await this.ieObjectsService.getThumbnailUrlWithToken(
+					ieObjectThumbnailUrl,
+					referer,
+					ip,
+					isPublicDomain
+				);
+			} else {
+				objectThumbnailUrl = undefined;
+			}
+		}
 
 		const objectRepresentations = await this.ieObjectsService.adaptRepresentations(
 			[graphQlMaterialRequest.objectRepresentation],
