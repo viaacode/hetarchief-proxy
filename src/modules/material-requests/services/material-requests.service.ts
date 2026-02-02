@@ -754,16 +754,12 @@ export class MaterialRequestsService {
 				: undefined;
 		} else {
 			// Old material request flow
-			if (ieObjectThumbnailUrl) {
-				objectThumbnailUrl = await this.ieObjectsService.getThumbnailUrlWithToken(
-					ieObjectThumbnailUrl,
-					referer,
-					ip,
-					isPublicDomain
-				);
-			} else {
-				objectThumbnailUrl = undefined;
-			}
+			objectThumbnailUrl = await this.ieObjectsService.getThumbnailUrlWithToken(
+				ieObjectThumbnailUrl,
+				referer,
+				ip,
+				isPublicDomain
+			);
 		}
 
 		const objectRepresentations = await this.ieObjectsService.adaptRepresentations(
