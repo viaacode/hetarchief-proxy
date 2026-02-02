@@ -32,6 +32,7 @@ mutation updateMaterialRequestForUser(
 			download_url
 			requester_capacity
 			organisation
+			organisation_sector
 			requested_by {
 				id
 				full_name

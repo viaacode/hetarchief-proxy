@@ -321,7 +321,8 @@ export class MaterialRequestsService {
 				created_at: new Date().toISOString(),
 				updated_at: new Date().toISOString(),
 				is_pending: true,
-				organisation: createMaterialRequestDto?.organisation,
+				organisation: createMaterialRequestDto?.organisation || user.getOrganisationName(),
+				organisation_sector: user.getSector(),
 				requester_capacity:
 					createMaterialRequestDto?.requesterCapacity ||
 					Lookup_App_Material_Request_Requester_Capacity_Enum.Other,
@@ -357,6 +358,7 @@ export class MaterialRequestsService {
 			| 'type'
 			| 'reason'
 			| 'organisation'
+			| 'organisation_sector'
 			| 'requester_capacity'
 			| 'is_pending'
 			| 'status'
@@ -544,7 +546,7 @@ export class MaterialRequestsService {
 				materialRequests: [request],
 				sendRequestListDto: {
 					type: request.requesterCapacity,
-					organisation: request.organisation,
+					organisation: request.requesterOrganisation,
 					requestGroupName: request.requestGroupName,
 				},
 				firstName: user.getFirstName(),
@@ -829,6 +831,8 @@ export class MaterialRequestsService {
 			requesterUserGroupName: graphQlMaterialRequest.requested_by.group?.name || null,
 			requesterUserGroupLabel: graphQlMaterialRequest.requested_by.group?.label || null,
 			requesterUserGroupDescription: graphQlMaterialRequest.requested_by.group?.description || null,
+			requesterOrganisation: graphQlMaterialRequest.organisation, // Requester organisation (free input field) in some cases
+			requesterOrganisationSector: graphQlMaterialRequest.organisation_sector || null,
 			maintainerId: organisation?.schemaIdentifier,
 			maintainerName: organisation?.schemaName,
 			maintainerSlug:
@@ -838,7 +842,6 @@ export class MaterialRequestsService {
 				// TODO remove this workaround once the INT organisations assets are available
 				.replace('https://assets-int.viaa.be/images/', 'https://assets.viaa.be/images/')
 				.replace('https://assets-tst.viaa.be/images/', 'https://assets.viaa.be/images/'),
-			organisation: graphQlMaterialRequest.organisation || null, // Requester organisation (free input field)
 			contactMail: this.spacesService.adaptEmail(
 				(graphQlMaterialRequest as FindMaterialRequestsQuery['app_material_requests'][0])
 					?.intellectualEntity?.schemaMaintainer?.schemaContactPoint
