@@ -680,6 +680,19 @@ export class MaterialRequestsService {
 		return null;
 	}
 
+	public isComplexReuseFlow(
+		ieObjectType: IeObjectType,
+		ieObjectLicenses: IeObjectLicense[],
+		isKeyUser: boolean
+	): boolean {
+		const simpleType = mapDcTermsFormatToSimpleType(ieObjectType);
+		return (
+			(simpleType === SimpleIeObjectType.AUDIO || simpleType === SimpleIeObjectType.VIDEO) &&
+			isKeyUser &&
+			intersection(ieObjectLicenses, IE_OBJECT_INTRA_CP_LICENSES).length > 0
+		);
+	}
+
 	/**
 	 * Adapt a material request as returned by a graphQl response to our internal model
 	 */
@@ -731,18 +744,17 @@ export class MaterialRequestsService {
 			objectLicences?.includes(IeObjectLicense.PUBLIEK_CONTENT) &&
 			objectLicences?.includes(IeObjectLicense.PUBLIC_DOMAIN);
 
-		const simpleType = mapDcTermsFormatToSimpleType(
-			graphQlMaterialRequest.intellectualEntity.dctermsFormat[0].dcterms_format as IeObjectType
-		);
-		const isComplexReuseFlow =
-			(simpleType === SimpleIeObjectType.AUDIO || simpleType === SimpleIeObjectType.VIDEO) &&
-			!!user?.getUser()?.isKeyUser &&
-			intersection(objectLicences, IE_OBJECT_INTRA_CP_LICENSES).length > 0;
-
 		let objectThumbnailUrl: string | undefined;
 		const ieObjectThumbnailUrl =
 			graphQlMaterialRequest.intellectualEntity?.schemaThumbnail?.schema_thumbnail_url?.[0];
-		if (isComplexReuseFlow) {
+		if (
+			this.isComplexReuseFlow(
+				graphQlMaterialRequest.intellectualEntity?.dctermsFormat?.[0]
+					?.dcterms_format as IeObjectType,
+				objectLicences,
+				user?.getIsKeyUser()
+			)
+		) {
 			// New material request with reuse form flow
 			objectThumbnailUrl = graphQlMaterialRequest.ie_object_representation_id
 				? await this.ieObjectsService.getThumbnailUrlWithToken(
