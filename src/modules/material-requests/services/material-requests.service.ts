@@ -1,5 +1,10 @@
 import { DataService, VideoStillsService } from '@meemoo/admin-core-api';
-import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import {
+	BadRequestException,
+	Injectable,
+	InternalServerErrorException,
+	NotFoundException,
+} from '@nestjs/common';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { compact, groupBy, intersection, isArray, isEmpty, isNil, kebabCase, set } from 'lodash';
 
@@ -62,11 +67,20 @@ import {
 	UpdateMaterialRequestStatusMutation,
 	UpdateMaterialRequestStatusMutationVariables,
 } from '~generated/graphql-db-types-hetarchief';
-import { EmailTemplate, type MaterialRequestEmailInfo } from '~modules/campaign-monitor/campaign-monitor.types';
+import {
+	EmailTemplate,
+	type MaterialRequestEmailInfo,
+} from '~modules/campaign-monitor/campaign-monitor.types';
 
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 import { convertSchemaIdentifierToId } from '~modules/ie-objects/helpers/convert-schema-identifier-to-id';
-import { IeObjectAccessThrough, IeObjectLicense, IeObjectType, SimpleIeObjectType } from '~modules/ie-objects/ie-objects.types';
+import {
+	IeObjectAccessThrough,
+	IeObjectLicense,
+	IeObjectType,
+	IeObjectsVisitorSpaceInfo,
+	SimpleIeObjectType,
+} from '~modules/ie-objects/ie-objects.types';
 import type { Organisation } from '~modules/organisations/organisations.types';
 
 import { OrganisationsService } from '~modules/organisations/services/organisations.service';
@@ -245,11 +259,13 @@ export class MaterialRequestsService {
 				)
 			)
 		);
+		const visitorSpaceAccessInfo =
+			await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
 
 		return Pagination<MaterialRequest>({
 			items: await Promise.all(
 				materialRequestsResponse.app_material_requests.map((mr) =>
-					this.adapt(mr, organisations, user, referer, ip)
+					this.adapt(mr, organisations, visitorSpaceAccessInfo, user, referer, ip)
 				)
 			),
 			page,
@@ -281,9 +297,13 @@ export class MaterialRequestsService {
 			)
 		);
 
+		const visitorSpaceAccessInfo =
+			await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
+
 		return this.adapt(
 			materialRequestResponse.app_material_requests[0],
 			organisations,
+			visitorSpaceAccessInfo,
 			user,
 			referer,
 			ip
@@ -346,8 +366,17 @@ export class MaterialRequestsService {
 		const organisations = await this.organisationsService.findOrganisationsBySchemaIdentifiers(
 			compact([createdMaterialRequest?.intellectualEntity?.schemaMaintainer?.org_identifier])
 		);
+		const visitorSpaceAccessInfo =
+			await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
 
-		return this.adapt(createdMaterialRequest, organisations, user, referer, ip);
+		return this.adapt(
+			createdMaterialRequest,
+			organisations,
+			visitorSpaceAccessInfo,
+			user,
+			referer,
+			ip
+		);
 	}
 
 	public async updateMaterialRequestForUser(
@@ -405,8 +434,10 @@ export class MaterialRequestsService {
 		const organisations = await this.organisationsService.findOrganisationsBySchemaIdentifiers(
 			compact([updatedRequest?.intellectualEntity?.schemaMaintainer?.org_identifier])
 		);
+		const visitorSpaceAccessInfo =
+			await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
 
-		return this.adapt(updatedRequest, organisations, user, referer, ip);
+		return this.adapt(updatedRequest, organisations, visitorSpaceAccessInfo, user, referer, ip);
 	}
 
 	public async deleteMaterialRequest(
@@ -511,10 +542,13 @@ export class MaterialRequestsService {
 		const organisations = await this.organisationsService.findOrganisationsBySchemaIdentifiers(
 			compact([graphQlMaterialRequest?.intellectualEntity?.schemaMaintainer?.org_identifier])
 		);
+		const visitorSpaceAccessInfo =
+			await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
 
 		const updatedRequest = await this.adapt(
 			graphQlMaterialRequest,
 			organisations,
+			visitorSpaceAccessInfo,
 			user,
 			referer,
 			ip
@@ -701,6 +735,7 @@ export class MaterialRequestsService {
 	public async adapt(
 		graphQlMaterialRequest: GqlMaterialRequest,
 		organisations?: Organisation[],
+		visitorSpaceAccessInfo?: IeObjectsVisitorSpaceInfo,
 		user?: SessionUserEntity,
 		referer?: string,
 		ip?: string
@@ -737,7 +772,12 @@ export class MaterialRequestsService {
 		let objectAccessThrough: IeObjectAccessThrough[] = [];
 		let objectLicences: IeObjectLicense[] = [];
 		if (user) {
-			const licenses = await this.getAccessThroughAndLicences(objectSchemaIdentifier, user, ip);
+			const licenses = await this.getAccessThroughAndLicences(
+				objectSchemaIdentifier,
+				visitorSpaceAccessInfo,
+				user,
+				ip
+			);
 			objectAccessThrough = licenses.objectAccessThrough;
 			objectLicences = licenses.objectLicences;
 		}
@@ -884,6 +924,7 @@ export class MaterialRequestsService {
 
 	public async getAccessThroughAndLicences(
 		objectSchemaIdentifier: string,
+		visitorSpaceAccessInfo: IeObjectsVisitorSpaceInfo,
 		user: SessionUserEntity,
 		ip: string
 	): Promise<{
@@ -895,9 +936,6 @@ export class MaterialRequestsService {
 			null,
 			ip
 		);
-
-		const visitorSpaceAccessInfo =
-			await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
 
 		const censoredObjectMetadata = limitAccessToObjectDetails(objectMetadata, {
 			userId: user.getId(),

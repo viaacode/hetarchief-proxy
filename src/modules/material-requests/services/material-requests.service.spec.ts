@@ -23,7 +23,7 @@ import type {
 	InsertMaterialRequestMutation,
 	UpdateMaterialRequestMutation,
 } from '~generated/graphql-db-types-hetarchief';
-import { IeObjectLicense } from '~modules/ie-objects/ie-objects.types';
+import { IeObjectLicense, IeObjectsVisitorSpaceInfo } from '~modules/ie-objects/ie-objects.types';
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { mockOrganisations } from '~modules/organisations/mocks/organisations.mocks';
 import { OrganisationsService } from '~modules/organisations/services/organisations.service';
@@ -71,6 +71,11 @@ const mockIeObjectsService: Partial<Record<keyof IeObjectsService, MockInstance>
 
 const mockVideoStillsService: Partial<Record<keyof VideoStillsService, MockInstance>> = {
 	getFirstVideoStills: vi.fn(() => []),
+};
+
+const mockIeObjectsVisitorSpaceInfo: IeObjectsVisitorSpaceInfo = {
+	objectIds: [],
+	visitorSpaceIds: [],
 };
 
 const getDefaultMaterialRequestByIdResponse = (): {
@@ -157,6 +162,7 @@ describe('MaterialRequestsService', () => {
 			const adapted = await materialRequestsService.adapt(
 				mockGqlMaterialRequest1,
 				mockOrganisations,
+				mockIeObjectsVisitorSpaceInfo,
 				new SessionUserEntity(mockUser),
 				'referer',
 				''
@@ -187,6 +193,7 @@ describe('MaterialRequestsService', () => {
 			const adapted = await materialRequestsService.adapt(
 				mockGqlMaterialRequest2,
 				mockOrganisations,
+				mockIeObjectsVisitorSpaceInfo,
 				new SessionUserEntity(mockUser),
 				'referer',
 				''
@@ -253,6 +260,7 @@ describe('MaterialRequestsService', () => {
 			const adapted = await materialRequestsService.adapt(
 				undefined,
 				mockOrganisations,
+				mockIeObjectsVisitorSpaceInfo,
 				new SessionUserEntity(mockUser),
 				'referer',
 				''
@@ -265,6 +273,7 @@ describe('MaterialRequestsService', () => {
 			const adapted = await materialRequestsService.adapt(
 				null,
 				mockOrganisations,
+				mockIeObjectsVisitorSpaceInfo,
 				new SessionUserEntity(mockUser),
 				'referer',
 				''
