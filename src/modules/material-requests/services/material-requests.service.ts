@@ -6,7 +6,7 @@ import {
 	NotFoundException,
 } from '@nestjs/common';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
-import { compact, groupBy, isArray, isEmpty, isNil, kebabCase, set } from 'lodash';
+import { compact, groupBy, intersection, isArray, isEmpty, isNil, kebabCase, set } from 'lodash';
 
 import {
 	CreateMaterialRequestDto,
@@ -79,6 +79,7 @@ import {
 	IeObjectLicense,
 	IeObjectType,
 	IeObjectsVisitorSpaceInfo,
+	SimpleIeObjectType,
 } from '~modules/ie-objects/ie-objects.types';
 import type { Organisation } from '~modules/organisations/organisations.types';
 
@@ -88,6 +89,8 @@ import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/help
 import { AvoStillsStillInfo } from '@viaa/avo2-types';
 import { addDays } from 'date-fns';
 import { limitAccessToObjectDetails } from '~modules/ie-objects/helpers/limit-access-to-object-details';
+import { mapDcTermsFormatToSimpleType } from '~modules/ie-objects/helpers/map-dc-terms-format-to-simple-type';
+import { IE_OBJECT_INTRA_CP_LICENSES } from '~modules/ie-objects/ie-objects.conts';
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
@@ -338,7 +341,8 @@ export class MaterialRequestsService {
 				created_at: new Date().toISOString(),
 				updated_at: new Date().toISOString(),
 				is_pending: true,
-				organisation: createMaterialRequestDto?.organisation,
+				organisation: createMaterialRequestDto?.organisation || user.getOrganisationName(),
+				organisation_sector: user.getSector(),
 				requester_capacity:
 					createMaterialRequestDto?.requesterCapacity ||
 					Lookup_App_Material_Request_Requester_Capacity_Enum.Other,
@@ -383,6 +387,7 @@ export class MaterialRequestsService {
 			| 'type'
 			| 'reason'
 			| 'organisation'
+			| 'organisation_sector'
 			| 'requester_capacity'
 			| 'is_pending'
 			| 'status'
@@ -575,7 +580,7 @@ export class MaterialRequestsService {
 				materialRequests: [request],
 				sendRequestListDto: {
 					type: request.requesterCapacity,
-					organisation: request.organisation,
+					organisation: request.requesterOrganisation,
 					requestGroupName: request.requestGroupName,
 				},
 				firstName: user.getFirstName(),
@@ -711,6 +716,19 @@ export class MaterialRequestsService {
 		return null;
 	}
 
+	public isComplexReuseFlow(
+		ieObjectType: IeObjectType,
+		ieObjectLicenses: IeObjectLicense[],
+		isKeyUser: boolean
+	): boolean {
+		const simpleType = mapDcTermsFormatToSimpleType(ieObjectType);
+		return (
+			(simpleType === SimpleIeObjectType.AUDIO || simpleType === SimpleIeObjectType.VIDEO) &&
+			isKeyUser &&
+			intersection(ieObjectLicenses, IE_OBJECT_INTRA_CP_LICENSES).length > 0
+		);
+	}
+
 	/**
 	 * Adapt a material request as returned by a graphQl response to our internal model
 	 */
@@ -768,16 +786,37 @@ export class MaterialRequestsService {
 			objectLicences?.includes(IeObjectLicense.PUBLIEK_CONTENT) &&
 			objectLicences?.includes(IeObjectLicense.PUBLIC_DOMAIN);
 
-		const objectThumbnailUrl: string | undefined =
-			graphQlMaterialRequest.ie_object_representation_id
-				? await this.ieObjectsService.getThumbnailUrlWithToken(
-						reuseForm?.thumbnailUrl ||
-							graphQlMaterialRequest.intellectualEntity?.schemaThumbnail?.schema_thumbnail_url?.[0],
-						referer,
-						ip,
-						isPublicDomain
-					)
-				: undefined;
+		let objectThumbnailUrl: string | undefined;
+		const ieObjectThumbnailUrl =
+			graphQlMaterialRequest.intellectualEntity?.schemaThumbnail?.schema_thumbnail_url?.[0];
+		const isComplexFlow = this.isComplexReuseFlow(
+			graphQlMaterialRequest.intellectualEntity?.dctermsFormat?.[0]?.dcterms_format as IeObjectType,
+			objectLicences,
+			user?.getIsKeyUser()
+		);
+		if (isComplexFlow) {
+			// New material request with reuse form flow
+			if (graphQlMaterialRequest.ie_object_representation_id) {
+				// If we know exactly which video of the ie object the user is requesting material for, we can get the thumbnail url for that specific representation
+				await this.ieObjectsService.getThumbnailUrlWithToken(
+					reuseForm?.thumbnailUrl || ieObjectThumbnailUrl,
+					referer,
+					ip,
+					isPublicDomain
+				);
+			} else {
+				// The user doesn't have access to the ie object essence (video), so we should not show any thumbnail for this material request
+				return undefined;
+			}
+		} else {
+			// Old material request flow
+			objectThumbnailUrl = await this.ieObjectsService.getThumbnailUrlWithToken(
+				ieObjectThumbnailUrl,
+				referer,
+				ip,
+				isPublicDomain
+			);
+		}
 
 		const objectRepresentations = await this.ieObjectsService.adaptRepresentations(
 			[graphQlMaterialRequest.objectRepresentation],
@@ -832,6 +871,8 @@ export class MaterialRequestsService {
 			requesterUserGroupName: graphQlMaterialRequest.requested_by.group?.name || null,
 			requesterUserGroupLabel: graphQlMaterialRequest.requested_by.group?.label || null,
 			requesterUserGroupDescription: graphQlMaterialRequest.requested_by.group?.description || null,
+			requesterOrganisation: graphQlMaterialRequest.organisation, // Requester organisation (free input field) in some cases
+			requesterOrganisationSector: graphQlMaterialRequest.organisation_sector || null,
 			maintainerId: organisation?.schemaIdentifier,
 			maintainerName: organisation?.schemaName,
 			maintainerSlug:
@@ -841,7 +882,6 @@ export class MaterialRequestsService {
 				// TODO remove this workaround once the INT organisations assets are available
 				.replace('https://assets-int.viaa.be/images/', 'https://assets.viaa.be/images/')
 				.replace('https://assets-tst.viaa.be/images/', 'https://assets.viaa.be/images/'),
-			organisation: graphQlMaterialRequest.organisation || null, // Requester organisation (free input field)
 			contactMail: this.spacesService.adaptEmail(
 				(graphQlMaterialRequest as FindMaterialRequestsQuery['app_material_requests'][0])
 					?.intellectualEntity?.schemaMaintainer?.schemaContactPoint

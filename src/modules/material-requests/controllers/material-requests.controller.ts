@@ -260,7 +260,7 @@ export class MaterialRequestsController {
 			for (const materialRequest of materialRequests.items) {
 				// If the email does not exist, the campaign monitor service will default to process.env.MEEMOO_MAINTAINER_MISSING_EMAIL_FALLBACK
 				materialRequest.requesterCapacity = sendRequestListDto.type;
-				materialRequest.organisation = sendRequestListDto?.organisation;
+				materialRequest.requesterOrganisation = sendRequestListDto?.organisation;
 				materialRequest.requestGroupName = sendRequestListDto?.requestGroupName;
 			}
 
@@ -283,7 +283,8 @@ export class MaterialRequestsController {
 						{
 							type: materialRequest.type,
 							reason: materialRequest.reason,
-							organisation: materialRequest.organisation,
+							organisation: materialRequest.requesterOrganisation,
+							organisation_sector: materialRequest.requesterOrganisationSector || user.getSector(),
 							requester_capacity: materialRequest.requesterCapacity,
 							is_pending: false,
 							status: materialRequest.reuseForm

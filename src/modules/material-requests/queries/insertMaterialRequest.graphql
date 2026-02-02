@@ -20,6 +20,7 @@ mutation insertMaterialRequest($newMaterialRequest: app_material_requests_insert
 		download_available_at
 		requester_capacity
 		organisation
+		organisation_sector
 		requested_by {
 			id
 			full_name

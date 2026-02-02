@@ -1492,15 +1492,10 @@ export class IeObjectsService {
 		ip: string,
 		isPublicDomain = false
 	): Promise<string | undefined> {
-		if (thumbnailUrl && referer) {
-			return this.playerTicketService.resolveThumbnailUrl(
-				thumbnailUrl,
-				referer,
-				ip,
-				isPublicDomain
-			);
+		if (!thumbnailUrl || !referer) {
+			return undefined;
 		}
-		return thumbnailUrl || undefined;
+		return this.playerTicketService.resolveThumbnailUrl(thumbnailUrl, referer, ip, isPublicDomain);
 	}
 
 	/**

@@ -76,7 +76,7 @@ async function loadIeObjects(): Promise<IeObject[]> {
 		},
 	});
 
-	const { data } = await response.json();
+	const { data } = await response.json() as any;
 	return data.graph__index_intellectual_entity;
 }
 

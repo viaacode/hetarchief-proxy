@@ -46,20 +46,23 @@ export interface MaterialRequest {
 	isPending: boolean;
 	status: Lookup_App_Material_Request_Status_Enum;
 	statusMotivation?: string;
+
 	requesterId: string;
 	requesterFullName: string;
 	requesterMail: string;
 	requesterCapacity: Lookup_App_Material_Request_Requester_Capacity_Enum;
-	maintainerId: string;
-	maintainerName: string;
-	maintainerSlug: string;
 	requesterUserGroupId?: string;
 	requesterUserGroupName?: string;
 	requesterUserGroupLabel?: string;
 	requesterUserGroupDescription?: string;
+	requesterOrganisation?: string;
+	requesterOrganisationSector?: string;
+
+	maintainerId: string;
+	maintainerName: string;
+	maintainerSlug: string;
 	maintainerLogo?: string;
 	contactMail?: string;
-	organisation?: string | null;
 
 	downloadUrl?: string;
 	downloadRetries?: number;
