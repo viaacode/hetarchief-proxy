@@ -747,23 +747,25 @@ export class MaterialRequestsService {
 		let objectThumbnailUrl: string | undefined;
 		const ieObjectThumbnailUrl =
 			graphQlMaterialRequest.intellectualEntity?.schemaThumbnail?.schema_thumbnail_url?.[0];
-		if (
-			this.isComplexReuseFlow(
-				graphQlMaterialRequest.intellectualEntity?.dctermsFormat?.[0]
-					?.dcterms_format as IeObjectType,
-				objectLicences,
-				user?.getIsKeyUser()
-			)
-		) {
+		const isComplexFlow = this.isComplexReuseFlow(
+			graphQlMaterialRequest.intellectualEntity?.dctermsFormat?.[0]?.dcterms_format as IeObjectType,
+			objectLicences,
+			user?.getIsKeyUser()
+		);
+		if (isComplexFlow) {
 			// New material request with reuse form flow
-			objectThumbnailUrl = graphQlMaterialRequest.ie_object_representation_id
-				? await this.ieObjectsService.getThumbnailUrlWithToken(
-						reuseForm?.thumbnailUrl || ieObjectThumbnailUrl,
-						referer,
-						ip,
-						isPublicDomain
-					)
-				: undefined;
+			if (graphQlMaterialRequest.ie_object_representation_id) {
+				// If we know exactly which video of the ie object the user is requesting material for, we can get the thumbnail url for that specific representation
+				await this.ieObjectsService.getThumbnailUrlWithToken(
+					reuseForm?.thumbnailUrl || ieObjectThumbnailUrl,
+					referer,
+					ip,
+					isPublicDomain
+				);
+			} else {
+				// The user doesn't have access to the ie object essence (video), so we should not show any thumbnail for this material request
+				return undefined;
+			}
 		} else {
 			// Old material request flow
 			objectThumbnailUrl = await this.ieObjectsService.getThumbnailUrlWithToken(
