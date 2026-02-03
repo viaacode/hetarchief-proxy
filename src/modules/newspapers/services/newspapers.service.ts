@@ -7,7 +7,10 @@ import { ConfigService } from '@nestjs/config';
 
 import type { Configuration } from '~config';
 
-import { GetNewspaperTitlesDocument, type GetNewspaperTitlesQuery } from '~generated/graphql-db-types-hetarchief';
+import {
+	GetNewspaperTitlesDocument,
+	type GetNewspaperTitlesQuery,
+} from '~generated/graphql-db-types-hetarchief';
 import type { NewspaperTitle } from '~modules/ie-objects/ie-objects.types';
 import { customError } from '~shared/helpers/custom-error';
 

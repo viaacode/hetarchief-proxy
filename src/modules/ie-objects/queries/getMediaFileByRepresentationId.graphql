@@ -1,0 +1,14 @@
+query getMediaFileByRepresentationId($representationId: String) {
+	graph_includes(
+		where: {
+			representation_id: { _eq: $representationId }
+			file: { ebucore_has_mime_type: { _eq: "video/mp4" } }
+		}
+		limit: 1
+	) {
+		file {
+			id
+			premis_stored_at
+		}
+	}
+}

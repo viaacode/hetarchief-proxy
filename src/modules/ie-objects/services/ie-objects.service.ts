@@ -4,7 +4,13 @@ import { retry } from 'async';
 
 import { DataService, PlayerTicketService } from '@meemoo/admin-core-api';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { Inject, Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
+import {
+	Inject,
+	Injectable,
+	InternalServerErrorException,
+	Logger,
+	NotFoundException,
+} from '@nestjs/common';
 
 import { ConfigService } from '@nestjs/config';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
@@ -46,10 +52,10 @@ import {
 	type IeObjectPages,
 	type IeObjectRepresentation,
 	type IeObjectSector,
-	IeObjectType,
 	type IeObjectsSitemap,
 	type IeObjectsVisitorSpaceInfo,
 	type IeObjectsWithAggregations,
+	IeObjectType,
 	type IsPartOfKey,
 	type Mention,
 	type RelatedIeObject,
@@ -77,6 +83,9 @@ import {
 	GetIeObjectV3InfoFromMediaMosaIdQueryVariables,
 	type GetIsPartOfQuery,
 	type GetIsRepresentedByQuery,
+	GetMediaFileByRepresentationIdDocument,
+	GetMediaFileByRepresentationIdQuery,
+	GetMediaFileByRepresentationIdQueryVariables,
 	GetParentIeObjectDocument,
 	type GetParentIeObjectQuery,
 	type GetParentIeObjectQueryVariables,
@@ -97,14 +106,14 @@ import {
 import { AND } from '~modules/ie-objects/elasticsearch/queryBuilder.helpers';
 import { convertSchemaIdentifierToId } from '~modules/ie-objects/helpers/convert-schema-identifier-to-id';
 import {
-	type SearchTermParseResult,
 	convertStringToSearchTerms,
+	type SearchTermParseResult,
 } from '~modules/ie-objects/helpers/convert-string-to-search-terms';
 import { AUTOCOMPLETE_FIELD_TO_ES_FIELD_NAME } from '~modules/ie-objects/ie-objects.conts';
 import {
-	CACHE_KEY_PREFIX_IE_OBJECTS_SEARCH,
 	CACHE_KEY_PREFIX_IE_OBJECT_DETAIL,
 	CACHE_KEY_PREFIX_IE_OBJECT_THUMBNAIL,
+	CACHE_KEY_PREFIX_IE_OBJECTS_SEARCH,
 	IE_OBJECT_DETAIL_QUERIES,
 } from '~modules/ie-objects/services/ie-objects.service.consts';
 import {
@@ -1565,5 +1574,28 @@ export class IeObjectsService {
 			}
 		}
 		return filteredRepresentations;
+	}
+
+	public async getMediaFileByRepresentationId(
+		representationId: string
+	): Promise<{ id: string; storedAt: string }> {
+		try {
+			const response = await this.dataService.execute<
+				GetMediaFileByRepresentationIdQuery,
+				GetMediaFileByRepresentationIdQueryVariables
+			>(GetMediaFileByRepresentationIdDocument, { representationId });
+
+			const file = response.graph_includes?.[0]?.file;
+
+			if (!file) {
+				throw new NotFoundException('Media file not found for the given representation ID');
+			}
+			return {
+				id: file.id,
+				storedAt: file.premis_stored_at,
+			};
+		} catch (err) {
+			throw new InternalServerErrorException('Failed getting ieObjects for sitemap', err);
+		}
 	}
 }

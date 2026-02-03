@@ -1,4 +1,4 @@
-import { DataService, VideoStillsService } from '@meemoo/admin-core-api';
+import { DataService, StillsObjectType, VideoStillsService } from '@meemoo/admin-core-api';
 import {
 	BadRequestException,
 	Injectable,
@@ -28,6 +28,7 @@ import {
 	MaterialRequestMaintainer,
 	MaterialRequestOrderProp,
 	MaterialRequestReuseForm,
+	MaterialRequestReuseFormKey,
 	MaterialRequestSendRequestListUserInfo,
 } from '../material-requests.types';
 
@@ -48,6 +49,9 @@ import {
 	type FindMaterialRequestsQueryVariables,
 	FindMaterialRequestsWithUnresolvedDownloadStatusDocument,
 	FindMaterialRequestsWithUnresolvedDownloadStatusQuery,
+	GetIeObjectByMaterialRequestIdDocument,
+	GetIeObjectByMaterialRequestIdQuery,
+	GetIeObjectByMaterialRequestIdQueryVariables,
 	InsertMaterialRequestDocument,
 	type InsertMaterialRequestMutation,
 	type InsertMaterialRequestMutationVariables,
@@ -75,10 +79,11 @@ import {
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 import { convertSchemaIdentifierToId } from '~modules/ie-objects/helpers/convert-schema-identifier-to-id';
 import {
+	IeObject,
 	IeObjectAccessThrough,
 	IeObjectLicense,
-	IeObjectType,
 	IeObjectsVisitorSpaceInfo,
+	IeObjectType,
 	SimpleIeObjectType,
 } from '~modules/ie-objects/ie-objects.types';
 import type { Organisation } from '~modules/organisations/organisations.types';
@@ -94,6 +99,7 @@ import { IE_OBJECT_INTRA_CP_LICENSES } from '~modules/ie-objects/ie-objects.cont
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
+import { AUDIO_WAVE_FORM_URL } from '~shared/consts/audio-wave-form-url';
 import { customError } from '~shared/helpers/custom-error';
 import { PaginationHelper } from '~shared/helpers/pagination';
 import { SortDirection } from '~shared/types';
@@ -332,9 +338,11 @@ export class MaterialRequestsService {
 		referer: string,
 		ip: string
 	): Promise<MaterialRequest> {
+		const ieObjectId = convertSchemaIdentifierToId(createMaterialRequestDto.objectSchemaIdentifier);
+		const ieObject = await this.ieObjectsService.findByIeObjectId(ieObjectId, referer, ip);
 		const variables: InsertMaterialRequestMutationVariables = {
 			newMaterialRequest: {
-				ie_object_id: convertSchemaIdentifierToId(createMaterialRequestDto.objectSchemaIdentifier),
+				ie_object_id: ieObjectId,
 				profile_id: user.getId(),
 				reason: createMaterialRequestDto.reason,
 				type: createMaterialRequestDto.type,
@@ -360,7 +368,8 @@ export class MaterialRequestsService {
 			await this.insertReuseFormForMaterialRequest(
 				createdMaterialRequest.id,
 				createdMaterialRequest.ie_object_representation_id,
-				createMaterialRequestDto.reuseForm
+				createMaterialRequestDto.reuseForm,
+				ieObject.dctermsFormat
 			);
 
 		const organisations = await this.organisationsService.findOrganisationsBySchemaIdentifiers(
@@ -400,6 +409,7 @@ export class MaterialRequestsService {
 		referer: string,
 		ip: string
 	): Promise<MaterialRequest> {
+		const ieObject = await this.getIeObjectFromMaterialRequestId(materialRequestId);
 		const updateMaterialRequest = {
 			...materialRequestInfo,
 			updated_at: new Date().toISOString(),
@@ -428,7 +438,8 @@ export class MaterialRequestsService {
 				updatedRequest.ie_object_representation_id,
 				materialRequestInfo.type === Lookup_App_Material_Request_Type_Enum.Reuse
 					? reuseForm
-					: undefined
+					: undefined,
+				ieObject.dctermsFormat
 			);
 
 		const organisations = await this.organisationsService.findOrganisationsBySchemaIdentifiers(
@@ -662,11 +673,22 @@ export class MaterialRequestsService {
 	private insertReuseFormForMaterialRequest = async (
 		materialRequestId: string,
 		representationId: string,
-		reuseForm: Record<string, string> | MaterialRequestReuseForm
+		reuseForm: Record<string, string> | MaterialRequestReuseForm,
+		ieObjectType: IeObjectType
 	) => {
 		if (reuseForm) {
 			// Avoid duplicate thumbnails so filtering the original in favor of a more accurate one
-			const keys = Object.keys(reuseForm).filter((key) => key !== 'thumbnailUrl');
+			const keys = Object.keys(reuseForm).filter(
+				(key) => key !== MaterialRequestReuseFormKey.thumbnailUrl
+			);
+
+			// For audio objects we don't need to do a request to the video stills service, since we just want to show a waveform
+			let thumbnailUrl: string;
+			if (mapDcTermsFormatToSimpleType(ieObjectType) === IeObjectType.AUDIO) {
+				thumbnailUrl = AUDIO_WAVE_FORM_URL;
+			} else {
+				thumbnailUrl = await this.findVideoStillForMaterialRequest(representationId, reuseForm);
+			}
 			const reuseFormVariables: InsertMaterialRequestReuseFormMutationVariables = {
 				keyValues: [
 					...keys.map((key) => ({
@@ -676,8 +698,8 @@ export class MaterialRequestsService {
 					})),
 					{
 						material_request_id: materialRequestId,
-						key: 'thumbnailUrl',
-						value: await this.findVideoStillForMaterialRequest(representationId, reuseForm),
+						key: MaterialRequestReuseFormKey.thumbnailUrl,
+						value: thumbnailUrl,
 					},
 				],
 			};
@@ -692,16 +714,28 @@ export class MaterialRequestsService {
 		}
 	};
 
+	/**
+	 * Gets the video still closest to the cut point that is passed
+	 * This function should only be used for video files, audio should return the default wave form AUDIO_WAVE_FORM_URL and newspapers don't need stills
+	 * if you use this function for audio, you'll get an ugly speaker
+	 * @param representationId
+	 * @param reuseForm
+	 * @private
+	 */
 	private async findVideoStillForMaterialRequest(
 		representationId: string,
 		reuseForm: Record<string, string> | MaterialRequestReuseForm
 	): Promise<string | null> {
 		const startTime = Number.parseInt(reuseForm?.startTime.toString());
 
+		const mediaFile = await this.ieObjectsService.getMediaFileByRepresentationId(representationId);
+
 		if (startTime && startTime > 0 && representationId) {
 			const stillInfos = await this.videoStillsService.getFirstVideoStills([
 				{
-					externalId: representationId,
+					id: mediaFile.id,
+					storedAt: mediaFile.storedAt,
+					type: StillsObjectType.video,
 					startTime: startTime * 1000,
 				},
 			]);
@@ -969,7 +1003,7 @@ export class MaterialRequestsService {
 	 * @param materialRequestId
 	 * @param setFields the fields of the material request to update
 	 */
-	async updateMaterialRequest(
+	public async updateMaterialRequest(
 		materialRequestId: string,
 		setFields: App_Material_Requests_Set_Input
 	) {
@@ -989,5 +1023,26 @@ export class MaterialRequestsService {
 			});
 		}
 		return this.adapt(materialRequest);
+	}
+
+	public async getIeObjectFromMaterialRequestId(
+		materialRequestId: string
+	): Promise<Pick<IeObject, 'iri' | 'dctermsFormat'> | null> {
+		const materialRequestResponse = await this.dataService.execute<
+			GetIeObjectByMaterialRequestIdQuery,
+			GetIeObjectByMaterialRequestIdQueryVariables
+		>(GetIeObjectByMaterialRequestIdDocument, { materialRequestId });
+
+		const ieObject = materialRequestResponse?.app_material_requests?.[0]?.intellectualEntity;
+		if (!ieObject) {
+			throw new NotFoundException(
+				`IeObject for material request with id '${materialRequestId}' was not found`
+			);
+		}
+
+		return {
+			iri: ieObject.id,
+			dctermsFormat: ieObject.dctermsFormat?.[0]?.dcterms_format as IeObjectType,
+		};
 	}
 }

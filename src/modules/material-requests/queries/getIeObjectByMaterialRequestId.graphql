@@ -1,0 +1,10 @@
+query GetIeObjectByMaterialRequestId($materialRequestId: uuid) {
+	app_material_requests(where: { id: { _eq: $materialRequestId } }) {
+		intellectualEntity {
+			id
+			dctermsFormat {
+				dcterms_format
+			}
+		}
+	}
+}
