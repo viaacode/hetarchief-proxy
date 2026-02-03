@@ -370,16 +370,7 @@ export class IeObjectsService {
 				async (
 					object: GetChildIeObjectsQuery['graph_intellectual_entity'][0]['hasPart'][0]
 				): Promise<RelatedIeObject> => {
-					const adapted = await this.adaptRelatedFromDB(object, referer, ip);
-					// Newspaper thumbnails can be viewed without requiring a player ticket
-					if (adapted.dctermsFormat !== IeObjectType.NEWSPAPER && referer) {
-						adapted.thumbnailUrl = await this.getThumbnailUrlWithToken(
-							adapted.thumbnailUrl,
-							referer,
-							ip
-						);
-					}
-					return adapted;
+					return await this.adaptRelatedFromDB(object, referer, ip);
 				}
 			)
 		);
