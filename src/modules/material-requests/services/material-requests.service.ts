@@ -327,7 +327,6 @@ export class MaterialRequestsService {
 		ip: string
 	): Promise<MaterialRequest> {
 		const ieObjectId = convertSchemaIdentifierToId(createMaterialRequestDto.objectSchemaIdentifier);
-		const ieObject = await this.ieObjectsService.findByIeObjectId(ieObjectId, referer, ip);
 		const variables: InsertMaterialRequestMutationVariables = {
 			newMaterialRequest: {
 				ie_object_id: ieObjectId,
@@ -357,7 +356,8 @@ export class MaterialRequestsService {
 				createdMaterialRequest.id,
 				createdMaterialRequest.ie_object_representation_id,
 				createMaterialRequestDto.reuseForm,
-				ieObject.dctermsFormat
+				createdMaterialRequest?.intellectualEntity?.dctermsFormat?.[0]
+					.dcterms_format as IeObjectType
 			);
 
 		const organisations = await this.organisationsService.findOrganisationsBySchemaIdentifiers(
