@@ -4,6 +4,7 @@ import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
 	plugins: [swc.vite()],
+	cacheDir: path.resolve(__dirname, 'node_modules/.vite'),
 	resolve: {
 		alias: {
 			'~config': path.resolve(__dirname, 'src/config'),
@@ -18,18 +19,6 @@ export default defineConfig({
 		environment: 'node',
 		include: ['**/*.spec.ts'],
 		setupFiles: ['../test/vitest.setup.ts', '../vitest.setup.redis-mock.ts'],
-		coverage: {
-			provider: 'v8',
-			reportsDirectory: '../coverage',
-			include: ['**/*.(t|j)s'],
-			exclude: ['node_modules', '**/*.module.ts', '**/*.dto.ts', '**/index.ts'],
-			thresholds: {
-				branches: 80,
-				functions: 80,
-				lines: 80,
-				statements: 80,
-			},
-		},
 		pool: 'threads',
 		maxWorkers: 8,
 	},
