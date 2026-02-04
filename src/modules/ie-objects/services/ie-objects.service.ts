@@ -4,7 +4,13 @@ import { retry } from 'async';
 
 import { DataService, PlayerTicketService } from '@meemoo/admin-core-api';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { Inject, Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
+import {
+	Inject,
+	Injectable,
+	InternalServerErrorException,
+	Logger,
+	NotFoundException,
+} from '@nestjs/common';
 
 import { ConfigService } from '@nestjs/config';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
@@ -46,10 +52,10 @@ import {
 	type IeObjectPages,
 	type IeObjectRepresentation,
 	type IeObjectSector,
-	IeObjectType,
 	type IeObjectsSitemap,
 	type IeObjectsVisitorSpaceInfo,
 	type IeObjectsWithAggregations,
+	IeObjectType,
 	type IsPartOfKey,
 	type Mention,
 	type RelatedIeObject,
@@ -86,6 +92,9 @@ import {
 	GetSchemaIdentifierV3BySchemaIdentifierV2Document,
 	type GetSchemaIdentifierV3BySchemaIdentifierV2Query,
 	type GetSchemaIdentifierV3BySchemaIdentifierV2QueryVariables,
+	GetVideoFileByRepresentationIdDocument,
+	GetVideoFileByRepresentationIdQuery,
+	GetVideoFileByRepresentationIdQueryVariables,
 	Lookup_Maintainer_Visitor_Space_Status_Enum as VisitorSpaceStatus,
 } from '~generated/graphql-db-types-hetarchief';
 import {
@@ -97,14 +106,14 @@ import {
 import { AND } from '~modules/ie-objects/elasticsearch/queryBuilder.helpers';
 import { convertSchemaIdentifierToId } from '~modules/ie-objects/helpers/convert-schema-identifier-to-id';
 import {
-	type SearchTermParseResult,
 	convertStringToSearchTerms,
+	type SearchTermParseResult,
 } from '~modules/ie-objects/helpers/convert-string-to-search-terms';
 import { AUTOCOMPLETE_FIELD_TO_ES_FIELD_NAME } from '~modules/ie-objects/ie-objects.conts';
 import {
-	CACHE_KEY_PREFIX_IE_OBJECTS_SEARCH,
 	CACHE_KEY_PREFIX_IE_OBJECT_DETAIL,
 	CACHE_KEY_PREFIX_IE_OBJECT_THUMBNAIL,
+	CACHE_KEY_PREFIX_IE_OBJECTS_SEARCH,
 	IE_OBJECT_DETAIL_QUERIES,
 } from '~modules/ie-objects/services/ie-objects.service.consts';
 import {
@@ -121,6 +130,7 @@ import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupName } from '~modules/users/types';
 
+import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
 import { VisitsService } from '~modules/visits/services/visits.service';
 import { VisitStatus, VisitTimeframe } from '~modules/visits/types';
 import { customError } from '~shared/helpers/custom-error';
@@ -555,8 +565,7 @@ export class IeObjectsService {
 			parentIeObject = await this.findByIeObjectId(parentIeObjectId, referer, ip);
 		}
 
-		const ieObject = await this.adaptFromDB(responses, parentIeObject, referer, ip);
-		return ieObject;
+		return await this.adaptFromDB(responses, parentIeObject, referer, ip);
 	}
 
 	/**
@@ -1565,5 +1574,30 @@ export class IeObjectsService {
 			}
 		}
 		return filteredRepresentations;
+	}
+
+	public async getVideoFileByRepresentationId(
+		representationId: string
+	): Promise<{ id: string; storedAt: string }> {
+		try {
+			const response = await this.dataService.execute<
+				GetVideoFileByRepresentationIdQuery,
+				GetVideoFileByRepresentationIdQueryVariables
+			>(GetVideoFileByRepresentationIdDocument, { representationId });
+
+			const file = response.graph_includes?.[0]?.file;
+
+			if (!file) {
+				throw new NotFoundException('Video file not found for the given representation ID');
+			}
+			return {
+				id: file.id,
+				storedAt: file.premis_stored_at,
+			};
+		} catch (err) {
+			throw new CustomError('Failed to get video file from representation id', err, {
+				representationId,
+			});
+		}
 	}
 }

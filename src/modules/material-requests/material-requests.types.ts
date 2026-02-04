@@ -90,6 +90,27 @@ export enum MaterialRequestExportQuality {
 	HIGH = 'HIGH',
 }
 
+export enum MaterialRequestReuseFormKey {
+	representationId = 'representationId',
+	thumbnailUrl = 'thumbnailUrl',
+	startTime = 'startTime',
+	endTime = 'endTime',
+	downloadQuality = 'downloadQuality',
+	intendedUsageDescription = 'intendedUsageDescription',
+	intendedUsage = 'intendedUsage',
+	distributionAccess = 'distributionAccess',
+	distributionType = 'distributionType',
+	distributionTypeDigitalOnline = 'distributionTypeDigitalOnline',
+	distributionTypeOtherExplanation = 'distributionTypeOtherExplanation',
+	materialEditing = 'materialEditing',
+	geographicalUsage = 'geographicalUsage',
+	geographicalUsageDescription = 'geographicalUsageDescription',
+	timeUsageType = 'timeUsageType',
+	timeUsageFrom = 'timeUsageFrom',
+	timeUsageTo = 'timeUsageTo',
+	copyrightDisplay = 'copyrightDisplay',
+}
+
 export interface MaterialRequestReuseForm {
 	thumbnailUrl?: string;
 	startTime?: number;
