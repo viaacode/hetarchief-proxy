@@ -1,10 +1,5 @@
 import { DataService, StillsObjectType, VideoStillsService } from '@meemoo/admin-core-api';
-import {
-	BadRequestException,
-	Injectable,
-	InternalServerErrorException,
-	NotFoundException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { compact, groupBy, intersection, isArray, isEmpty, isNil, kebabCase, set } from 'lodash';
 
@@ -49,9 +44,6 @@ import {
 	type FindMaterialRequestsQueryVariables,
 	FindMaterialRequestsWithUnresolvedDownloadStatusDocument,
 	FindMaterialRequestsWithUnresolvedDownloadStatusQuery,
-	GetIeObjectByMaterialRequestIdDocument,
-	GetIeObjectByMaterialRequestIdQuery,
-	GetIeObjectByMaterialRequestIdQueryVariables,
 	InsertMaterialRequestDocument,
 	type InsertMaterialRequestMutation,
 	type InsertMaterialRequestMutationVariables,
@@ -71,15 +63,11 @@ import {
 	UpdateMaterialRequestStatusMutation,
 	UpdateMaterialRequestStatusMutationVariables,
 } from '~generated/graphql-db-types-hetarchief';
-import {
-	EmailTemplate,
-	type MaterialRequestEmailInfo,
-} from '~modules/campaign-monitor/campaign-monitor.types';
+import { EmailTemplate, type MaterialRequestEmailInfo } from '~modules/campaign-monitor/campaign-monitor.types';
 
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 import { convertSchemaIdentifierToId } from '~modules/ie-objects/helpers/convert-schema-identifier-to-id';
 import {
-	IeObject,
 	IeObjectAccessThrough,
 	IeObjectLicense,
 	IeObjectsVisitorSpaceInfo,
@@ -409,7 +397,6 @@ export class MaterialRequestsService {
 		referer: string,
 		ip: string
 	): Promise<MaterialRequest> {
-		const ieObject = await this.getIeObjectFromMaterialRequestId(materialRequestId);
 		const updateMaterialRequest = {
 			...materialRequestInfo,
 			updated_at: new Date().toISOString(),
@@ -439,7 +426,7 @@ export class MaterialRequestsService {
 				materialRequestInfo.type === Lookup_App_Material_Request_Type_Enum.Reuse
 					? reuseForm
 					: undefined,
-				ieObject.dctermsFormat
+				updatedRequest?.intellectualEntity?.dctermsFormat?.[0]?.dcterms_format as IeObjectType
 			);
 
 		const organisations = await this.organisationsService.findOrganisationsBySchemaIdentifiers(
@@ -728,7 +715,7 @@ export class MaterialRequestsService {
 	): Promise<string | null> {
 		const startTime = Number.parseInt(reuseForm?.startTime.toString());
 
-		const mediaFile = await this.ieObjectsService.getMediaFileByRepresentationId(representationId);
+		const mediaFile = await this.ieObjectsService.getVideoFileByRepresentationId(representationId);
 
 		if (startTime && startTime > 0 && representationId) {
 			const stillInfos = await this.videoStillsService.getFirstVideoStills([
@@ -1023,26 +1010,5 @@ export class MaterialRequestsService {
 			});
 		}
 		return this.adapt(materialRequest);
-	}
-
-	public async getIeObjectFromMaterialRequestId(
-		materialRequestId: string
-	): Promise<Pick<IeObject, 'iri' | 'dctermsFormat'> | null> {
-		const materialRequestResponse = await this.dataService.execute<
-			GetIeObjectByMaterialRequestIdQuery,
-			GetIeObjectByMaterialRequestIdQueryVariables
-		>(GetIeObjectByMaterialRequestIdDocument, { materialRequestId });
-
-		const ieObject = materialRequestResponse?.app_material_requests?.[0]?.intellectualEntity;
-		if (!ieObject) {
-			throw new NotFoundException(
-				`IeObject for material request with id '${materialRequestId}' was not found`
-			);
-		}
-
-		return {
-			iri: ieObject.id,
-			dctermsFormat: ieObject.dctermsFormat?.[0]?.dcterms_format as IeObjectType,
-		};
 	}
 }

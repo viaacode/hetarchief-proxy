@@ -1,4 +1,4 @@
-query getMediaFileByRepresentationId($representationId: String) {
+query getVideoFileByRepresentationId($representationId: String) {
 	graph_includes(
 		where: {
 			representation_id: { _eq: $representationId }
