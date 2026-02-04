@@ -4,14 +4,31 @@ import { retry } from 'async';
 
 import { DataService, PlayerTicketService } from '@meemoo/admin-core-api';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { Inject, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
+import {
+	Inject,
+	Injectable,
+	InternalServerErrorException,
+	Logger,
+	NotFoundException,
+} from '@nestjs/common';
 
 import { ConfigService } from '@nestjs/config';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { mapLimit } from 'blend-promise-utils';
 import type { Cache } from 'cache-manager';
 import got, { type Got } from 'got';
-import { compact, find, isArray, isEmpty, isNil, kebabCase, omitBy, orderBy, take, uniq } from 'lodash';
+import {
+	compact,
+	find,
+	isArray,
+	isEmpty,
+	isNil,
+	kebabCase,
+	omitBy,
+	orderBy,
+	take,
+	uniq,
+} from 'lodash';
 
 import type { Configuration } from '~config';
 
@@ -88,7 +105,10 @@ import {
 } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
 import { AND } from '~modules/ie-objects/elasticsearch/queryBuilder.helpers';
 import { convertSchemaIdentifierToId } from '~modules/ie-objects/helpers/convert-schema-identifier-to-id';
-import { convertStringToSearchTerms, type SearchTermParseResult } from '~modules/ie-objects/helpers/convert-string-to-search-terms';
+import {
+	convertStringToSearchTerms,
+	type SearchTermParseResult,
+} from '~modules/ie-objects/helpers/convert-string-to-search-terms';
 import { AUTOCOMPLETE_FIELD_TO_ES_FIELD_NAME } from '~modules/ie-objects/ie-objects.conts';
 import {
 	CACHE_KEY_PREFIX_IE_OBJECT_DETAIL,
