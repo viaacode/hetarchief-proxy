@@ -827,7 +827,7 @@ export class MaterialRequestsService {
 			// New material request with reuse form flow
 			if (graphQlMaterialRequest.ie_object_representation_id) {
 				// If we know exactly which video of the ie object the user is requesting material for, we can get the thumbnail url for that specific representation
-				await this.ieObjectsService.getThumbnailUrlWithToken(
+				objectThumbnailUrl = await this.ieObjectsService.getThumbnailUrlWithToken(
 					reuseForm?.thumbnailUrl || ieObjectThumbnailUrl,
 					referer,
 					ip,
