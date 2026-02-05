@@ -1,6 +1,6 @@
 import { DataService, MediahavenService } from '@meemoo/admin-core-api';
 import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { isAfter, subHours } from 'date-fns';
 import { compact } from 'lodash';
@@ -18,6 +18,7 @@ import {
 	GetMhIdentifiersFromPartialMhIdentifierQueryVariables,
 	Lookup_App_Material_Request_Download_Status_Enum,
 } from '~generated/graphql-db-types-hetarchief';
+import { EmailTemplate } from '~modules/campaign-monitor/campaign-monitor.types';
 import { MaterialRequestForDownload } from '~modules/material-requests/material-requests.types';
 import { MaterialRequestsService } from '~modules/material-requests/services/material-requests.service';
 import {
@@ -28,14 +29,17 @@ import {
 	MamJobStatus,
 	MediahavenJobInfo,
 } from '~modules/mediahaven-jobs-watcher/mediahaven-jobs-watcher.types';
+import { UsersService } from '~modules/users/services/users.service';
 
 @Injectable()
 export class MediahavenJobsWatcherService {
 	constructor(
 		private configService: ConfigService<Configuration>,
+		@Inject(forwardRef(() => MaterialRequestsService))
 		private materialRequestsService: MaterialRequestsService,
 		private dataService: DataService,
-		private mediahavenService: MediahavenService
+		private mediahavenService: MediahavenService,
+		private usersService: UsersService
 	) {}
 
 	private async getAccessToken(): Promise<MamAccessToken> {
@@ -97,14 +101,32 @@ export class MediahavenJobsWatcherService {
 								updated_at: new Date().toISOString(),
 							});
 							break;
-						case MamJobStatus.Completed:
+						case MamJobStatus.Completed: {
 							// Job is completed, update material request with download URL and set status to SUCCEEDED
-							await this.materialRequestsService.updateMaterialRequest(materialRequest.id, {
-								download_url: relatedJob.DownloadUrl,
-								download_status: Lookup_App_Material_Request_Download_Status_Enum.Succeeded,
-								updated_at: new Date().toISOString(),
-							});
+							const updatedRequest = await this.materialRequestsService.updateMaterialRequest(
+								materialRequest.id,
+								{
+									download_url: relatedJob.DownloadUrl,
+									download_status: Lookup_App_Material_Request_Download_Status_Enum.Succeeded,
+									updated_at: new Date().toISOString(),
+								}
+							);
+							const requester = await this.usersService.getById(updatedRequest.requesterId);
+							await Promise.all([
+								this.materialRequestsService.sentStatusUpdateEmail(
+									EmailTemplate.MATERIAL_REQUEST_DOWNLOAD_READY_MAINTAINER,
+									updatedRequest,
+									requester
+								),
+								this.materialRequestsService.sentStatusUpdateEmail(
+									EmailTemplate.MATERIAL_REQUEST_DOWNLOAD_READY_REQUESTER,
+									updatedRequest,
+									requester
+								),
+							]);
+
 							break;
+						}
 
 						case MamJobStatus.Failed:
 						case MamJobStatus.Cancelled:

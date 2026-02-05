@@ -1,0 +1,17 @@
+query getMaterialRequestForDownloadJob($materialRequestId: uuid!) {
+	app_material_requests(where: { id: { _eq: $materialRequestId } }) {
+		id
+		approved_at
+		status
+		download_job_id
+		download_retries
+		download_status
+		ie_object_id
+		ie_object_representation_id
+		type
+		updated_at
+		material_request_reuse_form_values(where: { key: { _eq: "downloadQuality" } }) {
+			value
+		}
+	}
+}

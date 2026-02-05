@@ -1,4 +1,6 @@
-import { Lookup_App_Material_Request_Requester_Capacity_Enum } from '@meemoo/admin-core-api/dist/src/modules/shared/generated/graphql-db-types-hetarchief';
+import {
+	Lookup_App_Material_Request_Requester_Capacity_Enum,
+} from '@meemoo/admin-core-api/dist/src/modules/shared/generated/graphql-db-types-hetarchief';
 import { AvoAuthIdpType, PermissionName } from '@viaa/avo2-types';
 
 import {
@@ -9,8 +11,8 @@ import {
 } from '../campaign-monitor.types';
 
 import {
-	CampaignMonitorConfirmMailQueryDto,
 	CampaignMonitorConfirmationData,
+	CampaignMonitorConfirmMailQueryDto,
 	CampaignMonitorMaterialRequestData,
 	CampaignMonitorNewsletterUpdatePreferencesQueryDto,
 	RequestListItem,
@@ -86,11 +88,11 @@ export const mockMaterialRequestEmailInfo: MaterialRequestEmailInfo = {
 	to: 'test@example.com',
 	replyTo: 'test-cp@maintainer.be',
 	template: EmailTemplate.MATERIAL_REQUEST_MAINTAINER,
+	language: Locale.Nl,
 	materialRequests: [mockMaterialRequest1],
 	sendRequestListDto: mockSendRequestListDto,
-	firstName: 'mockFirstName',
-	lastName: 'mockLastName',
-	language: Locale.Nl,
+	requesterFirstName: 'mockFirstName',
+	requesterLastName: 'mockLastName',
 };
 
 export const mockRequestListItemToMaintainer: RequestListItem = {
@@ -118,8 +120,8 @@ export const mockRequestListItemToRequester: RequestListItem = {
 
 export const mockCampaignMonitorMaterialRequestDataToMaintainer: CampaignMonitorMaterialRequestData =
 	{
-		user_firstname: mockMaterialRequestEmailInfo.firstName,
-		user_lastname: mockMaterialRequestEmailInfo.lastName,
+		user_firstname: mockMaterialRequestEmailInfo.requesterFirstName,
+		user_lastname: mockMaterialRequestEmailInfo.requesterLastName,
 		cp_name: mockMaterialRequestEmailInfo.materialRequests[0].maintainerName,
 		request_list: [mockRequestListItemToMaintainer],
 		user_request_context: 'Andere',
@@ -129,8 +131,8 @@ export const mockCampaignMonitorMaterialRequestDataToMaintainer: CampaignMonitor
 
 export const mockCampaignMonitorMaterialRequestDataToRequester: CampaignMonitorMaterialRequestData =
 	{
-		user_firstname: mockMaterialRequestEmailInfo.firstName,
-		user_lastname: mockMaterialRequestEmailInfo.lastName,
+		user_firstname: mockMaterialRequestEmailInfo.requesterFirstName,
+		user_lastname: mockMaterialRequestEmailInfo.requesterLastName,
 		request_list: [mockRequestListItemToRequester],
 		user_request_context: 'Andere',
 		user_organisation: mockMaterialRequestEmailInfo.sendRequestListDto.organisation,

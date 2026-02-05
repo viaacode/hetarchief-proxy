@@ -1,22 +1,10 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import {
-	IsBoolean,
-	IsEnum,
-	IsNotEmpty,
-	IsObject,
-	IsOptional,
-	IsString,
-	ValidateNested,
-} from 'class-validator';
+import { IsBoolean, IsEnum, IsNotEmpty, IsObject, IsOptional, IsString, ValidateNested } from 'class-validator';
 
 import { LogEventType } from '~modules/events/types';
 import { Locale } from '~shared/types/types';
-import {
-	type CampaignMonitorShareFolderInfo,
-	ConsentToTrackOption,
-	EmailTemplate,
-} from '../campaign-monitor.types';
+import { type CampaignMonitorShareFolderInfo, ConsentToTrackOption, EmailTemplate } from '../campaign-monitor.types';
 
 export class CampaignMonitorVisitData {
 	@IsString()
@@ -113,6 +101,10 @@ export class CampaignMonitorMaterialRequestData {
 	@IsString()
 	@IsOptional()
 	cp_name?: string;
+
+	@IsString()
+	@IsOptional()
+	cp_email?: string;
 }
 
 export class CampaignMonitorConfirmationData {

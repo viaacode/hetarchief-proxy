@@ -1,10 +1,5 @@
-import { DataService, StillsObjectType, VideoStillsService } from '@meemoo/admin-core-api';
-import {
-	BadRequestException,
-	Injectable,
-	InternalServerErrorException,
-	NotFoundException,
-} from '@nestjs/common';
+import { DataService, Locale, StillsObjectType, VideoStillsService } from '@meemoo/admin-core-api';
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { compact, groupBy, intersection, isArray, isEmpty, isNil, kebabCase, set } from 'lodash';
 
@@ -49,6 +44,9 @@ import {
 	type FindMaterialRequestsQueryVariables,
 	FindMaterialRequestsWithUnresolvedDownloadStatusDocument,
 	FindMaterialRequestsWithUnresolvedDownloadStatusQuery,
+	GetMaterialRequestForDownloadJobDocument,
+	GetMaterialRequestForDownloadJobQuery,
+	GetMaterialRequestForDownloadJobQueryVariables,
 	InsertMaterialRequestDocument,
 	type InsertMaterialRequestMutation,
 	type InsertMaterialRequestMutationVariables,
@@ -58,6 +56,7 @@ import {
 	Lookup_App_Material_Request_Requester_Capacity_Enum,
 	Lookup_App_Material_Request_Status_Enum,
 	Lookup_App_Material_Request_Type_Enum,
+	Lookup_Languages_Enum,
 	UpdateMaterialRequestDocument,
 	UpdateMaterialRequestForUserDocument,
 	UpdateMaterialRequestForUserMutation,
@@ -68,18 +67,15 @@ import {
 	UpdateMaterialRequestStatusMutation,
 	UpdateMaterialRequestStatusMutationVariables,
 } from '~generated/graphql-db-types-hetarchief';
-import {
-	EmailTemplate,
-	type MaterialRequestEmailInfo,
-} from '~modules/campaign-monitor/campaign-monitor.types';
+import { EmailTemplate, type MaterialRequestEmailInfo } from '~modules/campaign-monitor/campaign-monitor.types';
 
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 import { convertSchemaIdentifierToId } from '~modules/ie-objects/helpers/convert-schema-identifier-to-id';
 import {
 	IeObjectAccessThrough,
 	IeObjectLicense,
-	IeObjectType,
 	IeObjectsVisitorSpaceInfo,
+	IeObjectType,
 	SimpleIeObjectType,
 } from '~modules/ie-objects/ie-objects.types';
 import type { Organisation } from '~modules/organisations/organisations.types';
@@ -87,14 +83,16 @@ import type { Organisation } from '~modules/organisations/organisations.types';
 import { OrganisationsService } from '~modules/organisations/services/organisations.service';
 
 import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
-import { AvoStillsStillInfo } from '@viaa/avo2-types';
+import { AvoStillsStillInfo, AvoUserCommonUser } from '@viaa/avo2-types';
 import { addDays } from 'date-fns';
 import { limitAccessToObjectDetails } from '~modules/ie-objects/helpers/limit-access-to-object-details';
 import { mapDcTermsFormatToSimpleType } from '~modules/ie-objects/helpers/map-dc-terms-format-to-simple-type';
 import { IE_OBJECT_INTRA_CP_LICENSES } from '~modules/ie-objects/ie-objects.conts';
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
+import { MediahavenJobsWatcherService } from '~modules/mediahaven-jobs-watcher/services/mediahaven-jobs-watcher.service';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
+import { UsersService } from '~modules/users/services/users.service';
 import { AUDIO_WAVE_FORM_URL } from '~shared/consts/audio-wave-form-url';
 import { customError } from '~shared/helpers/custom-error';
 import { PaginationHelper } from '~shared/helpers/pagination';
@@ -108,7 +106,9 @@ export class MaterialRequestsService {
 		private organisationsService: OrganisationsService,
 		private spacesService: SpacesService,
 		private ieObjectsService: IeObjectsService,
-		private videoStillsService: VideoStillsService
+		private videoStillsService: VideoStillsService,
+		private mediahavenJobWatcherService: MediahavenJobsWatcherService,
+		private usersService: UsersService
 	) {}
 
 	public async findAll(
@@ -461,6 +461,49 @@ export class MaterialRequestsService {
 		return response.delete_app_material_requests.affected_rows;
 	}
 
+	private validateStatusTransition(
+		currentRequest: MaterialRequest,
+		newStatus: Lookup_App_Material_Request_Status_Enum,
+		userId: string
+	) {
+		if (currentRequest.status === Lookup_App_Material_Request_Status_Enum.New) {
+			// The current status is still NEW, and we are not trying to set the status to cancelled or pending => Not allowed
+			if (
+				newStatus !== Lookup_App_Material_Request_Status_Enum.Cancelled &&
+				newStatus !== Lookup_App_Material_Request_Status_Enum.Pending
+			) {
+				throw new BadRequestException(
+					`Material request (${currentRequest.id}) could not be set to ${newStatus}.`
+				);
+			}
+
+			// Trying to update the status to cancelled, but user is not the one who made the request
+			if (
+				newStatus === Lookup_App_Material_Request_Status_Enum.Cancelled &&
+				currentRequest.requesterId !== userId
+			) {
+				throw new BadRequestException(
+					`Material request (${currentRequest.id}) could not be set to ${newStatus}.`
+				);
+			}
+		} else if (currentRequest.status === Lookup_App_Material_Request_Status_Enum.Pending) {
+			// The current status is PENDING, and we are not trying to set the status to APPROVED or DENIED => Not allowed
+			if (
+				newStatus !== Lookup_App_Material_Request_Status_Enum.Approved &&
+				newStatus !== Lookup_App_Material_Request_Status_Enum.Denied
+			) {
+				throw new BadRequestException(
+					`Material request (${currentRequest.id}) could not be set to ${newStatus}.`
+				);
+			}
+		} else {
+			// No other status updates are allowed
+			throw new BadRequestException(
+				`Material request (${currentRequest.id}) could not be set to ${newStatus}.`
+			);
+		}
+	}
+
 	public async updateMaterialRequestStatus(
 		materialRequestId: string,
 		statusOptions: UpdateMaterialRequestStatusDto,
@@ -472,42 +515,7 @@ export class MaterialRequestsService {
 
 		const { status, motivation } = statusOptions;
 
-		if (currentRequest.status === Lookup_App_Material_Request_Status_Enum.New) {
-			// The current status is still NEW, and we are not trying to set the status to cancelled or pending => Not allowed
-			if (
-				status !== Lookup_App_Material_Request_Status_Enum.Cancelled &&
-				status !== Lookup_App_Material_Request_Status_Enum.Pending
-			) {
-				throw new BadRequestException(
-					`Material request (${materialRequestId}) could not be set to ${status}.`
-				);
-			}
-
-			// Trying to update the status to cancelled, but user is not the one who made the request
-			if (
-				status === Lookup_App_Material_Request_Status_Enum.Cancelled &&
-				currentRequest.requesterId !== user.getId()
-			) {
-				throw new BadRequestException(
-					`Material request (${materialRequestId}) could not be set to ${status}.`
-				);
-			}
-		} else if (currentRequest.status === Lookup_App_Material_Request_Status_Enum.Pending) {
-			// The current status is PENDING, and we are not trying to set the status to APPROVED or DENIED => Not allowed
-			if (
-				status !== Lookup_App_Material_Request_Status_Enum.Approved &&
-				status !== Lookup_App_Material_Request_Status_Enum.Denied
-			) {
-				throw new BadRequestException(
-					`Material request (${materialRequestId}) could not be set to ${status}.`
-				);
-			}
-		} else {
-			// No other status updates are allowed
-			throw new BadRequestException(
-				`Material request (${materialRequestId}) could not be set to ${status}.`
-			);
-		}
+		this.validateStatusTransition(currentRequest, status, user.getId());
 
 		const updateMaterialRequest: Partial<GqlMaterialRequest> = {
 			status: status,
@@ -560,38 +568,54 @@ export class MaterialRequestsService {
 			ip
 		);
 
+		if (updatedRequest.status === Lookup_App_Material_Request_Status_Enum.Approved) {
+			// If the request is approved, we need to start prepping the download
+			const materialRequestForDownload = await this.getMaterialRequestForDownloadJob(
+				updatedRequest.id
+			);
+			await this.mediahavenJobWatcherService.createExportJob(materialRequestForDownload);
+		}
+
 		const emailTemplateToSend = MAP_MATERIAL_REQUEST_STATUS_TO_EMAIL_TEMPLATE[status];
 
 		if (updatedRequest && emailTemplateToSend) {
-			await this.sentStatusUpdateEmail(emailTemplateToSend, updatedRequest, user);
+			const requesterUser = await this.usersService.getById(updatedRequest.requesterId);
+			await this.sentStatusUpdateEmail(emailTemplateToSend, updatedRequest, requesterUser);
 		}
 
 		return updatedRequest;
 	}
 
+	public isSendToMaintainerEmailTemplate(template: EmailTemplate): boolean {
+		return (
+			template === EmailTemplate.MATERIAL_REQUEST_REQUESTER_CANCELLED ||
+			template === EmailTemplate.MATERIAL_REQUEST_DOWNLOAD_READY_MAINTAINER
+		);
+	}
+
 	public async sentStatusUpdateEmail(
 		template: EmailTemplate,
 		request: MaterialRequest,
-		user: SessionUserEntity
+		requesterUser: AvoUserCommonUser
 	): Promise<void> {
 		try {
 			// Emailed maintainer when the requester cancelled their request
 			// Emailed the requester when the maintainer approved or denied the request
-			const sentToMaintainer = template === EmailTemplate.MATERIAL_REQUEST_REQUESTER_CANCELLED;
+			const sentToMaintainer = this.isSendToMaintainerEmailTemplate(template);
 
 			const emailInfo: MaterialRequestEmailInfo = {
 				to: sentToMaintainer ? request.contactMail : request.requesterMail,
 				replyTo: sentToMaintainer ? request.requesterMail : null,
 				template,
+				language: sentToMaintainer ? Locale.Nl : (requesterUser.language as Lookup_Languages_Enum),
 				materialRequests: [request],
 				sendRequestListDto: {
 					type: request.requesterCapacity,
 					organisation: request.requesterOrganisation,
 					requestGroupName: request.requestGroupName,
 				},
-				firstName: user.getFirstName(),
-				lastName: user.getLastName(),
-				language: user.getLanguage(),
+				requesterFirstName: requesterUser.firstName,
+				requesterLastName: requesterUser.lastName,
 			};
 
 			await this.campaignMonitorService.sendForMaterialRequest(emailInfo);
@@ -599,7 +623,7 @@ export class MaterialRequestsService {
 			const error = customError('Failed to send email about material request status update', err, {
 				template,
 				request,
-				user,
+				requesterUser,
 			});
 			console.error(error);
 			throw error;
@@ -635,8 +659,8 @@ export class MaterialRequestsService {
 						template: EmailTemplate.MATERIAL_REQUEST_MAINTAINER,
 						materialRequests: materialRequests,
 						sendRequestListDto,
-						firstName: userInfo.firstName,
-						lastName: userInfo.lastName,
+						requesterFirstName: userInfo.firstName,
+						requesterLastName: userInfo.lastName,
 						language: userInfo.language,
 					};
 					await this.campaignMonitorService.sendForMaterialRequest(emailInfo);
@@ -650,8 +674,8 @@ export class MaterialRequestsService {
 				template: EmailTemplate.MATERIAL_REQUEST_REQUESTER,
 				materialRequests: materialRequests,
 				sendRequestListDto,
-				firstName: userInfo.firstName,
-				lastName: userInfo.lastName,
+				requesterFirstName: userInfo.firstName,
+				requesterLastName: userInfo.lastName,
 				language: userInfo.language,
 			};
 			await this.campaignMonitorService.sendForMaterialRequest(emailInfo);
@@ -991,6 +1015,20 @@ export class MaterialRequestsService {
 		return response.app_material_requests?.map(this.adaptMaterialRequestsForDownloadJobs);
 	}
 
+	public async getMaterialRequestForDownloadJob(
+		materialRequestId: string
+	): Promise<MaterialRequestForDownload | null> {
+		const response = await this.dataService.execute<
+			GetMaterialRequestForDownloadJobQuery,
+			GetMaterialRequestForDownloadJobQueryVariables
+		>(GetMaterialRequestForDownloadJobDocument, {
+			materialRequestId,
+		});
+
+		const materialRequest = response.app_material_requests?.[0];
+		return materialRequest ? this.adaptMaterialRequestsForDownloadJobs(materialRequest) : null;
+	}
+
 	/**
 	 * Update the download job id for a material request
 	 * also increments the download retries
@@ -1001,7 +1039,7 @@ export class MaterialRequestsService {
 	public async updateMaterialRequest(
 		materialRequestId: string,
 		setFields: App_Material_Requests_Set_Input
-	) {
+	): Promise<MaterialRequest> {
 		const response = await this.dataService.execute<
 			UpdateMaterialRequestMutation,
 			UpdateMaterialRequestMutationVariables
