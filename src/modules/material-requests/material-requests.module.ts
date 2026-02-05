@@ -10,6 +10,7 @@ import { IeObjectsModule } from '~modules/ie-objects';
 import { MediahavenJobsWatcherModule } from '~modules/mediahaven-jobs-watcher/mediahaven-jobs-watcher.module';
 import { OrganisationsModule } from '~modules/organisations/organisations.module';
 import { SpacesModule } from '~modules/spaces';
+import { UsersModule } from '~modules/users';
 
 @Module({
 	controllers: [MaterialRequestsController],
@@ -23,6 +24,7 @@ import { SpacesModule } from '~modules/spaces';
 		IeObjectsModule,
 		VideoStillsModule,
 		MediahavenJobsWatcherModule,
+		UsersModule,
 	],
 	exports: [MaterialRequestsService],
 })

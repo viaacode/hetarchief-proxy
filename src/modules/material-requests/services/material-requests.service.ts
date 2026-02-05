@@ -1,4 +1,4 @@
-import { DataService, Locale, StillsObjectType, UsersService, VideoStillsService } from '@meemoo/admin-core-api';
+import { DataService, Locale, StillsObjectType, VideoStillsService } from '@meemoo/admin-core-api';
 import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { compact, groupBy, intersection, isArray, isEmpty, isNil, kebabCase, set } from 'lodash';
@@ -92,6 +92,7 @@ import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.servic
 import { MediahavenJobsWatcherService } from '~modules/mediahaven-jobs-watcher/services/mediahaven-jobs-watcher.service';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
+import { UsersService } from '~modules/users/services/users.service';
 import { AUDIO_WAVE_FORM_URL } from '~shared/consts/audio-wave-form-url';
 import { customError } from '~shared/helpers/custom-error';
 import { PaginationHelper } from '~shared/helpers/pagination';

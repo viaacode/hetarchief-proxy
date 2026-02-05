@@ -1,6 +1,6 @@
-import { DataService, MediahavenService, UsersService } from '@meemoo/admin-core-api';
+import { DataService, MediahavenService } from '@meemoo/admin-core-api';
 import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { isAfter, subHours } from 'date-fns';
 import { compact } from 'lodash';
@@ -29,11 +29,13 @@ import {
 	MamJobStatus,
 	MediahavenJobInfo,
 } from '~modules/mediahaven-jobs-watcher/mediahaven-jobs-watcher.types';
+import { UsersService } from '~modules/users/services/users.service';
 
 @Injectable()
 export class MediahavenJobsWatcherService {
 	constructor(
 		private configService: ConfigService<Configuration>,
+		@Inject(forwardRef(() => MaterialRequestsService))
 		private materialRequestsService: MaterialRequestsService,
 		private dataService: DataService,
 		private mediahavenService: MediahavenService,
