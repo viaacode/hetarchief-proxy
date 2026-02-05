@@ -78,8 +78,8 @@ import { convertSchemaIdentifierToId } from '~modules/ie-objects/helpers/convert
 import {
 	IeObjectAccessThrough,
 	IeObjectLicense,
-	IeObjectsVisitorSpaceInfo,
 	IeObjectType,
+	IeObjectsVisitorSpaceInfo,
 	SimpleIeObjectType,
 } from '~modules/ie-objects/ie-objects.types';
 import type { Organisation } from '~modules/organisations/organisations.types';
@@ -835,7 +835,7 @@ export class MaterialRequestsService {
 				);
 			} else {
 				// The user doesn't have access to the ie object essence (video), so we should not show any thumbnail for this material request
-				return undefined;
+				objectThumbnailUrl = undefined;
 			}
 		} else {
 			// Old material request flow
