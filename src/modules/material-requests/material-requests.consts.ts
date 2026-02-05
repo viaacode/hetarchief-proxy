@@ -1,9 +1,7 @@
+import { Lookup_App_Material_Request_Status_Enum } from '~generated/graphql-db-types-hetarchief';
 import { EmailTemplate } from '~modules/campaign-monitor/campaign-monitor.types';
 import { LogEventType } from '~modules/events/types';
-import {
-	MaterialRequest,
-	MaterialRequestStatus,
-} from '~modules/material-requests/material-requests.types';
+import { MaterialRequest } from '~modules/material-requests/material-requests.types';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupName } from '~modules/users/types';
 
@@ -23,15 +21,18 @@ export const ORDER_PROP_TO_DB_PROP: Partial<Record<keyof MaterialRequest, string
 };
 
 export const MAP_MATERIAL_REQUEST_STATUS_TO_EMAIL_TEMPLATE = {
-	[MaterialRequestStatus.CANCELLED]: EmailTemplate.MATERIAL_REQUEST_REQUESTER_CANCELLED,
-	[MaterialRequestStatus.APPROVED]: EmailTemplate.MATERIAL_REQUEST_MAINTAINER_APPROVED,
-	[MaterialRequestStatus.DENIED]: EmailTemplate.MATERIAL_REQUEST_MAINTAINER_DENIED,
+	[Lookup_App_Material_Request_Status_Enum.Cancelled]:
+		EmailTemplate.MATERIAL_REQUEST_REQUESTER_CANCELLED,
+	[Lookup_App_Material_Request_Status_Enum.Approved]:
+		EmailTemplate.MATERIAL_REQUEST_MAINTAINER_APPROVED,
+	[Lookup_App_Material_Request_Status_Enum.Denied]:
+		EmailTemplate.MATERIAL_REQUEST_MAINTAINER_DENIED,
 };
 
 export const MAP_MATERIAL_REQUEST_STATUS_TO_EVENT_TYPE = {
-	[MaterialRequestStatus.CANCELLED]: LogEventType.ITEM_REQUEST_CANCEL,
-	[MaterialRequestStatus.APPROVED]: LogEventType.ITEM_REQUEST_APPROVE,
-	[MaterialRequestStatus.DENIED]: LogEventType.ITEM_REQUEST_DENY,
+	[Lookup_App_Material_Request_Status_Enum.Cancelled]: LogEventType.ITEM_REQUEST_CANCEL,
+	[Lookup_App_Material_Request_Status_Enum.Approved]: LogEventType.ITEM_REQUEST_APPROVE,
+	[Lookup_App_Material_Request_Status_Enum.Denied]: LogEventType.ITEM_REQUEST_DENY,
 };
 
 export const mapUserToGroupNameAndKeyUser = (user: SessionUserEntity): string => {

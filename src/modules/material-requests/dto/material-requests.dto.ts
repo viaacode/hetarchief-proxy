@@ -1,21 +1,11 @@
-import { Lookup_App_Material_Request_Requester_Capacity_Enum } from '@meemoo/admin-core-api/dist/src/modules/shared/generated/graphql-db-types-hetarchief';
+import {
+	Lookup_App_Material_Request_Requester_Capacity_Enum,
+} from '@meemoo/admin-core-api/dist/src/modules/shared/generated/graphql-db-types-hetarchief';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Transform, Type } from 'class-transformer';
-import {
-	IsArray,
-	IsBoolean,
-	IsEnum,
-	IsNumber,
-	IsObject,
-	IsOptional,
-	IsString,
-} from 'class-validator';
+import { IsArray, IsBoolean, IsEnum, IsNumber, IsObject, IsOptional, IsString } from 'class-validator';
 
-import {
-	MaterialRequestOrderProp,
-	MaterialRequestStatus,
-	MaterialRequestType,
-} from '../material-requests.types';
+import { MaterialRequestOrderProp, MaterialRequestType } from '../material-requests.types';
 
 import { Lookup_App_Material_Request_Status_Enum } from '~generated/graphql-db-types-hetarchief';
 import { commaSeparatedStringToArray } from '~shared/helpers/comma-separated-string-to-array';
@@ -46,14 +36,14 @@ export class MaterialRequestsQueryDto {
 	type? = undefined;
 
 	@IsArray()
-	@IsEnum(MaterialRequestStatus, { each: true })
+	@IsEnum(Lookup_App_Material_Request_Status_Enum, { each: true })
 	@IsOptional()
 	@ApiPropertyOptional({
 		type: String,
 		isArray: true,
 		description: 'Which statuses of material requests are requested',
 		default: undefined,
-		enum: MaterialRequestStatus,
+		enum: Lookup_App_Material_Request_Status_Enum,
 	})
 	@Transform(commaSeparatedStringToArray)
 	status? = undefined;

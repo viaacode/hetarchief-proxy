@@ -1,16 +1,13 @@
 import { AvoAuthIdpType, PermissionName } from '@viaa/avo2-types';
 
-import {
-	type MaterialRequest,
-	MaterialRequestStatus,
-	MaterialRequestType,
-} from '../material-requests.types';
+import { type MaterialRequest, MaterialRequestType } from '../material-requests.types';
 
 import {
 	type FindMaintainersWithMaterialRequestsQuery,
 	type FindMaterialRequestsByIdQuery,
 	type FindMaterialRequestsQuery,
 	Lookup_App_Material_Request_Requester_Capacity_Enum,
+	Lookup_App_Material_Request_Status_Enum,
 	Lookup_App_Material_Request_Type_Enum,
 } from '~generated/graphql-db-types-hetarchief';
 import { IeObjectType } from '~modules/ie-objects/ie-objects.types';
@@ -29,7 +26,7 @@ export const mockGqlMaterialRequest1: FindMaterialRequestsQuery['app_material_re
 	updated_at: '2022-03-18T08:32:57.256264',
 	type: MaterialRequestType.REUSE as any,
 	is_pending: true,
-	status: MaterialRequestStatus.NONE as any,
+	status: Lookup_App_Material_Request_Status_Enum.None as any,
 	organisation: null,
 	requester_capacity: Lookup_App_Material_Request_Requester_Capacity_Enum.Education as any,
 	download_url: null,
@@ -76,7 +73,7 @@ export const mockGqlMaterialRequest2: FindMaterialRequestsByIdQuery['app_materia
 	updated_at: '2022-03-18T08:32:57.256264',
 	type: MaterialRequestType.REUSE as any,
 	is_pending: true,
-	status: MaterialRequestStatus.NONE as any,
+	status: Lookup_App_Material_Request_Status_Enum.None as any,
 	organisation: null,
 	requester_capacity: Lookup_App_Material_Request_Requester_Capacity_Enum.Education as any,
 	requested_by: {
@@ -149,7 +146,7 @@ export const mockMaterialRequest1: MaterialRequest = {
 	cancelledAt: undefined,
 	type: Lookup_App_Material_Request_Type_Enum.Reuse,
 	isPending: true,
-	status: MaterialRequestStatus.NONE as any,
+	status: Lookup_App_Material_Request_Status_Enum.None as any,
 	requesterOrganisation: null,
 	requesterOrganisationSector: null,
 	requesterCapacity: Lookup_App_Material_Request_Requester_Capacity_Enum.Education,
@@ -187,7 +184,7 @@ const mockMaterialRequest2: MaterialRequest = {
 	cancelledAt: undefined,
 	type: Lookup_App_Material_Request_Type_Enum.MoreInfo,
 	isPending: true,
-	status: MaterialRequestStatus.NONE as any,
+	status: Lookup_App_Material_Request_Status_Enum.None as any,
 	requesterOrganisation: null,
 	requesterOrganisationSector: null,
 	requesterCapacity: Lookup_App_Material_Request_Requester_Capacity_Enum.Education,

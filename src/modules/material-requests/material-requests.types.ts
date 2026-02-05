@@ -8,12 +8,7 @@ import {
 	Lookup_App_Material_Request_Type_Enum,
 	type UpdateMaterialRequestMutation,
 } from '~generated/graphql-db-types-hetarchief';
-import {
-	IeObjectAccessThrough,
-	IeObjectLicense,
-	IeObjectRepresentation,
-	IeObjectType,
-} from '~modules/ie-objects/ie-objects.types';
+import { IeObjectAccessThrough, IeObjectLicense, IeObjectRepresentation, IeObjectType } from '~modules/ie-objects/ie-objects.types';
 import type { Locale } from '~shared/types/types';
 
 export interface MaterialRequest {
@@ -146,15 +141,6 @@ export enum MaterialRequestType {
 	REUSE = 'REUSE',
 	MORE_INFO = 'MORE_INFO',
 	VIEW = 'VIEW',
-}
-
-export enum MaterialRequestStatus {
-	NEW = 'NEW',
-	PENDING = 'PENDING',
-	APPROVED = 'APPROVED',
-	DENIED = 'DENIED',
-	CANCELLED = 'CANCELLED',
-	NONE = 'NONE',
 }
 
 export enum MaterialRequestRequesterCapacity {
