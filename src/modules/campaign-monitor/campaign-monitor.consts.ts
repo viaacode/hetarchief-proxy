@@ -31,6 +31,12 @@ export const getTemplateId = (template: string, language: Locale): string => {
 		[EmailTemplate.MATERIAL_REQUEST_MAINTAINER_DENIED]: process.env[
 			`CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_MAINTAINER_DENIED__${language.toUpperCase()}`
 		] as string,
+		[EmailTemplate.MATERIAL_REQUEST_DOWNLOAD_READY_MAINTAINER]: process.env[
+			`CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_DOWNLOAD_READY_MAINTAINER__${language.toUpperCase()}`
+		] as string,
+		[EmailTemplate.MATERIAL_REQUEST_DOWNLOAD_READY_REQUESTER]: process.env[
+			`CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_DOWNLOAD_READY_REQUESTER__${language.toUpperCase()}`
+		] as string,
 		[EmailTemplate.NEWSLETTER_CONFIRMATION]: process.env[
 			`CAMPAIGN_MONITOR_TEMPLATE_CONFIRMATION_NEWSLETTER_SUBSCRIPTION__${language.toUpperCase()}`
 		] as string,

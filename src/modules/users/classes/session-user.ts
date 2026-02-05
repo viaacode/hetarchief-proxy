@@ -1,8 +1,9 @@
 import { Logger } from '@nestjs/common';
-import { PermissionName } from '@viaa/avo2-types';
+import { AvoUserCommonUser, PermissionName } from '@viaa/avo2-types';
 
 import { GroupName, User } from '../types';
 
+import { convertUserInfoToCommonUser, UserInfoType } from '@meemoo/admin-core-api';
 import type { IeObjectSector } from '~modules/ie-objects/ie-objects.types';
 import { Locale } from '~shared/types/types';
 
@@ -40,6 +41,10 @@ export class SessionUserEntity {
 
 	public getUser(): User {
 		return this.user;
+	}
+
+	public getCommonUser(): AvoUserCommonUser {
+		return convertUserInfoToCommonUser(this.user, UserInfoType.HetArchiefUser);
 	}
 
 	public getId(): string {

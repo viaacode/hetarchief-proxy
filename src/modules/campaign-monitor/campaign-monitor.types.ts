@@ -1,8 +1,4 @@
-import {
-	CampaignMonitorConfirmationData,
-	CampaignMonitorMaterialRequestData,
-	CampaignMonitorVisitData,
-} from './dto/campaign-monitor.dto';
+import { CampaignMonitorConfirmationData, CampaignMonitorMaterialRequestData, CampaignMonitorVisitData } from './dto/campaign-monitor.dto';
 
 import { SendRequestListDto } from '~modules/material-requests/dto/material-requests.dto';
 import type { MaterialRequest } from '~modules/material-requests/material-requests.types';
@@ -19,6 +15,8 @@ export enum EmailTemplate {
 	MATERIAL_REQUEST_REQUESTER_CANCELLED = 'materialRequestRequesterCancelled',
 	MATERIAL_REQUEST_MAINTAINER_APPROVED = 'materialRequestMaintainerApproved',
 	MATERIAL_REQUEST_MAINTAINER_DENIED = 'materialRequestMaintainerDenied',
+	MATERIAL_REQUEST_DOWNLOAD_READY_MAINTAINER = 'materialRequestDownloadReadyMaintainer',
+	MATERIAL_REQUEST_DOWNLOAD_READY_REQUESTER = 'materialRequestDownloadReadyRequester',
 	NEWSLETTER_CONFIRMATION = 'newsletterConfirmation',
 }
 
@@ -33,11 +31,11 @@ export interface MaterialRequestEmailInfo {
 	to?: string;
 	replyTo: string;
 	template: EmailTemplate;
+	language: Locale; // Language that the email should be displayed in, to the receiver of the email
 	materialRequests: MaterialRequest[];
 	sendRequestListDto: SendRequestListDto;
-	firstName: string;
-	lastName: string;
-	language: Locale;
+	requesterFirstName: string;
+	requesterLastName: string;
 }
 
 export interface CampaignMonitorEmailInfo {

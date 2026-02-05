@@ -1,11 +1,5 @@
 import { TranslationsService } from '@meemoo/admin-core-api';
-import {
-	BadRequestException,
-	Injectable,
-	InternalServerErrorException,
-	Logger,
-	type OnApplicationBootstrap,
-} from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, Logger, type OnApplicationBootstrap } from '@nestjs/common';
 
 import { ConfigService } from '@nestjs/config';
 import * as promiseUtils from 'blend-promise-utils';
@@ -28,8 +22,8 @@ import {
 	type VisitEmailInfo,
 } from '../campaign-monitor.types';
 import {
-	CampaignMonitorConfirmMailQueryDto,
 	CampaignMonitorConfirmationData,
+	CampaignMonitorConfirmMailQueryDto,
 	CampaignMonitorData,
 	CampaignMonitorMaterialRequestData,
 	CampaignMonitorNewsletterUpdatePreferencesQueryDto,
@@ -39,10 +33,7 @@ import {
 } from '../dto/campaign-monitor.dto';
 import { decryptData, encryptData } from '../helpers/crypto-helper';
 
-import {
-	MaterialRequestRequesterCapacity,
-	MaterialRequestType,
-} from '~modules/material-requests/material-requests.types';
+import { MaterialRequestRequesterCapacity, MaterialRequestType } from '~modules/material-requests/material-requests.types';
 import type { VisitRequest } from '~modules/visits/types';
 import { customError } from '~shared/helpers/custom-error';
 import { checkRequiredEnvs } from '~shared/helpers/env-check';
@@ -537,9 +528,10 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 		// Maintainer Template
 		if (emailInfo.template === EmailTemplate.MATERIAL_REQUEST_MAINTAINER) {
 			return {
-				user_firstname: emailInfo.firstName,
-				user_lastname: emailInfo.lastName,
+				user_firstname: emailInfo.requesterFirstName,
+				user_lastname: emailInfo.requesterLastName,
 				cp_name: emailInfo.materialRequests[0]?.maintainerName,
+				cp_email: emailInfo.materialRequests[0]?.contactMail,
 				request_list: emailInfo.materialRequests.map((materialRequest) => {
 					return {
 						title: materialRequest.objectSchemaName,
@@ -561,8 +553,8 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 
 		// Requester Template
 		return {
-			user_firstname: emailInfo.firstName,
-			user_lastname: emailInfo.lastName,
+			user_firstname: emailInfo.requesterFirstName,
+			user_lastname: emailInfo.requesterLastName,
 			request_list: emailInfo.materialRequests.map((materialRequest) => ({
 				title: materialRequest.objectSchemaName,
 				cp_name: materialRequest.maintainerName,
