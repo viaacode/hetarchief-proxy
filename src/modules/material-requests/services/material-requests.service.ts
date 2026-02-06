@@ -1,5 +1,10 @@
 import { DataService, Locale, StillsObjectType, VideoStillsService } from '@meemoo/admin-core-api';
-import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import {
+	BadRequestException,
+	Injectable,
+	InternalServerErrorException,
+	NotFoundException,
+} from '@nestjs/common';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { compact, groupBy, intersection, isArray, isEmpty, isNil, kebabCase, set } from 'lodash';
 
@@ -67,15 +72,18 @@ import {
 	UpdateMaterialRequestStatusMutation,
 	UpdateMaterialRequestStatusMutationVariables,
 } from '~generated/graphql-db-types-hetarchief';
-import { EmailTemplate, type MaterialRequestEmailInfo } from '~modules/campaign-monitor/campaign-monitor.types';
+import {
+	EmailTemplate,
+	type MaterialRequestEmailInfo,
+} from '~modules/campaign-monitor/campaign-monitor.types';
 
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 import { convertSchemaIdentifierToId } from '~modules/ie-objects/helpers/convert-schema-identifier-to-id';
 import {
 	IeObjectAccessThrough,
 	IeObjectLicense,
-	IeObjectsVisitorSpaceInfo,
 	IeObjectType,
+	IeObjectsVisitorSpaceInfo,
 	SimpleIeObjectType,
 } from '~modules/ie-objects/ie-objects.types';
 import type { Organisation } from '~modules/organisations/organisations.types';
@@ -747,9 +755,9 @@ export class MaterialRequestsService {
 	): Promise<string | null> {
 		const startTime = Number.parseInt(reuseForm?.startTime.toString());
 
-		const mediaFile = await this.ieObjectsService.getVideoFileByRepresentationId(representationId);
-
 		if (startTime && startTime > 0 && representationId) {
+			const mediaFile =
+				await this.ieObjectsService.getVideoFileByRepresentationId(representationId);
 			const stillInfos = await this.videoStillsService.getFirstVideoStills([
 				{
 					id: mediaFile.id,
