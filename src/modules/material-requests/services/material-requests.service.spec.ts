@@ -1,6 +1,6 @@
 import { DataService, VideoStillsService } from '@meemoo/admin-core-api';
 import { Test, type TestingModule } from '@nestjs/testing';
-import { type MockInstance, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
 
 import { CampaignMonitorService } from '../../campaign-monitor/services/campaign-monitor.service';
 import { MaterialRequestType } from '../material-requests.types';
@@ -25,10 +25,12 @@ import type {
 } from '~generated/graphql-db-types-hetarchief';
 import { IeObjectLicense, IeObjectsVisitorSpaceInfo } from '~modules/ie-objects/ie-objects.types';
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
+import { MediahavenJobsWatcherService } from '~modules/mediahaven-jobs-watcher/services/mediahaven-jobs-watcher.service';
 import { mockOrganisations } from '~modules/organisations/mocks/organisations.mocks';
 import { OrganisationsService } from '~modules/organisations/services/organisations.service';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
+import { UsersService } from '~modules/users/services/users.service';
 import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockDataService: Partial<Record<keyof DataService, MockInstance>> = {
@@ -76,6 +78,19 @@ const mockVideoStillsService: Partial<Record<keyof VideoStillsService, MockInsta
 const mockIeObjectsVisitorSpaceInfo: IeObjectsVisitorSpaceInfo = {
 	objectIds: [],
 	visitorSpaceIds: [],
+};
+
+const mockMediahavenJobsWatcherService: Partial<
+	Record<keyof MediahavenJobsWatcherService, MockInstance>
+> = {
+	checkJobs: vi.fn(() => Promise.resolve()),
+	createExportJob: vi.fn(() => Promise.resolve('mock-job-id')),
+};
+
+const mockUsersService: Partial<Record<keyof UsersService, MockInstance>> = {
+	getUserByIdentityId: vi.fn(),
+	createUserWithIdp: vi.fn(),
+	updateUser: vi.fn(),
 };
 
 const getDefaultMaterialRequestByIdResponse = (): {
@@ -140,6 +155,14 @@ describe('MaterialRequestsService', () => {
 				{
 					provide: VideoStillsService,
 					useValue: mockVideoStillsService,
+				},
+				{
+					provide: MediahavenJobsWatcherService,
+					useValue: mockMediahavenJobsWatcherService,
+				},
+				{
+					provide: UsersService,
+					useValue: mockUsersService,
 				},
 			],
 		})
@@ -239,8 +262,8 @@ describe('MaterialRequestsService', () => {
 				mockGqlMaterialRequest2.intellectualEntity.dctermsFormat[0].dcterms_format
 			);
 			expect(adapted.objectThumbnailUrl).toEqual(
-			mockGqlMaterialRequest2.intellectualEntity.schemaThumbnail.schema_thumbnail_url[0]
-		);
+				mockGqlMaterialRequest2.intellectualEntity.schemaThumbnail.schema_thumbnail_url[0]
+			);
 			expect(adapted.reuseForm).toEqual({
 				representationId: mockGqlMaterialRequest2.material_request_reuse_form_values[0].value,
 				startTime: null,
