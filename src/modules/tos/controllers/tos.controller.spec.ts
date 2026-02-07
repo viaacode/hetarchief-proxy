@@ -6,6 +6,7 @@ import type { Tos } from '../types';
 
 import { TosController } from './tos.controller';
 
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockTosResponse: Tos = {
@@ -16,6 +17,10 @@ const mockTosService = {
 	findFirst: vi.fn(),
 	getTos: vi.fn(),
 	getTosLastUpdatedAt: vi.fn(),
+};
+
+const mockCacheManager = {
+	wrap: vi.fn((key, cb) => cb()),
 };
 
 describe('TosController', () => {
@@ -29,6 +34,10 @@ describe('TosController', () => {
 				{
 					provide: TosService,
 					useValue: mockTosService,
+				},
+				{
+					provide: CACHE_MANAGER,
+					useValue: mockCacheManager,
 				},
 			],
 		})
