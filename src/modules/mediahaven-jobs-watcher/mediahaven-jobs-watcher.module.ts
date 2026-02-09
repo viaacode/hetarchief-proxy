@@ -9,7 +9,13 @@ import { MediahavenJobsWatcherService } from '~modules/mediahaven-jobs-watcher/s
 @Module({
 	controllers: [MediahavenJobsWatcherController],
 	providers: [MediahavenJobsWatcherService],
-	imports: [forwardRef(() => MaterialRequestsModule), ConfigModule, DataModule, MediahavenModule, UsersModule],
+	imports: [
+		forwardRef(() => MaterialRequestsModule),
+		ConfigModule,
+		DataModule,
+		MediahavenModule,
+		UsersModule,
+	],
 	exports: [MediahavenJobsWatcherService],
 })
 export class MediahavenJobsWatcherModule {}

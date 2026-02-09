@@ -1,4 +1,8 @@
-import { CampaignMonitorConfirmationData, CampaignMonitorMaterialRequestData, CampaignMonitorVisitData } from './dto/campaign-monitor.dto';
+import {
+	CampaignMonitorConfirmationData,
+	CampaignMonitorMaterialRequestData,
+	CampaignMonitorVisitData,
+} from './dto/campaign-monitor.dto';
 
 import { SendRequestListDto } from '~modules/material-requests/dto/material-requests.dto';
 import type { MaterialRequest } from '~modules/material-requests/material-requests.types';
