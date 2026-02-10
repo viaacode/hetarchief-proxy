@@ -1,10 +1,5 @@
 import { DataService, Locale, StillsObjectType, VideoStillsService } from '@meemoo/admin-core-api';
-import {
-	BadRequestException,
-	Injectable,
-	InternalServerErrorException,
-	NotFoundException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { compact, groupBy, intersection, isArray, isEmpty, isNil, kebabCase, set } from 'lodash';
 
@@ -72,18 +67,14 @@ import {
 	UpdateMaterialRequestStatusMutation,
 	UpdateMaterialRequestStatusMutationVariables,
 } from '~generated/graphql-db-types-hetarchief';
-import {
-	EmailTemplate,
-	type MaterialRequestEmailInfo,
-} from '~modules/campaign-monitor/campaign-monitor.types';
+import { EmailTemplate, type MaterialRequestEmailInfo } from '~modules/campaign-monitor/campaign-monitor.types';
 
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
-import { convertSchemaIdentifierToId } from '~modules/ie-objects/helpers/convert-schema-identifier-to-id';
 import {
 	IeObjectAccessThrough,
 	IeObjectLicense,
-	IeObjectType,
 	IeObjectsVisitorSpaceInfo,
+	IeObjectType,
 	SimpleIeObjectType,
 } from '~modules/ie-objects/ie-objects.types';
 import type { Organisation } from '~modules/organisations/organisations.types';
@@ -342,10 +333,9 @@ export class MaterialRequestsService {
 		referer: string,
 		ip: string
 	): Promise<MaterialRequest> {
-		const ieObjectId = convertSchemaIdentifierToId(createMaterialRequestDto.objectSchemaIdentifier);
 		const variables: InsertMaterialRequestMutationVariables = {
 			newMaterialRequest: {
-				ie_object_id: ieObjectId,
+				ie_object_id: createMaterialRequestDto.objectId,
 				profile_id: user.getId(),
 				reason: createMaterialRequestDto.reason,
 				type: createMaterialRequestDto.type,
@@ -829,13 +819,14 @@ export class MaterialRequestsService {
 			reuseForm = null;
 		}
 
+		const objectId = graphQlMaterialRequest.intellectualEntity?.id;
 		const objectSchemaIdentifier = graphQlMaterialRequest.intellectualEntity?.schema_identifier;
 		let objectAccessThrough: IeObjectAccessThrough[] = [];
 		let objectLicences: IeObjectLicense[] = [];
 		let hasAccessToEssence = false;
 		if (user) {
 			const access = await this.getAccessThroughAndLicences(
-				objectSchemaIdentifier,
+				objectId,
 				visitorSpaceAccessInfo,
 				user,
 				ip
@@ -893,7 +884,7 @@ export class MaterialRequestsService {
 
 		return {
 			id: graphQlMaterialRequest.id,
-			objectId: graphQlMaterialRequest.ie_object_id,
+			objectId,
 			objectSchemaIdentifier,
 			objectSchemaName: graphQlMaterialRequest.intellectualEntity?.schema_name,
 			objectDctermsFormat: graphQlMaterialRequest.intellectualEntity?.dctermsFormat?.[0]
@@ -989,7 +980,7 @@ export class MaterialRequestsService {
 	}
 
 	public async getAccessThroughAndLicences(
-		objectSchemaIdentifier: string,
+		objectId: string,
 		visitorSpaceAccessInfo: IeObjectsVisitorSpaceInfo,
 		user: SessionUserEntity,
 		ip: string
@@ -998,11 +989,7 @@ export class MaterialRequestsService {
 		objectLicences: IeObjectLicense[];
 		hasAccessToEssence: boolean;
 	}> {
-		const objectMetadata = await this.ieObjectsService.findByIeObjectId(
-			convertSchemaIdentifierToId(objectSchemaIdentifier),
-			null,
-			ip
-		);
+		const objectMetadata = await this.ieObjectsService.findByIeObjectId(objectId, null, ip);
 
 		const censoredObjectMetadata = limitAccessToObjectDetails(objectMetadata, {
 			userId: user.getId(),

@@ -487,7 +487,7 @@ describe('MaterialRequestsService', () => {
 			mockDataService.execute.mockResolvedValueOnce(mockData);
 			const response = await materialRequestsService.createMaterialRequest(
 				{
-					objectSchemaIdentifier: mockGqlMaterialRequest1.ie_object_id,
+					objectId: mockGqlMaterialRequest1.ie_object_id,
 					reason: mockGqlMaterialRequest1.reason,
 					type: mockGqlMaterialRequest1.type,
 					requesterCapacity: mockGqlMaterialRequest1.requester_capacity,

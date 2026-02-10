@@ -1,6 +1,8 @@
-import { Lookup_App_Material_Request_Requester_Capacity_Enum } from '@meemoo/admin-core-api/dist/src/modules/shared/generated/graphql-db-types-hetarchief';
+import {
+	Lookup_App_Material_Request_Requester_Capacity_Enum,
+} from '@meemoo/admin-core-api/dist/src/modules/shared/generated/graphql-db-types-hetarchief';
 import { Test, type TestingModule } from '@nestjs/testing';
-import { type MockInstance, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
 
 import { MaterialRequestType } from '../material-requests.types';
 import {
@@ -127,7 +129,7 @@ describe('MaterialRequestsController', () => {
 			mockMaterialRequestsService.createMaterialRequest.mockResolvedValueOnce(mockMaterialRequest1);
 			const createdMaterialRequest = await materialRequestsController.createMaterialRequest(
 				{
-					objectSchemaIdentifier: '9471f49f-5ac0-43f5-a74a-09c4c56463a4',
+					objectId: 'https://data-qas.hetarchief.be/id/entity/qstt4fps28',
 					reason: 'voor mijn onderzoek en studie',
 					type: MaterialRequestType.VIEW,
 					requesterCapacity: Lookup_App_Material_Request_Requester_Capacity_Enum.Education,

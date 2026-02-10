@@ -1,4 +1,4 @@
-query findIeObjectInFolder($folderId: uuid, $ieObjectId: String) {
+query findIeObjectInFolder($folderId: uuid, $ieObjectId: String, $ieObjectPid: String) {
 	users_folder_ie(
 		where: {
 			user_collection_id: { _eq: $folderId }
