@@ -52,10 +52,10 @@ import {
 	type IeObjectPages,
 	type IeObjectRepresentation,
 	type IeObjectSector,
+	IeObjectType,
 	type IeObjectsSitemap,
 	type IeObjectsVisitorSpaceInfo,
 	type IeObjectsWithAggregations,
-	IeObjectType,
 	type IsPartOfKey,
 	type Mention,
 	type RelatedIeObject,
@@ -106,14 +106,14 @@ import {
 import { AND } from '~modules/ie-objects/elasticsearch/queryBuilder.helpers';
 import { convertSchemaIdentifierToId } from '~modules/ie-objects/helpers/convert-schema-identifier-to-id';
 import {
-	convertStringToSearchTerms,
 	type SearchTermParseResult,
+	convertStringToSearchTerms,
 } from '~modules/ie-objects/helpers/convert-string-to-search-terms';
 import { AUTOCOMPLETE_FIELD_TO_ES_FIELD_NAME } from '~modules/ie-objects/ie-objects.conts';
 import {
+	CACHE_KEY_PREFIX_IE_OBJECTS_SEARCH,
 	CACHE_KEY_PREFIX_IE_OBJECT_DETAIL,
 	CACHE_KEY_PREFIX_IE_OBJECT_THUMBNAIL,
-	CACHE_KEY_PREFIX_IE_OBJECTS_SEARCH,
 	IE_OBJECT_DETAIL_QUERIES,
 } from '~modules/ie-objects/services/ie-objects.service.consts';
 import {
@@ -131,8 +131,10 @@ import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupName } from '~modules/users/types';
 
 import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
+import { mapDcTermsFormatToSimpleType } from '~modules/ie-objects/helpers/map-dc-terms-format-to-simple-type';
 import { VisitsService } from '~modules/visits/services/visits.service';
 import { VisitStatus, VisitTimeframe } from '~modules/visits/types';
+import { AUDIO_WAVE_FORM_URL } from '~shared/consts/audio-wave-form-url';
 import { customError } from '~shared/helpers/custom-error';
 import { checkRequiredEnvs } from '~shared/helpers/env-check';
 import { getQueryName } from '~shared/helpers/get-query-name';
@@ -704,17 +706,24 @@ export class IeObjectsService {
 			licenses.includes(IeObjectLicense.PUBLIEK_CONTENT) &&
 			licenses.includes(IeObjectLicense.PUBLIC_DOMAIN);
 
-		const thumbnailUrl = await this.getThumbnailUrlWithToken(
-			schemaThumbnailUrlResponse?.schemaThumbnailUrl?.[0]?.schema_thumbnail_url?.[0],
-			referer,
-			ip,
-			// If the object is public domain, we generate a thumbnailUrl with a token that stays valid for 15 years
-			// https://meemoo.atlassian.net/browse/ARC-2891
-			isPublicDomain
-		);
+		const dctermsFormat = dctermsFormatResponse.dctermsFormat[0]?.dcterms_format as IeObjectType;
+		let thumbnailUrl =
+			schemaThumbnailUrlResponse?.schemaThumbnailUrl?.[0]?.schema_thumbnail_url?.[0];
+
+		if (mapDcTermsFormatToSimpleType(dctermsFormat) === IeObjectType.AUDIO) {
+			thumbnailUrl = AUDIO_WAVE_FORM_URL; // avoid the ugly speaker
+		} else {
+			thumbnailUrl = await this.getThumbnailUrlWithToken(
+				thumbnailUrl,
+				referer,
+				ip,
+				// If the object is public domain, we generate a thumbnailUrl with a token that stays valid for 15 years
+				// https://meemoo.atlassian.net/browse/ARC-2891
+				isPublicDomain
+			);
+		}
 
 		const schemaMaintainer = ie?.schemaMaintainer;
-		const dctermsFormat = dctermsFormatResponse.dctermsFormat[0]?.dcterms_format as IeObjectType;
 		const premisIdentifiers = isPartOfResponse?.isPartOf?.[0]?.isPartOf?.premisIdentifier
 			?.premis_identifier as (
 			| Record<string, string>
