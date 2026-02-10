@@ -832,15 +832,17 @@ export class MaterialRequestsService {
 		const objectSchemaIdentifier = graphQlMaterialRequest.intellectualEntity?.schema_identifier;
 		let objectAccessThrough: IeObjectAccessThrough[] = [];
 		let objectLicences: IeObjectLicense[] = [];
+		let hasAccessToEssence = false;
 		if (user) {
-			const licenses = await this.getAccessThroughAndLicences(
+			const access = await this.getAccessThroughAndLicences(
 				objectSchemaIdentifier,
 				visitorSpaceAccessInfo,
 				user,
 				ip
 			);
-			objectAccessThrough = licenses.objectAccessThrough;
-			objectLicences = licenses.objectLicences;
+			objectAccessThrough = access.objectAccessThrough;
+			objectLicences = access.objectLicences;
+			hasAccessToEssence = access.hasAccessToEssence;
 		}
 
 		const isPublicDomain: boolean =
@@ -855,7 +857,10 @@ export class MaterialRequestsService {
 			objectLicences,
 			user?.getIsKeyUser()
 		);
-		if (isComplexFlow) {
+
+		if (!hasAccessToEssence) {
+			objectThumbnailUrl = undefined;
+		} else if (isComplexFlow) {
 			// New material request with reuse form flow
 			if (graphQlMaterialRequest.ie_object_representation_id) {
 				// If we know exactly which video of the ie object the user is requesting material for, we can get the thumbnail url for that specific representation
@@ -991,8 +996,9 @@ export class MaterialRequestsService {
 	): Promise<{
 		objectAccessThrough: IeObjectAccessThrough[];
 		objectLicences: IeObjectLicense[];
+		hasAccessToEssence: boolean;
 	}> {
-		const objectMetadata = await this.ieObjectsService.findMetadataByIeObjectId(
+		const objectMetadata = await this.ieObjectsService.findByIeObjectId(
 			convertSchemaIdentifierToId(objectSchemaIdentifier),
 			null,
 			ip
@@ -1009,8 +1015,10 @@ export class MaterialRequestsService {
 		});
 
 		return {
-			objectAccessThrough: censoredObjectMetadata?.accessThrough,
-			objectLicences: censoredObjectMetadata?.licenses,
+			objectAccessThrough: censoredObjectMetadata?.accessThrough ?? [],
+			objectLicences: censoredObjectMetadata?.licenses ?? [],
+			hasAccessToEssence:
+				!!censoredObjectMetadata.thumbnailUrl || !!censoredObjectMetadata.pages?.length,
 		};
 	}
 
