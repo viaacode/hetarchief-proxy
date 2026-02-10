@@ -64,6 +64,7 @@ import { convertSchemaIdentifierToId } from '~modules/ie-objects/helpers/convert
 import { mapDcTermsFormatToSimpleType } from '~modules/ie-objects/helpers/map-dc-terms-format-to-simple-type';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupName } from '~modules/users/types';
+import { AUDIO_WAVE_FORM_URL } from '~shared/consts/audio-wave-form-url';
 import { Ip } from '~shared/decorators/ip.decorator';
 import { Referer } from '~shared/decorators/referer.decorator';
 import { SessionUser } from '~shared/decorators/user.decorator';
@@ -652,13 +653,6 @@ export class IeObjectsController {
 					convertSchemaIdentifierToId(schemaIdentifier)
 				);
 
-				if (ieObject?.dctermsFormat === IeObjectType.AUDIO) {
-					return {
-						schemaIdentifier: ieObject.schemaIdentifier || null,
-						thumbnailUrl: null,
-					}; // Audio items only contain the ugly speaker, so we return null
-				}
-
 				// Censor the object based on the licenses and sector
 				// Only leave the properties that the current user can see of this object
 				const limitedObject = limitAccessToObjectDetails(ieObject, {
@@ -675,11 +669,18 @@ export class IeObjectsController {
 					throw new ForbiddenException('You do not have access to this object');
 				}
 
-				if (!limitedObject.thumbnailUrl) {
+				if (!Object.keys(limitedObject).includes('thumbnailUrl')) {
 					return {
 						schemaIdentifier: limitedObject.schemaIdentifier || null,
 						thumbnailUrl: null,
 					}; // If you're not allowed to see the thumbnail, return null
+				}
+
+				if (mapDcTermsFormatToSimpleType(ieObject?.dctermsFormat) === IeObjectType.AUDIO) {
+					return {
+						schemaIdentifier: ieObject.schemaIdentifier || null,
+						thumbnailUrl: AUDIO_WAVE_FORM_URL,
+					}; // avoid the ugly speaker
 				}
 
 				// Meemoo admin user always has VISITOR_SPACE_FULL in accessThrough when object has BEZOEKERTOOL licences
