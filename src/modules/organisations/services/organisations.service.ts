@@ -4,12 +4,9 @@ import { Inject, Injectable, InternalServerErrorException } from '@nestjs/common
 import type { Cache } from 'cache-manager';
 import { shuffle } from 'lodash';
 
-import type {
-	GqlOrganisation,
-	MaintainerGridOrganisation,
-	Organisation,
-} from '../organisations.types';
+import type { GqlOrganisation, MaintainerGridOrganisation, Organisation } from '../organisations.types';
 
+import { hoursToSeconds } from 'date-fns';
 import {
 	FindOrganisationsBySchemaIdsDocument,
 	type FindOrganisationsBySchemaIdsQuery,
@@ -114,8 +111,8 @@ export class OrganisationsService {
 			const allContentPartners = await this.cacheManager.wrap(
 				'CONTENT_PARTNERS_MAINTAINER_GRID',
 				() => this.fetchAllContentPartnersThatHaveObjects(),
-				// cache for 60 minutes
-				3_600_000
+				// cache for 1 hour
+				hoursToSeconds(1)
 			);
 
 			return shuffle(allContentPartners.filter((contentPartner) => !!contentPartner.logoUrl)).slice(

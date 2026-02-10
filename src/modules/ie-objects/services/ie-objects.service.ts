@@ -114,6 +114,7 @@ import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupName } from '~modules/users/types';
 
 import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
+import { hoursToSeconds } from 'date-fns';
 import { mapDcTermsFormatToSimpleType } from '~modules/ie-objects/helpers/map-dc-terms-format-to-simple-type';
 import { VisitsService } from '~modules/visits/services/visits.service';
 import { VisitStatus, VisitTimeframe } from '~modules/visits/types';
@@ -238,8 +239,8 @@ export class IeObjectsService {
 				objectResponse = await this.cacheManager.wrap(
 					CACHE_KEY_PREFIX_IE_OBJECTS_SEARCH + cacheKey,
 					() => this.executeQuery(esIndex, esQuery),
-					// cache for 60 minutes
-					3_600_000
+					// cache for 1 hour
+					hoursToSeconds(1)
 				);
 			} else {
 				objectResponse = await this.executeQuery(esIndex, esQuery);
@@ -538,8 +539,8 @@ export class IeObjectsService {
 		const responses = await this.cacheManager.wrap(
 			CACHE_KEY_PREFIX_IE_OBJECT_DETAIL + objectId,
 			() => this.getIeObjectByIdFromDb(objectId),
-			// cache for 60 minutes
-			3_600_000
+			// cache for 1 hour
+			hoursToSeconds(1)
 		);
 
 		// Get parent ieObject if it exists
@@ -565,8 +566,8 @@ export class IeObjectsService {
 			async (): Promise<IeObjectForThumbnailOnly> => {
 				return await this.getIeObjectThumbnailByIdFromDb(objectId);
 			},
-			// cache for 60 minutes
-			3_600_000
+			// cache for 1 hour
+			hoursToSeconds(1)
 		);
 	}
 
@@ -1616,7 +1617,9 @@ export class IeObjectsService {
 		try {
 			return await this.cacheManager.wrap(
 				CACHE_KEY_PREFIX_IE_OBJECT_PID_TO_ID + schemaIdentifier,
-				async () => this.getObjectIdBySchemaIdentifier(schemaIdentifier)
+				async () => this.getObjectIdBySchemaIdentifier(schemaIdentifier),
+				// cache for 1 day
+				hoursToSeconds(24)
 			);
 		} catch (err) {
 			throw new CustomError(
