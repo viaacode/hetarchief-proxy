@@ -3,6 +3,7 @@ import { ApiTags } from '@nestjs/swagger';
 
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import type { Cache } from 'cache-manager';
+import { hoursToSeconds } from 'date-fns';
 import { TosService } from '../services/tos.service';
 import type { Tos } from '../types';
 
@@ -23,8 +24,8 @@ export class TosController {
 		return await this.cacheManager.wrap(
 			CACHE_KEY_GET_TOS_LAST_UPDATED,
 			() => this.tosService.getTosLastUpdatedAt(),
-			// cache for 60 minutes
-			3_600_000
+			// cache for 1 day
+			hoursToSeconds(24)
 		);
 	}
 }

@@ -43,8 +43,8 @@ import {
 	IeObjectAccessThrough,
 	IeObjectLicense,
 	type IeObjectSeo,
-	IeObjectType,
 	type IeObjectsWithAggregations,
+	IeObjectType,
 	type RelatedIeObject,
 	type RelatedIeObjects,
 } from '../ie-objects.types';
@@ -54,13 +54,7 @@ import { IeObjectsService } from '../services/ie-objects.service';
 import { mapLimit } from 'blend-promise-utils';
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
-import {
-	ALL_INDEXES,
-	IeObjectsSearchFilterField,
-	Operator,
-	OrderProperty,
-} from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
-import { convertSchemaIdentifierToId } from '~modules/ie-objects/helpers/convert-schema-identifier-to-id';
+import { ALL_INDEXES, IeObjectsSearchFilterField, Operator, OrderProperty } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
 import { mapDcTermsFormatToSimpleType } from '~modules/ie-objects/helpers/map-dc-terms-format-to-simple-type';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupName } from '~modules/users/types';
@@ -138,13 +132,11 @@ export class IeObjectsController {
 	public async getIeObjectSeoById(
 		@Referer() referer: string,
 		@Ip() ip: string,
-		@Param('id') id: string
+		@Param('schemaIdentifier') schemaIdentifier: string
 	): Promise<IeObjectSeo> {
-		const ieObject = await this.ieObjectsService.findByIeObjectId(
-			convertSchemaIdentifierToId(id),
-			referer,
-			ip
-		);
+		const ieObjectId =
+			await this.ieObjectsService.getObjectIdBySchemaIdentifierCached(schemaIdentifier);
+		const ieObject = await this.ieObjectsService.findByIeObjectId(ieObjectId, referer, ip);
 
 		const hasPublicAccess = ieObject?.licenses.some((license: IeObjectLicense) =>
 			[
@@ -188,8 +180,10 @@ export class IeObjectsController {
 		@Res() res: Response,
 		@SessionUser() user: SessionUserEntity
 	): Promise<void> {
+		const ieObjectId =
+			await this.ieObjectsService.getObjectIdBySchemaIdentifierCached(schemaIdentifier);
 		const objectMetadata = await this.ieObjectsService.findMetadataByIeObjectId(
-			convertSchemaIdentifierToId(schemaIdentifier),
+			ieObjectId,
 			null,
 			ip
 		);
@@ -259,8 +253,10 @@ export class IeObjectsController {
 		@Res() res: Response,
 		@SessionUser() user: SessionUserEntity
 	): Promise<void> {
+		const ieObjectId =
+			await this.ieObjectsService.getObjectIdBySchemaIdentifierCached(schemaIdentifier);
 		const objectMetadata = await this.ieObjectsService.findMetadataByIeObjectId(
-			convertSchemaIdentifierToId(schemaIdentifier),
+			ieObjectId,
 			null,
 			ip
 		);
@@ -649,9 +645,9 @@ export class IeObjectsController {
 					return null;
 				}
 
-				const ieObject = await this.ieObjectsService.findThumbnailByIeObjectId(
-					convertSchemaIdentifierToId(schemaIdentifier)
-				);
+				const ieObjectId =
+					await this.ieObjectsService.getObjectIdBySchemaIdentifierCached(schemaIdentifier);
+				const ieObject = await this.ieObjectsService.findThumbnailByIeObjectId(ieObjectId);
 
 				// Censor the object based on the licenses and sector
 				// Only leave the properties that the current user can see of this object
@@ -747,11 +743,9 @@ export class IeObjectsController {
 					return null;
 				}
 
-				const ieObject = await this.ieObjectsService.findByIeObjectId(
-					convertSchemaIdentifierToId(schemaIdentifier),
-					referer,
-					ip
-				);
+				const ieObjectId =
+					await this.ieObjectsService.getObjectIdBySchemaIdentifierCached(schemaIdentifier);
+				const ieObject = await this.ieObjectsService.findByIeObjectId(ieObjectId, referer, ip);
 
 				if (!ieObject) {
 					return null;

@@ -1,5 +1,5 @@
-query getIeObjectIds($schemaIdentifier: String!) {
-	graph_intellectual_entity(where: { id: { _eq: $schemaIdentifier } }) {
+query getIeObjectIdBySchemaIdentifier($schemaIdentifier: String!) {
+	graph_intellectual_entity(where: { schema_identifier: { _eq: $schemaIdentifier } }) {
 		id
 		schema_identifier
 	}

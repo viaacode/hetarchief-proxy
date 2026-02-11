@@ -21,10 +21,7 @@ import { compact, isNil } from 'lodash';
 
 import { type Folder, type FolderShared, FolderStatus } from '../types';
 
-import {
-	ConsentToTrackOption,
-	EmailTemplate,
-} from '~modules/campaign-monitor/campaign-monitor.types';
+import { ConsentToTrackOption, EmailTemplate } from '~modules/campaign-monitor/campaign-monitor.types';
 
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 
@@ -33,7 +30,6 @@ import { LogEventType } from '~modules/events/types';
 import { CreateOrUpdateFolderDto, FolderObjectsQueryDto } from '~modules/folders/dto/folders.dto';
 
 import { FoldersService } from '~modules/folders/services/folders.service';
-import { convertSchemaIdentifierToId } from '~modules/ie-objects/helpers/convert-schema-identifier-to-id';
 import { type IeObject, IeObjectLicense } from '~modules/ie-objects/ie-objects.types';
 
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
@@ -237,7 +233,8 @@ export class FoldersController {
 			throw new ForbiddenException('You can only add objects to your own folders');
 		}
 
-		const ieObjectId = convertSchemaIdentifierToId(objectSchemaIdentifier);
+		const ieObjectId =
+			await this.ieObjectsService.getObjectIdBySchemaIdentifierCached(objectSchemaIdentifier);
 		const folderObject = await this.foldersService.addObjectToFolder(
 			folderId,
 			ieObjectId,
@@ -283,9 +280,11 @@ export class FoldersController {
 		if (collection.userProfileId !== user?.getId()) {
 			throw new ForbiddenException('You can only delete objects from your own folders');
 		}
+		const ieObjectId =
+			await this.ieObjectsService.getObjectIdBySchemaIdentifierCached(objectSchemaIdentifier);
 		const affectedRows = await this.foldersService.removeObjectFromFolder(
 			folderId,
-			convertSchemaIdentifierToId(objectSchemaIdentifier),
+			ieObjectId,
 			user?.getId()
 		);
 		if (affectedRows > 0) {
@@ -317,17 +316,15 @@ export class FoldersController {
 			throw new ForbiddenException('You can only move objects to your own folders');
 		}
 
+		const ieObjectId =
+			await this.ieObjectsService.getObjectIdBySchemaIdentifierCached(objectSchemaIdentifier);
 		const folderObject = await this.foldersService.addObjectToFolder(
 			newFolderId,
-			convertSchemaIdentifierToId(objectSchemaIdentifier),
+			ieObjectId,
 			referer,
 			ip
 		);
-		await this.foldersService.removeObjectFromFolder(
-			oldFolderId,
-			convertSchemaIdentifierToId(objectSchemaIdentifier),
-			user?.getId()
-		);
+		await this.foldersService.removeObjectFromFolder(oldFolderId, ieObjectId, user?.getId());
 		return folderObject;
 	}
 
