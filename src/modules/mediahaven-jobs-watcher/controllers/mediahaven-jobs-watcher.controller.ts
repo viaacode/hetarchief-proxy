@@ -3,9 +3,7 @@ import { Controller, Post, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { MediahavenJobsWatcherService } from '~modules/mediahaven-jobs-watcher/services/mediahaven-jobs-watcher.service';
 import { ApiKeyGuard } from '~shared/guards/api-key.guard';
-import { LoggedInGuard } from '~shared/guards/logged-in.guard';
 
-@UseGuards(LoggedInGuard)
 @ApiTags('MediahavenJobsWatcher')
 @Controller('mediahaven-jobs-watcher')
 export class MediahavenJobsWatcherController {
