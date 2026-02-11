@@ -1594,7 +1594,7 @@ export class IeObjectsService {
 		}
 	}
 
-	async getObjectIdBySchemaIdentifier(schemaIdentifier: string): Promise<string> {
+	private async getObjectIdBySchemaIdentifier(schemaIdentifier: string): Promise<string> {
 		try {
 			const response = await this.dataService.execute<
 				GetIeObjectIdBySchemaIdentifierQuery,
@@ -1613,7 +1613,7 @@ export class IeObjectsService {
 		}
 	}
 
-	async getObjectIdBySchemaIdentifierCached(schemaIdentifier: string): Promise<string> {
+	public async getObjectIdBySchemaIdentifierCached(schemaIdentifier: string): Promise<string> {
 		try {
 			return await this.cacheManager.wrap(
 				CACHE_KEY_PREFIX_IE_OBJECT_PID_TO_ID + schemaIdentifier,
