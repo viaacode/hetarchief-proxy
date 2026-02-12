@@ -4,7 +4,11 @@ import { Inject, Injectable, InternalServerErrorException } from '@nestjs/common
 import type { Cache } from 'cache-manager';
 import { shuffle } from 'lodash';
 
-import type { GqlOrganisation, MaintainerGridOrganisation, Organisation } from '../organisations.types';
+import type {
+	GqlOrganisation,
+	MaintainerGridOrganisation,
+	Organisation,
+} from '../organisations.types';
 
 import { hoursToSeconds } from 'date-fns';
 import {
