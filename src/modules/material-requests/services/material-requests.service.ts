@@ -624,7 +624,7 @@ export class MaterialRequestsService {
 				requesterUser,
 			});
 			console.error(error);
-			throw error;
+			// Do not throw errors when email cannot be sent
 		}
 	}
 
