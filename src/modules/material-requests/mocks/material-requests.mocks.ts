@@ -19,7 +19,7 @@ export const mockUserProfileId = 'eccf3357-bc87-42e4-a91c-5a0ba8cb550a';
 
 export const mockGqlMaterialRequest1: FindMaterialRequestsQuery['app_material_requests'][0] = {
 	id: '9471f49f-5ac0-43f5-a74a-09c4c56463a4',
-	ie_object_id: 'https://data-qas.hetarchief.be/id/entity/0000003g0k',
+	ie_object_id: 'https://data-int.hetarchief.be/id/entity/0000003g0k',
 	profile_id: 'e1d792cc-4624-48cb-aab3-80ef90521b54',
 	reason: 'voor mijn onderzoek en studie',
 	created_at: '2022-03-18T08:32:57.256264',

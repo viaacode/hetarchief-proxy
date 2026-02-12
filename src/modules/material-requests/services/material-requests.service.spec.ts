@@ -69,6 +69,11 @@ const mockIeObjectsService: Partial<Record<keyof IeObjectsService, MockInstance>
 	})),
 	getVisitorSpaceAccessInfoFromUser: vi.fn(() => ({ objectIds: [], visitorSpaceIds: [] })),
 	adaptRepresentations: vi.fn(() => []),
+	findByIeObjectId: vi.fn(() => ({
+		licenses: [IeObjectLicense.PUBLIC_DOMAIN, IeObjectLicense.PUBLIEK_CONTENT],
+		thumbnailUrl: 'http://example.com/thumbnail.jpg',
+		pages: [],
+	})),
 };
 
 const mockVideoStillsService: Partial<Record<keyof VideoStillsService, MockInstance>> = {

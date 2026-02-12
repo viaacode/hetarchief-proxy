@@ -58,6 +58,7 @@ const mockIeObjectsService: Partial<Record<keyof IeObjectsService, MockInstance>
 		objectIds: [],
 		visitorSpaceIds: [],
 	})),
+	getObjectIdBySchemaIdentifierCached: vi.fn().mockResolvedValue('mock-ie-object-id'),
 };
 
 const mockPlayerTicketService: Partial<Record<keyof PlayerTicketService, MockInstance>> = {

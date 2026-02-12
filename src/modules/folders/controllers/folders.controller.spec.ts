@@ -119,6 +119,7 @@ const mockIeObjectsService: Partial<Record<keyof IeObjectsService, MockInstance>
 	findByIeObjectId: vi.fn(),
 	getVisitorSpaceAccessInfoFromUser: vi.fn(),
 	limitObjectInFolder: vi.fn((folderObjectItem: Partial<IeObject>) => folderObjectItem),
+	getObjectIdBySchemaIdentifierCached: vi.fn().mockResolvedValue('mock-ie-object-id'),
 };
 
 const mockVisitsService: Partial<Record<keyof VisitsService, MockInstance>> = {
