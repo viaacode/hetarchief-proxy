@@ -28,6 +28,7 @@ import {
 	MamExportQuality,
 	MamJobStatus,
 	MediahavenJobInfo,
+	MediaHavenRecord,
 } from '~modules/mediahaven-jobs-watcher/mediahaven-jobs-watcher.types';
 import { UsersService } from '~modules/users/services/users.service';
 
@@ -52,26 +53,34 @@ export class MediahavenJobsWatcherService {
 		});
 	}
 
-	private async retryDownloadJobOrFail(materialRequest: MaterialRequestForDownload): Promise<void> {
+	/**
+	 * Try to create a new job, since the last one failed to timed-out. If the number of retries in not too high and not too fast after the last try.
+	 * @param materialRequest
+	 * @return boolean indicating whether the job failed (true) or was retried (false)
+	 */
+	private async retryDownloadJobOrFail(
+		materialRequest: MaterialRequestForDownload
+	): Promise<boolean> {
 		// No jobs present in Mediahaven for this material request
 		const updatedAt = new Date(materialRequest.updatedAt);
 		// If the material request was updated less than 1 hour ago, wait before retrying
 		if (isAfter(updatedAt, subHours(new Date(), 1))) {
 			// Skip this material request for now
 			// Maybe there is an issue with the api, so we'll try again in 1 hour after the last attempt
-		} else {
-			// Check if we can retry creating the export job
-			if ((materialRequest.downloadRetries || 0) < 3) {
-				// Retry creating the export job
-				await this.createExportJob(materialRequest);
-			} else {
-				// Max retries reached, mark as failed
-				await this.materialRequestsService.updateMaterialRequest(materialRequest.id, {
-					download_status: Lookup_App_Material_Request_Download_Status_Enum.Failed,
-					updated_at: new Date().toISOString(),
-				});
-			}
+			return false;
 		}
+		// Check if we can retry creating the export job
+		if ((materialRequest.downloadRetries || 0) < 3) {
+			// Retry creating the export job
+			await this.createExportJob(materialRequest);
+			return false;
+		}
+		// Max retries reached, mark as failed
+		await this.materialRequestsService.updateMaterialRequest(materialRequest.id, {
+			download_status: Lookup_App_Material_Request_Download_Status_Enum.Failed,
+			updated_at: new Date().toISOString(),
+		});
+		return true;
 	}
 
 	public async checkJobs() {
@@ -84,6 +93,13 @@ export class MediahavenJobsWatcherService {
 			 * This follows the flow diagram for checking Mediahaven jobs for material requests:
 			 * https://drive.google.com/file/d/1w2MRcTxzTsXjivATFEvaDkv99tMxnUqF/view?usp=sharing
 			 */
+			const reportItems = {
+				pending: 0,
+				completed: 0,
+				restarted: 0,
+				failed: 0,
+				alreadyExists: 0,
+			};
 			for (const materialRequest of unresolvedMaterialRequests) {
 				const relatedJob = jobs.find((job) => {
 					return materialRequest.downloadJobId === job.ExportJobId;
@@ -100,44 +116,64 @@ export class MediahavenJobsWatcherService {
 								download_status: Lookup_App_Material_Request_Download_Status_Enum.Pending,
 								updated_at: new Date().toISOString(),
 							});
+							reportItems.pending += 1;
 							break;
 						case MamJobStatus.Completed: {
 							// Job is completed, update material request with download URL and set status to SUCCEEDED
 							const updatedRequest = await this.materialRequestsService.updateMaterialRequest(
 								materialRequest.id,
 								{
-									download_url: relatedJob.DownloadUrl,
+									// download_url: relatedJob.DownloadUrl, // TODO have meemoo investigate why these are empty
+									download_url: relatedJob.Name,
 									download_status: Lookup_App_Material_Request_Download_Status_Enum.Succeeded,
 									updated_at: new Date().toISOString(),
+									download_available_at: relatedJob.FinishDate,
 								}
 							);
 							const requester = await this.usersService.getById(updatedRequest.requesterId);
-							await Promise.all([
-								this.materialRequestsService.sentStatusUpdateEmail(
-									EmailTemplate.MATERIAL_REQUEST_DOWNLOAD_READY_MAINTAINER,
-									updatedRequest,
-									requester
-								),
-								this.materialRequestsService.sentStatusUpdateEmail(
-									EmailTemplate.MATERIAL_REQUEST_DOWNLOAD_READY_REQUESTER,
-									updatedRequest,
-									requester
-								),
-							]);
+							reportItems.completed += 1;
+
+							try {
+								await Promise.all([
+									this.materialRequestsService.sentStatusUpdateEmail(
+										EmailTemplate.MATERIAL_REQUEST_DOWNLOAD_READY_MAINTAINER,
+										updatedRequest,
+										requester
+									),
+									this.materialRequestsService.sentStatusUpdateEmail(
+										EmailTemplate.MATERIAL_REQUEST_DOWNLOAD_READY_REQUESTER,
+										updatedRequest,
+										requester
+									),
+								]);
+							} catch (err) {
+								// Log the error but don't throw, since the main flow of updating the material request is successful
+								console.error('Failed to send material request export job completed emails', err, {
+									materialRequestId: materialRequest.id,
+									requesterId: updatedRequest.requesterId,
+								});
+							}
 
 							break;
 						}
 
 						case MamJobStatus.Failed:
-						case MamJobStatus.Cancelled:
-							await this.retryDownloadJobOrFail(materialRequest);
+						case MamJobStatus.Cancelled: {
+							const hasFailed = await this.retryDownloadJobOrFail(materialRequest);
+							if (hasFailed) {
+								reportItems.failed += 1;
+							} else {
+								reportItems.restarted += 1;
+							}
 							break;
+						}
 
 						case MamJobStatus.AlreadyExists:
 							await this.materialRequestsService.updateMaterialRequest(materialRequest.id, {
 								download_status: Lookup_App_Material_Request_Download_Status_Enum.Failed,
 								updated_at: new Date().toISOString(),
 							});
+							reportItems.alreadyExists += 1;
 							break;
 
 						default:
@@ -148,6 +184,7 @@ export class MediahavenJobsWatcherService {
 					}
 				}
 			}
+			console.log('Mediahaven jobs check report', reportItems);
 		} catch (err) {
 			throw new CustomError('Error checking mediahaven jobs', err);
 		}
@@ -162,25 +199,30 @@ export class MediahavenJobsWatcherService {
 		let url: string | null = null;
 		let body: CreateMamJob | null = null;
 		try {
-			const accessToken = await this.getAccessToken();
-			url = stringifyUrl({
-				url: `${this.configService.get('MEDIAHAVEN_API_ENDPOINT')}/exports`,
-			});
 			if (materialRequest.objectRepresentationId) {
 				// User has access to essence of the ie object, and wants to export a specific video (representation)
 				const mhFragmentId = await this.getMhFragmentIdByRepresentationId(
 					materialRequest.objectRepresentationId
 				);
+				const startTime = materialRequest.reuseForm.startTime;
+				const endTime = materialRequest.reuseForm.endTime;
+
+				let partial = null;
+				if (startTime || endTime) {
+					const record = await this.getMediaHavenMetadataByRecordId(mhFragmentId);
+					const framerate: number = Number.parseInt(record?.Technical?.VideoFps || '25', 10);
+					partial = {
+						Type: 'Partial',
+						Start: startTime * framerate,
+						End: endTime * framerate,
+					};
+				}
+
 				body = {
 					Records: [
 						{
 							RecordId: mhFragmentId,
-							// TODO if material request has cue points
-							// Partial: {
-							// 	Type: 'Full',
-							// 	Start: '',
-							// 	End: '',
-							// },
+							...(partial ? { Partial: partial } : {}),
 						},
 					],
 					ExportLocationId: this.configService.get('MEDIAHAVEN_EXPORT_LOCATION_ID'),
@@ -210,6 +252,10 @@ export class MediahavenJobsWatcherService {
 				};
 			}
 
+			const accessToken = await this.getAccessToken();
+			url = stringifyUrl({
+				url: `${this.configService.get('MEDIAHAVEN_API_ENDPOINT')}/exports`,
+			});
 			const response = await fetch(url, {
 				method: 'POST',
 				headers: {
@@ -252,7 +298,7 @@ export class MediahavenJobsWatcherService {
 
 			return jobId;
 		} catch (err) {
-			throw new CustomError('Failed to create mediahaven export job', null, {
+			throw new CustomError('Failed to create mediahaven export job', err, {
 				materialRequestId: materialRequest.id,
 				url,
 				body,
@@ -384,30 +430,66 @@ export class MediahavenJobsWatcherService {
 	private async getMhFragmentIdByPartialMhFragmentId(
 		partialMhFragmentIds: string[]
 	): Promise<string[]> {
-		return await Promise.all(
-			partialMhFragmentIds.map(async (partialMhFragmentId): Promise<string> => {
-				const responseMhFragment = await this.dataService.execute<
-					GetMhIdentifiersFromPartialMhIdentifierQuery,
-					GetMhIdentifiersFromPartialMhIdentifierQueryVariables
-				>(GetMhIdentifiersFromPartialMhIdentifierDocument, {
-					partialMhIdentifierStartsWith: `${partialMhFragmentId}%`,
-				});
+		try {
+			return await Promise.all(
+				partialMhFragmentIds.map(async (partialMhFragmentId): Promise<string> => {
+					const responseMhFragment = await this.dataService.execute<
+						GetMhIdentifiersFromPartialMhIdentifierQuery,
+						GetMhIdentifiersFromPartialMhIdentifierQueryVariables
+					>(GetMhIdentifiersFromPartialMhIdentifierDocument, {
+						partialMhIdentifierStartsWith: `${partialMhFragmentId}%`,
+					});
 
-				const mhFragmentId =
-					responseMhFragment.graph_mh_fragment_identifier?.[0]?.mh_fragment_identifier;
+					const mhFragmentId =
+						responseMhFragment.graph_mh_fragment_identifier?.[0]?.mh_fragment_identifier;
 
-				if (!mhFragmentId) {
-					throw new CustomError(
-						'Could not find Mediahaven fragment identifier by partial mediahaven identifier in database',
-						null,
-						{
-							partialMhFragmentId,
-						}
-					);
+					if (!mhFragmentId) {
+						throw new CustomError(
+							'Could not find Mediahaven fragment identifier by partial mediahaven identifier in database',
+							null,
+							{
+								partialMhFragmentId,
+							}
+						);
+					}
+
+					return mhFragmentId;
+				})
+			);
+		} catch (err) {
+			throw new CustomError(
+				'Failed to get Mediahaven fragment ID by partial Mediahaven fragment ID',
+				err,
+				{
+					partialMhFragmentIds,
 				}
+			);
+		}
+	}
 
-				return mhFragmentId;
-			})
-		);
+	private async getMediaHavenMetadataByRecordId(recordId: string): Promise<MediaHavenRecord> {
+		const accessToken = await this.getAccessToken();
+		const url = `${this.configService.get('MEDIAHAVEN_API_ENDPOINT')}/records/${recordId}`;
+		const response = await fetch(url, {
+			method: 'GET',
+			headers: {
+				accept: 'application/json',
+				Authorization: `bearer ${accessToken.token.access_token}`,
+			},
+		});
+		if (response.status < 200 || response.status >= 400) {
+			throw new CustomError(
+				'Error received when fetching a mediahaven record by id',
+				response?.statusText,
+				{
+					status: response.status,
+					statusText: response.statusText,
+					responseBody: response.body,
+					recordId,
+					url,
+				}
+			);
+		}
+		return (await response.json()) as MediaHavenRecord;
 	}
 }

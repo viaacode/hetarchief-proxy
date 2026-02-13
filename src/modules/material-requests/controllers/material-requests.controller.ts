@@ -17,7 +17,7 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import type { IPagination } from '@studiohyperdrive/pagination';
 import { AvoAuthIdpType, PermissionName } from '@viaa/avo2-types';
 import type { Request } from 'express';
-import { isEmpty, isNil } from 'lodash';
+import { isEmpty, isNil, noop } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 
 import {
@@ -31,15 +31,17 @@ import type { MaterialRequest, MaterialRequestMaintainer } from '../material-req
 
 import { MaterialRequestsService } from '../services/material-requests.service';
 
+import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
 import { Lookup_App_Material_Request_Status_Enum } from '~generated/graphql-db-types-hetarchief';
 import { EventsService } from '~modules/events/services/events.service';
 import { type LogEvent, LogEventType } from '~modules/events/types';
 import { mapDcTermsFormatToSimpleType } from '~modules/ie-objects/helpers/map-dc-terms-format-to-simple-type';
 import {
-	MAP_MATERIAL_REQUEST_STATUS_TO_EVENT_TYPE,
 	getAdditionEventDate,
+	MAP_MATERIAL_REQUEST_STATUS_TO_EVENT_TYPE,
 	mapUserToGroupNameAndKeyUser,
 } from '~modules/material-requests/material-requests.consts';
+import { MediahavenJobsWatcherService } from '~modules/mediahaven-jobs-watcher/services/mediahaven-jobs-watcher.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupId, GroupName } from '~modules/users/types';
 import { Ip } from '~shared/decorators/ip.decorator';
@@ -56,7 +58,8 @@ import { EventsHelper } from '~shared/helpers/events';
 export class MaterialRequestsController {
 	constructor(
 		private materialRequestsService: MaterialRequestsService,
-		private eventsService: EventsService
+		private eventsService: EventsService,
+		private mediahavenJobWatcherService: MediahavenJobsWatcherService
 	) {}
 
 	@Get()
@@ -192,22 +195,42 @@ export class MaterialRequestsController {
 
 		// Is this a trackable event? (Approved, Denied, Cancelled)
 		if (eventType) {
-			await this.eventsService.insertEvents([
-				{
-					id: EventsHelper.getEventId(request),
-					type: eventType,
-					source: request.path,
-					subject: user?.getId(),
-					time: new Date().toISOString(),
-					data: {
-						type: mapDcTermsFormatToSimpleType(materialRequest.objectDctermsFormat),
-						or_id: materialRequest.maintainerId,
-						pid: materialRequest.objectSchemaIdentifier,
-						material_request_group_id: materialRequest.requestGroupId,
-						...getAdditionEventDate(eventType, materialRequest),
+			this.eventsService
+				.insertEvents([
+					{
+						id: EventsHelper.getEventId(request),
+						type: eventType,
+						source: request.path,
+						subject: user?.getId(),
+						time: new Date().toISOString(),
+						data: {
+							type: mapDcTermsFormatToSimpleType(materialRequest.objectDctermsFormat),
+							or_id: materialRequest.maintainerId,
+							pid: materialRequest.objectSchemaIdentifier,
+							material_request_group_id: materialRequest.requestGroupId,
+							...getAdditionEventDate(eventType, materialRequest),
+						},
 					},
-				},
-			]);
+				])
+				.then(noop)
+				.catch((err) => {
+					const error = new CustomError(
+						'Failed to log event for material request status update',
+						err,
+						{
+							updateMaterialRequestStatusDto,
+							materialRequestId,
+						}
+					);
+					console.error(error);
+				});
+		}
+
+		if (materialRequest.status === Lookup_App_Material_Request_Status_Enum.Approved) {
+			// If the request is approved, we need to start prepping the download
+			const materialRequestForDownload =
+				await this.materialRequestsService.getMaterialRequestForDownloadJob(materialRequest.id);
+			await this.mediahavenJobWatcherService.createExportJob(materialRequestForDownload);
 		}
 
 		return materialRequest;
