@@ -1,10 +1,5 @@
 import { DataService, Locale, StillsObjectType, VideoStillsService } from '@meemoo/admin-core-api';
-import {
-	BadRequestException,
-	Injectable,
-	InternalServerErrorException,
-	NotFoundException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { compact, groupBy, intersection, isArray, isEmpty, isNil, kebabCase, set } from 'lodash';
 
@@ -72,10 +67,7 @@ import {
 	UpdateMaterialRequestStatusMutation,
 	UpdateMaterialRequestStatusMutationVariables,
 } from '~generated/graphql-db-types-hetarchief';
-import {
-	EmailTemplate,
-	type MaterialRequestEmailInfo,
-} from '~modules/campaign-monitor/campaign-monitor.types';
+import { EmailTemplate, type MaterialRequestEmailInfo } from '~modules/campaign-monitor/campaign-monitor.types';
 
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 import {
@@ -574,13 +566,13 @@ export class MaterialRequestsService {
 			ip
 		);
 
-		if (updatedRequest.status === Lookup_App_Material_Request_Status_Enum.Approved) {
-			// If the request is approved, we need to start prepping the download
-			const materialRequestForDownload = await this.getMaterialRequestForDownloadJob(
-				updatedRequest.id
-			);
-			await this.mediahavenJobWatcherService.createExportJob(materialRequestForDownload);
-		}
+		// if (updatedRequest.status === Lookup_App_Material_Request_Status_Enum.Approved) {
+		// 	// If the request is approved, we need to start prepping the download
+		// 	const materialRequestForDownload = await this.getMaterialRequestForDownloadJob(
+		// 		updatedRequest.id
+		// 	);
+		// 	await this.mediahavenJobWatcherService.createExportJob(materialRequestForDownload);
+		// }
 
 		const emailTemplateToSend = MAP_MATERIAL_REQUEST_STATUS_TO_EMAIL_TEMPLATE[status];
 
@@ -632,7 +624,7 @@ export class MaterialRequestsService {
 				requesterUser,
 			});
 			console.error(error);
-			throw error;
+			// Do not throw errors when email cannot be sent
 		}
 	}
 
