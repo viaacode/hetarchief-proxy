@@ -1,11 +1,5 @@
 import { TranslationsService } from '@meemoo/admin-core-api';
-import {
-	BadRequestException,
-	Injectable,
-	InternalServerErrorException,
-	Logger,
-	type OnApplicationBootstrap,
-} from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, Logger, type OnApplicationBootstrap } from '@nestjs/common';
 
 import { ConfigService } from '@nestjs/config';
 import * as promiseUtils from 'blend-promise-utils';
@@ -39,10 +33,8 @@ import {
 } from '../dto/campaign-monitor.dto';
 import { decryptData, encryptData } from '../helpers/crypto-helper';
 
-import {
-	MaterialRequestRequesterCapacity,
-	MaterialRequestType,
-} from '~modules/material-requests/material-requests.types';
+import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
+import { MaterialRequestRequesterCapacity, MaterialRequestType } from '~modules/material-requests/material-requests.types';
 import type { VisitRequest } from '~modules/visits/types';
 import { customError } from '~shared/helpers/custom-error';
 import { checkRequiredEnvs } from '~shared/helpers/env-check';
@@ -175,28 +167,34 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 	}
 
 	public async sendForMaterialRequest(emailInfo: MaterialRequestEmailInfo): Promise<void> {
-		const recipients: string[] = [];
-		if (emailInfo.to) {
-			recipients.push(emailInfo.to);
-		} else {
-			// If there are no recipients, the mails will be sent to a fallback email address
-			recipients.push(this.configService.get('MEEMOO_MAINTAINER_MISSING_EMAIL_FALLBACK'));
+		try {
+			const recipients: string[] = [];
+			if (emailInfo.to) {
+				recipients.push(emailInfo.to);
+			} else {
+				// If there are no recipients, the mails will be sent to a fallback email address
+				recipients.push(this.configService.get('MEEMOO_MAINTAINER_MISSING_EMAIL_FALLBACK'));
+			}
+
+			const data: CampaignMonitorData = {
+				to: recipients,
+				replyTo: emailInfo.replyTo,
+				consentToTrack: ConsentToTrackOption.UNCHANGED,
+				data: this.convertMaterialRequestsToEmailTemplateData(emailInfo),
+			};
+
+			await this.sendTransactionalMail(
+				{
+					template: emailInfo.template,
+					data,
+				},
+				emailInfo.language
+			);
+		} catch (err) {
+			throw new CustomError('Failed to send material request email', err, {
+				emailInfo,
+			});
 		}
-
-		const data: CampaignMonitorData = {
-			to: recipients,
-			replyTo: emailInfo.replyTo,
-			consentToTrack: ConsentToTrackOption.UNCHANGED,
-			data: this.convertMaterialRequestsToEmailTemplateData(emailInfo),
-		};
-
-		await this.sendTransactionalMail(
-			{
-				template: emailInfo.template,
-				data,
-			},
-			emailInfo.language
-		);
 	}
 
 	/**
@@ -392,12 +390,13 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 			}
 
 			if (!cmTemplateId) {
-				const error = new InternalServerErrorException(
+				const error = new CustomError(
+					'Cannot send email since the requested email template id has not been set as an environment variable',
+					null,
 					{
 						templateName: emailInfo.template,
 						envVarPrefix: 'CAMPAIGN_MONITOR_EMAIL_TEMPLATE_',
-					},
-					'Cannot send email since the requested email template id has not been set as an environment variable'
+					}
 				);
 				this.logger.error(error);
 				throw error;
@@ -445,7 +444,10 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 				);
 			}
 		} catch (err) {
-			throw new BadRequestException(err, 'Failed to send email using the campaign monitor api');
+			throw new CustomError('Failed to send email using the campaign monitor api', err, {
+				emailInfo,
+				lang,
+			});
 		}
 	}
 

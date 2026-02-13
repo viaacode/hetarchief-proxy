@@ -88,7 +88,6 @@ import { limitAccessToObjectDetails } from '~modules/ie-objects/helpers/limit-ac
 import { mapDcTermsFormatToSimpleType } from '~modules/ie-objects/helpers/map-dc-terms-format-to-simple-type';
 import { IE_OBJECT_INTRA_CP_LICENSES } from '~modules/ie-objects/ie-objects.conts';
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
-import { MediahavenJobsWatcherService } from '~modules/mediahaven-jobs-watcher/services/mediahaven-jobs-watcher.service';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { UsersService } from '~modules/users/services/users.service';
@@ -106,7 +105,6 @@ export class MaterialRequestsService {
 		private spacesService: SpacesService,
 		private ieObjectsService: IeObjectsService,
 		private videoStillsService: VideoStillsService,
-		private mediahavenJobWatcherService: MediahavenJobsWatcherService,
 		private usersService: UsersService
 	) {}
 
@@ -565,14 +563,6 @@ export class MaterialRequestsService {
 			referer,
 			ip
 		);
-
-		// if (updatedRequest.status === Lookup_App_Material_Request_Status_Enum.Approved) {
-		// 	// If the request is approved, we need to start prepping the download
-		// 	const materialRequestForDownload = await this.getMaterialRequestForDownloadJob(
-		// 		updatedRequest.id
-		// 	);
-		// 	await this.mediahavenJobWatcherService.createExportJob(materialRequestForDownload);
-		// }
 
 		const emailTemplateToSend = MAP_MATERIAL_REQUEST_STATUS_TO_EMAIL_TEMPLATE[status];
 
