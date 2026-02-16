@@ -15,6 +15,7 @@ import {
 
 import { MaterialRequestsService } from './material-requests.service';
 
+import { ConfigService } from '@nestjs/config';
 import type {
 	DeleteMaterialRequestMutation,
 	FindMaintainersWithMaterialRequestsQuery,
@@ -23,6 +24,7 @@ import type {
 	InsertMaterialRequestMutation,
 	UpdateMaterialRequestMutation,
 } from '~generated/graphql-db-types-hetarchief';
+import { EventsService } from '~modules/events/services/events.service';
 import { IeObjectLicense, IeObjectsVisitorSpaceInfo } from '~modules/ie-objects/ie-objects.types';
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { MediahavenJobsWatcherService } from '~modules/mediahaven-jobs-watcher/services/mediahaven-jobs-watcher.service';
@@ -32,6 +34,7 @@ import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { UsersService } from '~modules/users/services/users.service';
 import { TestingLogger } from '~shared/logging/test-logger';
+import { mockConfigService } from '~shared/test/mock-config-service';
 
 const mockDataService: Partial<Record<keyof DataService, MockInstance>> = {
 	execute: vi.fn(),
@@ -88,7 +91,8 @@ const mockIeObjectsVisitorSpaceInfo: IeObjectsVisitorSpaceInfo = {
 const mockMediahavenJobsWatcherService: Partial<
 	Record<keyof MediahavenJobsWatcherService, MockInstance>
 > = {
-	checkJobs: vi.fn(() => Promise.resolve()),
+	checkUnresolvedJobs: vi.fn(() => Promise.resolve()),
+	checkAlmostExpiredDownloads: vi.fn(() => Promise.resolve()),
 	createExportJob: vi.fn(() => Promise.resolve('mock-job-id')),
 };
 
@@ -96,6 +100,10 @@ const mockUsersService: Partial<Record<keyof UsersService, MockInstance>> = {
 	getUserByIdentityId: vi.fn(),
 	createUserWithIdp: vi.fn(),
 	updateUser: vi.fn(),
+};
+
+const mockEventsService: Partial<Record<keyof EventsService, MockInstance>> = {
+	insertEvents: vi.fn(() => Promise.resolve()),
 };
 
 const getDefaultMaterialRequestByIdResponse = (): {
@@ -168,6 +176,14 @@ describe('MaterialRequestsService', () => {
 				{
 					provide: UsersService,
 					useValue: mockUsersService,
+				},
+				{
+					provide: EventsService,
+					useValue: mockEventsService,
+				},
+				{
+					provide: ConfigService,
+					useValue: mockConfigService,
 				},
 			],
 		})
