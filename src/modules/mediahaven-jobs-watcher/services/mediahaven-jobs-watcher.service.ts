@@ -56,7 +56,7 @@ export class MediahavenJobsWatcherService {
 	/**
 	 * Try to create a new job, since the last one failed to timed-out. If the number of retries in not too high and not too fast after the last try.
 	 * @param materialRequest
-	 * @return boolean indicating whether the job failed (true) or was retried (false)
+	 * @return boolean indicating whether the job failed (true), was delayed (false) or was retried (false)
 	 */
 	private async retryDownloadJobOrFail(
 		materialRequest: MaterialRequestForDownload
