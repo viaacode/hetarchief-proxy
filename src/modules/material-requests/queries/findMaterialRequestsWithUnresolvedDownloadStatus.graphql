@@ -15,6 +15,7 @@ query findMaterialRequestsWithUnresolvedDownloadStatus {
 		download_job_id
 		download_retries
 		download_status
+		download_expiry_warning_email_sent
 		ie_object_id
 		ie_object_representation_id
 		type

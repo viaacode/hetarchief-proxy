@@ -33,6 +33,7 @@ mutation updateMaterialRequest(
 			download_retries
 			download_available_at
 			download_job_id
+			download_expiry_warning_email_sent
 			requested_by {
 				id
 				full_name

@@ -18,10 +18,26 @@ export class MediahavenJobsWatcherController {
 	public async checkMediahavenJobsStatuses(): Promise<{ message: 'checking' }> {
 		try {
 			this.mediahavenJobsWatcherService
-				.checkJobs()
+				.checkUnresolvedJobs()
 				.then(noop)
 				.catch((err) => {
-					console.log(new CustomError('Error during checkMediahavenJobsStatuses cron', err));
+					console.log(
+						new CustomError(
+							'Error during checkMediahavenJobsStatuses => checkUnresolvedJobs cron',
+							err
+						)
+					);
+				});
+			this.mediahavenJobsWatcherService
+				.checkAlmostExpiredDownloads()
+				.then(noop)
+				.catch((err) => {
+					console.log(
+						new CustomError(
+							'Error during checkMediahavenJobsStatuses => checkAlmostExpiredDownloads cron',
+							err
+						)
+					);
 				});
 			return { message: 'checking' };
 		} catch (err) {
