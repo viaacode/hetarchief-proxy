@@ -29,17 +29,11 @@ import {
 } from '../dto/material-requests.dto';
 import type { MaterialRequest, MaterialRequestMaintainer } from '../material-requests.types';
 
-import { MaterialRequestsService } from '../services/material-requests.service';
-
 import { Lookup_App_Material_Request_Status_Enum } from '~generated/graphql-db-types-hetarchief';
 import { EventsService } from '~modules/events/services/events.service';
 import { type LogEvent, LogEventType } from '~modules/events/types';
 import { mapDcTermsFormatToSimpleType } from '~modules/ie-objects/helpers/map-dc-terms-format-to-simple-type';
-import {
-	MAP_MATERIAL_REQUEST_STATUS_TO_EVENT_TYPE,
-	getAdditionEventDate,
-	mapUserToGroupNameAndKeyUser,
-} from '~modules/material-requests/material-requests.consts';
+import { mapUserToGroupNameAndKeyUser } from '~modules/material-requests/material-requests.consts';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupId, GroupName } from '~modules/users/types';
 import { Ip } from '~shared/decorators/ip.decorator';
@@ -49,6 +43,7 @@ import { RequireAllPermissions } from '~shared/decorators/require-permissions.de
 import { SessionUser } from '~shared/decorators/user.decorator';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
 import { EventsHelper } from '~shared/helpers/events';
+import { MaterialRequestsService } from '../services/material-requests.service';
 
 @UseGuards(LoggedInGuard)
 @ApiTags('MaterialRequests')
@@ -180,37 +175,15 @@ export class MaterialRequestsController {
 		@Referer() referer: string,
 		@Ip() ip: string
 	): Promise<MaterialRequest> {
-		const materialRequest = await this.materialRequestsService.updateMaterialRequestStatus(
+		return await this.materialRequestsService.updateMaterialRequestStatus(
 			materialRequestId,
 			updateMaterialRequestStatusDto,
 			user,
 			referer,
-			ip
+			ip,
+			request.path,
+			EventsHelper.getEventId(request)
 		);
-
-		const eventType = MAP_MATERIAL_REQUEST_STATUS_TO_EVENT_TYPE[materialRequest.status];
-
-		// Is this a trackable event? (Approved, Denied, Cancelled)
-		if (eventType) {
-			await this.eventsService.insertEvents([
-				{
-					id: EventsHelper.getEventId(request),
-					type: eventType,
-					source: request.path,
-					subject: user?.getId(),
-					time: new Date().toISOString(),
-					data: {
-						type: mapDcTermsFormatToSimpleType(materialRequest.objectDctermsFormat),
-						or_id: materialRequest.maintainerId,
-						pid: materialRequest.objectSchemaIdentifier,
-						material_request_group_id: materialRequest.requestGroupId,
-						...getAdditionEventDate(eventType, materialRequest),
-					},
-				},
-			]);
-		}
-
-		return materialRequest;
 	}
 
 	@Delete(':id')

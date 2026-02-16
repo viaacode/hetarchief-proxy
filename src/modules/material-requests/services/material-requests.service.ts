@@ -1,7 +1,7 @@
 import { DataService, Locale, StillsObjectType, VideoStillsService } from '@meemoo/admin-core-api';
 import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
-import { compact, groupBy, intersection, isArray, isEmpty, isNil, kebabCase, set } from 'lodash';
+import { compact, groupBy, intersection, isArray, isEmpty, isNil, kebabCase, noop, set } from 'lodash';
 
 import {
 	CreateMaterialRequestDto,
@@ -11,7 +11,9 @@ import {
 } from '../dto/material-requests.dto';
 import {
 	DOWNLOAD_AVAILABILITY_DAYS,
+	getAdditionEventDate,
 	MAP_MATERIAL_REQUEST_STATUS_TO_EMAIL_TEMPLATE,
+	MAP_MATERIAL_REQUEST_STATUS_TO_EVENT_TYPE,
 	ORDER_PROP_TO_DB_PROP,
 } from '../material-requests.consts';
 import {
@@ -84,6 +86,7 @@ import { OrganisationsService } from '~modules/organisations/services/organisati
 import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
 import { AvoStillsStillInfo, AvoUserCommonUser } from '@viaa/avo2-types';
 import { addDays } from 'date-fns';
+import { EventsService } from '~modules/events/services/events.service';
 import { limitAccessToObjectDetails } from '~modules/ie-objects/helpers/limit-access-to-object-details';
 import { mapDcTermsFormatToSimpleType } from '~modules/ie-objects/helpers/map-dc-terms-format-to-simple-type';
 import { IE_OBJECT_INTRA_CP_LICENSES } from '~modules/ie-objects/ie-objects.conts';
@@ -106,8 +109,9 @@ export class MaterialRequestsService {
 		private spacesService: SpacesService,
 		private ieObjectsService: IeObjectsService,
 		private videoStillsService: VideoStillsService,
-		private mediahavenJobWatcherService: MediahavenJobsWatcherService,
-		private usersService: UsersService
+		private usersService: UsersService,
+		private eventsService: EventsService,
+		private mediahavenJobWatcherService: MediahavenJobsWatcherService
 	) {}
 
 	public async findAll(
@@ -507,7 +511,9 @@ export class MaterialRequestsService {
 		statusOptions: UpdateMaterialRequestStatusDto,
 		user: SessionUserEntity,
 		referer: string,
-		ip: string
+		ip: string,
+		requestPath: string,
+		eventId?: string
 	): Promise<MaterialRequest> {
 		const currentRequest = await this.findById(materialRequestId, user, referer, ip);
 
@@ -566,13 +572,15 @@ export class MaterialRequestsService {
 			ip
 		);
 
-		// if (updatedRequest.status === Lookup_App_Material_Request_Status_Enum.Approved) {
-		// 	// If the request is approved, we need to start prepping the download
-		// 	const materialRequestForDownload = await this.getMaterialRequestForDownloadJob(
-		// 		updatedRequest.id
-		// 	);
-		// 	await this.mediahavenJobWatcherService.createExportJob(materialRequestForDownload);
-		// }
+		this.trackMaterialRequestStatusChangeEvent(updatedRequest, requestPath, user?.getId(), eventId);
+
+		if (updatedRequest.status === Lookup_App_Material_Request_Status_Enum.Approved) {
+			// If the request is approved, we need to start prepping the download
+			const materialRequestForDownload = await this.getMaterialRequestForDownloadJob(
+				updatedRequest.id
+			);
+			await this.mediahavenJobWatcherService.createExportJob(materialRequestForDownload);
+		}
 
 		const emailTemplateToSend = MAP_MATERIAL_REQUEST_STATUS_TO_EMAIL_TEMPLATE[status];
 
@@ -1059,5 +1067,49 @@ export class MaterialRequestsService {
 			});
 		}
 		return this.adapt(materialRequest);
+	}
+
+	private trackMaterialRequestStatusChangeEvent(
+		updatedRequest: MaterialRequest,
+		requestPath: string,
+		userId: string,
+		eventId: string
+	) {
+		const eventType = MAP_MATERIAL_REQUEST_STATUS_TO_EVENT_TYPE[updatedRequest.status];
+
+		// Is this a trackable event? (Approved, Denied, Cancelled)
+		if (eventType) {
+			this.eventsService
+				.insertEvents([
+					{
+						id: eventId,
+						type: eventType,
+						source: requestPath,
+						subject: userId,
+						time: new Date().toISOString(),
+						data: {
+							type: mapDcTermsFormatToSimpleType(updatedRequest.objectDctermsFormat),
+							or_id: updatedRequest.maintainerId,
+							pid: updatedRequest.objectSchemaIdentifier,
+							material_request_group_id: updatedRequest.requestGroupId,
+							...getAdditionEventDate(eventType, updatedRequest),
+						},
+					},
+				])
+				.then(noop)
+				.catch((err) => {
+					const error = new CustomError(
+						'Failed to log event for material request status update',
+						err,
+						{
+							materialRequestId: updatedRequest.id,
+							requestPath,
+							eventId,
+							updatedRequest,
+						}
+					);
+					console.error(error);
+				});
+		}
 	}
 }

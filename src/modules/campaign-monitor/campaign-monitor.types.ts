@@ -1,8 +1,4 @@
-import {
-	CampaignMonitorConfirmationData,
-	CampaignMonitorMaterialRequestData,
-	CampaignMonitorVisitData,
-} from './dto/campaign-monitor.dto';
+import { CampaignMonitorConfirmationData, CampaignMonitorMaterialRequestData, CampaignMonitorVisitData } from './dto/campaign-monitor.dto';
 
 import { SendRequestListDto } from '~modules/material-requests/dto/material-requests.dto';
 import type { MaterialRequest } from '~modules/material-requests/material-requests.types';
@@ -21,6 +17,8 @@ export enum EmailTemplate {
 	MATERIAL_REQUEST_MAINTAINER_DENIED = 'materialRequestMaintainerDenied',
 	MATERIAL_REQUEST_DOWNLOAD_READY_MAINTAINER = 'materialRequestDownloadReadyMaintainer',
 	MATERIAL_REQUEST_DOWNLOAD_READY_REQUESTER = 'materialRequestDownloadReadyRequester',
+	MATERIAL_REQUEST_DOWNLOAD_EXPIRE_SOON = 'materialRequestDownloadExpireSoon',
+	MATERIAL_REQUEST_DOWNLOAD_DOWNLOADED = 'materialRequestDownloadDownloaded',
 	NEWSLETTER_CONFIRMATION = 'newsletterConfirmation',
 }
 

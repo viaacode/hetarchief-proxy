@@ -3,7 +3,7 @@ import { EmailTemplate } from './campaign-monitor.types';
 import type { Locale } from '~shared/types/types';
 
 export const getTemplateId = (template: string, language: Locale): string => {
-	const templateIds = {
+	const templateIds: Record<EmailTemplate, string> = {
 		[EmailTemplate.SHARE_FOLDER]: process.env[
 			`CAMPAIGN_MONITOR_TEMPLATE_SHARE_FOLDER__${language.toUpperCase()}`
 		] as string,
@@ -36,6 +36,12 @@ export const getTemplateId = (template: string, language: Locale): string => {
 		] as string,
 		[EmailTemplate.MATERIAL_REQUEST_DOWNLOAD_READY_REQUESTER]: process.env[
 			`CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_DOWNLOAD_READY_REQUESTER__${language.toUpperCase()}`
+		] as string,
+		[EmailTemplate.MATERIAL_REQUEST_DOWNLOAD_EXPIRE_SOON]: process.env[
+			`CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_DOWNLOAD_EXPIRE_SOON__${language.toUpperCase()}`
+		] as string,
+		[EmailTemplate.MATERIAL_REQUEST_DOWNLOAD_DOWNLOADED]: process.env[
+			`CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_DOWNLOAD_DOWNLOADED__${language.toUpperCase()}`
 		] as string,
 		[EmailTemplate.NEWSLETTER_CONFIRMATION]: process.env[
 			`CAMPAIGN_MONITOR_TEMPLATE_CONFIRMATION_NEWSLETTER_SUBSCRIPTION__${language.toUpperCase()}`
