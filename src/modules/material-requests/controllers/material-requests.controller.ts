@@ -222,7 +222,7 @@ export class MaterialRequestsController {
 		dto.size = 100;
 
 		try {
-			const materialRequests = await this.materialRequestsService.findAll(
+			let { items: materialRequests } = await this.materialRequestsService.findAll(
 				dto,
 				true,
 				user,
@@ -230,53 +230,52 @@ export class MaterialRequestsController {
 				ip
 			);
 
-			for (const materialRequest of materialRequests.items) {
+			for (const materialRequest of materialRequests) {
 				// If the email does not exist, the campaign monitor service will default to process.env.MEEMOO_MAINTAINER_MISSING_EMAIL_FALLBACK
 				materialRequest.requesterCapacity = sendRequestListDto.type;
 				materialRequest.requesterOrganisation = sendRequestListDto?.organisation;
 				materialRequest.requestGroupName = sendRequestListDto?.requestGroupName;
 			}
 
-			await this.materialRequestsService.sendRequestList(
-				materialRequests.items,
-				sendRequestListDto,
-				{
-					firstName: user.getFirstName(),
-					lastName: user.getLastName(),
-					language: user.getLanguage(),
-				}
-			);
+			await this.materialRequestsService.sendRequestList(materialRequests, sendRequestListDto, {
+				firstName: user.getFirstName(),
+				lastName: user.getLastName(),
+				language: user.getLanguage(),
+			});
 
 			const material_request_group_id = uuidv4();
-			await Promise.all(
-				materialRequests.items.map(async (materialRequest: MaterialRequest) => {
-					await this.materialRequestsService.updateMaterialRequestForUser(
-						materialRequest.id,
-						user,
-						{
-							type: materialRequest.type,
-							reason: materialRequest.reason,
-							organisation: materialRequest.requesterOrganisation,
-							organisation_sector: materialRequest.requesterOrganisationSector || user.getSector(),
-							requester_capacity: materialRequest.requesterCapacity,
-							is_pending: false,
-							status: materialRequest.reuseForm
-								? Lookup_App_Material_Request_Status_Enum.New
-								: Lookup_App_Material_Request_Status_Enum.None,
-							group_id: material_request_group_id,
-							name: materialRequest.reuseForm ? materialRequest.requestGroupName : undefined,
-							requested_at: new Date().toISOString(),
-						},
-						materialRequest.reuseForm,
-						referer,
-						ip
-					);
-				})
+			// store the update requests so we can use them for the events to prevent data loss
+			materialRequests = await Promise.all(
+				materialRequests.map(
+					async (materialRequest: MaterialRequest) =>
+						await this.materialRequestsService.updateMaterialRequestForUser(
+							materialRequest.id,
+							user,
+							{
+								type: materialRequest.type,
+								reason: materialRequest.reason,
+								organisation: materialRequest.requesterOrganisation,
+								organisation_sector:
+									materialRequest.requesterOrganisationSector || user.getSector(),
+								requester_capacity: materialRequest.requesterCapacity,
+								is_pending: false,
+								status: materialRequest.reuseForm
+									? Lookup_App_Material_Request_Status_Enum.New
+									: Lookup_App_Material_Request_Status_Enum.None,
+								group_id: material_request_group_id,
+								name: materialRequest.reuseForm ? materialRequest.requestGroupName : undefined,
+								requested_at: new Date().toISOString(),
+							},
+							materialRequest.reuseForm,
+							referer,
+							ip
+						)
+				)
 			);
 
 			// Log events for each material request
 			this.eventsService.insertEvents(
-				materialRequests.items.map(
+				materialRequests.map(
 					(materialRequest): LogEvent => ({
 						id: EventsHelper.getEventId(request),
 						type: LogEventType.ITEM_REQUEST,
