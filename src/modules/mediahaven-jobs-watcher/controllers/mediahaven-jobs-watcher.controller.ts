@@ -10,7 +10,11 @@ import { ApiKeyGuard } from '~shared/guards/api-key.guard';
 export class MediahavenJobsWatcherController {
 	constructor(private mediahavenJobsWatcherService: MediahavenJobsWatcherService) {}
 
-	@Post()
+	/**
+	 * Will check mediahaven for jobs matching material requests and update the download statuses / restart jobs if needed
+	 * Should be triggered every 5 minutes
+	 */
+	@Post('download-statuses')
 	@ApiOperation({
 		description: 'trigger the poller to check for Mediahaven jobs that have changed state',
 	})
@@ -28,6 +32,23 @@ export class MediahavenJobsWatcherController {
 						)
 					);
 				});
+			return { message: 'checking' };
+		} catch (err) {
+			throw new CustomError('Error checking Mediahaven jobs statuses', err);
+		}
+	}
+
+	/**
+	 * Will check mediahaven for downloads that are about to expire and send a warning email to the user
+	 * Should be triggered once every day
+	 */
+	@Post('download-expiry')
+	@ApiOperation({
+		description: 'trigger the poller to check for Mediahaven jobs that have changed state',
+	})
+	@UseGuards(ApiKeyGuard)
+	public async checkDownloadExpiry(): Promise<{ message: 'checking' }> {
+		try {
 			this.mediahavenJobsWatcherService
 				.checkAlmostExpiredDownloads()
 				.then(noop)
@@ -41,7 +62,7 @@ export class MediahavenJobsWatcherController {
 				});
 			return { message: 'checking' };
 		} catch (err) {
-			throw new CustomError('Error checking Mediahaven jobs statuses', err);
+			throw new CustomError('Error checking Mediahaven download expiry', err);
 		}
 	}
 }

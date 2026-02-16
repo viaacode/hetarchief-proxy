@@ -203,6 +203,9 @@ export class MediahavenJobsWatcherService {
 						materialRequest,
 						requester
 					);
+					await this.materialRequestsService.updateMaterialRequest(materialRequest.id, {
+						download_expiry_warning_email_sent: true,
+					});
 				} catch (err) {
 					// Log the error but don't throw, since the main flow of updating the material request is successful
 					console.error('Failed to send material request almost expired download email', err, {
