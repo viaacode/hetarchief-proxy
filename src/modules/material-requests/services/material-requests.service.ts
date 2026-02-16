@@ -6,7 +6,17 @@ import {
 	NotFoundException,
 } from '@nestjs/common';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
-import { compact, groupBy, intersection, isArray, isEmpty, isNil, kebabCase, noop, set } from 'lodash';
+import {
+	compact,
+	groupBy,
+	intersection,
+	isArray,
+	isEmpty,
+	isNil,
+	kebabCase,
+	noop,
+	set,
+} from 'lodash';
 
 import {
 	CreateMaterialRequestDto,
@@ -16,10 +26,10 @@ import {
 } from '../dto/material-requests.dto';
 import {
 	DOWNLOAD_AVAILABILITY_DAYS,
-	getAdditionEventDate,
 	MAP_MATERIAL_REQUEST_STATUS_TO_EMAIL_TEMPLATE,
 	MAP_MATERIAL_REQUEST_STATUS_TO_EVENT_TYPE,
 	ORDER_PROP_TO_DB_PROP,
+	getAdditionEventDate,
 } from '../material-requests.consts';
 import {
 	GqlMaterialRequest,
@@ -835,7 +845,7 @@ export class MaterialRequestsService {
 			reuseForm = null;
 		}
 
-		const objectId = graphQlMaterialRequest.ie_object_id;
+		const objectId = graphQlMaterialRequest.intellectualEntity?.id;
 		const objectSchemaIdentifier = graphQlMaterialRequest.intellectualEntity?.schema_identifier;
 		let objectAccessThrough: IeObjectAccessThrough[] = [];
 		let objectLicences: IeObjectLicense[] = [];
@@ -1021,7 +1031,7 @@ export class MaterialRequestsService {
 			objectAccessThrough: censoredObjectMetadata?.accessThrough ?? [],
 			objectLicences: censoredObjectMetadata?.licenses ?? [],
 			hasAccessToEssence:
-				!!censoredObjectMetadata.thumbnailUrl || !!censoredObjectMetadata.pages?.length,
+				!!censoredObjectMetadata?.thumbnailUrl || !!censoredObjectMetadata?.pages?.length,
 		};
 	}
 
