@@ -165,7 +165,7 @@ export const mockMaterialRequest1: MaterialRequest = {
 	reuseForm: undefined,
 	objectRepresentation: representationMp3,
 	requestGroupName: null,
-	downloadUrl: null,
+	downloadStatus: null,
 	downloadAvailableAt: undefined,
 	downloadExpiresAt: undefined,
 };
