@@ -57,8 +57,8 @@ async function bootstrap() {
 	/** Swagger docs **/
 	if (configService.get('ENVIRONMENT') !== 'production') {
 		const swaggerConfig = new DocumentBuilder()
-			.setTitle('HetArchief2.0 Leeszalen tool API docs')
-			.setDescription('Documentatie voor de leeszalen tool api calls')
+			.setTitle('hetarchief.be API docs')
+			.setDescription('Documentatie voor de hetarchief.be api calls')
 			.setVersion(packageJson.version)
 			.addCookieAuth('connect.sid')
 			.build();
