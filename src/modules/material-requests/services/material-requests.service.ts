@@ -943,7 +943,7 @@ export class MaterialRequestsService {
 			isPending: graphQlMaterialRequest.is_pending,
 			status: graphQlMaterialRequest.status,
 			statusMotivation: graphQlMaterialRequest.status_motivation,
-			downloadUrl: graphQlMaterialRequest.download_url ?? null,
+			downloadStatus: graphQlMaterialRequest.download_status ?? null,
 			downloadAvailableAt: graphQlMaterialRequest.download_available_at,
 			downloadExpiresAt: graphQlMaterialRequest.download_available_at
 				? addDays(

@@ -16,7 +16,7 @@ mutation insertMaterialRequest($newMaterialRequest: app_material_requests_insert
 		status_motivation
 		group_id
 		name
-		download_url
+		download_status
 		download_available_at
 		requester_capacity
 		organisation

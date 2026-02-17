@@ -29,7 +29,6 @@ mutation updateMaterialRequestForUser(
 			status_motivation
 			group_id
 			name
-			download_url
 			requester_capacity
 			organisation
 			organisation_sector

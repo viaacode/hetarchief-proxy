@@ -29,7 +29,7 @@ export const mockGqlMaterialRequest1: FindMaterialRequestsQuery['app_material_re
 	status: Lookup_App_Material_Request_Status_Enum.None as any,
 	organisation: null,
 	requester_capacity: Lookup_App_Material_Request_Requester_Capacity_Enum.Education as any,
-	download_url: null,
+	download_status: null,
 	requested_by: {
 		id: 'b6c5419f-6a19-4a41-a400-e0bbc0429c4f',
 		full_name: 'Ilya Korsakov',
@@ -207,7 +207,7 @@ const mockMaterialRequest2: MaterialRequest = {
 	objectLicences: [],
 	objectRepresentation: representationMp3,
 	requestGroupName: null,
-	downloadUrl: null,
+	downloadStatus: null,
 	downloadAvailableAt: undefined,
 	downloadExpiresAt: undefined,
 };
