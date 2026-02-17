@@ -227,13 +227,17 @@ export class MaterialRequestsService {
 			const downloadUrlQuery = [];
 
 			if (hasDownloadUrl.includes('true')) {
-				downloadUrlQuery.push({ download_url: { _is_null: false } });
+				downloadUrlQuery.push({
+					_and: [{ download_url: { _is_null: false } }, { download_url: { _neq: '' } }],
+				});
 			}
 
 			if (hasDownloadUrl.includes('false')) {
 				downloadUrlQuery.push({
 					_and: [
-						{ download_url: { _is_null: true } },
+						{
+							_or: [{ download_url: { _is_null: true } }, { download_url: { _eq: '' } }],
+						},
 						{
 							status: {
 								_in: [
@@ -945,14 +949,7 @@ export class MaterialRequestsService {
 			isPending: graphQlMaterialRequest.is_pending,
 			status: graphQlMaterialRequest.status,
 			statusMotivation: graphQlMaterialRequest.status_motivation,
-			downloadStatus: graphQlMaterialRequest.download_status ?? null,
-			downloadAvailableAt: graphQlMaterialRequest.download_available_at,
-			downloadExpiresAt: graphQlMaterialRequest.download_available_at
-				? addDays(
-						new Date(graphQlMaterialRequest.download_available_at),
-						DOWNLOAD_AVAILABILITY_DAYS
-					).toISOString()
-				: null,
+			...this.adaptDownloadRelatedData(graphQlMaterialRequest),
 			requestGroupName: graphQlMaterialRequest.name ?? null,
 			requestGroupId: graphQlMaterialRequest.group_id ?? null,
 			requesterId: graphQlMaterialRequest.requested_by.id,
@@ -981,6 +978,30 @@ export class MaterialRequestsService {
 			objectMeemooLocalId:
 				(graphQlMaterialRequest as FindMaterialRequestsQuery['app_material_requests'][0])
 					?.intellectualEntity?.premisIdentifier?.[0]?.value || null,
+		};
+	}
+
+	private adaptDownloadRelatedData(
+		graphQlMaterialRequest: GqlMaterialRequest
+	): Pick<MaterialRequest, 'downloadAvailableAt' | 'downloadStatus' | 'downloadExpiresAt'> {
+		const { download_available_at, download_status } = graphQlMaterialRequest;
+
+		let downloadStatus = download_status ?? null;
+
+		// The downloadStatus says it succeeded but we have no url, so we can assume something went wrong
+		if (
+			!download_available_at &&
+			download_status === Lookup_App_Material_Request_Download_Status_Enum.Succeeded
+		) {
+			downloadStatus = Lookup_App_Material_Request_Download_Status_Enum.Failed;
+		}
+
+		return {
+			downloadAvailableAt: download_available_at,
+			downloadStatus,
+			downloadExpiresAt: download_available_at
+				? addDays(new Date(download_available_at), DOWNLOAD_AVAILABILITY_DAYS).toISOString()
+				: null,
 		};
 	}
 
