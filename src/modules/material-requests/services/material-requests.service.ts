@@ -6,6 +6,7 @@ import {
 	NotFoundException,
 } from '@nestjs/common';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
+import { mapLimit } from 'blend-promise-utils';
 import {
 	compact,
 	groupBy,
@@ -59,6 +60,9 @@ import {
 	FindMaterialRequestsDocument,
 	type FindMaterialRequestsQuery,
 	type FindMaterialRequestsQueryVariables,
+	FindMaterialRequestsWithAlmostExpiredDownloadDocument,
+	FindMaterialRequestsWithAlmostExpiredDownloadQuery,
+	FindMaterialRequestsWithAlmostExpiredDownloadQueryVariables,
 	FindMaterialRequestsWithUnresolvedDownloadStatusDocument,
 	FindMaterialRequestsWithUnresolvedDownloadStatusQuery,
 	GetMaterialRequestForDownloadJobDocument,
@@ -102,8 +106,10 @@ import type { Organisation } from '~modules/organisations/organisations.types';
 import { OrganisationsService } from '~modules/organisations/services/organisations.service';
 
 import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
+import { ConfigService } from '@nestjs/config';
 import { AvoStillsStillInfo, AvoUserCommonUser } from '@viaa/avo2-types';
-import { addDays } from 'date-fns';
+import { addDays, subDays } from 'date-fns';
+import type { Configuration } from '~config';
 import { EventsService } from '~modules/events/services/events.service';
 import { limitAccessToObjectDetails } from '~modules/ie-objects/helpers/limit-access-to-object-details';
 import { mapDcTermsFormatToSimpleType } from '~modules/ie-objects/helpers/map-dc-terms-format-to-simple-type';
@@ -129,7 +135,8 @@ export class MaterialRequestsService {
 		private videoStillsService: VideoStillsService,
 		private usersService: UsersService,
 		private eventsService: EventsService,
-		private mediahavenJobWatcherService: MediahavenJobsWatcherService
+		private mediahavenJobWatcherService: MediahavenJobsWatcherService,
+		private configService: ConfigService<Configuration>
 	) {}
 
 	public async findAll(
@@ -1042,6 +1049,38 @@ export class MaterialRequestsService {
 			);
 
 		return response.app_material_requests?.map(this.adaptMaterialRequestsForDownloadJobs);
+	}
+
+	/**
+	 * Finds all the material requests that
+	 * - are approved
+	 * - have a download available
+	 * - have a download that will expire in 8 days or less
+	 * - have a requester that has not yet been sent an expiry warning email
+	 */
+	async findAllWithAlmostExpiredDownload(): Promise<MaterialRequest[]> {
+		try {
+			const DAYS_AVAILABLE = this.configService.get<number>(
+				'MATERIAL_REQUEST_DOWNLOAD_DAYS_AVAILABLE'
+			);
+			const DAYS_BEFORE_EXPIRATION = this.configService.get<number>(
+				'MATERIAL_REQUEST_DOWNLOAD_WARNING_DAYS_BEFORE_EXPIRING'
+			);
+			const response = await this.dataService.execute<
+				FindMaterialRequestsWithAlmostExpiredDownloadQuery,
+				FindMaterialRequestsWithAlmostExpiredDownloadQueryVariables
+			>(FindMaterialRequestsWithAlmostExpiredDownloadDocument, {
+				warningDate: subDays(new Date(), DAYS_AVAILABLE - DAYS_BEFORE_EXPIRATION).toISOString(),
+			});
+			return await mapLimit(response.app_material_requests, 5, this.adapt);
+		} catch (err) {
+			const error = customError(
+				'Failed to find material requests with almost expired download',
+				err
+			);
+			console.error(error);
+			return [];
+		}
 	}
 
 	public async getMaterialRequestForDownloadJob(

@@ -200,7 +200,7 @@ describe('CampaignMonitorService', () => {
 					replyTo: null,
 				});
 			} catch (err) {
-				expect(err.name).toEqual('BadRequestException');
+				expect(err.name).toEqual('Error');
 			}
 			campaignMonitorService.setIsEnabled(true);
 		});

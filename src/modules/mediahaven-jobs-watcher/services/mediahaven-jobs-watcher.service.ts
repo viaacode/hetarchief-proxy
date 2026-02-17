@@ -19,7 +19,7 @@ import {
 	Lookup_App_Material_Request_Download_Status_Enum,
 } from '~generated/graphql-db-types-hetarchief';
 import { EmailTemplate } from '~modules/campaign-monitor/campaign-monitor.types';
-import { MaterialRequestForDownload } from '~modules/material-requests/material-requests.types';
+import { MaterialRequest, MaterialRequestForDownload } from '~modules/material-requests/material-requests.types';
 import { MaterialRequestsService } from '~modules/material-requests/services/material-requests.service';
 import {
 	CreateMamJob,
@@ -83,7 +83,7 @@ export class MediahavenJobsWatcherService {
 		return true;
 	}
 
-	public async checkJobs() {
+	public async checkUnresolvedJobs() {
 		try {
 			const jobs: MediahavenJobInfo[] = await this.getJobsFromMediahaven();
 			const unresolvedMaterialRequests: MaterialRequestForDownload[] =
@@ -187,6 +187,35 @@ export class MediahavenJobsWatcherService {
 			console.log('Mediahaven jobs check report', reportItems);
 		} catch (err) {
 			throw new CustomError('Error checking mediahaven jobs', err);
+		}
+	}
+
+	public async checkAlmostExpiredDownloads() {
+		try {
+			const almostExpiredMaterialRequests: MaterialRequest[] =
+				await this.materialRequestsService.findAllWithAlmostExpiredDownload();
+
+			for (const materialRequest of almostExpiredMaterialRequests) {
+				try {
+					const requester = await this.usersService.getById(materialRequest.profileId);
+					await this.materialRequestsService.sentStatusUpdateEmail(
+						EmailTemplate.MATERIAL_REQUEST_DOWNLOAD_EXPIRE_SOON,
+						materialRequest,
+						requester
+					);
+					await this.materialRequestsService.updateMaterialRequest(materialRequest.id, {
+						download_expiry_warning_email_sent: true,
+					});
+				} catch (err) {
+					// Log the error but don't throw, since the main flow of updating the material request is successful
+					console.error('Failed to send material request almost expired download email', err, {
+						materialRequestId: materialRequest.id,
+						requesterId: materialRequest.requesterId,
+					});
+				}
+			}
+		} catch (err) {
+			throw new CustomError('Error checking almost expired material request downloads', err);
 		}
 	}
 

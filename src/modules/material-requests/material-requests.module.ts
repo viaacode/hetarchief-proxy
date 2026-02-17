@@ -4,6 +4,7 @@ import { Module } from '@nestjs/common';
 import { MaterialRequestsController } from './controllers/material-requests.controller';
 import { MaterialRequestsService } from './services/material-requests.service';
 
+import { ConfigModule } from '@nestjs/config';
 import { CampaignMonitorModule } from '~modules/campaign-monitor';
 import { EventsModule } from '~modules/events';
 import { IeObjectsModule } from '~modules/ie-objects';
@@ -16,6 +17,7 @@ import { UsersModule } from '~modules/users';
 	controllers: [MaterialRequestsController],
 	providers: [MaterialRequestsService],
 	imports: [
+		ConfigModule,
 		DataModule,
 		CampaignMonitorModule,
 		OrganisationsModule,

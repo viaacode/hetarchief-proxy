@@ -2,18 +2,14 @@ import {
 	FindMaintainersWithMaterialRequestsQuery,
 	FindMaterialRequestsByIdQuery,
 	FindMaterialRequestsQuery,
+	FindMaterialRequestsWithAlmostExpiredDownloadQuery,
 	Lookup_App_Material_Request_Download_Status_Enum,
 	Lookup_App_Material_Request_Requester_Capacity_Enum,
 	Lookup_App_Material_Request_Status_Enum,
 	Lookup_App_Material_Request_Type_Enum,
 	type UpdateMaterialRequestMutation,
 } from '~generated/graphql-db-types-hetarchief';
-import {
-	IeObjectAccessThrough,
-	IeObjectLicense,
-	IeObjectRepresentation,
-	IeObjectType,
-} from '~modules/ie-objects/ie-objects.types';
+import { IeObjectAccessThrough, IeObjectLicense, IeObjectRepresentation, IeObjectType } from '~modules/ie-objects/ie-objects.types';
 import type { Locale } from '~shared/types/types';
 
 export interface MaterialRequest {
@@ -171,7 +167,8 @@ export enum MaterialRequestOrderProp {
 export type GqlMaterialRequest =
 	| FindMaterialRequestsQuery['app_material_requests'][0]
 	| FindMaterialRequestsByIdQuery['app_material_requests'][0]
-	| UpdateMaterialRequestMutation['update_app_material_requests']['returning'][0];
+	| UpdateMaterialRequestMutation['update_app_material_requests']['returning'][0]
+	| FindMaterialRequestsWithAlmostExpiredDownloadQuery['app_material_requests'][0];
 
 export type GqlMaterialRequestMaintainer =
 	FindMaintainersWithMaterialRequestsQuery['graph_organisations_with_material_requests'][0];
