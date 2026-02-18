@@ -74,6 +74,7 @@ import {
 	InsertMaterialRequestReuseFormDocument,
 	InsertMaterialRequestReuseFormMutation,
 	InsertMaterialRequestReuseFormMutationVariables,
+	Lookup_App_Material_Request_Download_Status_Enum,
 	Lookup_App_Material_Request_Requester_Capacity_Enum,
 	Lookup_App_Material_Request_Status_Enum,
 	Lookup_App_Material_Request_Type_Enum,
@@ -108,9 +109,10 @@ import { OrganisationsService } from '~modules/organisations/services/organisati
 import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
 import { ConfigService } from '@nestjs/config';
 import { AvoStillsStillInfo, AvoUserCommonUser } from '@viaa/avo2-types';
-import { addDays, subDays } from 'date-fns';
+import { addDays, isWithinInterval, subDays } from 'date-fns';
 import type { Configuration } from '~config';
 import { EventsService } from '~modules/events/services/events.service';
+import { LogEventType } from '~modules/events/types';
 import { limitAccessToObjectDetails } from '~modules/ie-objects/helpers/limit-access-to-object-details';
 import { mapDcTermsFormatToSimpleType } from '~modules/ie-objects/helpers/map-dc-terms-format-to-simple-type';
 import { IE_OBJECT_INTRA_CP_LICENSES } from '~modules/ie-objects/ie-objects.conts';
@@ -225,13 +227,17 @@ export class MaterialRequestsService {
 			const downloadUrlQuery = [];
 
 			if (hasDownloadUrl.includes('true')) {
-				downloadUrlQuery.push({ download_url: { _is_null: false } });
+				downloadUrlQuery.push({
+					_and: [{ download_url: { _is_null: false } }, { download_url: { _neq: '' } }],
+				});
 			}
 
 			if (hasDownloadUrl.includes('false')) {
 				downloadUrlQuery.push({
 					_and: [
-						{ download_url: { _is_null: true } },
+						{
+							_or: [{ download_url: { _is_null: true } }, { download_url: { _eq: '' } }],
+						},
 						{
 							status: {
 								_in: [
@@ -943,14 +949,7 @@ export class MaterialRequestsService {
 			isPending: graphQlMaterialRequest.is_pending,
 			status: graphQlMaterialRequest.status,
 			statusMotivation: graphQlMaterialRequest.status_motivation,
-			downloadUrl: graphQlMaterialRequest.download_url ?? null,
-			downloadAvailableAt: graphQlMaterialRequest.download_available_at,
-			downloadExpiresAt: graphQlMaterialRequest.download_available_at
-				? addDays(
-						new Date(graphQlMaterialRequest.download_available_at),
-						DOWNLOAD_AVAILABILITY_DAYS
-					).toISOString()
-				: null,
+			...this.adaptDownloadRelatedData(graphQlMaterialRequest),
 			requestGroupName: graphQlMaterialRequest.name ?? null,
 			requestGroupId: graphQlMaterialRequest.group_id ?? null,
 			requesterId: graphQlMaterialRequest.requested_by.id,
@@ -982,6 +981,30 @@ export class MaterialRequestsService {
 		};
 	}
 
+	private adaptDownloadRelatedData(
+		graphQlMaterialRequest: GqlMaterialRequest
+	): Pick<MaterialRequest, 'downloadAvailableAt' | 'downloadStatus' | 'downloadExpiresAt'> {
+		const { download_available_at, download_status } = graphQlMaterialRequest;
+
+		let downloadStatus = download_status ?? null;
+
+		// The downloadStatus says it succeeded but we have no url, so we can assume something went wrong
+		if (
+			!download_available_at &&
+			download_status === Lookup_App_Material_Request_Download_Status_Enum.Succeeded
+		) {
+			downloadStatus = Lookup_App_Material_Request_Download_Status_Enum.Failed;
+		}
+
+		return {
+			downloadAvailableAt: download_available_at,
+			downloadStatus,
+			downloadExpiresAt: download_available_at
+				? addDays(new Date(download_available_at), DOWNLOAD_AVAILABILITY_DAYS).toISOString()
+				: null,
+		};
+	}
+
 	public adaptMaterialRequestsForDownloadJobs(
 		materialRequests: FindMaterialRequestsWithUnresolvedDownloadStatusQuery['app_material_requests'][0]
 	): MaterialRequestForDownload {
@@ -990,6 +1013,7 @@ export class MaterialRequestsService {
 			type: materialRequests.type,
 			status: materialRequests.status,
 			approvedAt: materialRequests.approved_at,
+			downloadUrl: materialRequests.download_url || null,
 			downloadJobId: materialRequests.download_job_id || null,
 			downloadRetries: materialRequests.download_retries,
 			downloadStatus: materialRequests.download_status || null,
@@ -1124,6 +1148,101 @@ export class MaterialRequestsService {
 			});
 		}
 		return this.adapt(materialRequest);
+	}
+
+	/**
+	 * Find the download url for the specified request
+	 * Will throw an error if
+	 * - the request status is not approved
+	 * - the download status is not succeeded
+	 * - the download has expired
+	 * - there is no download url
+	 * Will otherwise log an event and send a notification to the user
+	 * @param materialRequestId
+	 * @param user
+	 * @param referer
+	 * @param ip
+	 * @param requestPath
+	 * @param eventId
+	 */
+	public async handleDownloadForMaterialRequest(
+		materialRequestId: string,
+		user: SessionUserEntity,
+		referer: string,
+		ip: string,
+		requestPath: string,
+		eventId: string
+	): Promise<string> {
+		// Reusing the current implementations for logic like the organisations of the findById
+		// or logic to get the downloadUrl of the getMaterialRequestForDownloadJob
+		const [materialRequest, materialRequestForDownload] = await Promise.all([
+			this.findById(materialRequestId, user, referer, ip),
+			this.getMaterialRequestForDownloadJob(materialRequestId),
+		]);
+
+		const downloadAvailableAt = materialRequest?.downloadAvailableAt
+			? new Date(materialRequest?.downloadAvailableAt)
+			: null;
+		const downloadExpiresAt = materialRequest?.downloadExpiresAt
+			? new Date(materialRequest?.downloadExpiresAt)
+			: null;
+
+		const downloadExpired =
+			!!downloadAvailableAt &&
+			!!downloadExpiresAt &&
+			!isWithinInterval(Date.now(), {
+				start: downloadAvailableAt,
+				end: downloadExpiresAt,
+			});
+
+		const isRequestApproved =
+			materialRequest.status === Lookup_App_Material_Request_Status_Enum.Approved;
+		const hasDownloadJobSucceeded =
+			materialRequest.downloadStatus === Lookup_App_Material_Request_Download_Status_Enum.Succeeded;
+
+		if (
+			!isRequestApproved ||
+			!hasDownloadJobSucceeded ||
+			downloadExpired ||
+			!materialRequestForDownload.downloadUrl
+		) {
+			const error = new CustomError(
+				'The download for this request is expired or not yet available',
+				null,
+				{
+					materialRequestId,
+					materialRequest,
+				}
+			);
+			console.error(error);
+			throw error;
+		}
+
+		this.eventsService.insertEvents([
+			{
+				id: eventId,
+				type: LogEventType.ITEM_REQUEST_DOWNLOAD_EXECUTED,
+				source: requestPath,
+				subject: user?.getId(),
+				time: new Date().toISOString(),
+				data: {
+					type: mapDcTermsFormatToSimpleType(materialRequest.objectDctermsFormat),
+					or_id: materialRequest.maintainerId,
+					pid: materialRequest.objectSchemaIdentifier,
+					material_request_group_id: materialRequest.requestGroupId,
+					fragment_id: materialRequest.objectSchemaIdentifier,
+				},
+			},
+		]);
+
+		const requester = await this.usersService.getById(materialRequest.profileId);
+		await this.sentStatusUpdateEmail(
+			EmailTemplate.MATERIAL_REQUEST_DOWNLOAD_DOWNLOADED,
+			materialRequest,
+			requester
+		);
+
+		return materialRequestForDownload.downloadUrl;
 	}
 
 	private trackMaterialRequestStatusChangeEvent(

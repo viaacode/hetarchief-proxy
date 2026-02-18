@@ -31,8 +31,6 @@ export enum LogEventType {
 	ITEM_REQUEST_DENY = 'be.hetarchief.reuse.disapprove',
 	ITEM_REQUEST_CANCEL = 'be.hetarchief.reuse.cancel',
 	ITEM_REQUEST_DOWNLOAD_AVAILABLE = 'be.hetarchief.reuse.downloadavailable',
-
-	// Triggered in the frontend
 	ITEM_REQUEST_DOWNLOAD_EXECUTED = 'be.hetarchief.reuse.downloadexecuted',
 }
 

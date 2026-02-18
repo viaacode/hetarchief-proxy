@@ -12,6 +12,7 @@ query findMaterialRequestsWithUnresolvedDownloadStatus {
 		id
 		approved_at
 		status
+		download_url
 		download_job_id
 		download_retries
 		download_status

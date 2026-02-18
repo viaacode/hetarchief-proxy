@@ -109,6 +109,28 @@ export class MaterialRequestsController {
 		return await this.materialRequestsService.findById(id, user, referer, ip);
 	}
 
+	@Get(':id/download')
+	@RequireAnyPermissions(
+		PermissionName.VIEW_ANY_MATERIAL_REQUESTS,
+		PermissionName.VIEW_OWN_MATERIAL_REQUESTS
+	)
+	public async handleDownload(
+		@Param('id', ParseUUIDPipe) id: string,
+		@SessionUser() user: SessionUserEntity,
+		@Referer() referer: string,
+		@Ip() ip: string,
+		@Req() request: Request
+	): Promise<string> {
+		return this.materialRequestsService.handleDownloadForMaterialRequest(
+			id,
+			user,
+			referer,
+			ip,
+			request.path,
+			EventsHelper.getEventId(request)
+		);
+	}
+
 	@Put()
 	@ApiOperation({
 		description: 'Create a material request',
