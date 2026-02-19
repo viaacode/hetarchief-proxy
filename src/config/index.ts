@@ -41,6 +41,11 @@ const config = (): Configuration => {
 		CLIENT_HOST: getEnvValue('CLIENT_HOST', true),
 		PORT: Number.parseInt(getEnvValue('PORT', false), 10) || DEFAULT_CONFIG.port,
 		PROXY_API_KEY: getEnvValue('PROXY_API_KEY', true),
+		FORCE_ROLE_EVALUATOR_EMAILS: getEnvValue('FORCE_ROLE_EVALUATOR_EMAILS', false)
+			? getEnvValue('FORCE_ROLE_EVALUATOR_EMAILS', false)
+					.split(',')
+					.map((email) => email.trim())
+			: [],
 		GRAPHQL_ENABLE_WHITELIST: getEnvValue('GRAPHQL_ENABLE_WHITELIST', false) === 'true',
 		GRAPHQL_URL_LOGGING: getEnvValue('GRAPHQL_URL_LOGGING', true),
 		GRAPHQL_SECRET_LOGGING: getEnvValue('GRAPHQL_SECRET_LOGGING', true),
