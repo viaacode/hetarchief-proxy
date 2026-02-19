@@ -19,7 +19,10 @@ import {
 	Lookup_App_Material_Request_Download_Status_Enum,
 } from '~generated/graphql-db-types-hetarchief';
 import { EmailTemplate } from '~modules/campaign-monitor/campaign-monitor.types';
-import { MaterialRequest, MaterialRequestForDownload } from '~modules/material-requests/material-requests.types';
+import {
+	MaterialRequest,
+	MaterialRequestForDownload,
+} from '~modules/material-requests/material-requests.types';
 import { MaterialRequestsService } from '~modules/material-requests/services/material-requests.service';
 import {
 	CreateMamJob,
