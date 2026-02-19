@@ -1,18 +1,5 @@
 import { TranslationsService } from '@meemoo/admin-core-api';
-import {
-	Body,
-	Controller,
-	Get,
-	HttpException,
-	HttpStatus,
-	Logger,
-	Post,
-	Query,
-	Redirect,
-	Req,
-	Res,
-	Session,
-} from '@nestjs/common';
+import { Body, Controller, Get, HttpException, HttpStatus, Logger, Post, Query, Redirect, Req, Res, Session } from '@nestjs/common';
 
 import { ConfigService } from '@nestjs/config';
 import { ApiTags } from '@nestjs/swagger';
@@ -137,13 +124,21 @@ export class HetArchiefController {
 				(archiefUser?.language || Locale.Nl) as Locale
 			);
 
+			const FORCE_ROLE_EVALUATOR_EMAILS = this.configService
+				.get<string>('FORCE_ROLE_EVALUATOR_EMAILS')
+				.split(',')
+				.map((email) => email.trim());
 			const userDto: CreateOrUpdateUserDto = {
 				firstName: ldapUser.attributes.givenName[0],
 				lastName: ldapUser.attributes.sn[0],
 				email: ldapUser.attributes.mail[0],
 				groupId: userGroup,
 				isKeyUser: apps.includes(LdapApp.CATALOGUS_PRO),
-				isEvaluator: apps.includes(LdapApp.EVALUATOR_ROLE),
+				isEvaluator:
+					apps.includes(LdapApp.EVALUATOR_ROLE) ||
+					// Temp workaround since email addresses with a "+" do not work very well with groups in the account manager,
+					// So we force the CP admin to always have the evaluator group for testing purposes
+					FORCE_ROLE_EVALUATOR_EMAILS.includes(ldapUser.attributes.mail[0]),
 				organisationId,
 				language: info.language || Locale.Nl,
 			};
