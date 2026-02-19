@@ -1,8 +1,10 @@
+import { GetObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { DataService, MediahavenService } from '@meemoo/admin-core-api';
 import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { isAfter, subHours } from 'date-fns';
+import { isAfter, isPast, parseISO, subHours, subMinutes } from 'date-fns';
 import { compact } from 'lodash';
 import { stringifyUrl } from 'query-string';
 import { Configuration } from '~config';
@@ -32,11 +34,14 @@ import {
 	MamJobStatus,
 	MediahavenJobInfo,
 	MediaHavenRecord,
+	S3ExportLocationToken,
 } from '~modules/mediahaven-jobs-watcher/mediahaven-jobs-watcher.types';
 import { UsersService } from '~modules/users/services/users.service';
 
 @Injectable()
 export class MediahavenJobsWatcherService {
+	private s3DownloadLocationToken: S3ExportLocationToken | null = null;
+
 	constructor(
 		private configService: ConfigService<Configuration>,
 		@Inject(forwardRef(() => MaterialRequestsService))
@@ -523,5 +528,97 @@ export class MediahavenJobsWatcherService {
 			);
 		}
 		return (await response.json()) as MediaHavenRecord;
+	}
+
+	/**
+	 * Fetches a token for the dl s3 bucket location
+	 * @private
+	 */
+	private async getS3DownloadLocationToken(): Promise<S3ExportLocationToken> {
+		const TOKEN_ENDPOINT = this.configService.get('MEDIAHAVEN_S3_EXPORT_LOCATION_TOKEN_ENDPOINT');
+		const TOKEN_USERNAME = this.configService.get('MEDIAHAVEN_S3_EXPORT_LOCATION_TOKEN_USERNAME');
+		const TOKEN_PASSWORD = this.configService.get('MEDIAHAVEN_S3_EXPORT_LOCATION_TOKEN_PASSWORD');
+		const TOKEN_SECRET = this.configService.get(
+			'MEDIAHAVEN_S3_EXPORT_LOCATION_TOKEN_X_USER_SECRET_KEY_META'
+		);
+
+		const credentials = Buffer.from(`${TOKEN_USERNAME}:${TOKEN_PASSWORD}`).toString('base64');
+
+		const result = await fetch(TOKEN_ENDPOINT, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Basic ${credentials}`,
+				'X-User-Secret-Key-Meta': TOKEN_SECRET,
+			},
+		});
+		const token = (await result.json()) as S3ExportLocationToken;
+		return token;
+	}
+
+	/**
+	 * Fetches a token for the dl s3 bucket location, if the token is expired or not cached yet, it will be refreshed
+	 * @private
+	 */
+	private async getS3DownloadLocationTokenCached(): Promise<S3ExportLocationToken> {
+		if (
+			!this.s3DownloadLocationToken ||
+			isPast(subMinutes(parseISO(this.s3DownloadLocationToken.expiration), 5))
+		) {
+			// No token yet, or taken is expired
+			this.s3DownloadLocationToken = await this.getS3DownloadLocationToken();
+		}
+		return this.s3DownloadLocationToken;
+	}
+
+	/**
+	 * Gets a download url for the mediahaven export s3 bucket location from an export job file name
+	 * any permission checks need to happen before this point, since this endpoint will not check any permissions
+	 * @param fileRelativePath The filename with extension in the s3 bucket to generate a signed URL for
+	 * @param desiredFileName The filename that should show up in the browser of the user when downloading the file
+	 * @returns A presigned URL that allows the client to download the file
+	 */
+	public async getS3DownloadSignedUrl(
+		fileRelativePath: string,
+		desiredFileName?: string
+	): Promise<string> {
+		try {
+			const EXPORT_LOCATION_URL = this.configService.get('MEDIAHAVEN_S3_EXPORT_LOCATION_URL');
+			const EXPORT_LOCATION_BUCKET_URL = this.configService.get(
+				'MEDIAHAVEN_S3_EXPORT_LOCATION_BUCKET_URL'
+			);
+			const SIGNED_URL_EXPIRY_SECONDS = this.configService.get(
+				'MEDIAHAVEN_S3_EXPORT_LOCATION_SIGNED_URL_EXPIRY_SECONDS'
+			);
+
+			const token = await this.getS3DownloadLocationTokenCached();
+			const s3Client = new S3Client({
+				endpoint: EXPORT_LOCATION_URL,
+				credentials: {
+					accessKeyId: token.token,
+					secretAccessKey: token.secret,
+				},
+				region: 'eu-west-1', // Required but often ignored by S3-compatible storage
+				forcePathStyle: false,
+				bucketEndpoint: true,
+			});
+
+			const command = new GetObjectCommand({
+				Bucket: EXPORT_LOCATION_BUCKET_URL,
+				Key: fileRelativePath,
+				ResponseContentDisposition: `attachment; filename="${desiredFileName || fileRelativePath}"`,
+			});
+
+			// Generate a presigned URL valid for 1 hour (configurable env var)
+			const signedUrl = await getSignedUrl(s3Client, command, {
+				expiresIn: SIGNED_URL_EXPIRY_SECONDS,
+			});
+
+			return signedUrl;
+		} catch (err) {
+			throw new CustomError('Failed to generate S3 presigned download URL', err, {
+				downloadPath: fileRelativePath,
+			});
+		}
 	}
 }
