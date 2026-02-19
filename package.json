@@ -35,6 +35,7 @@
     "bump": "bump-package-versions --part=patch --strategy=highest ./package.json"
   },
   "dependencies": {
+    "@aws-sdk/s3-request-presigner": "^3.717.0",
     "@meemoo/admin-core-api": "5.2.27",
     "@nestjs/common": "9.4.3",
     "@nestjs/config": "3.2.3",

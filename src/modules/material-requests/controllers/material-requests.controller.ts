@@ -121,7 +121,7 @@ export class MaterialRequestsController {
 		@Ip() ip: string,
 		@Req() request: Request
 	): Promise<string> {
-		return this.materialRequestsService.handleDownloadForMaterialRequest(
+		return this.materialRequestsService.getDownloadUrlForMaterialRequest(
 			id,
 			user,
 			referer,

@@ -70,6 +70,15 @@ export interface CreateMamJob {
 	Tag: string;
 }
 
+export interface S3ExportLocationToken {
+	token: string;
+	owner: string;
+	scope: string;
+	expiration: string;
+	creation: string;
+	secret: string;
+}
+
 export type MediaHavenRecord = {
 	Context: {
 		IsDeletable: boolean;

@@ -1,3 +1,4 @@
+import { parse } from 'node:path';
 import { DataService, Locale, StillsObjectType, VideoStillsService } from '@meemoo/admin-core-api';
 import {
 	BadRequestException,
@@ -27,10 +28,10 @@ import {
 } from '../dto/material-requests.dto';
 import {
 	DOWNLOAD_AVAILABILITY_DAYS,
+	getAdditionEventDate,
 	MAP_MATERIAL_REQUEST_STATUS_TO_EMAIL_TEMPLATE,
 	MAP_MATERIAL_REQUEST_STATUS_TO_EVENT_TYPE,
 	ORDER_PROP_TO_DB_PROP,
-	getAdditionEventDate,
 } from '../material-requests.consts';
 import {
 	GqlMaterialRequest,
@@ -98,8 +99,8 @@ import { CampaignMonitorService } from '~modules/campaign-monitor/services/campa
 import {
 	IeObjectAccessThrough,
 	IeObjectLicense,
-	IeObjectType,
 	IeObjectsVisitorSpaceInfo,
+	IeObjectType,
 	SimpleIeObjectType,
 } from '~modules/ie-objects/ie-objects.types';
 import type { Organisation } from '~modules/organisations/organisations.types';
@@ -1165,7 +1166,7 @@ export class MaterialRequestsService {
 	 * @param requestPath
 	 * @param eventId
 	 */
-	public async handleDownloadForMaterialRequest(
+	public async getDownloadUrlForMaterialRequest(
 		materialRequestId: string,
 		user: SessionUserEntity,
 		referer: string,
@@ -1218,22 +1219,24 @@ export class MaterialRequestsService {
 			throw error;
 		}
 
-		this.eventsService.insertEvents([
-			{
-				id: eventId,
-				type: LogEventType.ITEM_REQUEST_DOWNLOAD_EXECUTED,
-				source: requestPath,
-				subject: user?.getId(),
-				time: new Date().toISOString(),
-				data: {
-					type: mapDcTermsFormatToSimpleType(materialRequest.objectDctermsFormat),
-					or_id: materialRequest.maintainerId,
-					pid: materialRequest.objectSchemaIdentifier,
-					material_request_group_id: materialRequest.requestGroupId,
-					fragment_id: materialRequest.objectSchemaIdentifier,
+		this.eventsService
+			.insertEvents([
+				{
+					id: eventId,
+					type: LogEventType.ITEM_REQUEST_DOWNLOAD_EXECUTED,
+					source: requestPath,
+					subject: user?.getId(),
+					time: new Date().toISOString(),
+					data: {
+						type: mapDcTermsFormatToSimpleType(materialRequest.objectDctermsFormat),
+						or_id: materialRequest.maintainerId,
+						pid: materialRequest.objectSchemaIdentifier,
+						material_request_group_id: materialRequest.requestGroupId,
+						fragment_id: materialRequest.objectSchemaIdentifier,
+					},
 				},
-			},
-		]);
+			])
+			.then(noop);
 
 		const requester = await this.usersService.getById(materialRequest.profileId);
 		await this.sentStatusUpdateEmail(
@@ -1242,7 +1245,14 @@ export class MaterialRequestsService {
 			requester
 		);
 
-		return materialRequestForDownload.downloadUrl;
+		const objectTitle = kebabCase(materialRequest.objectSchemaName);
+		const maintainerName = kebabCase(materialRequest.maintainerName);
+		const extension = parse(materialRequestForDownload.downloadUrl).ext;
+		const desiredFileName = `${objectTitle}__${maintainerName}${extension}`;
+		return await this.mediahavenJobWatcherService.getS3DownloadSignedUrl(
+			materialRequestForDownload.downloadUrl,
+			desiredFileName
+		);
 	}
 
 	private trackMaterialRequestStatusChangeEvent(
