@@ -5,7 +5,7 @@ export const configValidationSchema = Joi.object({
 	HOST: Joi.string(),
 	PORT: Joi.number().default(3000),
 	PROXY_API_KEY: Joi.string().required(),
-	FORCE_ROLE_EVALUATOR_EMAILS: Joi.array().items(Joi.string()),
+	FORCE_ROLE_EVALUATOR_EMAILS: Joi.string().allow(''),
 	GRAPHQL_ENABLE_WHITELIST: Joi.boolean().default(true),
 	GRAPHQL_URL_LOGGING: Joi.string().required(),
 	GRAPHQL_SECRET_LOGGING: Joi.string().required(),

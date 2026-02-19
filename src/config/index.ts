@@ -34,18 +34,16 @@ const getEnvValue = (name: string, required = true): string => {
 
 const config = (): Configuration => {
 	const env = getEnvValue('NODE_ENV', false) || DEFAULT_CONFIG.environment;
-	return {
+	const configValues = {
 		NODE_ENV: env,
 		ENVIRONMENT: env,
 		HOST: getEnvValue('HOST', true),
 		CLIENT_HOST: getEnvValue('CLIENT_HOST', true),
 		PORT: Number.parseInt(getEnvValue('PORT', false), 10) || DEFAULT_CONFIG.port,
 		PROXY_API_KEY: getEnvValue('PROXY_API_KEY', true),
-		FORCE_ROLE_EVALUATOR_EMAILS: getEnvValue('FORCE_ROLE_EVALUATOR_EMAILS', false)
-			? getEnvValue('FORCE_ROLE_EVALUATOR_EMAILS', false)
-					.split(',')
-					.map((email) => email.trim())
-			: [],
+		FORCE_ROLE_EVALUATOR_EMAILS: (getEnvValue('FORCE_ROLE_EVALUATOR_EMAILS', false) || '')
+			.split(',')
+			.map((email) => email.trim()),
 		GRAPHQL_ENABLE_WHITELIST: getEnvValue('GRAPHQL_ENABLE_WHITELIST', false) === 'true',
 		GRAPHQL_URL_LOGGING: getEnvValue('GRAPHQL_URL_LOGGING', true),
 		GRAPHQL_SECRET_LOGGING: getEnvValue('GRAPHQL_SECRET_LOGGING', true),
@@ -199,9 +197,11 @@ const config = (): Configuration => {
 		MEDIAHAVEN_EXPORT_LOCATION_ID: getEnvValue('MEDIAHAVEN_EXPORT_LOCATION_ID', true),
 		MEDIAHAVEN_EXPORT_JOBS_TAG: getEnvValue('MEDIAHAVEN_EXPORT_JOBS_TAG', true),
 	};
+	return configValues;
 };
 
 export default config;
+export const parsedEnvs = config();
 
 export * from './config.const';
 export * from './config.types';

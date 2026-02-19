@@ -124,9 +124,10 @@ export class HetArchiefController {
 				(archiefUser?.language || Locale.Nl) as Locale
 			);
 
-			const FORCE_ROLE_EVALUATOR_EMAILS = this.configService.get<string[]>(
-				'FORCE_ROLE_EVALUATOR_EMAILS'
-			);
+			const FORCE_ROLE_EVALUATOR_EMAILS = this.configService
+				.get<string>('FORCE_ROLE_EVALUATOR_EMAILS')
+				.split(',')
+				.map((email) => email.trim());
 			const userDto: CreateOrUpdateUserDto = {
 				firstName: ldapUser.attributes.givenName[0],
 				lastName: ldapUser.attributes.sn[0],
