@@ -94,11 +94,15 @@ export class FoldersController {
 				(folder.objects ?? []).map((object) => {
 					if (!object) {
 						console.error(
-							customError('Folder object returned null', null, {
-								object,
-								folderId: folder.id,
-								folderName: folder.name,
-							})
+							customError(
+								'Folder object returned null. user no longer has access or object no longer exists',
+								null,
+								{
+									object,
+									folderId: folder.id,
+									folderName: folder.name,
+								}
+							)
 						);
 						return {}; // ieObject in folder no longer exists
 					}

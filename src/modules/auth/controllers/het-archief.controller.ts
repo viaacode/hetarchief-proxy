@@ -143,7 +143,11 @@ export class HetArchiefController {
 				email: ldapUser.attributes.mail[0],
 				groupId: userGroup,
 				isKeyUser: apps.includes(LdapApp.CATALOGUS_PRO),
-				isEvaluator: apps.includes(LdapApp.EVALUATOR_ROLE),
+				isEvaluator:
+					apps.includes(LdapApp.EVALUATOR_ROLE) ||
+					// Temp workaround since email addresses with a "+" do not work very well with groups in the account manager,
+					// So we force the CP admin to always have the evaluator group for testing purposes
+					ldapUser.attributes.mail[0] === 'hetarchief2.0+cpadmin@meemoo.be',
 				organisationId,
 				language: info.language || Locale.Nl,
 			};
