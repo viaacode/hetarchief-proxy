@@ -21,10 +21,7 @@ import {
 	Lookup_App_Material_Request_Download_Status_Enum,
 } from '~generated/graphql-db-types-hetarchief';
 import { EmailTemplate } from '~modules/campaign-monitor/campaign-monitor.types';
-import {
-	MaterialRequest,
-	MaterialRequestForDownload,
-} from '~modules/material-requests/material-requests.types';
+import { MaterialRequest, MaterialRequestForDownload } from '~modules/material-requests/material-requests.types';
 import { MaterialRequestsService } from '~modules/material-requests/services/material-requests.service';
 import {
 	CreateMamJob,
@@ -382,30 +379,42 @@ export class MediahavenJobsWatcherService {
 	 * @returns The Mediahaven fragment ID
 	 */
 	private async getMhFragmentIdByRepresentationId(representationId: string): Promise<string> {
-		// TODO check if video/mp4 is the correct media type to fetch audio files, or we need to switch to audio/mp3 for audio
-		const responseFileInfo = await this.dataService.execute<
-			GetFileStoredAtByRepresentationIdQuery,
-			GetFileStoredAtByRepresentationIdQueryVariables
-		>(GetFileStoredAtByRepresentationIdDocument, {
-			representationId,
-		});
-		const fileStoredAtUrl = responseFileInfo.graph_includes?.[0]?.file?.premis_stored_at;
-		// Get second to last part of the URL
-		// https://media-qas.viaa.be/play/v2/SBS/aaf815a5a39e414291c14603edbe336a0cf599d0da2146c7a9578def535362cd/browse.mp4 => aaf815a5a39e414291c14603edbe336a0cf599d0da2146c7a9578def535362cd
-		const partialMhFragmentIdentifier = fileStoredAtUrl.split('/').at(-2);
-
-		if (!partialMhFragmentIdentifier) {
-			throw new CustomError(
-				'Could not extract Mediahaven fragment identifier from stored at URL',
-				null,
-				{
+		try {
+			// TODO check if video/mp4 is the correct media type to fetch audio files, or we need to switch to audio/mp3 for audio
+			const responseFileInfo = await this.dataService.execute<
+				GetFileStoredAtByRepresentationIdQuery,
+				GetFileStoredAtByRepresentationIdQueryVariables
+			>(GetFileStoredAtByRepresentationIdDocument, {
+				representationId,
+			});
+			const fileStoredAtUrl = responseFileInfo.graph_includes?.[0]?.file?.premis_stored_at;
+			if (!fileStoredAtUrl) {
+				throw new CustomError('audio/video file was not found under representation', null, {
 					representationId,
-					fileStoredAtUrl,
-				}
-			);
-		}
+					query: 'GetFileStoredAtByRepresentationId',
+				});
+			}
+			// Get second to last part of the URL
+			// https://media-qas.viaa.be/play/v2/SBS/aaf815a5a39e414291c14603edbe336a0cf599d0da2146c7a9578def535362cd/browse.mp4 => aaf815a5a39e414291c14603edbe336a0cf599d0da2146c7a9578def535362cd
+			const partialMhFragmentIdentifier = fileStoredAtUrl.split('/').at(-2);
 
-		return (await this.getMhFragmentIdByPartialMhFragmentId([partialMhFragmentIdentifier]))?.[0];
+			if (!partialMhFragmentIdentifier) {
+				throw new CustomError(
+					'Could not extract Mediahaven fragment identifier from stored at URL',
+					null,
+					{
+						representationId,
+						fileStoredAtUrl,
+					}
+				);
+			}
+
+			return (await this.getMhFragmentIdByPartialMhFragmentId([partialMhFragmentIdentifier]))?.[0];
+		} catch (err) {
+			throw new CustomError('Failed to get Mediahaven fragment ID by representation ID', err, {
+				representationId,
+			});
+		}
 	}
 
 	/**
@@ -505,29 +514,35 @@ export class MediahavenJobsWatcherService {
 	}
 
 	private async getMediaHavenMetadataByRecordId(recordId: string): Promise<MediaHavenRecord> {
-		const accessToken = await this.getAccessToken();
-		const url = `${this.configService.get('MEDIAHAVEN_API_ENDPOINT')}/records/${recordId}`;
-		const response = await fetch(url, {
-			method: 'GET',
-			headers: {
-				accept: 'application/json',
-				Authorization: `bearer ${accessToken.token.access_token}`,
-			},
-		});
-		if (response.status < 200 || response.status >= 400) {
-			throw new CustomError(
-				'Error received when fetching a mediahaven record by id',
-				response?.statusText,
-				{
-					status: response.status,
-					statusText: response.statusText,
-					responseBody: response.body,
-					recordId,
-					url,
-				}
-			);
+		try {
+			const accessToken = await this.getAccessToken();
+			const url = `${this.configService.get('MEDIAHAVEN_API_ENDPOINT')}/records/${recordId}`;
+			const response = await fetch(url, {
+				method: 'GET',
+				headers: {
+					accept: 'application/json',
+					Authorization: `bearer ${accessToken.token.access_token}`,
+				},
+			});
+			if (response.status < 200 || response.status >= 400) {
+				throw new CustomError(
+					'Error received when fetching a mediahaven record by id',
+					response?.statusText,
+					{
+						status: response.status,
+						statusText: response.statusText,
+						responseBody: response.body,
+						recordId,
+						url,
+					}
+				);
+			}
+			return (await response.json()) as MediaHavenRecord;
+		} catch (err) {
+			throw new CustomError('Failed to fetch Mediahaven metadata by recordId', err, {
+				recordId,
+			});
 		}
-		return (await response.json()) as MediaHavenRecord;
 	}
 
 	/**
@@ -535,25 +550,29 @@ export class MediahavenJobsWatcherService {
 	 * @private
 	 */
 	private async getS3DownloadLocationToken(): Promise<S3ExportLocationToken> {
-		const TOKEN_ENDPOINT = this.configService.get('MEDIAHAVEN_S3_EXPORT_LOCATION_TOKEN_ENDPOINT');
-		const TOKEN_USERNAME = this.configService.get('MEDIAHAVEN_S3_EXPORT_LOCATION_TOKEN_USERNAME');
-		const TOKEN_PASSWORD = this.configService.get('MEDIAHAVEN_S3_EXPORT_LOCATION_TOKEN_PASSWORD');
-		const TOKEN_SECRET = this.configService.get(
-			'MEDIAHAVEN_S3_EXPORT_LOCATION_TOKEN_X_USER_SECRET_KEY_META'
-		);
+		try {
+			const TOKEN_ENDPOINT = this.configService.get('MEDIAHAVEN_S3_EXPORT_LOCATION_TOKEN_ENDPOINT');
+			const TOKEN_USERNAME = this.configService.get('MEDIAHAVEN_S3_EXPORT_LOCATION_TOKEN_USERNAME');
+			const TOKEN_PASSWORD = this.configService.get('MEDIAHAVEN_S3_EXPORT_LOCATION_TOKEN_PASSWORD');
+			const TOKEN_SECRET = this.configService.get(
+				'MEDIAHAVEN_S3_EXPORT_LOCATION_TOKEN_X_USER_SECRET_KEY_META'
+			);
 
-		const credentials = Buffer.from(`${TOKEN_USERNAME}:${TOKEN_PASSWORD}`).toString('base64');
+			const credentials = Buffer.from(`${TOKEN_USERNAME}:${TOKEN_PASSWORD}`).toString('base64');
 
-		const result = await fetch(TOKEN_ENDPOINT, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-				Authorization: `Basic ${credentials}`,
-				'X-User-Secret-Key-Meta': TOKEN_SECRET,
-			},
-		});
-		const token = (await result.json()) as S3ExportLocationToken;
-		return token;
+			const result = await fetch(TOKEN_ENDPOINT, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					Authorization: `Basic ${credentials}`,
+					'X-User-Secret-Key-Meta': TOKEN_SECRET,
+				},
+			});
+			const token = (await result.json()) as S3ExportLocationToken;
+			return token;
+		} catch (err) {
+			throw new CustomError('Failed to fetch S3 export location token', err);
+		}
 	}
 
 	/**
