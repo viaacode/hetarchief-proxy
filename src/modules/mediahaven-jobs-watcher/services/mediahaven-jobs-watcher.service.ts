@@ -248,7 +248,7 @@ export class MediahavenJobsWatcherService {
 					const record = await this.getMediaHavenMetadataByRecordId(mhFragmentId);
 					const framerate: number = Number.parseInt(record?.Technical?.VideoFps || '25', 10);
 					partial = {
-						Type: 'Partial',
+						Type: 'Frames',
 						Start: startTime * framerate,
 						End: endTime * framerate,
 					};
@@ -302,13 +302,19 @@ export class MediahavenJobsWatcherService {
 				body: JSON.stringify(body),
 			});
 			if (response.status < 200 || response.status >= 400) {
+				let responseBody: any;
+				try {
+					responseBody = await response.json();
+				} catch (err) {
+					// ignore error, we don't need the response body perse
+				}
 				throw new CustomError(
 					'Error received when creating mediahaven export job',
 					response?.statusText,
 					{
 						status: response.status,
 						statusText: response.statusText,
-						responseBody: response.body,
+						responseBody,
 					}
 				);
 			}

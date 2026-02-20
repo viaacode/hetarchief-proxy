@@ -21,7 +21,10 @@ query findMaterialRequestsWithUnresolvedDownloadStatus {
 		ie_object_representation_id
 		type
 		updated_at
-		material_request_reuse_form_values(where: { key: { _eq: "downloadQuality" } }) {
+		material_request_reuse_form_values(
+			where: { key: { _in: ["downloadQuality", "startTime", "endTime"] } }
+		) {
+			key
 			value
 		}
 	}
