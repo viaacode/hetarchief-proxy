@@ -2,6 +2,7 @@ import { GetObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { DataService, MediahavenService } from '@meemoo/admin-core-api';
 import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
+import { logAndThrow } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/logAndThrow';
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { isAfter, isPast, parseISO, subHours, subMinutes } from 'date-fns';
@@ -253,7 +254,7 @@ export class MediahavenJobsWatcherService {
 					partial = {
 						Type: 'Frames',
 						Start: startTime * framerate,
-						End: endTime * framerate,
+						End: Math.min(endTime * framerate, record.Technical.EndFrames), // Avoid trying to export past the end of the file
 					};
 				}
 
@@ -307,7 +308,7 @@ export class MediahavenJobsWatcherService {
 			if (response.status < 200 || response.status >= 400) {
 				let responseBody: any;
 				try {
-					responseBody = await response.json();
+					responseBody = await response.text();
 				} catch (err) {
 					// ignore error, we don't need the response body perse
 				}
@@ -343,11 +344,12 @@ export class MediahavenJobsWatcherService {
 
 			return jobId;
 		} catch (err) {
-			throw new CustomError('Failed to create mediahaven export job', err, {
+			const error = new CustomError('Failed to create mediahaven export job', err, {
 				materialRequestId: materialRequest.id,
 				url,
 				body,
 			});
+			logAndThrow(error);
 		}
 	}
 
