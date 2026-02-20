@@ -130,8 +130,7 @@ export class MediahavenJobsWatcherService {
 							const updatedRequest = await this.materialRequestsService.updateMaterialRequest(
 								materialRequest.id,
 								{
-									// download_url: relatedJob.DownloadUrl, // TODO have meemoo investigate why these are empty
-									download_url: relatedJob.Name,
+									download_url: `${this.getDownloadFolderPath(materialRequest)}/${relatedJob.Name}`,
 									download_status: Lookup_App_Material_Request_Download_Status_Enum.Succeeded,
 									updated_at: new Date().toISOString(),
 									download_available_at: relatedJob.FinishDate,
@@ -226,6 +225,10 @@ export class MediahavenJobsWatcherService {
 		}
 	}
 
+	private getDownloadFolderPath(materialRequest: MaterialRequestForDownload): string {
+		return `${materialRequest.id}/${materialRequest?.downloadRetries ?? 0}`;
+	}
+
 	/**
 	 * Create an export job in Mediahaven for the given material request.
 	 * @param materialRequest
@@ -262,7 +265,7 @@ export class MediahavenJobsWatcherService {
 						},
 					],
 					ExportLocationId: this.configService.get('MEDIAHAVEN_EXPORT_LOCATION_ID'),
-					// DestinationPath: `/exports/${materialRequest.id}`,
+					DestinationPath: this.getDownloadFolderPath(materialRequest),
 					ExportSource:
 						materialRequest.reuseForm.downloadQuality === 'HIGH'
 							? MamExportQuality.ORIGINAL
@@ -278,7 +281,7 @@ export class MediahavenJobsWatcherService {
 						RecordId: mhFragmentId,
 					})),
 					ExportLocationId: this.configService.get('MEDIAHAVEN_EXPORT_LOCATION_ID'),
-					// DestinationPath: `/exports/${materialRequest.id}`,
+					DestinationPath: this.getDownloadFolderPath(materialRequest),
 					ExportSource:
 						materialRequest.reuseForm.downloadQuality === 'HIGH'
 							? MamExportQuality.ORIGINAL
