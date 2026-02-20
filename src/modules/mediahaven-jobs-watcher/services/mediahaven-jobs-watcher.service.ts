@@ -99,6 +99,7 @@ export class MediahavenJobsWatcherService {
 			 * https://drive.google.com/file/d/1w2MRcTxzTsXjivATFEvaDkv99tMxnUqF/view?usp=sharing
 			 */
 			const reportItems = {
+				started: 0,
 				pending: 0,
 				completed: 0,
 				restarted: 0,
@@ -111,6 +112,7 @@ export class MediahavenJobsWatcherService {
 				});
 				if (!relatedJob) {
 					await this.retryDownloadJobOrFail(materialRequest);
+					reportItems.started += 1;
 				} else {
 					// One job found
 					switch (relatedJob.Status) {
