@@ -2,7 +2,7 @@ query getFileStoredAtByRepresentationId($representationId: String) {
 	graph_includes(
 		where: {
 			representation_id: { _eq: $representationId }
-			file: { ebucore_has_mime_type: { _eq: "video/mp4" } }
+			file: { ebucore_has_mime_type: { _in: ["video/mp4", "audio/mp4"] } }
 		}
 		limit: 1
 	) {
