@@ -5,9 +5,11 @@ import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/help
 import { logAndThrow } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/logAndThrow';
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { AvoUserCommonUser } from '@viaa/avo2-types';
 import { isAfter, isPast, parseISO, subHours, subMinutes } from 'date-fns';
-import { compact } from 'lodash';
+import { compact, noop } from 'lodash';
 import { stringifyUrl } from 'query-string';
+import { v4 as uuidv4 } from 'uuid';
 import { Configuration } from '~config';
 import {
 	GetFileStoredAtByIeObjectIdDocument,
@@ -22,6 +24,9 @@ import {
 	Lookup_App_Material_Request_Download_Status_Enum,
 } from '~generated/graphql-db-types-hetarchief';
 import { EmailTemplate } from '~modules/campaign-monitor/campaign-monitor.types';
+import { EventsService } from '~modules/events/services/events.service';
+import { LogEventType } from '~modules/events/types';
+import { mapDcTermsFormatToSimpleType } from '~modules/ie-objects/helpers/map-dc-terms-format-to-simple-type';
 import { MaterialRequest, MaterialRequestForDownload } from '~modules/material-requests/material-requests.types';
 import { MaterialRequestsService } from '~modules/material-requests/services/material-requests.service';
 import {
@@ -46,7 +51,8 @@ export class MediahavenJobsWatcherService {
 		private materialRequestsService: MaterialRequestsService,
 		private dataService: DataService,
 		private mediahavenService: MediahavenService,
-		private usersService: UsersService
+		private usersService: UsersService,
+		private eventsService: EventsService
 	) {}
 
 	private async getAccessToken(): Promise<MamAccessToken> {
@@ -89,6 +95,64 @@ export class MediahavenJobsWatcherService {
 		return true;
 	}
 
+	private triggerDownloadAvailableEvent(materialRequest: MaterialRequest) {
+		this.eventsService
+			.insertEvents([
+				{
+					id: uuidv4(),
+					type: LogEventType.ITEM_REQUEST_DOWNLOAD_AVAILABLE,
+					source: 'mediahaven-jobs-watcher/download-statuses',
+					subject: materialRequest.id,
+					time: new Date().toISOString(),
+					data: {
+						pid: materialRequest.objectSchemaIdentifier,
+						type: mapDcTermsFormatToSimpleType(materialRequest.objectDctermsFormat),
+						or_id: materialRequest.maintainerId,
+						fragment_id: materialRequest.objectSchemaIdentifier,
+						material_request_group_id: materialRequest.requestGroupId,
+					},
+				},
+			])
+			.then(noop)
+			.catch((err) => {
+				const error = new CustomError(
+					'Failed to log event for material request download available',
+					err,
+					{
+						materialRequestId: materialRequest.id,
+						materialRequest,
+					}
+				);
+				console.error(error);
+			});
+	}
+
+	private async sendEmailsForDownloadAvailable(
+		materialRequest: MaterialRequest,
+		requester: AvoUserCommonUser
+	) {
+		try {
+			await Promise.all([
+				this.materialRequestsService.sentStatusUpdateEmail(
+					EmailTemplate.MATERIAL_REQUEST_DOWNLOAD_READY_MAINTAINER,
+					materialRequest,
+					requester
+				),
+				this.materialRequestsService.sentStatusUpdateEmail(
+					EmailTemplate.MATERIAL_REQUEST_DOWNLOAD_READY_REQUESTER,
+					materialRequest,
+					requester
+				),
+			]);
+		} catch (err) {
+			// Log the error but don't throw, since the main flow of updating the material request is successful
+			console.error('Failed to send material request export job completed emails', err, {
+				materialRequestId: materialRequest.id,
+				requesterId: materialRequest.requesterId,
+			});
+		}
+	}
+
 	public async checkUnresolvedJobs() {
 		try {
 			const jobs: MediahavenJobInfo[] = await this.getJobsFromMediahaven();
@@ -108,87 +172,80 @@ export class MediahavenJobsWatcherService {
 				alreadyExists: 0,
 			};
 			for (const materialRequest of unresolvedMaterialRequests) {
-				const relatedJob = jobs.find((job) => {
-					return materialRequest.downloadJobId === job.ExportJobId;
-				});
-				if (!relatedJob) {
-					await this.retryDownloadJobOrFail(materialRequest);
-					reportItems.started += 1;
-				} else {
-					// One job found
-					switch (relatedJob.Status) {
-						case MamJobStatus.Waiting:
-						case MamJobStatus.InProgress:
-							// Job is still in progress, set material request download status to PENDING
-							await this.materialRequestsService.updateMaterialRequest(materialRequest.id, {
-								download_status: Lookup_App_Material_Request_Download_Status_Enum.Pending,
-								updated_at: new Date().toISOString(),
-							});
-							reportItems.pending += 1;
-							break;
-						case MamJobStatus.Completed: {
-							// Job is completed, update material request with download URL and set status to SUCCEEDED
-							const updatedRequest = await this.materialRequestsService.updateMaterialRequest(
-								materialRequest.id,
-								{
-									download_url: `${this.getDownloadFolderPath(materialRequest)}/${relatedJob.Name}`,
-									download_status: Lookup_App_Material_Request_Download_Status_Enum.Succeeded,
+				try {
+					const relatedJob = jobs.find((job) => {
+						return materialRequest.downloadJobId === job.ExportJobId;
+					});
+					if (!relatedJob) {
+						await this.retryDownloadJobOrFail(materialRequest);
+						reportItems.started += 1;
+					} else {
+						// One job found
+						switch (relatedJob.Status) {
+							case MamJobStatus.Waiting:
+							case MamJobStatus.InProgress:
+								// Job is still in progress, set material request download status to PENDING
+								await this.materialRequestsService.updateMaterialRequest(materialRequest.id, {
+									download_status: Lookup_App_Material_Request_Download_Status_Enum.Pending,
 									updated_at: new Date().toISOString(),
-									download_available_at: relatedJob.FinishDate,
-								}
-							);
-							const requester = await this.usersService.getById(updatedRequest.requesterId);
-							reportItems.completed += 1;
-
-							try {
-								await Promise.all([
-									this.materialRequestsService.sentStatusUpdateEmail(
-										EmailTemplate.MATERIAL_REQUEST_DOWNLOAD_READY_MAINTAINER,
-										updatedRequest,
-										requester
-									),
-									this.materialRequestsService.sentStatusUpdateEmail(
-										EmailTemplate.MATERIAL_REQUEST_DOWNLOAD_READY_REQUESTER,
-										updatedRequest,
-										requester
-									),
-								]);
-							} catch (err) {
-								// Log the error but don't throw, since the main flow of updating the material request is successful
-								console.error('Failed to send material request export job completed emails', err, {
-									materialRequestId: materialRequest.id,
-									requesterId: updatedRequest.requesterId,
 								});
+								reportItems.pending += 1;
+								break;
+							case MamJobStatus.Completed: {
+								// Job is completed, update material request with download URL and set status to SUCCEEDED
+								const updatedRequest = await this.materialRequestsService.updateMaterialRequest(
+									materialRequest.id,
+									{
+										download_url: `${this.getDownloadFolderPath(materialRequest)}/${relatedJob.Name}`,
+										download_status: Lookup_App_Material_Request_Download_Status_Enum.Succeeded,
+										updated_at: new Date().toISOString(),
+										download_available_at: relatedJob.FinishDate,
+									}
+								);
+								const requester = await this.usersService.getById(updatedRequest.requesterId);
+								reportItems.completed += 1;
+
+								// Trigger download available event
+								this.triggerDownloadAvailableEvent(updatedRequest);
+
+								// Send email to requester and maintainer
+								this.sendEmailsForDownloadAvailable(updatedRequest, requester).catch(noop);
+
+								break;
 							}
 
-							break;
-						}
-
-						case MamJobStatus.Failed:
-						case MamJobStatus.Cancelled: {
-							const hasFailed = await this.retryDownloadJobOrFail(materialRequest);
-							if (hasFailed) {
-								reportItems.failed += 1;
-							} else {
-								reportItems.restarted += 1;
+							case MamJobStatus.Failed:
+							case MamJobStatus.Cancelled: {
+								const hasFailed = await this.retryDownloadJobOrFail(materialRequest);
+								if (hasFailed) {
+									reportItems.failed += 1;
+								} else {
+									reportItems.restarted += 1;
+								}
+								break;
 							}
-							break;
+
+							case MamJobStatus.AlreadyExists:
+								await this.materialRequestsService.updateMaterialRequest(materialRequest.id, {
+									download_status: Lookup_App_Material_Request_Download_Status_Enum.Failed,
+									updated_at: new Date().toISOString(),
+								});
+								reportItems.alreadyExists += 1;
+								break;
+
+							default:
+								throw new CustomError('Unknown Mediahaven job status received', null, {
+									materialRequestId: materialRequest.id,
+									jobStatus: relatedJob.Status,
+								});
 						}
-
-						case MamJobStatus.AlreadyExists:
-							await this.materialRequestsService.updateMaterialRequest(materialRequest.id, {
-								download_status: Lookup_App_Material_Request_Download_Status_Enum.Failed,
-								updated_at: new Date().toISOString(),
-							});
-							reportItems.alreadyExists += 1;
-							break;
-
-						default:
-							throw new CustomError('Unknown Mediahaven job status received', null, {
-								materialRequestId: materialRequest.id,
-								jobStatus: relatedJob.Status,
-							});
 					}
+				} catch (err) {
+					console.error(
+						new CustomError('Error checking mediahaven job', err, {
+							materialRequestId: materialRequest.id,
+						})
+					);
 				}
 			}
 			console.log('Mediahaven jobs check report', reportItems);

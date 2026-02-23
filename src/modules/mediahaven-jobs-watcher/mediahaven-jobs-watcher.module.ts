@@ -1,10 +1,11 @@
 import { DataModule, MediahavenModule } from '@meemoo/admin-core-api';
 import { forwardRef, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { EventsModule } from '~modules/events';
 import { MaterialRequestsModule } from '~modules/material-requests';
-import { UsersModule } from '~modules/users/users.module';
 import { MediahavenJobsWatcherController } from '~modules/mediahaven-jobs-watcher/controllers/mediahaven-jobs-watcher.controller';
 import { MediahavenJobsWatcherService } from '~modules/mediahaven-jobs-watcher/services/mediahaven-jobs-watcher.service';
+import { UsersModule } from '~modules/users/users.module';
 
 @Module({
 	controllers: [MediahavenJobsWatcherController],
@@ -15,6 +16,7 @@ import { MediahavenJobsWatcherService } from '~modules/mediahaven-jobs-watcher/s
 		DataModule,
 		MediahavenModule,
 		UsersModule,
+		EventsModule,
 	],
 	exports: [MediahavenJobsWatcherService],
 })
