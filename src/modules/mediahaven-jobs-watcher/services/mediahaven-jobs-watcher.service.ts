@@ -227,7 +227,7 @@ export class MediahavenJobsWatcherService {
 	}
 
 	private getDownloadFolderPath(materialRequest: MaterialRequestForDownload): string {
-		return `${materialRequest.id}/${materialRequest?.downloadRetries ?? 0}`;
+		return `${materialRequest.requesterId}/${materialRequest.id}`;
 	}
 
 	/**

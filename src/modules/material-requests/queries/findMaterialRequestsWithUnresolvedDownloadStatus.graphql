@@ -19,6 +19,7 @@ query findMaterialRequestsWithUnresolvedDownloadStatus {
 		download_expiry_warning_email_sent
 		ie_object_id
 		ie_object_representation_id
+		profile_id
 		type
 		updated_at
 		material_request_reuse_form_values(

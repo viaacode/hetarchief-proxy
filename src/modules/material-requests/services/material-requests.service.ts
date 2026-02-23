@@ -989,7 +989,9 @@ export class MaterialRequestsService {
 	}
 
 	public adaptMaterialRequestsForDownloadJobs(
-		materialRequests: FindMaterialRequestsWithUnresolvedDownloadStatusQuery['app_material_requests'][0]
+		materialRequests:
+			| FindMaterialRequestsWithUnresolvedDownloadStatusQuery['app_material_requests'][0]
+			| GetMaterialRequestForDownloadJobQuery['app_material_requests'][0]
 	): MaterialRequestForDownload {
 		const fieldValues: Partial<{
 			[MaterialRequestReuseFormKey.downloadQuality]: MaterialRequestExportQuality;
@@ -1008,6 +1010,7 @@ export class MaterialRequestsService {
 			downloadRetries: materialRequests.download_retries,
 			downloadStatus: materialRequests.download_status || null,
 			objectRepresentationId: materialRequests.ie_object_representation_id || null,
+			requesterId: materialRequests.profile_id,
 			objectId: materialRequests.ie_object_id,
 			updatedAt: materialRequests.updated_at,
 			reuseForm: {
