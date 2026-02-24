@@ -1,9 +1,24 @@
 import { parse } from 'node:path';
 import { DataService, Locale, StillsObjectType, VideoStillsService } from '@meemoo/admin-core-api';
-import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import {
+	BadRequestException,
+	Injectable,
+	InternalServerErrorException,
+	NotFoundException,
+} from '@nestjs/common';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { mapLimit } from 'blend-promise-utils';
-import { compact, groupBy, intersection, isArray, isEmpty, isNil, kebabCase, noop, set } from 'lodash';
+import {
+	compact,
+	groupBy,
+	intersection,
+	isArray,
+	isEmpty,
+	isNil,
+	kebabCase,
+	noop,
+	set,
+} from 'lodash';
 
 import {
 	CreateMaterialRequestDto,
@@ -12,11 +27,10 @@ import {
 	UpdateMaterialRequestStatusDto,
 } from '../dto/material-requests.dto';
 import {
-	DOWNLOAD_AVAILABILITY_DAYS,
-	getAdditionEventDate,
 	MAP_MATERIAL_REQUEST_STATUS_TO_EMAIL_TEMPLATE,
 	MAP_MATERIAL_REQUEST_STATUS_TO_EVENT_TYPE,
 	ORDER_PROP_TO_DB_PROP,
+	getAdditionEventDate,
 } from '../material-requests.consts';
 import {
 	GqlMaterialRequest,
@@ -75,14 +89,17 @@ import {
 	UpdateMaterialRequestStatusMutation,
 	UpdateMaterialRequestStatusMutationVariables,
 } from '~generated/graphql-db-types-hetarchief';
-import { EmailTemplate, type MaterialRequestEmailInfo } from '~modules/campaign-monitor/campaign-monitor.types';
+import {
+	EmailTemplate,
+	type MaterialRequestEmailInfo,
+} from '~modules/campaign-monitor/campaign-monitor.types';
 
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 import {
 	IeObjectAccessThrough,
 	IeObjectLicense,
-	IeObjectsVisitorSpaceInfo,
 	IeObjectType,
+	IeObjectsVisitorSpaceInfo,
 	SimpleIeObjectType,
 } from '~modules/ie-objects/ie-objects.types';
 import type { Organisation } from '~modules/organisations/organisations.types';
@@ -979,11 +996,15 @@ export class MaterialRequestsService {
 			downloadStatus = Lookup_App_Material_Request_Download_Status_Enum.Failed;
 		}
 
+		const DAYS_AVAILABLE = this.configService.get<number>(
+			'MATERIAL_REQUEST_DOWNLOAD_DAYS_AVAILABLE'
+		);
+
 		return {
 			downloadAvailableAt: download_available_at,
 			downloadStatus,
 			downloadExpiresAt: download_available_at
-				? addDays(new Date(download_available_at), DOWNLOAD_AVAILABILITY_DAYS).toISOString()
+				? addDays(new Date(download_available_at), DAYS_AVAILABLE).toISOString()
 				: null,
 		};
 	}
