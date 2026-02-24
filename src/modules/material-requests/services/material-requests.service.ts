@@ -1264,7 +1264,7 @@ export class MaterialRequestsService {
 		const extension = parse(materialRequestForDownload.downloadUrl).ext;
 		const desiredFileName = `${objectTitle}__${maintainerName}${extension}`;
 		return await this.mediahavenJobWatcherService.getS3DownloadSignedUrl(
-			materialRequestForDownload.downloadUrl,
+			this.mediahavenJobWatcherService.getDownloadUrl(materialRequestForDownload),
 			desiredFileName
 		);
 	}
