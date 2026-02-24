@@ -5,8 +5,6 @@ import { MaterialRequest } from '~modules/material-requests/material-requests.ty
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupName } from '~modules/users/types';
 
-export const DOWNLOAD_AVAILABILITY_DAYS = 30;
-
 export const ORDER_PROP_TO_DB_PROP: Partial<Record<keyof MaterialRequest, string>> = {
 	id: 'id',
 	createdAt: 'created_at',
