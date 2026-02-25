@@ -21,10 +21,7 @@ import { compact, isNil } from 'lodash';
 
 import { type Folder, type FolderShared, FolderStatus } from '../types';
 
-import {
-	ConsentToTrackOption,
-	EmailTemplate,
-} from '~modules/campaign-monitor/campaign-monitor.types';
+import { ConsentToTrackOption, EmailTemplate } from '~modules/campaign-monitor/campaign-monitor.types';
 
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 
@@ -366,7 +363,7 @@ export class FoldersController {
 		};
 		await this.campaignMonitorService.sendTransactionalMail(
 			{
-				template: EmailTemplate.SHARE_FOLDER,
+				template: EmailTemplate.CAMPAIGN_MONITOR_TEMPLATE_SHARE_FOLDER,
 				data: {
 					to: emailInfo.to,
 					replyTo: user.getMail(),
