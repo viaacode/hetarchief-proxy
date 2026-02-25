@@ -1,11 +1,5 @@
 import { TranslationsService } from '@meemoo/admin-core-api';
-import {
-	BadRequestException,
-	Injectable,
-	InternalServerErrorException,
-	Logger,
-	type OnApplicationBootstrap,
-} from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, Logger, type OnApplicationBootstrap } from '@nestjs/common';
 
 import { ConfigService } from '@nestjs/config';
 import * as promiseUtils from 'blend-promise-utils';
@@ -15,7 +9,7 @@ import { stringifyUrl } from 'query-string';
 
 import type { Configuration } from '~config';
 
-import { getTemplateId } from '../campaign-monitor.consts';
+import { getTemplateEnvVarName, getTemplateId } from '../campaign-monitor.consts';
 import {
 	CampaignMonitorCustomFieldName,
 	type CampaignMonitorNewsletterPreferences,
@@ -40,10 +34,8 @@ import {
 import { decryptData, encryptData } from '../helpers/crypto-helper';
 
 import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
-import {
-	MaterialRequestRequesterCapacity,
-	MaterialRequestType,
-} from '~modules/material-requests/material-requests.types';
+import { Lookup_Languages_Enum } from '~generated/graphql-db-types-hetarchief';
+import { MaterialRequestRequesterCapacity, MaterialRequestType } from '~modules/material-requests/material-requests.types';
 import type { VisitRequest } from '~modules/visits/types';
 import { customError } from '~shared/helpers/custom-error';
 import { checkRequiredEnvs } from '~shared/helpers/env-check';
@@ -69,6 +61,12 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 			'CAMPAIGN_MONITOR_API_ENDPOINT',
 			'CAMPAIGN_MONITOR_SUBSCRIBER_API_ENDPOINT',
 			'CAMPAIGN_MONITOR_OPTIN_LIST_HETARCHIEF',
+
+			// Ensure all environment variables for email templates are set
+			...Object.values(EmailTemplate).flatMap((template) => [
+				getTemplateEnvVarName(template, Lookup_Languages_Enum.En),
+				getTemplateEnvVarName(template, Lookup_Languages_Enum.Nl),
+			]),
 		]);
 
 		this.isEnabled = this.configService.get('ENABLE_SEND_EMAIL');
@@ -237,7 +235,7 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 
 		await this.sendTransactionalMail(
 			{
-				template: EmailTemplate.NEWSLETTER_CONFIRMATION,
+				template: EmailTemplate.CAMPAIGN_MONITOR_TEMPLATE_CONFIRMATION_NEWSLETTER_SUBSCRIPTION,
 				data,
 			},
 			language
@@ -404,7 +402,6 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 					null,
 					{
 						templateName: emailInfo.template,
-						envVarPrefix: 'CAMPAIGN_MONITOR_EMAIL_TEMPLATE_',
 					}
 				);
 				this.logger.error(error);
@@ -546,7 +543,9 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 		};
 
 		// Maintainer Template
-		if (emailInfo.template === EmailTemplate.MATERIAL_REQUEST_MAINTAINER) {
+		if (
+			emailInfo.template === EmailTemplate.CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_MAINTAINER
+		) {
 			return {
 				user_firstname: emailInfo.requesterFirstName,
 				user_lastname: emailInfo.requesterLastName,

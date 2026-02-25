@@ -1,27 +1,13 @@
-import {
-	Body,
-	Controller,
-	Get,
-	InternalServerErrorException,
-	Post,
-	Query,
-	Redirect,
-	Req,
-	UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Get, InternalServerErrorException, Post, Query, Redirect, Req, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import type { Request } from 'express';
 
-import {
-	type CampaignMonitorNewsletterPreferences,
-	EmailTemplate,
-} from '../campaign-monitor.types';
+import { type CampaignMonitorNewsletterPreferences } from '../campaign-monitor.types';
 
 import {
 	CampaignMonitorConfirmMailQueryDto,
 	CampaignMonitorNewsletterPreferencesQueryDto,
 	CampaignMonitorNewsletterUpdatePreferencesQueryDto,
-	CampaignMonitorSendMailDto,
 } from '../dto/campaign-monitor.dto';
 
 import { CampaignMonitorService } from '../services/campaign-monitor.service';
@@ -45,27 +31,6 @@ export class CampaignMonitorController {
 		private eventsService: EventsService,
 		private usersService: UsersService
 	) {}
-
-	/**
-	 * Send an email using the campaign monitor api.
-	 */
-	@UseGuards(LoggedInGuard)
-	@Post('send')
-	@ApiOperation({
-		description: `Send transactional mails through Campaign Monitor. Template value is one of following values (${Object.values(
-			EmailTemplate
-		).join(', ')}). Data custom fields are dependent on provided template type.`,
-	})
-	async sendTransactionalMail(
-		@Body() emailInfo: CampaignMonitorSendMailDto,
-		@SessionUser() user?: SessionUserEntity
-	): Promise<{ message: 'success' }> {
-		await this.campaignMonitorService.sendTransactionalMail(
-			emailInfo,
-			user?.getLanguage() || Locale.Nl
-		);
-		return { message: 'success' };
-	}
 
 	@UseGuards(LoggedInGuard)
 	@Get('preferences')

@@ -134,12 +134,12 @@ describe('CampaignMonitorService', () => {
 			await campaignMonitorService.sendForVisit({
 				to: [{ id: visit.visitorId, email: null, language: Locale.Nl }],
 				replyTo: null,
-				template: EmailTemplate.VISIT_APPROVED,
+				template: EmailTemplate.CAMPAIGN_MONITOR_TEMPLATE_VISIT_APPROVED,
 				visitRequest: visit,
 			});
 			expect(sendTransactionalMailSpy).toBeCalledWith(
 				{
-					template: EmailTemplate.VISIT_APPROVED,
+					template: EmailTemplate.CAMPAIGN_MONITOR_TEMPLATE_VISIT_APPROVED,
 					data: {
 						to: ['MEEMOO_MAINTAINER_MISSING_EMAIL_FALLBACK'],
 						replyTo: null,
@@ -188,7 +188,7 @@ describe('CampaignMonitorService', () => {
 			const visitRequest = getMockVisitRequest();
 			try {
 				await campaignMonitorService.sendForVisit({
-					template: EmailTemplate.VISIT_APPROVED,
+					template: EmailTemplate.CAMPAIGN_MONITOR_TEMPLATE_VISIT_APPROVED,
 					visitRequest: visitRequest,
 					to: [
 						{
@@ -207,7 +207,7 @@ describe('CampaignMonitorService', () => {
 
 		it('should early return when no recipients are provided', async () => {
 			const response = await campaignMonitorService.sendForVisit({
-				template: EmailTemplate.VISIT_APPROVED,
+				template: EmailTemplate.CAMPAIGN_MONITOR_TEMPLATE_VISIT_APPROVED,
 				visitRequest: getMockVisitRequest(),
 				to: [],
 				replyTo: null,
@@ -227,7 +227,8 @@ describe('CampaignMonitorService', () => {
 
 		it('should parse materialRequestEmailInfo with Requester Template', () => {
 			const materialRequestEmailInfo = mockMaterialRequestEmailInfo;
-			materialRequestEmailInfo.template = EmailTemplate.MATERIAL_REQUEST_REQUESTER;
+			materialRequestEmailInfo.template =
+				EmailTemplate.CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_REQUESTER;
 			const result =
 				campaignMonitorService.convertMaterialRequestsToEmailTemplateData(materialRequestEmailInfo);
 			expect(result).toEqual(mockCampaignMonitorMaterialRequestDataToRequester);
@@ -237,7 +238,8 @@ describe('CampaignMonitorService', () => {
 	describe('sendForMaterialRequest', () => {
 		it('should throw an error and not send to an empty recipients email address', async () => {
 			const materialRequestEmailInfo = mockMaterialRequestEmailInfo;
-			materialRequestEmailInfo.template = EmailTemplate.MATERIAL_REQUEST_REQUESTER;
+			materialRequestEmailInfo.template =
+				EmailTemplate.CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_REQUESTER;
 			materialRequestEmailInfo.to = null;
 			const sendTransactionalMailSpy = vi.spyOn(campaignMonitorService, 'sendTransactionalMail');
 			sendTransactionalMailSpy.mockResolvedValueOnce(undefined);
@@ -267,7 +269,8 @@ describe('CampaignMonitorService', () => {
 		it('should NOT call the campaign monitor api if email sending is disabled', async () => {
 			campaignMonitorService.setIsEnabled(false);
 			const materialRequestEmailInfo = mockMaterialRequestEmailInfo;
-			materialRequestEmailInfo.template = EmailTemplate.MATERIAL_REQUEST_REQUESTER;
+			materialRequestEmailInfo.template =
+				EmailTemplate.CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_REQUESTER;
 
 			const result = await campaignMonitorService.sendForMaterialRequest(materialRequestEmailInfo);
 			expect(result).toBeFalsy();
@@ -283,7 +286,8 @@ describe('CampaignMonitorService', () => {
 
 			try {
 				const materialRequestEmailInfo = mockMaterialRequestEmailInfo;
-				materialRequestEmailInfo.template = EmailTemplate.MATERIAL_REQUEST_REQUESTER;
+				materialRequestEmailInfo.template =
+					EmailTemplate.CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_REQUESTER;
 				materialRequestEmailInfo.to = 'test@example.com';
 				await campaignMonitorService.sendForMaterialRequest(materialRequestEmailInfo);
 			} catch (err) {
@@ -295,7 +299,8 @@ describe('CampaignMonitorService', () => {
 			campaignMonitorService.makeCmApiRequest = vi.fn().mockRejectedValueOnce('');
 			try {
 				const materialRequestEmailInfo = mockMaterialRequestEmailInfo;
-				materialRequestEmailInfo.template = EmailTemplate.MATERIAL_REQUEST_REQUESTER;
+				materialRequestEmailInfo.template =
+					EmailTemplate.CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_REQUESTER;
 				materialRequestEmailInfo.to = 'test@example.com';
 				await campaignMonitorService.sendForMaterialRequest(materialRequestEmailInfo);
 				fail('sendForMaterialRequest should have thrown an error when CM throws an error');
