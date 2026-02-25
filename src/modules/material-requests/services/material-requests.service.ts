@@ -1,24 +1,9 @@
 import { parse } from 'node:path';
 import { DataService, Locale, StillsObjectType, VideoStillsService } from '@meemoo/admin-core-api';
-import {
-	BadRequestException,
-	Injectable,
-	InternalServerErrorException,
-	NotFoundException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { mapLimit } from 'blend-promise-utils';
-import {
-	compact,
-	groupBy,
-	intersection,
-	isArray,
-	isEmpty,
-	isNil,
-	kebabCase,
-	noop,
-	set,
-} from 'lodash';
+import { compact, groupBy, intersection, isArray, isEmpty, isNil, kebabCase, noop, set } from 'lodash';
 
 import {
 	CreateMaterialRequestDto,
@@ -27,10 +12,10 @@ import {
 	UpdateMaterialRequestStatusDto,
 } from '../dto/material-requests.dto';
 import {
+	getAdditionEventDate,
 	MAP_MATERIAL_REQUEST_STATUS_TO_EMAIL_TEMPLATE,
 	MAP_MATERIAL_REQUEST_STATUS_TO_EVENT_TYPE,
 	ORDER_PROP_TO_DB_PROP,
-	getAdditionEventDate,
 } from '../material-requests.consts';
 import {
 	GqlMaterialRequest,
@@ -89,17 +74,14 @@ import {
 	UpdateMaterialRequestStatusMutation,
 	UpdateMaterialRequestStatusMutationVariables,
 } from '~generated/graphql-db-types-hetarchief';
-import {
-	EmailTemplate,
-	type MaterialRequestEmailInfo,
-} from '~modules/campaign-monitor/campaign-monitor.types';
+import { EmailTemplate, type MaterialRequestEmailInfo } from '~modules/campaign-monitor/campaign-monitor.types';
 
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 import {
 	IeObjectAccessThrough,
 	IeObjectLicense,
-	IeObjectType,
 	IeObjectsVisitorSpaceInfo,
+	IeObjectType,
 	SimpleIeObjectType,
 } from '~modules/ie-objects/ie-objects.types';
 import type { Organisation } from '~modules/organisations/organisations.types';
@@ -625,8 +607,9 @@ export class MaterialRequestsService {
 
 	public isSendToMaintainerEmailTemplate(template: EmailTemplate): boolean {
 		return (
-			template === EmailTemplate.MATERIAL_REQUEST_REQUESTER_CANCELLED ||
-			template === EmailTemplate.MATERIAL_REQUEST_DOWNLOAD_READY_MAINTAINER
+			template === EmailTemplate.CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_REQUESTER_CANCELLED ||
+			template ===
+				EmailTemplate.CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_DOWNLOAD_READY_MAINTAINER
 		);
 	}
 
@@ -693,7 +676,7 @@ export class MaterialRequestsService {
 						// Each materialRequest in this group has the same maintainer, otherwise, the maintainer will receive multiple mails
 						to: materialRequests[0].contactMail,
 						replyTo: materialRequests[0]?.requesterMail,
-						template: EmailTemplate.MATERIAL_REQUEST_MAINTAINER,
+						template: EmailTemplate.CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_MAINTAINER,
 						materialRequests: materialRequests,
 						sendRequestListDto,
 						requesterFirstName: userInfo.firstName,
@@ -708,7 +691,7 @@ export class MaterialRequestsService {
 			const emailInfo: MaterialRequestEmailInfo = {
 				to: materialRequests[0]?.requesterMail,
 				replyTo: null, // Reply to support@meemoo.be
-				template: EmailTemplate.MATERIAL_REQUEST_REQUESTER,
+				template: EmailTemplate.CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_REQUESTER,
 				materialRequests: materialRequests,
 				sendRequestListDto,
 				requesterFirstName: userInfo.firstName,
@@ -1254,7 +1237,7 @@ export class MaterialRequestsService {
 
 		const requester = await this.usersService.getById(materialRequest.profileId);
 		await this.sentStatusUpdateEmail(
-			EmailTemplate.MATERIAL_REQUEST_DOWNLOAD_DOWNLOADED,
+			EmailTemplate.CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_DOWNLOAD_DOWNLOADED,
 			materialRequest,
 			requester
 		);

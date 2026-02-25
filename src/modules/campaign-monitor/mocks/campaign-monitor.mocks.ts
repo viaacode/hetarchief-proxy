@@ -1,4 +1,6 @@
-import { Lookup_App_Material_Request_Requester_Capacity_Enum } from '@meemoo/admin-core-api/dist/src/modules/shared/generated/graphql-db-types-hetarchief';
+import {
+	Lookup_App_Material_Request_Requester_Capacity_Enum,
+} from '@meemoo/admin-core-api/dist/src/modules/shared/generated/graphql-db-types-hetarchief';
 import { AvoAuthIdpType, PermissionName } from '@viaa/avo2-types';
 
 import {
@@ -85,7 +87,7 @@ export const mockSendRequestListDto: SendRequestListDto = {
 export const mockMaterialRequestEmailInfo: MaterialRequestEmailInfo = {
 	to: 'test@example.com',
 	replyTo: 'test-cp@maintainer.be',
-	template: EmailTemplate.MATERIAL_REQUEST_MAINTAINER,
+	template: EmailTemplate.CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_MAINTAINER,
 	language: Locale.Nl,
 	materialRequests: [mockMaterialRequest1],
 	sendRequestListDto: mockSendRequestListDto,

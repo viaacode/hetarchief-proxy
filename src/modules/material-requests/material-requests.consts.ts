@@ -20,11 +20,11 @@ export const ORDER_PROP_TO_DB_PROP: Partial<Record<keyof MaterialRequest, string
 
 export const MAP_MATERIAL_REQUEST_STATUS_TO_EMAIL_TEMPLATE = {
 	[Lookup_App_Material_Request_Status_Enum.Cancelled]:
-		EmailTemplate.MATERIAL_REQUEST_REQUESTER_CANCELLED,
+		EmailTemplate.CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_REQUESTER_CANCELLED,
 	[Lookup_App_Material_Request_Status_Enum.Approved]:
-		EmailTemplate.MATERIAL_REQUEST_MAINTAINER_APPROVED,
+		EmailTemplate.CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_MAINTAINER_APPROVED,
 	[Lookup_App_Material_Request_Status_Enum.Denied]:
-		EmailTemplate.MATERIAL_REQUEST_MAINTAINER_DENIED,
+		EmailTemplate.CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_MAINTAINER_DENIED,
 };
 
 export const MAP_MATERIAL_REQUEST_STATUS_TO_EVENT_TYPE = {

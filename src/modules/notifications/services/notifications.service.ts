@@ -1,20 +1,10 @@
-import {
-	DataService,
-	Locale,
-	MaintenanceAlertsService,
-	TranslationsService,
-} from '@meemoo/admin-core-api';
+import { DataService, Locale, MaintenanceAlertsService, TranslationsService } from '@meemoo/admin-core-api';
 import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { isPast } from 'date-fns';
 
 import { DeleteNotificationDto } from '../dto/notifications.dto';
-import {
-	type GqlNotification,
-	type Notification,
-	NotificationStatus,
-	NotificationType,
-} from '../types';
+import { type GqlNotification, type Notification, NotificationStatus, NotificationType } from '../types';
 
 import {
 	type App_Notification_Bool_Exp,
@@ -218,7 +208,7 @@ export class NotificationsService {
 						},
 					],
 					replyTo: userEmail,
-					template: EmailTemplate.VISIT_REQUEST_CP,
+					template: EmailTemplate.CAMPAIGN_MONITOR_TEMPLATE_VISIT_REQUEST_CP,
 					visitRequest: visitRequest,
 				}),
 			]);
@@ -273,7 +263,7 @@ export class NotificationsService {
 					},
 				],
 				replyTo: visitRequest.spaceMail,
-				template: EmailTemplate.VISIT_APPROVED,
+				template: EmailTemplate.CAMPAIGN_MONITOR_TEMPLATE_VISIT_APPROVED,
 				visitRequest: visitRequest,
 			}),
 		]);
@@ -327,7 +317,7 @@ export class NotificationsService {
 					},
 				],
 				replyTo: visitRequest.spaceMail,
-				template: EmailTemplate.VISIT_DENIED,
+				template: EmailTemplate.CAMPAIGN_MONITOR_TEMPLATE_VISIT_DENIED,
 				visitRequest: visitRequest,
 			}),
 		]);
