@@ -291,6 +291,29 @@ export class MediahavenJobsWatcherService {
 		return `${materialRequest.requesterId}/${materialRequest.id}`;
 	}
 
+	private getFpsFromMediahavenRecord(record: MediaHavenRecord, exportHighQuality: boolean): number {
+		const originalFps: string | undefined = record?.Technical?.VideoFps;
+		const browseFps: string | undefined = record?.Internal?.Browses.Browse.find(
+			(browse) => browse.VideoFps
+		)?.VideoFps;
+		const fpsString: string = (exportHighQuality ? originalFps : browseFps) || '25';
+		let fpsDecimal = 25;
+		try {
+			if (fpsString.includes('/')) {
+				const [numerator, denominator] = fpsString.split('/');
+				fpsDecimal = Number.parseInt(numerator, 10) / Number.parseInt(denominator, 10);
+			} else {
+				fpsDecimal = Number.parseFloat(fpsString);
+			}
+		} catch (err) {
+			console.error('Error parsing framerate from Mediahaven record', err, {
+				recordId: record?.Internal?.FragmentId,
+				videoFps: record?.Technical?.VideoFps,
+			});
+		}
+		return fpsDecimal;
+	}
+
 	/**
 	 * Create an export job in Mediahaven for the given material request.
 	 * @param materialRequest
@@ -300,6 +323,7 @@ export class MediahavenJobsWatcherService {
 		let url: string | null = null;
 		let body: CreateMamJob | null = null;
 		try {
+			const exportHighQuality = materialRequest.reuseForm.downloadQuality === 'HIGH';
 			if (materialRequest.objectRepresentationId) {
 				// User has access to essence of the ie object, and wants to export a specific video (representation)
 				const mhFragmentId = await this.getMhFragmentIdByRepresentationId(
@@ -311,11 +335,12 @@ export class MediahavenJobsWatcherService {
 				let partial = null;
 				if (startTime || endTime) {
 					const record = await this.getMediaHavenMetadataByRecordId(mhFragmentId);
-					const framerate: number = Number.parseInt(record?.Technical?.VideoFps || '25', 10);
+					const fpsDecimal = this.getFpsFromMediahavenRecord(record, exportHighQuality);
+
 					partial = {
 						Type: 'Frames',
-						Start: startTime * framerate,
-						End: Math.min(endTime * framerate, record.Technical.EndFrames), // Avoid trying to export past the end of the file
+						Start: startTime * fpsDecimal,
+						End: Math.min(endTime * fpsDecimal, record.Technical.EndFrames), // Avoid trying to export past the end of the file
 					};
 				}
 
