@@ -283,20 +283,15 @@ export class MediahavenJobsWatcherService {
 		}
 	}
 
-	public getDownloadUrl(materialRequest: MaterialRequestForDownload): string {
-		return `${this.getDownloadFolderPath(materialRequest)}/${materialRequest.downloadUrl}`;
-	}
-
 	private getDownloadFolderPath(materialRequest: MaterialRequestForDownload): string {
 		return `${materialRequest.requesterId}/${materialRequest.id}`;
 	}
 
 	private getFpsFromMediahavenRecord(record: MediaHavenRecord, exportHighQuality: boolean): number {
-		const originalFps: string | undefined = record?.Technical?.VideoFps;
 		const browseFps: string | undefined = record?.Internal?.Browses.Browse.find(
 			(browse) => browse.VideoFps
 		)?.VideoFps;
-		const fpsString: string = (exportHighQuality ? originalFps : browseFps) || '25';
+		const fpsString: string = browseFps || '25';
 		let fpsDecimal = 25;
 		try {
 			if (fpsString.includes('/')) {
@@ -308,7 +303,7 @@ export class MediahavenJobsWatcherService {
 		} catch (err) {
 			console.error('Error parsing framerate from Mediahaven record', err, {
 				recordId: record?.Internal?.FragmentId,
-				videoFps: record?.Technical?.VideoFps,
+				browseFps,
 			});
 		}
 		return fpsDecimal;
