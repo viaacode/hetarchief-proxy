@@ -293,6 +293,7 @@ export class MediahavenJobsWatcherService {
 
 			for (const materialRequest of expiredMaterialRequests) {
 				try {
+					// Could be sped up by doing this in bulk
 					await this.materialRequestsService.updateMaterialRequest(materialRequest.id, {
 						download_status: Lookup_App_Material_Request_Download_Status_Enum.Expired,
 					});
