@@ -33,6 +33,17 @@ export class MediahavenJobsWatcherController {
 						)
 					);
 				});
+			this.mediahavenJobsWatcherService
+				.checkExpiredDownloads()
+				.then(noop)
+				.catch((err) => {
+					console.log(
+						new CustomError(
+							'Error during checkMediahavenJobsStatuses => checkExpiredDownloads cron',
+							err
+						)
+					);
+				});
 			return { message: 'checking' };
 		} catch (err) {
 			throw new CustomError('Error checking Mediahaven jobs statuses', err);
