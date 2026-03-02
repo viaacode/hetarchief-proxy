@@ -1,9 +1,24 @@
 import { parse } from 'node:path';
 import { DataService, Locale, StillsObjectType, VideoStillsService } from '@meemoo/admin-core-api';
-import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import {
+	BadRequestException,
+	Injectable,
+	InternalServerErrorException,
+	NotFoundException,
+} from '@nestjs/common';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { mapLimit } from 'blend-promise-utils';
-import { compact, groupBy, intersection, isArray, isEmpty, isNil, kebabCase, noop, set } from 'lodash';
+import {
+	compact,
+	groupBy,
+	intersection,
+	isArray,
+	isEmpty,
+	isNil,
+	kebabCase,
+	noop,
+	set,
+} from 'lodash';
 
 import {
 	CreateMaterialRequestDto,
@@ -12,10 +27,10 @@ import {
 	UpdateMaterialRequestStatusDto,
 } from '../dto/material-requests.dto';
 import {
-	getAdditionEventDate,
 	MAP_MATERIAL_REQUEST_STATUS_TO_EMAIL_TEMPLATE,
 	MAP_MATERIAL_REQUEST_STATUS_TO_EVENT_TYPE,
 	ORDER_PROP_TO_DB_PROP,
+	getAdditionEventDate,
 } from '../material-requests.consts';
 import {
 	GqlMaterialRequest,
@@ -48,6 +63,9 @@ import {
 	FindMaterialRequestsWithAlmostExpiredDownloadDocument,
 	FindMaterialRequestsWithAlmostExpiredDownloadQuery,
 	FindMaterialRequestsWithAlmostExpiredDownloadQueryVariables,
+	FindMaterialRequestsWithExpiredDownloadDocument,
+	FindMaterialRequestsWithExpiredDownloadQuery,
+	FindMaterialRequestsWithExpiredDownloadQueryVariables,
 	FindMaterialRequestsWithUnresolvedDownloadStatusDocument,
 	FindMaterialRequestsWithUnresolvedDownloadStatusQuery,
 	GetMaterialRequestForDownloadJobDocument,
@@ -74,14 +92,17 @@ import {
 	UpdateMaterialRequestStatusMutation,
 	UpdateMaterialRequestStatusMutationVariables,
 } from '~generated/graphql-db-types-hetarchief';
-import { EmailTemplate, type MaterialRequestEmailInfo } from '~modules/campaign-monitor/campaign-monitor.types';
+import {
+	EmailTemplate,
+	type MaterialRequestEmailInfo,
+} from '~modules/campaign-monitor/campaign-monitor.types';
 
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 import {
 	IeObjectAccessThrough,
 	IeObjectLicense,
-	IeObjectsVisitorSpaceInfo,
 	IeObjectType,
+	IeObjectsVisitorSpaceInfo,
 	SimpleIeObjectType,
 } from '~modules/ie-objects/ie-objects.types';
 import type { Organisation } from '~modules/organisations/organisations.types';
@@ -210,7 +231,17 @@ export class MaterialRequestsService {
 
 			if (hasDownloadUrl.includes('true')) {
 				downloadUrlQuery.push({
-					_and: [{ download_url: { _is_null: false } }, { download_url: { _neq: '' } }],
+					_and: [
+						{ download_url: { _is_null: false } },
+						{
+							download_url: { _neq: '' },
+						},
+						{
+							download_status: {
+								_eq: 'SUCCEEDED',
+							},
+						},
+					],
 				});
 			}
 
@@ -218,7 +249,15 @@ export class MaterialRequestsService {
 				downloadUrlQuery.push({
 					_and: [
 						{
-							_or: [{ download_url: { _is_null: true } }, { download_url: { _eq: '' } }],
+							_or: [
+								{ download_url: { _is_null: true } },
+								{ download_url: { _eq: '' } },
+								{
+									download_status: {
+										_neq: 'SUCCEEDED',
+									},
+								},
+							],
 						},
 						{
 							status: {
@@ -1100,6 +1139,31 @@ export class MaterialRequestsService {
 				'Failed to find material requests with almost expired download',
 				err
 			);
+			console.error(error);
+			return [];
+		}
+	}
+
+	/**
+	 * Finds all the material requests that
+	 * - are approved
+	 * - have a download available
+	 * - have a download that is expired
+	 */
+	async findAllWithExpiredDownload(): Promise<MaterialRequest[]> {
+		try {
+			const DAYS_AVAILABLE = this.configService.get<number>(
+				'MATERIAL_REQUEST_DOWNLOAD_DAYS_AVAILABLE'
+			);
+			const response = await this.dataService.execute<
+				FindMaterialRequestsWithExpiredDownloadQuery,
+				FindMaterialRequestsWithExpiredDownloadQueryVariables
+			>(FindMaterialRequestsWithExpiredDownloadDocument, {
+				expirationDate: subDays(new Date(), DAYS_AVAILABLE).toISOString(),
+			});
+			return await mapLimit(response.app_material_requests, 5, this.adapt);
+		} catch (err) {
+			const error = customError('Failed to find material requests with expired download', err);
 			console.error(error);
 			return [];
 		}

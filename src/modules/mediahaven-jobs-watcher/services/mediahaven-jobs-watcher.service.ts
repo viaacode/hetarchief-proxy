@@ -3,7 +3,7 @@ import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { DataService, MediahavenService } from '@meemoo/admin-core-api';
 import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
 import { logAndThrow } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/logAndThrow';
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AvoUserCommonUser } from '@viaa/avo2-types';
 import { isAfter, isPast, parseISO, subHours, subMinutes } from 'date-fns';
@@ -27,7 +27,10 @@ import { EmailTemplate } from '~modules/campaign-monitor/campaign-monitor.types'
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
 import { mapDcTermsFormatToSimpleType } from '~modules/ie-objects/helpers/map-dc-terms-format-to-simple-type';
-import { MaterialRequest, MaterialRequestForDownload } from '~modules/material-requests/material-requests.types';
+import {
+	MaterialRequest,
+	MaterialRequestForDownload,
+} from '~modules/material-requests/material-requests.types';
 import { MaterialRequestsService } from '~modules/material-requests/services/material-requests.service';
 import {
 	CreateMamJob,
@@ -35,8 +38,8 @@ import {
 	MamAccessToken,
 	MamExportQuality,
 	MamJobStatus,
-	MediahavenJobInfo,
 	MediaHavenRecord,
+	MediahavenJobInfo,
 	S3ExportLocationToken,
 } from '~modules/mediahaven-jobs-watcher/mediahaven-jobs-watcher.types';
 import { UsersService } from '~modules/users/services/users.service';
@@ -280,6 +283,29 @@ export class MediahavenJobsWatcherService {
 			}
 		} catch (err) {
 			throw new CustomError('Error checking almost expired material request downloads', err);
+		}
+	}
+
+	public async checkExpiredDownloads() {
+		try {
+			const expiredMaterialRequests: MaterialRequest[] =
+				await this.materialRequestsService.findAllWithExpiredDownload();
+
+			for (const materialRequest of expiredMaterialRequests) {
+				try {
+					await this.materialRequestsService.updateMaterialRequest(materialRequest.id, {
+						download_status: Lookup_App_Material_Request_Download_Status_Enum.Expired,
+					});
+				} catch (err) {
+					// Log the error but don't throw, since the main flow of updating the material request is successful
+					console.error('Failed to update material request expired download', err, {
+						materialRequestId: materialRequest.id,
+						requesterId: materialRequest.requesterId,
+					});
+				}
+			}
+		} catch (err) {
+			throw new CustomError('Error checking expired material request downloads', err);
 		}
 	}
 
