@@ -1,5 +1,11 @@
 import { TranslationsService } from '@meemoo/admin-core-api';
-import { BadRequestException, Injectable, InternalServerErrorException, Logger, type OnApplicationBootstrap } from '@nestjs/common';
+import {
+	BadRequestException,
+	Injectable,
+	InternalServerErrorException,
+	Logger,
+	type OnApplicationBootstrap,
+} from '@nestjs/common';
 
 import { ConfigService } from '@nestjs/config';
 import * as promiseUtils from 'blend-promise-utils';
@@ -35,7 +41,10 @@ import { decryptData, encryptData } from '../helpers/crypto-helper';
 
 import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
 import { Lookup_Languages_Enum } from '~generated/graphql-db-types-hetarchief';
-import { MaterialRequestRequesterCapacity, MaterialRequestType } from '~modules/material-requests/material-requests.types';
+import {
+	MaterialRequestRequesterCapacity,
+	MaterialRequestType,
+} from '~modules/material-requests/material-requests.types';
 import type { VisitRequest } from '~modules/visits/types';
 import { customError } from '~shared/helpers/custom-error';
 import { checkRequiredEnvs } from '~shared/helpers/env-check';

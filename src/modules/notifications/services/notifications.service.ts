@@ -1,10 +1,20 @@
-import { DataService, Locale, MaintenanceAlertsService, TranslationsService } from '@meemoo/admin-core-api';
+import {
+	DataService,
+	Locale,
+	MaintenanceAlertsService,
+	TranslationsService,
+} from '@meemoo/admin-core-api';
 import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { isPast } from 'date-fns';
 
 import { DeleteNotificationDto } from '../dto/notifications.dto';
-import { type GqlNotification, type Notification, NotificationStatus, NotificationType } from '../types';
+import {
+	type GqlNotification,
+	type Notification,
+	NotificationStatus,
+	NotificationType,
+} from '../types';
 
 import {
 	type App_Notification_Bool_Exp,

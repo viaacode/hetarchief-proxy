@@ -3,7 +3,11 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import type { Request } from 'express';
 import { afterEach, beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
 
-import { mockNewsletterUpdatePreferencesQueryDto, mockSendMailQueryDto, mockUser } from '../mocks/campaign-monitor.mocks';
+import {
+	mockNewsletterUpdatePreferencesQueryDto,
+	mockSendMailQueryDto,
+	mockUser,
+} from '../mocks/campaign-monitor.mocks';
 import { CampaignMonitorService } from '../services/campaign-monitor.service';
 
 import { CampaignMonitorController } from './campaign-monitor.controller';
