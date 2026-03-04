@@ -1,24 +1,9 @@
 import { parse } from 'node:path';
 import { DataService, Locale, StillsObjectType, VideoStillsService } from '@meemoo/admin-core-api';
-import {
-	BadRequestException,
-	Injectable,
-	InternalServerErrorException,
-	NotFoundException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { mapLimit } from 'blend-promise-utils';
-import {
-	compact,
-	groupBy,
-	intersection,
-	isArray,
-	isEmpty,
-	isNil,
-	kebabCase,
-	noop,
-	set,
-} from 'lodash';
+import { compact, groupBy, intersection, isArray, isEmpty, isNil, kebabCase, noop, set } from 'lodash';
 
 import {
 	CreateMaterialRequestDto,
@@ -27,10 +12,10 @@ import {
 	UpdateMaterialRequestStatusDto,
 } from '../dto/material-requests.dto';
 import {
+	getAdditionEventDate,
 	MAP_MATERIAL_REQUEST_STATUS_TO_EMAIL_TEMPLATE,
 	MAP_MATERIAL_REQUEST_STATUS_TO_EVENT_TYPE,
 	ORDER_PROP_TO_DB_PROP,
-	getAdditionEventDate,
 } from '../material-requests.consts';
 import {
 	GqlMaterialRequest,
@@ -92,17 +77,14 @@ import {
 	UpdateMaterialRequestStatusMutation,
 	UpdateMaterialRequestStatusMutationVariables,
 } from '~generated/graphql-db-types-hetarchief';
-import {
-	EmailTemplate,
-	type MaterialRequestEmailInfo,
-} from '~modules/campaign-monitor/campaign-monitor.types';
+import { EmailTemplate, type MaterialRequestEmailInfo } from '~modules/campaign-monitor/campaign-monitor.types';
 
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 import {
 	IeObjectAccessThrough,
 	IeObjectLicense,
-	IeObjectType,
 	IeObjectsVisitorSpaceInfo,
+	IeObjectType,
 	SimpleIeObjectType,
 } from '~modules/ie-objects/ie-objects.types';
 import type { Organisation } from '~modules/organisations/organisations.types';
@@ -1018,8 +1000,8 @@ export class MaterialRequestsService {
 			downloadStatus = Lookup_App_Material_Request_Download_Status_Enum.Failed;
 		}
 
-		const DAYS_AVAILABLE = this.configService.get<number>(
-			'MATERIAL_REQUEST_DOWNLOAD_DAYS_AVAILABLE'
+		const DAYS_AVAILABLE = Number.parseFloat(
+			this.configService.get('MATERIAL_REQUEST_DOWNLOAD_DAYS_AVAILABLE')
 		);
 
 		return {
@@ -1031,8 +1013,8 @@ export class MaterialRequestsService {
 		};
 	}
 
-	public adaptMaterialRequestsForDownloadJobs(
-		materialRequests:
+	public adaptMaterialRequestForDownloadJobs(
+		materialRequest:
 			| FindMaterialRequestsWithUnresolvedDownloadStatusQuery['app_material_requests'][0]
 			| GetMaterialRequestForDownloadJobQuery['app_material_requests'][0]
 	): MaterialRequestForDownload {
@@ -1041,21 +1023,21 @@ export class MaterialRequestsService {
 			[MaterialRequestReuseFormKey.startTime]: string;
 			[MaterialRequestReuseFormKey.endTime]: string;
 		}> = Object.fromEntries(
-			materialRequests.material_request_reuse_form_values.map((field) => [field.key, field.value])
+			materialRequest.material_request_reuse_form_values.map((field) => [field.key, field.value])
 		);
 		return {
-			id: materialRequests.id,
-			type: materialRequests.type,
-			status: materialRequests.status,
-			approvedAt: materialRequests.approved_at,
-			downloadUrl: materialRequests.download_url || null,
-			downloadJobId: materialRequests.download_job_id || null,
-			downloadRetries: materialRequests.download_retries,
-			downloadStatus: materialRequests.download_status || null,
-			objectRepresentationId: materialRequests.ie_object_representation_id || null,
-			requesterId: materialRequests.profile_id,
-			objectId: materialRequests.ie_object_id,
-			updatedAt: materialRequests.updated_at,
+			id: materialRequest.id,
+			type: materialRequest.type,
+			status: materialRequest.status,
+			approvedAt: materialRequest.approved_at,
+			downloadUrl: materialRequest.download_url || null,
+			downloadJobId: materialRequest.download_job_id || null,
+			downloadRetries: materialRequest.download_retries,
+			downloadStatus: materialRequest.download_status || null,
+			objectRepresentationId: materialRequest.ie_object_representation_id || null,
+			requesterId: materialRequest.profile_id,
+			objectId: materialRequest.ie_object_id,
+			updatedAt: materialRequest.updated_at,
 			reuseForm: {
 				downloadQuality: fieldValues.downloadQuality,
 				startTime: fieldValues.startTime ? Number.parseInt(fieldValues.startTime, 10) : null,
@@ -1109,7 +1091,7 @@ export class MaterialRequestsService {
 				FindMaterialRequestsWithUnresolvedDownloadStatusDocument
 			);
 
-		return response.app_material_requests?.map(this.adaptMaterialRequestsForDownloadJobs);
+		return response.app_material_requests?.map(this.adaptMaterialRequestForDownloadJobs);
 	}
 
 	/**
@@ -1133,7 +1115,13 @@ export class MaterialRequestsService {
 			>(FindMaterialRequestsWithAlmostExpiredDownloadDocument, {
 				warningDate: subDays(new Date(), DAYS_AVAILABLE - DAYS_BEFORE_EXPIRATION).toISOString(),
 			});
-			return await mapLimit(response.app_material_requests, 5, this.adapt);
+			return await mapLimit(
+				response.app_material_requests,
+				5,
+				// Requires arrow wrapper, because otherwise the second param is the index in the array,
+				// and that's interpreted as the organisations array in the adapt function
+				(materialRequest: GqlMaterialRequest) => this.adapt(materialRequest)
+			);
 		} catch (err) {
 			const error = customError(
 				'Failed to find material requests with almost expired download',
@@ -1152,8 +1140,8 @@ export class MaterialRequestsService {
 	 */
 	async findAllWithExpiredDownload(): Promise<MaterialRequest[]> {
 		try {
-			const DAYS_AVAILABLE = this.configService.get<number>(
-				'MATERIAL_REQUEST_DOWNLOAD_DAYS_AVAILABLE'
+			const DAYS_AVAILABLE = Number.parseFloat(
+				this.configService.get('MATERIAL_REQUEST_DOWNLOAD_DAYS_AVAILABLE')
 			);
 			const response = await this.dataService.execute<
 				FindMaterialRequestsWithExpiredDownloadQuery,
@@ -1161,7 +1149,13 @@ export class MaterialRequestsService {
 			>(FindMaterialRequestsWithExpiredDownloadDocument, {
 				expirationDate: subDays(new Date(), DAYS_AVAILABLE).toISOString(),
 			});
-			return await mapLimit(response.app_material_requests, 5, this.adapt);
+			return await mapLimit(
+				response.app_material_requests,
+				5,
+				// Requires arrow wrapper, because otherwise the second param is the index in the array,
+				// and that's interpreted as the organisations array in the adapt function
+				(materialRequest: GqlMaterialRequest) => this.adapt(materialRequest)
+			);
 		} catch (err) {
 			const error = customError('Failed to find material requests with expired download', err);
 			console.error(error);
@@ -1180,7 +1174,7 @@ export class MaterialRequestsService {
 		});
 
 		const materialRequest = response.app_material_requests?.[0];
-		return materialRequest ? this.adaptMaterialRequestsForDownloadJobs(materialRequest) : null;
+		return materialRequest ? this.adaptMaterialRequestForDownloadJobs(materialRequest) : null;
 	}
 
 	/**
