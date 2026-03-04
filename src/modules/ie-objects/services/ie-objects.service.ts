@@ -4,31 +4,14 @@ import { retry } from 'async';
 
 import { DataService, PlayerTicketService } from '@meemoo/admin-core-api';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import {
-	Inject,
-	Injectable,
-	InternalServerErrorException,
-	Logger,
-	NotFoundException,
-} from '@nestjs/common';
+import { Inject, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
 
 import { ConfigService } from '@nestjs/config';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { mapLimit } from 'blend-promise-utils';
 import type { Cache } from 'cache-manager';
 import got, { type Got } from 'got';
-import {
-	compact,
-	find,
-	isArray,
-	isEmpty,
-	isNil,
-	kebabCase,
-	omitBy,
-	orderBy,
-	take,
-	uniq,
-} from 'lodash';
+import { compact, find, isArray, isEmpty, isNil, kebabCase, omitBy, orderBy, take, uniq } from 'lodash';
 
 import type { Configuration } from '~config';
 
@@ -107,10 +90,7 @@ import {
 	MAX_COUNT_SEARCH_RESULTS,
 } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
 import { AND } from '~modules/ie-objects/elasticsearch/queryBuilder.helpers';
-import {
-	convertStringToSearchTerms,
-	type SearchTermParseResult,
-} from '~modules/ie-objects/helpers/convert-string-to-search-terms';
+import { convertStringToSearchTerms, type SearchTermParseResult } from '~modules/ie-objects/helpers/convert-string-to-search-terms';
 import { AUTOCOMPLETE_FIELD_TO_ES_FIELD_NAME } from '~modules/ie-objects/ie-objects.conts';
 import {
 	CACHE_KEY_PREFIX_IE_OBJECT_DETAIL,
@@ -1614,14 +1594,14 @@ export class IeObjectsService {
 		}
 	}
 
-	private async getObjectIdBySchemaIdentifier(schemaIdentifier: string): Promise<string> {
+	private async getObjectIdBySchemaIdentifier(schemaIdentifier: string): Promise<string | null> {
 		try {
 			const response = await this.dataService.execute<
 				GetIeObjectIdBySchemaIdentifierQuery,
 				GetIeObjectIdBySchemaIdentifierQueryVariables
 			>(GetIeObjectIdBySchemaIdentifierDocument, { schemaIdentifier });
 
-			return response.graph_intellectual_entity?.[0]?.id;
+			return response.graph_intellectual_entity?.[0]?.id || null;
 		} catch (err) {
 			throw new CustomError(
 				'Failed to fetch the ieObject id from the database by schemaIdentifier',
@@ -1633,7 +1613,9 @@ export class IeObjectsService {
 		}
 	}
 
-	public async getObjectIdBySchemaIdentifierCached(schemaIdentifier: string): Promise<string> {
+	public async getObjectIdBySchemaIdentifierCached(
+		schemaIdentifier: string
+	): Promise<string | null> {
 		try {
 			return await this.cacheManager.wrap(
 				CACHE_KEY_PREFIX_IE_OBJECT_PID_TO_ID + schemaIdentifier,

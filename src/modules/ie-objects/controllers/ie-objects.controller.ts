@@ -51,15 +51,12 @@ import {
 
 import { IeObjectsService } from '../services/ie-objects.service';
 
+import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
+import { logAndThrow } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/logAndThrow';
 import { mapLimit } from 'blend-promise-utils';
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
-import {
-	ALL_INDEXES,
-	IeObjectsSearchFilterField,
-	Operator,
-	OrderProperty,
-} from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
+import { ALL_INDEXES, IeObjectsSearchFilterField, Operator, OrderProperty } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
 import { mapDcTermsFormatToSimpleType } from '~modules/ie-objects/helpers/map-dc-terms-format-to-simple-type';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupName } from '~modules/users/types';
@@ -726,68 +723,86 @@ export class IeObjectsController {
 		@Ip() ip: string,
 		@SessionUser() user: SessionUserEntity
 	): Promise<(Partial<IeObject> | null)[]> {
-		let ids: string[];
-		if (typeof schemaIdentifiers === 'string') {
-			ids = [schemaIdentifiers];
-		} else {
-			ids = schemaIdentifiers;
-		}
-
-		const visitorSpaceAccessInfo =
-			await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
-
-		const limitedObjects: Partial<IeObject>[] = await mapLimit(
-			ids,
-			12,
-			async (schemaIdentifier: string): Promise<Partial<IeObject> | null> => {
-				if (
-					!schemaIdentifier ||
-					schemaIdentifier.length === 0 ||
-					schemaIdentifier.includes('.well-known')
-				) {
-					return null;
-				}
-
-				const ieObjectId =
-					await this.ieObjectsService.getObjectIdBySchemaIdentifierCached(schemaIdentifier);
-				const ieObject = await this.ieObjectsService.findByIeObjectId(ieObjectId, referer, ip);
-
-				if (!ieObject) {
-					return null;
-				}
-
-				// Censor the object based on the licenses and sector
-				// Only leave the properties that the current user can see of this object
-				const limitedObject = limitAccessToObjectDetails(ieObject, {
-					userId: user?.getId(),
-					isKeyUser: user.getIsKeyUser(),
-					sector: user.getSector(),
-					groupId: user.getGroupId(),
-					maintainerId: user.getOrganisationId(),
-					accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
-					accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
-				});
-
-				if (!limitedObject) {
-					throw new ForbiddenException('You do not have access to this object');
-				}
-
-				// Meemoo admin user always has VISITOR_SPACE_FULL in accessThrough when object has BEZOEKERTOOL licences
-				if (
-					user.getGroupName() === GroupName.MEEMOO_ADMIN &&
-					visitorSpaceAccessInfo.visitorSpaceIds.includes(limitedObject.maintainerId) &&
-					intersection(limitedObject?.licenses, [
-						IeObjectLicense.BEZOEKERTOOL_CONTENT,
-						IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
-					]).length > 0
-				) {
-					limitedObject?.accessThrough.push(IeObjectAccessThrough.VISITOR_SPACE_FULL);
-				}
-
-				return limitedObject;
+		try {
+			let ids: string[];
+			if (typeof schemaIdentifiers === 'string') {
+				ids = [schemaIdentifiers];
+			} else {
+				ids = schemaIdentifiers;
 			}
-		);
 
-		return limitedObjects;
+			const visitorSpaceAccessInfo =
+				await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
+
+			const limitedObjects: Partial<IeObject>[] = await mapLimit(
+				ids,
+				12,
+				async (schemaIdentifier: string): Promise<Partial<IeObject> | null> => {
+					try {
+						if (
+							!schemaIdentifier ||
+							schemaIdentifier.length === 0 ||
+							schemaIdentifier.includes('.well-known')
+						) {
+							return null;
+						}
+
+						const ieObjectId: string | null =
+							await this.ieObjectsService.getObjectIdBySchemaIdentifierCached(schemaIdentifier);
+
+						if (!ieObjectId) {
+							return null;
+						}
+
+						const ieObject = await this.ieObjectsService.findByIeObjectId(ieObjectId, referer, ip);
+
+						if (!ieObject) {
+							return null;
+						}
+
+						// Censor the object based on the licenses and sector
+						// Only leave the properties that the current user can see of this object
+						const limitedObject = limitAccessToObjectDetails(ieObject, {
+							userId: user?.getId(),
+							isKeyUser: user.getIsKeyUser(),
+							sector: user.getSector(),
+							groupId: user.getGroupId(),
+							maintainerId: user.getOrganisationId(),
+							accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
+							accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
+						});
+
+						if (!limitedObject) {
+							throw new ForbiddenException('You do not have access to this object');
+						}
+
+						// Meemoo admin user always has VISITOR_SPACE_FULL in accessThrough when object has BEZOEKERTOOL licences
+						if (
+							user.getGroupName() === GroupName.MEEMOO_ADMIN &&
+							visitorSpaceAccessInfo.visitorSpaceIds.includes(limitedObject.maintainerId) &&
+							intersection(limitedObject?.licenses, [
+								IeObjectLicense.BEZOEKERTOOL_CONTENT,
+								IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
+							]).length > 0
+						) {
+							limitedObject?.accessThrough.push(IeObjectAccessThrough.VISITOR_SPACE_FULL);
+						}
+
+						return limitedObject;
+					} catch (err) {
+						throw new CustomError('Failed to retrieve object details in getIeObjectsByIds', err, {
+							schemaIdentifier,
+						});
+					}
+				}
+			);
+
+			return limitedObjects;
+		} catch (err) {
+			const error = new CustomError('Failed to retrieve object details in getIeObjectsByIds', err, {
+				schemaIdentifiers,
+			});
+			logAndThrow(error);
+		}
 	}
 }

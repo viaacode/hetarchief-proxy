@@ -5,6 +5,7 @@ import {
 	ForbiddenException,
 	Get,
 	InternalServerErrorException,
+	NotFoundException,
 	Param,
 	ParseUUIDPipe,
 	Patch,
@@ -21,10 +22,7 @@ import { compact, isNil } from 'lodash';
 
 import { type Folder, type FolderShared, FolderStatus } from '../types';
 
-import {
-	ConsentToTrackOption,
-	EmailTemplate,
-} from '~modules/campaign-monitor/campaign-monitor.types';
+import { ConsentToTrackOption, EmailTemplate } from '~modules/campaign-monitor/campaign-monitor.types';
 
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 
@@ -242,6 +240,11 @@ export class FoldersController {
 
 		const ieObjectId =
 			await this.ieObjectsService.getObjectIdBySchemaIdentifierCached(objectSchemaIdentifier);
+
+		if (!ieObjectId) {
+			throw new NotFoundException('Object not found');
+		}
+
 		const folderObject = await this.foldersService.addObjectToFolder(
 			folderId,
 			ieObjectId,

@@ -4,14 +4,7 @@ import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { format } from 'date-fns';
 import { isEmpty, maxBy } from 'lodash';
 
-import type {
-	Folder,
-	FolderObjectLink,
-	GqlFolder,
-	GqlFolderWithIeObjects,
-	GqlObject,
-	GqlUpdateFolder,
-} from '../types';
+import type { Folder, FolderObjectLink, GqlFolder, GqlFolderWithIeObjects, GqlObject, GqlUpdateFolder } from '../types';
 
 import {
 	FindFolderByIdDocument,
@@ -23,9 +16,6 @@ import {
 	FindFoldersByUserDocument,
 	type FindFoldersByUserQuery,
 	type FindFoldersByUserQueryVariables,
-	FindIeObjectBySchemaIdentifierDocument,
-	type FindIeObjectBySchemaIdentifierQuery,
-	type FindIeObjectBySchemaIdentifierQueryVariables,
 	FindIeObjectInFolderDocument,
 	type FindIeObjectInFolderQuery,
 	type FindIeObjectInFolderQueryVariables,
@@ -357,22 +347,6 @@ export class FoldersService {
 		return this.adaptFolderObjectLink(foundObject, referer, ip);
 	}
 
-	public async findObjectById(
-		ieObjectId: string,
-		referer: string,
-		ip: string
-	): Promise<Partial<IeObject> | null> {
-		const response = await this.dataService.execute<
-			FindIeObjectBySchemaIdentifierQuery,
-			FindIeObjectBySchemaIdentifierQueryVariables
-		>(FindIeObjectBySchemaIdentifierDocument, {
-			ieObjectId,
-		});
-		const foundObject = response.graph_intellectual_entity[0];
-
-		return this.adaptIeObject(foundObject, referer, ip);
-	}
-
 	public async addObjectToFolder(
 		folderId: string,
 		ieObjectId: string,
@@ -387,7 +361,7 @@ export class FoldersService {
 			});
 		}
 
-		const objectInfo = await this.findObjectById(ieObjectId, referer, ip);
+		const objectInfo = await this.ieObjectsService.findByIeObjectId(ieObjectId, referer, ip);
 
 		if (!objectInfo) {
 			throw new NotFoundException(`Object with id ${ieObjectId} was not found`);
