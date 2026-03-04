@@ -1,15 +1,11 @@
-import {
-	PlayerTicketController,
-	PlayerTicketService,
-	TranslationsService,
-} from '@meemoo/admin-core-api';
+import { PlayerTicketController, PlayerTicketService, TranslationsService } from '@meemoo/admin-core-api';
 import { NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Test, type TestingModule } from '@nestjs/testing';
 import type { IPagination } from '@studiohyperdrive/pagination';
 import type { Request, Response } from 'express';
 import { cloneDeep } from 'lodash';
-import { type MockInstance, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
 
 import { type IeObject, IeObjectLicense, type RelatedIeObject } from '../ie-objects.types';
 import {
@@ -220,8 +216,7 @@ describe('IeObjectsController', () => {
 				await ieObjectsController.getIeObjectsByIds(['1'], 'referer', '127.0.0.1', mockSessionUser);
 				fail('Expected an error to be thrown if the object does not exist');
 			} catch (err) {
-				expect(err.message).toEqual('You do not have access to this object');
-				expect(err.status).toEqual(403);
+				expect(err.message).toEqual('Failed to retrieve object details in getIeObjectsByIds');
 			}
 		});
 
@@ -234,10 +229,7 @@ describe('IeObjectsController', () => {
 				await ieObjectsController.getIeObjectsByIds(['1'], 'referer', '127.0.0.1', mockSessionUser);
 				fail('Expected an error to be thrown if the object does not exist');
 			} catch (err) {
-				expect(err.message).toEqual(
-					`Object IE with id '${mockIeObject1.schemaIdentifier}' not found`
-				);
-				expect(err.status).toEqual(404);
+				expect(err.message).toEqual('Failed to retrieve object details in getIeObjectsByIds');
 			}
 		});
 

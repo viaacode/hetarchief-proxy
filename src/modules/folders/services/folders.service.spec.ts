@@ -1,14 +1,13 @@
 import { DataService } from '@meemoo/admin-core-api';
 import { Test, type TestingModule } from '@nestjs/testing';
 import { format } from 'date-fns';
-import { type MockInstance, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
 
 import { FoldersService } from './folders.service';
 
 import type {
 	FindFolderIeObjectsByFolderIdQuery,
 	FindFoldersByUserQuery,
-	FindIeObjectBySchemaIdentifierQuery,
 	FindIeObjectInFolderQuery,
 	InsertFolderMutation,
 	InsertIeObjectIntoFolderMutation,
@@ -29,6 +28,7 @@ const mockDataService: Partial<Record<keyof DataService, MockInstance>> = {
 
 const mockIeObjectsService: Partial<Record<keyof IeObjectsService, MockInstance>> = {
 	getThumbnailUrlWithToken: vi.fn(),
+	findByIeObjectId: vi.fn(),
 };
 
 const mockVisitsService: Partial<Record<keyof VisitsService, MockInstance>> = {
@@ -470,29 +470,12 @@ describe('FoldersService', () => {
 		});
 	});
 
-	describe('findObjectBySchemaIdentifier', () => {
-		it('can find an object by schema identifier', async () => {
-			const mockData: FindIeObjectBySchemaIdentifierQuery = {
-				graph_intellectual_entity: [mockGqlFolderObject],
-			};
-			mockDataService.execute.mockResolvedValueOnce(mockData);
-			const object = await foldersService.findObjectById(
-				mockFolderObject.iri,
-				'referer',
-				'127.0.0.1'
-			);
-			expect(object.schemaIdentifier).toEqual(mockFolderObject.schemaIdentifier);
-		});
-	});
-
 	describe('addObjectToFolder', () => {
 		it('can add object to a folder', async () => {
 			const findObjectInFolderSpy = vi
 				.spyOn(foldersService, 'findObjectInFolderById')
 				.mockResolvedValueOnce(null);
-			const findObjectByIdSpy = vi
-				.spyOn(foldersService, 'findObjectById')
-				.mockResolvedValueOnce(mockFolderObject);
+			mockIeObjectsService.findByIeObjectId.mockResolvedValueOnce(mockFolderObject);
 			const mockData: InsertIeObjectIntoFolderMutation = {
 				insert_users_folder_ie: {
 					returning: [
@@ -512,7 +495,6 @@ describe('FoldersService', () => {
 				mockGqlFolderObjectLink.intellectualEntity.schema_identifier
 			);
 			findObjectInFolderSpy.mockRestore();
-			findObjectByIdSpy.mockRestore();
 		});
 
 		it('can not add object to a folder if it already exists', async () => {
@@ -543,9 +525,7 @@ describe('FoldersService', () => {
 			const findObjectInFolderSpy = vi
 				.spyOn(foldersService, 'findObjectInFolderById')
 				.mockResolvedValueOnce(null);
-			const findObjectByIdSpy = vi
-				.spyOn(foldersService, 'findObjectById')
-				.mockResolvedValueOnce(null);
+			mockIeObjectsService.findByIeObjectId.mockResolvedValueOnce(null);
 
 			let error: any;
 			try {
@@ -564,7 +544,6 @@ describe('FoldersService', () => {
 				message: `Object with id ${mockGqlFolderObjectLink.intellectualEntity.schema_identifier} was not found`,
 			});
 			findObjectInFolderSpy.mockRestore();
-			findObjectByIdSpy.mockRestore();
 		});
 	});
 

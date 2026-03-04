@@ -2,7 +2,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import type { IPagination } from '@studiohyperdrive/pagination';
 import { AvoAuthIdpType, PermissionName } from '@viaa/avo2-types';
 import type { Request } from 'express';
-import { type MockInstance, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
 
 import { FoldersService } from '../services/folders.service';
 
@@ -282,6 +282,7 @@ describe('FoldersController', () => {
 			mockFoldersService.findFolderById.mockResolvedValueOnce(mockFoldersResponse.items[0]);
 			mockFoldersService.findFolderById.mockResolvedValueOnce(mockFoldersResponse.items[0]);
 			mockFoldersService.findObjectInFolderById.mockResolvedValue(mockFoldersResponse.items[0]);
+			mockIeObjectsService.getObjectIdBySchemaIdentifierCached.mockResolvedValue(mockIeObject1.iri);
 			mockIeObjectsService.findByIeObjectId.mockResolvedValue([mockIeObject1]);
 			const folderObject = await foldersController.addObjectToFolder(
 				mockRequest,

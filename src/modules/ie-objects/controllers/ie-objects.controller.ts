@@ -734,7 +734,7 @@ export class IeObjectsController {
 			const visitorSpaceAccessInfo =
 				await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
 
-			const limitedObjects: Partial<IeObject>[] = await mapLimit(
+			const limitedObjects: Partial<IeObject | null>[] = await mapLimit(
 				ids,
 				12,
 				async (schemaIdentifier: string): Promise<Partial<IeObject> | null> => {
