@@ -46,6 +46,8 @@ export const mockConfigService = {
 				return '86400';
 			case 'REDIS_CONNECTION_STRING':
 				return 'redis connection string';
+			case 'MEDIAHAVEN_EXPORT_JOB_RETRY_DELAY_HOURS':
+				return 1;
 			default:
 				if (key.startsWith('CAMPAIGN_MONITOR_TEMPLATE_')) {
 					return 'fakeTemplateId';

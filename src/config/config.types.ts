@@ -86,6 +86,7 @@ export interface Configuration {
 	MEDIAHAVEN_S3_EXPORT_LOCATION_URL: string;
 	MEDIAHAVEN_S3_EXPORT_LOCATION_SIGNED_URL_EXPIRY_SECONDS: number;
 	MEDIAHAVEN_S3_EXPORT_LOCATION_BUCKET_URL: string;
+	MEDIAHAVEN_EXPORT_JOB_RETRY_DELAY_HOURS: number;
 }
 
 export type ConfigService = NestConfigService<Configuration>;
