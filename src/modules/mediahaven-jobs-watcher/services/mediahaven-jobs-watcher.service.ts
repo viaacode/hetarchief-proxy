@@ -726,8 +726,9 @@ export class MediahavenJobsWatcherService {
 			const EXPORT_LOCATION_BUCKET_URL = this.configService.get(
 				'MEDIAHAVEN_S3_EXPORT_LOCATION_BUCKET_URL'
 			);
-			const SIGNED_URL_EXPIRY_SECONDS = this.configService.get(
-				'MEDIAHAVEN_S3_EXPORT_LOCATION_SIGNED_URL_EXPIRY_SECONDS'
+			const SIGNED_URL_EXPIRY_SECONDS = Number.parseInt(
+				this.configService.get('MEDIAHAVEN_S3_EXPORT_LOCATION_SIGNED_URL_EXPIRY_SECONDS'),
+				10
 			);
 
 			const token = await this.getS3DownloadLocationTokenCached();
