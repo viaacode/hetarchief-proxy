@@ -4,7 +4,14 @@ import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { format } from 'date-fns';
 import { isEmpty, maxBy } from 'lodash';
 
-import type { Folder, FolderObjectLink, GqlFolder, GqlFolderWithIeObjects, GqlObject, GqlUpdateFolder } from '../types';
+import type {
+	Folder,
+	FolderObjectLink,
+	GqlFolder,
+	GqlFolderWithIeObjects,
+	GqlObject,
+	GqlUpdateFolder,
+} from '../types';
 
 import {
 	FindFolderByIdDocument,

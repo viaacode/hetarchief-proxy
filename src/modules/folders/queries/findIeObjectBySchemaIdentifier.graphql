@@ -41,4 +41,3 @@ query findIeObjectBySchemaIdentifier($schemaIdentifier: String!) {
 		}
 	}
 }
-
