@@ -9,12 +9,7 @@ import {
 	Lookup_App_Material_Request_Type_Enum,
 	type UpdateMaterialRequestMutation,
 } from '~generated/graphql-db-types-hetarchief';
-import {
-	IeObjectAccessThrough,
-	IeObjectLicense,
-	IeObjectRepresentation,
-	IeObjectType,
-} from '~modules/ie-objects/ie-objects.types';
+import { IeObjectAccessThrough, IeObjectLicense, IeObjectRepresentation, IeObjectType } from '~modules/ie-objects/ie-objects.types';
 import type { Locale } from '~shared/types/types';
 
 export interface MaterialRequest {
@@ -96,6 +91,7 @@ export enum MaterialRequestReuseFormKey {
 	thumbnailUrl = 'thumbnailUrl',
 	startTime = 'startTime',
 	endTime = 'endTime',
+	durationType = 'durationType',
 	downloadQuality = 'downloadQuality',
 	intendedUsageDescription = 'intendedUsageDescription',
 	intendedUsage = 'intendedUsage',
@@ -112,10 +108,16 @@ export enum MaterialRequestReuseFormKey {
 	copyrightDisplay = 'copyrightDisplay',
 }
 
+export enum MaterialRequestDurationType {
+	FULL = 'FULL',
+	PARTIAL = 'PARTIAL',
+}
+
 export interface MaterialRequestReuseForm {
 	thumbnailUrl?: string;
 	startTime?: number;
 	endTime?: number;
+	durationType?: MaterialRequestDurationType;
 	downloadQuality?: MaterialRequestExportQuality;
 	intendedUsageDescription?: string;
 	intendedUsage?: string;

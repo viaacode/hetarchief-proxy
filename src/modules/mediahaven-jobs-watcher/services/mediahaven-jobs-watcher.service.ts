@@ -7,7 +7,7 @@ import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AvoUserCommonUser } from '@viaa/avo2-types';
 import { isAfter, isPast, parseISO, subHours, subMinutes } from 'date-fns';
-import { compact, noop } from 'lodash';
+import { compact, isNil, noop } from 'lodash';
 import { stringifyUrl } from 'query-string';
 import { v4 as uuidv4 } from 'uuid';
 import { Configuration } from '~config';
@@ -29,6 +29,7 @@ import { LogEventType } from '~modules/events/types';
 import { mapDcTermsFormatToSimpleType } from '~modules/ie-objects/helpers/map-dc-terms-format-to-simple-type';
 import {
 	MaterialRequest,
+	MaterialRequestDurationType,
 	MaterialRequestForDownload,
 } from '~modules/material-requests/material-requests.types';
 import { MaterialRequestsService } from '~modules/material-requests/services/material-requests.service';
@@ -356,11 +357,18 @@ export class MediahavenJobsWatcherService {
 				const mhFragmentId = await this.getMhFragmentIdByRepresentationId(
 					materialRequest.objectRepresentationId
 				);
-				const startTime = materialRequest.reuseForm.startTime;
+				// https://meemoo.atlassian.net/browse/ARC-3441
+				const durationType =
+					materialRequest.reuseForm.durationType || MaterialRequestDurationType.PARTIAL;
+				const startTime = materialRequest.reuseForm.startTime || 0;
 				const endTime = materialRequest.reuseForm.endTime;
 
 				let partial = null;
-				if (startTime || endTime) {
+				if (
+					durationType === MaterialRequestDurationType.PARTIAL &&
+					!isNil(startTime) &&
+					!isNil(endTime)
+				) {
 					const record = await this.getMediaHavenMetadataByRecordId(mhFragmentId);
 					const fpsDecimal = this.getFpsFromMediahavenRecord(record, exportHighQuality);
 
@@ -466,7 +474,7 @@ export class MediahavenJobsWatcherService {
 		}
 	}
 
-	private async getJobsFromMediahaven(): Promise<MediahavenJobInfo[]> {
+	public async getJobsFromMediahaven(): Promise<MediahavenJobInfo[]> {
 		const accessToken = await this.getAccessToken();
 		const url = stringifyUrl({
 			url: `${this.configService.get('MEDIAHAVEN_API_ENDPOINT')}/exports`,
