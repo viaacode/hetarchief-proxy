@@ -461,6 +461,7 @@ export class MediahavenJobsWatcherService {
 				download_job_id: jobId,
 				download_status: Lookup_App_Material_Request_Download_Status_Enum.New,
 				updated_at: new Date().toISOString(),
+				download_retries: (materialRequest.downloadRetries || 0) + 1,
 			});
 
 			return jobId;
