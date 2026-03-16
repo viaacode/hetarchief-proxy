@@ -540,12 +540,29 @@ export class MaterialRequestsService {
 					`Material request (${currentRequest.id}) could not be set to ${newStatus}.`
 				);
 			}
+
+			// Trying to update the status to pending, but user is the one who made the request
+			if (
+				newStatus === Lookup_App_Material_Request_Status_Enum.Pending &&
+				currentRequest.requesterId === userId
+			) {
+				throw new BadRequestException(
+					`Material request (${currentRequest.id}) could not be set to ${newStatus}.`
+				);
+			}
 		} else if (currentRequest.status === Lookup_App_Material_Request_Status_Enum.Pending) {
 			// The current status is PENDING, and we are not trying to set the status to APPROVED or DENIED => Not allowed
 			if (
 				newStatus !== Lookup_App_Material_Request_Status_Enum.Approved &&
 				newStatus !== Lookup_App_Material_Request_Status_Enum.Denied
 			) {
+				throw new BadRequestException(
+					`Material request (${currentRequest.id}) could not be set to ${newStatus}.`
+				);
+			}
+
+			// Trying to update the status to APPROVED or DENIED, but user is the one who made the request
+			if (currentRequest.requesterId === userId) {
 				throw new BadRequestException(
 					`Material request (${currentRequest.id}) could not be set to ${newStatus}.`
 				);
