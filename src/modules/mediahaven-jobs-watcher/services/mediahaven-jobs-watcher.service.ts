@@ -3,7 +3,7 @@ import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { DataService, MediahavenService } from '@meemoo/admin-core-api';
 import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
 import { logAndThrow } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/logAndThrow';
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AvoUserCommonUser } from '@viaa/avo2-types';
 import { isAfter, isPast, parseISO, subHours, subMinutes } from 'date-fns';
@@ -39,8 +39,8 @@ import {
 	MamAccessToken,
 	MamExportQuality,
 	MamJobStatus,
-	MediahavenJobInfo,
 	MediaHavenRecord,
+	MediahavenJobInfo,
 	S3ExportLocationToken,
 } from '~modules/mediahaven-jobs-watcher/mediahaven-jobs-watcher.types';
 import { UsersService } from '~modules/users/services/users.service';

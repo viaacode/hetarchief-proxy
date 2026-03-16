@@ -4,14 +4,31 @@ import { retry } from 'async';
 
 import { DataService, PlayerTicketService } from '@meemoo/admin-core-api';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { Inject, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
+import {
+	Inject,
+	Injectable,
+	InternalServerErrorException,
+	Logger,
+	NotFoundException,
+} from '@nestjs/common';
 
 import { ConfigService } from '@nestjs/config';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { mapLimit } from 'blend-promise-utils';
 import type { Cache } from 'cache-manager';
 import got, { type Got } from 'got';
-import { compact, find, isArray, isEmpty, isNil, kebabCase, omitBy, orderBy, take, uniq } from 'lodash';
+import {
+	compact,
+	find,
+	isArray,
+	isEmpty,
+	isNil,
+	kebabCase,
+	omitBy,
+	orderBy,
+	take,
+	uniq,
+} from 'lodash';
 
 import type { Configuration } from '~config';
 
@@ -35,10 +52,10 @@ import {
 	type IeObjectPages,
 	type IeObjectRepresentation,
 	type IeObjectSector,
+	IeObjectType,
 	type IeObjectsSitemap,
 	type IeObjectsVisitorSpaceInfo,
 	type IeObjectsWithAggregations,
-	IeObjectType,
 	type IsPartOfKey,
 	type Mention,
 	type RelatedIeObject,
@@ -90,13 +107,16 @@ import {
 	MAX_COUNT_SEARCH_RESULTS,
 } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
 import { AND } from '~modules/ie-objects/elasticsearch/queryBuilder.helpers';
-import { convertStringToSearchTerms, type SearchTermParseResult } from '~modules/ie-objects/helpers/convert-string-to-search-terms';
+import {
+	type SearchTermParseResult,
+	convertStringToSearchTerms,
+} from '~modules/ie-objects/helpers/convert-string-to-search-terms';
 import { AUTOCOMPLETE_FIELD_TO_ES_FIELD_NAME } from '~modules/ie-objects/ie-objects.conts';
 import {
+	CACHE_KEY_PREFIX_IE_OBJECTS_SEARCH,
 	CACHE_KEY_PREFIX_IE_OBJECT_DETAIL,
 	CACHE_KEY_PREFIX_IE_OBJECT_PID_TO_ID,
 	CACHE_KEY_PREFIX_IE_OBJECT_THUMBNAIL,
-	CACHE_KEY_PREFIX_IE_OBJECTS_SEARCH,
 	IE_OBJECT_DETAIL_QUERIES,
 } from '~modules/ie-objects/services/ie-objects.service.consts';
 import {
