@@ -14,7 +14,7 @@ query getMaterialRequestForDownloadJob($materialRequestId: uuid!) {
 		type
 		updated_at
 		material_request_reuse_form_values(
-			where: { key: { _in: ["downloadQuality", "startTime", "endTime"] } }
+			where: { key: { _in: ["downloadQuality", "startTime", "endTime", "durationType"] } }
 		) {
 			key
 			value

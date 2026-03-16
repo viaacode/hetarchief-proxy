@@ -21,6 +21,7 @@ import {
 	GqlMaterialRequest,
 	GqlMaterialRequestMaintainer,
 	MaterialRequest,
+	MaterialRequestDurationType,
 	MaterialRequestExportQuality,
 	MaterialRequestForDownload,
 	MaterialRequestMaintainer,
@@ -1022,6 +1023,7 @@ export class MaterialRequestsService {
 			[MaterialRequestReuseFormKey.downloadQuality]: MaterialRequestExportQuality;
 			[MaterialRequestReuseFormKey.startTime]: string;
 			[MaterialRequestReuseFormKey.endTime]: string;
+			[MaterialRequestReuseFormKey.durationType]: MaterialRequestDurationType;
 		}> = Object.fromEntries(
 			materialRequest.material_request_reuse_form_values.map((field) => [field.key, field.value])
 		);
@@ -1042,6 +1044,7 @@ export class MaterialRequestsService {
 				downloadQuality: fieldValues.downloadQuality,
 				startTime: fieldValues.startTime ? Number.parseInt(fieldValues.startTime, 10) : null,
 				endTime: fieldValues.endTime ? Number.parseInt(fieldValues.endTime, 10) : null,
+				durationType: fieldValues.durationType ?? MaterialRequestDurationType.PARTIAL,
 			},
 		};
 	}
