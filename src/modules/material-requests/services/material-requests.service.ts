@@ -518,8 +518,9 @@ export class MaterialRequestsService {
 	private validateStatusTransition(
 		currentRequest: MaterialRequest,
 		newStatus: Lookup_App_Material_Request_Status_Enum,
-		userId: string
+		user: SessionUserEntity
 	) {
+		const userId = user.getId();
 		if (currentRequest.status === Lookup_App_Material_Request_Status_Enum.New) {
 			// The current status is still NEW, and we are not trying to set the status to cancelled or pending => Not allowed
 			if (
@@ -541,10 +542,11 @@ export class MaterialRequestsService {
 				);
 			}
 
-			// Trying to update the status to pending, but user is the one who made the request
+			// Trying to update the status to pending, but user is the one who made the request or the user is not part of the same organisation
 			if (
 				newStatus === Lookup_App_Material_Request_Status_Enum.Pending &&
-				currentRequest.requesterId === userId
+				(currentRequest.requesterId === userId ||
+					currentRequest.maintainerId !== user.getOrganisationId())
 			) {
 				throw new BadRequestException(
 					`Material request (${currentRequest.id}) could not be set to ${newStatus}.`
@@ -561,8 +563,11 @@ export class MaterialRequestsService {
 				);
 			}
 
-			// Trying to update the status to APPROVED or DENIED, but user is the one who made the request
-			if (currentRequest.requesterId === userId) {
+			// Trying to update the status to APPROVED or DENIED, but user is the one who made the request or the user is not part of the same organisation
+			if (
+				currentRequest.requesterId === userId ||
+				currentRequest.maintainerId !== user.getOrganisationId()
+			) {
 				throw new BadRequestException(
 					`Material request (${currentRequest.id}) could not be set to ${newStatus}.`
 				);
@@ -588,7 +593,7 @@ export class MaterialRequestsService {
 
 		const { status, motivation } = statusOptions;
 
-		this.validateStatusTransition(currentRequest, status, user.getId());
+		this.validateStatusTransition(currentRequest, status, user);
 
 		const updateMaterialRequest: Partial<GqlMaterialRequest> = {
 			status: status,
