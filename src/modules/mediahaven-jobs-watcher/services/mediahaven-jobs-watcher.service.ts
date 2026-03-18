@@ -83,9 +83,9 @@ export class MediahavenJobsWatcherService {
 			this.configService.get('MEDIAHAVEN_EXPORT_JOB_RETRY_DELAY_HOURS') || '1'
 		);
 		// If the material request was updated less than retryDelayHours ago, wait before retrying
-		if (isBefore(updatedAt, subHours(new Date(), retryDelayHours))) {
+		if (!isBefore(updatedAt, subHours(new Date(), retryDelayHours))) {
 			// Skip this material request for now
-			// Maybe there is an issue with the api, so we'll try again in 1 hour after the last attempt
+			// Maybe there is an issue with the api, so we'll try again after the delay
 			return false;
 		}
 		// Check if we can retry creating the export job
