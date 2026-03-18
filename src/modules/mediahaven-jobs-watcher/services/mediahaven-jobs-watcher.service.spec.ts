@@ -1,12 +1,9 @@
 import { DataService, MediahavenService } from '@meemoo/admin-core-api';
 import { ConfigService } from '@nestjs/config';
 import { Test, type TestingModule } from '@nestjs/testing';
-import { type MockInstance, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
 
-import {
-	MamJobStatus,
-	type MediahavenJobInfo,
-} from '~modules/mediahaven-jobs-watcher/mediahaven-jobs-watcher.types';
+import { MamJobStatus, type MediahavenJobInfo } from '~modules/mediahaven-jobs-watcher/mediahaven-jobs-watcher.types';
 import { MediahavenJobsWatcherService } from './mediahaven-jobs-watcher.service';
 
 import { Lookup_App_Material_Request_Download_Status_Enum } from '~generated/graphql-db-types-hetarchief';
@@ -350,147 +347,149 @@ describe('MediahavenJobsWatcherService', () => {
 			});
 		});
 
-		describe('MamJobStatus.Failed', () => {
-			it('should retry creating export job when job is Failed and retries < 3', async () => {
-				const materialRequest = createMockMaterialRequest({
-					downloadRetries: 0,
-					updatedAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), // 2 hours ago
-				});
-				const job = createMockMediahavenJob({
-					ExportJobId: materialRequest.downloadJobId,
-					Status: MamJobStatus.Failed,
-					Progress: 0,
-				});
+		// https://meemoo.atlassian.net/browse/ARC-3573
+		// describe('MamJobStatus.Failed', () => {
+		// 	it('should retry creating export job when job is Failed and retries < 3', async () => {
+		// 		const materialRequest = createMockMaterialRequest({
+		// 			downloadRetries: 0,
+		// 			updatedAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), // 2 hours ago
+		// 		});
+		// 		const job = createMockMediahavenJob({
+		// 			ExportJobId: materialRequest.downloadJobId,
+		// 			Status: MamJobStatus.Failed,
+		// 			Progress: 0,
+		// 		});
+		//
+		// 		mockMaterialRequestsService.findAllWithUnresolvedDownload.mockResolvedValue([
+		// 			materialRequest,
+		// 		]);
+		// 		mockFetch.mockResolvedValue({
+		// 			status: 200,
+		// 			json: () => Promise.resolve({ Results: [job] }),
+		// 		});
+		//
+		// 		const createExportJobSpy = vi.spyOn(service, 'createExportJob');
+		// 		createExportJobSpy.mockResolvedValue('new-job-id');
+		//
+		// 		await service.checkUnresolvedJobs();
+		//
+		// 		expect(createExportJobSpy).toHaveBeenCalledWith(materialRequest);
+		// 	});
+		//
+		// 	it('should delay retry when job is Failed but updatedAt is less than 1 hour ago', async () => {
+		// 		const materialRequest = createMockMaterialRequest({
+		// 			downloadRetries: 0,
+		// 			updatedAt: new Date(Date.now() - 30 * 60 * 1000).toISOString(), // 30 minutes ago
+		// 		});
+		// 		const job = createMockMediahavenJob({
+		// 			ExportJobId: materialRequest.downloadJobId,
+		// 			Status: MamJobStatus.Failed,
+		// 		});
+		//
+		// 		mockMaterialRequestsService.findAllWithUnresolvedDownload.mockResolvedValue([
+		// 			materialRequest,
+		// 		]);
+		// 		mockFetch.mockResolvedValue({
+		// 			status: 200,
+		// 			json: () => Promise.resolve({ Results: [job] }),
+		// 		});
+		//
+		// 		const createExportJobSpy = vi.spyOn(service, 'createExportJob');
+		// 		createExportJobSpy.mockResolvedValue('new-job-id');
+		//
+		// 		await service.checkUnresolvedJobs();
+		//
+		// 		expect(createExportJobSpy).not.toHaveBeenCalled();
+		// 		expect(mockMaterialRequestsService.updateMaterialRequest).not.toHaveBeenCalled();
+		// 	});
+		//
+		// 	it('should mark as failed when job is Failed and max retries (3) reached', async () => {
+		// 		const materialRequest = createMockMaterialRequest({
+		// 			downloadRetries: 3,
+		// 			updatedAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), // 2 hours ago
+		// 		});
+		// 		const job = createMockMediahavenJob({
+		// 			ExportJobId: materialRequest.downloadJobId,
+		// 			Status: MamJobStatus.Failed,
+		// 		});
+		//
+		// 		mockMaterialRequestsService.findAllWithUnresolvedDownload.mockResolvedValue([
+		// 			materialRequest,
+		// 		]);
+		// 		mockMaterialRequestsService.updateMaterialRequest.mockResolvedValue(materialRequest);
+		// 		mockFetch.mockResolvedValue({
+		// 			status: 200,
+		// 			json: () => Promise.resolve({ Results: [job] }),
+		// 		});
+		//
+		// 		await service.checkUnresolvedJobs();
+		//
+		// 		expect(mockMaterialRequestsService.updateMaterialRequest).toHaveBeenCalledWith(
+		// 			materialRequest.id,
+		// 			expect.objectContaining({
+		// 				download_status: Lookup_App_Material_Request_Download_Status_Enum.Failed,
+		// 			})
+		// 		);
+		// 	});
+		// });
 
-				mockMaterialRequestsService.findAllWithUnresolvedDownload.mockResolvedValue([
-					materialRequest,
-				]);
-				mockFetch.mockResolvedValue({
-					status: 200,
-					json: () => Promise.resolve({ Results: [job] }),
-				});
-
-				const createExportJobSpy = vi.spyOn(service, 'createExportJob');
-				createExportJobSpy.mockResolvedValue('new-job-id');
-
-				await service.checkUnresolvedJobs();
-
-				expect(createExportJobSpy).toHaveBeenCalledWith(materialRequest);
-			});
-
-			it('should delay retry when job is Failed but updatedAt is less than 1 hour ago', async () => {
-				const materialRequest = createMockMaterialRequest({
-					downloadRetries: 0,
-					updatedAt: new Date(Date.now() - 30 * 60 * 1000).toISOString(), // 30 minutes ago
-				});
-				const job = createMockMediahavenJob({
-					ExportJobId: materialRequest.downloadJobId,
-					Status: MamJobStatus.Failed,
-				});
-
-				mockMaterialRequestsService.findAllWithUnresolvedDownload.mockResolvedValue([
-					materialRequest,
-				]);
-				mockFetch.mockResolvedValue({
-					status: 200,
-					json: () => Promise.resolve({ Results: [job] }),
-				});
-
-				const createExportJobSpy = vi.spyOn(service, 'createExportJob');
-				createExportJobSpy.mockResolvedValue('new-job-id');
-
-				await service.checkUnresolvedJobs();
-
-				expect(createExportJobSpy).not.toHaveBeenCalled();
-				expect(mockMaterialRequestsService.updateMaterialRequest).not.toHaveBeenCalled();
-			});
-
-			it('should mark as failed when job is Failed and max retries (3) reached', async () => {
-				const materialRequest = createMockMaterialRequest({
-					downloadRetries: 3,
-					updatedAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), // 2 hours ago
-				});
-				const job = createMockMediahavenJob({
-					ExportJobId: materialRequest.downloadJobId,
-					Status: MamJobStatus.Failed,
-				});
-
-				mockMaterialRequestsService.findAllWithUnresolvedDownload.mockResolvedValue([
-					materialRequest,
-				]);
-				mockMaterialRequestsService.updateMaterialRequest.mockResolvedValue(materialRequest);
-				mockFetch.mockResolvedValue({
-					status: 200,
-					json: () => Promise.resolve({ Results: [job] }),
-				});
-
-				await service.checkUnresolvedJobs();
-
-				expect(mockMaterialRequestsService.updateMaterialRequest).toHaveBeenCalledWith(
-					materialRequest.id,
-					expect.objectContaining({
-						download_status: Lookup_App_Material_Request_Download_Status_Enum.Failed,
-					})
-				);
-			});
-		});
-
-		describe('MamJobStatus.Cancelled', () => {
-			it('should retry creating export job when job is Cancelled and retries < 3', async () => {
-				const materialRequest = createMockMaterialRequest({
-					downloadRetries: 1,
-					updatedAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
-				});
-				const job = createMockMediahavenJob({
-					ExportJobId: materialRequest.downloadJobId,
-					Status: MamJobStatus.Cancelled,
-				});
-
-				mockMaterialRequestsService.findAllWithUnresolvedDownload.mockResolvedValue([
-					materialRequest,
-				]);
-				mockFetch.mockResolvedValue({
-					status: 200,
-					json: () => Promise.resolve({ Results: [job] }),
-				});
-
-				const createExportJobSpy = vi.spyOn(service, 'createExportJob');
-				createExportJobSpy.mockResolvedValue('new-job-id');
-
-				await service.checkUnresolvedJobs();
-
-				expect(createExportJobSpy).toHaveBeenCalledWith(materialRequest);
-			});
-
-			it('should mark as failed when job is Cancelled and max retries reached', async () => {
-				const materialRequest = createMockMaterialRequest({
-					downloadRetries: 3,
-					updatedAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
-				});
-				const job = createMockMediahavenJob({
-					ExportJobId: materialRequest.downloadJobId,
-					Status: MamJobStatus.Cancelled,
-				});
-
-				mockMaterialRequestsService.findAllWithUnresolvedDownload.mockResolvedValue([
-					materialRequest,
-				]);
-				mockMaterialRequestsService.updateMaterialRequest.mockResolvedValue(materialRequest);
-				mockFetch.mockResolvedValue({
-					status: 200,
-					json: () => Promise.resolve({ Results: [job] }),
-				});
-
-				await service.checkUnresolvedJobs();
-
-				expect(mockMaterialRequestsService.updateMaterialRequest).toHaveBeenCalledWith(
-					materialRequest.id,
-					expect.objectContaining({
-						download_status: Lookup_App_Material_Request_Download_Status_Enum.Failed,
-					})
-				);
-			});
-		});
+		// https://meemoo.atlassian.net/browse/ARC-3573
+		// describe('MamJobStatus.Cancelled', () => {
+		// 	it('should retry creating export job when job is Cancelled and retries < 3', async () => {
+		// 		const materialRequest = createMockMaterialRequest({
+		// 			downloadRetries: 1,
+		// 			updatedAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+		// 		});
+		// 		const job = createMockMediahavenJob({
+		// 			ExportJobId: materialRequest.downloadJobId,
+		// 			Status: MamJobStatus.Cancelled,
+		// 		});
+		//
+		// 		mockMaterialRequestsService.findAllWithUnresolvedDownload.mockResolvedValue([
+		// 			materialRequest,
+		// 		]);
+		// 		mockFetch.mockResolvedValue({
+		// 			status: 200,
+		// 			json: () => Promise.resolve({ Results: [job] }),
+		// 		});
+		//
+		// 		const createExportJobSpy = vi.spyOn(service, 'createExportJob');
+		// 		createExportJobSpy.mockResolvedValue('new-job-id');
+		//
+		// 		await service.checkUnresolvedJobs();
+		//
+		// 		expect(createExportJobSpy).toHaveBeenCalledWith(materialRequest);
+		// 	});
+		//
+		// 	it('should mark as failed when job is Cancelled and max retries reached', async () => {
+		// 		const materialRequest = createMockMaterialRequest({
+		// 			downloadRetries: 3,
+		// 			updatedAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+		// 		});
+		// 		const job = createMockMediahavenJob({
+		// 			ExportJobId: materialRequest.downloadJobId,
+		// 			Status: MamJobStatus.Cancelled,
+		// 		});
+		//
+		// 		mockMaterialRequestsService.findAllWithUnresolvedDownload.mockResolvedValue([
+		// 			materialRequest,
+		// 		]);
+		// 		mockMaterialRequestsService.updateMaterialRequest.mockResolvedValue(materialRequest);
+		// 		mockFetch.mockResolvedValue({
+		// 			status: 200,
+		// 			json: () => Promise.resolve({ Results: [job] }),
+		// 		});
+		//
+		// 		await service.checkUnresolvedJobs();
+		//
+		// 		expect(mockMaterialRequestsService.updateMaterialRequest).toHaveBeenCalledWith(
+		// 			materialRequest.id,
+		// 			expect.objectContaining({
+		// 				download_status: Lookup_App_Material_Request_Download_Status_Enum.Failed,
+		// 			})
+		// 		);
+		// 	});
+		// });
 
 		describe('MamJobStatus.AlreadyExists', () => {
 			it('should mark as failed when job status is AlreadyExists', async () => {
@@ -520,74 +519,75 @@ describe('MediahavenJobsWatcherService', () => {
 			});
 		});
 
-		describe('Retry logic simulation', () => {
-			it('should simulate complete retry cycle: fail 3 times then mark as permanently failed', async () => {
-				// Simulate first failure attempt (retry 0 -> 1)
-				const firstAttempt = createMockMaterialRequest({
-					downloadRetries: 0,
-					updatedAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
-				});
-				const failedJob = createMockMediahavenJob({
-					ExportJobId: firstAttempt.downloadJobId,
-					Status: MamJobStatus.Failed,
-				});
-
-				mockMaterialRequestsService.findAllWithUnresolvedDownload.mockResolvedValue([firstAttempt]);
-				mockFetch.mockResolvedValue({
-					status: 200,
-					json: () => Promise.resolve({ Results: [failedJob] }),
-				});
-
-				const createExportJobSpy = vi.spyOn(service, 'createExportJob');
-				createExportJobSpy.mockResolvedValue('new-job-id');
-
-				await service.checkUnresolvedJobs();
-				expect(createExportJobSpy).toHaveBeenCalledTimes(1);
-
-				// Simulate second failure attempt (retry 1 -> 2)
-				createExportJobSpy.mockClear();
-				const secondAttempt = createMockMaterialRequest({
-					downloadRetries: 1,
-					updatedAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
-				});
-				mockMaterialRequestsService.findAllWithUnresolvedDownload.mockResolvedValue([
-					secondAttempt,
-				]);
-
-				await service.checkUnresolvedJobs();
-				expect(createExportJobSpy).toHaveBeenCalledTimes(1);
-
-				// Simulate third failure attempt (retry 2 -> 3)
-				createExportJobSpy.mockClear();
-				const thirdAttempt = createMockMaterialRequest({
-					downloadRetries: 2,
-					updatedAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
-				});
-				mockMaterialRequestsService.findAllWithUnresolvedDownload.mockResolvedValue([thirdAttempt]);
-
-				await service.checkUnresolvedJobs();
-				expect(createExportJobSpy).toHaveBeenCalledTimes(1);
-
-				// Simulate final check - should mark as failed (retry 3 = max)
-				createExportJobSpy.mockClear();
-				const finalAttempt = createMockMaterialRequest({
-					downloadRetries: 3,
-					updatedAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
-				});
-				mockMaterialRequestsService.findAllWithUnresolvedDownload.mockResolvedValue([finalAttempt]);
-				mockMaterialRequestsService.updateMaterialRequest.mockResolvedValue(finalAttempt);
-
-				await service.checkUnresolvedJobs();
-
-				expect(createExportJobSpy).not.toHaveBeenCalled();
-				expect(mockMaterialRequestsService.updateMaterialRequest).toHaveBeenCalledWith(
-					finalAttempt.id,
-					expect.objectContaining({
-						download_status: Lookup_App_Material_Request_Download_Status_Enum.Failed,
-					})
-				);
-			});
-		});
+		// https://meemoo.atlassian.net/browse/ARC-3573
+		// describe('Retry logic simulation', () => {
+		// 	it('should simulate complete retry cycle: fail 3 times then mark as permanently failed', async () => {
+		// 		// Simulate first failure attempt (retry 0 -> 1)
+		// 		const firstAttempt = createMockMaterialRequest({
+		// 			downloadRetries: 0,
+		// 			updatedAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+		// 		});
+		// 		const failedJob = createMockMediahavenJob({
+		// 			ExportJobId: firstAttempt.downloadJobId,
+		// 			Status: MamJobStatus.Failed,
+		// 		});
+		//
+		// 		mockMaterialRequestsService.findAllWithUnresolvedDownload.mockResolvedValue([firstAttempt]);
+		// 		mockFetch.mockResolvedValue({
+		// 			status: 200,
+		// 			json: () => Promise.resolve({ Results: [failedJob] }),
+		// 		});
+		//
+		// 		const createExportJobSpy = vi.spyOn(service, 'createExportJob');
+		// 		createExportJobSpy.mockResolvedValue('new-job-id');
+		//
+		// 		await service.checkUnresolvedJobs();
+		// 		expect(createExportJobSpy).toHaveBeenCalledTimes(1);
+		//
+		// 		// Simulate second failure attempt (retry 1 -> 2)
+		// 		createExportJobSpy.mockClear();
+		// 		const secondAttempt = createMockMaterialRequest({
+		// 			downloadRetries: 1,
+		// 			updatedAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+		// 		});
+		// 		mockMaterialRequestsService.findAllWithUnresolvedDownload.mockResolvedValue([
+		// 			secondAttempt,
+		// 		]);
+		//
+		// 		await service.checkUnresolvedJobs();
+		// 		expect(createExportJobSpy).toHaveBeenCalledTimes(1);
+		//
+		// 		// Simulate third failure attempt (retry 2 -> 3)
+		// 		createExportJobSpy.mockClear();
+		// 		const thirdAttempt = createMockMaterialRequest({
+		// 			downloadRetries: 2,
+		// 			updatedAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+		// 		});
+		// 		mockMaterialRequestsService.findAllWithUnresolvedDownload.mockResolvedValue([thirdAttempt]);
+		//
+		// 		await service.checkUnresolvedJobs();
+		// 		expect(createExportJobSpy).toHaveBeenCalledTimes(1);
+		//
+		// 		// Simulate final check - should mark as failed (retry 3 = max)
+		// 		createExportJobSpy.mockClear();
+		// 		const finalAttempt = createMockMaterialRequest({
+		// 			downloadRetries: 3,
+		// 			updatedAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+		// 		});
+		// 		mockMaterialRequestsService.findAllWithUnresolvedDownload.mockResolvedValue([finalAttempt]);
+		// 		mockMaterialRequestsService.updateMaterialRequest.mockResolvedValue(finalAttempt);
+		//
+		// 		await service.checkUnresolvedJobs();
+		//
+		// 		expect(createExportJobSpy).not.toHaveBeenCalled();
+		// 		expect(mockMaterialRequestsService.updateMaterialRequest).toHaveBeenCalledWith(
+		// 			finalAttempt.id,
+		// 			expect.objectContaining({
+		// 				download_status: Lookup_App_Material_Request_Download_Status_Enum.Failed,
+		// 			})
+		// 		);
+		// 	});
+		// });
 
 		describe('Multiple material requests', () => {
 			it('should process multiple material requests with different statuses', async () => {
@@ -658,95 +658,96 @@ describe('MediahavenJobsWatcherService', () => {
 			});
 		});
 
-		describe('Configurable retry delay', () => {
-			it('should respect MEDIAHAVEN_EXPORT_JOB_RETRY_DELAY_HOURS env var for retry delay', async () => {
-				// Configure a shorter delay (0.5 hours = 30 minutes)
-				mockConfigService.get.mockImplementation((key: string) => {
-					if (key === 'MEDIAHAVEN_EXPORT_JOB_RETRY_DELAY_HOURS') {
-						return '0.5'; // 30 minutes
-					}
-					return key;
-				});
-
-				// Material request updated 45 minutes ago - should delay with 1-hour delay, but retry with 0.5-hour delay
-				const materialRequest = createMockMaterialRequest({
-					downloadRetries: 0,
-					updatedAt: new Date(Date.now() - 45 * 60 * 1000).toISOString(), // 45 minutes ago
-				});
-				const job = createMockMediahavenJob({
-					ExportJobId: materialRequest.downloadJobId,
-					Status: MamJobStatus.Failed,
-				});
-
-				mockMaterialRequestsService.findAllWithUnresolvedDownload.mockResolvedValue([
-					materialRequest,
-				]);
-				mockFetch.mockResolvedValue({
-					status: 200,
-					json: () => Promise.resolve({ Results: [job] }),
-				});
-
-				const createExportJobSpy = vi.spyOn(service, 'createExportJob');
-				createExportJobSpy.mockResolvedValue('new-job-id');
-
-				await service.checkUnresolvedJobs();
-
-				// With 0.5 hour delay, 45 minutes should be past the delay, so retry should happen
-				expect(createExportJobSpy).toHaveBeenCalledWith(materialRequest);
-
-				// Reset mock
-				mockConfigService.get.mockImplementation((key: string) => {
-					if (key === 'MEDIAHAVEN_EXPORT_JOB_RETRY_DELAY_HOURS') {
-						return '1';
-					}
-					return key;
-				});
-			});
-
-			it('should use default of 1 hour when MEDIAHAVEN_EXPORT_JOB_RETRY_DELAY_HOURS is not set', async () => {
-				// Configure to return undefined for the delay
-				mockConfigService.get.mockImplementation((key: string) => {
-					if (key === 'MEDIAHAVEN_EXPORT_JOB_RETRY_DELAY_HOURS') {
-						return undefined;
-					}
-					return key;
-				});
-
-				// Material request updated 45 minutes ago - should delay with default 1 hour delay
-				const materialRequest = createMockMaterialRequest({
-					downloadRetries: 0,
-					updatedAt: new Date(Date.now() - 45 * 60 * 1000).toISOString(), // 45 minutes ago
-				});
-				const job = createMockMediahavenJob({
-					ExportJobId: materialRequest.downloadJobId,
-					Status: MamJobStatus.Failed,
-				});
-
-				mockMaterialRequestsService.findAllWithUnresolvedDownload.mockResolvedValue([
-					materialRequest,
-				]);
-				mockFetch.mockResolvedValue({
-					status: 200,
-					json: () => Promise.resolve({ Results: [job] }),
-				});
-
-				const createExportJobSpy = vi.spyOn(service, 'createExportJob');
-				createExportJobSpy.mockResolvedValue('new-job-id');
-
-				await service.checkUnresolvedJobs();
-
-				// With default 1-hour delay, 45 minutes is not enough - should not retry
-				expect(createExportJobSpy).not.toHaveBeenCalled();
-
-				// Reset mock
-				mockConfigService.get.mockImplementation((key: string) => {
-					if (key === 'MEDIAHAVEN_EXPORT_JOB_RETRY_DELAY_HOURS') {
-						return '1';
-					}
-					return key;
-				});
-			});
-		});
+		// https://meemoo.atlassian.net/browse/ARC-3573
+		// describe('Configurable retry delay', () => {
+		// 	it('should respect MEDIAHAVEN_EXPORT_JOB_RETRY_DELAY_HOURS env var for retry delay', async () => {
+		// 		// Configure a shorter delay (0.5 hours = 30 minutes)
+		// 		mockConfigService.get.mockImplementation((key: string) => {
+		// 			if (key === 'MEDIAHAVEN_EXPORT_JOB_RETRY_DELAY_HOURS') {
+		// 				return '0.5'; // 30 minutes
+		// 			}
+		// 			return key;
+		// 		});
+		//
+		// 		// Material request updated 45 minutes ago - should delay with 1-hour delay, but retry with 0.5-hour delay
+		// 		const materialRequest = createMockMaterialRequest({
+		// 			downloadRetries: 0,
+		// 			updatedAt: new Date(Date.now() - 45 * 60 * 1000).toISOString(), // 45 minutes ago
+		// 		});
+		// 		const job = createMockMediahavenJob({
+		// 			ExportJobId: materialRequest.downloadJobId,
+		// 			Status: MamJobStatus.Failed,
+		// 		});
+		//
+		// 		mockMaterialRequestsService.findAllWithUnresolvedDownload.mockResolvedValue([
+		// 			materialRequest,
+		// 		]);
+		// 		mockFetch.mockResolvedValue({
+		// 			status: 200,
+		// 			json: () => Promise.resolve({ Results: [job] }),
+		// 		});
+		//
+		// 		const createExportJobSpy = vi.spyOn(service, 'createExportJob');
+		// 		createExportJobSpy.mockResolvedValue('new-job-id');
+		//
+		// 		await service.checkUnresolvedJobs();
+		//
+		// 		// With 0.5 hour delay, 45 minutes should be past the delay, so retry should happen
+		// 		expect(createExportJobSpy).toHaveBeenCalledWith(materialRequest);
+		//
+		// 		// Reset mock
+		// 		mockConfigService.get.mockImplementation((key: string) => {
+		// 			if (key === 'MEDIAHAVEN_EXPORT_JOB_RETRY_DELAY_HOURS') {
+		// 				return '1';
+		// 			}
+		// 			return key;
+		// 		});
+		// 	});
+		//
+		// 	it('should use default of 1 hour when MEDIAHAVEN_EXPORT_JOB_RETRY_DELAY_HOURS is not set', async () => {
+		// 		// Configure to return undefined for the delay
+		// 		mockConfigService.get.mockImplementation((key: string) => {
+		// 			if (key === 'MEDIAHAVEN_EXPORT_JOB_RETRY_DELAY_HOURS') {
+		// 				return undefined;
+		// 			}
+		// 			return key;
+		// 		});
+		//
+		// 		// Material request updated 45 minutes ago - should delay with default 1 hour delay
+		// 		const materialRequest = createMockMaterialRequest({
+		// 			downloadRetries: 0,
+		// 			updatedAt: new Date(Date.now() - 45 * 60 * 1000).toISOString(), // 45 minutes ago
+		// 		});
+		// 		const job = createMockMediahavenJob({
+		// 			ExportJobId: materialRequest.downloadJobId,
+		// 			Status: MamJobStatus.Failed,
+		// 		});
+		//
+		// 		mockMaterialRequestsService.findAllWithUnresolvedDownload.mockResolvedValue([
+		// 			materialRequest,
+		// 		]);
+		// 		mockFetch.mockResolvedValue({
+		// 			status: 200,
+		// 			json: () => Promise.resolve({ Results: [job] }),
+		// 		});
+		//
+		// 		const createExportJobSpy = vi.spyOn(service, 'createExportJob');
+		// 		createExportJobSpy.mockResolvedValue('new-job-id');
+		//
+		// 		await service.checkUnresolvedJobs();
+		//
+		// 		// With default 1-hour delay, 45 minutes is not enough - should not retry
+		// 		expect(createExportJobSpy).not.toHaveBeenCalled();
+		//
+		// 		// Reset mock
+		// 		mockConfigService.get.mockImplementation((key: string) => {
+		// 			if (key === 'MEDIAHAVEN_EXPORT_JOB_RETRY_DELAY_HOURS') {
+		// 				return '1';
+		// 			}
+		// 			return key;
+		// 		});
+		// 	});
+		// });
 
 		describe('Error handling', () => {
 			it('should continue processing other requests when one fails', async () => {

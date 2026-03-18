@@ -227,7 +227,7 @@ export class MediahavenJobsWatcherService {
 									download_status: Lookup_App_Material_Request_Download_Status_Enum.Failed,
 									updated_at: new Date().toISOString(),
 								});
-								// https://studiohyperdrive.slack.com/archives/C027HPM6SCD/p1773825367185219
+								// https://meemoo.atlassian.net/browse/ARC-3573
 								// const hasFailed = await this.retryDownloadJobOrFail(materialRequest);
 								// if (hasFailed) {
 								reportItems.failed += 1;
