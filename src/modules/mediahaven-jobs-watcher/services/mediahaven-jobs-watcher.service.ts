@@ -223,12 +223,17 @@ export class MediahavenJobsWatcherService {
 
 							case MamJobStatus.Failed:
 							case MamJobStatus.Cancelled: {
-								const hasFailed = await this.retryDownloadJobOrFail(materialRequest);
-								if (hasFailed) {
-									reportItems.failed += 1;
-								} else {
-									reportItems.restarted += 1;
-								}
+								await this.materialRequestsService.updateMaterialRequest(materialRequest.id, {
+									download_status: Lookup_App_Material_Request_Download_Status_Enum.Failed,
+									updated_at: new Date().toISOString(),
+								});
+								// https://studiohyperdrive.slack.com/archives/C027HPM6SCD/p1773825367185219
+								// const hasFailed = await this.retryDownloadJobOrFail(materialRequest);
+								// if (hasFailed) {
+								reportItems.failed += 1;
+								// } else {
+								// 	reportItems.restarted += 1;
+								// }
 								break;
 							}
 
