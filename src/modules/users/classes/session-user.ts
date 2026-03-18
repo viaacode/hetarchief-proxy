@@ -25,6 +25,7 @@ export class SessionUserEntity {
 		if (
 			user?.isKeyUser &&
 			user?.isEvaluator &&
+			process.env.ENABLE_MATERIAL_REQUEST_COMPLEX_REUSE_FLOW === 'true' &&
 			!user.permissions.includes(PermissionName.VIEW_ANY_MATERIAL_REQUESTS)
 		) {
 			user.permissions.push(PermissionName.VIEW_ANY_MATERIAL_REQUESTS);
