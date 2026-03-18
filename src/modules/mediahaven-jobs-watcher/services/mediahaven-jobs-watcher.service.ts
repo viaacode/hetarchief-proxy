@@ -3,10 +3,10 @@ import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { DataService, MediahavenService } from '@meemoo/admin-core-api';
 import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
 import { logAndThrow } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/logAndThrow';
-import { Inject, Injectable, forwardRef } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AvoUserCommonUser } from '@viaa/avo2-types';
-import { isAfter, isPast, parseISO, subHours, subMinutes } from 'date-fns';
+import { isBefore, isPast, parseISO, subHours, subMinutes } from 'date-fns';
 import { compact, isNil, noop } from 'lodash';
 import { stringifyUrl } from 'query-string';
 import { v4 as uuidv4 } from 'uuid';
@@ -39,8 +39,8 @@ import {
 	MamAccessToken,
 	MamExportQuality,
 	MamJobStatus,
-	MediaHavenRecord,
 	MediahavenJobInfo,
+	MediaHavenRecord,
 	S3ExportLocationToken,
 } from '~modules/mediahaven-jobs-watcher/mediahaven-jobs-watcher.types';
 import { UsersService } from '~modules/users/services/users.service';
@@ -83,7 +83,7 @@ export class MediahavenJobsWatcherService {
 			this.configService.get('MEDIAHAVEN_EXPORT_JOB_RETRY_DELAY_HOURS') || '1'
 		);
 		// If the material request was updated less than retryDelayHours ago, wait before retrying
-		if (isAfter(updatedAt, subHours(new Date(), retryDelayHours))) {
+		if (isBefore(updatedAt, subHours(new Date(), retryDelayHours))) {
 			// Skip this material request for now
 			// Maybe there is an issue with the api, so we'll try again in 1 hour after the last attempt
 			return false;
