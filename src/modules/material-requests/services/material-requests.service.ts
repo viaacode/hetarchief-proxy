@@ -125,6 +125,7 @@ import { MediahavenJobsWatcherService } from '~modules/mediahaven-jobs-watcher/s
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { UsersService } from '~modules/users/services/users.service';
+import { GroupName } from '~modules/users/types';
 import { AUDIO_WAVE_FORM_URL } from '~shared/consts/audio-wave-form-url';
 import { customError } from '~shared/helpers/custom-error';
 import { PaginationHelper } from '~shared/helpers/pagination';
@@ -519,8 +520,25 @@ export class MaterialRequestsService {
 	private validateStatusTransition(
 		currentRequest: MaterialRequest,
 		newStatus: Lookup_App_Material_Request_Status_Enum,
-		userId: string
+		user: SessionUserEntity
 	) {
+		const isRequester = currentRequest.requesterId === user.getId();
+		const isUserAllowedToCancel = isRequester;
+		let isUserAllowedToAdvanceStatus = !isRequester && user.getIsEvaluator();
+
+		// Non meemoo admins should be of the same organisation in order to update the status
+		if (user.getGroupName() !== GroupName.MEEMOO_ADMIN) {
+			isUserAllowedToAdvanceStatus =
+				isUserAllowedToAdvanceStatus && user.getOrganisationId() === currentRequest.maintainerId;
+		}
+
+		// User is not allowed to do anything with the status
+		if (!isUserAllowedToCancel && !isUserAllowedToAdvanceStatus) {
+			throw new BadRequestException(
+				`Material request (${currentRequest.id}) could not be set to ${newStatus}.`
+			);
+		}
+
 		if (currentRequest.status === Lookup_App_Material_Request_Status_Enum.New) {
 			// The current status is still NEW, and we are not trying to set the status to cancelled or pending => Not allowed
 			if (
@@ -535,7 +553,17 @@ export class MaterialRequestsService {
 			// Trying to update the status to cancelled, but user is not the one who made the request
 			if (
 				newStatus === Lookup_App_Material_Request_Status_Enum.Cancelled &&
-				currentRequest.requesterId !== userId
+				isUserAllowedToCancel
+			) {
+				throw new BadRequestException(
+					`Material request (${currentRequest.id}) could not be set to ${newStatus}.`
+				);
+			}
+
+			// Trying to update the status to pending, but user is the one who made the request or the user is not part of the same organisation
+			if (
+				newStatus === Lookup_App_Material_Request_Status_Enum.Pending &&
+				!isUserAllowedToAdvanceStatus
 			) {
 				throw new BadRequestException(
 					`Material request (${currentRequest.id}) could not be set to ${newStatus}.`
@@ -547,6 +575,13 @@ export class MaterialRequestsService {
 				newStatus !== Lookup_App_Material_Request_Status_Enum.Approved &&
 				newStatus !== Lookup_App_Material_Request_Status_Enum.Denied
 			) {
+				throw new BadRequestException(
+					`Material request (${currentRequest.id}) could not be set to ${newStatus}.`
+				);
+			}
+
+			// Trying to update the status to APPROVED or DENIED, but user is the one who made the request or the user is not part of the same organisation
+			if (!isUserAllowedToAdvanceStatus) {
 				throw new BadRequestException(
 					`Material request (${currentRequest.id}) could not be set to ${newStatus}.`
 				);
@@ -572,7 +607,7 @@ export class MaterialRequestsService {
 
 		const { status, motivation } = statusOptions;
 
-		this.validateStatusTransition(currentRequest, status, user.getId());
+		this.validateStatusTransition(currentRequest, status, user);
 
 		const updateMaterialRequest: Partial<GqlMaterialRequest> = {
 			status: status,
