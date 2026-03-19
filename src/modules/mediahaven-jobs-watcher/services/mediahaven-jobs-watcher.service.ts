@@ -184,7 +184,12 @@ export class MediahavenJobsWatcherService {
 						return materialRequest.downloadJobId === job.ExportJobId;
 					});
 					if (!relatedJob) {
-						await this.retryDownloadJobOrFail(materialRequest);
+						const jobId = await this.createExportJob(materialRequest);
+						await this.materialRequestsService.updateMaterialRequest(materialRequest.id, {
+							download_status: Lookup_App_Material_Request_Download_Status_Enum.New,
+							download_job_id: jobId,
+							updated_at: new Date().toISOString(),
+						});
 						reportItems.started += 1;
 					} else {
 						// One job found
