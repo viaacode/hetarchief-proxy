@@ -1,24 +1,9 @@
 import { parse } from 'node:path';
 import { DataService, Locale, StillsObjectType, VideoStillsService } from '@meemoo/admin-core-api';
-import {
-	BadRequestException,
-	Injectable,
-	InternalServerErrorException,
-	NotFoundException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { mapLimit } from 'blend-promise-utils';
-import {
-	compact,
-	groupBy,
-	intersection,
-	isArray,
-	isEmpty,
-	isNil,
-	kebabCase,
-	noop,
-	set,
-} from 'lodash';
+import { compact, groupBy, intersection, isArray, isEmpty, isNil, kebabCase, noop, set } from 'lodash';
 
 import {
 	CreateMaterialRequestDto,
@@ -27,10 +12,10 @@ import {
 	UpdateMaterialRequestStatusDto,
 } from '../dto/material-requests.dto';
 import {
+	getAdditionEventDate,
 	MAP_MATERIAL_REQUEST_STATUS_TO_EMAIL_TEMPLATE,
 	MAP_MATERIAL_REQUEST_STATUS_TO_EVENT_TYPE,
 	ORDER_PROP_TO_DB_PROP,
-	getAdditionEventDate,
 } from '../material-requests.consts';
 import {
 	GqlMaterialRequest,
@@ -93,17 +78,14 @@ import {
 	UpdateMaterialRequestStatusMutation,
 	UpdateMaterialRequestStatusMutationVariables,
 } from '~generated/graphql-db-types-hetarchief';
-import {
-	EmailTemplate,
-	type MaterialRequestEmailInfo,
-} from '~modules/campaign-monitor/campaign-monitor.types';
+import { EmailTemplate, type MaterialRequestEmailInfo } from '~modules/campaign-monitor/campaign-monitor.types';
 
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 import {
 	IeObjectAccessThrough,
 	IeObjectLicense,
-	IeObjectType,
 	IeObjectsVisitorSpaceInfo,
+	IeObjectType,
 	SimpleIeObjectType,
 } from '~modules/ie-objects/ie-objects.types';
 import type { Organisation } from '~modules/organisations/organisations.types';
@@ -523,14 +505,13 @@ export class MaterialRequestsService {
 		user: SessionUserEntity
 	) {
 		const isRequester = currentRequest.requesterId === user.getId();
+		const isEvaluatorOfCp =
+			user.getOrganisationId() === currentRequest.maintainerId && user.getIsEvaluator();
 		const isUserAllowedToCancel = isRequester;
-		let isUserAllowedToAdvanceStatus = !isRequester && user.getIsEvaluator();
 
 		// Non meemoo admins should be of the same organisation in order to update the status
-		if (user.getGroupName() !== GroupName.MEEMOO_ADMIN) {
-			isUserAllowedToAdvanceStatus =
-				isUserAllowedToAdvanceStatus && user.getOrganisationId() === currentRequest.maintainerId;
-		}
+		const isUserAllowedToAdvanceStatus =
+			!isRequester && (isEvaluatorOfCp || user.getGroupName() === GroupName.MEEMOO_ADMIN);
 
 		// User is not allowed to do anything with the status
 		if (!isUserAllowedToCancel && !isUserAllowedToAdvanceStatus) {
@@ -553,7 +534,7 @@ export class MaterialRequestsService {
 			// Trying to update the status to cancelled, but user is not the one who made the request
 			if (
 				newStatus === Lookup_App_Material_Request_Status_Enum.Cancelled &&
-				isUserAllowedToCancel
+				!isUserAllowedToCancel
 			) {
 				throw new BadRequestException(
 					`Material request (${currentRequest.id}) could not be set to ${newStatus}.`
