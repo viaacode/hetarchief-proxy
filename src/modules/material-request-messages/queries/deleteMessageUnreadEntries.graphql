@@ -1,0 +1,10 @@
+mutation deleteMessageUnreadEntries($materialRequestId: uuid!, $profileId: uuid!) {
+	delete_app_material_request_message_unread_status(
+		where: {
+			material_request_id: { _eq: $materialRequestId }
+			receiver_profile_id: { _eq: $profileId }
+		}
+	) {
+		affected_rows
+	}
+}

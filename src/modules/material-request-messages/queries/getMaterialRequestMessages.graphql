@@ -1,0 +1,31 @@
+query getMaterialRequestMessages($materialRequestId: uuid!, $offset: Int!, $limit: Int!) {
+	app_material_request_messages_and_events(
+		where: { material_request_id: { _eq: $materialRequestId } }
+		offset: $offset
+		limit: $limit
+		order_by: { created_at: desc }
+	) {
+		id
+		message_type
+		sender_profile_id
+		sender {
+			full_name
+			organisation {
+				org_identifier
+				skos_pref_label
+			}
+		}
+		body
+		attachment_url
+		attachment_filename
+		material_request_id
+		created_at
+	}
+	app_material_request_messages_and_events_aggregate(
+		where: { material_request_id: { _eq: $materialRequestId } }
+	) {
+		aggregate {
+			count
+		}
+	}
+}

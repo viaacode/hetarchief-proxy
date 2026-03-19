@@ -13,6 +13,7 @@ import { ContentPartnersModule } from '~modules/content-partners';
 import { EventsModule } from '~modules/events';
 import { FoldersModule } from '~modules/folders';
 import { IeObjectsModule } from '~modules/ie-objects';
+import { MaterialRequestMessagesModule } from '~modules/material-request-messages';
 import { MaterialRequestsModule } from '~modules/material-requests';
 import { MediahavenJobsWatcherModule } from '~modules/mediahaven-jobs-watcher/mediahaven-jobs-watcher.module';
 import { NewspapersModule } from '~modules/newspapers';
@@ -60,6 +61,7 @@ checkRequiredEnvs(['ADMIN_CORE_ROUTES_PREFIX']);
 		NotFoundModule,
 		AdminCoreModule,
 		MaterialRequestsModule,
+		MaterialRequestMessagesModule,
 		IeObjectsModule,
 		NewspapersModule,
 		ZendeskModule,

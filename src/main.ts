@@ -60,7 +60,7 @@ async function bootstrap() {
 			.setTitle('hetarchief.be API docs')
 			.setDescription('Documentatie voor de hetarchief.be api calls')
 			.setVersion(packageJson.version)
-			.addCookieAuth('connect.sid')
+			.addCookieAuth('connect.sid.hetarchief')
 			.build();
 		const document = SwaggerModule.createDocument(app, swaggerConfig);
 		SwaggerModule.setup('docs', app, document);

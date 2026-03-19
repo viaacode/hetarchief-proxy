@@ -337,6 +337,8 @@ export class MaterialRequestsController {
 		}
 	}
 
+	// Endpoint to fetch material request messages
+
 	// helpers
 	// ========================
 	public validateMaintainerIdsWithUserGroup(

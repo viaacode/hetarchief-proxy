@@ -1,0 +1,12 @@
+query countUnreadMaterialRequestMessages($materialRequestId: uuid!, $profileId: uuid!) {
+	app_material_request_message_unread_status_aggregate(
+		where: {
+			receiver_profile_id: { _eq: $profileId }
+			material_request_id: { _eq: $materialRequestId }
+		}
+	) {
+		aggregate {
+			count
+		}
+	}
+}
