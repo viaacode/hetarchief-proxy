@@ -165,7 +165,7 @@ export class SpacesController {
 
 		if (file) {
 			updateSpaceDto.image = await this.assetsService.uploadAndTrack(
-				AvoFileUploadAssetType.SPACE_IMAGE,
+				AvoFileUploadAssetType.SPACE_IMAGE as any,
 				file,
 				visitorSpace.maintainerId
 			);
@@ -221,7 +221,7 @@ export class SpacesController {
 
 		if (file) {
 			createSpaceDto.image = await this.assetsService.uploadAndTrack(
-				AvoFileUploadAssetType.SPACE_IMAGE,
+				AvoFileUploadAssetType.SPACE_IMAGE as any,
 				file,
 				createSpaceDto.orId
 			);

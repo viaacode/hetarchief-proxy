@@ -17,20 +17,17 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import type { IPagination } from '@studiohyperdrive/pagination';
 import { AvoFileUploadAssetType, PermissionName } from '@viaa/avo2-types';
 
-import archiver from 'archiver';
 import { randomUUID } from 'node:crypto';
 import path from 'node:path';
-import type { Response } from 'express';
-import { kebabCase } from 'lodash';
 import { AssetsService } from '@meemoo/admin-core-api';
 import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
 import { logAndThrow } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/logAndThrow';
 import { FileInterceptor } from '@nestjs/platform-express';
+import archiver from 'archiver';
+import type { Response } from 'express';
+import { kebabCase } from 'lodash';
 import { Lookup_App_Material_Request_Message_Type_Enum } from '~generated/graphql-db-types-hetarchief';
-import {
-	MaterialRequestAttachment,
-	MaterialRequestMessage,
-} from '~modules/material-request-messages/material-request-messages.types';
+import { MaterialRequestAttachment, MaterialRequestMessage } from '~modules/material-request-messages/material-request-messages.types';
 import { MaterialRequest } from '~modules/material-requests/material-requests.types';
 import { MaterialRequestsService } from '~modules/material-requests/services/material-requests.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
@@ -248,7 +245,7 @@ export class MaterialRequestMessagesController {
 			}
 
 			const requestName = kebabCase(materialRequest.requestGroupName || 'material-request');
-			const maintainerName = kebabCase(materialRequest.maintainerName || 'unknown');
+			const maintainerName = kebabCase(materialRequest.maintainerName || '');
 			const zipFilename = `${requestName}-${maintainerName}-attachments.zip`;
 			res.setHeader('Content-Type', 'application/zip');
 			res.setHeader('Content-Disposition', `attachment; filename="${zipFilename}"`);
