@@ -15,10 +15,13 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import type { IPagination } from '@studiohyperdrive/pagination';
 import { AvoFileUploadAssetType, PermissionName } from '@viaa/avo2-types';
 
+import { randomUUID } from 'node:crypto';
+import path from 'node:path';
 import { AssetsService } from '@meemoo/admin-core-api';
 import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
 import { logAndThrow } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/logAndThrow';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { Lookup_App_Material_Request_Message_Type_Enum } from '~generated/graphql-db-types-hetarchief';
 import { MaterialRequestMessage } from '~modules/material-request-messages/material-request-messages.types';
 import { MaterialRequestsService } from '~modules/material-requests/services/material-requests.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
@@ -135,22 +138,27 @@ export class MaterialRequestMessagesController {
 		@UploadedFile() file?: Express.Multer.File
 	): Promise<MaterialRequestMessage> {
 		try {
-			let assetUrl: string | undefined;
+			let attachmentUrl: string | undefined;
+			let attachmentFilename: string | undefined;
 			if (file) {
 				// Upload file using admin-core-api assets service
-				const assetUrl =
-					await this.assetsService.uploadAndTrack(
-						AvoFileUploadAssetType.MATERIAL_REQUEST_MESSAGE_ATTACHMENT,
-						file,
-						user.getId(),
-						uuid() + ext
-					));
+				attachmentFilename = file.filename;
+				const fileNameParsed = path.parse(attachmentFilename);
+				attachmentUrl = await this.assetsService.uploadAndTrack(
+					AvoFileUploadAssetType.MATERIAL_REQUEST_MESSAGE_ATTACHMENT as any,
+					file,
+					user.getId(),
+					randomUUID() + fileNameParsed.ext
+				);
 			}
 			return await this.materialRequestMessagesService.createMessage(
 				materialRequestId,
 				user.getId(),
+				Lookup_App_Material_Request_Message_Type_Enum.Message,
 				message,
-				assetUrl
+				attachmentUrl,
+				attachmentFilename,
+				new Date().toISOString()
 			);
 		} catch (err) {
 			logAndThrow(

@@ -7,9 +7,16 @@ import {
 	CountUnreadMaterialRequestMessagesDocument,
 	CountUnreadMaterialRequestMessagesQuery,
 	CountUnreadMaterialRequestMessagesQueryVariables,
+	DeleteMessageUnreadEntriesDocument,
+	DeleteMessageUnreadEntriesMutation,
+	DeleteMessageUnreadEntriesMutationVariables,
 	GetMaterialRequestMessagesDocument,
 	GetMaterialRequestMessagesQuery,
 	GetMaterialRequestMessagesQueryVariables,
+	InsertMaterialRequestMessageDocument,
+	InsertMaterialRequestMessageMutation,
+	InsertMaterialRequestMessageMutationVariables,
+	Lookup_App_Material_Request_Message_Type_Enum,
 } from '~generated/graphql-db-types-hetarchief';
 
 import { PaginationHelper } from '~shared/helpers/pagination';
@@ -77,11 +84,36 @@ export class MaterialRequestMessagesService {
 
 	public async deleteMessageUnreadEntries(
 		materialRequestId: string,
-		userProfileId: string
+		profileId: string
 	): Promise<void> {
 		await this.dataService.execute<
 			DeleteMessageUnreadEntriesMutation,
 			DeleteMessageUnreadEntriesMutationVariables
-		>(DeleteMessageUnreadEntriesDocument, { materialRequestId, userProfileId });
+		>(DeleteMessageUnreadEntriesDocument, { materialRequestId, profileId });
+	}
+
+	async createMessage(
+		materialRequestId: string,
+		profileId: string,
+		messageType: Lookup_App_Material_Request_Message_Type_Enum,
+		message: string,
+		attachmentUrl: string,
+		attachmentFilename: string,
+		timestamp: string
+	): Promise<MaterialRequestMessage> {
+		const response = await this.dataService.execute<
+			InsertMaterialRequestMessageMutation,
+			InsertMaterialRequestMessageMutationVariables
+		>(InsertMaterialRequestMessageDocument, {
+			materialRequestId,
+			senderProfileId: profileId,
+			messageType,
+			body: message,
+			attachmentUrl: attachmentUrl || null,
+			attachmentFilename: attachmentFilename || null,
+			createdAt: timestamp,
+		});
+
+		return this.adapt(response.insert_app_material_request_messages_and_events_one);
 	}
 }

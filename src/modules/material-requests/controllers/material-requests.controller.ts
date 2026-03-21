@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto';
 import {
 	Body,
 	Controller,
@@ -18,7 +19,6 @@ import type { IPagination } from '@studiohyperdrive/pagination';
 import { AvoAuthIdpType, PermissionName } from '@viaa/avo2-types';
 import type { Request } from 'express';
 import { isEmpty, isNil } from 'lodash';
-import { v4 as uuidv4 } from 'uuid';
 
 import {
 	CreateMaterialRequestDto,
@@ -265,7 +265,7 @@ export class MaterialRequestsController {
 				language: user.getLanguage(),
 			});
 
-			const material_request_group_id = uuidv4();
+			const material_request_group_id = randomUUID();
 			// store the update requests so we can use them for the events to prevent data loss
 			materialRequests = await Promise.all(
 				materialRequests.map(

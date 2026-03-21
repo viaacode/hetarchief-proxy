@@ -1,0 +1,37 @@
+mutation insertMaterialRequestMessage(
+	$materialRequestId: uuid!
+	$senderProfileId: uuid!
+	$messageType: lookup_app_material_request_message_type_enum!
+	$body: jsonb
+	$attachmentUrl: String
+	$attachmentFilename: String
+	$createdAt: timestamp!
+) {
+	insert_app_material_request_messages_and_events_one(
+		object: {
+			material_request_id: $materialRequestId
+			sender_profile_id: $senderProfileId
+			message_type: $messageType
+			body: $body
+			attachment_url: $attachmentUrl
+			attachment_filename: $attachmentFilename
+			created_at: $createdAt
+		}
+	) {
+		id
+		message_type
+		sender_profile_id
+		sender {
+			full_name
+			organisation {
+				org_identifier
+				skos_pref_label
+			}
+		}
+		body
+		attachment_url
+		attachment_filename
+		material_request_id
+		created_at
+	}
+}
