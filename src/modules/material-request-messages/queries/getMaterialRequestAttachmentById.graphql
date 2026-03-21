@@ -1,0 +1,15 @@
+query getMaterialRequestAttachmentById($materialRequestId: uuid!, $attachmentId: uuid!) {
+	app_material_request_messages_and_events(
+		where: {
+			material_request_id: { _eq: $materialRequestId }
+			id: { _eq: $attachmentId }
+			attachment_url: { _is_null: false }
+		}
+		limit: 1
+	) {
+		id
+		attachment_url
+		attachment_filename
+		created_at
+	}
+}

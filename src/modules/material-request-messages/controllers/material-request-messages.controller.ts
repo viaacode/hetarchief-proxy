@@ -3,10 +3,12 @@ import {
 	Controller,
 	ForbiddenException,
 	Get,
+	NotFoundException,
 	Param,
 	ParseIntPipe,
 	Post,
 	Query,
+	Res,
 	UploadedFile,
 	UseGuards,
 	UseInterceptors,
@@ -15,14 +17,21 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import type { IPagination } from '@studiohyperdrive/pagination';
 import { AvoFileUploadAssetType, PermissionName } from '@viaa/avo2-types';
 
+import archiver from 'archiver';
 import { randomUUID } from 'node:crypto';
 import path from 'node:path';
+import type { Response } from 'express';
+import { kebabCase } from 'lodash';
 import { AssetsService } from '@meemoo/admin-core-api';
 import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
 import { logAndThrow } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/logAndThrow';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Lookup_App_Material_Request_Message_Type_Enum } from '~generated/graphql-db-types-hetarchief';
-import { MaterialRequestMessage } from '~modules/material-request-messages/material-request-messages.types';
+import {
+	MaterialRequestAttachment,
+	MaterialRequestMessage,
+} from '~modules/material-request-messages/material-request-messages.types';
+import { MaterialRequest } from '~modules/material-requests/material-requests.types';
 import { MaterialRequestsService } from '~modules/material-requests/services/material-requests.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupName } from '~modules/users/types';
@@ -168,5 +177,184 @@ export class MaterialRequestMessagesController {
 				})
 			);
 		}
+	}
+
+	@Get(':materialRequestId/attachments')
+	@ApiOperation({
+		description:
+			'Get attachments for a specific material request. Returns paginated list ordered from oldest to newest.',
+	})
+	@RequireAnyPermissions(
+		PermissionName.VIEW_OWN_MATERIAL_REQUESTS,
+		PermissionName.VIEW_ANY_MATERIAL_REQUESTS
+	)
+	public async getMaterialRequestAttachments(
+		@Param('materialRequestId') materialRequestId: string,
+		@SessionUser() user: SessionUserEntity,
+		@Query('page', ParseIntPipe) page: number,
+		@Query('size', ParseIntPipe) size: number,
+		@Referer() referer: string,
+		@Ip() ip: string
+	): Promise<IPagination<MaterialRequestAttachment>> {
+		try {
+			await this.verifyAccessToMaterialRequest(materialRequestId, user, referer, ip);
+
+			return await this.materialRequestMessagesService.findAttachments(
+				materialRequestId,
+				page,
+				size
+			);
+		} catch (err) {
+			logAndThrow(
+				new CustomError('Failed to get material request attachments', err, {
+					materialRequestId,
+					userId: user?.getId(),
+					page,
+					size,
+				})
+			);
+		}
+	}
+
+	@Get(':materialRequestId/attachments/download-zip')
+	@ApiOperation({
+		description:
+			'Download all attachments for a material request as a single ZIP file. Streams files directly from storage.',
+	})
+	@RequireAnyPermissions(
+		PermissionName.VIEW_OWN_MATERIAL_REQUESTS,
+		PermissionName.VIEW_ANY_MATERIAL_REQUESTS
+	)
+	public async downloadAttachmentsAsZip(
+		@Param('materialRequestId') materialRequestId: string,
+		@SessionUser() user: SessionUserEntity,
+		@Referer() referer: string,
+		@Ip() ip: string,
+		@Res() res: Response
+	): Promise<void> {
+		try {
+			const materialRequest = await this.verifyAccessToMaterialRequest(
+				materialRequestId,
+				user,
+				referer,
+				ip
+			);
+
+			const attachments =
+				await this.materialRequestMessagesService.getAllAttachments(materialRequestId);
+
+			if (attachments.length === 0) {
+				throw new NotFoundException('No attachments found for this material request');
+			}
+
+			const requestName = kebabCase(materialRequest.requestGroupName || 'material-request');
+			const maintainerName = kebabCase(materialRequest.maintainerName || 'unknown');
+			const zipFilename = `${requestName}-${maintainerName}-attachments.zip`;
+			res.setHeader('Content-Type', 'application/zip');
+			res.setHeader('Content-Disposition', `attachment; filename="${zipFilename}"`);
+
+			const archive = archiver('zip', { zlib: { level: 5 } });
+			archive.pipe(res);
+
+			for (const attachment of attachments) {
+				const response = await fetch(attachment.attachmentUrl);
+				if (!response.ok) {
+					console.error(`Failed to fetch attachment: ${attachment.attachmentUrl}`);
+					continue;
+				}
+
+				const arrayBuffer = await response.arrayBuffer();
+				const buffer = Buffer.from(arrayBuffer);
+				const filename = attachment.attachmentFilename
+					? this.toKebabCaseFilename(attachment.attachmentFilename)
+					: `attachment-${attachment.id}`;
+				archive.append(buffer, { name: filename });
+			}
+
+			await archive.finalize();
+		} catch (err) {
+			if (!res.headersSent) {
+				logAndThrow(
+					new CustomError('Failed to download material request attachments as zip', err, {
+						materialRequestId,
+						userId: user?.getId(),
+					})
+				);
+			}
+		}
+	}
+
+	@Get(':materialRequestId/attachments/:attachmentId/download')
+	@ApiOperation({
+		description: 'Get a download URL for a specific attachment.',
+	})
+	@RequireAnyPermissions(
+		PermissionName.VIEW_OWN_MATERIAL_REQUESTS,
+		PermissionName.VIEW_ANY_MATERIAL_REQUESTS
+	)
+	public async getAttachmentDownloadUrl(
+		@Param('materialRequestId') materialRequestId: string,
+		@Param('attachmentId') attachmentId: string,
+		@SessionUser() user: SessionUserEntity,
+		@Referer() referer: string,
+		@Ip() ip: string
+	): Promise<{ url: string; filename: string }> {
+		try {
+			await this.verifyAccessToMaterialRequest(materialRequestId, user, referer, ip);
+
+			const attachment = await this.materialRequestMessagesService.findAttachmentById(
+				materialRequestId,
+				attachmentId
+			);
+
+			if (!attachment) {
+				throw new NotFoundException('Attachment not found');
+			}
+
+			return {
+				url: attachment.attachmentUrl,
+				filename: attachment.attachmentFilename,
+			};
+		} catch (err) {
+			logAndThrow(
+				new CustomError('Failed to get attachment download URL', err, {
+					materialRequestId,
+					attachmentId,
+					userId: user?.getId(),
+				})
+			);
+		}
+	}
+
+	private async verifyAccessToMaterialRequest(
+		materialRequestId: string,
+		user: SessionUserEntity,
+		referer: string,
+		ip: string
+	): Promise<MaterialRequest> {
+		const materialRequest = await this.materialRequestsService.findById(
+			materialRequestId,
+			user,
+			referer,
+			ip
+		);
+
+		const isRequester = user.getId() === materialRequest.requesterId;
+		const isEvaluatorOfTheCp =
+			user?.getOrganisationId() === materialRequest.maintainerId && user.getIsEvaluator();
+		const isMeemooAdmin = user.getGroupName() === GroupName.MEEMOO_ADMIN;
+
+		if (!isRequester && !isEvaluatorOfTheCp && !isMeemooAdmin) {
+			throw new ForbiddenException(
+				'You do not have permission to access this material request. Only requester and evaluators of the organisation of the material can access it.'
+			);
+		}
+
+		return materialRequest;
+	}
+
+	private toKebabCaseFilename(filename: string): string {
+		const parsed = path.parse(filename);
+		return `${kebabCase(parsed.name)}${parsed.ext}`;
 	}
 }

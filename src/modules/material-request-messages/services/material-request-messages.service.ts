@@ -1,7 +1,7 @@
 import { DataService } from '@meemoo/admin-core-api';
 import { Injectable } from '@nestjs/common';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
-import { MaterialRequestMessage } from '../material-request-messages.types';
+import { MaterialRequestAttachment, MaterialRequestMessage } from '../material-request-messages.types';
 
 import {
 	CountUnreadMaterialRequestMessagesDocument,
@@ -10,6 +10,12 @@ import {
 	DeleteMessageUnreadEntriesDocument,
 	DeleteMessageUnreadEntriesMutation,
 	DeleteMessageUnreadEntriesMutationVariables,
+	GetMaterialRequestAttachmentByIdDocument,
+	GetMaterialRequestAttachmentByIdQuery,
+	GetMaterialRequestAttachmentByIdQueryVariables,
+	GetMaterialRequestAttachmentsDocument,
+	GetMaterialRequestAttachmentsQuery,
+	GetMaterialRequestAttachmentsQueryVariables,
 	GetMaterialRequestMessagesDocument,
 	GetMaterialRequestMessagesQuery,
 	GetMaterialRequestMessagesQueryVariables,
@@ -115,5 +121,73 @@ export class MaterialRequestMessagesService {
 		});
 
 		return this.adapt(response.insert_app_material_request_messages_and_events_one);
+	}
+
+	public async findAttachments(
+		materialRequestId: string,
+		page: number,
+		size: number
+	): Promise<IPagination<MaterialRequestAttachment>> {
+		const { offset, limit } = PaginationHelper.convertPagination(page, size);
+
+		const response = await this.dataService.execute<
+			GetMaterialRequestAttachmentsQuery,
+			GetMaterialRequestAttachmentsQueryVariables
+		>(GetMaterialRequestAttachmentsDocument, {
+			materialRequestId,
+			offset,
+			limit,
+		});
+
+		return Pagination<MaterialRequestAttachment>({
+			items: response?.app_material_request_messages_and_events?.map(this.adaptAttachment),
+			page,
+			size,
+			total: response?.app_material_request_messages_and_events_aggregate?.aggregate?.count,
+		});
+	}
+
+	public async getAllAttachments(materialRequestId: string): Promise<MaterialRequestAttachment[]> {
+		const response = await this.dataService.execute<
+			GetMaterialRequestAttachmentsQuery,
+			GetMaterialRequestAttachmentsQueryVariables
+		>(GetMaterialRequestAttachmentsDocument, {
+			materialRequestId,
+			offset: 0,
+			limit: 1000,
+		});
+
+		return response?.app_material_request_messages_and_events?.map(this.adaptAttachment) || [];
+	}
+
+	private adaptAttachment(
+		attachment: GetMaterialRequestAttachmentsQuery['app_material_request_messages_and_events'][0]
+	): MaterialRequestAttachment {
+		return {
+			id: attachment.id,
+			attachmentUrl: attachment.attachment_url,
+			attachmentFilename: attachment.attachment_filename,
+			createdAt: attachment.created_at,
+		};
+	}
+
+	public async findAttachmentById(
+		materialRequestId: string,
+		attachmentId: string
+	): Promise<MaterialRequestAttachment | null> {
+		const response = await this.dataService.execute<
+			GetMaterialRequestAttachmentByIdQuery,
+			GetMaterialRequestAttachmentByIdQueryVariables
+		>(GetMaterialRequestAttachmentByIdDocument, {
+			materialRequestId,
+			attachmentId,
+		});
+
+		const attachment = response?.app_material_request_messages_and_events?.[0];
+		if (!attachment) {
+			return null;
+		}
+
+		return this.adaptAttachment(attachment);
 	}
 }

@@ -48,3 +48,10 @@ export interface MaterialRequestMessage {
 	attachmentFilename: string | null;
 	createdAt: string;
 }
+
+export interface MaterialRequestAttachment {
+	id: string;
+	attachmentUrl: string;
+	attachmentFilename: string;
+	createdAt: string;
+}
