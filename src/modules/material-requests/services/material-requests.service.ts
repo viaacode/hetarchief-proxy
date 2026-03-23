@@ -58,12 +58,16 @@ import {
 	GetMaterialRequestForDownloadJobQuery,
 	GetMaterialRequestForDownloadJobQueryVariables,
 	InsertMaterialRequestDocument,
+	InsertMaterialRequestMessageDocument,
+	InsertMaterialRequestMessageMutation,
+	InsertMaterialRequestMessageMutationVariables,
 	type InsertMaterialRequestMutation,
 	type InsertMaterialRequestMutationVariables,
 	InsertMaterialRequestReuseFormDocument,
 	InsertMaterialRequestReuseFormMutation,
 	InsertMaterialRequestReuseFormMutationVariables,
 	Lookup_App_Material_Request_Download_Status_Enum,
+	Lookup_App_Material_Request_Message_Type_Enum,
 	Lookup_App_Material_Request_Requester_Capacity_Enum,
 	Lookup_App_Material_Request_Status_Enum,
 	Lookup_App_Material_Request_Type_Enum,
@@ -859,6 +863,17 @@ export class MaterialRequestsService {
 	}
 
 	/**
+	 * Extract the date from status events based on message type
+	 */
+	private getStatusEventDate(
+		statusEvents: Array<{ message_type: string; created_at: string }> | undefined,
+		messageType: Lookup_App_Material_Request_Message_Type_Enum
+	): string | undefined {
+		const event = statusEvents?.find((e) => e.message_type === messageType);
+		return event?.created_at;
+	}
+
+	/**
 	 * Adapt a material request as returned by a graphQl response to our internal model
 	 */
 	public async adapt(
@@ -981,9 +996,18 @@ export class MaterialRequestsService {
 			createdAt: graphQlMaterialRequest.created_at,
 			updatedAt: graphQlMaterialRequest.updated_at,
 			requestedAt: graphQlMaterialRequest.requested_at,
-			approvedAt: graphQlMaterialRequest.approved_at,
-			deniedAt: graphQlMaterialRequest.denied_at,
-			cancelledAt: graphQlMaterialRequest.cancelled_at,
+			approvedAt: this.getStatusEventDate(
+				(graphQlMaterialRequest as any).messages_and_events,
+				Lookup_App_Material_Request_Message_Type_Enum.Approved
+			),
+			deniedAt: this.getStatusEventDate(
+				(graphQlMaterialRequest as any).messages_and_events,
+				Lookup_App_Material_Request_Message_Type_Enum.Denied
+			),
+			cancelledAt: this.getStatusEventDate(
+				(graphQlMaterialRequest as any).messages_and_events,
+				Lookup_App_Material_Request_Message_Type_Enum.Cancelled
+			),
 			type: graphQlMaterialRequest.type,
 			isPending: graphQlMaterialRequest.is_pending,
 			status: graphQlMaterialRequest.status,
@@ -1065,7 +1089,6 @@ export class MaterialRequestsService {
 			id: materialRequest.id,
 			type: materialRequest.type,
 			status: materialRequest.status,
-			approvedAt: materialRequest.approved_at,
 			downloadUrl: materialRequest.download_url || null,
 			downloadJobId: materialRequest.download_job_id || null,
 			downloadRetries: materialRequest.download_retries,

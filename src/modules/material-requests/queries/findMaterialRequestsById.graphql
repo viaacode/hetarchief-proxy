@@ -7,10 +7,18 @@ query findMaterialRequestsById($id: uuid!) {
 		created_at
 		updated_at
 		requested_at
-		approved_at
-		denied_at
-		cancelled_at
 		type
+		messages_and_events(
+			where: {
+				message_type: {
+					_in: [APPROVED, DENIED, CANCELLED]
+				}
+			}
+			order_by: { created_at: asc }
+		) {
+			message_type
+			created_at
+		}
 		is_pending
 		status
 		status_motivation

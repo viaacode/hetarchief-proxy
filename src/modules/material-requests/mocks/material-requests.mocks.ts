@@ -74,6 +74,7 @@ export const mockGqlMaterialRequest2: FindMaterialRequestsByIdQuery['app_materia
 	type: MaterialRequestType.REUSE as any,
 	is_pending: true,
 	status: Lookup_App_Material_Request_Status_Enum.None as any,
+	messages_and_events: [],
 	organisation: null,
 	requester_capacity: Lookup_App_Material_Request_Requester_Capacity_Enum.Education as any,
 	requested_by: {

@@ -13,9 +13,6 @@ query findMaterialRequestsWithExpiredDownload($expirationDate: timestamp!) {
 		created_at
 		updated_at
 		requested_at
-		approved_at
-		denied_at
-		cancelled_at
 		type
 		is_pending
 		status
