@@ -1,6 +1,13 @@
-import { Lookup_App_Material_Request_Status_Enum } from '~generated/graphql-db-types-hetarchief';
+import {
+	Lookup_App_Material_Request_Message_Type_Enum,
+	Lookup_App_Material_Request_Status_Enum,
+} from '~generated/graphql-db-types-hetarchief';
 import { EmailTemplate } from '~modules/campaign-monitor/campaign-monitor.types';
 import { LogEventType } from '~modules/events/types';
+import {
+	MaterialRequestMessage,
+	MaterialRequestMessageBodyStatusUpdateWithMotivation,
+} from '~modules/material-request-messages/material-request-messages.types';
 import { MaterialRequest } from '~modules/material-requests/material-requests.types';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupName } from '~modules/users/types';
@@ -56,30 +63,50 @@ export const getAdditionEventDate = (
 	time?: string;
 } => {
 	if (type === LogEventType.ITEM_REQUEST_APPROVE) {
+		const event = getStatusEventDate(
+			request.history,
+			Lookup_App_Material_Request_Message_Type_Enum.Approved
+		);
 		return {
-			motivation: request.statusMotivation,
-			time: request.approvedAt,
+			motivation: (event.body as MaterialRequestMessageBodyStatusUpdateWithMotivation).motivation,
+			time: event.createdAt,
 		};
 	}
 
 	if (type === LogEventType.ITEM_REQUEST_DENY) {
+		const event = getStatusEventDate(
+			request.history,
+			Lookup_App_Material_Request_Message_Type_Enum.Denied
+		);
 		return {
-			motivation: request.statusMotivation,
-			time: request.deniedAt,
+			motivation: (event.body as MaterialRequestMessageBodyStatusUpdateWithMotivation).motivation,
+			time: request.createdAt,
 		};
 	}
 
 	if (type === LogEventType.ITEM_REQUEST_CANCEL) {
+		const event = getStatusEventDate(
+			request.history,
+			Lookup_App_Material_Request_Message_Type_Enum.Denied
+		);
 		return {
-			time: request.cancelledAt,
+			time: event.createdAt,
 		};
 	}
 
 	if (type === LogEventType.ITEM_REQUEST_DOWNLOAD_AVAILABLE) {
+		// TODO: get this from the history
 		return {
 			time: request.downloadAvailableAt,
 		};
 	}
 
 	return {};
+};
+
+const getStatusEventDate = (
+	statusEvents: MaterialRequestMessage[],
+	messageType: Lookup_App_Material_Request_Message_Type_Enum
+): MaterialRequestMessage => {
+	return statusEvents?.find((e) => e.messageType === messageType);
 };

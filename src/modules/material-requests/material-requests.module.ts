@@ -1,5 +1,5 @@
 import { DataModule, VideoStillsModule } from '@meemoo/admin-core-api';
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 
 import { MaterialRequestsController } from './controllers/material-requests.controller';
 import { MaterialRequestsService } from './services/material-requests.service';
@@ -8,6 +8,7 @@ import { ConfigModule } from '@nestjs/config';
 import { CampaignMonitorModule } from '~modules/campaign-monitor';
 import { EventsModule } from '~modules/events';
 import { IeObjectsModule } from '~modules/ie-objects';
+import { MaterialRequestMessagesModule } from '~modules/material-request-messages';
 import { MediahavenJobsWatcherModule } from '~modules/mediahaven-jobs-watcher/mediahaven-jobs-watcher.module';
 import { OrganisationsModule } from '~modules/organisations/organisations.module';
 import { SpacesModule } from '~modules/spaces';
@@ -27,6 +28,7 @@ import { UsersModule } from '~modules/users';
 		VideoStillsModule,
 		MediahavenJobsWatcherModule,
 		UsersModule,
+		forwardRef(() => MaterialRequestMessagesModule),
 	],
 	exports: [MaterialRequestsService],
 })

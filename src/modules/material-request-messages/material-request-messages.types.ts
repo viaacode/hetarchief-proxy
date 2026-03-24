@@ -21,19 +21,14 @@ export interface MaterialRequestMessageBodyAdditionalConditions {
 	autoApproveAfterAcceptAdditionalConditions: boolean;
 }
 
-export interface MaterialRequestMessageBodyApproved {
-	message: string;
-}
-
-export interface MaterialRequestMessageBodyDenied {
-	message: string;
+export interface MaterialRequestMessageBodyStatusUpdateWithMotivation {
+	motivation: string;
 }
 
 export type MaterialRequestMessageBody =
 	| MaterialRequestMessageBodyMessage
 	| MaterialRequestMessageBodyAdditionalConditions
-	| MaterialRequestMessageBodyApproved
-	| MaterialRequestMessageBodyDenied;
+	| MaterialRequestMessageBodyStatusUpdateWithMotivation;
 
 export interface MaterialRequestMessage {
 	id: string;

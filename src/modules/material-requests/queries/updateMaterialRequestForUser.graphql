@@ -22,11 +22,7 @@ mutation updateMaterialRequestForUser(
 			updated_at
 			requested_at
 			messages_and_events(
-				where: {
-					message_type: {
-						_in: [APPROVED, DENIED, CANCELLED]
-					}
-				}
+				where: { message_type: { _nin: [MESSAGE] } }
 				order_by: { created_at: asc }
 			) {
 				message_type
@@ -34,7 +30,6 @@ mutation updateMaterialRequestForUser(
 			}
 			is_pending
 			status
-			status_motivation
 			group_id
 			name
 			requester_capacity

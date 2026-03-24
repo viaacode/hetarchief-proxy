@@ -15,7 +15,6 @@ query findMaterialRequests(
 		type
 		is_pending
 		status
-		status_motivation
 		group_id
 		name
 		download_status

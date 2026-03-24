@@ -1,7 +1,11 @@
 import { DataService } from '@meemoo/admin-core-api';
 import { Injectable } from '@nestjs/common';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
-import { MaterialRequestAttachment, MaterialRequestMessage } from '../material-request-messages.types';
+import {
+	MaterialRequestAttachment,
+	MaterialRequestMessage,
+	MaterialRequestMessageBody,
+} from '../material-request-messages.types';
 
 import {
 	CountUnreadMaterialRequestMessagesDocument,
@@ -70,7 +74,7 @@ export class MaterialRequestMessagesService {
 		return response.app_material_request_message_unread_status_aggregate?.aggregate?.count || 0;
 	}
 
-	private adapt(
+	public adapt(
 		message: GetMaterialRequestMessagesQuery['app_material_request_messages_and_events'][0]
 	): MaterialRequestMessage {
 		return {
@@ -102,10 +106,9 @@ export class MaterialRequestMessagesService {
 		materialRequestId: string,
 		profileId: string,
 		messageType: Lookup_App_Material_Request_Message_Type_Enum,
-		message: string,
-		attachmentUrl: string,
-		attachmentFilename: string,
-		timestamp: string
+		message?: MaterialRequestMessageBody,
+		attachmentUrl?: string,
+		attachmentFilename?: string
 	): Promise<MaterialRequestMessage> {
 		const response = await this.dataService.execute<
 			InsertMaterialRequestMessageMutation,
@@ -114,10 +117,10 @@ export class MaterialRequestMessagesService {
 			materialRequestId,
 			senderProfileId: profileId,
 			messageType,
-			body: message,
+			body: JSON.stringify(message || {}),
 			attachmentUrl: attachmentUrl || null,
 			attachmentFilename: attachmentFilename || null,
-			createdAt: timestamp,
+			createdAt: new Date().toISOString(),
 		});
 
 		return this.adapt(response.insert_app_material_request_messages_and_events_one);
