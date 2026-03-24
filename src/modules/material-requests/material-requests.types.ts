@@ -15,7 +15,7 @@ import {
 	IeObjectRepresentation,
 	IeObjectType,
 } from '~modules/ie-objects/ie-objects.types';
-import { MaterialRequestMessage } from '~modules/material-request-messages/material-request-messages.types';
+import { MaterialRequestEvent } from '~modules/material-request-messages/material-request-messages.types';
 import type { Locale } from '~shared/types/types';
 
 export interface MaterialRequest {
@@ -44,7 +44,7 @@ export interface MaterialRequest {
 	type: Lookup_App_Material_Request_Type_Enum;
 	isPending: boolean;
 	status: Lookup_App_Material_Request_Status_Enum;
-	history: MaterialRequestMessage[];
+	history: MaterialRequestEvent[];
 
 	requesterId: string;
 	requesterFullName: string;

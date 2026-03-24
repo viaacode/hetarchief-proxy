@@ -1055,7 +1055,7 @@ export class MaterialRequestsService {
 			history: (
 				(graphQlMaterialRequest as FindMaterialRequestsByIdQuery['app_material_requests'][0])
 					.messages_and_events || []
-			).map(this.materialRequestMessageService.adapt),
+			).map(this.materialRequestMessageService.adaptEvent),
 		};
 	}
 

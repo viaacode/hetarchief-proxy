@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import {
 	MaterialRequestAttachment,
+	MaterialRequestEvent,
 	MaterialRequestMessage,
 	MaterialRequestMessageBody,
 } from '../material-request-messages.types';
@@ -74,18 +75,27 @@ export class MaterialRequestMessagesService {
 		return response.app_material_request_message_unread_status_aggregate?.aggregate?.count || 0;
 	}
 
-	public adapt(
+	public adaptEvent(
 		message: GetMaterialRequestMessagesQuery['app_material_request_messages_and_events'][0]
-	): MaterialRequestMessage {
+	): MaterialRequestEvent {
 		return {
 			id: message.id,
 			materialRequestId: message.material_request_id,
+			messageType: message.message_type,
+			body: message.body,
+			createdAt: message.created_at,
+		};
+	}
+
+	private adapt(
+		message: GetMaterialRequestMessagesQuery['app_material_request_messages_and_events'][0]
+	): MaterialRequestMessage {
+		return {
+			...this.adaptEvent(message),
 			senderProfile: {
 				id: message.sender_profile_id,
 				fullName: message.sender.full_name,
 			},
-			messageType: message.message_type,
-			body: message.body,
 			attachmentUrl: message.attachment_url,
 			attachmentFilename: message.attachment_filename,
 			createdAt: message.created_at,

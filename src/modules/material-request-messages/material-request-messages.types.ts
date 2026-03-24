@@ -30,18 +30,21 @@ export type MaterialRequestMessageBody =
 	| MaterialRequestMessageBodyAdditionalConditions
 	| MaterialRequestMessageBodyStatusUpdateWithMotivation;
 
-export interface MaterialRequestMessage {
+export interface MaterialRequestEvent {
 	id: string;
 	materialRequestId: string;
+	messageType: Lookup_App_Material_Request_Message_Type_Enum;
+	body: MaterialRequestMessageBody;
+	createdAt: string;
+}
+
+export interface MaterialRequestMessage extends MaterialRequestEvent {
 	senderProfile: {
 		id: string;
 		fullName: string;
 	};
-	messageType: Lookup_App_Material_Request_Message_Type_Enum;
-	body: MaterialRequestMessageBody;
 	attachmentUrl: string | null;
 	attachmentFilename: string | null;
-	createdAt: string;
 }
 
 export interface MaterialRequestAttachment {

@@ -5,7 +5,7 @@ import {
 import { EmailTemplate } from '~modules/campaign-monitor/campaign-monitor.types';
 import { LogEventType } from '~modules/events/types';
 import {
-	MaterialRequestMessage,
+	MaterialRequestEvent,
 	MaterialRequestMessageBodyStatusUpdateWithMotivation,
 } from '~modules/material-request-messages/material-request-messages.types';
 import { MaterialRequest } from '~modules/material-requests/material-requests.types';
@@ -105,8 +105,8 @@ export const getAdditionEventDate = (
 };
 
 const getStatusEventDate = (
-	statusEvents: MaterialRequestMessage[],
+	statusEvents: MaterialRequestEvent[],
 	messageType: Lookup_App_Material_Request_Message_Type_Enum
-): MaterialRequestMessage => {
+): MaterialRequestEvent => {
 	return statusEvents?.find((e) => e.messageType === messageType);
 };
