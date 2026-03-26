@@ -3,7 +3,10 @@ import { ConfigService } from '@nestjs/config';
 import { Test, type TestingModule } from '@nestjs/testing';
 import { afterEach, beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
 
-import { MamJobStatus, type MediahavenJobInfo } from '~modules/mediahaven-jobs-watcher/mediahaven-jobs-watcher.types';
+import {
+	MamJobStatus,
+	type MediahavenJobInfo,
+} from '~modules/mediahaven-jobs-watcher/mediahaven-jobs-watcher.types';
 import { MediahavenJobsWatcherService } from './mediahaven-jobs-watcher.service';
 
 import { Lookup_App_Material_Request_Download_Status_Enum } from '~generated/graphql-db-types-hetarchief';

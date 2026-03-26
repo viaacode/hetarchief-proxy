@@ -27,7 +27,10 @@ import archiver from 'archiver';
 import type { Response } from 'express';
 import { kebabCase } from 'lodash';
 import { Lookup_App_Material_Request_Message_Type_Enum } from '~generated/graphql-db-types-hetarchief';
-import { MaterialRequestAttachment, MaterialRequestMessage } from '~modules/material-request-messages/material-request-messages.types';
+import {
+	MaterialRequestAttachment,
+	MaterialRequestMessage,
+} from '~modules/material-request-messages/material-request-messages.types';
 import { MaterialRequest } from '~modules/material-requests/material-requests.types';
 import { MaterialRequestsService } from '~modules/material-requests/services/material-requests.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';

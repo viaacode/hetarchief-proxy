@@ -1,7 +1,10 @@
 import { DataService } from '@meemoo/admin-core-api';
 import { Injectable } from '@nestjs/common';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
-import { MaterialRequestAttachment, MaterialRequestMessage } from '../material-request-messages.types';
+import {
+	MaterialRequestAttachment,
+	MaterialRequestMessage,
+} from '../material-request-messages.types';
 
 import {
 	CountUnreadMaterialRequestMessagesDocument,
