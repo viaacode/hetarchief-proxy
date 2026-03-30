@@ -74,6 +74,7 @@ export const mockGqlMaterialRequest2: FindMaterialRequestsByIdQuery['app_materia
 	type: MaterialRequestType.REUSE as any,
 	is_pending: true,
 	status: Lookup_App_Material_Request_Status_Enum.None as any,
+	messages_and_events: [],
 	organisation: null,
 	requester_capacity: Lookup_App_Material_Request_Requester_Capacity_Enum.Education as any,
 	requested_by: {
@@ -141,9 +142,6 @@ export const mockMaterialRequest1: MaterialRequest = {
 	createdAt: '2022-03-18T08:32:57.256264',
 	updatedAt: '2022-03-18T08:32:57.256264',
 	requestedAt: undefined,
-	approvedAt: undefined,
-	deniedAt: undefined,
-	cancelledAt: undefined,
 	type: Lookup_App_Material_Request_Type_Enum.Reuse,
 	isPending: true,
 	status: Lookup_App_Material_Request_Status_Enum.None as any,
@@ -168,6 +166,7 @@ export const mockMaterialRequest1: MaterialRequest = {
 	downloadStatus: null,
 	downloadAvailableAt: undefined,
 	downloadExpiresAt: undefined,
+	history: [],
 };
 
 const mockMaterialRequest2: MaterialRequest = {
@@ -179,9 +178,6 @@ const mockMaterialRequest2: MaterialRequest = {
 	createdAt: '2022-02-18T08:32:57.256264',
 	updatedAt: '2022-02-18T08:32:57.256264',
 	requestedAt: undefined,
-	approvedAt: undefined,
-	deniedAt: undefined,
-	cancelledAt: undefined,
 	type: Lookup_App_Material_Request_Type_Enum.MoreInfo,
 	isPending: true,
 	status: Lookup_App_Material_Request_Status_Enum.None as any,
@@ -210,6 +206,7 @@ const mockMaterialRequest2: MaterialRequest = {
 	downloadStatus: null,
 	downloadAvailableAt: undefined,
 	downloadExpiresAt: undefined,
+	history: [],
 };
 
 export const mockMaterialRequestsResponse = {

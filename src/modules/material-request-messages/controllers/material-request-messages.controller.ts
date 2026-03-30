@@ -13,7 +13,7 @@ import {
 	UseGuards,
 	UseInterceptors,
 } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
 import type { IPagination } from '@studiohyperdrive/pagination';
 import { AvoFileUploadAssetType, PermissionName } from '@viaa/avo2-types';
 
@@ -27,7 +27,10 @@ import archiver from 'archiver';
 import type { Response } from 'express';
 import { kebabCase } from 'lodash';
 import { Lookup_App_Material_Request_Message_Type_Enum } from '~generated/graphql-db-types-hetarchief';
-import { MaterialRequestAttachment, MaterialRequestMessage } from '~modules/material-request-messages/material-request-messages.types';
+import {
+	MaterialRequestAttachment,
+	MaterialRequestMessage,
+} from '~modules/material-request-messages/material-request-messages.types';
 import { MaterialRequest } from '~modules/material-requests/material-requests.types';
 import { MaterialRequestsService } from '~modules/material-requests/services/material-requests.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
@@ -132,6 +135,17 @@ export class MaterialRequestMessagesController {
 	@ApiOperation({
 		description: 'Create a material request message with optional file upload.',
 	})
+	@ApiConsumes('multipart/form-data')
+	@ApiBody({
+		schema: {
+			type: 'object',
+			properties: {
+				message: { type: 'string' },
+				file: { type: 'string', format: 'binary' },
+			},
+			required: ['message'],
+		},
+	})
 	@RequireAnyPermissions(
 		PermissionName.VIEW_OWN_MATERIAL_REQUESTS,
 		PermissionName.VIEW_ANY_MATERIAL_REQUESTS
@@ -161,10 +175,9 @@ export class MaterialRequestMessagesController {
 				materialRequestId,
 				user.getId(),
 				Lookup_App_Material_Request_Message_Type_Enum.Message,
-				message,
+				{ message },
 				attachmentUrl,
-				attachmentFilename,
-				new Date().toISOString()
+				attachmentFilename
 			);
 		} catch (err) {
 			logAndThrow(

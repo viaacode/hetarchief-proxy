@@ -10,7 +10,6 @@ query findMaterialRequestsWithUnresolvedDownloadStatus {
 		}
 	) {
 		id
-		approved_at
 		status
 		download_url
 		download_job_id

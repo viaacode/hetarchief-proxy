@@ -15,12 +15,15 @@ mutation updateMaterialRequestStatus(
 			created_at
 			updated_at
 			requested_at
-			approved_at
-			denied_at
-			cancelled_at
+			messages_and_events(
+				where: { message_type: { _nin: [MESSAGE] } }
+				order_by: { created_at: asc }
+			) {
+				message_type
+				created_at
+			}
 			is_pending
 			status
-			status_motivation
 			group_id
 			name
 			download_status

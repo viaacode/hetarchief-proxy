@@ -1,7 +1,6 @@
 query getMaterialRequestForDownloadJob($materialRequestId: uuid!) {
 	app_material_requests(where: { id: { _eq: $materialRequestId } }) {
 		id
-		approved_at
 		status
 		download_job_id
 		download_retries

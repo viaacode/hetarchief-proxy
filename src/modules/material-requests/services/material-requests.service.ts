@@ -1,9 +1,24 @@
 import { parse } from 'node:path';
 import { DataService, Locale, StillsObjectType, VideoStillsService } from '@meemoo/admin-core-api';
-import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import {
+	BadRequestException,
+	Injectable,
+	InternalServerErrorException,
+	NotFoundException,
+} from '@nestjs/common';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { mapLimit } from 'blend-promise-utils';
-import { compact, groupBy, intersection, isArray, isEmpty, isNil, kebabCase, noop, set } from 'lodash';
+import {
+	compact,
+	groupBy,
+	intersection,
+	isArray,
+	isEmpty,
+	isNil,
+	kebabCase,
+	noop,
+	set,
+} from 'lodash';
 
 import {
 	CreateMaterialRequestDto,
@@ -12,10 +27,10 @@ import {
 	UpdateMaterialRequestStatusDto,
 } from '../dto/material-requests.dto';
 import {
-	getAdditionEventDate,
 	MAP_MATERIAL_REQUEST_STATUS_TO_EMAIL_TEMPLATE,
 	MAP_MATERIAL_REQUEST_STATUS_TO_EVENT_TYPE,
 	ORDER_PROP_TO_DB_PROP,
+	getAdditionEventDate,
 } from '../material-requests.consts';
 import {
 	GqlMaterialRequest,
@@ -64,6 +79,7 @@ import {
 	InsertMaterialRequestReuseFormMutation,
 	InsertMaterialRequestReuseFormMutationVariables,
 	Lookup_App_Material_Request_Download_Status_Enum,
+	Lookup_App_Material_Request_Message_Type_Enum,
 	Lookup_App_Material_Request_Requester_Capacity_Enum,
 	Lookup_App_Material_Request_Status_Enum,
 	Lookup_App_Material_Request_Type_Enum,
@@ -78,14 +94,17 @@ import {
 	UpdateMaterialRequestStatusMutation,
 	UpdateMaterialRequestStatusMutationVariables,
 } from '~generated/graphql-db-types-hetarchief';
-import { EmailTemplate, type MaterialRequestEmailInfo } from '~modules/campaign-monitor/campaign-monitor.types';
+import {
+	EmailTemplate,
+	type MaterialRequestEmailInfo,
+} from '~modules/campaign-monitor/campaign-monitor.types';
 
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 import {
 	IeObjectAccessThrough,
 	IeObjectLicense,
-	IeObjectsVisitorSpaceInfo,
 	IeObjectType,
+	IeObjectsVisitorSpaceInfo,
 	SimpleIeObjectType,
 } from '~modules/ie-objects/ie-objects.types';
 import type { Organisation } from '~modules/organisations/organisations.types';
@@ -103,6 +122,7 @@ import { limitAccessToObjectDetails } from '~modules/ie-objects/helpers/limit-ac
 import { mapDcTermsFormatToSimpleType } from '~modules/ie-objects/helpers/map-dc-terms-format-to-simple-type';
 import { IE_OBJECT_INTRA_CP_LICENSES } from '~modules/ie-objects/ie-objects.conts';
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
+import { MaterialRequestMessagesService } from '~modules/material-request-messages/services/material-request-messages.service';
 import { MediahavenJobsWatcherService } from '~modules/mediahaven-jobs-watcher/services/mediahaven-jobs-watcher.service';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
@@ -125,7 +145,8 @@ export class MaterialRequestsService {
 		private usersService: UsersService,
 		private eventsService: EventsService,
 		private mediahavenJobWatcherService: MediahavenJobsWatcherService,
-		private configService: ConfigService<Configuration>
+		private configService: ConfigService<Configuration>,
+		private materialRequestMessageService: MaterialRequestMessagesService
 	) {}
 
 	public async findAll(
@@ -596,13 +617,31 @@ export class MaterialRequestsService {
 		};
 
 		if (status === Lookup_App_Material_Request_Status_Enum.Cancelled) {
-			updateMaterialRequest.cancelled_at = new Date().toISOString();
+			this.materialRequestMessageService
+				.createMessage(
+					materialRequestId,
+					user.getId(),
+					Lookup_App_Material_Request_Message_Type_Enum.Cancelled
+				)
+				.then(noop);
 		} else if (status === Lookup_App_Material_Request_Status_Enum.Approved) {
-			updateMaterialRequest.status_motivation = motivation;
-			updateMaterialRequest.approved_at = new Date().toISOString();
+			this.materialRequestMessageService
+				.createMessage(
+					materialRequestId,
+					user.getId(),
+					Lookup_App_Material_Request_Message_Type_Enum.Approved,
+					{ motivation }
+				)
+				.then(noop);
 		} else if (status === Lookup_App_Material_Request_Status_Enum.Denied) {
-			updateMaterialRequest.status_motivation = motivation;
-			updateMaterialRequest.denied_at = new Date().toISOString();
+			this.materialRequestMessageService
+				.createMessage(
+					materialRequestId,
+					user.getId(),
+					Lookup_App_Material_Request_Message_Type_Enum.Denied,
+					{ motivation }
+				)
+				.then(noop);
 		}
 
 		const updateMaterialRequestStatusResponse = await this.dataService.execute<
@@ -981,13 +1020,9 @@ export class MaterialRequestsService {
 			createdAt: graphQlMaterialRequest.created_at,
 			updatedAt: graphQlMaterialRequest.updated_at,
 			requestedAt: graphQlMaterialRequest.requested_at,
-			approvedAt: graphQlMaterialRequest.approved_at,
-			deniedAt: graphQlMaterialRequest.denied_at,
-			cancelledAt: graphQlMaterialRequest.cancelled_at,
 			type: graphQlMaterialRequest.type,
 			isPending: graphQlMaterialRequest.is_pending,
 			status: graphQlMaterialRequest.status,
-			statusMotivation: graphQlMaterialRequest.status_motivation,
 			...this.adaptDownloadRelatedData(graphQlMaterialRequest),
 			requestGroupName: graphQlMaterialRequest.name ?? null,
 			requestGroupId: graphQlMaterialRequest.group_id ?? null,
@@ -1017,6 +1052,10 @@ export class MaterialRequestsService {
 			objectMeemooLocalId:
 				(graphQlMaterialRequest as FindMaterialRequestsQuery['app_material_requests'][0])
 					?.intellectualEntity?.premisIdentifier?.[0]?.value || null,
+			history: (
+				(graphQlMaterialRequest as FindMaterialRequestsByIdQuery['app_material_requests'][0])
+					.messages_and_events || []
+			).map(this.materialRequestMessageService.adaptEvent),
 		};
 	}
 
@@ -1065,7 +1104,6 @@ export class MaterialRequestsService {
 			id: materialRequest.id,
 			type: materialRequest.type,
 			status: materialRequest.status,
-			approvedAt: materialRequest.approved_at,
 			downloadUrl: materialRequest.download_url || null,
 			downloadJobId: materialRequest.download_job_id || null,
 			downloadRetries: materialRequest.download_retries,

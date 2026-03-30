@@ -503,7 +503,10 @@ describe('MaterialRequestsService', () => {
 				mockOrganisations
 			);
 			const mockData: InsertMaterialRequestMutation = {
-				insert_app_material_requests_one: mockGqlMaterialRequest1,
+				insert_app_material_requests_one: {
+					...mockGqlMaterialRequest1,
+					messages_and_events: [],
+				},
 			};
 			mockDataService.execute.mockResolvedValueOnce(mockData);
 			const response = await materialRequestsService.createMaterialRequest(

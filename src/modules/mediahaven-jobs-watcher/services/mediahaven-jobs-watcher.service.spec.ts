@@ -55,7 +55,6 @@ const createMockMaterialRequest = (
 	id: 'material-request-1',
 	type: 'REUSE' as any,
 	status: 'APPROVED' as any,
-	approvedAt: new Date().toISOString(),
 	downloadJobId: 'export-job-1',
 	downloadRetries: 0,
 	downloadStatus: Lookup_App_Material_Request_Download_Status_Enum.New,
