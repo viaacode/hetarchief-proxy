@@ -108,8 +108,8 @@ import {
 } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
 import { AND } from '~modules/ie-objects/elasticsearch/queryBuilder.helpers';
 import {
-	type SearchTermParseResult,
 	convertStringToSearchTerms,
+	type SearchTermParseResult,
 } from '~modules/ie-objects/helpers/convert-string-to-search-terms';
 import { AUTOCOMPLETE_FIELD_TO_ES_FIELD_NAME } from '~modules/ie-objects/ie-objects.conts';
 import {
