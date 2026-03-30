@@ -1,5 +1,3 @@
-import { Readable } from 'node:stream';
-
 import {
 	AssetsService,
 	ContentPagesService,
@@ -321,15 +319,7 @@ export class SitemapService {
 		return this.assetsService.uploadAndTrack(
 			AvoFileUploadAssetType.SITEMAP as any,
 			{
-				fieldname: name,
 				originalname: name,
-				encoding: '',
-				mimetype: 'text/xml',
-				size: 0,
-				stream: new Readable(),
-				destination: '',
-				filename: name,
-				path: '',
 				buffer: Buffer.from(xml, 'utf-8'),
 			},
 			name,

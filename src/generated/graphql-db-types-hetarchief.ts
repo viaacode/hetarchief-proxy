@@ -18998,8 +18998,18 @@ export enum Lookup_App_Material_Request_Message_Type_Enum {
   Cancelled = 'CANCELLED',
   /** when a material request is denied by an evaluator at the cp */
   Denied = 'DENIED',
+  /** When a download is made available */
+  DownloadAvailable = 'DOWNLOAD_AVAILABLE',
+  /** When a download has expired */
+  DownloadExpired = 'DOWNLOAD_EXPIRED',
+  /** When a download job has started */
+  DownloadRequested = 'DOWNLOAD_REQUESTED',
+  /** pdf generated when the material request gets a final status. eg: APPROVED or DENIED or CANCELLED */
+  FinalSummary = 'FINAL_SUMMARY',
   /** a regular message */
-  Message = 'MESSAGE'
+  Message = 'MESSAGE',
+  /** pdf file generated when the requester sends the material request with reuse form to the evaluator */
+  ReuseSummary = 'REUSE_SUMMARY'
 }
 
 /** Boolean expression to compare columns of type "lookup_app_material_request_message_type_enum". All fields are combined with logical 'AND'. */

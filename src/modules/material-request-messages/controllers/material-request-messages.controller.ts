@@ -30,7 +30,11 @@ import { addMilliseconds } from 'date-fns';
 import type { Response } from 'express';
 import { kebabCase } from 'lodash';
 import { Lookup_App_Material_Request_Message_Type_Enum } from '~generated/graphql-db-types-hetarchief';
-import { MaterialRequestAttachment, MaterialRequestMessage, } from '~modules/material-request-messages/material-request-messages.types';
+import {
+	MaterialRequestAttachment,
+	MaterialRequestMessage,
+} from '~modules/material-request-messages/material-request-messages.types';
+import { MaterialRequestPdfGeneratorService } from '~modules/material-request-messages/services/material-request-pdf-generator';
 import { MaterialRequest } from '~modules/material-requests/material-requests.types';
 import { MaterialRequestsService } from '~modules/material-requests/services/material-requests.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
@@ -39,6 +43,7 @@ import { Ip } from '~shared/decorators/ip.decorator';
 import { Referer } from '~shared/decorators/referer.decorator';
 import { RequireAnyPermissions } from '~shared/decorators/require-any-permissions.decorator';
 import { SessionUser } from '~shared/decorators/user.decorator';
+import { LocalhostGuard } from '~shared/guards/localhost.guard';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
 import { MaterialRequestMessagesService } from '../services/material-request-messages.service';
 
@@ -67,7 +72,8 @@ export class MaterialRequestMessagesController {
 	constructor(
 		private materialRequestMessagesService: MaterialRequestMessagesService,
 		private materialRequestsService: MaterialRequestsService,
-		protected assetsService: AssetsService
+		private assetsService: AssetsService,
+		private materialRequestPdfGenerator: MaterialRequestPdfGeneratorService
 	) {}
 
 	@Get(':materialRequestId/messages')
@@ -418,5 +424,37 @@ export class MaterialRequestMessagesController {
 	private toKebabCaseFilename(filename: string): string {
 		const parsed = path.parse(filename);
 		return `${kebabCase(parsed.name)}${parsed.ext}`;
+	}
+
+	@Get(':materialRequestId/test-generate-pdf')
+	@UseGuards(LocalhostGuard)
+	@ApiOperation({
+		description: 'Test PDF generation for a material request by ID. Localhost only.',
+	})
+	public async testGeneratePdf(
+		@Param('materialRequestId') materialRequestId: string,
+		@SessionUser() user: SessionUserEntity,
+		@Referer() referer: string,
+		@Ip() ip: string
+	): Promise<{ pdfUrl: string }> {
+		try {
+			const materialRequest = await this.materialRequestsService.findById(
+				materialRequestId,
+				user,
+				referer,
+				ip
+			);
+			const pdfUrl =
+				await this.materialRequestPdfGenerator.generateReuseFormPdfAndUpload(materialRequest);
+			return {
+				pdfUrl: pdfUrl,
+			};
+		} catch (err) {
+			logAndThrow(
+				new CustomError('Failed to generate material request PDF', err, {
+					materialRequestId,
+				})
+			);
+		}
 	}
 }

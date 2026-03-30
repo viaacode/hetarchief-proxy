@@ -7,6 +7,10 @@
       {
         "include": "modules/not-found/template/*",
         "outDir": "dist/src"
+      },
+      {
+        "include": "assets/fonts/**/*",
+        "outDir": "dist/src"
       }
     ]
   }
