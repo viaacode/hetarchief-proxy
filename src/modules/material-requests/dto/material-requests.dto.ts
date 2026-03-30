@@ -1,15 +1,9 @@
-import { Lookup_App_Material_Request_Requester_Capacity_Enum } from '@meemoo/admin-core-api/dist/src/modules/shared/generated/graphql-db-types-hetarchief';
+import {
+	Lookup_App_Material_Request_Requester_Capacity_Enum
+} from '@meemoo/admin-core-api/dist/src/modules/shared/generated/graphql-db-types-hetarchief';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Transform, Type } from 'class-transformer';
-import {
-	IsArray,
-	IsBoolean,
-	IsEnum,
-	IsNumber,
-	IsObject,
-	IsOptional,
-	IsString,
-} from 'class-validator';
+import { IsArray, IsBoolean, IsEnum, IsNumber, IsObject, IsOptional, IsString, } from 'class-validator';
 
 import { MaterialRequestOrderProp, MaterialRequestType } from '../material-requests.types';
 
@@ -108,9 +102,9 @@ export class MaterialRequestsQueryDto {
 	@ApiPropertyOptional({
 		type: Number,
 		description: 'The max. number of results to return',
-		default: 10,
+		default: 20,
 	})
-	size? = 10;
+	size? = 20;
 
 	@IsString()
 	@Type(() => String)
