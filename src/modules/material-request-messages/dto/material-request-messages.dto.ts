@@ -23,9 +23,9 @@ export class MaterialRequestAttachmentsQueryDto {
 	@ApiPropertyOptional({
 		type: Number,
 		description: 'The max. number of results to return',
-		default: 10,
+		default: 20,
 	})
-	size? = 10;
+	size? = 20;
 
 	@IsString()
 	@Type(() => String)
