@@ -116,9 +116,10 @@ export class MaterialRequestMessagesService {
 		materialRequestId: string,
 		profileId: string,
 		messageType: Lookup_App_Material_Request_Message_Type_Enum,
-		message?: MaterialRequestMessageBody,
-		attachmentUrl?: string,
-		attachmentFilename?: string
+		message?: MaterialRequestMessageBody | null,
+		createdAt: string = new Date().toISOString(),
+		attachmentUrl?: string | null,
+		attachmentFilename?: string | null
 	): Promise<MaterialRequestMessage> {
 		const response = await this.dataService.execute<
 			InsertMaterialRequestMessageMutation,
@@ -130,7 +131,7 @@ export class MaterialRequestMessagesService {
 			body: JSON.stringify(message || {}),
 			attachmentUrl: attachmentUrl || null,
 			attachmentFilename: attachmentFilename || null,
-			createdAt: new Date().toISOString(),
+			createdAt,
 		});
 
 		return this.adapt(response.insert_app_material_request_messages_and_events_one);
