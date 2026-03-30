@@ -9,11 +9,7 @@ mutation insertMaterialRequest($newMaterialRequest: app_material_requests_insert
 		updated_at
 		requested_at
 		messages_and_events(
-			where: {
-				message_type: {
-					_in: [APPROVED, DENIED, CANCELLED]
-				}
-			}
+			where: { message_type: { _nin: [MESSAGE] } }
 			order_by: { created_at: asc }
 		) {
 			message_type
@@ -21,14 +17,13 @@ mutation insertMaterialRequest($newMaterialRequest: app_material_requests_insert
 		}
 		is_pending
 		status
-		status_motivation
 		group_id
 		name
-		download_status
-		download_available_at
 		requester_capacity
 		organisation
 		organisation_sector
+		download_status
+		download_available_at
 		requested_by {
 			id
 			full_name

@@ -9,7 +9,13 @@ import {
 	Lookup_App_Material_Request_Type_Enum,
 	type UpdateMaterialRequestMutation,
 } from '~generated/graphql-db-types-hetarchief';
-import { IeObjectAccessThrough, IeObjectLicense, IeObjectRepresentation, IeObjectType } from '~modules/ie-objects/ie-objects.types';
+import {
+	IeObjectAccessThrough,
+	IeObjectLicense,
+	IeObjectRepresentation,
+	IeObjectType,
+} from '~modules/ie-objects/ie-objects.types';
+import { MaterialRequestEvent } from '~modules/material-request-messages/material-request-messages.types';
 import type { Locale } from '~shared/types/types';
 
 export interface MaterialRequest {
@@ -33,15 +39,12 @@ export interface MaterialRequest {
 	createdAt: string;
 	updatedAt: string;
 	requestedAt?: string;
-	approvedAt?: string;
-	deniedAt?: string;
-	cancelledAt?: string;
 	downloadAvailableAt?: string;
 	downloadExpiresAt?: string | null;
 	type: Lookup_App_Material_Request_Type_Enum;
 	isPending: boolean;
 	status: Lookup_App_Material_Request_Status_Enum;
-	statusMotivation?: string;
+	history: MaterialRequestEvent[];
 
 	requesterId: string;
 	requesterFullName: string;
