@@ -252,10 +252,34 @@ export class MaterialRequestMessagesController {
 		description:
 			'Get attachments for a specific material request. Returns paginated list ordered from oldest to newest by default.',
 	})
-	@ApiQuery({ name: 'page', required: false, type: Number, description: 'Which page of results to fetch. Counting starts at 1', example: 1 })
-	@ApiQuery({ name: 'size', required: false, type: Number, description: 'The max. number of results to return', example: 10 })
-	@ApiQuery({ name: 'orderProp', required: false, enum: MaterialRequestAttachmentOrderProp, description: 'Property to sort the results by', example: MaterialRequestAttachmentOrderProp.CREATED_AT })
-	@ApiQuery({ name: 'orderDirection', required: false, enum: SortDirection, description: 'Direction to sort in. either desc or asc', example: SortDirection.asc })
+	@ApiQuery({
+		name: 'page',
+		required: false,
+		type: Number,
+		description: 'Which page of results to fetch. Counting starts at 1',
+		example: 1,
+	})
+	@ApiQuery({
+		name: 'size',
+		required: false,
+		type: Number,
+		description: 'The max. number of results to return',
+		example: 10,
+	})
+	@ApiQuery({
+		name: 'orderProp',
+		required: false,
+		enum: MaterialRequestAttachmentOrderProp,
+		description: 'Property to sort the results by',
+		example: MaterialRequestAttachmentOrderProp.CREATED_AT,
+	})
+	@ApiQuery({
+		name: 'orderDirection',
+		required: false,
+		enum: SortDirection,
+		description: 'Direction to sort in. either desc or asc',
+		example: SortDirection.asc,
+	})
 	@RequireAnyPermissions(
 		PermissionName.VIEW_OWN_MATERIAL_REQUESTS,
 		PermissionName.VIEW_ANY_MATERIAL_REQUESTS
