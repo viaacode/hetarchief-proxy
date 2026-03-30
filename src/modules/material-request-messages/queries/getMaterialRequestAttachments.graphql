@@ -1,9 +1,14 @@
-query getMaterialRequestAttachments($materialRequestId: uuid!, $offset: Int!, $limit: Int!) {
+query getMaterialRequestAttachments(
+	$materialRequestId: uuid!
+	$offset: Int!
+	$limit: Int!
+	$orderBy: [app_material_request_messages_and_events_order_by!] = [{ created_at: asc }]
+) {
 	app_material_request_messages_and_events(
 		where: { material_request_id: { _eq: $materialRequestId }, attachment_url: { _is_null: false } }
 		offset: $offset
 		limit: $limit
-		order_by: { created_at: asc }
+		order_by: $orderBy
 	) {
 		id
 		attachment_url

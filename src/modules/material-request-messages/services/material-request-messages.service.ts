@@ -1,8 +1,10 @@
 import { DataService } from '@meemoo/admin-core-api';
 import { Injectable } from '@nestjs/common';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
+import { set } from 'lodash';
 import {
 	MaterialRequestAttachment,
+	MaterialRequestAttachmentOrderProp,
 	MaterialRequestEvent,
 	MaterialRequestMessage,
 	MaterialRequestMessageBody,
@@ -31,6 +33,12 @@ import {
 } from '~generated/graphql-db-types-hetarchief';
 
 import { PaginationHelper } from '~shared/helpers/pagination';
+import { SortDirection } from '~shared/types';
+
+const ATTACHMENT_ORDER_PROP_TO_DB_PROP: Record<MaterialRequestAttachmentOrderProp, string> = {
+	[MaterialRequestAttachmentOrderProp.CREATED_AT]: 'created_at',
+	[MaterialRequestAttachmentOrderProp.ATTACHMENT_FILENAME]: 'attachment_filename',
+};
 
 @Injectable()
 export class MaterialRequestMessagesService {
@@ -140,9 +148,13 @@ export class MaterialRequestMessagesService {
 	public async findAttachments(
 		materialRequestId: string,
 		page: number,
-		size: number
+		size: number,
+		orderProp: MaterialRequestAttachmentOrderProp = MaterialRequestAttachmentOrderProp.CREATED_AT,
+		orderDirection: SortDirection = SortDirection.asc
 	): Promise<IPagination<MaterialRequestAttachment>> {
 		const { offset, limit } = PaginationHelper.convertPagination(page, size);
+
+		const orderBy = [set({}, ATTACHMENT_ORDER_PROP_TO_DB_PROP[orderProp] || ATTACHMENT_ORDER_PROP_TO_DB_PROP[MaterialRequestAttachmentOrderProp.CREATED_AT], orderDirection)];
 
 		const response = await this.dataService.execute<
 			GetMaterialRequestAttachmentsQuery,
@@ -151,6 +163,7 @@ export class MaterialRequestMessagesService {
 			materialRequestId,
 			offset,
 			limit,
+			orderBy,
 		});
 
 		return Pagination<MaterialRequestAttachment>({
