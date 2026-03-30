@@ -26,7 +26,7 @@ import { logAndThrow } from '@meemoo/admin-core-api/dist/src/modules/shared/help
 import { FilesInterceptor } from '@nestjs/platform-express';
 import archiver from 'archiver';
 import { mapLimit } from 'blend-promise-utils';
-import { addSeconds } from 'date-fns';
+import { addMilliseconds } from 'date-fns';
 import type { Response } from 'express';
 import { kebabCase } from 'lodash';
 import { Lookup_App_Material_Request_Message_Type_Enum } from '~generated/graphql-db-types-hetarchief';
@@ -226,7 +226,7 @@ export class MaterialRequestMessagesController {
 					Lookup_App_Material_Request_Message_Type_Enum.Message,
 					i === 0 ? { message } : null,
 					// To ensure the files appear in-order, we tweak the created at date to ensure they are sequential
-					addSeconds(baseTimestamp, 1).toISOString(),
+					addMilliseconds(baseTimestamp, i).toISOString(),
 					attachmentUrl,
 					file.originalname
 				);

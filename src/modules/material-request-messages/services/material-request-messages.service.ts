@@ -128,7 +128,7 @@ export class MaterialRequestMessagesService {
 			materialRequestId,
 			senderProfileId: profileId,
 			messageType,
-			body: JSON.stringify(message || {}),
+			body: message ? JSON.stringify(message) : null,
 			attachmentUrl: attachmentUrl || null,
 			attachmentFilename: attachmentFilename || null,
 			createdAt,
