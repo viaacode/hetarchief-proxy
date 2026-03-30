@@ -1,4 +1,5 @@
 import {
+	BadRequestException,
 	Body,
 	Controller,
 	ForbiddenException,
@@ -9,7 +10,7 @@ import {
 	Post,
 	Query,
 	Res,
-	UploadedFile,
+	UploadedFiles,
 	UseGuards,
 	UseInterceptors,
 } from '@nestjs/common';
@@ -22,15 +23,14 @@ import path from 'node:path';
 import { AssetsService } from '@meemoo/admin-core-api';
 import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
 import { logAndThrow } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/logAndThrow';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { FilesInterceptor } from '@nestjs/platform-express';
 import archiver from 'archiver';
+import { mapLimit } from 'blend-promise-utils';
+import { addMilliseconds } from 'date-fns';
 import type { Response } from 'express';
 import { kebabCase } from 'lodash';
 import { Lookup_App_Material_Request_Message_Type_Enum } from '~generated/graphql-db-types-hetarchief';
-import {
-	MaterialRequestAttachment,
-	MaterialRequestMessage,
-} from '~modules/material-request-messages/material-request-messages.types';
+import { MaterialRequestAttachment, MaterialRequestMessage, } from '~modules/material-request-messages/material-request-messages.types';
 import { MaterialRequest } from '~modules/material-requests/material-requests.types';
 import { MaterialRequestsService } from '~modules/material-requests/services/material-requests.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
@@ -41,6 +41,24 @@ import { RequireAnyPermissions } from '~shared/decorators/require-any-permission
 import { SessionUser } from '~shared/decorators/user.decorator';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
 import { MaterialRequestMessagesService } from '../services/material-request-messages.service';
+
+const ALLOWED_FILE_EXTENSIONS = [
+	'pdf',
+	'doc',
+	'docx',
+	'xls',
+	'xlsx',
+	'jpg',
+	'jpeg',
+	'png',
+	'csv',
+	'gif',
+	'tiff',
+	'tif',
+];
+const MAX_FILE_SIZE_BYTES = 30 * 1024 * 1024; // 30 MB
+const UPLOAD_FILE_FIELD = 'files';
+const MAX_FILE_COUNT = 20;
 
 @UseGuards(LoggedInGuard)
 @ApiTags('MaterialRequestMessages')
@@ -133,7 +151,10 @@ export class MaterialRequestMessagesController {
 
 	@Post(':materialRequestId/messages')
 	@ApiOperation({
-		description: 'Create a material request message with optional file upload.',
+		description:
+			'Create one or more material request messages with optional file uploads. ' +
+			'Each file generates a separate message entry. The first entry contains the message text and the first file. ' +
+			'Subsequent entries contain only a file.',
 	})
 	@ApiConsumes('multipart/form-data')
 	@ApiBody({
@@ -141,7 +162,10 @@ export class MaterialRequestMessagesController {
 			type: 'object',
 			properties: {
 				message: { type: 'string' },
-				file: { type: 'string', format: 'binary' },
+				files: {
+					type: 'array',
+					items: { type: 'string', format: 'binary' },
+				},
 			},
 			required: ['message'],
 		},
@@ -150,35 +174,63 @@ export class MaterialRequestMessagesController {
 		PermissionName.VIEW_OWN_MATERIAL_REQUESTS,
 		PermissionName.VIEW_ANY_MATERIAL_REQUESTS
 	)
-	@UseInterceptors(FileInterceptor('file'))
+	@UseInterceptors(
+		FilesInterceptor(UPLOAD_FILE_FIELD, MAX_FILE_COUNT, {
+			limits: { fileSize: MAX_FILE_SIZE_BYTES },
+			fileFilter: (_req, file, callback) => {
+				const ext = path.extname(file.originalname).slice(1).toLowerCase();
+				if (!ALLOWED_FILE_EXTENSIONS.includes(ext)) {
+					return callback(
+						new BadRequestException(
+							`File type .${ext} is not allowed. Allowed types: ${ALLOWED_FILE_EXTENSIONS.join(', ')}`
+						),
+						false
+					);
+				}
+				callback(null, true);
+			},
+		})
+	)
 	public async createMaterialRequestMessage(
 		@Param('materialRequestId') materialRequestId: string,
 		@SessionUser() user: SessionUserEntity,
 		@Body('message') message: string,
-		@UploadedFile() file?: Express.Multer.File
-	): Promise<MaterialRequestMessage> {
+		@UploadedFiles() files?: Express.Multer.File[]
+	): Promise<MaterialRequestMessage[]> {
 		try {
-			let attachmentUrl: string | undefined;
-			let attachmentFilename: string | undefined;
-			if (file) {
-				// Upload file using admin-core-api assets service
-				attachmentFilename = file.filename;
-				const fileNameParsed = path.parse(attachmentFilename);
-				attachmentUrl = await this.assetsService.uploadAndTrack(
+			const baseTimestamp = Date.now();
+			const userId = user.getId();
+
+			if (!files || files.length === 0) {
+				return [
+					await this.materialRequestMessagesService.createMessage(
+						materialRequestId,
+						userId,
+						Lookup_App_Material_Request_Message_Type_Enum.Message,
+						message ? { message } : null
+					),
+				];
+			}
+
+			return await mapLimit(files, 5, async (file, i) => {
+				const fileExt = path.extname(file.originalname);
+				const attachmentUrl = await this.assetsService.uploadAndTrack(
 					AvoFileUploadAssetType.MATERIAL_REQUEST_MESSAGE_ATTACHMENT as any,
 					file,
-					user.getId(),
-					randomUUID() + fileNameParsed.ext
+					userId,
+					randomUUID() + fileExt
 				);
-			}
-			return await this.materialRequestMessagesService.createMessage(
-				materialRequestId,
-				user.getId(),
-				Lookup_App_Material_Request_Message_Type_Enum.Message,
-				{ message },
-				attachmentUrl,
-				attachmentFilename
-			);
+				return this.materialRequestMessagesService.createMessage(
+					materialRequestId,
+					userId,
+					Lookup_App_Material_Request_Message_Type_Enum.Message,
+					i === 0 ? { message } : null,
+					// To ensure the files appear in-order, we tweak the created at date to ensure they are sequential
+					addMilliseconds(baseTimestamp, i).toISOString(),
+					attachmentUrl,
+					file.originalname
+				);
+			});
 		} catch (err) {
 			logAndThrow(
 				new CustomError('Failed to create material request message', err, {
