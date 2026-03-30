@@ -14,7 +14,7 @@ import {
 	UseGuards,
 	UseInterceptors,
 } from '@nestjs/common';
-import { ApiBody, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiConsumes, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import type { IPagination } from '@studiohyperdrive/pagination';
 import { AvoFileUploadAssetType, PermissionName } from '@viaa/avo2-types';
 
@@ -30,7 +30,12 @@ import { addMilliseconds } from 'date-fns';
 import type { Response } from 'express';
 import { kebabCase } from 'lodash';
 import { Lookup_App_Material_Request_Message_Type_Enum } from '~generated/graphql-db-types-hetarchief';
-import { MaterialRequestAttachment, MaterialRequestMessage, } from '~modules/material-request-messages/material-request-messages.types';
+import { MaterialRequestAttachmentsQueryDto } from '~modules/material-request-messages/dto/material-request-messages.dto';
+import {
+	MaterialRequestAttachment,
+	MaterialRequestAttachmentOrderProp,
+	MaterialRequestMessage,
+} from '~modules/material-request-messages/material-request-messages.types';
 import { MaterialRequest } from '~modules/material-requests/material-requests.types';
 import { MaterialRequestsService } from '~modules/material-requests/services/material-requests.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
@@ -40,6 +45,7 @@ import { Referer } from '~shared/decorators/referer.decorator';
 import { RequireAnyPermissions } from '~shared/decorators/require-any-permissions.decorator';
 import { SessionUser } from '~shared/decorators/user.decorator';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
+import { SortDirection } from '~shared/types';
 import { MaterialRequestMessagesService } from '../services/material-request-messages.service';
 
 const ALLOWED_FILE_EXTENSIONS = [
@@ -244,7 +250,35 @@ export class MaterialRequestMessagesController {
 	@Get(':materialRequestId/attachments')
 	@ApiOperation({
 		description:
-			'Get attachments for a specific material request. Returns paginated list ordered from oldest to newest.',
+			'Get attachments for a specific material request. Returns paginated list ordered from oldest to newest by default.',
+	})
+	@ApiQuery({
+		name: 'page',
+		required: false,
+		type: Number,
+		description: 'Which page of results to fetch. Counting starts at 1',
+		example: 1,
+	})
+	@ApiQuery({
+		name: 'size',
+		required: false,
+		type: Number,
+		description: 'The max. number of results to return',
+		example: 10,
+	})
+	@ApiQuery({
+		name: 'orderProp',
+		required: false,
+		enum: MaterialRequestAttachmentOrderProp,
+		description: 'Property to sort the results by',
+		example: MaterialRequestAttachmentOrderProp.CREATED_AT,
+	})
+	@ApiQuery({
+		name: 'orderDirection',
+		required: false,
+		enum: SortDirection,
+		description: 'Direction to sort in. either desc or asc',
+		example: SortDirection.asc,
 	})
 	@RequireAnyPermissions(
 		PermissionName.VIEW_OWN_MATERIAL_REQUESTS,
@@ -253,8 +287,7 @@ export class MaterialRequestMessagesController {
 	public async getMaterialRequestAttachments(
 		@Param('materialRequestId') materialRequestId: string,
 		@SessionUser() user: SessionUserEntity,
-		@Query('page', ParseIntPipe) page: number,
-		@Query('size', ParseIntPipe) size: number,
+		@Query() queryDto: MaterialRequestAttachmentsQueryDto,
 		@Referer() referer: string,
 		@Ip() ip: string
 	): Promise<IPagination<MaterialRequestAttachment>> {
@@ -263,16 +296,20 @@ export class MaterialRequestMessagesController {
 
 			return await this.materialRequestMessagesService.findAttachments(
 				materialRequestId,
-				page,
-				size
+				queryDto.page,
+				queryDto.size,
+				queryDto.orderProp,
+				queryDto.orderDirection
 			);
 		} catch (err) {
 			logAndThrow(
 				new CustomError('Failed to get material request attachments', err, {
 					materialRequestId,
 					userId: user?.getId(),
-					page,
-					size,
+					page: queryDto.page,
+					size: queryDto.size,
+					orderProp: queryDto.orderProp,
+					orderDirection: queryDto.orderDirection,
 				})
 			);
 		}

@@ -53,3 +53,8 @@ export interface MaterialRequestAttachment {
 	attachmentFilename: string;
 	createdAt: string;
 }
+
+export enum MaterialRequestAttachmentOrderProp {
+	CREATED_AT = 'createdAt',
+	ATTACHMENT_FILENAME = 'attachmentFilename',
+}
