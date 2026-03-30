@@ -43,8 +43,8 @@ import {
 	IeObjectAccessThrough,
 	IeObjectLicense,
 	type IeObjectSeo,
-	IeObjectType,
 	type IeObjectsWithAggregations,
+	IeObjectType,
 	type RelatedIeObject,
 	type RelatedIeObjects,
 } from '../ie-objects.types';
@@ -56,12 +56,7 @@ import { logAndThrow } from '@meemoo/admin-core-api/dist/src/modules/shared/help
 import { mapLimit } from 'blend-promise-utils';
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
-import {
-	ALL_INDEXES,
-	IeObjectsSearchFilterField,
-	Operator,
-	OrderProperty,
-} from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
+import { ALL_INDEXES, IeObjectsSearchFilterField, Operator, OrderProperty, } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
 import { mapDcTermsFormatToSimpleType } from '~modules/ie-objects/helpers/map-dc-terms-format-to-simple-type';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupName } from '~modules/users/types';
@@ -574,16 +569,13 @@ export class IeObjectsController {
 				},
 			});
 		}
-		if (!queryDto?.query) {
-			throw new BadRequestException('Body param query is required');
-		}
 		if (!queryDto?.filters) {
 			throw new BadRequestException('Body param filters is required');
 		}
-		return this.ieObjectsService.getMetadataAutocomplete(queryDto.field, queryDto.query, {
+		return this.ieObjectsService.getMetadataAutocomplete(queryDto.field, queryDto.query || '', {
 			filters: queryDto.filters,
 			page: 1,
-			size: 200,
+			size: 2000,
 			orderProp: OrderProperty.RELEVANCE,
 			orderDirection: SortDirection.desc,
 		});

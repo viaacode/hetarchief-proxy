@@ -4,31 +4,14 @@ import { retry } from 'async';
 
 import { DataService, PlayerTicketService } from '@meemoo/admin-core-api';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import {
-	Inject,
-	Injectable,
-	InternalServerErrorException,
-	Logger,
-	NotFoundException,
-} from '@nestjs/common';
+import { Inject, Injectable, InternalServerErrorException, Logger, NotFoundException, } from '@nestjs/common';
 
 import { ConfigService } from '@nestjs/config';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { mapLimit } from 'blend-promise-utils';
 import type { Cache } from 'cache-manager';
 import got, { type Got } from 'got';
-import {
-	compact,
-	find,
-	isArray,
-	isEmpty,
-	isNil,
-	kebabCase,
-	omitBy,
-	orderBy,
-	take,
-	uniq,
-} from 'lodash';
+import { compact, find, isArray, isEmpty, isNil, kebabCase, omitBy, orderBy, uniq } from 'lodash';
 
 import type { Configuration } from '~config';
 
@@ -52,10 +35,10 @@ import {
 	type IeObjectPages,
 	type IeObjectRepresentation,
 	type IeObjectSector,
-	IeObjectType,
 	type IeObjectsSitemap,
 	type IeObjectsVisitorSpaceInfo,
 	type IeObjectsWithAggregations,
+	IeObjectType,
 	type IsPartOfKey,
 	type Mention,
 	type RelatedIeObject,
@@ -113,10 +96,10 @@ import {
 } from '~modules/ie-objects/helpers/convert-string-to-search-terms';
 import { AUTOCOMPLETE_FIELD_TO_ES_FIELD_NAME } from '~modules/ie-objects/ie-objects.conts';
 import {
-	CACHE_KEY_PREFIX_IE_OBJECTS_SEARCH,
 	CACHE_KEY_PREFIX_IE_OBJECT_DETAIL,
 	CACHE_KEY_PREFIX_IE_OBJECT_PID_TO_ID,
 	CACHE_KEY_PREFIX_IE_OBJECT_THUMBNAIL,
+	CACHE_KEY_PREFIX_IE_OBJECTS_SEARCH,
 	IE_OBJECT_DETAIL_QUERIES,
 } from '~modules/ie-objects/services/ie-objects.service.consts';
 import {
@@ -1400,19 +1383,34 @@ export class IeObjectsService {
 		const esField = AUTOCOMPLETE_FIELD_TO_ES_FIELD_NAME[field];
 		esQuery._source = false;
 		esQuery.fields = [`${esField}.sayt`];
-		esQuery.size = 200; // Load more results, so we can remove the non unique entries
+		esQuery.size = 2000; // Load more results, so we can remove the non unique entries
+		const mustClauses = [];
+
+		// Only add multi_match if query exists
+		if (query && query.trim() !== '') {
+			mustClauses.push({
+				multi_match: {
+					query: query,
+					type: 'bool_prefix',
+					fields: [`${esField}.sayt`, `${esField}.sayt._2gram`, `${esField}.sayt._3gram`],
+				},
+			});
+		} else {
+			mustClauses.push({
+				exists: {
+					field: esField,
+				},
+			});
+		}
+
+		// Preserve existing query if it exists
+		if (esQuery.query) {
+			mustClauses.push(esQuery.query);
+		}
+
 		esQuery.query = {
 			bool: {
-				must: [
-					{
-						multi_match: {
-							query: query,
-							type: 'bool_prefix',
-							fields: [`${esField}.sayt`, `${esField}.sayt._2gram`, `${esField}.sayt._3gram`],
-						},
-					},
-					esQuery.query,
-				],
+				must: mustClauses.length ? mustClauses : [{ match_all: {} }],
 			},
 		};
 		if (field === AutocompleteField.newspaperSeriesName) {
@@ -1448,32 +1446,33 @@ export class IeObjectsService {
 		const queryParts = query.toLowerCase().split(' ');
 
 		// Map elasticsearch response to a list of unique strings
-		return take(
-			uniq(
-				response.hits?.hits?.flatMap((hit): string[] => {
-					const value = hit.fields[`${esField}.sayt`];
-					if (isArray(value)) {
-						// List of strings
-						let relevantValues: string[];
-						if (value.length > 1) {
-							// If there are multiple values, filter them based on the query parts
-							relevantValues = value.filter((v) =>
-								queryParts.every((queryPart) => v.toLowerCase().includes(queryPart))
-							);
-						} else {
-							relevantValues = value;
-						}
-
-						return relevantValues.map((v) => {
-							return v.trim();
-						});
+		const suggestions: string[] = uniq(
+			response.hits?.hits?.flatMap((hit): string[] => {
+				const value = hit.fields[`${esField}.sayt`];
+				if (isArray(value)) {
+					// List of strings
+					let relevantValues: string[];
+					if (value.length > 1) {
+						// If there are multiple values, filter them based on the query parts
+						relevantValues = value.filter((v) =>
+							queryParts.every((queryPart) => v.toLowerCase().includes(queryPart))
+						);
+					} else {
+						relevantValues = value;
 					}
-					// Single string
-					return [value] as string[];
-				})
-			),
-			200
+
+					return relevantValues.map((v) => {
+						return v.trim();
+					});
+				}
+				// Single string
+				return [value] as string[];
+			})
 		);
+		if (!query) {
+			return suggestions.sort();
+		}
+		return suggestions;
 	}
 
 	public async getPreviousNextIeObject(collectionId: string, ieObjectIri: string) {
