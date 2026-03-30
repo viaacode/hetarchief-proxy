@@ -6,12 +6,15 @@ import { Injectable } from '@nestjs/common';
 import { AvoFileUploadAssetType } from '@viaa/avo2-types';
 import { format, isValid, parseISO } from 'date-fns';
 import PDFDocument from 'pdfkit';
+import { Lookup_App_Material_Request_Message_Type_Enum } from '~generated/graphql-db-types-hetarchief';
 import { GET_REUSE_LABELS } from '~modules/material-request-messages/material-request-messages.const';
 import {
-	MaterialRequest,
-	MaterialRequestReuseFormKey,
-	MaterialRequestType,
-} from '~modules/material-requests/material-requests.types';
+	MaterialRequestAdditionalConditionsType,
+	type MaterialRequestEvent,
+	type MaterialRequestMessageBodyAdditionalConditions,
+	type MaterialRequestMessageBodyStatusUpdateWithMotivation,
+} from '~modules/material-request-messages/material-request-messages.types';
+import { MaterialRequest, MaterialRequestReuseFormKey, MaterialRequestType, } from '~modules/material-requests/material-requests.types';
 
 const FONTS_DIR = join(__dirname, '../../../assets/fonts/sofia-pro');
 const FONT_REGULAR = join(FONTS_DIR, 'sofia-pro-regular.woff');
@@ -287,7 +290,111 @@ export class MaterialRequestPdfGeneratorService {
 			doc.moveDown(0.5);
 		}
 
-		// Stamp page numbers on all buffered pages
+		this.addPageNumbers(doc, margin, contentWidth);
+
+		doc.flushPages();
+		doc.end();
+		return pdfBufferPromise;
+	}
+
+	private formatDateWithTime(value?: string | null): string {
+		if (!value) return '-';
+
+		const date = parseISO(value);
+		if (!isValid(date)) return value;
+
+		return format(date, 'dd/MM/yyyy HH:mm');
+	}
+
+	private mapEventToStatusLabel(
+		event: MaterialRequestEvent,
+		materialRequest: MaterialRequest
+	): string {
+		const dateStr = this.formatDateWithTime(event.createdAt);
+
+		switch (event.messageType) {
+			case Lookup_App_Material_Request_Message_Type_Enum.Approved:
+				return this.translationsService.tText(
+					'modules/account/components/material-request-detail-blade/material-request-detail-blade___goedgekeurd-op',
+					{ approvedAt: dateStr }
+				);
+			case Lookup_App_Material_Request_Message_Type_Enum.Denied:
+				return this.translationsService.tText(
+					'modules/account/components/material-request-detail-blade/material-request-detail-blade___geweigerd-op',
+					{ deniedAt: dateStr }
+				);
+			case Lookup_App_Material_Request_Message_Type_Enum.Cancelled:
+			case Lookup_App_Material_Request_Message_Type_Enum.AdditionalConditionsDenied:
+				return this.translationsService.tText(
+					'modules/account/components/material-request-detail-blade/material-request-detail-blade___geannulleerd-op',
+					{ cancelledAt: dateStr }
+				);
+			case Lookup_App_Material_Request_Message_Type_Enum.DownloadAvailable:
+				return this.translationsService.tText(
+					'modules/account/components/material-request-detail-blade/material-request-detail-blade___download-beschikbaar-van-tot',
+					{
+						availableAt: dateStr,
+						expiresAt: materialRequest.downloadExpiresAt
+							? this.formatDateWithTime(materialRequest.downloadExpiresAt)
+							: '-',
+					}
+				);
+			case Lookup_App_Material_Request_Message_Type_Enum.AdditionalConditions:
+				return this.translationsService.tText(
+					'modules/account/components/material-request-detail-blade/material-request-detail-blade___voorwaarden-verstuurd-op',
+					{ sentAt: dateStr }
+				);
+			case Lookup_App_Material_Request_Message_Type_Enum.AdditionalConditionsAccepted:
+				return this.translationsService.tText(
+					'modules/account/components/material-request-detail-blade/material-request-detail-blade___voorwaarden-aanvaard-op',
+					{ sentAt: dateStr }
+				);
+			default:
+				return '';
+		}
+	}
+
+	private renderTableRow(
+		doc: PDFKit.PDFDocument,
+		margin: number,
+		rowY: number,
+		cells: { text: string; width: number }[],
+		isHeader: boolean
+	): number {
+		const cellPadding = 8;
+		const borderColor = '#d1d5db';
+		const font = isHeader ? 'SofiaProBold' : 'SofiaProRegular';
+
+		const cellHeights = cells.map(
+			({ text, width }) =>
+				doc
+					.font(font)
+					.fontSize(10)
+					.heightOfString(text, { width: width - cellPadding * 2 }) +
+				cellPadding * 2
+		);
+		const rowHeight = Math.max(28, ...cellHeights);
+
+		let cellX = margin;
+		for (const { text, width } of cells) {
+			doc.rect(cellX, rowY, width, rowHeight).stroke(borderColor);
+			doc
+				.font(font)
+				.fontSize(10)
+				.fillColor(COLORS.text)
+				.text(text, cellX + cellPadding, rowY + cellPadding, {
+					width: width - cellPadding * 2,
+				});
+			cellX += width;
+		}
+
+		doc.y = rowY + rowHeight;
+		doc.x = margin;
+
+		return rowHeight;
+	}
+
+	private addPageNumbers(doc: PDFKit.PDFDocument, margin: number, contentWidth: number): void {
 		const { start, count } = doc.bufferedPageRange();
 		for (let i = start; i < start + count; i++) {
 			doc.switchToPage(i);
@@ -304,6 +411,209 @@ export class MaterialRequestPdfGeneratorService {
 				});
 			doc.page.margins.bottom = oldBottomMargin;
 		}
+	}
+
+	private addMotivationSection(
+		doc: PDFKit.PDFDocument,
+		contentWidth: number,
+		materialRequest: MaterialRequest
+	): void {
+		const findEvent = (type: Lookup_App_Material_Request_Message_Type_Enum) =>
+			materialRequest.history.find((e) => e.messageType === type);
+
+		const deniedEvent = findEvent(Lookup_App_Material_Request_Message_Type_Enum.Denied);
+		const approvedEvent = findEvent(Lookup_App_Material_Request_Message_Type_Enum.Approved);
+		const additionalConditionsEvent = findEvent(
+			Lookup_App_Material_Request_Message_Type_Enum.AdditionalConditions
+		);
+
+		const motivationEvent = deniedEvent ?? approvedEvent;
+		const motivation = (
+			motivationEvent?.body as MaterialRequestMessageBodyStatusUpdateWithMotivation
+		)?.motivation;
+
+		const conditions = (
+			additionalConditionsEvent?.body as MaterialRequestMessageBodyAdditionalConditions
+		)?.conditions;
+
+		if (!motivation && !conditions?.length) {
+			return;
+		}
+
+		this.h2(
+			doc,
+			contentWidth,
+			this.translationsService.tText(
+				'modules/account/components/material-request-detail-blade/material-request-detail-blade___motivatie'
+			)
+		);
+
+		if (motivation) {
+			this.text(doc, contentWidth, motivation);
+			doc.moveDown(0.5);
+		}
+
+		if (conditions?.length) {
+			for (const condition of conditions) {
+				const conditionTypeLabel = this.getConditionTypeLabel(condition.type);
+				this.h3(doc, contentWidth, conditionTypeLabel);
+				this.text(doc, contentWidth, condition.text);
+				doc.moveDown(0.5);
+			}
+		}
+	}
+
+	private getConditionTypeLabel(type: MaterialRequestAdditionalConditionsType): string {
+		const labels: Record<MaterialRequestAdditionalConditionsType, string> = {
+			[MaterialRequestAdditionalConditionsType.PERMISSION_LICENSE_OWNER]:
+				this.translationsService.tText('Toestemming licentiehouder'),
+			[MaterialRequestAdditionalConditionsType.ATTRIBUTION]:
+				this.translationsService.tText('Bronvermelding'),
+			[MaterialRequestAdditionalConditionsType.PAYMENT]: this.translationsService.tText('Betaling'),
+			[MaterialRequestAdditionalConditionsType.EXTRA_USE_LIMITATION]:
+				this.translationsService.tText('Extra gebruiksbeperking'),
+		};
+		return labels[type] ?? type;
+	}
+
+	/**
+	 * Generate the final summary PDF for a material request (sent when the request reaches a terminal status)
+	 */
+	private async generateFinalSummaryPdf(materialRequest: MaterialRequest): Promise<Buffer> {
+		const doc = new PDFDocument({
+			size: 'A4',
+			margin: 50,
+			bufferPages: true,
+			info: {
+				Title: 'Synthese: jouw aanvraag tot hergebruik',
+				Author: 'meemoo',
+				Subject: 'Synthese: jouw aanvraag tot hergebruik',
+			},
+		});
+
+		doc.registerFont('SofiaProBold', FONT_BOLD);
+		doc.registerFont('SofiaProRegular', FONT_REGULAR);
+		doc.registerFont('SofiaProItalic', FONT_ITALIC);
+
+		const chunks: Buffer[] = [];
+		doc.on('data', (chunk) => chunks.push(Buffer.from(chunk)));
+
+		const pdfBufferPromise = new Promise<Buffer>((resolve, reject) => {
+			doc.on('end', () => resolve(Buffer.concat(chunks)));
+			doc.on('error', reject);
+		});
+
+		const margin = 50;
+		const contentWidth = doc.page.width - margin * 2;
+
+		// h1 — page title
+		this.h1(doc, contentWidth, 'Synthese: jouw aanvraag tot hergebruik');
+
+		// h2 — Gegevens over jouw aanvraag
+		this.h2(doc, contentWidth, this.translationsService.tText('Gegevens over jouw aanvraag'));
+
+		this.h3(doc, contentWidth, this.translationsService.tText('Materiaal'));
+		this.text(doc, contentWidth, materialRequest.objectSchemaName);
+		this.greyText(doc, contentWidth, materialRequest.objectSchemaIdentifier);
+		this.greyText(doc, contentWidth, materialRequest.maintainerName);
+		this.greyText(
+			doc,
+			contentWidth,
+			materialRequest.reuseForm?.durationType === 'PARTIAL'
+				? `${this.formatSeconds(materialRequest.reuseForm.startTime)} - ${this.formatSeconds(materialRequest.reuseForm.endTime)}`
+				: this.translationsService.tText('Volledig bestand')
+		);
+		doc.moveDown(0.5);
+
+		this.h3(doc, contentWidth, this.translationsService.tText('Type aanvraag'));
+		this.text(
+			doc,
+			contentWidth,
+			this.GET_MATERIAL_REQUEST_TRANSLATIONS_BY_TYPE()[materialRequest.type]
+		);
+		doc.moveDown(0.5);
+
+		this.h3(doc, contentWidth, this.translationsService.tText('Aanvrager'));
+		this.text(doc, contentWidth, materialRequest.requesterFullName);
+		this.greyText(doc, contentWidth, materialRequest.requesterMail);
+		doc.moveDown(0.5);
+
+		this.h3(doc, contentWidth, this.translationsService.tText('Organisatie'));
+		this.text(doc, contentWidth, materialRequest.requesterOrganisation);
+		if (materialRequest.requesterOrganisationSector) {
+			this.greyText(doc, contentWidth, materialRequest.requesterOrganisationSector);
+		}
+		doc.moveDown(0.5);
+
+		if (materialRequest.requestGroupName) {
+			this.h3(doc, contentWidth, this.translationsService.tText('Naam aanvraag'));
+			this.text(doc, contentWidth, materialRequest.requestGroupName);
+			doc.moveDown(0.5);
+		}
+
+		doc.moveDown(1);
+
+		// h2 — Status log
+		this.h2(doc, contentWidth, this.translationsService.tText('Status log'));
+
+		const col1Width = contentWidth * 0.4;
+		const col2Width = contentWidth * 0.6;
+
+		const requestedAtLabel = this.translationsService.tText(
+			'modules/account/components/material-request-detail-blade/material-request-detail-blade___aangevraagd-op',
+			{
+				requestedAt: this.formatDateWithTime(
+					materialRequest.requestedAt || materialRequest.createdAt
+				),
+			}
+		);
+
+		const historyRows: [string, string][] = [
+			[requestedAtLabel, `${materialRequest.requesterFullName} (${materialRequest.requesterMail})`],
+			...materialRequest.history
+				.map((event): [string, string] => [
+					this.mapEventToStatusLabel(event, materialRequest),
+					`${event.senderProfile.fullName} (${event.senderProfile.mail}`,
+				])
+				.filter(([label]) => !!label),
+		];
+
+		let tableY = doc.y;
+		tableY += this.renderTableRow(
+			doc,
+			margin,
+			tableY,
+			[
+				{ text: this.translationsService.tText('Status'), width: col1Width },
+				{ text: this.translationsService.tText('Uitgevoerd door'), width: col2Width },
+			],
+			true
+		);
+
+		for (const [status, performer] of historyRows) {
+			if (tableY + 30 > doc.page.height - margin) {
+				doc.addPage();
+				tableY = margin;
+			}
+			tableY += this.renderTableRow(
+				doc,
+				margin,
+				tableY,
+				[
+					{ text: status, width: col1Width },
+					{ text: performer, width: col2Width },
+				],
+				false
+			);
+		}
+
+		doc.y = tableY;
+		doc.moveDown(1.5);
+
+		// Motivation / additional conditions (only shown if applicable)
+		this.addMotivationSection(doc, contentWidth, materialRequest);
+
+		this.addPageNumbers(doc, margin, contentWidth);
 
 		doc.flushPages();
 		doc.end();
@@ -312,6 +622,21 @@ export class MaterialRequestPdfGeneratorService {
 
 	public async generateReuseFormPdfAndUpload(materialRequest: MaterialRequest): Promise<string> {
 		const pdfBuffer = await this.generateReuseFormPdf(materialRequest);
+
+		const fileName = `${randomUUID()}.pdf`;
+		return await this.assetsService.uploadAndTrack(
+			AvoFileUploadAssetType.MATERIAL_REQUEST_MESSAGE_ATTACHMENT,
+			{
+				originalname: fileName,
+				buffer: pdfBuffer,
+			},
+			materialRequest.requesterId,
+			fileName
+		);
+	}
+
+	public async generateFinalSummaryPdfAndUpload(materialRequest: MaterialRequest): Promise<string> {
+		const pdfBuffer = await this.generateFinalSummaryPdf(materialRequest);
 
 		const fileName = `${randomUUID()}.pdf`;
 		return await this.assetsService.uploadAndTrack(

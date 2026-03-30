@@ -48,6 +48,7 @@ import { LocalhostGuard } from '~shared/guards/localhost.guard';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
 import { SortDirection } from '~shared/types';
 import { MaterialRequestMessagesService } from '../services/material-request-messages.service';
+import { MaterialRequestPdfGeneratorService } from '../services/material-request-pdf-generator';
 
 const ALLOWED_FILE_EXTENSIONS = [
 	'pdf',
@@ -459,12 +460,12 @@ export class MaterialRequestMessagesController {
 		return `${kebabCase(parsed.name)}${parsed.ext}`;
 	}
 
-	@Get(':materialRequestId/test-generate-pdf')
+	@Get(':materialRequestId/test-generate-reuse-summary-pdf')
 	@UseGuards(LocalhostGuard)
 	@ApiOperation({
-		description: 'Test PDF generation for a material request by ID. Localhost only.',
+		description: 'Test PDF generation for a material request reuse form. Localhost only.',
 	})
-	public async testGeneratePdf(
+	public async testGenerateReuseSummaryPdf(
 		@Param('materialRequestId') materialRequestId: string,
 		@SessionUser() user: SessionUserEntity,
 		@Referer() referer: string,
@@ -485,6 +486,38 @@ export class MaterialRequestMessagesController {
 		} catch (err) {
 			logAndThrow(
 				new CustomError('Failed to generate material request PDF', err, {
+					materialRequestId,
+				})
+			);
+		}
+	}
+
+	@Get(':materialRequestId/test-generate-complete-summary-pdf')
+	@UseGuards(LocalhostGuard)
+	@ApiOperation({
+		description: 'Test PDF generation for a completed material request. Localhost only.',
+	})
+	public async testGenerateCompleteSummaryPdf(
+		@Param('materialRequestId') materialRequestId: string,
+		@SessionUser() user: SessionUserEntity,
+		@Referer() referer: string,
+		@Ip() ip: string
+	): Promise<{ pdfUrl: string }> {
+		try {
+			const materialRequest = await this.materialRequestsService.findById(
+				materialRequestId,
+				user,
+				referer,
+				ip
+			);
+			const pdfUrl =
+				await this.materialRequestPdfGenerator.generateFinalSummaryPdfAndUpload(materialRequest);
+			return {
+				pdfUrl: pdfUrl,
+			};
+		} catch (err) {
+			logAndThrow(
+				new CustomError('Failed to generate complete summary PDF', err, {
 					materialRequestId,
 				})
 			);

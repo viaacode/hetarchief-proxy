@@ -12,7 +12,18 @@ query findMaterialRequestsById($id: uuid!) {
 			where: { message_type: { _nin: [MESSAGE] } }
 			order_by: { created_at: asc }
 		) {
+			id
 			message_type
+			body
+			sender_profile_id
+			sender {
+				full_name
+				mail
+				organisation {
+					org_identifier
+					skos_pref_label
+				}
+			}
 			created_at
 		}
 		is_pending
