@@ -36,13 +36,14 @@ export interface MaterialRequestEvent {
 	messageType: Lookup_App_Material_Request_Message_Type_Enum;
 	body: MaterialRequestMessageBody;
 	createdAt: string;
-}
-
-export interface MaterialRequestMessage extends MaterialRequestEvent {
 	senderProfile: {
 		id: string;
 		fullName: string;
+		mail: string;
 	};
+}
+
+export interface MaterialRequestMessage extends MaterialRequestEvent {
 	attachmentUrl: string | null;
 	attachmentFilename: string | null;
 }

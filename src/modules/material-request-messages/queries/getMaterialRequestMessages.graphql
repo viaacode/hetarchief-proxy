@@ -7,19 +7,20 @@ query getMaterialRequestMessages($materialRequestId: uuid!, $offset: Int!, $limi
 	) {
 		id
 		message_type
+		body
 		sender_profile_id
 		sender {
 			full_name
+			mail
 			organisation {
 				org_identifier
 				skos_pref_label
 			}
 		}
-		body
 		attachment_url
 		attachment_filename
-		material_request_id
 		created_at
+		material_request_id
 	}
 	app_material_request_messages_and_events_aggregate(
 		where: { material_request_id: { _eq: $materialRequestId } }
