@@ -1,24 +1,9 @@
 import { parse } from 'node:path';
 import { DataService, Locale, StillsObjectType, VideoStillsService } from '@meemoo/admin-core-api';
-import {
-	BadRequestException,
-	Injectable,
-	InternalServerErrorException,
-	NotFoundException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException, } from '@nestjs/common';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { mapLimit } from 'blend-promise-utils';
-import {
-	compact,
-	groupBy,
-	intersection,
-	isArray,
-	isEmpty,
-	isNil,
-	kebabCase,
-	noop,
-	set,
-} from 'lodash';
+import { compact, groupBy, intersection, isArray, isEmpty, isNil, kebabCase, noop, set, } from 'lodash';
 
 import {
 	CreateMaterialRequestDto,
@@ -94,10 +79,7 @@ import {
 	UpdateMaterialRequestStatusMutation,
 	UpdateMaterialRequestStatusMutationVariables,
 } from '~generated/graphql-db-types-hetarchief';
-import {
-	EmailTemplate,
-	type MaterialRequestEmailInfo,
-} from '~modules/campaign-monitor/campaign-monitor.types';
+import { EmailTemplate, type MaterialRequestEmailInfo, } from '~modules/campaign-monitor/campaign-monitor.types';
 
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 import {
@@ -114,7 +96,7 @@ import { OrganisationsService } from '~modules/organisations/services/organisati
 import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
 import { ConfigService } from '@nestjs/config';
 import { AvoStillsStillInfo, AvoUserCommonUser } from '@viaa/avo2-types';
-import { addDays, format, isWithinInterval, subDays } from 'date-fns';
+import { addDays, isWithinInterval, subDays } from 'date-fns';
 import type { Configuration } from '~config';
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
@@ -684,24 +666,6 @@ export class MaterialRequestsService {
 
 		this.trackMaterialRequestStatusChangeEvent(updatedRequest, requestPath, user?.getId(), eventId);
 
-		if (updatedRequest.status === Lookup_App_Material_Request_Status_Enum.New) {
-			// Request has been created
-			// We need to create a PDF-version of the reuse form if the material request has a reuse form
-			// And add it as a special event in the material requests events and messages table
-			if (!isEmpty(updatedRequest.reuseForm)) {
-				const reuseFormPdfUrl =
-					await this.materialRequestPdfGenerator.generateReuseFormPdfAndUpload(updatedRequest);
-				await this.materialRequestMessageService.createMessage(
-					updatedRequest.id,
-					updatedRequest.requesterId,
-					Lookup_App_Material_Request_Message_Type_Enum.ReuseSummary,
-					null,
-					new Date().toISOString(),
-					reuseFormPdfUrl,
-					`Hergebruikformulier-${format(new Date(), 'DDMMYYYYHHmm')}.pdf`
-				);
-			}
-		}
 		if (updatedRequest.status === Lookup_App_Material_Request_Status_Enum.Approved) {
 			// If the request is approved, we need to start prepping the download
 			const materialRequestForDownload = await this.getMaterialRequestForDownloadJob(
