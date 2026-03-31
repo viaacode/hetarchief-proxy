@@ -78,6 +78,21 @@ export class MaterialRequestPdfGeneratorService {
 	}
 
 	/**
+	 * Get's the start and endtime that was selected on the video/audio timeline. eg: 00:12:00 - 00:15:00
+	 * @param materialRequest
+	 * @param locale
+	 */
+	private getFragmentSelection = (materialRequest: MaterialRequest, locale) => {
+		return materialRequest.reuseForm?.durationType === MaterialRequestDurationType.PARTIAL
+			? `${this.formatSecondsToTimestamp(materialRequest.reuseForm.startTime)} - ${this.formatSecondsToTimestamp(materialRequest.reuseForm.endTime)}`
+			: this.tText(
+					'modules/material-request-messages/services/material-request-pdf-generator___volledig-materiaal',
+					{},
+					locale
+				);
+	};
+
+	/**
 	 * Returns the translated values for the text in the pdf using the same keys as the frontend,
 	 * so we hopefully don't have to add these translations twice
 	 * @param request The material request containing the reuse form with the values to get the labels for.
@@ -99,18 +114,15 @@ export class MaterialRequestPdfGeneratorService {
 		return [
 			{
 				label: this.tText(
-					'modules/visitor-space/components/material-request-for-reuse-blade/material-request-for-reuse-blade___materiaalselectie',
+					'modules/material-request-messages/services/material-request-pdf-generator___materiaalselectie',
 					{},
 					locale
 				),
-				value:
-					reuseForm.durationType === MaterialRequestDurationType.PARTIAL
-						? `${this.formatSecondsToTimestamp(reuseForm.startTime)} - ${this.formatSecondsToTimestamp(reuseForm.endTime)}`
-						: this.tText('Volledig materiaal', {}, locale),
+				value: this.getFragmentSelection(request, locale),
 			},
 			{
 				label: this.tText(
-					'modules/visitor-space/components/material-request-for-reuse-blade/material-request-for-reuse-blade___downloadkwaliteit-label',
+					'modules/material-request-messages/services/material-request-pdf-generator___downloadkwaliteit-label',
 					{},
 					locale
 				),
@@ -118,7 +130,7 @@ export class MaterialRequestPdfGeneratorService {
 			},
 			{
 				label: this.tText(
-					'modules/visitor-space/components/material-request-for-reuse-blade/material-request-for-reuse-blade___bedoeld-gebruik-label',
+					'modules/material-request-messages/services/material-request-pdf-generator___bedoeld-gebruik-label',
 					{},
 					locale
 				),
@@ -126,7 +138,7 @@ export class MaterialRequestPdfGeneratorService {
 			},
 			{
 				label: this.tText(
-					'modules/visitor-space/components/material-request-for-reuse-blade/material-request-for-reuse-blade___bedoeld-gebruik-beschrijving-label',
+					'modules/material-request-messages/services/material-request-pdf-generator___bedoeld-gebruik-beschrijving-label',
 					{},
 					locale
 				),
@@ -138,7 +150,7 @@ export class MaterialRequestPdfGeneratorService {
 			},
 			{
 				label: this.tText(
-					'modules/visitor-space/components/material-request-for-reuse-blade/material-request-for-reuse-blade___ontsluiting-materiaal-label',
+					'modules/material-request-messages/services/material-request-pdf-generator___ontsluiting-materiaal-label',
 					{},
 					locale
 				),
@@ -146,7 +158,7 @@ export class MaterialRequestPdfGeneratorService {
 			},
 			{
 				label: this.tText(
-					'modules/visitor-space/components/material-request-for-reuse-blade/material-request-for-reuse-blade___type-ontsluiting-label',
+					'modules/material-request-messages/services/material-request-pdf-generator___type-ontsluiting-label',
 					{},
 					locale
 				),
@@ -154,7 +166,7 @@ export class MaterialRequestPdfGeneratorService {
 			},
 			{
 				label: this.tText(
-					'modules/visitor-space/components/material-request-for-reuse-blade/material-request-for-reuse-blade___wijziging-materiaal-label',
+					'modules/material-request-messages/services/material-request-pdf-generator___wijziging-materiaal-label',
 					{},
 					locale
 				),
@@ -162,7 +174,7 @@ export class MaterialRequestPdfGeneratorService {
 			},
 			{
 				label: this.tText(
-					'modules/visitor-space/components/material-request-for-reuse-blade/material-request-for-reuse-blade___geografisch-gebruik-label',
+					'modules/material-request-messages/services/material-request-pdf-generator___geografisch-gebruik-label',
 					{},
 					locale
 				),
@@ -170,7 +182,7 @@ export class MaterialRequestPdfGeneratorService {
 			},
 			{
 				label: this.tText(
-					'modules/visitor-space/components/material-request-for-reuse-blade/material-request-for-reuse-blade___gebruik-in-de-tijd-label',
+					'modules/material-request-messages/services/material-request-pdf-generator___gebruik-in-de-tijd-label',
 					{},
 					locale
 				),
@@ -178,7 +190,7 @@ export class MaterialRequestPdfGeneratorService {
 			},
 			{
 				label: this.tText(
-					'modules/visitor-space/components/material-request-for-reuse-blade/material-request-for-reuse-blade___bronvermelding-label',
+					'modules/material-request-messages/services/material-request-pdf-generator___bronvermelding-label',
 					{},
 					locale
 				),
@@ -191,21 +203,9 @@ export class MaterialRequestPdfGeneratorService {
 		locale: Locale
 	): Record<MaterialRequestType, string> {
 		return {
-			[MaterialRequestType.MORE_INFO]: this.tText(
-				'modules/material-requests/const/material-requests___type-more-info',
-				{},
-				locale
-			),
-			[MaterialRequestType.REUSE]: this.tText(
-				'modules/material-requests/const/material-requests___type-reuse',
-				{},
-				locale
-			),
-			[MaterialRequestType.VIEW]: this.tText(
-				'modules/material-requests/const/material-requests___type-view',
-				{},
-				locale
-			),
+			[MaterialRequestType.MORE_INFO]: this.tText('Meer info', {}, locale),
+			[MaterialRequestType.REUSE]: this.tText('Hergebruik', {}, locale),
+			[MaterialRequestType.VIEW]: this.tText('Bekijken/beluisteren', {}, locale),
 		};
 	}
 
@@ -257,22 +257,41 @@ export class MaterialRequestPdfGeneratorService {
 		materialRequest: MaterialRequest,
 		locale
 	): void {
-		const fragmentSelection =
-			materialRequest.reuseForm?.durationType === 'PARTIAL'
-				? `${this.formatSecondsToTimestamp(materialRequest.reuseForm.startTime)} - ${this.formatSecondsToTimestamp(materialRequest.reuseForm.endTime)}`
-				: this.tText('Volledig materiaal', {}, locale);
-
 		// h2 — Gegevens over jouw aanvraag
-		this.h2(doc, contentWidth, this.tText('Gegevens over jouw aanvraag', {}, locale));
+		this.h2(
+			doc,
+			contentWidth,
+			this.tText(
+				'modules/material-request-messages/services/material-request-pdf-generator___gegevens-over-jouw-aanvraag',
+				{},
+				locale
+			)
+		);
 
-		this.h3(doc, contentWidth, this.tText('Materiaal', {}, locale));
+		this.h3(
+			doc,
+			contentWidth,
+			this.tText(
+				'modules/material-request-messages/services/material-request-pdf-generator___materiaal',
+				{},
+				locale
+			)
+		);
 		this.text(doc, contentWidth, materialRequest.objectSchemaName);
 		this.greyText(doc, contentWidth, materialRequest.objectSchemaIdentifier);
 		this.greyText(doc, contentWidth, materialRequest.maintainerName);
-		this.greyText(doc, contentWidth, fragmentSelection);
+		this.greyText(doc, contentWidth, this.getFragmentSelection(materialRequest, locale));
 		doc.moveDown(0.5);
 
-		this.h3(doc, contentWidth, this.tText('Type aanvraag', {}, locale));
+		this.h3(
+			doc,
+			contentWidth,
+			this.tText(
+				'modules/material-request-messages/services/material-request-pdf-generator___type-aanvraag',
+				{},
+				locale
+			)
+		);
 		this.text(
 			doc,
 			contentWidth,
@@ -280,19 +299,43 @@ export class MaterialRequestPdfGeneratorService {
 		);
 		doc.moveDown(0.5);
 
-		this.h3(doc, contentWidth, this.tText('Aanvrager', {}, locale));
+		this.h3(
+			doc,
+			contentWidth,
+			this.tText(
+				'modules/material-request-messages/services/material-request-pdf-generator___aanvrager',
+				{},
+				locale
+			)
+		);
 		this.text(doc, contentWidth, materialRequest.requesterFullName);
 		this.greyText(doc, contentWidth, materialRequest.requesterMail);
 		doc.moveDown(0.5);
 
-		this.h3(doc, contentWidth, this.tText('Organisatie', {}, locale));
+		this.h3(
+			doc,
+			contentWidth,
+			this.tText(
+				'modules/material-request-messages/services/material-request-pdf-generator___organisatie',
+				{},
+				locale
+			)
+		);
 		this.text(doc, contentWidth, materialRequest.requesterOrganisation);
 		if (materialRequest.requesterOrganisationSector) {
 			this.greyText(doc, contentWidth, materialRequest.requesterOrganisationSector);
 		}
 		doc.moveDown(0.5);
 
-		this.h3(doc, contentWidth, this.tText('Naam aanvraag', {}, locale));
+		this.h3(
+			doc,
+			contentWidth,
+			this.tText(
+				'modules/material-request-messages/services/material-request-pdf-generator___naam-aanvraag',
+				{},
+				locale
+			)
+		);
 		this.text(doc, contentWidth, materialRequest.requestGroupName);
 		doc.moveDown(1.5);
 	}
@@ -308,7 +351,11 @@ export class MaterialRequestPdfGeneratorService {
 			bufferPages: true,
 			info: {
 				Title: title,
-				Author: this.tText('pdf document author: meemoo', {}, locale),
+				Author: this.tText(
+					'modules/material-request-messages/services/material-request-pdf-generator___pdf-document-author-meemoo',
+					{},
+					locale
+				),
 				Subject: title,
 			},
 		});
@@ -338,27 +385,15 @@ export class MaterialRequestPdfGeneratorService {
 
 		switch (event.messageType) {
 			case Lookup_App_Material_Request_Message_Type_Enum.Approved:
-				return this.tText(
-					'modules/account/components/material-request-detail-blade/material-request-detail-blade___goedgekeurd-op',
-					{ approvedAt: dateStr },
-					locale
-				);
+				return this.tText('Goedgekeurd op {{approvedAt}}', { approvedAt: dateStr }, locale);
 			case Lookup_App_Material_Request_Message_Type_Enum.Denied:
-				return this.tText(
-					'modules/account/components/material-request-detail-blade/material-request-detail-blade___geweigerd-op',
-					{ deniedAt: dateStr },
-					locale
-				);
+				return this.tText('Geweigerd op {{deniedAt}}', { deniedAt: dateStr }, locale);
 			case Lookup_App_Material_Request_Message_Type_Enum.Cancelled:
 			case Lookup_App_Material_Request_Message_Type_Enum.AdditionalConditionsDenied:
-				return this.tText(
-					'modules/account/components/material-request-detail-blade/material-request-detail-blade___geannulleerd-op',
-					{ cancelledAt: dateStr },
-					locale
-				);
+				return this.tText('Geannuleerd op {{cancelledAt}}', { cancelledAt: dateStr }, locale);
 			case Lookup_App_Material_Request_Message_Type_Enum.DownloadAvailable:
 				return this.tText(
-					'modules/account/components/material-request-detail-blade/material-request-detail-blade___download-beschikbaar-van-tot',
+					'Download beschikbaar van tot',
 					{
 						availableAt: this.formatDateWithTime(materialRequest.downloadAvailableAt),
 						expiresAt: this.formatDateWithTime(materialRequest.downloadExpiresAt),
@@ -366,17 +401,9 @@ export class MaterialRequestPdfGeneratorService {
 					locale
 				);
 			case Lookup_App_Material_Request_Message_Type_Enum.AdditionalConditions:
-				return this.tText(
-					'modules/account/components/material-request-detail-blade/material-request-detail-blade___voorwaarden-verstuurd-op',
-					{ sentAt: dateStr },
-					locale
-				);
+				return this.tText('Voorwaarden verstuurd op', { sentAt: dateStr }, locale);
 			case Lookup_App_Material_Request_Message_Type_Enum.AdditionalConditionsAccepted:
-				return this.tText(
-					'modules/account/components/material-request-detail-blade/material-request-detail-blade___voorwaarden-aanvaard-op',
-					{ sentAt: dateStr },
-					locale
-				);
+				return this.tText('Voorwaarden aanvaard op', { sentAt: dateStr }, locale);
 			default:
 				return '';
 		}
@@ -469,15 +496,7 @@ export class MaterialRequestPdfGeneratorService {
 			return;
 		}
 
-		this.h2(
-			doc,
-			contentWidth,
-			this.tText(
-				'modules/account/components/material-request-detail-blade/material-request-detail-blade___motivatie',
-				{},
-				locale
-			)
-		);
+		this.h2(doc, contentWidth, this.tText('Motivatie', {}, locale));
 
 		if (motivation) {
 			this.text(doc, contentWidth, motivation);
@@ -500,18 +519,22 @@ export class MaterialRequestPdfGeneratorService {
 	): string {
 		const labels: Record<MaterialRequestAdditionalConditionsType, string> = {
 			[MaterialRequestAdditionalConditionsType.PERMISSION_LICENSE_OWNER]: this.tText(
-				'Toestemming licentiehouder',
+				'modules/material-request-messages/services/material-request-pdf-generator___toestemming-licentiehouder',
 				{},
 				locale
 			),
 			[MaterialRequestAdditionalConditionsType.ATTRIBUTION]: this.tText(
-				'Bronvermelding',
+				'modules/material-request-messages/services/material-request-pdf-generator___bronvermelding',
 				{},
 				locale
 			),
-			[MaterialRequestAdditionalConditionsType.PAYMENT]: this.tText('Betaling', {}, locale),
+			[MaterialRequestAdditionalConditionsType.PAYMENT]: this.tText(
+				'modules/material-request-messages/services/material-request-pdf-generator___betaling',
+				{},
+				locale
+			),
 			[MaterialRequestAdditionalConditionsType.EXTRA_USE_LIMITATION]: this.tText(
-				'Extra gebruiksbeperking',
+				'modules/material-request-messages/services/material-request-pdf-generator___extra-gebruiksbeperking',
 				{},
 				locale
 			),
@@ -527,20 +550,40 @@ export class MaterialRequestPdfGeneratorService {
 	private async generateReuseFormPdf(materialRequest: MaterialRequest): Promise<Buffer> {
 		const locale = Locale.Nl;
 		const [doc, pdfBufferPromise, margin, contentWidth] = this.setupPdfDoc(
-			this.tText('Synthese: jouw aanvraag tot hergebruik', {}, locale),
+			this.tText(
+				'modules/material-request-messages/services/material-request-pdf-generator___synthese-jouw-aanvraag-tot-hergebruik',
+				{},
+				locale
+			),
 			locale
 		);
 
 		const labels = this.getTranslatedLabels(materialRequest, Locale.Nl);
 
 		// h1 — page title
-		this.h1(doc, contentWidth, this.tText('Synthese: jouw aanvraag tot hergebruik', {}, locale));
+		this.h1(
+			doc,
+			contentWidth,
+			this.tText(
+				'modules/material-request-messages/services/material-request-pdf-generator___synthese-jouw-aanvraag-tot-hergebruik',
+				{},
+				locale
+			)
+		);
 
 		// h2 — Info about the material request
 		this.addGeneralMaterialRequestInfo(doc, contentWidth, materialRequest, locale);
 
 		// h2 — Selected form fields
-		this.h2(doc, contentWidth, this.tText('Geselecteerde formulierwaarden', {}, locale));
+		this.h2(
+			doc,
+			contentWidth,
+			this.tText(
+				'modules/material-request-messages/services/material-request-pdf-generator___geselecteerde-formulierwaarden',
+				{},
+				locale
+			)
+		);
 
 		for (const field of labels) {
 			this.h3(doc, contentWidth, field.label);
@@ -570,18 +613,38 @@ export class MaterialRequestPdfGeneratorService {
 	private async generateFinalSummaryPdf(materialRequest: MaterialRequest): Promise<Buffer> {
 		const locale = Locale.Nl;
 		const [doc, pdfBufferPromise, margin, contentWidth] = this.setupPdfDoc(
-			this.tText('Synthese: jouw aanvraag tot hergebruik', {}, locale),
+			this.tText(
+				'modules/material-request-messages/services/material-request-pdf-generator___synthese-jouw-aanvraag-tot-hergebruik',
+				{},
+				locale
+			),
 			locale
 		);
 
 		// h1 — page title
-		this.h1(doc, contentWidth, this.tText('Synthese: jouw aanvraag tot hergebruik', {}, locale));
+		this.h1(
+			doc,
+			contentWidth,
+			this.tText(
+				'modules/material-request-messages/services/material-request-pdf-generator___synthese-jouw-aanvraag-tot-hergebruik',
+				{},
+				locale
+			)
+		);
 
 		// h2 — Info about the material request
 		this.addGeneralMaterialRequestInfo(doc, contentWidth, materialRequest, locale);
 
 		// h2 — Status log
-		this.h2(doc, contentWidth, this.tText('Status log', {}, locale));
+		this.h2(
+			doc,
+			contentWidth,
+			this.tText(
+				'modules/material-request-messages/services/material-request-pdf-generator___status-log',
+				{},
+				locale
+			)
+		);
 
 		const col1Width = contentWidth * 0.4;
 		const col2Width = contentWidth * 0.6;
@@ -612,8 +675,22 @@ export class MaterialRequestPdfGeneratorService {
 			margin,
 			tableY,
 			[
-				{ text: this.tText('Status', {}, locale), width: col1Width },
-				{ text: this.tText('Uitgevoerd door', {}, locale), width: col2Width },
+				{
+					text: this.tText(
+						'modules/material-request-messages/services/material-request-pdf-generator___status',
+						{},
+						locale
+					),
+					width: col1Width,
+				},
+				{
+					text: this.tText(
+						'modules/material-request-messages/services/material-request-pdf-generator___uitgevoerd-door',
+						{},
+						locale
+					),
+					width: col2Width,
+				},
 			],
 			true
 		);
