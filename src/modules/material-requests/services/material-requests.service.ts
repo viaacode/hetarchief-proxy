@@ -1,24 +1,9 @@
 import { parse } from 'node:path';
 import { DataService, Locale, StillsObjectType, VideoStillsService } from '@meemoo/admin-core-api';
-import {
-	BadRequestException,
-	Injectable,
-	InternalServerErrorException,
-	NotFoundException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException, } from '@nestjs/common';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { mapLimit } from 'blend-promise-utils';
-import {
-	compact,
-	groupBy,
-	intersection,
-	isArray,
-	isEmpty,
-	isNil,
-	kebabCase,
-	noop,
-	set,
-} from 'lodash';
+import { compact, groupBy, intersection, isArray, isEmpty, isNil, kebabCase, noop, set, } from 'lodash';
 
 import {
 	CreateMaterialRequestDto,
@@ -94,10 +79,7 @@ import {
 	UpdateMaterialRequestStatusMutation,
 	UpdateMaterialRequestStatusMutationVariables,
 } from '~generated/graphql-db-types-hetarchief';
-import {
-	EmailTemplate,
-	type MaterialRequestEmailInfo,
-} from '~modules/campaign-monitor/campaign-monitor.types';
+import { EmailTemplate, type MaterialRequestEmailInfo, } from '~modules/campaign-monitor/campaign-monitor.types';
 
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 import {
@@ -123,7 +105,6 @@ import { mapDcTermsFormatToSimpleType } from '~modules/ie-objects/helpers/map-dc
 import { IE_OBJECT_INTRA_CP_LICENSES } from '~modules/ie-objects/ie-objects.conts';
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { MaterialRequestMessagesService } from '~modules/material-request-messages/services/material-request-messages.service';
-import { MaterialRequestPdfGeneratorService } from '~modules/material-request-messages/services/material-request-pdf-generator';
 import { MediahavenJobsWatcherService } from '~modules/mediahaven-jobs-watcher/services/mediahaven-jobs-watcher.service';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
@@ -147,8 +128,7 @@ export class MaterialRequestsService {
 		private eventsService: EventsService,
 		private mediahavenJobWatcherService: MediahavenJobsWatcherService,
 		private configService: ConfigService<Configuration>,
-		private materialRequestMessageService: MaterialRequestMessagesService,
-		private materialRequestPdfGenerator: MaterialRequestPdfGeneratorService
+		private materialRequestMessageService: MaterialRequestMessagesService
 	) {}
 
 	public async findAll(

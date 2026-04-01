@@ -8,9 +8,12 @@ import { format, isValid, Locale as DateFnsLocale, parseISO } from 'date-fns';
 import { enGB, nlBE } from 'date-fns/locale';
 import PDFDocument from 'pdfkit';
 import { Lookup_App_Material_Request_Message_Type_Enum } from '~generated/graphql-db-types-hetarchief';
-import { GET_REUSE_LABELS } from '~modules/material-request-messages/material-request-messages.const';
 import {
-	MaterialRequestAdditionalConditionsType,
+	GET_MATERIAL_REQUEST_EXTRA_CONDITION_LABELS,
+	GET_MATERIAL_REQUEST_TRANSLATIONS_BY_TYPE,
+	GET_REUSE_LABELS,
+} from '~modules/material-request-messages/material-request-messages.const';
+import {
 	type MaterialRequestEvent,
 	type MaterialRequestMessageBodyAdditionalConditions,
 	type MaterialRequestMessageBodyStatusUpdateWithMotivation,
@@ -20,7 +23,6 @@ import {
 	MaterialRequest,
 	MaterialRequestDurationType,
 	MaterialRequestReuseFormKey,
-	MaterialRequestType,
 } from '~modules/material-requests/material-requests.types';
 import { Locale } from '~shared/types/types';
 
@@ -36,6 +38,7 @@ const COLORS = {
 	title: '#00857d',
 	text: '#222222',
 	muted: '#888888',
+	borderColor: '#d1d5db',
 };
 
 const DATE_FNS_LOCALE_BY_LOCALE: Record<Locale, DateFnsLocale> = {
@@ -199,28 +202,6 @@ export class MaterialRequestPdfGeneratorService {
 		];
 	}
 
-	private GET_MATERIAL_REQUEST_TRANSLATIONS_BY_TYPE(
-		locale: Locale
-	): Record<MaterialRequestType, string> {
-		return {
-			[MaterialRequestType.MORE_INFO]: this.translationsService.tText(
-				'modules/material-request-messages/services/material-request-pdf-generator___meer-info',
-				{},
-				locale
-			),
-			[MaterialRequestType.REUSE]: this.translationsService.tText(
-				'modules/material-request-messages/services/material-request-pdf-generator___hergebruik',
-				{},
-				locale
-			),
-			[MaterialRequestType.VIEW]: this.translationsService.tText(
-				'modules/material-request-messages/services/material-request-pdf-generator___bekijken-beluisteren',
-				{},
-				locale
-			),
-		};
-	}
-
 	private h1(doc: PDFKit.PDFDocument, contentWidth: number, text: string): void {
 		doc
 			.font(SOFIA_PRO_BOLD)
@@ -307,7 +288,7 @@ export class MaterialRequestPdfGeneratorService {
 		this.text(
 			doc,
 			contentWidth,
-			this.GET_MATERIAL_REQUEST_TRANSLATIONS_BY_TYPE(locale)[materialRequest.type]
+			GET_MATERIAL_REQUEST_TRANSLATIONS_BY_TYPE(locale)[materialRequest.type]
 		);
 		doc.moveDown(0.5);
 
@@ -450,7 +431,6 @@ export class MaterialRequestPdfGeneratorService {
 		isHeader: boolean
 	): number {
 		const cellPadding = 8;
-		const borderColor = '#d1d5db';
 		const font = isHeader ? SOFIA_PRO_BOLD : SOFIA_PRO_REGULAR;
 
 		const cellHeights = cells.map(
@@ -465,7 +445,7 @@ export class MaterialRequestPdfGeneratorService {
 
 		let cellX = margin;
 		for (const { text, width } of cells) {
-			doc.rect(cellX, rowY, width, rowHeight).stroke(borderColor);
+			doc.rect(cellX, rowY, width, rowHeight).stroke(COLORS.borderColor);
 			doc
 				.font(font)
 				.fontSize(10)
@@ -546,43 +526,13 @@ export class MaterialRequestPdfGeneratorService {
 
 		if (conditions?.length) {
 			for (const condition of conditions) {
-				const conditionTypeLabel = this.getConditionTypeLabel(condition.type, locale);
+				const conditionTypeLabel =
+					GET_MATERIAL_REQUEST_EXTRA_CONDITION_LABELS[condition.type] ?? condition.type;
 				this.h3(doc, contentWidth, conditionTypeLabel);
 				this.text(doc, contentWidth, condition.text);
 				doc.moveDown(0.5);
 			}
 		}
-	}
-
-	private getConditionTypeLabel(
-		type: MaterialRequestAdditionalConditionsType,
-		locale: Locale
-	): string {
-		const labels: Record<MaterialRequestAdditionalConditionsType, string> = {
-			[MaterialRequestAdditionalConditionsType.PERMISSION_LICENSE_OWNER]:
-				this.translationsService.tText(
-					'modules/material-request-messages/services/material-request-pdf-generator___toestemming-licentiehouder',
-					{},
-					locale
-				),
-			[MaterialRequestAdditionalConditionsType.ATTRIBUTION]: this.translationsService.tText(
-				'modules/material-request-messages/services/material-request-pdf-generator___bronvermelding',
-				{},
-				locale
-			),
-			[MaterialRequestAdditionalConditionsType.PAYMENT]: this.translationsService.tText(
-				'modules/material-request-messages/services/material-request-pdf-generator___betaling',
-				{},
-				locale
-			),
-			[MaterialRequestAdditionalConditionsType.EXTRA_USE_LIMITATION]:
-				this.translationsService.tText(
-					'modules/material-request-messages/services/material-request-pdf-generator___extra-gebruiksbeperking',
-					{},
-					locale
-				),
-		};
-		return labels[type] ?? type;
 	}
 
 	/**
