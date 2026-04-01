@@ -88,7 +88,7 @@ export class MaterialRequestMessagesController {
 		PermissionName.VIEW_OWN_MATERIAL_REQUESTS,
 		PermissionName.VIEW_ANY_MATERIAL_REQUESTS
 	)
-	public async getMaterialRequests(
+	public async getMaterialRequestMessages(
 		@Param('materialRequestId') materialRequestId: string,
 		@SessionUser() user: SessionUserEntity,
 		@Query('page', ParseIntPipe) page: number,
@@ -100,8 +100,9 @@ export class MaterialRequestMessagesController {
 			const materialRequest = await this.materialRequestsService.findById(
 				materialRequestId,
 				user,
-				referer,
-				ip
+				false,
+				undefined,
+				undefined
 			);
 
 			const isRequester = user.getId() === materialRequest.requesterId;
@@ -290,12 +291,10 @@ export class MaterialRequestMessagesController {
 	public async getMaterialRequestAttachments(
 		@Param('materialRequestId') materialRequestId: string,
 		@SessionUser() user: SessionUserEntity,
-		@Query() queryDto: MaterialRequestAttachmentsQueryDto,
-		@Referer() referer: string,
-		@Ip() ip: string
+		@Query() queryDto: MaterialRequestAttachmentsQueryDto
 	): Promise<IPagination<MaterialRequestAttachment>> {
 		try {
-			await this.verifyAccessToMaterialRequest(materialRequestId, user, referer, ip);
+			await this.verifyAccessToMaterialRequest(materialRequestId, user);
 
 			return await this.materialRequestMessagesService.findAttachments(
 				materialRequestId,
@@ -330,17 +329,10 @@ export class MaterialRequestMessagesController {
 	public async downloadAttachmentsAsZip(
 		@Param('materialRequestId') materialRequestId: string,
 		@SessionUser() user: SessionUserEntity,
-		@Referer() referer: string,
-		@Ip() ip: string,
 		@Res() res: Response
 	): Promise<void> {
 		try {
-			const materialRequest = await this.verifyAccessToMaterialRequest(
-				materialRequestId,
-				user,
-				referer,
-				ip
-			);
+			const materialRequest = await this.verifyAccessToMaterialRequest(materialRequestId, user);
 
 			const attachments =
 				await this.materialRequestMessagesService.getAllAttachments(materialRequestId);
@@ -402,7 +394,7 @@ export class MaterialRequestMessagesController {
 		@Ip() ip: string
 	): Promise<{ url: string; filename: string }> {
 		try {
-			await this.verifyAccessToMaterialRequest(materialRequestId, user, referer, ip);
+			await this.verifyAccessToMaterialRequest(materialRequestId, user);
 
 			const attachment = await this.materialRequestMessagesService.findAttachmentById(
 				materialRequestId,
@@ -430,15 +422,14 @@ export class MaterialRequestMessagesController {
 
 	private async verifyAccessToMaterialRequest(
 		materialRequestId: string,
-		user: SessionUserEntity,
-		referer: string,
-		ip: string
+		user: SessionUserEntity
 	): Promise<MaterialRequest> {
 		const materialRequest = await this.materialRequestsService.findById(
 			materialRequestId,
 			user,
-			referer,
-			ip
+			false,
+			undefined,
+			undefined
 		);
 
 		const isRequester = user.getId() === materialRequest.requesterId;
@@ -467,16 +458,15 @@ export class MaterialRequestMessagesController {
 	})
 	public async testGenerateReuseSummaryPdf(
 		@Param('materialRequestId') materialRequestId: string,
-		@SessionUser() user: SessionUserEntity,
-		@Referer() referer: string,
-		@Ip() ip: string
+		@SessionUser() user: SessionUserEntity
 	): Promise<{ pdfUrl: string }> {
 		try {
 			const materialRequest = await this.materialRequestsService.findById(
 				materialRequestId,
 				user,
-				referer,
-				ip
+				false,
+				undefined,
+				undefined
 			);
 			const pdfUrl =
 				await this.materialRequestPdfGenerator.generateReuseFormPdfAndUpload(materialRequest);
@@ -499,16 +489,15 @@ export class MaterialRequestMessagesController {
 	})
 	public async testGenerateCompleteSummaryPdf(
 		@Param('materialRequestId') materialRequestId: string,
-		@SessionUser() user: SessionUserEntity,
-		@Referer() referer: string,
-		@Ip() ip: string
+		@SessionUser() user: SessionUserEntity
 	): Promise<{ pdfUrl: string }> {
 		try {
 			const materialRequest = await this.materialRequestsService.findById(
 				materialRequestId,
 				user,
-				referer,
-				ip
+				false,
+				undefined,
+				undefined
 			);
 			const pdfUrl =
 				await this.materialRequestPdfGenerator.generateFinalSummaryPdfAndUpload(materialRequest);

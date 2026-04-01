@@ -72,9 +72,7 @@ describe('MaterialRequestsController', () => {
 				new SessionUserEntity({
 					...mockUser,
 					permissions: [PermissionName.VIEW_ANY_MATERIAL_REQUESTS],
-				}),
-				'referer',
-				''
+				})
 			);
 
 			expect(materialRequests).toEqual(mockMaterialRequestsResponse);
