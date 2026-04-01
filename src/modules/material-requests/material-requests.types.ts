@@ -12,7 +12,12 @@ import {
 	type UpdateMaterialRequestMutation,
 	UpdateMaterialRequestStatusMutation,
 } from '~generated/graphql-db-types-hetarchief';
-import { IeObjectAccessThrough, IeObjectLicense, IeObjectRepresentation, IeObjectType, } from '~modules/ie-objects/ie-objects.types';
+import {
+	IeObjectAccessThrough,
+	IeObjectLicense,
+	IeObjectRepresentation,
+	IeObjectType,
+} from '~modules/ie-objects/ie-objects.types';
 import { MaterialRequestEvent } from '~modules/material-request-messages/material-request-messages.types';
 import type { Locale } from '~shared/types/types';
 

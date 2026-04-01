@@ -165,17 +165,17 @@ export class IeObjectsController {
 	/**
 	 * Export metadata to xml
 	 * @param ip
-	 * @param schemaIdentifier ieObjectId (eg: https://data.hetarchief.be/id/entity/086348mc8s)
+	 * @param ieObjectId ieObjectId (eg: https://data.hetarchief.be/id/entity/086348mc8s)
 	 * @param currentPageUrl The current page that is open on the client's browser (for event logging purposes)
 	 * @param referer
 	 * @param request
 	 * @param res
 	 * @param user
 	 */
-	@Get(':schemaIdentifier/export/xml')
+	@Get('export/xml')
 	@Header('Content-Type', 'text/xml')
 	public async exportXml(
-		@Param('schemaIdentifier') schemaIdentifier: string,
+		@Query('ieObjectId') ieObjectId: string,
 		@Query('currentPageUrl') currentPageUrl: string,
 		@Referer() referer: string,
 		@Ip() ip: string,
@@ -183,8 +183,6 @@ export class IeObjectsController {
 		@Res() res: Response,
 		@SessionUser() user: SessionUserEntity
 	): Promise<void> {
-		const ieObjectId =
-			await this.ieObjectsService.getObjectIdBySchemaIdentifierCached(schemaIdentifier);
 		const objectMetadata = await this.ieObjectsService.findMetadataByIeObjectId(
 			ieObjectId,
 			null,
@@ -239,16 +237,16 @@ export class IeObjectsController {
 	 * Export metadata to csv
 	 * @param referer
 	 * @param ip
-	 * @param schemaIdentifier ieObjectId (eg: https://data.hetarchief.be/id/entity/086348mc8s)
+	 * @param ieObjectId The iri object id of the ie object (eg: https://data.hetarchief.be/id/entity/086348mc8s)
 	 * @param currentPageUrl
 	 * @param request
 	 * @param res
 	 * @param user
 	 */
-	@Get(':schemaIdentifier/export/csv')
+	@Get('export/csv')
 	@Header('Content-Type', 'text/csv')
 	public async exportCsv(
-		@Param('schemaIdentifier') schemaIdentifier: string,
+		@Query('ieObjectId') ieObjectId: string,
 		@Query('currentPageUrl') currentPageUrl: string,
 		@Referer() referer: string,
 		@Ip() ip: string,
@@ -256,8 +254,6 @@ export class IeObjectsController {
 		@Res() res: Response,
 		@SessionUser() user: SessionUserEntity
 	): Promise<void> {
-		const ieObjectId =
-			await this.ieObjectsService.getObjectIdBySchemaIdentifierCached(schemaIdentifier);
 		const objectMetadata = await this.ieObjectsService.findMetadataByIeObjectId(
 			ieObjectId,
 			null,
@@ -711,55 +707,72 @@ export class IeObjectsController {
 	}
 
 	/**
-	 * Get ie objects by their id (schema identifiers)
+	 * Get ie objects by their schemaIdentifier (aka PID)
 	 * @param schemaIdentifiers ie object schema_identifiers. eg: 086348mc8s, qstt4fps28
-	 * @param referer site making the request. eg: https://qas-v3.hetarchief.be
-	 * @param ip Ip of the client making the request. eg: 172.17.45.216
+	 * @param ieObjectIds
 	 * @param user Currently logged-in user
 	 * @param resolveThumbnailUrl
+	 * @param referer site making the request. eg: https://qas-v3.hetarchief.be
+	 * @param ip Ip of the client making the request. eg: 172.17.45.216
 	 */
 	@Get()
 	public async getIeObjectsByIds(
-		@Query('ids') schemaIdentifiers: string[],
-		@Referer() referer: string | null,
-		@Ip() ip: string,
+		@Query('schemaIdentifiers') schemaIdentifiers: string | string[] | undefined,
+		@Query('ieObjectIds') ieObjectIds: string | string[] | undefined,
 		@SessionUser() user: SessionUserEntity,
-		@Query('resolveThumbnailUrl') resolveThumbnailUrl = true
+		@Query('resolveThumbnailUrl') resolveThumbnailUrl: 'true' | 'false',
+		@Referer() referer: string | null,
+		@Ip() ip: string
 	): Promise<(Partial<IeObject> | null)[]> {
 		try {
-			let ids: string[];
-			if (typeof schemaIdentifiers === 'string') {
-				ids = [schemaIdentifiers];
+			let ieObjectIdsResolved: string[];
+			if (schemaIdentifiers) {
+				let schemaIdentifiersResolved: string[];
+				if (typeof schemaIdentifiers === 'string') {
+					schemaIdentifiersResolved = [schemaIdentifiers];
+				} else {
+					schemaIdentifiersResolved = schemaIdentifiers;
+				}
+				if (schemaIdentifiersResolved?.length) {
+					// Convert schemaIdentifiers to ieObjectIds
+					// Convert qs6d5p9579 => https://data-qas.hetarchief.be/id/entity/qs6d5p9579
+					ieObjectIdsResolved = await mapLimit(
+						schemaIdentifiersResolved,
+						12,
+						async (schemaIdentifier: string): Promise<string | null> => {
+							return await this.ieObjectsService.getObjectIdBySchemaIdentifierCached(
+								schemaIdentifier
+							);
+						}
+					);
+				}
 			} else {
-				ids = schemaIdentifiers;
+				if (typeof ieObjectIds === 'string') {
+					ieObjectIdsResolved = [ieObjectIds];
+				} else {
+					ieObjectIdsResolved = ieObjectIds;
+				}
 			}
 
 			const visitorSpaceAccessInfo =
 				await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
 
 			const limitedObjects: Partial<IeObject | null>[] = await mapLimit(
-				ids,
-				12,
-				async (schemaIdentifier: string): Promise<Partial<IeObject> | null> => {
+				ieObjectIdsResolved,
+				20,
+				async (ieObjectId: string): Promise<Partial<IeObject> | null> => {
 					try {
 						if (
-							!schemaIdentifier ||
-							schemaIdentifier.length === 0 ||
-							schemaIdentifier.includes('.well-known')
+							!ieObjectId ||
+							ieObjectId.length === 0 ||
+							ieObjectId.includes('.well-known') // strange nextjs ssr requests
 						) {
-							return null;
-						}
-
-						const ieObjectId: string | null =
-							await this.ieObjectsService.getObjectIdBySchemaIdentifierCached(schemaIdentifier);
-
-						if (!ieObjectId) {
 							return null;
 						}
 
 						const ieObject = await this.ieObjectsService.findByIeObjectId(
 							ieObjectId,
-							resolveThumbnailUrl,
+							resolveThumbnailUrl === 'true',
 							referer,
 							ip
 						);
@@ -798,18 +811,26 @@ export class IeObjectsController {
 
 						return limitedObject;
 					} catch (err) {
-						throw new CustomError('Failed to retrieve object details in getIeObjectsByIds', err, {
-							schemaIdentifier,
-						});
+						throw new CustomError(
+							'Failed to retrieve object details by id in getIeObjectsByIeObjectIds',
+							err,
+							{
+								schemaIdentifier: ieObjectId,
+							}
+						);
 					}
 				}
 			);
 
 			return limitedObjects;
 		} catch (err) {
-			const error = new CustomError('Failed to retrieve object details in getIeObjectsByIds', err, {
-				schemaIdentifiers,
-			});
+			const error = new CustomError(
+				'Failed to retrieve object details in getIeObjectsBySchemaIdentifiers',
+				err,
+				{
+					schemaIdentifiers,
+				}
+			);
 			logAndThrow(error);
 		}
 	}

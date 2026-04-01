@@ -116,11 +116,17 @@ export class MaterialRequestsController {
 	public async getMaterialRequestById(
 		@Param('id', ParseUUIDPipe) id: string,
 		@SessionUser() user: SessionUserEntity,
+		@Query('resolveThumbnailUrl') resolveThumbnailUrl: 'true' | 'false',
 		@Referer() referer: string,
-		@Ip() ip: string,
-		@Query('resolveThumbnailUrl') resolveThumbnailUrl = true
+		@Ip() ip: string
 	): Promise<MaterialRequest> {
-		return await this.materialRequestsService.findById(id, user, resolveThumbnailUrl, referer, ip);
+		return await this.materialRequestsService.findById(
+			id,
+			user,
+			resolveThumbnailUrl === 'true',
+			referer,
+			ip
+		);
 	}
 
 	@Get(':id/download')

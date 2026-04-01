@@ -527,40 +527,6 @@ export class IeObjectsService {
 	}
 
 	/**
-	 * Get one Intellectual Entity object by its object id (eg: https://data.hetarchief.be/id/entity/086348mc8s)
-	 * (not all details are available in ES)
-	 */
-	public async findByIeObjectId(
-		objectId: string,
-		resolveThumbnailUrl: boolean,
-		referer: string,
-		ip: string
-	): Promise<Partial<IeObject> | null> {
-		// Cache the object for 60 minutes since we need it once for server side rendering and once for client side rendering
-		const responses = await this.cacheManager.wrap(
-			CACHE_KEY_PREFIX_IE_OBJECT_DETAIL + objectId,
-			() => this.getIeObjectByIdFromDb(objectId),
-			// cache for 1 hour
-			hoursToSeconds(1)
-		);
-
-		// Get parent ieObject if it exists
-		const parentIeObjectId = (responses[IeObjectDetailResponseIndex.IsPartOf] as GetIsPartOfQuery)
-			?.isPartOf?.[0]?.isPartOf?.id;
-		let parentIeObject: Partial<IeObject> | null = null;
-		if (parentIeObjectId) {
-			parentIeObject = await this.findByIeObjectId(
-				parentIeObjectId,
-				resolveThumbnailUrl,
-				referer,
-				ip
-			);
-		}
-
-		return await this.adaptFromDB(responses, parentIeObject, resolveThumbnailUrl, referer, ip);
-	}
-
-	/**
 	 * Get one Intellectual Entity object thumbnail by its object id (eg: https://data.hetarchief.be/id/entity/086348mc8s)
 	 */
 	public async findThumbnailByIeObjectId(
@@ -1640,6 +1606,40 @@ export class IeObjectsService {
 				representationId,
 			});
 		}
+	}
+
+	/**
+	 * Get one Intellectual Entity object by its object id (eg: https://data.hetarchief.be/id/entity/086348mc8s)
+	 * (not all details are available in ES)
+	 */
+	public async findByIeObjectId(
+		objectId: string,
+		resolveThumbnailUrl: boolean,
+		referer: string,
+		ip: string
+	): Promise<Partial<IeObject> | null> {
+		// Cache the object for 60 minutes since we need it once for server side rendering and once for client side rendering
+		const responses = await this.cacheManager.wrap(
+			CACHE_KEY_PREFIX_IE_OBJECT_DETAIL + objectId,
+			() => this.getIeObjectByIdFromDb(objectId),
+			// cache for 1 hour
+			hoursToSeconds(1)
+		);
+
+		// Get parent ieObject if it exists
+		const parentIeObjectId = (responses[IeObjectDetailResponseIndex.IsPartOf] as GetIsPartOfQuery)
+			?.isPartOf?.[0]?.isPartOf?.id;
+		let parentIeObject: Partial<IeObject> | null = null;
+		if (parentIeObjectId) {
+			parentIeObject = await this.findByIeObjectId(
+				parentIeObjectId,
+				resolveThumbnailUrl,
+				referer,
+				ip
+			);
+		}
+
+		return await this.adaptFromDB(responses, parentIeObject, resolveThumbnailUrl, referer, ip);
 	}
 
 	private async getObjectIdBySchemaIdentifier(schemaIdentifier: string): Promise<string | null> {
