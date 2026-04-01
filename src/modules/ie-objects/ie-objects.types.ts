@@ -218,6 +218,11 @@ export interface IeObject {
 	mentions?: Mention[];
 }
 
+export type IeObjectForAccessCheck = Pick<
+	IeObject,
+	'schemaIdentifier' | 'licenses' | 'maintainerId' | 'sector'
+>;
+
 export type IeObjectForThumbnailOnly = Pick<
 	IeObject,
 	'thumbnailUrl' | 'schemaIdentifier' | 'licenses' | 'maintainerId' | 'sector' | 'dctermsFormat'

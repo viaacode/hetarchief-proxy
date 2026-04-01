@@ -41,6 +41,7 @@ import {
 	AutocompleteField,
 	type IeObject,
 	IeObjectAccessThrough,
+	IeObjectForAccessCheck,
 	IeObjectLicense,
 	type IeObjectSeo,
 	type IeObjectsWithAggregations,
@@ -56,12 +57,7 @@ import { logAndThrow } from '@meemoo/admin-core-api/dist/src/modules/shared/help
 import { mapLimit } from 'blend-promise-utils';
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
-import {
-	ALL_INDEXES,
-	IeObjectsSearchFilterField,
-	Operator,
-	OrderProperty,
-} from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
+import { ALL_INDEXES, IeObjectsSearchFilterField, Operator, OrderProperty, } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
 import { mapDcTermsFormatToSimpleType } from '~modules/ie-objects/helpers/map-dc-terms-format-to-simple-type';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupName } from '~modules/users/types';
@@ -143,7 +139,7 @@ export class IeObjectsController {
 	): Promise<IeObjectSeo> {
 		const ieObjectId =
 			await this.ieObjectsService.getObjectIdBySchemaIdentifierCached(schemaIdentifier);
-		const ieObject = await this.ieObjectsService.findByIeObjectId(ieObjectId, referer, ip);
+		const ieObject = await this.ieObjectsService.findByIeObjectId(ieObjectId, true, referer, ip);
 
 		const hasPublicAccess = ieObject?.licenses.some((license: IeObjectLicense) =>
 			[
@@ -220,7 +216,7 @@ export class IeObjectsController {
 			await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
 
 		const xmlContent = convertObjectToXml(
-			limitAccessToObjectDetails(objectMetadata, {
+			limitAccessToObjectDetails(objectMetadata as IeObjectForAccessCheck, {
 				userId: user?.getId(),
 				isKeyUser: user.getIsKeyUser(),
 				sector: user.getSector(),
@@ -292,15 +288,18 @@ export class IeObjectsController {
 		const visitorSpaceAccessInfo =
 			await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
 
-		const censoredObjectMetadata = limitAccessToObjectDetails(objectMetadata, {
-			userId: user?.getId(),
-			isKeyUser: user.getIsKeyUser(),
-			sector: user.getSector(),
-			groupId: user.getGroupId(),
-			maintainerId: user.getOrganisationId(),
-			accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
-			accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
-		});
+		const censoredObjectMetadata = limitAccessToObjectDetails(
+			objectMetadata as IeObjectForAccessCheck,
+			{
+				userId: user?.getId(),
+				isKeyUser: user.getIsKeyUser(),
+				sector: user.getSector(),
+				groupId: user.getGroupId(),
+				maintainerId: user.getOrganisationId(),
+				accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
+				accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
+			}
+		);
 
 		const csvContent = convertObjectToCsv(censoredObjectMetadata);
 		res.set({
@@ -496,7 +495,7 @@ export class IeObjectsController {
 		const licensedSearchResult = {
 			...searchResult,
 			items: searchResult.items.map((item) =>
-				limitAccessToObjectDetails(item, {
+				limitAccessToObjectDetails(item as IeObjectForAccessCheck, {
 					userId: user?.getId(),
 					isKeyUser: user.getIsKeyUser(),
 					sector: user.getSector(),
@@ -717,13 +716,15 @@ export class IeObjectsController {
 	 * @param referer site making the request. eg: https://qas-v3.hetarchief.be
 	 * @param ip Ip of the client making the request. eg: 172.17.45.216
 	 * @param user Currently logged-in user
+	 * @param resolveThumbnailUrl
 	 */
 	@Get()
 	public async getIeObjectsByIds(
 		@Query('ids') schemaIdentifiers: string[],
 		@Referer() referer: string | null,
 		@Ip() ip: string,
-		@SessionUser() user: SessionUserEntity
+		@SessionUser() user: SessionUserEntity,
+		@Query('resolveThumbnailUrl') resolveThumbnailUrl = true
 	): Promise<(Partial<IeObject> | null)[]> {
 		try {
 			let ids: string[];
@@ -756,7 +757,12 @@ export class IeObjectsController {
 							return null;
 						}
 
-						const ieObject = await this.ieObjectsService.findByIeObjectId(ieObjectId, referer, ip);
+						const ieObject = await this.ieObjectsService.findByIeObjectId(
+							ieObjectId,
+							resolveThumbnailUrl,
+							referer,
+							ip
+						);
 
 						if (!ieObject) {
 							return null;
@@ -764,7 +770,7 @@ export class IeObjectsController {
 
 						// Censor the object based on the licenses and sector
 						// Only leave the properties that the current user can see of this object
-						const limitedObject = limitAccessToObjectDetails(ieObject, {
+						const limitedObject = limitAccessToObjectDetails(ieObject as IeObjectForAccessCheck, {
 							userId: user?.getId(),
 							isKeyUser: user.getIsKeyUser(),
 							sector: user.getSector(),

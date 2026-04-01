@@ -32,6 +32,8 @@ mutation updateMaterialRequestForUser(
 			status
 			group_id
 			name
+			download_status
+			download_available_at
 			requester_capacity
 			organisation
 			organisation_sector
@@ -67,6 +69,7 @@ mutation updateMaterialRequestForUser(
 					skos_pref_label
 					ha_org_has_logo
 					skos_alt_label
+					ha_org_sector
 					schemaContactPoint {
 						schema_contact_type
 						schema_email
@@ -75,6 +78,9 @@ mutation updateMaterialRequestForUser(
 					visitorSpace {
 						slug
 					}
+				}
+				schemaLicenses {
+					schema_license
 				}
 			}
 			ie_object_representation_id

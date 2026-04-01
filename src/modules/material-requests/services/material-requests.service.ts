@@ -83,8 +83,10 @@ import { EmailTemplate, type MaterialRequestEmailInfo, } from '~modules/campaign
 
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 import {
+	type IeObject,
 	IeObjectAccessThrough,
 	IeObjectLicense,
+	type IeObjectSector,
 	IeObjectsVisitorSpaceInfo,
 	IeObjectType,
 	SimpleIeObjectType,
@@ -135,6 +137,7 @@ export class MaterialRequestsService {
 		inputQuery: MaterialRequestsQueryDto,
 		isPersonal: boolean,
 		user: SessionUserEntity,
+		resolveThumbnailUrl: boolean,
 		referer: string,
 		ip: string
 	): Promise<IPagination<MaterialRequest>> {
@@ -309,7 +312,15 @@ export class MaterialRequestsService {
 		return Pagination<MaterialRequest>({
 			items: await Promise.all(
 				materialRequestsResponse.app_material_requests.map((mr) =>
-					this.adapt(mr, organisations, visitorSpaceAccessInfo, user, referer, ip)
+					this.adapt(
+						mr,
+						resolveThumbnailUrl,
+						organisations,
+						visitorSpaceAccessInfo,
+						user,
+						referer,
+						ip
+					)
 				)
 			),
 			page,
@@ -321,6 +332,7 @@ export class MaterialRequestsService {
 	public async findById(
 		id: string,
 		user: SessionUserEntity,
+		resolveThumbnailUrl: boolean,
 		referer: string,
 		ip: string
 	): Promise<MaterialRequest> {
@@ -346,6 +358,7 @@ export class MaterialRequestsService {
 
 		return this.adapt(
 			materialRequestResponse.app_material_requests[0],
+			resolveThumbnailUrl,
 			organisations,
 			visitorSpaceAccessInfo,
 			user,
@@ -394,11 +407,11 @@ export class MaterialRequestsService {
 			},
 		};
 
-		const { insert_app_material_requests_one: createdMaterialRequest } =
-			await this.dataService.execute<
-				InsertMaterialRequestMutation,
-				InsertMaterialRequestMutationVariables
-			>(InsertMaterialRequestDocument, variables);
+		const createdMaterialRequestResponse = await this.dataService.execute<
+			InsertMaterialRequestMutation,
+			InsertMaterialRequestMutationVariables
+		>(InsertMaterialRequestDocument, variables);
+		const createdMaterialRequest = createdMaterialRequestResponse.insert_app_material_requests_one;
 
 		createdMaterialRequest.material_request_reuse_form_values =
 			await this.insertReuseFormForMaterialRequest(
@@ -417,6 +430,7 @@ export class MaterialRequestsService {
 
 		return this.adapt(
 			createdMaterialRequest,
+			true,
 			organisations,
 			visitorSpaceAccessInfo,
 			user,
@@ -484,7 +498,15 @@ export class MaterialRequestsService {
 		const visitorSpaceAccessInfo =
 			await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
 
-		return this.adapt(updatedRequest, organisations, visitorSpaceAccessInfo, user, referer, ip);
+		return this.adapt(
+			updatedRequest,
+			true,
+			organisations,
+			visitorSpaceAccessInfo,
+			user,
+			referer,
+			ip
+		);
 	}
 
 	public async deleteMaterialRequest(
@@ -587,7 +609,7 @@ export class MaterialRequestsService {
 		requestPath: string,
 		eventId?: string
 	): Promise<MaterialRequest> {
-		const currentRequest = await this.findById(materialRequestId, user, referer, ip);
+		const currentRequest = await this.findById(materialRequestId, user, false, referer, ip);
 
 		const { status, motivation } = statusOptions;
 
@@ -635,7 +657,7 @@ export class MaterialRequestsService {
 		});
 
 		const graphQlMaterialRequest =
-			updateMaterialRequestStatusResponse.update_app_material_requests.returning?.[0];
+			updateMaterialRequestStatusResponse.update_app_material_requests_by_pk;
 
 		if (isEmpty(graphQlMaterialRequest)) {
 			const error = customError('Failed to update material request status', null, {
@@ -655,6 +677,7 @@ export class MaterialRequestsService {
 
 		const updatedRequest = await this.adapt(
 			graphQlMaterialRequest,
+			true,
 			organisations,
 			visitorSpaceAccessInfo,
 			user,
@@ -884,6 +907,7 @@ export class MaterialRequestsService {
 	 */
 	public async adapt(
 		graphQlMaterialRequest: GqlMaterialRequest,
+		resolveThumbnailUrl: boolean,
 		organisations?: Organisation[],
 		visitorSpaceAccessInfo?: IeObjectsVisitorSpaceInfo,
 		user?: SessionUserEntity,
@@ -918,17 +942,29 @@ export class MaterialRequestsService {
 			reuseForm = null;
 		}
 
-		const objectId = graphQlMaterialRequest.intellectualEntity?.id;
-		const objectSchemaIdentifier = graphQlMaterialRequest.intellectualEntity?.schema_identifier;
+		const rawObject: GqlMaterialRequest['intellectualEntity'] =
+			graphQlMaterialRequest.intellectualEntity;
+		const objectId = rawObject?.id;
+		const objectSchemaIdentifier = rawObject?.schema_identifier;
 		let objectAccessThrough: IeObjectAccessThrough[] = [];
 		let objectLicences: IeObjectLicense[] = [];
 		let hasAccessToEssence = false;
 		if (user && objectId) {
-			const access = await this.getAccessThroughAndLicences(
-				objectId,
+			const objectForAccessChecks: Pick<
+				IeObject,
+				'licenses' | 'schemaIdentifier' | 'maintainerId' | 'sector'
+			> = {
+				maintainerId: rawObject.schemaMaintainer.org_identifier,
+				schemaIdentifier: rawObject.schema_identifier,
+				licenses: rawObject.schemaLicenses.map(
+					(license) => license.schema_license
+				) as IeObjectLicense[],
+				sector: rawObject.schemaMaintainer.ha_org_sector as IeObjectSector,
+			};
+			const access = this.getAccessThroughAndLicences(
+				objectForAccessChecks,
 				visitorSpaceAccessInfo,
-				user,
-				ip
+				user
 			);
 			objectAccessThrough = access.objectAccessThrough;
 			objectLicences = access.objectLicences;
@@ -940,15 +976,14 @@ export class MaterialRequestsService {
 			objectLicences?.includes(IeObjectLicense.PUBLIC_DOMAIN);
 
 		let objectThumbnailUrl: string | undefined;
-		const ieObjectThumbnailUrl =
-			graphQlMaterialRequest.intellectualEntity?.schemaThumbnail?.schema_thumbnail_url?.[0];
+		const ieObjectThumbnailUrl = rawObject?.schemaThumbnail?.schema_thumbnail_url?.[0];
 		const isComplexFlow = this.isComplexReuseFlow(
-			graphQlMaterialRequest.intellectualEntity?.dctermsFormat?.[0]?.dcterms_format as IeObjectType,
+			rawObject?.dctermsFormat?.[0]?.dcterms_format as IeObjectType,
 			objectLicences,
 			user?.getIsKeyUser()
 		);
 
-		if (!hasAccessToEssence) {
+		if (!hasAccessToEssence || !resolveThumbnailUrl) {
 			objectThumbnailUrl = undefined;
 		} else if (isComplexFlow) {
 			// New material request with reuse form flow
@@ -976,22 +1011,20 @@ export class MaterialRequestsService {
 
 		const objectRepresentations = await this.ieObjectsService.adaptRepresentations(
 			[graphQlMaterialRequest.objectRepresentation],
+			resolveThumbnailUrl,
+			isPublicDomain,
 			referer,
-			ip,
-			isPublicDomain
+			ip
 		);
 
 		return {
 			id: graphQlMaterialRequest.id,
 			objectId,
 			objectSchemaIdentifier,
-			objectSchemaName: graphQlMaterialRequest.intellectualEntity?.schema_name,
-			objectDctermsFormat: graphQlMaterialRequest.intellectualEntity?.dctermsFormat?.[0]
-				?.dcterms_format as IeObjectType,
+			objectSchemaName: rawObject?.schema_name,
+			objectDctermsFormat: rawObject?.dctermsFormat?.[0]?.dcterms_format as IeObjectType,
 			objectThumbnailUrl,
-			objectPublishedOrCreatedDate:
-				graphQlMaterialRequest.intellectualEntity?.schema_date_published ||
-				graphQlMaterialRequest.intellectualEntity?.created_at,
+			objectPublishedOrCreatedDate: rawObject?.schema_date_published || rawObject?.created_at,
 			objectAccessThrough,
 			objectLicences,
 			objectRepresentationId: graphQlMaterialRequest.ie_object_representation_id,
@@ -1021,8 +1054,7 @@ export class MaterialRequestsService {
 			maintainerId: organisation?.schemaIdentifier,
 			maintainerName: organisation?.schemaName,
 			maintainerSlug:
-				graphQlMaterialRequest.intellectualEntity?.schemaMaintainer?.visitorSpace?.slug ||
-				kebabCase(organisation?.schemaName),
+				rawObject?.schemaMaintainer?.visitorSpace?.slug || kebabCase(organisation?.schemaName),
 			maintainerLogo: organisation?.logo
 				// TODO remove this workaround once the INT organisations assets are available
 				.replace('https://assets-int.viaa.be/images/', 'https://assets.viaa.be/images/')
@@ -1048,7 +1080,7 @@ export class MaterialRequestsService {
 
 		let downloadStatus = download_status ?? null;
 
-		// The downloadStatus says it succeeded but we have no url, so we can assume something went wrong
+		// The downloadStatus says it succeeded, but we have no url, so we can assume something went wrong
 		if (
 			!download_available_at &&
 			download_status === Lookup_App_Material_Request_Download_Status_Enum.Succeeded
@@ -1112,18 +1144,15 @@ export class MaterialRequestsService {
 		};
 	}
 
-	public async getAccessThroughAndLicences(
-		objectId: string,
+	public getAccessThroughAndLicences(
+		objectMetadata: Pick<IeObject, 'licenses' | 'schemaIdentifier' | 'maintainerId' | 'sector'>,
 		visitorSpaceAccessInfo: IeObjectsVisitorSpaceInfo,
-		user: SessionUserEntity,
-		ip: string
-	): Promise<{
+		user: SessionUserEntity
+	): {
 		objectAccessThrough: IeObjectAccessThrough[];
 		objectLicences: IeObjectLicense[];
 		hasAccessToEssence: boolean;
-	}> {
-		const objectMetadata = await this.ieObjectsService.findByIeObjectId(objectId, null, ip);
-
+	} {
 		const censoredObjectMetadata = limitAccessToObjectDetails(objectMetadata, {
 			userId: user.getId(),
 			isKeyUser: user.getIsKeyUser(),
@@ -1177,7 +1206,7 @@ export class MaterialRequestsService {
 				5,
 				// Requires arrow wrapper, because otherwise the second param is the index in the array,
 				// and that's interpreted as the organisations array in the adapt function
-				(materialRequest: GqlMaterialRequest) => this.adapt(materialRequest)
+				(materialRequest: GqlMaterialRequest) => this.adapt(materialRequest, false)
 			);
 		} catch (err) {
 			const error = customError(
@@ -1211,7 +1240,7 @@ export class MaterialRequestsService {
 				5,
 				// Requires arrow wrapper, because otherwise the second param is the index in the array,
 				// and that's interpreted as the organisations array in the adapt function
-				(materialRequest: GqlMaterialRequest) => this.adapt(materialRequest)
+				(materialRequest: GqlMaterialRequest) => this.adapt(materialRequest, false)
 			);
 		} catch (err) {
 			const error = customError('Failed to find material requests with expired download', err);
@@ -1260,7 +1289,7 @@ export class MaterialRequestsService {
 				response,
 			});
 		}
-		return this.adapt(materialRequest);
+		return this.adapt(materialRequest, false);
 	}
 
 	/**
@@ -1273,23 +1302,19 @@ export class MaterialRequestsService {
 	 * Will otherwise log an event and send a notification to the user
 	 * @param materialRequestId
 	 * @param user
-	 * @param referer
-	 * @param ip
 	 * @param requestPath
 	 * @param eventId
 	 */
 	public async getDownloadUrlForMaterialRequest(
 		materialRequestId: string,
 		user: SessionUserEntity,
-		referer: string,
-		ip: string,
 		requestPath: string,
 		eventId: string
 	): Promise<string> {
 		// Reusing the current implementations for logic like the organisations of the findById
 		// or logic to get the downloadUrl of the getMaterialRequestForDownloadJob
 		const [materialRequest, materialRequestForDownload] = await Promise.all([
-			this.findById(materialRequestId, user, referer, ip),
+			this.findById(materialRequestId, user, false, undefined, undefined),
 			this.getMaterialRequestForDownloadJob(materialRequestId),
 		]);
 

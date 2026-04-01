@@ -18,7 +18,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import * as promiseUtils from 'blend-promise-utils';
 import type { Request } from 'express';
-import { compact, isNil } from 'lodash';
+import { compact, isNil, noop } from 'lodash';
 
 import { type Folder, type FolderShared, FolderStatus } from '../types';
 
@@ -256,25 +256,27 @@ export class FoldersController {
 		);
 
 		// Log event
-		const ieObject = await this.ieObjectsService.findByIeObjectId(ieObjectId, referer, ip);
-		this.eventsService.insertEvents([
-			{
-				id: EventsHelper.getEventId(request),
-				type: LogEventType.ITEM_BOOKMARK,
-				source: request.path,
-				subject: user?.getId(),
-				time: new Date().toISOString(),
-				data: {
-					type: mapDcTermsFormatToSimpleType(ieObject.dctermsFormat),
-					pid: ieObject.schemaIdentifier,
-					fragment_id: objectSchemaIdentifier,
-					folder_id: folderId,
-					user_group_name: user.getGroupName(),
-					user_group_id: user.getGroupId(),
-					or_id: ieObject.maintainerId,
+		const ieObject = await this.ieObjectsService.findByIeObjectId(ieObjectId, false, referer, ip);
+		this.eventsService
+			.insertEvents([
+				{
+					id: EventsHelper.getEventId(request),
+					type: LogEventType.ITEM_BOOKMARK,
+					source: request.path,
+					subject: user?.getId(),
+					time: new Date().toISOString(),
+					data: {
+						type: mapDcTermsFormatToSimpleType(ieObject.dctermsFormat),
+						pid: ieObject.schemaIdentifier,
+						fragment_id: objectSchemaIdentifier,
+						folder_id: folderId,
+						user_group_name: user.getGroupName(),
+						user_group_id: user.getGroupId(),
+						or_id: ieObject.maintainerId,
+					},
 				},
-			},
-		]);
+			])
+			.then(noop);
 
 		return folderObject;
 	}

@@ -11,10 +11,10 @@ query findMaterialRequestsWithAlmostExpiredDownload($warningDate: timestamp!) {
 		ie_object_id
 		profile_id
 		reason
+		type
 		created_at
 		updated_at
 		requested_at
-		type
 		is_pending
 		status
 		group_id
@@ -56,6 +56,7 @@ query findMaterialRequestsWithAlmostExpiredDownload($warningDate: timestamp!) {
 				skos_pref_label
 				ha_org_has_logo
 				skos_alt_label
+				ha_org_sector
 				schemaContactPoint {
 					schema_contact_type
 					schema_email
@@ -64,6 +65,9 @@ query findMaterialRequestsWithAlmostExpiredDownload($warningDate: timestamp!) {
 				visitorSpace {
 					slug
 				}
+			}
+			schemaLicenses {
+				schema_license
 			}
 		}
 		ie_object_representation_id
