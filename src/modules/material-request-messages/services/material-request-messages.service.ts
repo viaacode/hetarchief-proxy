@@ -62,7 +62,7 @@ export class MaterialRequestMessagesService {
 
 		return Pagination<MaterialRequestMessage>({
 			items: materialRequestMessagesResponse?.app_material_request_messages_and_events?.map(
-				this.adapt
+				(event) => this.adapt(event)
 			),
 			page,
 			size,
@@ -92,6 +92,11 @@ export class MaterialRequestMessagesService {
 			messageType: message.message_type,
 			body: message.body,
 			createdAt: message.created_at,
+			senderProfile: {
+				id: message.sender_profile_id,
+				fullName: message.sender?.full_name,
+				mail: message.sender?.mail,
+			},
 		};
 	}
 
@@ -100,13 +105,8 @@ export class MaterialRequestMessagesService {
 	): MaterialRequestMessage {
 		return {
 			...this.adaptEvent(message),
-			senderProfile: {
-				id: message.sender_profile_id,
-				fullName: message.sender.full_name,
-			},
 			attachmentUrl: message.attachment_url,
 			attachmentFilename: message.attachment_filename,
-			createdAt: message.created_at,
 		};
 	}
 
@@ -154,7 +154,14 @@ export class MaterialRequestMessagesService {
 	): Promise<IPagination<MaterialRequestAttachment>> {
 		const { offset, limit } = PaginationHelper.convertPagination(page, size);
 
-		const orderBy = [set({}, ATTACHMENT_ORDER_PROP_TO_DB_PROP[orderProp] || ATTACHMENT_ORDER_PROP_TO_DB_PROP[MaterialRequestAttachmentOrderProp.CREATED_AT], orderDirection)];
+		const orderBy = [
+			set(
+				{},
+				ATTACHMENT_ORDER_PROP_TO_DB_PROP[orderProp] ||
+					ATTACHMENT_ORDER_PROP_TO_DB_PROP[MaterialRequestAttachmentOrderProp.CREATED_AT],
+				orderDirection
+			),
+		];
 
 		const response = await this.dataService.execute<
 			GetMaterialRequestAttachmentsQuery,

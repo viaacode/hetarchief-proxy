@@ -18,7 +18,7 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import type { IPagination } from '@studiohyperdrive/pagination';
 import { AvoAuthIdpType, PermissionName } from '@viaa/avo2-types';
 import type { Request } from 'express';
-import { isEmpty, isNil } from 'lodash';
+import { isEmpty, isNil, noop } from 'lodash';
 
 import {
 	CreateMaterialRequestDto,
@@ -29,10 +29,16 @@ import {
 } from '../dto/material-requests.dto';
 import type { MaterialRequest, MaterialRequestMaintainer } from '../material-requests.types';
 
-import { Lookup_App_Material_Request_Status_Enum } from '~generated/graphql-db-types-hetarchief';
+import { format } from 'date-fns';
+import {
+	Lookup_App_Material_Request_Message_Type_Enum,
+	Lookup_App_Material_Request_Status_Enum,
+} from '~generated/graphql-db-types-hetarchief';
 import { EventsService } from '~modules/events/services/events.service';
 import { type LogEvent, LogEventType } from '~modules/events/types';
 import { mapDcTermsFormatToSimpleType } from '~modules/ie-objects/helpers/map-dc-terms-format-to-simple-type';
+import { MaterialRequestMessagesService } from '~modules/material-request-messages/services/material-request-messages.service';
+import { MaterialRequestPdfGeneratorService } from '~modules/material-request-messages/services/material-request-pdf-generator';
 import { mapUserToGroupNameAndKeyUser } from '~modules/material-requests/material-requests.consts';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupId, GroupName } from '~modules/users/types';
@@ -51,6 +57,8 @@ import { MaterialRequestsService } from '../services/material-requests.service';
 export class MaterialRequestsController {
 	constructor(
 		private materialRequestsService: MaterialRequestsService,
+		private materialRequestMessagesService: MaterialRequestMessagesService,
+		private materialRequestPdfGeneratorService: MaterialRequestPdfGeneratorService,
 		private eventsService: EventsService
 	) {}
 
@@ -268,8 +276,8 @@ export class MaterialRequestsController {
 			const material_request_group_id = randomUUID();
 			// store the update requests so we can use them for the events to prevent data loss
 			materialRequests = await Promise.all(
-				materialRequests.map(
-					async (materialRequest: MaterialRequest) =>
+				materialRequests.map(async (materialRequest: MaterialRequest) => {
+					const updatedMaterialRequest =
 						await this.materialRequestsService.updateMaterialRequestForUser(
 							materialRequest.id,
 							user,
@@ -291,39 +299,60 @@ export class MaterialRequestsController {
 							materialRequest.reuseForm,
 							referer,
 							ip
-						)
-				)
+						);
+					if (
+						updatedMaterialRequest.status === Lookup_App_Material_Request_Status_Enum.New &&
+						updatedMaterialRequest.reuseForm
+					) {
+						// Generate a summary PDF of the reuse form and store it in a REUSE_SUMMARY message
+						await this.materialRequestMessagesService.createMessage(
+							updatedMaterialRequest.id,
+							updatedMaterialRequest.requesterId,
+							Lookup_App_Material_Request_Message_Type_Enum.ReuseSummary,
+							null,
+							new Date().toISOString(),
+							await this.materialRequestPdfGeneratorService.generateReuseFormPdfAndUpload(
+								updatedMaterialRequest
+							),
+							`Hergebruik-formulier-${format(new Date(), 'ddMMYYYYHHmm')}.pdf`
+						);
+					}
+					return updatedMaterialRequest;
+				})
 			);
 
 			// Log events for each material request
-			this.eventsService.insertEvents(
-				materialRequests.map(
-					(materialRequest): LogEvent => ({
-						id: EventsHelper.getEventId(request),
-						type: LogEventType.ITEM_REQUEST,
-						source: request.path,
-						subject: user?.getId(),
-						time: new Date().toISOString(),
-						data: {
-							material_request_group_id: materialRequest.requestGroupId,
-							type: mapDcTermsFormatToSimpleType(materialRequest.objectDctermsFormat),
-							external_id: materialRequest.objectSchemaIdentifier,
-							fragment_id: materialRequest.objectSchemaIdentifier,
-							idp: AvoAuthIdpType.HETARCHIEF,
-							user_group_name: mapUserToGroupNameAndKeyUser(user),
-							user_group_id: user.getGroupId(),
-							or_id: materialRequest.maintainerId,
-							contact_form: {
-								user_type: materialRequest.requesterCapacity,
-								problem_category: materialRequest.type,
-								problem_description: materialRequest.reason,
-								cp_id: materialRequest.maintainerId,
-								local_cp_id: materialRequest.objectMeemooLocalId,
+			this.eventsService
+				.insertEvents(
+					materialRequests.map(
+						(materialRequest): LogEvent => ({
+							id: EventsHelper.getEventId(request),
+							type: LogEventType.ITEM_REQUEST,
+							source: request.path,
+							subject: user?.getId(),
+							time: new Date().toISOString(),
+							data: {
+								material_request_group_id: materialRequest.requestGroupId,
+								type: mapDcTermsFormatToSimpleType(materialRequest.objectDctermsFormat),
+								external_id: materialRequest.objectSchemaIdentifier,
+								fragment_id: materialRequest.objectSchemaIdentifier,
+								idp: AvoAuthIdpType.HETARCHIEF,
+								user_group_name: mapUserToGroupNameAndKeyUser(user),
+								user_group_id: user.getGroupId(),
+								or_id: materialRequest.maintainerId,
+								contact_form: {
+									user_type: materialRequest.requesterCapacity,
+									problem_category: materialRequest.type,
+									problem_description: materialRequest.reason,
+									cp_id: materialRequest.maintainerId,
+									local_cp_id: materialRequest.objectMeemooLocalId,
+								},
 							},
-						},
-					})
+						})
+					)
+					// Don't wait for log events to be inserted
 				)
-			);
+				.then(noop);
 
 			return { message: 'success' };
 		} catch (err) {

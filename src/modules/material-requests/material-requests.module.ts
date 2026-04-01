@@ -1,5 +1,5 @@
 import { DataModule, VideoStillsModule } from '@meemoo/admin-core-api';
-import { Module, forwardRef } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 
 import { MaterialRequestsController } from './controllers/material-requests.controller';
 import { MaterialRequestsService } from './services/material-requests.service';
