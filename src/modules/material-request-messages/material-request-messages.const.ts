@@ -1,6 +1,9 @@
 import { TranslationsService } from '@meemoo/admin-core-api';
 
-import { MaterialRequestReuseFormKey, MaterialRequestType, } from '~modules/material-requests/material-requests.types';
+import {
+	MaterialRequestReuseFormKey,
+	MaterialRequestType,
+} from '~modules/material-requests/material-requests.types';
 import { Locale } from '~shared/types/types';
 import {
 	MaterialRequestAdditionalConditionsType,
@@ -152,20 +155,21 @@ export function GET_REUSE_LABELS(
 }
 
 export function GET_MATERIAL_REQUEST_TRANSLATIONS_BY_TYPE(
+	translationsService: TranslationsService,
 	locale: Locale
 ): Record<MaterialRequestType, string> {
 	return {
-		[MaterialRequestType.MORE_INFO]: this.translationsService.tText(
+		[MaterialRequestType.MORE_INFO]: translationsService.tText(
 			'modules/material-request-messages/services/material-request-pdf-generator___meer-info',
 			{},
 			locale
 		),
-		[MaterialRequestType.REUSE]: this.translationsService.tText(
+		[MaterialRequestType.REUSE]: translationsService.tText(
 			'modules/material-request-messages/services/material-request-pdf-generator___hergebruik',
 			{},
 			locale
 		),
-		[MaterialRequestType.VIEW]: this.translationsService.tText(
+		[MaterialRequestType.VIEW]: translationsService.tText(
 			'modules/material-request-messages/services/material-request-pdf-generator___bekijken-beluisteren',
 			{},
 			locale
@@ -174,26 +178,26 @@ export function GET_MATERIAL_REQUEST_TRANSLATIONS_BY_TYPE(
 }
 
 export function GET_MATERIAL_REQUEST_EXTRA_CONDITION_LABELS(
+	translationsService: TranslationsService,
 	locale: Locale
 ): Record<MaterialRequestAdditionalConditionsType, string> {
 	return {
-		[MaterialRequestAdditionalConditionsType.PERMISSION_LICENSE_OWNER]:
-			this.translationsService.tText(
-				'modules/material-request-messages/services/material-request-pdf-generator___toestemming-licentiehouder',
-				{},
-				locale
-			),
-		[MaterialRequestAdditionalConditionsType.ATTRIBUTION]: this.translationsService.tText(
+		[MaterialRequestAdditionalConditionsType.PERMISSION_LICENSE_OWNER]: translationsService.tText(
+			'modules/material-request-messages/services/material-request-pdf-generator___toestemming-licentiehouder',
+			{},
+			locale
+		),
+		[MaterialRequestAdditionalConditionsType.ATTRIBUTION]: translationsService.tText(
 			'modules/material-request-messages/services/material-request-pdf-generator___bronvermelding',
 			{},
 			locale
 		),
-		[MaterialRequestAdditionalConditionsType.PAYMENT]: this.translationsService.tText(
+		[MaterialRequestAdditionalConditionsType.PAYMENT]: translationsService.tText(
 			'modules/material-request-messages/services/material-request-pdf-generator___betaling',
 			{},
 			locale
 		),
-		[MaterialRequestAdditionalConditionsType.EXTRA_USE_LIMITATION]: this.translationsService.tText(
+		[MaterialRequestAdditionalConditionsType.EXTRA_USE_LIMITATION]: translationsService.tText(
 			'modules/material-request-messages/services/material-request-pdf-generator___extra-gebruiksbeperking',
 			{},
 			locale
