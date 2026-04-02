@@ -9,6 +9,7 @@ import {
 	ParseIntPipe,
 	Post,
 	Query,
+	Req,
 	Res,
 	UploadedFiles,
 	UseGuards,
@@ -27,14 +28,19 @@ import { FilesInterceptor } from '@nestjs/platform-express';
 import archiver from 'archiver';
 import { mapLimit } from 'blend-promise-utils';
 import { addMilliseconds } from 'date-fns';
-import type { Response } from 'express';
+import type { Request, Response } from 'express';
 import { kebabCase } from 'lodash';
-import { Lookup_App_Material_Request_Message_Type_Enum } from '~generated/graphql-db-types-hetarchief';
+import {
+	Lookup_App_Material_Request_Message_Type_Enum,
+	Lookup_App_Material_Request_Status_Enum,
+} from '~generated/graphql-db-types-hetarchief';
+import { MaterialRequestMessageBodyAdditionalConditionsDto } from '~modules/material-request-messages/dto/material-request-message-body-additional-conditions.dto';
 import { MaterialRequestAttachmentsQueryDto } from '~modules/material-request-messages/dto/material-request-messages.dto';
 import {
 	MaterialRequestAttachment,
 	MaterialRequestAttachmentOrderProp,
 	MaterialRequestMessage,
+	MaterialRequestMessageBodyAdditionalConditions,
 } from '~modules/material-request-messages/material-request-messages.types';
 import { MaterialRequest } from '~modules/material-requests/material-requests.types';
 import { MaterialRequestsService } from '~modules/material-requests/services/material-requests.service';
@@ -44,8 +50,10 @@ import { Ip } from '~shared/decorators/ip.decorator';
 import { Referer } from '~shared/decorators/referer.decorator';
 import { RequireAnyPermissions } from '~shared/decorators/require-any-permissions.decorator';
 import { SessionUser } from '~shared/decorators/user.decorator';
+import { IsEvaluatorGuard } from '~shared/guards/is-evaluator.guard';
 import { LocalhostGuard } from '~shared/guards/localhost.guard';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
+import { EventsHelper } from '~shared/helpers/events';
 import { SortDirection } from '~shared/types';
 import { MaterialRequestMessagesService } from '../services/material-request-messages.service';
 import { MaterialRequestPdfGeneratorService } from '../services/material-request-pdf-generator';
@@ -251,6 +259,132 @@ export class MaterialRequestMessagesController {
 		}
 	}
 
+	@Post(':materialRequestId/extra-conditions/add')
+	@UseGuards(IsEvaluatorGuard)
+	public async addExtraConditions(
+		@Param('materialRequestId') materialRequestId: string,
+		@SessionUser() user: SessionUserEntity,
+		@Body('extraConditions') extraConditions: MaterialRequestMessageBodyAdditionalConditionsDto
+	): Promise<void> {
+		try {
+			const materialRequest = await this.verifyAccessToMaterialRequest(materialRequestId, user);
+			await this.materialRequestMessagesService.addExtraConditions(
+				materialRequest.id,
+				user.getId(),
+				extraConditions
+			);
+		} catch (err) {
+			logAndThrow(
+				new CustomError('Failed to add extra conditions to material request', err, {
+					materialRequestId,
+					userId: user?.getId(),
+					extraConditions,
+				})
+			);
+		}
+	}
+
+	@Post(':materialRequestId/extra-conditions/:action')
+	public async acceptExtraConditions(
+		@Param('materialRequestId') materialRequestId: string,
+		@Param('action') action: 'accept' | 'decline',
+		@SessionUser() user: SessionUserEntity,
+		@Referer() referer: string,
+		@Ip() ip: string,
+		@Req() request: Request
+	): Promise<void> {
+		try {
+			const materialRequest = await this.verifyAccessToMaterialRequest(materialRequestId, user);
+			if (user.getId() !== materialRequest.requesterId) {
+				throw new ForbiddenException(
+					'Only the requester of the material request can accept or decline additional conditions'
+				);
+			}
+			const additionalConditionsEvent = materialRequest.history.find(
+				(event) =>
+					event.messageType === Lookup_App_Material_Request_Message_Type_Enum.AdditionalConditions
+			);
+			const hasAdditionalConditionsAlreadyAccepted: boolean = !!materialRequest.history.find(
+				(event) =>
+					event.messageType ===
+					Lookup_App_Material_Request_Message_Type_Enum.AdditionalConditionsAccepted
+			);
+			const hasAdditionalConditionsAlreadyDeclined: boolean = !!materialRequest.history.find(
+				(event) =>
+					event.messageType ===
+					Lookup_App_Material_Request_Message_Type_Enum.AdditionalConditionsDenied
+			);
+			if (!additionalConditionsEvent) {
+				throw new BadRequestException(
+					'This material request does not have additional conditions to accept'
+				);
+			}
+			if (hasAdditionalConditionsAlreadyAccepted) {
+				throw new BadRequestException(
+					'Additional conditions for this material request have already been accepted'
+				);
+			}
+			if (hasAdditionalConditionsAlreadyDeclined) {
+				throw new BadRequestException(
+					'Additional conditions for this material request have already been declined, you cannot accept them now'
+				);
+			}
+			if (action === 'accept') {
+				await this.materialRequestMessagesService.acceptExtraConditions(
+					materialRequest.id,
+					user.getId()
+				);
+				const autoAccept = (
+					additionalConditionsEvent.body as MaterialRequestMessageBodyAdditionalConditions
+				).autoApproveAfterAcceptAdditionalConditions;
+				if (autoAccept) {
+					await this.materialRequestsService.updateMaterialRequestStatus(
+						materialRequestId,
+						{
+							status: Lookup_App_Material_Request_Status_Enum.Approved,
+							motivation: null,
+						},
+						user,
+						referer,
+						ip,
+						request.path,
+						EventsHelper.getEventId(request)
+					);
+				} else {
+					// The evaluator will still have to manually approve the material request
+				}
+			} else if (action === 'decline') {
+				await this.materialRequestMessagesService.declineExtraConditions(
+					materialRequest.id,
+					user.getId()
+				);
+				await this.materialRequestsService.updateMaterialRequestStatus(
+					materialRequestId,
+					{
+						status: Lookup_App_Material_Request_Status_Enum.Denied,
+						motivation: null,
+					},
+					user,
+					referer,
+					ip,
+					request.path,
+					EventsHelper.getEventId(request)
+				);
+			} else {
+				throw new BadRequestException(
+					'This endpoint only accepts paths: /extra-conditions/accept or /extra-conditions/decline'
+				);
+			}
+		} catch (err) {
+			logAndThrow(
+				new CustomError('Failed to accept extra conditions of material request', err, {
+					materialRequestId,
+					userId: user?.getId(),
+				})
+			);
+		}
+	}
+
 	@Get(':materialRequestId/attachments')
 	@ApiOperation({
 		description:
@@ -389,9 +523,7 @@ export class MaterialRequestMessagesController {
 	public async getAttachmentDownloadUrl(
 		@Param('materialRequestId') materialRequestId: string,
 		@Param('attachmentId') attachmentId: string,
-		@SessionUser() user: SessionUserEntity,
-		@Referer() referer: string,
-		@Ip() ip: string
+		@SessionUser() user: SessionUserEntity
 	): Promise<{ url: string; filename: string }> {
 		try {
 			await this.verifyAccessToMaterialRequest(materialRequestId, user);

@@ -7,7 +7,7 @@ export enum MaterialRequestAdditionalConditionsType {
 	EXTRA_USE_LIMITATION = 'EXTRA_USE_LIMITATION',
 }
 
-interface Condition {
+export interface MaterialRequestMessageBodyAdditionalCondition {
 	type: MaterialRequestAdditionalConditionsType;
 	text: string;
 }
@@ -17,7 +17,7 @@ export interface MaterialRequestMessageBodyMessage {
 }
 
 export interface MaterialRequestMessageBodyAdditionalConditions {
-	conditions: Condition[];
+	conditions: MaterialRequestMessageBodyAdditionalCondition[];
 	autoApproveAfterAcceptAdditionalConditions: boolean;
 }
 
