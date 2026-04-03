@@ -60,7 +60,7 @@ export class MediahavenJobsWatcherController {
 		description: 'trigger the poller to check for Mediahaven jobs that have changed state',
 	})
 	@UseGuards(ApiKeyGuard)
-	public async checkDownloadExpiry(): Promise<{ message: 'checking' }> {
+	public async checkDownloadAlmostExpired(): Promise<{ message: 'checking' }> {
 		try {
 			this.mediahavenJobsWatcherService
 				.checkAlmostExpiredDownloads()

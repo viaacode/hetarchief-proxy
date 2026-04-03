@@ -6,6 +6,7 @@ import { logAndThrow } from '@meemoo/admin-core-api/dist/src/modules/shared/help
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AvoUserCommonUser } from '@viaa/avo2-types';
+import { mapLimit } from 'blend-promise-utils';
 import { isBefore, isPast, parseISO, subHours, subMinutes } from 'date-fns';
 import { compact, isNil, noop } from 'lodash';
 import { stringifyUrl } from 'query-string';
@@ -22,11 +23,13 @@ import {
 	GetMhIdentifiersFromPartialMhIdentifierQuery,
 	GetMhIdentifiersFromPartialMhIdentifierQueryVariables,
 	Lookup_App_Material_Request_Download_Status_Enum,
+	Lookup_App_Material_Request_Message_Type_Enum,
 } from '~generated/graphql-db-types-hetarchief';
 import { EmailTemplate } from '~modules/campaign-monitor/campaign-monitor.types';
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
 import { mapDcTermsFormatToSimpleType } from '~modules/ie-objects/helpers/map-dc-terms-format-to-simple-type';
+import { MaterialRequestMessagesService } from '~modules/material-request-messages/services/material-request-messages.service';
 import {
 	MaterialRequest,
 	MaterialRequestDurationType,
@@ -53,6 +56,7 @@ export class MediahavenJobsWatcherService {
 		private configService: ConfigService<Configuration>,
 		@Inject(forwardRef(() => MaterialRequestsService))
 		private materialRequestsService: MaterialRequestsService,
+		private materialRequestMessagesService: MaterialRequestMessagesService,
 		private dataService: DataService,
 		private mediahavenService: MediahavenService,
 		private usersService: UsersService,
@@ -217,7 +221,18 @@ export class MediahavenJobsWatcherService {
 								const requester = await this.usersService.getById(updatedRequest.requesterId);
 								reportItems.completed += 1;
 
-								// Trigger download available event
+								// Create download-available material request message event
+								await this.materialRequestMessagesService.createMessage(
+									materialRequest.id,
+									null,
+									Lookup_App_Material_Request_Message_Type_Enum.DownloadAvailable,
+									null,
+									new Date().toISOString(),
+									null,
+									null
+								);
+
+								// Trigger download-available event
 								this.triggerDownloadAvailableEvent(updatedRequest);
 
 								// Send email to requester and maintainer
@@ -305,12 +320,22 @@ export class MediahavenJobsWatcherService {
 			const expiredMaterialRequests: MaterialRequest[] =
 				await this.materialRequestsService.findAllWithExpiredDownload();
 
-			for (const materialRequest of expiredMaterialRequests) {
+			await mapLimit(expiredMaterialRequests, 5, async (materialRequest) => {
 				try {
-					// Could be sped up by doing this in bulk
 					await this.materialRequestsService.updateMaterialRequest(materialRequest.id, {
 						download_status: Lookup_App_Material_Request_Download_Status_Enum.Expired,
 					});
+
+					// Create a material request message event for the expired download
+					await this.materialRequestMessagesService.createMessage(
+						materialRequest.id,
+						null,
+						Lookup_App_Material_Request_Message_Type_Enum.DownloadExpired,
+						null,
+						new Date().toISOString(),
+						null,
+						null
+					);
 				} catch (err) {
 					// Log the error but don't throw, since the main flow of updating the material request is successful
 					console.error('Failed to update material request expired download', err, {
@@ -318,7 +343,7 @@ export class MediahavenJobsWatcherService {
 						requesterId: materialRequest.requesterId,
 					});
 				}
-			}
+			});
 
 			console.info(`marked ${expiredMaterialRequests.length} material requests as expired`);
 		} catch (err) {

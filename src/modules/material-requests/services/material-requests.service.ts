@@ -627,7 +627,13 @@ export class MaterialRequestsService {
 		requestPath: string,
 		eventId?: string
 	): Promise<MaterialRequest> {
-		const currentRequest = await this.findById(materialRequestId, user, false, referer, ip);
+		const currentRequest = await this.findById(
+			materialRequestId,
+			user,
+			false,
+			undefined,
+			undefined
+		);
 
 		const { status, motivation } = statusOptions;
 
