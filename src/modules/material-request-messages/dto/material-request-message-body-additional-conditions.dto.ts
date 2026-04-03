@@ -18,13 +18,15 @@ export class MaterialRequestMessageBodyAdditionalConditionDto
 		type: String,
 		description: `Type of additional condition to the reuse request. Can be one of: ${Object.values(MaterialRequestAdditionalConditionsType).join(', ')}`,
 		enum: MaterialRequestAdditionalConditionsType,
+		required: true,
 	})
 	type: MaterialRequestAdditionalConditionsType;
 
 	@IsString()
-	@ApiPropertyOptional({
+	@ApiProperty({
 		type: String,
 		description: 'Text describing the additional condition',
+		required: true,
 	})
 	text: string;
 }
@@ -37,6 +39,7 @@ export class MaterialRequestMessageBodyAdditionalConditionsDto
 		type: MaterialRequestMessageBodyAdditionalConditionDto,
 		description:
 			'The conditions that the maintainer wants the requester to accept before they will allow reuse of the material',
+		required: true,
 	})
 	conditions: MaterialRequestMessageBodyAdditionalConditionDto[];
 
@@ -45,7 +48,8 @@ export class MaterialRequestMessageBodyAdditionalConditionsDto
 	@ApiProperty({
 		type: Boolean,
 		description:
-			'Should the material download be prepared immediately after the requester accepts the additional conditions?',
+			'Should the material request be approved immediately after the requester accepts the additional conditions?',
+		required: true,
 	})
 	autoApproveAfterAcceptAdditionalConditions: boolean;
 }

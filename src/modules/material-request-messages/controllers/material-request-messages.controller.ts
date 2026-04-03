@@ -326,7 +326,7 @@ export class MaterialRequestMessagesController {
 			}
 			if (hasAdditionalConditionsAlreadyDeclined) {
 				throw new BadRequestException(
-					'Additional conditions for this material request have already been declined, you cannot accept them now'
+					'Additional conditions for this material request have already been declined'
 				);
 			}
 			if (action === 'accept') {
@@ -361,7 +361,7 @@ export class MaterialRequestMessagesController {
 				await this.materialRequestsService.updateMaterialRequestStatus(
 					materialRequestId,
 					{
-						status: Lookup_App_Material_Request_Status_Enum.Denied,
+						status: Lookup_App_Material_Request_Status_Enum.Cancelled,
 						motivation: null,
 					},
 					user,
