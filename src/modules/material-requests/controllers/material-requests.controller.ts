@@ -70,14 +70,19 @@ export class MaterialRequestsController {
 	@RequireAnyPermissions(PermissionName.VIEW_ANY_MATERIAL_REQUESTS)
 	public async getMaterialRequests(
 		@Query() queryDto: MaterialRequestsQueryDto,
-		@SessionUser() user: SessionUserEntity,
-		@Referer() referer: string,
-		@Ip() ip: string
+		@SessionUser() user: SessionUserEntity
 	): Promise<IPagination<MaterialRequest>> {
 		// ARC-1472 Validate the user group if the request has maintainerIds
 		const validatedQueryDto = this.validateMaintainerIdsWithUserGroup(user, queryDto);
 
-		return await this.materialRequestsService.findAll(validatedQueryDto, false, user, referer, ip);
+		return await this.materialRequestsService.findAll(
+			validatedQueryDto,
+			false,
+			user,
+			false,
+			undefined,
+			undefined
+		);
 	}
 
 	@Get('personal')
@@ -94,7 +99,7 @@ export class MaterialRequestsController {
 		// ARC-1472 Validate the user group if the request has maintainerIds
 		const validatedQueryDto = this.validateMaintainerIdsWithUserGroup(user, queryDto);
 
-		return this.materialRequestsService.findAll(validatedQueryDto, true, user, referer, ip);
+		return this.materialRequestsService.findAll(validatedQueryDto, true, user, true, referer, ip);
 	}
 
 	@Get('maintainers')
@@ -111,10 +116,17 @@ export class MaterialRequestsController {
 	public async getMaterialRequestById(
 		@Param('id', ParseUUIDPipe) id: string,
 		@SessionUser() user: SessionUserEntity,
+		@Query('resolveThumbnailUrl') resolveThumbnailUrl: 'true' | 'false',
 		@Referer() referer: string,
 		@Ip() ip: string
 	): Promise<MaterialRequest> {
-		return await this.materialRequestsService.findById(id, user, referer, ip);
+		return await this.materialRequestsService.findById(
+			id,
+			user,
+			resolveThumbnailUrl === 'true',
+			referer,
+			ip
+		);
 	}
 
 	@Get(':id/download')
@@ -132,8 +144,6 @@ export class MaterialRequestsController {
 		return this.materialRequestsService.getDownloadUrlForMaterialRequest(
 			id,
 			user,
-			referer,
-			ip,
 			request.path,
 			EventsHelper.getEventId(request)
 		);
@@ -256,8 +266,9 @@ export class MaterialRequestsController {
 				dto,
 				true,
 				user,
-				referer,
-				ip
+				false,
+				undefined,
+				undefined
 			);
 
 			for (const materialRequest of materialRequests) {

@@ -1,6 +1,6 @@
 import { DataService, VideoStillsService } from '@meemoo/admin-core-api';
 import { Test, type TestingModule } from '@nestjs/testing';
-import { afterEach, beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
+import { type MockInstance, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { CampaignMonitorService } from '../../campaign-monitor/services/campaign-monitor.service';
 import { MaterialRequestType } from '../material-requests.types';
@@ -205,6 +205,7 @@ describe('MaterialRequestsService', () => {
 		it('can adapt a FindMaterialRequestsQuery hasura response to our material request interface', async () => {
 			const adapted = await materialRequestsService.adapt(
 				mockGqlMaterialRequest1,
+				true,
 				mockOrganisations,
 				mockIeObjectsVisitorSpaceInfo,
 				new SessionUserEntity(mockUser),
@@ -236,6 +237,7 @@ describe('MaterialRequestsService', () => {
 		it('can adapt a FindMaterialRequestsByIdQuery hasura response to our material request interface', async () => {
 			const adapted = await materialRequestsService.adapt(
 				mockGqlMaterialRequest2,
+				true,
 				mockOrganisations,
 				mockIeObjectsVisitorSpaceInfo,
 				new SessionUserEntity(mockUser),
@@ -305,6 +307,7 @@ describe('MaterialRequestsService', () => {
 		it('should return null when the material request does not exist', async () => {
 			const adapted = await materialRequestsService.adapt(
 				undefined,
+				true,
 				mockOrganisations,
 				mockIeObjectsVisitorSpaceInfo,
 				new SessionUserEntity(mockUser),
@@ -318,6 +321,7 @@ describe('MaterialRequestsService', () => {
 		it('returns null on invalid input', async () => {
 			const adapted = await materialRequestsService.adapt(
 				null,
+				true,
 				mockOrganisations,
 				mockIeObjectsVisitorSpaceInfo,
 				new SessionUserEntity(mockUser),
@@ -341,6 +345,7 @@ describe('MaterialRequestsService', () => {
 				},
 				false,
 				new SessionUserEntity(mockUser),
+				true,
 				'referer',
 				''
 			);
@@ -363,6 +368,7 @@ describe('MaterialRequestsService', () => {
 				},
 				false,
 				new SessionUserEntity(mockUser),
+				true,
 				'referer',
 				''
 			);
@@ -387,6 +393,7 @@ describe('MaterialRequestsService', () => {
 				},
 				false,
 				new SessionUserEntity(mockUser),
+				true,
 				'referer',
 				''
 			);
@@ -410,6 +417,7 @@ describe('MaterialRequestsService', () => {
 				},
 				false,
 				new SessionUserEntity(mockUser),
+				true,
 				'referer',
 				''
 			);
@@ -432,6 +440,7 @@ describe('MaterialRequestsService', () => {
 					...mockUser,
 					id: mockUserProfileId,
 				}),
+				true,
 				'referer',
 				''
 			);
@@ -448,6 +457,7 @@ describe('MaterialRequestsService', () => {
 			const response = await materialRequestsService.findById(
 				'1',
 				new SessionUserEntity(mockUser),
+				true,
 				'referer',
 				''
 			);
@@ -472,6 +482,7 @@ describe('MaterialRequestsService', () => {
 				await materialRequestsService.findById(
 					'unknown-id',
 					new SessionUserEntity(mockUser),
+					true,
 					'referer',
 					''
 				);

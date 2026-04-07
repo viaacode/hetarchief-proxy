@@ -368,7 +368,7 @@ export class FoldersService {
 			});
 		}
 
-		const objectInfo = await this.ieObjectsService.findByIeObjectId(ieObjectId, referer, ip);
+		const objectInfo = await this.ieObjectsService.findByIeObjectId(ieObjectId, false, referer, ip);
 
 		if (!objectInfo) {
 			throw new NotFoundException(`Object with id ${ieObjectId} was not found`);

@@ -60,6 +60,7 @@ export const mockGqlMaterialRequest1: FindMaterialRequestsQuery['app_material_re
 			schema_thumbnail_url:
 				'VRT/b1f60efadf5243d78c7c91512adaa6cefe52723ff35848268894c7861d852b79/keyframes/keyframes_1_1/keyframe1.jpg',
 		},
+		schemaLicenses: [],
 	},
 	material_request_reuse_form_values: null,
 };
@@ -113,6 +114,7 @@ export const mockGqlMaterialRequest2: FindMaterialRequestsByIdQuery['app_materia
 				'VRT/b1f60efadf5243d78c7c91512adaa6cefe52723ff35848268894c7861d852b79/keyframes/keyframes_1_1/keyframe1.jpg',
 			],
 		},
+		schemaLicenses: [],
 	},
 	material_request_reuse_form_values: [
 		{

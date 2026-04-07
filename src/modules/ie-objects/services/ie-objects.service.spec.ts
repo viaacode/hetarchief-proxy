@@ -210,6 +210,7 @@ describe('ieObjectsService', () => {
 			// Fetch the object
 			const ieObject = await ieObjectsService.findByIeObjectId(
 				mockObjectId,
+				false,
 				'referer',
 				'127.0.0.1'
 			);
@@ -252,6 +253,7 @@ describe('ieObjectsService', () => {
 
 			const ieObject = await ieObjectsService.findByIeObjectId(
 				mockObjectId,
+				false,
 				'referer',
 				'127.0.0.1'
 			);
@@ -278,6 +280,7 @@ describe('ieObjectsService', () => {
 
 			const ieObject = await ieObjectsService.findByIeObjectId(
 				mockObjectId,
+				false,
 				'referer',
 				'127.0.0.1'
 			);
@@ -290,7 +293,12 @@ describe('ieObjectsService', () => {
 			const mockData: Readonly<IeObjectDetailResponseTypes> = mockIeObjectEmpty;
 			mockDataService.execute.mockResolvedValueOnce(mockData);
 
-			const ieObject = await ieObjectsService.findByIeObjectId('invalidId', 'referer', '127.0.0.1');
+			const ieObject = await ieObjectsService.findByIeObjectId(
+				'invalidId',
+				false,
+				'referer',
+				'127.0.0.1'
+			);
 			expect(ieObject).toEqual(null);
 		});
 	});
