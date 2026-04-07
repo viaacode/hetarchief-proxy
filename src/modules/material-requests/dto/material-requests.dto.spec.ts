@@ -11,7 +11,7 @@ describe('MaterialRequestsDto', () => {
 			const materialRequestsQueryDto = new MaterialRequestsQueryDto();
 			expect(materialRequestsQueryDto).toEqual({
 				page: 1,
-				size: 10,
+				size: 20,
 				orderProp: 'createdAt',
 				orderDirection: 'desc',
 			});

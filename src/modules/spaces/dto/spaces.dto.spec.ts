@@ -13,7 +13,7 @@ describe('SpacesQueryDto', () => {
 				orderProp: VisitorSpaceOrderProps.OrganisationName,
 				page: 1,
 				query: undefined,
-				size: 10,
+				size: 20,
 				status: [VisitorSpaceStatus.Active],
 			});
 		});
