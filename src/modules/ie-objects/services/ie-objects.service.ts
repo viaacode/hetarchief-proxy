@@ -536,34 +536,6 @@ export class IeObjectsService {
 	}
 
 	/**
-	 * Get one Intellectual Entity object by its object id (eg: https://data.hetarchief.be/id/entity/086348mc8s)
-	 * (not all details are available in ES)
-	 */
-	public async findByIeObjectId(
-		objectId: string,
-		referer: string,
-		ip: string
-	): Promise<Partial<IeObject> | null> {
-		// Cache the object for 60 minutes since we need it once for server side rendering and once for client side rendering
-		const responses = await this.cacheManager.wrap(
-			CACHE_KEY_PREFIX_IE_OBJECT_DETAIL + objectId,
-			() => this.getIeObjectByIdFromDb(objectId),
-			// cache for 1 hour
-			hoursToSeconds(1)
-		);
-
-		// Get parent ieObject if it exists
-		const parentIeObjectId = (responses[IeObjectDetailResponseIndex.IsPartOf] as GetIsPartOfQuery)
-			?.isPartOf?.[0]?.isPartOf?.id;
-		let parentIeObject: Partial<IeObject> | null = null;
-		if (parentIeObjectId) {
-			parentIeObject = await this.findByIeObjectId(parentIeObjectId, referer, ip);
-		}
-
-		return await this.adaptFromDB(responses, parentIeObject, referer, ip);
-	}
-
-	/**
 	 * Get one Intellectual Entity object thumbnail by its object id (eg: https://data.hetarchief.be/id/entity/086348mc8s)
 	 */
 	public async findThumbnailByIeObjectId(
@@ -588,7 +560,7 @@ export class IeObjectsService {
 		referer: string,
 		ip: string
 	): Promise<Partial<IeObject>> {
-		const object = await this.findByIeObjectId(ieObjectId, referer, ip);
+		const object = await this.findByIeObjectId(ieObjectId, false, referer, ip);
 		return this.adaptMetadata(object);
 	}
 
@@ -651,6 +623,7 @@ export class IeObjectsService {
 	public async adaptFromDB(
 		ieObjectResponseList: IeObjectDetailResponseTypes,
 		parentIeObject: Partial<IeObject> | null,
+		resolveThumbnailUrl: boolean,
 		referer: string,
 		ip: string
 	): Promise<Partial<IeObject>> {
@@ -706,14 +679,18 @@ export class IeObjectsService {
 		if (mapDcTermsFormatToSimpleType(dctermsFormat) === IeObjectType.AUDIO) {
 			thumbnailUrl = AUDIO_WAVE_FORM_URL; // avoid the ugly speaker
 		} else {
-			thumbnailUrl = await this.getThumbnailUrlWithToken(
-				thumbnailUrl,
-				referer,
-				ip,
-				// If the object is public domain, we generate a thumbnailUrl with a token that stays valid for 15 years
-				// https://meemoo.atlassian.net/browse/ARC-2891
-				isPublicDomain
-			);
+			if (resolveThumbnailUrl) {
+				thumbnailUrl = await this.getThumbnailUrlWithToken(
+					thumbnailUrl,
+					referer,
+					ip,
+					// If the object is public domain, we generate a thumbnailUrl with a token that stays valid for 15 years
+					// https://meemoo.atlassian.net/browse/ARC-2891
+					isPublicDomain
+				);
+			} else {
+				// Return unresolved thumbnail url, since the user might want to know if there is a thumbnail or not, without needing the resolved thumbnail
+			}
 		}
 
 		const schemaMaintainer = ie?.schemaMaintainer;
@@ -725,9 +702,10 @@ export class IeObjectsService {
 		const ieObjectByPages: IeObjectPages | null = await this.adaptRepresentationsPaged(
 			isRepresentedByResponse,
 			hasPartResponse,
+			resolveThumbnailUrl,
+			isPublicDomain,
 			referer,
-			ip,
-			isPublicDomain
+			ip
 		);
 
 		const isPartOfParentCollections = parentCollectionResponse?.parentCollection?.map((part) => {
@@ -1062,9 +1040,10 @@ export class IeObjectsService {
 	public async adaptRepresentationsPaged(
 		isRepresentedByResponse: GetIsRepresentedByQuery,
 		hasPartResponse: GetHasPartQuery,
+		resolveThumbnailUrl: boolean,
+		isPublicDomain: boolean,
 		referer: string,
-		ip: string,
-		isPublicDomain: boolean
+		ip: string
 	): Promise<IeObjectPages | null> {
 		const ieObjectSelf = isRepresentedByResponse?.graph__intellectual_entity[0];
 		const ieObjectParts = hasPartResponse?.graph_intellectual_entity || [];
@@ -1090,9 +1069,10 @@ export class IeObjectsService {
 				): Promise<IeObjectPage | null> => {
 					const representations = await this.adaptRepresentations(
 						page?.isRepresentedBy,
+						resolveThumbnailUrl,
+						isPublicDomain,
 						referer,
-						ip,
-						isPublicDomain
+						ip
 					);
 
 					// Avoid returning empty array representations
@@ -1121,9 +1101,10 @@ export class IeObjectsService {
 
 	public async adaptRepresentations(
 		isRepresentedBy: DbIeObjectWithRepresentations['isRepresentedBy'] | undefined,
-		referer: string,
-		ip: string,
-		isPublicDomain: boolean
+		resolveThumbnailUrl: boolean,
+		isPublicDomain: boolean,
+		referer?: string,
+		ip?: string
 	): Promise<IeObjectRepresentation[]> {
 		const representations = compact(
 			await mapLimit(
@@ -1148,7 +1129,13 @@ export class IeObjectsService {
 						schemaTranscriptUrl,
 						edmIsNextInSequence: representation.edm_is_next_in_sequence,
 						updatedAt: representation.updated_at,
-						files: await this.adaptFiles(representation.includes, referer, ip, isPublicDomain),
+						files: await this.adaptFiles(
+							representation.includes,
+							resolveThumbnailUrl,
+							isPublicDomain,
+							referer,
+							ip
+						),
 					};
 				}
 			)
@@ -1159,9 +1146,10 @@ export class IeObjectsService {
 
 	public async adaptFiles(
 		dbFiles: DbFile,
+		resolveThumbnailUrl: boolean,
+		isPublicDomain: boolean,
 		referer: string,
-		ip: string,
-		isPublicDomain: boolean
+		ip: string
 	): Promise<IeObjectFile[]> {
 		if (isEmpty(dbFiles)) {
 			return [];
@@ -1174,12 +1162,16 @@ export class IeObjectsService {
 				if (!file) {
 					return null;
 				}
-				const thumbnailUrl: string | undefined = await this.getThumbnailUrlWithToken(
-					file.schema_thumbnail_url,
-					referer,
-					ip,
-					isPublicDomain
-				);
+
+				let thumbnailUrl: string | undefined = undefined;
+				if (resolveThumbnailUrl) {
+					thumbnailUrl = await this.getThumbnailUrlWithToken(
+						file.schema_thumbnail_url,
+						referer,
+						ip,
+						isPublicDomain
+					);
+				}
 
 				return {
 					id: file.id,
@@ -1320,15 +1312,21 @@ export class IeObjectsService {
 		user: SessionUserEntity,
 		visitorSpaceAccessInfo: IeObjectsVisitorSpaceInfo
 	): Partial<IeObject> {
-		const limitedObjectDetails = limitAccessToObjectDetails(folderObjectItem, {
-			userId: user?.getId(),
-			sector: user.getSector(),
-			maintainerId: user.getOrganisationId(),
-			groupId: user.getGroupId(),
-			isKeyUser: user.getIsKeyUser(),
-			accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
-			accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
-		});
+		const limitedObjectDetails = limitAccessToObjectDetails(
+			folderObjectItem as Pick<
+				IeObject,
+				'licenses' | 'schemaIdentifier' | 'maintainerId' | 'sector'
+			>,
+			{
+				userId: user?.getId(),
+				sector: user.getSector(),
+				maintainerId: user.getOrganisationId(),
+				groupId: user.getGroupId(),
+				isKeyUser: user.getIsKeyUser(),
+				accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
+				accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
+			}
+		);
 
 		return {
 			accessThrough: [],
@@ -1617,6 +1615,40 @@ export class IeObjectsService {
 				representationId,
 			});
 		}
+	}
+
+	/**
+	 * Get one Intellectual Entity object by its object id (eg: https://data.hetarchief.be/id/entity/086348mc8s)
+	 * (not all details are available in ES)
+	 */
+	public async findByIeObjectId(
+		objectId: string,
+		resolveThumbnailUrl: boolean,
+		referer: string,
+		ip: string
+	): Promise<Partial<IeObject> | null> {
+		// Cache the object for 60 minutes since we need it once for server side rendering and once for client side rendering
+		const responses = await this.cacheManager.wrap(
+			CACHE_KEY_PREFIX_IE_OBJECT_DETAIL + objectId,
+			() => this.getIeObjectByIdFromDb(objectId),
+			// cache for 1 hour
+			hoursToSeconds(1)
+		);
+
+		// Get parent ieObject if it exists
+		const parentIeObjectId = (responses[IeObjectDetailResponseIndex.IsPartOf] as GetIsPartOfQuery)
+			?.isPartOf?.[0]?.isPartOf?.id;
+		let parentIeObject: Partial<IeObject> | null = null;
+		if (parentIeObjectId) {
+			parentIeObject = await this.findByIeObjectId(
+				parentIeObjectId,
+				resolveThumbnailUrl,
+				referer,
+				ip
+			);
+		}
+
+		return await this.adaptFromDB(responses, parentIeObject, resolveThumbnailUrl, referer, ip);
 	}
 
 	private async getObjectIdBySchemaIdentifier(schemaIdentifier: string): Promise<string | null> {

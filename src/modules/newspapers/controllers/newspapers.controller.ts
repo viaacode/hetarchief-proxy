@@ -55,10 +55,10 @@ export class NewspapersController {
 		private configService: ConfigService<Configuration>
 	) {}
 
-	@Get(':id/export/zip')
+	@Get('export/zip')
 	@Header('Content-Type', 'application/zip')
 	public async downloadNewspaperAsZip(
-		@Param('id') id: string,
+		@Query('ieObjectId') ieObjectId: string,
 		@Query('page') pageIndex: number | undefined,
 		@Query('currentPageUrl') currentPageUrl: string,
 		@Referer() referer: string,
@@ -68,10 +68,13 @@ export class NewspapersController {
 		@SessionUser() user: SessionUserEntity
 	): Promise<void> {
 		const limitedObjectMetadatas = await this.ieObjectsController.getIeObjectsByIds(
-			[id],
-			null, // No need to add player tickets to the thumbnail urls
-			ip,
-			user
+			undefined,
+			[ieObjectId],
+			user,
+			// No need to add player tickets to the thumbnail urls
+			'false',
+			null,
+			null
 		);
 		const limitedObjectMetadata = limitedObjectMetadatas[0];
 
@@ -160,7 +163,7 @@ export class NewspapersController {
 		});
 
 		const pageSuffix = exportSinglePage ? `-page-${pageIndex + 1}` : '';
-		const filename = `${`newspaper-${id}`}${pageSuffix}.zip`;
+		const filename = `${`newspaper-${limitedObjectMetadata.schemaIdentifier}`}${pageSuffix}.zip`;
 		res.set({
 			'Content-Disposition': `attachment; filename=${filename}`,
 		});
@@ -221,10 +224,10 @@ export class NewspapersController {
 		]);
 	}
 
-	@Get(':id/export/jpg/selection')
+	@Get(':schemaIdentifier/export/jpg/selection')
 	@Header('Content-Type', 'application/zip')
 	public async downloadSelectionInPage(
-		@Param('id') id: string,
+		@Param('schemaIdentifier') schemaIdentifier: string,
 		@Query('page') pageIndex: number,
 		@Query('startX') startX: number,
 		@Query('startY') startY: number,
@@ -238,10 +241,12 @@ export class NewspapersController {
 		@SessionUser() user: SessionUserEntity
 	): Promise<void> {
 		const limitedObjectMetadatas = await this.ieObjectsController.getIeObjectsByIds(
-			[id],
-			referer,
-			ip,
-			user
+			[schemaIdentifier],
+			undefined,
+			user,
+			'false',
+			undefined,
+			undefined
 		);
 		const limitedObjectMetadata = limitedObjectMetadatas[0];
 
@@ -272,7 +277,7 @@ export class NewspapersController {
 			);
 		}
 
-		const filename = `${`newspaper-${id}`}-selectie.jpg`;
+		const filename = `${`newspaper-${schemaIdentifier}`}-selectie.jpg`;
 		res.set({
 			'Content-Disposition': `attachment; filename=${filename}`,
 		});

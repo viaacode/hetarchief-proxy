@@ -41,6 +41,7 @@ import {
 	AutocompleteField,
 	type IeObject,
 	IeObjectAccessThrough,
+	IeObjectForAccessCheck,
 	IeObjectLicense,
 	type IeObjectSeo,
 	type IeObjectsWithAggregations,
@@ -56,12 +57,7 @@ import { logAndThrow } from '@meemoo/admin-core-api/dist/src/modules/shared/help
 import { mapLimit } from 'blend-promise-utils';
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
-import {
-	ALL_INDEXES,
-	IeObjectsSearchFilterField,
-	Operator,
-	OrderProperty,
-} from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
+import { ALL_INDEXES, IeObjectsSearchFilterField, Operator, OrderProperty, } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
 import { mapDcTermsFormatToSimpleType } from '~modules/ie-objects/helpers/map-dc-terms-format-to-simple-type';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupName } from '~modules/users/types';
@@ -143,7 +139,7 @@ export class IeObjectsController {
 	): Promise<IeObjectSeo> {
 		const ieObjectId =
 			await this.ieObjectsService.getObjectIdBySchemaIdentifierCached(schemaIdentifier);
-		const ieObject = await this.ieObjectsService.findByIeObjectId(ieObjectId, referer, ip);
+		const ieObject = await this.ieObjectsService.findByIeObjectId(ieObjectId, true, referer, ip);
 
 		const hasPublicAccess = ieObject?.licenses.some((license: IeObjectLicense) =>
 			[
@@ -169,17 +165,17 @@ export class IeObjectsController {
 	/**
 	 * Export metadata to xml
 	 * @param ip
-	 * @param schemaIdentifier ieObjectId (eg: https://data.hetarchief.be/id/entity/086348mc8s)
+	 * @param ieObjectId ieObjectId (eg: https://data.hetarchief.be/id/entity/086348mc8s)
 	 * @param currentPageUrl The current page that is open on the client's browser (for event logging purposes)
 	 * @param referer
 	 * @param request
 	 * @param res
 	 * @param user
 	 */
-	@Get(':schemaIdentifier/export/xml')
+	@Get('export/xml')
 	@Header('Content-Type', 'text/xml')
 	public async exportXml(
-		@Param('schemaIdentifier') schemaIdentifier: string,
+		@Query('ieObjectId') ieObjectId: string,
 		@Query('currentPageUrl') currentPageUrl: string,
 		@Referer() referer: string,
 		@Ip() ip: string,
@@ -187,8 +183,6 @@ export class IeObjectsController {
 		@Res() res: Response,
 		@SessionUser() user: SessionUserEntity
 	): Promise<void> {
-		const ieObjectId =
-			await this.ieObjectsService.getObjectIdBySchemaIdentifierCached(schemaIdentifier);
 		const objectMetadata = await this.ieObjectsService.findMetadataByIeObjectId(
 			ieObjectId,
 			null,
@@ -220,7 +214,7 @@ export class IeObjectsController {
 			await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
 
 		const xmlContent = convertObjectToXml(
-			limitAccessToObjectDetails(objectMetadata, {
+			limitAccessToObjectDetails(objectMetadata as IeObjectForAccessCheck, {
 				userId: user?.getId(),
 				isKeyUser: user.getIsKeyUser(),
 				sector: user.getSector(),
@@ -243,16 +237,16 @@ export class IeObjectsController {
 	 * Export metadata to csv
 	 * @param referer
 	 * @param ip
-	 * @param schemaIdentifier ieObjectId (eg: https://data.hetarchief.be/id/entity/086348mc8s)
+	 * @param ieObjectId The iri object id of the ie object (eg: https://data.hetarchief.be/id/entity/086348mc8s)
 	 * @param currentPageUrl
 	 * @param request
 	 * @param res
 	 * @param user
 	 */
-	@Get(':schemaIdentifier/export/csv')
+	@Get('export/csv')
 	@Header('Content-Type', 'text/csv')
 	public async exportCsv(
-		@Param('schemaIdentifier') schemaIdentifier: string,
+		@Query('ieObjectId') ieObjectId: string,
 		@Query('currentPageUrl') currentPageUrl: string,
 		@Referer() referer: string,
 		@Ip() ip: string,
@@ -260,8 +254,6 @@ export class IeObjectsController {
 		@Res() res: Response,
 		@SessionUser() user: SessionUserEntity
 	): Promise<void> {
-		const ieObjectId =
-			await this.ieObjectsService.getObjectIdBySchemaIdentifierCached(schemaIdentifier);
 		const objectMetadata = await this.ieObjectsService.findMetadataByIeObjectId(
 			ieObjectId,
 			null,
@@ -292,15 +284,18 @@ export class IeObjectsController {
 		const visitorSpaceAccessInfo =
 			await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
 
-		const censoredObjectMetadata = limitAccessToObjectDetails(objectMetadata, {
-			userId: user?.getId(),
-			isKeyUser: user.getIsKeyUser(),
-			sector: user.getSector(),
-			groupId: user.getGroupId(),
-			maintainerId: user.getOrganisationId(),
-			accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
-			accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
-		});
+		const censoredObjectMetadata = limitAccessToObjectDetails(
+			objectMetadata as IeObjectForAccessCheck,
+			{
+				userId: user?.getId(),
+				isKeyUser: user.getIsKeyUser(),
+				sector: user.getSector(),
+				groupId: user.getGroupId(),
+				maintainerId: user.getOrganisationId(),
+				accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
+				accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
+			}
+		);
 
 		const csvContent = convertObjectToCsv(censoredObjectMetadata);
 		res.set({
@@ -496,7 +491,7 @@ export class IeObjectsController {
 		const licensedSearchResult = {
 			...searchResult,
 			items: searchResult.items.map((item) =>
-				limitAccessToObjectDetails(item, {
+				limitAccessToObjectDetails(item as IeObjectForAccessCheck, {
 					userId: user?.getId(),
 					isKeyUser: user.getIsKeyUser(),
 					sector: user.getSector(),
@@ -712,51 +707,75 @@ export class IeObjectsController {
 	}
 
 	/**
-	 * Get ie objects by their id (schema identifiers)
+	 * Get ie objects by their schemaIdentifier (aka PID)
 	 * @param schemaIdentifiers ie object schema_identifiers. eg: 086348mc8s, qstt4fps28
+	 * @param ieObjectIds
+	 * @param user Currently logged-in user
+	 * @param resolveThumbnailUrl
 	 * @param referer site making the request. eg: https://qas-v3.hetarchief.be
 	 * @param ip Ip of the client making the request. eg: 172.17.45.216
-	 * @param user Currently logged-in user
 	 */
 	@Get()
 	public async getIeObjectsByIds(
-		@Query('ids') schemaIdentifiers: string[],
+		@Query('schemaIdentifiers') schemaIdentifiers: string | string[] | undefined,
+		@Query('ieObjectIds') ieObjectIds: string | string[] | undefined,
+		@SessionUser() user: SessionUserEntity,
+		@Query('resolveThumbnailUrl') resolveThumbnailUrl: 'true' | 'false',
 		@Referer() referer: string | null,
-		@Ip() ip: string,
-		@SessionUser() user: SessionUserEntity
+		@Ip() ip: string
 	): Promise<(Partial<IeObject> | null)[]> {
 		try {
-			let ids: string[];
-			if (typeof schemaIdentifiers === 'string') {
-				ids = [schemaIdentifiers];
+			let ieObjectIdsResolved: string[];
+			if (schemaIdentifiers) {
+				let schemaIdentifiersResolved: string[];
+				if (typeof schemaIdentifiers === 'string') {
+					schemaIdentifiersResolved = [schemaIdentifiers];
+				} else {
+					schemaIdentifiersResolved = schemaIdentifiers;
+				}
+				if (schemaIdentifiersResolved?.length) {
+					// Convert schemaIdentifiers to ieObjectIds
+					// Convert qs6d5p9579 => https://data-qas.hetarchief.be/id/entity/qs6d5p9579
+					ieObjectIdsResolved = await mapLimit(
+						schemaIdentifiersResolved,
+						12,
+						async (schemaIdentifier: string): Promise<string | null> => {
+							return await this.ieObjectsService.getObjectIdBySchemaIdentifierCached(
+								schemaIdentifier
+							);
+						}
+					);
+				}
 			} else {
-				ids = schemaIdentifiers;
+				if (typeof ieObjectIds === 'string') {
+					ieObjectIdsResolved = [ieObjectIds];
+				} else {
+					ieObjectIdsResolved = ieObjectIds;
+				}
 			}
 
 			const visitorSpaceAccessInfo =
 				await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
 
 			const limitedObjects: Partial<IeObject | null>[] = await mapLimit(
-				ids,
-				12,
-				async (schemaIdentifier: string): Promise<Partial<IeObject> | null> => {
+				ieObjectIdsResolved,
+				20,
+				async (ieObjectId: string): Promise<Partial<IeObject> | null> => {
 					try {
 						if (
-							!schemaIdentifier ||
-							schemaIdentifier.length === 0 ||
-							schemaIdentifier.includes('.well-known')
+							!ieObjectId ||
+							ieObjectId.length === 0 ||
+							ieObjectId.includes('.well-known') // strange nextjs ssr requests
 						) {
 							return null;
 						}
 
-						const ieObjectId: string | null =
-							await this.ieObjectsService.getObjectIdBySchemaIdentifierCached(schemaIdentifier);
-
-						if (!ieObjectId) {
-							return null;
-						}
-
-						const ieObject = await this.ieObjectsService.findByIeObjectId(ieObjectId, referer, ip);
+						const ieObject = await this.ieObjectsService.findByIeObjectId(
+							ieObjectId,
+							resolveThumbnailUrl === 'true',
+							referer,
+							ip
+						);
 
 						if (!ieObject) {
 							return null;
@@ -764,7 +783,7 @@ export class IeObjectsController {
 
 						// Censor the object based on the licenses and sector
 						// Only leave the properties that the current user can see of this object
-						const limitedObject = limitAccessToObjectDetails(ieObject, {
+						const limitedObject = limitAccessToObjectDetails(ieObject as IeObjectForAccessCheck, {
 							userId: user?.getId(),
 							isKeyUser: user.getIsKeyUser(),
 							sector: user.getSector(),
@@ -792,9 +811,13 @@ export class IeObjectsController {
 
 						return limitedObject;
 					} catch (err) {
-						throw new CustomError('Failed to retrieve object details in getIeObjectsByIds', err, {
-							schemaIdentifier,
-						});
+						throw new CustomError(
+							'Failed to retrieve object details by id in getIeObjectsByIds',
+							err,
+							{
+								schemaIdentifier: ieObjectId,
+							}
+						);
 					}
 				}
 			);

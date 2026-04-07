@@ -15,6 +15,8 @@ import { MaterialRequestsController } from './material-requests.controller';
 
 import { PermissionName } from '@viaa/avo2-types';
 import { EventsService } from '~modules/events/services/events.service';
+import { MaterialRequestMessagesService } from '~modules/material-request-messages/services/material-request-messages.service';
+import { MaterialRequestPdfGeneratorService } from '~modules/material-request-messages/services/material-request-pdf-generator';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { TestingLogger } from '~shared/logging/test-logger';
 
@@ -25,6 +27,20 @@ const mockMaterialRequestsService: Partial<Record<keyof MaterialRequestsService,
 	createMaterialRequest: vi.fn(),
 	updateMaterialRequestForUser: vi.fn(),
 	deleteMaterialRequest: vi.fn(),
+};
+
+const mockMaterialRequestMessageService: Partial<
+	Record<keyof MaterialRequestMessagesService, MockInstance>
+> = {
+	findAll: vi.fn(),
+	countUnreadMessages: vi.fn(),
+};
+
+const mockMaterialRequestPdfGeneratorService: Partial<
+	Record<keyof MaterialRequestPdfGeneratorService, MockInstance>
+> = {
+	generateReuseFormPdfAndUpload: vi.fn(),
+	generateFinalSummaryPdfAndUpload: vi.fn(),
 };
 
 const mockEventsService: Partial<Record<keyof EventsService, MockInstance>> = {
@@ -42,6 +58,14 @@ describe('MaterialRequestsController', () => {
 				{
 					provide: MaterialRequestsService,
 					useValue: mockMaterialRequestsService,
+				},
+				{
+					provide: MaterialRequestMessagesService,
+					useValue: mockMaterialRequestMessageService,
+				},
+				{
+					provide: MaterialRequestPdfGeneratorService,
+					useValue: mockMaterialRequestPdfGeneratorService,
 				},
 				{
 					provide: EventsService,
@@ -72,9 +96,7 @@ describe('MaterialRequestsController', () => {
 				new SessionUserEntity({
 					...mockUser,
 					permissions: [PermissionName.VIEW_ANY_MATERIAL_REQUESTS],
-				}),
-				'referer',
-				''
+				})
 			);
 
 			expect(materialRequests).toEqual(mockMaterialRequestsResponse);
@@ -105,6 +127,7 @@ describe('MaterialRequestsController', () => {
 			const response = await materialRequestsController.getMaterialRequestById(
 				'1',
 				new SessionUserEntity(mockUser),
+				'false',
 				'referer',
 				''
 			);

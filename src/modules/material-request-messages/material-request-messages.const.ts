@@ -155,8 +155,8 @@ export function GET_REUSE_LABELS(
 }
 
 export function GET_MATERIAL_REQUEST_TRANSLATIONS_BY_TYPE(
-	translationsService: TranslationsService,
-	locale: Locale
+	locale: Locale,
+	translationsService: TranslationsService
 ): Record<MaterialRequestType, string> {
 	return {
 		[MaterialRequestType.MORE_INFO]: translationsService.tText(
@@ -178,8 +178,8 @@ export function GET_MATERIAL_REQUEST_TRANSLATIONS_BY_TYPE(
 }
 
 export function GET_MATERIAL_REQUEST_EXTRA_CONDITION_LABELS(
-	translationsService: TranslationsService,
-	locale: Locale
+	locale: Locale,
+	translationsService: TranslationsService
 ): Record<MaterialRequestAdditionalConditionsType, string> {
 	return {
 		[MaterialRequestAdditionalConditionsType.PERMISSION_LICENSE_OWNER]: translationsService.tText(

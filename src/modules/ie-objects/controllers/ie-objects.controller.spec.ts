@@ -9,7 +9,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import type { IPagination } from '@studiohyperdrive/pagination';
 import type { Request, Response } from 'express';
 import { cloneDeep } from 'lodash';
-import { type MockInstance, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
 
 import { type IeObject, IeObjectLicense, type RelatedIeObject } from '../ie-objects.types';
 import {
@@ -201,9 +201,11 @@ describe('IeObjectsController', () => {
 
 			const ieObjects = await ieObjectsController.getIeObjectsByIds(
 				['1'],
-				'referer',
-				'127.0.0.1',
-				mockSessionUser
+				undefined,
+				mockSessionUser,
+				'false',
+				undefined,
+				undefined
 			);
 
 			expect(ieObjects[0]).toBeDefined();
@@ -217,7 +219,14 @@ describe('IeObjectsController', () => {
 			mockIeObjectsService.findByIeObjectId.mockResolvedValueOnce(mockResponse);
 
 			try {
-				await ieObjectsController.getIeObjectsByIds(['1'], 'referer', '127.0.0.1', mockSessionUser);
+				await ieObjectsController.getIeObjectsByIds(
+					['1'],
+					undefined,
+					mockSessionUser,
+					'false',
+					undefined,
+					undefined
+				);
 				fail('Expected an error to be thrown if the object does not exist');
 			} catch (err) {
 				expect(err.message).toEqual('Failed to retrieve object details in getIeObjectsByIds');
@@ -230,7 +239,14 @@ describe('IeObjectsController', () => {
 			);
 
 			try {
-				await ieObjectsController.getIeObjectsByIds(['1'], 'referer', '127.0.0.1', mockSessionUser);
+				await ieObjectsController.getIeObjectsByIds(
+					['1'],
+					undefined,
+					mockSessionUser,
+					'false',
+					undefined,
+					undefined
+				);
 				fail('Expected an error to be thrown if the object does not exist');
 			} catch (err) {
 				expect(err.message).toEqual('Failed to retrieve object details in getIeObjectsByIds');
@@ -247,9 +263,11 @@ describe('IeObjectsController', () => {
 
 			const ieObjects = await ieObjectsController.getIeObjectsByIds(
 				['1'],
+				undefined,
+				mockSessionUser,
+				'true',
 				'referer',
-				'127.0.0.1',
-				mockSessionUser
+				'127.0.0.1'
 			);
 
 			expect(ieObjects[0].schemaIdentifier).toEqual(mockIeObject1.schemaIdentifier);
@@ -268,9 +286,11 @@ describe('IeObjectsController', () => {
 
 			const ieObjects = await ieObjectsController.getIeObjectsByIds(
 				['1'],
+				undefined,
+				mockSessionUser,
+				'true',
 				'referer',
-				'127.0.0.1',
-				mockSessionUser
+				'127.0.0.1'
 			);
 
 			expect(ieObjects[0].thumbnailUrl).toBeUndefined();
@@ -287,9 +307,11 @@ describe('IeObjectsController', () => {
 
 			const ieObjects = await ieObjectsController.getIeObjectsByIds(
 				['1'],
+				undefined,
+				mockSessionUser,
+				'true',
 				'referer',
-				'127.0.0.1',
-				mockSessionUser
+				'127.0.0.1'
 			);
 
 			expect(ieObjects[0].schemaIdentifier).toEqual(mockResponse.schemaIdentifier);

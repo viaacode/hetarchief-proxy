@@ -1,4 +1,4 @@
-﻿import { Buffer } from 'node:buffer';
+import { Buffer } from 'node:buffer';
 import { randomUUID } from 'node:crypto';
 import { join } from 'node:path';
 import { AssetsService, TranslationsService } from '@meemoo/admin-core-api';
@@ -303,7 +303,7 @@ export class MaterialRequestPdfGeneratorService {
 		this.text(
 			doc,
 			contentWidth,
-			GET_MATERIAL_REQUEST_TRANSLATIONS_BY_TYPE(this.translationsService, locale)[
+			GET_MATERIAL_REQUEST_TRANSLATIONS_BY_TYPE(locale, this.translationsService)[
 				materialRequest.type
 			]
 		);

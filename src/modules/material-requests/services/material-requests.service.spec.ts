@@ -1,3 +1,7 @@
+vi.mock('~modules/mediahaven-jobs-watcher/services/mediahaven-jobs-watcher.service', () => ({
+	MediahavenJobsWatcherService: class MediahavenJobsWatcherService {},
+}));
+
 import { DataService, VideoStillsService } from '@meemoo/admin-core-api';
 import { Test, type TestingModule } from '@nestjs/testing';
 import { afterEach, beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
@@ -8,6 +12,7 @@ import {
 	mockGqlMaintainers,
 	mockGqlMaterialRequest1,
 	mockGqlMaterialRequest2,
+	mockGqlMaterialRequest3,
 	mockMaintainerWithMaterialRequest,
 	mockUser,
 	mockUserProfileId,
@@ -27,6 +32,7 @@ import type {
 import { EventsService } from '~modules/events/services/events.service';
 import { IeObjectLicense, IeObjectsVisitorSpaceInfo } from '~modules/ie-objects/ie-objects.types';
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
+import { MaterialRequestMessagesService } from '~modules/material-request-messages/services/material-request-messages.service';
 import { MediahavenJobsWatcherService } from '~modules/mediahaven-jobs-watcher/services/mediahaven-jobs-watcher.service';
 import { mockOrganisations } from '~modules/organisations/mocks/organisations.mocks';
 import { OrganisationsService } from '~modules/organisations/services/organisations.service';
@@ -104,6 +110,14 @@ const mockUsersService: Partial<Record<keyof UsersService, MockInstance>> = {
 
 const mockEventsService: Partial<Record<keyof EventsService, MockInstance>> = {
 	insertEvents: vi.fn(() => Promise.resolve()),
+};
+
+const mockMaterialRequestMessageService: Partial<
+	Record<keyof MaterialRequestMessagesService, MockInstance>
+> = {
+	findAll: vi.fn(),
+	countUnreadMessages: vi.fn(),
+	adaptEvent: vi.fn((message) => message),
 };
 
 const getDefaultMaterialRequestByIdResponse = (): {
@@ -185,6 +199,10 @@ describe('MaterialRequestsService', () => {
 					provide: ConfigService,
 					useValue: mockConfigService,
 				},
+				{
+					provide: MaterialRequestMessagesService,
+					useValue: mockMaterialRequestMessageService,
+				},
 			],
 		})
 			.setLogger(new TestingLogger())
@@ -205,6 +223,7 @@ describe('MaterialRequestsService', () => {
 		it('can adapt a FindMaterialRequestsQuery hasura response to our material request interface', async () => {
 			const adapted = await materialRequestsService.adapt(
 				mockGqlMaterialRequest1,
+				true,
 				mockOrganisations,
 				mockIeObjectsVisitorSpaceInfo,
 				new SessionUserEntity(mockUser),
@@ -236,6 +255,7 @@ describe('MaterialRequestsService', () => {
 		it('can adapt a FindMaterialRequestsByIdQuery hasura response to our material request interface', async () => {
 			const adapted = await materialRequestsService.adapt(
 				mockGqlMaterialRequest2,
+				true,
 				mockOrganisations,
 				mockIeObjectsVisitorSpaceInfo,
 				new SessionUserEntity(mockUser),
@@ -305,6 +325,7 @@ describe('MaterialRequestsService', () => {
 		it('should return null when the material request does not exist', async () => {
 			const adapted = await materialRequestsService.adapt(
 				undefined,
+				true,
 				mockOrganisations,
 				mockIeObjectsVisitorSpaceInfo,
 				new SessionUserEntity(mockUser),
@@ -318,6 +339,7 @@ describe('MaterialRequestsService', () => {
 		it('returns null on invalid input', async () => {
 			const adapted = await materialRequestsService.adapt(
 				null,
+				true,
 				mockOrganisations,
 				mockIeObjectsVisitorSpaceInfo,
 				new SessionUserEntity(mockUser),
@@ -341,6 +363,7 @@ describe('MaterialRequestsService', () => {
 				},
 				false,
 				new SessionUserEntity(mockUser),
+				true,
 				'referer',
 				''
 			);
@@ -363,6 +386,7 @@ describe('MaterialRequestsService', () => {
 				},
 				false,
 				new SessionUserEntity(mockUser),
+				true,
 				'referer',
 				''
 			);
@@ -387,6 +411,7 @@ describe('MaterialRequestsService', () => {
 				},
 				false,
 				new SessionUserEntity(mockUser),
+				true,
 				'referer',
 				''
 			);
@@ -410,6 +435,7 @@ describe('MaterialRequestsService', () => {
 				},
 				false,
 				new SessionUserEntity(mockUser),
+				true,
 				'referer',
 				''
 			);
@@ -432,6 +458,7 @@ describe('MaterialRequestsService', () => {
 					...mockUser,
 					id: mockUserProfileId,
 				}),
+				true,
 				'referer',
 				''
 			);
@@ -448,6 +475,7 @@ describe('MaterialRequestsService', () => {
 			const response = await materialRequestsService.findById(
 				'1',
 				new SessionUserEntity(mockUser),
+				true,
 				'referer',
 				''
 			);
@@ -472,6 +500,7 @@ describe('MaterialRequestsService', () => {
 				await materialRequestsService.findById(
 					'unknown-id',
 					new SessionUserEntity(mockUser),
+					true,
 					'referer',
 					''
 				);
@@ -535,7 +564,7 @@ describe('MaterialRequestsService', () => {
 			);
 			const mockData: UpdateMaterialRequestMutation = {
 				update_app_material_requests: {
-					returning: [mockGqlMaterialRequest1 as any],
+					returning: [mockGqlMaterialRequest3 as any],
 				},
 			};
 			mockDataService.execute.mockResolvedValueOnce(mockData);

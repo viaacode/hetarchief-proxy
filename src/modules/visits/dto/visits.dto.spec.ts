@@ -30,9 +30,15 @@ describe('VisitsDto', () => {
 			const visitsQueryDto = new VisitsQueryDto();
 			expect(visitsQueryDto).toEqual({
 				page: 1,
-				size: 10,
+				size: 20,
 				orderProp: 'startAt',
 				orderDirection: 'desc',
+				accessType: undefined,
+				query: undefined,
+				requesterId: undefined,
+				status: undefined,
+				timeframe: undefined,
+				visitorSpaceSlug: undefined,
 			});
 		});
 	});

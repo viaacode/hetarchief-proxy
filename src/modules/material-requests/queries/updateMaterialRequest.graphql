@@ -66,6 +66,7 @@ mutation updateMaterialRequest(
 					skos_pref_label
 					ha_org_has_logo
 					skos_alt_label
+					ha_org_sector
 					schemaContactPoint {
 						schema_contact_type
 						schema_email
@@ -74,6 +75,9 @@ mutation updateMaterialRequest(
 					visitorSpace {
 						slug
 					}
+				}
+				schemaLicenses {
+					schema_license
 				}
 			}
 			ie_object_representation_id

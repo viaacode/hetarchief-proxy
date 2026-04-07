@@ -14,7 +14,7 @@ describe('FoldersDto', () => {
 			expect(collectionObjectsQueryDto).toEqual({
 				page: 1,
 				query: undefined,
-				size: 10,
+				size: 20,
 			});
 		});
 	});
