@@ -57,12 +57,7 @@ import { logAndThrow } from '@meemoo/admin-core-api/dist/src/modules/shared/help
 import { mapLimit } from 'blend-promise-utils';
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
-import {
-	ALL_INDEXES,
-	IeObjectsSearchFilterField,
-	Operator,
-	OrderProperty,
-} from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
+import { ALL_INDEXES, IeObjectsSearchFilterField, Operator, OrderProperty, } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
 import { mapDcTermsFormatToSimpleType } from '~modules/ie-objects/helpers/map-dc-terms-format-to-simple-type';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupName } from '~modules/users/types';
@@ -817,7 +812,7 @@ export class IeObjectsController {
 						return limitedObject;
 					} catch (err) {
 						throw new CustomError(
-							'Failed to retrieve object details by id in getIeObjectsByIeObjectIds',
+							'Failed to retrieve object details by id in getIeObjectsByIds',
 							err,
 							{
 								schemaIdentifier: ieObjectId,
@@ -829,13 +824,9 @@ export class IeObjectsController {
 
 			return limitedObjects;
 		} catch (err) {
-			const error = new CustomError(
-				'Failed to retrieve object details in getIeObjectsBySchemaIdentifiers',
-				err,
-				{
-					schemaIdentifiers,
-				}
-			);
+			const error = new CustomError('Failed to retrieve object details in getIeObjectsByIds', err, {
+				schemaIdentifiers,
+			});
 			logAndThrow(error);
 		}
 	}

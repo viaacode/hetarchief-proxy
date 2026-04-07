@@ -1,6 +1,10 @@
+vi.mock('~modules/mediahaven-jobs-watcher/services/mediahaven-jobs-watcher.service', () => ({
+	MediahavenJobsWatcherService: class MediahavenJobsWatcherService {},
+}));
+
 import { DataService, VideoStillsService } from '@meemoo/admin-core-api';
 import { Test, type TestingModule } from '@nestjs/testing';
-import { type MockInstance, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
 
 import { CampaignMonitorService } from '../../campaign-monitor/services/campaign-monitor.service';
 import { MaterialRequestType } from '../material-requests.types';
@@ -8,6 +12,7 @@ import {
 	mockGqlMaintainers,
 	mockGqlMaterialRequest1,
 	mockGqlMaterialRequest2,
+	mockGqlMaterialRequest3,
 	mockMaintainerWithMaterialRequest,
 	mockUser,
 	mockUserProfileId,
@@ -27,6 +32,7 @@ import type {
 import { EventsService } from '~modules/events/services/events.service';
 import { IeObjectLicense, IeObjectsVisitorSpaceInfo } from '~modules/ie-objects/ie-objects.types';
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
+import { MaterialRequestMessagesService } from '~modules/material-request-messages/services/material-request-messages.service';
 import { MediahavenJobsWatcherService } from '~modules/mediahaven-jobs-watcher/services/mediahaven-jobs-watcher.service';
 import { mockOrganisations } from '~modules/organisations/mocks/organisations.mocks';
 import { OrganisationsService } from '~modules/organisations/services/organisations.service';
@@ -104,6 +110,14 @@ const mockUsersService: Partial<Record<keyof UsersService, MockInstance>> = {
 
 const mockEventsService: Partial<Record<keyof EventsService, MockInstance>> = {
 	insertEvents: vi.fn(() => Promise.resolve()),
+};
+
+const mockMaterialRequestMessageService: Partial<
+	Record<keyof MaterialRequestMessagesService, MockInstance>
+> = {
+	findAll: vi.fn(),
+	countUnreadMessages: vi.fn(),
+	adaptEvent: vi.fn((message) => message),
 };
 
 const getDefaultMaterialRequestByIdResponse = (): {
@@ -184,6 +198,10 @@ describe('MaterialRequestsService', () => {
 				{
 					provide: ConfigService,
 					useValue: mockConfigService,
+				},
+				{
+					provide: MaterialRequestMessagesService,
+					useValue: mockMaterialRequestMessageService,
 				},
 			],
 		})
@@ -546,7 +564,7 @@ describe('MaterialRequestsService', () => {
 			);
 			const mockData: UpdateMaterialRequestMutation = {
 				update_app_material_requests: {
-					returning: [mockGqlMaterialRequest1 as any],
+					returning: [mockGqlMaterialRequest3 as any],
 				},
 			};
 			mockDataService.execute.mockResolvedValueOnce(mockData);

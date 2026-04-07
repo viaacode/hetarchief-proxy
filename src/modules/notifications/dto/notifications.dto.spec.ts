@@ -7,7 +7,7 @@ describe('NotificationsDto', () => {
 			const notificationsQueryDto = new NotificationsQueryDto();
 			expect(notificationsQueryDto).toEqual({
 				page: 1,
-				size: 10,
+				size: 20,
 			});
 		});
 	});
