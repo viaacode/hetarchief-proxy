@@ -284,6 +284,7 @@ describe('FoldersController', () => {
 			mockFoldersService.findObjectInFolderById.mockResolvedValue(mockFoldersResponse.items[0]);
 			mockIeObjectsService.getObjectIdBySchemaIdentifierCached.mockResolvedValue(mockIeObject1.iri);
 			mockIeObjectsService.findByIeObjectId.mockResolvedValue([mockIeObject1]);
+			mockEventsService.insertEvents.mockResolvedValueOnce([]);
 			const folderObject = await foldersController.addObjectToFolder(
 				mockRequest,
 				'referer',

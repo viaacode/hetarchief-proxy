@@ -203,7 +203,7 @@ describe('IeObjectsController', () => {
 				['1'],
 				undefined,
 				mockSessionUser,
-				false,
+				'false',
 				undefined,
 				undefined
 			);
@@ -223,7 +223,7 @@ describe('IeObjectsController', () => {
 					['1'],
 					undefined,
 					mockSessionUser,
-					false,
+					'false',
 					undefined,
 					undefined
 				);
@@ -243,7 +243,7 @@ describe('IeObjectsController', () => {
 					['1'],
 					undefined,
 					mockSessionUser,
-					false,
+					'false',
 					undefined,
 					undefined
 				);
@@ -265,7 +265,7 @@ describe('IeObjectsController', () => {
 				['1'],
 				undefined,
 				mockSessionUser,
-				true,
+				'true',
 				'referer',
 				'127.0.0.1'
 			);
@@ -288,7 +288,7 @@ describe('IeObjectsController', () => {
 				['1'],
 				undefined,
 				mockSessionUser,
-				true,
+				'true',
 				'referer',
 				'127.0.0.1'
 			);
@@ -309,7 +309,7 @@ describe('IeObjectsController', () => {
 				['1'],
 				undefined,
 				mockSessionUser,
-				true,
+				'true',
 				'referer',
 				'127.0.0.1'
 			);

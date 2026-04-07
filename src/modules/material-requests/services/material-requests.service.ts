@@ -1,24 +1,9 @@
 import { parse } from 'node:path';
 import { DataService, Locale, StillsObjectType, VideoStillsService } from '@meemoo/admin-core-api';
-import {
-	BadRequestException,
-	Injectable,
-	InternalServerErrorException,
-	NotFoundException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException, } from '@nestjs/common';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { mapLimit } from 'blend-promise-utils';
-import {
-	compact,
-	groupBy,
-	intersection,
-	isArray,
-	isEmpty,
-	isNil,
-	kebabCase,
-	noop,
-	set,
-} from 'lodash';
+import { compact, groupBy, intersection, isArray, isEmpty, isNil, kebabCase, noop, set, } from 'lodash';
 
 import {
 	CreateMaterialRequestDto,
@@ -94,10 +79,7 @@ import {
 	UpdateMaterialRequestStatusMutation,
 	UpdateMaterialRequestStatusMutationVariables,
 } from '~generated/graphql-db-types-hetarchief';
-import {
-	EmailTemplate,
-	type MaterialRequestEmailInfo,
-} from '~modules/campaign-monitor/campaign-monitor.types';
+import { EmailTemplate, type MaterialRequestEmailInfo, } from '~modules/campaign-monitor/campaign-monitor.types';
 
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 import {
@@ -1177,6 +1159,9 @@ export class MaterialRequestsService {
 		objectLicences: IeObjectLicense[];
 		hasAccessToEssence: boolean;
 	} {
+		// Set a fake thumbnailUrl to see if our existing censor logic will censor the thumbnail
+		// We don't need the actual thumbnail in this function, we just need to see if it is accessible to the current user
+		(objectMetadata as any).thumbnailUrl = 'fake-thumbnail-for-access-check';
 		const censoredObjectMetadata = limitAccessToObjectDetails(objectMetadata, {
 			userId: user.getId(),
 			isKeyUser: user.getIsKeyUser(),

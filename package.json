@@ -6,10 +6,11 @@
   "private": true,
   "license": "UNLICENSED",
   "contributors": [
-    "Andry Charlier <andry.charlier@studiohyperdrive.be>",
-    "Bart Naessens <bart.naessens@studiohyperdrive.be>",
     "Bert Verhelst <bert.verhelst@studiohyperdrive.be>",
-    "Ian Emsens <ian.emsens@studiohypderive.be>"
+    "Femke Reunes <femke.reunes@studiohyperdrive.be>",
+    "Ian Emsens <ian.emsens@studiohypderive.be>",
+    "Bart Naessens <bart.naessens@studiohyperdrive.be>",
+    "Andry Charlier <andry.charlier@studiohyperdrive.be>"
   ],
   "scripts": {
     "prebuild": "rimraf dist",
