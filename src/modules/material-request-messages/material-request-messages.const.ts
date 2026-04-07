@@ -1,6 +1,9 @@
 import { TranslationsService } from '@meemoo/admin-core-api';
 
-import { MaterialRequestReuseFormKey, MaterialRequestType, } from '~modules/material-requests/material-requests.types';
+import {
+	MaterialRequestReuseFormKey,
+	MaterialRequestType,
+} from '~modules/material-requests/material-requests.types';
 import { Locale } from '~shared/types/types';
 import {
 	MaterialRequestAdditionalConditionsType,

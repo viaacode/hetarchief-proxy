@@ -1,4 +1,4 @@
-﻿import { Buffer } from 'node:buffer';
+import { Buffer } from 'node:buffer';
 import { randomUUID } from 'node:crypto';
 import { join } from 'node:path';
 import { AssetsService, TranslationsService } from '@meemoo/admin-core-api';
@@ -6,6 +6,7 @@ import { Injectable } from '@nestjs/common';
 import { AvoFileUploadAssetType } from '@viaa/avo2-types';
 import { format, isValid, Locale as DateFnsLocale, parseISO } from 'date-fns';
 import { enGB, nlBE } from 'date-fns/locale';
+import { drop, take } from 'lodash';
 import PDFDocument from 'pdfkit';
 import { Lookup_App_Material_Request_Message_Type_Enum } from '~generated/graphql-db-types-hetarchief';
 import {
@@ -114,6 +115,20 @@ export class MaterialRequestPdfGeneratorService {
 			timeUsage += `: ${this.formatDate(reuseForm.timeUsageFrom, locale)} - ${this.formatDate(reuseForm.timeUsageTo, locale)}`;
 		}
 
+		const distributionTypeOtherExplanation = reuseForm.distributionTypeOtherExplanation
+			? `\n${this.translationsService.tText(
+					'modules/material-request-messages/services/material-request-pdf-generator___opmerking-remark-distribution-type-other-explanation',
+					{
+						remark: reuseForm.distributionTypeOtherExplanation?.trim() || '-',
+					},
+					locale
+				)}`
+			: '';
+		const geographicalUsageDescription = `\n${this.translationsService.tText(
+			'modules/material-request-messages/services/material-request-pdf-generator___opmerking-remark-geographical-usage-description',
+			{ remark: reuseForm.geographicalUsageDescription?.trim() || '-' },
+			locale
+		)}`;
 		return [
 			{
 				label: this.translationsService.tText(
@@ -146,10 +161,10 @@ export class MaterialRequestPdfGeneratorService {
 					locale
 				),
 				value: `${this.translationsService.tText(
-					'modules/account/utils/create-label-value-material-request-reuse-form___opmerking',
-					{},
+					'modules/material-request-messages/services/material-request-pdf-generator___opmerking-remark-intended-usage-description',
+					{ remark: reuseForm.intendedUsageDescription?.trim() || '-' },
 					locale
-				)}: ${reuseForm.intendedUsageDescription?.trim() || '-'}`,
+				)}`,
 			},
 			{
 				label: this.translationsService.tText(
@@ -165,7 +180,7 @@ export class MaterialRequestPdfGeneratorService {
 					{},
 					locale
 				),
-				value: LABELS[MaterialRequestReuseFormKey.distributionType][reuseForm.distributionType],
+				value: `${LABELS[MaterialRequestReuseFormKey.distributionType][reuseForm.distributionType]}${distributionTypeOtherExplanation}`,
 			},
 			{
 				label: this.translationsService.tText(
@@ -181,7 +196,7 @@ export class MaterialRequestPdfGeneratorService {
 					{},
 					locale
 				),
-				value: LABELS[MaterialRequestReuseFormKey.geographicalUsage][reuseForm.geographicalUsage],
+				value: `${LABELS[MaterialRequestReuseFormKey.geographicalUsage][reuseForm.geographicalUsage]}${geographicalUsageDescription}`,
 			},
 			{
 				label: this.translationsService.tText(
@@ -529,7 +544,9 @@ export class MaterialRequestPdfGeneratorService {
 		if (conditions?.length) {
 			for (const condition of conditions) {
 				const conditionTypeLabel =
-					GET_MATERIAL_REQUEST_EXTRA_CONDITION_LABELS[condition.type] ?? condition.type;
+					GET_MATERIAL_REQUEST_EXTRA_CONDITION_LABELS(locale, this.translationsService)[
+						condition.type
+					] ?? condition.type;
 				this.h3(doc, contentWidth, conditionTypeLabel);
 				this.text(doc, contentWidth, condition.text);
 				doc.moveDown(0.5);
@@ -537,30 +554,18 @@ export class MaterialRequestPdfGeneratorService {
 		}
 	}
 
-	/**
-	 * Generate PDF for a material request
-	 * @param materialRequest The material request with all the reuse form values
-	 * @returns Buffer containing the PDF data
-	 */
-	private async generateReuseFormPdf(materialRequest: MaterialRequest): Promise<Buffer> {
-		const locale = Locale.Nl;
-		const [doc, pdfBufferPromise, margin, contentWidth] = this.setupPdfDoc(
-			this.translationsService.tText(
-				'modules/material-request-messages/services/material-request-pdf-generator___synthese-jouw-aanvraag-tot-hergebruik',
-				{},
-				locale
-			),
-			locale
-		);
-
-		const labels = this.getTranslatedLabels(materialRequest, Locale.Nl);
-
+	private generateReuseFormPdfBody(
+		doc: PDFKit.PDFDocument,
+		contentWidth: number,
+		materialRequest: MaterialRequest,
+		locale: Locale
+	) {
 		// h1 — page title
 		this.h1(
 			doc,
 			contentWidth,
 			this.translationsService.tText(
-				'modules/material-request-messages/services/material-request-pdf-generator___synthese-jouw-aanvraag-tot-hergebruik',
+				'modules/material-request-messages/services/material-request-pdf-generator___reuse-form-values',
 				{},
 				locale
 			)
@@ -580,11 +585,44 @@ export class MaterialRequestPdfGeneratorService {
 			)
 		);
 
-		for (const field of labels) {
+		const labels = this.getTranslatedLabels(materialRequest, locale);
+		for (const field of take(labels, 6)) {
 			this.h3(doc, contentWidth, field.label);
 			this.text(doc, contentWidth, field.value);
 			doc.moveDown(0.5);
 		}
+		// Ensure page breaks in a logical place and not between title and value
+		doc.addPage();
+		for (const field of drop(labels, 6)) {
+			this.h3(doc, contentWidth, field.label);
+			this.text(doc, contentWidth, field.value);
+			doc.moveDown(0.5);
+		}
+	}
+
+	/**
+	 * Generate PDF for a material request
+	 * @param materialRequest The material request with all the reuse form values
+	 * @returns Buffer containing the PDF data
+	 */
+	private async generateReuseFormPdf(materialRequest: MaterialRequest): Promise<Buffer> {
+		const locale = Locale.Nl;
+		const [doc, pdfBufferPromise, margin, contentWidth] = this.setupPdfDoc(
+			this.translationsService.tText(
+				'modules/material-request-messages/services/material-request-pdf-generator___reuse-form-values',
+				{},
+				locale
+			),
+			locale
+		);
+
+		// NL
+		this.generateReuseFormPdfBody(doc, contentWidth, materialRequest, Locale.Nl);
+
+		doc.addPage();
+
+		// EN
+		this.generateReuseFormPdfBody(doc, contentWidth, materialRequest, Locale.En);
 
 		this.addPageNumbers(doc, margin, contentWidth);
 
@@ -602,26 +640,19 @@ export class MaterialRequestPdfGeneratorService {
 		return format(date, 'dd/MM/yyyy HH:mm');
 	}
 
-	/**
-	 * Generate the final summary PDF for a material request (sent when the request reaches a terminal status)
-	 */
-	private async generateFinalSummaryPdf(materialRequest: MaterialRequest): Promise<Buffer> {
-		const locale = Locale.Nl;
-		const [doc, pdfBufferPromise, margin, contentWidth] = this.setupPdfDoc(
-			this.translationsService.tText(
-				'modules/material-request-messages/services/material-request-pdf-generator___synthese-jouw-aanvraag-tot-hergebruik',
-				{},
-				locale
-			),
-			locale
-		);
-
+	private generateFinalSummaryPdfBody(
+		doc: PDFKit.PDFDocument,
+		margin: number,
+		contentWidth: number,
+		materialRequest: MaterialRequest,
+		locale: Locale
+	) {
 		// h1 — page title
 		this.h1(
 			doc,
 			contentWidth,
 			this.translationsService.tText(
-				'modules/material-request-messages/services/material-request-pdf-generator___synthese-jouw-aanvraag-tot-hergebruik',
+				'modules/material-request-messages/services/material-request-pdf-generator___summary-of-material-request',
 				{},
 				locale
 			)
@@ -712,6 +743,27 @@ export class MaterialRequestPdfGeneratorService {
 
 		// Motivation / additional conditions (only shown if applicable)
 		this.addMotivationSection(doc, contentWidth, materialRequest, locale);
+	}
+
+	/**
+	 * Generate the final summary PDF for a material request (sent when the request reaches a terminal status)
+	 */
+	private async generateFinalSummaryPdf(materialRequest: MaterialRequest): Promise<Buffer> {
+		const locale = Locale.Nl;
+		const [doc, pdfBufferPromise, margin, contentWidth] = this.setupPdfDoc(
+			this.translationsService.tText(
+				'modules/material-request-messages/services/material-request-pdf-generator___summary-of-material-request',
+				{},
+				locale
+			),
+			locale
+		);
+
+		this.generateFinalSummaryPdfBody(doc, margin, contentWidth, materialRequest, Locale.Nl);
+
+		doc.addPage();
+
+		this.generateFinalSummaryPdfBody(doc, margin, contentWidth, materialRequest, Locale.En);
 
 		this.addPageNumbers(doc, margin, contentWidth);
 
