@@ -544,7 +544,7 @@ export class MaterialRequestPdfGeneratorService {
 		if (conditions?.length) {
 			for (const condition of conditions) {
 				const conditionTypeLabel =
-					GET_MATERIAL_REQUEST_EXTRA_CONDITION_LABELS(this.translationsService, locale)[
+					GET_MATERIAL_REQUEST_EXTRA_CONDITION_LABELS(locale, this.translationsService)[
 						condition.type
 					] ?? condition.type;
 				this.h3(doc, contentWidth, conditionTypeLabel);
