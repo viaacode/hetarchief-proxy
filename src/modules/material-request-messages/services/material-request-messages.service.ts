@@ -32,6 +32,7 @@ import {
 	Lookup_App_Material_Request_Message_Type_Enum,
 } from '~generated/graphql-db-types-hetarchief';
 
+import { MaterialRequestMessageBodyAdditionalConditionsDto } from '~modules/material-request-messages/dto/material-request-message-body-additional-conditions.dto';
 import { PaginationHelper } from '~shared/helpers/pagination';
 import { SortDirection } from '~shared/types';
 
@@ -122,7 +123,7 @@ export class MaterialRequestMessagesService {
 
 	async createMessage(
 		materialRequestId: string,
-		profileId: string,
+		profileId: string | null, // if the event was created by the proxy itself. eg: when the download becomes available
 		messageType: Lookup_App_Material_Request_Message_Type_Enum,
 		message?: MaterialRequestMessageBody | null,
 		createdAt: string = new Date().toISOString(),
@@ -223,5 +224,61 @@ export class MaterialRequestMessagesService {
 		}
 
 		return this.adaptAttachment(attachment);
+	}
+
+	/**
+	 * Add additional conditions to the material request that the requester has to accept before the material download can be made available.
+	 * @param materialRequestId
+	 * @param profileId Evaluator profile id that is added the additional conditions
+	 * @param extraConditions
+	 */
+	public async addExtraConditions(
+		materialRequestId: string,
+		profileId: string,
+		extraConditions: MaterialRequestMessageBodyAdditionalConditionsDto
+	) {
+		await this.createMessage(
+			materialRequestId,
+			profileId,
+			Lookup_App_Material_Request_Message_Type_Enum.AdditionalConditions,
+			extraConditions,
+			new Date().toString(),
+			null,
+			null
+		);
+	}
+
+	/**
+	 * Requester of material accepts the additional conditions imposed by the evaluator of the material request
+	 * @param materialRequestId
+	 * @param profileId requester profile id
+	 */
+	public async acceptExtraConditions(materialRequestId: string, profileId: string) {
+		await this.createMessage(
+			materialRequestId,
+			profileId,
+			Lookup_App_Material_Request_Message_Type_Enum.AdditionalConditionsAccepted,
+			null,
+			new Date().toString(),
+			null,
+			null
+		);
+	}
+
+	/**
+	 * Requester of material declines the additional conditions imposed by the evaluator of the material request
+	 * @param materialRequestId
+	 * @param profileId requester profile id
+	 */
+	public async declineExtraConditions(materialRequestId: string, profileId: string) {
+		await this.createMessage(
+			materialRequestId,
+			profileId,
+			Lookup_App_Material_Request_Message_Type_Enum.AdditionalConditionsDenied,
+			null,
+			new Date().toString(),
+			null,
+			null
+		);
 	}
 }
