@@ -288,7 +288,9 @@ export class MaterialRequestPdfGeneratorService {
 		this.text(
 			doc,
 			contentWidth,
-			GET_MATERIAL_REQUEST_TRANSLATIONS_BY_TYPE(locale)[materialRequest.type]
+			GET_MATERIAL_REQUEST_TRANSLATIONS_BY_TYPE(locale, this.translationsService)[
+				materialRequest.type
+			]
 		);
 		doc.moveDown(0.5);
 
