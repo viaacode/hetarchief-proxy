@@ -325,7 +325,7 @@ export class MaterialRequestsController {
 							await this.materialRequestPdfGeneratorService.generateReuseFormPdfAndUpload(
 								updatedMaterialRequest
 							),
-							`Hergebruik-formulier-${format(new Date(), 'ddMMYYYYHHmm')}.pdf`
+							`Hergebruik-formulier-${format(new Date(), 'ddMMyyyyHHmm')}.pdf`
 						);
 					}
 					return updatedMaterialRequest;
