@@ -95,7 +95,12 @@ export class MaterialRequestMessagesService {
 			createdAt: message.created_at,
 			senderProfile: {
 				id: message.sender_profile_id,
-				fullName: message.sender?.full_name,
+				firstName: message.sender?.first_name,
+				lastName: message.sender?.last_name,
+				organisation: {
+					id: message.sender?.organisation?.org_identifier,
+					name: message.sender?.organisation.skos_pref_label,
+				},
 				mail: message.sender?.mail,
 			},
 		};

@@ -690,7 +690,7 @@ export class MaterialRequestPdfGeneratorService {
 			...materialRequest.history
 				.map((event): [string, string] => [
 					this.mapEventToStatusLabel(event, materialRequest, locale),
-					`${event.senderProfile.fullName} (${event.senderProfile.mail}`,
+					`${event.senderProfile.firstName} ${event.senderProfile.lastName} (${event.senderProfile.mail}`,
 				])
 				.filter(([label]) => !!label),
 		];
