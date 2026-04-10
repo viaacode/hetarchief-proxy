@@ -34,7 +34,9 @@ import {
 	Lookup_App_Material_Request_Message_Type_Enum,
 	Lookup_App_Material_Request_Status_Enum,
 } from '~generated/graphql-db-types-hetarchief';
-import { MaterialRequestMessageBodyAdditionalConditionsDto } from '~modules/material-request-messages/dto/material-request-message-body-additional-conditions.dto';
+import {
+	MaterialRequestMessageBodyAdditionalConditionsDto
+} from '~modules/material-request-messages/dto/material-request-message-body-additional-conditions.dto';
 import { MaterialRequestAttachmentsQueryDto } from '~modules/material-request-messages/dto/material-request-messages.dto';
 import {
 	MaterialRequestAttachment,
@@ -78,7 +80,7 @@ const MAX_FILE_COUNT = 20;
 
 @UseGuards(LoggedInGuard)
 @ApiTags('MaterialRequestMessages')
-@Controller('material-request-messages')
+@Controller('material-requests')
 export class MaterialRequestMessagesController {
 	constructor(
 		private materialRequestMessagesService: MaterialRequestMessagesService,

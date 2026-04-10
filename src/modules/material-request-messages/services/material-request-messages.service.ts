@@ -32,7 +32,9 @@ import {
 	Lookup_App_Material_Request_Message_Type_Enum,
 } from '~generated/graphql-db-types-hetarchief';
 
-import { MaterialRequestMessageBodyAdditionalConditionsDto } from '~modules/material-request-messages/dto/material-request-message-body-additional-conditions.dto';
+import {
+	MaterialRequestMessageBodyAdditionalConditionsDto
+} from '~modules/material-request-messages/dto/material-request-message-body-additional-conditions.dto';
 import { PaginationHelper } from '~shared/helpers/pagination';
 import { SortDirection } from '~shared/types';
 
@@ -45,6 +47,12 @@ const ATTACHMENT_ORDER_PROP_TO_DB_PROP: Record<MaterialRequestAttachmentOrderPro
 export class MaterialRequestMessagesService {
 	constructor(private dataService: DataService) {}
 
+	/**
+	 * Get's messages from the database from most recent to oldest
+	 * @param materialRequestId
+	 * @param page
+	 * @param size
+	 */
 	public async findAll(
 		materialRequestId: string,
 		page: number,
@@ -91,11 +99,16 @@ export class MaterialRequestMessagesService {
 			id: message.id,
 			materialRequestId: message.material_request_id,
 			messageType: message.message_type,
-			body: message.body,
+			body: message.body || null,
 			createdAt: message.created_at,
 			senderProfile: {
 				id: message.sender_profile_id,
-				fullName: message.sender?.full_name,
+				firstName: message.sender?.first_name,
+				lastName: message.sender?.last_name,
+				organisation: {
+					id: message.sender?.organisation?.org_identifier,
+					name: message.sender?.organisation.skos_pref_label,
+				},
 				mail: message.sender?.mail,
 			},
 		};
@@ -137,7 +150,7 @@ export class MaterialRequestMessagesService {
 			materialRequestId,
 			senderProfileId: profileId,
 			messageType,
-			body: message ? JSON.stringify(message) : null,
+			body: message || null,
 			attachmentUrl: attachmentUrl || null,
 			attachmentFilename: attachmentFilename || null,
 			createdAt,

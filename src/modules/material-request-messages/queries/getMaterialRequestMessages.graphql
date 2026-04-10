@@ -10,7 +10,8 @@ query getMaterialRequestMessages($materialRequestId: uuid!, $offset: Int!, $limi
 		body
 		sender_profile_id
 		sender {
-			full_name
+			first_name
+			last_name
 			mail
 			organisation {
 				org_identifier

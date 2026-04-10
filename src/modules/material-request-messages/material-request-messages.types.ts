@@ -38,8 +38,13 @@ export interface MaterialRequestEvent {
 	createdAt: string;
 	senderProfile: {
 		id: string;
-		fullName: string;
 		mail: string;
+		firstName: string;
+		lastName: string;
+		organisation: {
+			id: string;
+			name: string;
+		};
 	};
 }
 
