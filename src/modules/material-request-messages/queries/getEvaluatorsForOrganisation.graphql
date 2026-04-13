@@ -1,0 +1,22 @@
+query getEvaluatorsForOrganisation($organisationId: String!) {
+	users_profile(
+		where: {
+			is_evaluator: { _eq: true }
+			organisation: { org_identifier: { _eq: $organisationId } }
+		}
+	) {
+		is_evaluator
+		is_key_user
+		first_name
+		language
+		last_name
+		mail
+		organisation_schema_identifier
+		accepted_tos_at
+		last_access_at
+		created_at
+		updated_at
+		group_id
+		id
+	}
+}

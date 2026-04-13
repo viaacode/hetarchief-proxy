@@ -317,7 +317,7 @@ export class MaterialRequestsController {
 					) {
 						// Generate a summary PDF of the reuse form and store it in a REUSE_SUMMARY message
 						await this.materialRequestMessagesService.createMessage(
-							updatedMaterialRequest.id,
+							updatedMaterialRequest,
 							updatedMaterialRequest.requesterId,
 							Lookup_App_Material_Request_Message_Type_Enum.ReuseSummary,
 							null,

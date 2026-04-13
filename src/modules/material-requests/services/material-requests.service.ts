@@ -27,10 +27,10 @@ import {
 	UpdateMaterialRequestStatusDto,
 } from '../dto/material-requests.dto';
 import {
-	getAdditionEventDate,
 	MAP_MATERIAL_REQUEST_STATUS_TO_EMAIL_TEMPLATE,
 	MAP_MATERIAL_REQUEST_STATUS_TO_EVENT_TYPE,
 	ORDER_PROP_TO_DB_PROP,
+	getAdditionEventDate,
 } from '../material-requests.consts';
 import {
 	GqlMaterialRequest,
@@ -105,8 +105,8 @@ import {
 	IeObjectAccessThrough,
 	IeObjectLicense,
 	type IeObjectSector,
-	IeObjectsVisitorSpaceInfo,
 	IeObjectType,
+	IeObjectsVisitorSpaceInfo,
 	SimpleIeObjectType,
 } from '~modules/ie-objects/ie-objects.types';
 import type { Organisation } from '~modules/organisations/organisations.types';
@@ -647,7 +647,7 @@ export class MaterialRequestsService {
 		if (status === Lookup_App_Material_Request_Status_Enum.Cancelled) {
 			this.materialRequestMessageService
 				.createMessage(
-					materialRequestId,
+					currentRequest,
 					user.getId(),
 					Lookup_App_Material_Request_Message_Type_Enum.Cancelled
 				)
@@ -655,7 +655,7 @@ export class MaterialRequestsService {
 		} else if (status === Lookup_App_Material_Request_Status_Enum.Approved) {
 			this.materialRequestMessageService
 				.createMessage(
-					materialRequestId,
+					currentRequest,
 					user.getId(),
 					Lookup_App_Material_Request_Message_Type_Enum.Approved,
 					{ motivation }
@@ -664,7 +664,7 @@ export class MaterialRequestsService {
 		} else if (status === Lookup_App_Material_Request_Status_Enum.Denied) {
 			this.materialRequestMessageService
 				.createMessage(
-					materialRequestId,
+					currentRequest,
 					user.getId(),
 					Lookup_App_Material_Request_Message_Type_Enum.Denied,
 					{ motivation }
@@ -1150,6 +1150,7 @@ export class MaterialRequestsService {
 			requesterId: materialRequest.profile_id,
 			objectId: materialRequest.ie_object_id,
 			updatedAt: materialRequest.updated_at,
+			maintainerId: materialRequest.intellectualEntity.schemaMaintainer.org_identifier,
 			reuseForm: {
 				downloadQuality: fieldValues.downloadQuality,
 				startTime: fieldValues.startTime ? Number.parseInt(fieldValues.startTime, 10) : null,

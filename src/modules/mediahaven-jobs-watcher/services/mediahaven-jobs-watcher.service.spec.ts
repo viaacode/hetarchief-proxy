@@ -1,7 +1,7 @@
 import { DataService, MediahavenService } from '@meemoo/admin-core-api';
 import { ConfigService } from '@nestjs/config';
 import { Test, type TestingModule } from '@nestjs/testing';
-import { afterEach, beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
+import { type MockInstance, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
 	MamJobStatus,
@@ -67,6 +67,7 @@ const createMockMaterialRequest = (
 	updatedAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), // 2 hours ago
 	downloadUrl: '',
 	reuseForm: { downloadQuality: 'HIGH' } as any,
+	maintainerId: '',
 	...overrides,
 });
 
