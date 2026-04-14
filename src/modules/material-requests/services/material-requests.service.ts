@@ -639,37 +639,26 @@ export class MaterialRequestsService {
 
 		this.validateStatusTransition(currentRequest, status, user);
 
-		const updateMaterialRequest: Partial<GqlMaterialRequest> = {
-			status: status,
-			updated_at: new Date().toISOString(),
-		};
-
 		if (status === Lookup_App_Material_Request_Status_Enum.Cancelled) {
-			this.materialRequestMessageService
-				.createMessage(
-					currentRequest,
-					user.getId(),
-					Lookup_App_Material_Request_Message_Type_Enum.Cancelled
-				)
-				.then(noop);
+			await this.materialRequestMessageService.createMessage(
+				currentRequest,
+				user.getId(),
+				Lookup_App_Material_Request_Message_Type_Enum.Cancelled
+			);
 		} else if (status === Lookup_App_Material_Request_Status_Enum.Approved) {
-			this.materialRequestMessageService
-				.createMessage(
-					currentRequest,
-					user.getId(),
-					Lookup_App_Material_Request_Message_Type_Enum.Approved,
-					{ motivation }
-				)
-				.then(noop);
+			await this.materialRequestMessageService.createMessage(
+				currentRequest,
+				user.getId(),
+				Lookup_App_Material_Request_Message_Type_Enum.Approved,
+				{ motivation }
+			);
 		} else if (status === Lookup_App_Material_Request_Status_Enum.Denied) {
-			this.materialRequestMessageService
-				.createMessage(
-					currentRequest,
-					user.getId(),
-					Lookup_App_Material_Request_Message_Type_Enum.Denied,
-					{ motivation }
-				)
-				.then(noop);
+			await this.materialRequestMessageService.createMessage(
+				currentRequest,
+				user.getId(),
+				Lookup_App_Material_Request_Message_Type_Enum.Denied,
+				{ motivation }
+			);
 		}
 
 		const updateMaterialRequestStatusResponse = await this.dataService.execute<
@@ -677,7 +666,10 @@ export class MaterialRequestsService {
 			UpdateMaterialRequestStatusMutationVariables
 		>(UpdateMaterialRequestStatusDocument, {
 			materialRequestId: currentRequest.id,
-			updateMaterialRequest,
+			updateMaterialRequest: {
+				status: status,
+				updated_at: new Date().toISOString(),
+			},
 		});
 
 		const graphQlMaterialRequest =
@@ -717,6 +709,17 @@ export class MaterialRequestsService {
 				updatedRequest.id
 			);
 			await this.mediahavenJobWatcherService.createExportJob(materialRequestForDownload);
+		}
+
+		if (
+			updatedRequest.status === Lookup_App_Material_Request_Status_Enum.Denied ||
+			updatedRequest.status === Lookup_App_Material_Request_Status_Enum.Cancelled
+		) {
+			// Generate a summary PDF of the reuse form and store it in a REUSE_SUMMARY message
+			await this.materialRequestMessageService.createFinalSummaryMessage(
+				updatedRequest,
+				user.getId()
+			);
 		}
 
 		const emailTemplateToSend = MAP_MATERIAL_REQUEST_STATUS_TO_EMAIL_TEMPLATE[status];

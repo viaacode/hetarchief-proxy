@@ -30,6 +30,7 @@ import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
 import { mapDcTermsFormatToSimpleType } from '~modules/ie-objects/helpers/map-dc-terms-format-to-simple-type';
 import { MaterialRequestMessagesService } from '~modules/material-request-messages/services/material-request-messages.service';
+import { MaterialRequestPdfGeneratorService } from '~modules/material-request-messages/services/material-request-pdf-generator';
 import {
 	MaterialRequest,
 	MaterialRequestDurationType,
@@ -57,6 +58,7 @@ export class MediahavenJobsWatcherService {
 		@Inject(forwardRef(() => MaterialRequestsService))
 		private materialRequestsService: MaterialRequestsService,
 		private materialRequestMessagesService: MaterialRequestMessagesService,
+		private materialRequestPdfGeneratorService: MaterialRequestPdfGeneratorService,
 		private dataService: DataService,
 		private mediahavenService: MediahavenService,
 		private usersService: UsersService,
@@ -223,12 +225,18 @@ export class MediahavenJobsWatcherService {
 
 								// Create download-available material request message event
 								await this.materialRequestMessagesService.createMessage(
-									materialRequest,
+									updatedRequest,
 									null,
 									Lookup_App_Material_Request_Message_Type_Enum.DownloadAvailable,
 									null,
 									new Date().toISOString(),
 									null,
+									null
+								);
+
+								// Generate a summary PDF of the reuse form and store it in a REUSE_SUMMARY message
+								await this.materialRequestMessagesService.createFinalSummaryMessage(
+									updatedRequest,
 									null
 								);
 
@@ -322,13 +330,16 @@ export class MediahavenJobsWatcherService {
 
 			await mapLimit(expiredMaterialRequests, 5, async (materialRequest) => {
 				try {
-					await this.materialRequestsService.updateMaterialRequest(materialRequest.id, {
-						download_status: Lookup_App_Material_Request_Download_Status_Enum.Expired,
-					});
+					const updatedRequest = await this.materialRequestsService.updateMaterialRequest(
+						materialRequest.id,
+						{
+							download_status: Lookup_App_Material_Request_Download_Status_Enum.Expired,
+						}
+					);
 
 					// Create a material request message event for the expired download
 					await this.materialRequestMessagesService.createMessage(
-						materialRequest,
+						updatedRequest,
 						null,
 						Lookup_App_Material_Request_Message_Type_Enum.DownloadExpired,
 						null,

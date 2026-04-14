@@ -39,7 +39,9 @@ import {
 } from '~generated/graphql-db-types-hetarchief';
 
 import { mapLimit } from 'blend-promise-utils';
+import { format } from 'date-fns';
 import { MaterialRequestMessageBodyAdditionalConditionsDto } from '~modules/material-request-messages/dto/material-request-message-body-additional-conditions.dto';
+import { MaterialRequestPdfGeneratorService } from '~modules/material-request-messages/services/material-request-pdf-generator';
 import { MaterialRequest } from '~modules/material-requests/material-requests.types';
 import { PaginationHelper } from '~shared/helpers/pagination';
 import { SortDirection } from '~shared/types';
@@ -51,7 +53,10 @@ const ATTACHMENT_ORDER_PROP_TO_DB_PROP: Record<MaterialRequestAttachmentOrderPro
 
 @Injectable()
 export class MaterialRequestMessagesService {
-	constructor(private dataService: DataService) {}
+	constructor(
+		private dataService: DataService,
+		private materialRequestPdfGeneratorService: MaterialRequestPdfGeneratorService
+	) {}
 
 	/**
 	 * Get's messages from the database from most recent to oldest
@@ -141,7 +146,7 @@ export class MaterialRequestMessagesService {
 	}
 
 	async createMessage(
-		materialRequest: Pick<MaterialRequest, 'id' | 'requesterId' | 'maintainerId'>,
+		materialRequest: MaterialRequest,
 		profileId: string | null, // if the event was created by the proxy itself. eg: when the download becomes available
 		messageType: Lookup_App_Material_Request_Message_Type_Enum,
 		message?: MaterialRequestMessageBody | null,
@@ -198,6 +203,37 @@ export class MaterialRequestMessagesService {
 		});
 
 		return insertedMessage;
+	}
+
+	public async createReuseSummaryMessage(
+		materialRequest: MaterialRequest
+	): Promise<MaterialRequestMessage> {
+		return this.createMessage(
+			materialRequest,
+			materialRequest.requesterId,
+			Lookup_App_Material_Request_Message_Type_Enum.ReuseSummary,
+			null,
+			new Date().toISOString(),
+			await this.materialRequestPdfGeneratorService.generateReuseFormPdfAndUpload(materialRequest),
+			`Hergebruik-formulier-${format(new Date(), 'ddMMyyyyHHmm')}.pdf`
+		);
+	}
+
+	public async createFinalSummaryMessage(
+		materialRequest: MaterialRequest,
+		profileId: string
+	): Promise<MaterialRequestMessage> {
+		return this.createMessage(
+			materialRequest,
+			profileId,
+			Lookup_App_Material_Request_Message_Type_Enum.FinalSummary,
+			null,
+			new Date().toISOString(),
+			await this.materialRequestPdfGeneratorService.generateFinalSummaryPdfAndUpload(
+				materialRequest
+			),
+			`Synthesedocument-${format(new Date(), 'ddMMyyyyHHmm')}.pdf`
+		);
 	}
 
 	public async findAttachments(

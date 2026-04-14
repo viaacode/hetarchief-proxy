@@ -29,16 +29,11 @@ import {
 } from '../dto/material-requests.dto';
 import type { MaterialRequest, MaterialRequestMaintainer } from '../material-requests.types';
 
-import { format } from 'date-fns';
-import {
-	Lookup_App_Material_Request_Message_Type_Enum,
-	Lookup_App_Material_Request_Status_Enum,
-} from '~generated/graphql-db-types-hetarchief';
+import { Lookup_App_Material_Request_Status_Enum } from '~generated/graphql-db-types-hetarchief';
 import { EventsService } from '~modules/events/services/events.service';
 import { type LogEvent, LogEventType } from '~modules/events/types';
 import { mapDcTermsFormatToSimpleType } from '~modules/ie-objects/helpers/map-dc-terms-format-to-simple-type';
 import { MaterialRequestMessagesService } from '~modules/material-request-messages/services/material-request-messages.service';
-import { MaterialRequestPdfGeneratorService } from '~modules/material-request-messages/services/material-request-pdf-generator';
 import { mapUserToGroupNameAndKeyUser } from '~modules/material-requests/material-requests.consts';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupId, GroupName } from '~modules/users/types';
@@ -58,7 +53,6 @@ export class MaterialRequestsController {
 	constructor(
 		private materialRequestsService: MaterialRequestsService,
 		private materialRequestMessagesService: MaterialRequestMessagesService,
-		private materialRequestPdfGeneratorService: MaterialRequestPdfGeneratorService,
 		private eventsService: EventsService
 	) {}
 
@@ -316,16 +310,8 @@ export class MaterialRequestsController {
 						updatedMaterialRequest.reuseForm
 					) {
 						// Generate a summary PDF of the reuse form and store it in a REUSE_SUMMARY message
-						await this.materialRequestMessagesService.createMessage(
-							updatedMaterialRequest,
-							updatedMaterialRequest.requesterId,
-							Lookup_App_Material_Request_Message_Type_Enum.ReuseSummary,
-							null,
-							new Date().toISOString(),
-							await this.materialRequestPdfGeneratorService.generateReuseFormPdfAndUpload(
-								updatedMaterialRequest
-							),
-							`Hergebruik-formulier-${format(new Date(), 'ddMMyyyyHHmm')}.pdf`
+						await this.materialRequestMessagesService.createReuseSummaryMessage(
+							updatedMaterialRequest
 						);
 					}
 					return updatedMaterialRequest;
