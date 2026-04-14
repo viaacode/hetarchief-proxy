@@ -14,6 +14,17 @@ mutation insertMaterialRequest($newMaterialRequest: app_material_requests_insert
 		) {
 			message_type
 			created_at
+			body
+			sender_profile_id
+			sender {
+				first_name
+				last_name
+				mail
+				organisation {
+					org_identifier
+					skos_pref_label
+				}
+			}
 		}
 		is_pending
 		status

@@ -125,6 +125,7 @@ import { mapDcTermsFormatToSimpleType } from '~modules/ie-objects/helpers/map-dc
 import { IE_OBJECT_INTRA_CP_LICENSES } from '~modules/ie-objects/ie-objects.conts';
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { MaterialRequestMessagesService } from '~modules/material-request-messages/services/material-request-messages.service';
+import { MaterialRequestPdfGeneratorService } from '~modules/material-request-messages/services/material-request-pdf-generator';
 import { MediahavenJobsWatcherService } from '~modules/mediahaven-jobs-watcher/services/mediahaven-jobs-watcher.service';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
@@ -148,7 +149,8 @@ export class MaterialRequestsService {
 		private eventsService: EventsService,
 		private mediahavenJobWatcherService: MediahavenJobsWatcherService,
 		private configService: ConfigService<Configuration>,
-		private materialRequestMessageService: MaterialRequestMessagesService
+		private materialRequestMessageService: MaterialRequestMessagesService,
+		private materialRequestPdfGeneratorService: MaterialRequestPdfGeneratorService
 	) {}
 
 	public async findAll(
@@ -717,6 +719,24 @@ export class MaterialRequestsService {
 				updatedRequest.id
 			);
 			await this.mediahavenJobWatcherService.createExportJob(materialRequestForDownload);
+		}
+
+		if (
+			updatedRequest.status === Lookup_App_Material_Request_Status_Enum.Denied ||
+			updatedRequest.status === Lookup_App_Material_Request_Status_Enum.Cancelled
+		) {
+			// Generate a summary PDF of the reuse form and store it in a REUSE_SUMMARY message
+			await this.materialRequestMessageService.createMessage(
+				updatedRequest,
+				user.getId(),
+				Lookup_App_Material_Request_Message_Type_Enum.FinalSummary,
+				null,
+				new Date().toISOString(),
+				await this.materialRequestPdfGeneratorService.generateFinalSummaryPdfAndUpload(
+					updatedRequest
+				)
+				// No file name since it will be fixed
+			);
 		}
 
 		const emailTemplateToSend = MAP_MATERIAL_REQUEST_STATUS_TO_EMAIL_TEMPLATE[status];

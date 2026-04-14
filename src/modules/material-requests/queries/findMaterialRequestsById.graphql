@@ -14,17 +14,18 @@ query findMaterialRequestsById($id: uuid!) {
 		) {
 			id
 			message_type
+			created_at
 			body
 			sender_profile_id
 			sender {
-				full_name
+				first_name
+				last_name
 				mail
 				organisation {
 					org_identifier
 					skos_pref_label
 				}
 			}
-			created_at
 		}
 		is_pending
 		status
