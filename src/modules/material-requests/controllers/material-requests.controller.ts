@@ -29,7 +29,6 @@ import {
 } from '../dto/material-requests.dto';
 import type { MaterialRequest, MaterialRequestMaintainer } from '../material-requests.types';
 
-import { format } from 'date-fns';
 import {
 	Lookup_App_Material_Request_Message_Type_Enum,
 	Lookup_App_Material_Request_Status_Enum,
@@ -324,8 +323,8 @@ export class MaterialRequestsController {
 							new Date().toISOString(),
 							await this.materialRequestPdfGeneratorService.generateReuseFormPdfAndUpload(
 								updatedMaterialRequest
-							),
-							`Hergebruik-formulier-${format(new Date(), 'ddMMyyyyHHmm')}.pdf`
+							)
+							// No file name since it will be fixed
 						);
 					}
 					return updatedMaterialRequest;

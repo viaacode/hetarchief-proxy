@@ -39,6 +39,7 @@ import {
 } from '~generated/graphql-db-types-hetarchief';
 
 import { mapLimit } from 'blend-promise-utils';
+import { format } from 'date-fns';
 import { MaterialRequestMessageBodyAdditionalConditionsDto } from '~modules/material-request-messages/dto/material-request-message-body-additional-conditions.dto';
 import { MaterialRequest } from '~modules/material-requests/material-requests.types';
 import { PaginationHelper } from '~shared/helpers/pagination';
@@ -149,6 +150,16 @@ export class MaterialRequestMessagesService {
 		attachmentUrl?: string | null,
 		attachmentFilename?: string | null
 	): Promise<MaterialRequestMessage> {
+		let resolvedAttachmentFilename = attachmentFilename;
+
+		if (attachmentUrl) {
+			if (messageType === Lookup_App_Material_Request_Message_Type_Enum.ReuseSummary) {
+				resolvedAttachmentFilename = `Hergebruik-formulier-${format(new Date(), 'ddMMyyyyHHmm')}.pdf`;
+			} else if (messageType === Lookup_App_Material_Request_Message_Type_Enum.FinalSummary) {
+				resolvedAttachmentFilename = `Synthesedocument-${format(new Date(), 'ddMMyyyyHHmm')}.pdf`;
+			}
+		}
+
 		const response = await this.dataService.execute<
 			InsertMaterialRequestMessageMutation,
 			InsertMaterialRequestMessageMutationVariables
@@ -158,7 +169,7 @@ export class MaterialRequestMessagesService {
 			messageType,
 			body: message || null,
 			attachmentUrl: attachmentUrl || null,
-			attachmentFilename: attachmentFilename || null,
+			attachmentFilename: resolvedAttachmentFilename || null,
 			createdAt,
 		});
 
