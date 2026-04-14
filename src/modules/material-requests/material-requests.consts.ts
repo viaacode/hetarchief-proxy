@@ -87,7 +87,7 @@ export const getAdditionEventDate = (
 	if (type === LogEventType.ITEM_REQUEST_CANCEL) {
 		const event = getStatusEventDate(
 			request.history,
-			Lookup_App_Material_Request_Message_Type_Enum.Denied
+			Lookup_App_Material_Request_Message_Type_Enum.Cancelled
 		);
 		return {
 			time: event.createdAt,
