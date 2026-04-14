@@ -12,6 +12,11 @@ query getMaterialRequestForDownloadJob($materialRequestId: uuid!) {
 		profile_id
 		type
 		updated_at
+		intellectualEntity {
+			schemaMaintainer {
+				org_identifier
+			}
+		}
 		material_request_reuse_form_values(
 			where: { key: { _in: ["downloadQuality", "startTime", "endTime", "durationType"] } }
 		) {

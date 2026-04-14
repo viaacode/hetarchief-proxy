@@ -84,6 +84,7 @@ export type MaterialRequestForDownload = Pick<
 	| 'requesterId'
 	| 'updatedAt'
 	| 'reuseForm'
+	| 'maintainerId'
 > & { downloadUrl: string };
 
 export enum MaterialRequestExportQuality {

@@ -34,9 +34,7 @@ import {
 	Lookup_App_Material_Request_Message_Type_Enum,
 	Lookup_App_Material_Request_Status_Enum,
 } from '~generated/graphql-db-types-hetarchief';
-import {
-	MaterialRequestMessageBodyAdditionalConditionsDto
-} from '~modules/material-request-messages/dto/material-request-message-body-additional-conditions.dto';
+import { MaterialRequestMessageBodyAdditionalConditionsDto } from '~modules/material-request-messages/dto/material-request-message-body-additional-conditions.dto';
 import { MaterialRequestAttachmentsQueryDto } from '~modules/material-request-messages/dto/material-request-messages.dto';
 import {
 	MaterialRequestAttachment,
@@ -107,23 +105,8 @@ export class MaterialRequestMessagesController {
 		@Ip() ip: string
 	): Promise<IPagination<MaterialRequestMessage>> {
 		try {
-			const materialRequest = await this.materialRequestsService.findById(
-				materialRequestId,
-				user,
-				false,
-				undefined,
-				undefined
-			);
+			await this.verifyAccessToMaterialRequest(materialRequestId, user);
 
-			const isRequester = user.getId() === materialRequest.requesterId;
-			const isEvaluatorOfTheCp =
-				user?.getOrganisationId() === materialRequest.maintainerId && user.getIsEvaluator();
-			const isMeemooAdmin = user.getGroupName() === GroupName.MEEMOO_ADMIN;
-			if (!isRequester && !isEvaluatorOfTheCp && !isMeemooAdmin) {
-				throw new ForbiddenException(
-					'You do not have permission to view messages for this material request. Only requester and evaluators of the organisation of the material can view the messages'
-				);
-			}
 			// Mark messages as read
 			await this.materialRequestMessagesService.deleteMessageUnreadEntries(
 				materialRequestId,
@@ -221,10 +204,12 @@ export class MaterialRequestMessagesController {
 			const baseTimestamp = Date.now();
 			const userId = user.getId();
 
+			const materialRequest = await this.verifyAccessToMaterialRequest(materialRequestId, user);
+
 			if (!files || files.length === 0) {
 				return [
 					await this.materialRequestMessagesService.createMessage(
-						materialRequestId,
+						materialRequest,
 						userId,
 						Lookup_App_Material_Request_Message_Type_Enum.Message,
 						message ? { message } : null
@@ -241,7 +226,7 @@ export class MaterialRequestMessagesController {
 					randomUUID() + fileExt
 				);
 				return this.materialRequestMessagesService.createMessage(
-					materialRequestId,
+					materialRequest,
 					userId,
 					Lookup_App_Material_Request_Message_Type_Enum.Message,
 					i === 0 ? { message } : null,
@@ -271,7 +256,7 @@ export class MaterialRequestMessagesController {
 		try {
 			const materialRequest = await this.verifyAccessToMaterialRequest(materialRequestId, user);
 			await this.materialRequestMessagesService.addExtraConditions(
-				materialRequest.id,
+				materialRequest,
 				user.getId(),
 				extraConditions
 			);
@@ -333,7 +318,7 @@ export class MaterialRequestMessagesController {
 			}
 			if (action === 'accept') {
 				await this.materialRequestMessagesService.acceptExtraConditions(
-					materialRequest.id,
+					materialRequest,
 					user.getId()
 				);
 				const autoAccept = (
@@ -357,7 +342,7 @@ export class MaterialRequestMessagesController {
 				}
 			} else if (action === 'decline') {
 				await this.materialRequestMessagesService.declineExtraConditions(
-					materialRequest.id,
+					materialRequest,
 					user.getId()
 				);
 				await this.materialRequestsService.updateMaterialRequestStatus(

@@ -17,6 +17,9 @@ import {
 	DeleteMessageUnreadEntriesDocument,
 	DeleteMessageUnreadEntriesMutation,
 	DeleteMessageUnreadEntriesMutationVariables,
+	GetEvaluatorsForOrganisationDocument,
+	GetEvaluatorsForOrganisationQuery,
+	GetEvaluatorsForOrganisationQueryVariables,
 	GetMaterialRequestAttachmentByIdDocument,
 	GetMaterialRequestAttachmentByIdQuery,
 	GetMaterialRequestAttachmentByIdQueryVariables,
@@ -29,12 +32,15 @@ import {
 	InsertMaterialRequestMessageDocument,
 	InsertMaterialRequestMessageMutation,
 	InsertMaterialRequestMessageMutationVariables,
+	InsertMaterialRequestMessageUnreadStatusDocument,
+	InsertMaterialRequestMessageUnreadStatusMutation,
+	InsertMaterialRequestMessageUnreadStatusMutationVariables,
 	Lookup_App_Material_Request_Message_Type_Enum,
 } from '~generated/graphql-db-types-hetarchief';
 
-import {
-	MaterialRequestMessageBodyAdditionalConditionsDto
-} from '~modules/material-request-messages/dto/material-request-message-body-additional-conditions.dto';
+import { mapLimit } from 'blend-promise-utils';
+import { MaterialRequestMessageBodyAdditionalConditionsDto } from '~modules/material-request-messages/dto/material-request-message-body-additional-conditions.dto';
+import { MaterialRequest } from '~modules/material-requests/material-requests.types';
 import { PaginationHelper } from '~shared/helpers/pagination';
 import { SortDirection } from '~shared/types';
 
@@ -135,7 +141,7 @@ export class MaterialRequestMessagesService {
 	}
 
 	async createMessage(
-		materialRequestId: string,
+		materialRequest: Pick<MaterialRequest, 'id' | 'requesterId' | 'maintainerId'>,
 		profileId: string | null, // if the event was created by the proxy itself. eg: when the download becomes available
 		messageType: Lookup_App_Material_Request_Message_Type_Enum,
 		message?: MaterialRequestMessageBody | null,
@@ -147,7 +153,7 @@ export class MaterialRequestMessagesService {
 			InsertMaterialRequestMessageMutation,
 			InsertMaterialRequestMessageMutationVariables
 		>(InsertMaterialRequestMessageDocument, {
-			materialRequestId,
+			materialRequestId: materialRequest.id,
 			senderProfileId: profileId,
 			messageType,
 			body: message || null,
@@ -156,7 +162,42 @@ export class MaterialRequestMessagesService {
 			createdAt,
 		});
 
-		return this.adapt(response.insert_app_material_request_messages_and_events_one);
+		const insertedMessage = this.adapt(
+			response.insert_app_material_request_messages_and_events_one
+		);
+
+		const receiverIds: string[] = [];
+
+		// sender is the system => send to the requester and all evaluators of this organisation
+		// sender is the requester => send to all evaluators of this organisation
+		if (profileId === materialRequest.requesterId || !profileId) {
+			const evaluatorResponse = await this.dataService.execute<
+				GetEvaluatorsForOrganisationQuery,
+				GetEvaluatorsForOrganisationQueryVariables
+			>(GetEvaluatorsForOrganisationDocument, {
+				organisationId: materialRequest.maintainerId,
+			});
+
+			receiverIds.push(...evaluatorResponse.users_profile.map((item) => item.id as string));
+		}
+
+		if (profileId !== materialRequest.requesterId) {
+			// An evaluator answered the requester or the system
+			receiverIds.push(materialRequest.requesterId);
+		}
+
+		await mapLimit(receiverIds, 5, async (receiverId) => {
+			await this.dataService.execute<
+				InsertMaterialRequestMessageUnreadStatusMutation,
+				InsertMaterialRequestMessageUnreadStatusMutationVariables
+			>(InsertMaterialRequestMessageUnreadStatusDocument, {
+				material_request_id: materialRequest.id,
+				material_request_message_id: insertedMessage.id,
+				receiver_profile_id: receiverId,
+			});
+		});
+
+		return insertedMessage;
 	}
 
 	public async findAttachments(
@@ -241,17 +282,17 @@ export class MaterialRequestMessagesService {
 
 	/**
 	 * Add additional conditions to the material request that the requester has to accept before the material download can be made available.
-	 * @param materialRequestId
+	 * @param materialRequest
 	 * @param profileId Evaluator profile id that is added the additional conditions
 	 * @param extraConditions
 	 */
 	public async addExtraConditions(
-		materialRequestId: string,
+		materialRequest: MaterialRequest,
 		profileId: string,
 		extraConditions: MaterialRequestMessageBodyAdditionalConditionsDto
 	) {
 		await this.createMessage(
-			materialRequestId,
+			materialRequest,
 			profileId,
 			Lookup_App_Material_Request_Message_Type_Enum.AdditionalConditions,
 			extraConditions,
@@ -263,12 +304,12 @@ export class MaterialRequestMessagesService {
 
 	/**
 	 * Requester of material accepts the additional conditions imposed by the evaluator of the material request
-	 * @param materialRequestId
+	 * @param materialRequest
 	 * @param profileId requester profile id
 	 */
-	public async acceptExtraConditions(materialRequestId: string, profileId: string) {
+	public async acceptExtraConditions(materialRequest: MaterialRequest, profileId: string) {
 		await this.createMessage(
-			materialRequestId,
+			materialRequest,
 			profileId,
 			Lookup_App_Material_Request_Message_Type_Enum.AdditionalConditionsAccepted,
 			null,
@@ -280,12 +321,12 @@ export class MaterialRequestMessagesService {
 
 	/**
 	 * Requester of material declines the additional conditions imposed by the evaluator of the material request
-	 * @param materialRequestId
+	 * @param materialRequest
 	 * @param profileId requester profile id
 	 */
-	public async declineExtraConditions(materialRequestId: string, profileId: string) {
+	public async declineExtraConditions(materialRequest: MaterialRequest, profileId: string) {
 		await this.createMessage(
-			materialRequestId,
+			materialRequest,
 			profileId,
 			Lookup_App_Material_Request_Message_Type_Enum.AdditionalConditionsDenied,
 			null,

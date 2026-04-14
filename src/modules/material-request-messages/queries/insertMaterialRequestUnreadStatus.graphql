@@ -1,0 +1,22 @@
+mutation InsertMaterialRequestMessageUnreadStatus(
+	$material_request_message_id: uuid!
+	$receiver_profile_id: uuid!
+	$material_request_id: uuid!
+) {
+	insert_app_material_request_message_unread_status(
+		objects: {
+			material_request_message_id: $material_request_message_id
+			receiver_profile_id: $receiver_profile_id
+			material_request_id: $material_request_id
+		}
+	) {
+		affected_rows
+		returning {
+			id
+			material_request_message_id
+			receiver_profile_id
+			is_unread
+			material_request_id
+		}
+	}
+}
