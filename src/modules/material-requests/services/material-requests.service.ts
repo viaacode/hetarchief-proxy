@@ -125,7 +125,6 @@ import { mapDcTermsFormatToSimpleType } from '~modules/ie-objects/helpers/map-dc
 import { IE_OBJECT_INTRA_CP_LICENSES } from '~modules/ie-objects/ie-objects.conts';
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { MaterialRequestMessagesService } from '~modules/material-request-messages/services/material-request-messages.service';
-import { MaterialRequestPdfGeneratorService } from '~modules/material-request-messages/services/material-request-pdf-generator';
 import { MediahavenJobsWatcherService } from '~modules/mediahaven-jobs-watcher/services/mediahaven-jobs-watcher.service';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
@@ -149,8 +148,7 @@ export class MaterialRequestsService {
 		private eventsService: EventsService,
 		private mediahavenJobWatcherService: MediahavenJobsWatcherService,
 		private configService: ConfigService<Configuration>,
-		private materialRequestMessageService: MaterialRequestMessagesService,
-		private materialRequestPdfGeneratorService: MaterialRequestPdfGeneratorService
+		private materialRequestMessageService: MaterialRequestMessagesService
 	) {}
 
 	public async findAll(
@@ -641,37 +639,26 @@ export class MaterialRequestsService {
 
 		this.validateStatusTransition(currentRequest, status, user);
 
-		const updateMaterialRequest: Partial<GqlMaterialRequest> = {
-			status: status,
-			updated_at: new Date().toISOString(),
-		};
-
 		if (status === Lookup_App_Material_Request_Status_Enum.Cancelled) {
-			this.materialRequestMessageService
-				.createMessage(
-					currentRequest,
-					user.getId(),
-					Lookup_App_Material_Request_Message_Type_Enum.Cancelled
-				)
-				.then(noop);
+			await this.materialRequestMessageService.createMessage(
+				currentRequest,
+				user.getId(),
+				Lookup_App_Material_Request_Message_Type_Enum.Cancelled
+			);
 		} else if (status === Lookup_App_Material_Request_Status_Enum.Approved) {
-			this.materialRequestMessageService
-				.createMessage(
-					currentRequest,
-					user.getId(),
-					Lookup_App_Material_Request_Message_Type_Enum.Approved,
-					{ motivation }
-				)
-				.then(noop);
+			await this.materialRequestMessageService.createMessage(
+				currentRequest,
+				user.getId(),
+				Lookup_App_Material_Request_Message_Type_Enum.Approved,
+				{ motivation }
+			);
 		} else if (status === Lookup_App_Material_Request_Status_Enum.Denied) {
-			this.materialRequestMessageService
-				.createMessage(
-					currentRequest,
-					user.getId(),
-					Lookup_App_Material_Request_Message_Type_Enum.Denied,
-					{ motivation }
-				)
-				.then(noop);
+			await this.materialRequestMessageService.createMessage(
+				currentRequest,
+				user.getId(),
+				Lookup_App_Material_Request_Message_Type_Enum.Denied,
+				{ motivation }
+			);
 		}
 
 		const updateMaterialRequestStatusResponse = await this.dataService.execute<
@@ -679,7 +666,10 @@ export class MaterialRequestsService {
 			UpdateMaterialRequestStatusMutationVariables
 		>(UpdateMaterialRequestStatusDocument, {
 			materialRequestId: currentRequest.id,
-			updateMaterialRequest,
+			updateMaterialRequest: {
+				status: status,
+				updated_at: new Date().toISOString(),
+			},
 		});
 
 		const graphQlMaterialRequest =
@@ -726,16 +716,9 @@ export class MaterialRequestsService {
 			updatedRequest.status === Lookup_App_Material_Request_Status_Enum.Cancelled
 		) {
 			// Generate a summary PDF of the reuse form and store it in a REUSE_SUMMARY message
-			await this.materialRequestMessageService.createMessage(
+			await this.materialRequestMessageService.createFinalSummaryMessage(
 				updatedRequest,
-				user.getId(),
-				Lookup_App_Material_Request_Message_Type_Enum.FinalSummary,
-				null,
-				new Date().toISOString(),
-				await this.materialRequestPdfGeneratorService.generateFinalSummaryPdfAndUpload(
-					updatedRequest
-				)
-				// No file name since it will be fixed
+				user.getId()
 			);
 		}
 

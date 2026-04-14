@@ -225,12 +225,18 @@ export class MediahavenJobsWatcherService {
 
 								// Create download-available material request message event
 								await this.materialRequestMessagesService.createMessage(
-									materialRequest,
+									updatedRequest,
 									null,
 									Lookup_App_Material_Request_Message_Type_Enum.DownloadAvailable,
 									null,
 									new Date().toISOString(),
 									null,
+									null
+								);
+
+								// Generate a summary PDF of the reuse form and store it in a REUSE_SUMMARY message
+								await this.materialRequestMessagesService.createFinalSummaryMessage(
+									updatedRequest,
 									null
 								);
 
@@ -340,19 +346,6 @@ export class MediahavenJobsWatcherService {
 						new Date().toISOString(),
 						null,
 						null
-					);
-
-					// Create a material request message event for the finalized request
-					await this.materialRequestMessagesService.createMessage(
-						updatedRequest,
-						null,
-						Lookup_App_Material_Request_Message_Type_Enum.FinalSummary,
-						null,
-						new Date().toISOString(),
-						await this.materialRequestPdfGeneratorService.generateFinalSummaryPdfAndUpload(
-							updatedRequest
-						)
-						// No file name since it will be fixed
 					);
 				} catch (err) {
 					// Log the error but don't throw, since the main flow of updating the material request is successful
