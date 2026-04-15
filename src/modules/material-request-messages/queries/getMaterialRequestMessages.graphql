@@ -18,8 +18,11 @@ query getMaterialRequestMessages($materialRequestId: uuid!, $offset: Int!, $limi
 				skos_pref_label
 			}
 		}
-		attachment_url
-		attachment_filename
+		attachments {
+			id
+			attachment_url
+			attachment_filename
+		}
 		created_at
 		material_request_id
 	}

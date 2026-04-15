@@ -49,8 +49,7 @@ export interface MaterialRequestEvent {
 }
 
 export interface MaterialRequestMessage extends MaterialRequestEvent {
-	attachmentUrl: string | null;
-	attachmentFilename: string | null;
+	attachments: MaterialRequestAttachment[];
 }
 
 export interface MaterialRequestAttachment {

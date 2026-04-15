@@ -130,8 +130,7 @@ export class MaterialRequestMessagesService {
 	): MaterialRequestMessage {
 		return {
 			...this.adaptEvent(message),
-			attachmentUrl: message.attachment_url,
-			attachmentFilename: message.attachment_filename,
+			attachments: message.attachments?.map(this.adaptAttachment) || [],
 		};
 	}
 
@@ -151,8 +150,7 @@ export class MaterialRequestMessagesService {
 		messageType: Lookup_App_Material_Request_Message_Type_Enum,
 		message?: MaterialRequestMessageBody | null,
 		createdAt: string = new Date().toISOString(),
-		attachmentUrl?: string | null,
-		attachmentFilename?: string | null
+		attachments: Pick<MaterialRequestAttachment, 'attachmentUrl' | 'attachmentFilename'>[] = []
 	): Promise<MaterialRequestMessage> {
 		const response = await this.dataService.execute<
 			InsertMaterialRequestMessageMutation,
@@ -162,8 +160,10 @@ export class MaterialRequestMessagesService {
 			senderProfileId: profileId,
 			messageType,
 			body: message || null,
-			attachmentUrl: attachmentUrl || null,
-			attachmentFilename: attachmentFilename || null,
+			attachments: attachments?.map((attachment) => ({
+				attachment_filename: attachment.attachmentFilename,
+				attachment_url: attachment.attachmentUrl,
+			})),
 			createdAt,
 		});
 
@@ -214,8 +214,15 @@ export class MaterialRequestMessagesService {
 			Lookup_App_Material_Request_Message_Type_Enum.ReuseSummary,
 			null,
 			new Date().toISOString(),
-			await this.materialRequestPdfGeneratorService.generateReuseFormPdfAndUpload(materialRequest),
-			`Hergebruik-formulier-${format(new Date(), 'ddMMyyyyHHmm')}.pdf`
+			[
+				{
+					attachmentUrl:
+						await this.materialRequestPdfGeneratorService.generateReuseFormPdfAndUpload(
+							materialRequest
+						),
+					attachmentFilename: `Hergebruik-formulier-${format(new Date(), 'ddMMyyyyHHmm')}.pdf`,
+				},
+			]
 		);
 	}
 
@@ -229,10 +236,15 @@ export class MaterialRequestMessagesService {
 			Lookup_App_Material_Request_Message_Type_Enum.FinalSummary,
 			null,
 			new Date().toISOString(),
-			await this.materialRequestPdfGeneratorService.generateFinalSummaryPdfAndUpload(
-				materialRequest
-			),
-			`Synthesedocument-${format(new Date(), 'ddMMyyyyHHmm')}.pdf`
+			[
+				{
+					attachmentUrl:
+						await this.materialRequestPdfGeneratorService.generateFinalSummaryPdfAndUpload(
+							materialRequest
+						),
+					attachmentFilename: `Synthesedocument-${format(new Date(), 'ddMMyyyyHHmm')}.pdf`,
+				},
+			]
 		);
 	}
 
@@ -265,10 +277,10 @@ export class MaterialRequestMessagesService {
 		});
 
 		return Pagination<MaterialRequestAttachment>({
-			items: response?.app_material_request_messages_and_events?.map(this.adaptAttachment),
+			items: response?.app_material_request_messages_attachments?.map(this.adaptAttachment),
 			page,
 			size,
-			total: response?.app_material_request_messages_and_events_aggregate?.aggregate?.count,
+			total: response?.app_material_request_messages_attachments_aggregate?.aggregate?.count,
 		});
 	}
 
@@ -282,11 +294,11 @@ export class MaterialRequestMessagesService {
 			limit: 1000,
 		});
 
-		return response?.app_material_request_messages_and_events?.map(this.adaptAttachment) || [];
+		return response?.app_material_request_messages_attachments?.map(this.adaptAttachment) || [];
 	}
 
 	private adaptAttachment(
-		attachment: GetMaterialRequestAttachmentsQuery['app_material_request_messages_and_events'][0]
+		attachment: GetMaterialRequestAttachmentsQuery['app_material_request_messages_attachments'][0]
 	): MaterialRequestAttachment {
 		return {
 			id: attachment.id,
@@ -308,7 +320,7 @@ export class MaterialRequestMessagesService {
 			attachmentId,
 		});
 
-		const attachment = response?.app_material_request_messages_and_events?.[0];
+		const attachment = response?.app_material_request_messages_attachments?.[0];
 		if (!attachment) {
 			return null;
 		}
@@ -333,7 +345,6 @@ export class MaterialRequestMessagesService {
 			Lookup_App_Material_Request_Message_Type_Enum.AdditionalConditions,
 			extraConditions,
 			new Date().toString(),
-			null,
 			null
 		);
 	}
@@ -350,7 +361,6 @@ export class MaterialRequestMessagesService {
 			Lookup_App_Material_Request_Message_Type_Enum.AdditionalConditionsAccepted,
 			null,
 			new Date().toString(),
-			null,
 			null
 		);
 	}
@@ -367,7 +377,6 @@ export class MaterialRequestMessagesService {
 			Lookup_App_Material_Request_Message_Type_Enum.AdditionalConditionsDenied,
 			null,
 			new Date().toString(),
-			null,
 			null
 		);
 	}

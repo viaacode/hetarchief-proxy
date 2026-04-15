@@ -2586,8 +2586,10 @@ export type App_Material_Request_Message_Unread_Status_Updates = {
 /** contains the conversation history between a material requester and the evaluators of a cp-admin */
 export type App_Material_Request_Messages_And_Events = {
   __typename?: 'app_material_request_messages_and_events';
-  attachment_filename?: Maybe<Scalars['String']['output']>;
-  attachment_url?: Maybe<Scalars['String']['output']>;
+  /** An array relationship */
+  attachments: Array<App_Material_Request_Messages_Attachments>;
+  /** An aggregate relationship */
+  attachments_aggregate: App_Material_Request_Messages_Attachments_Aggregate;
   body?: Maybe<Scalars['jsonb']['output']>;
   created_at: Scalars['timestamp']['output'];
   id: Scalars['uuid']['output'];
@@ -2596,13 +2598,33 @@ export type App_Material_Request_Messages_And_Events = {
   material_request_id: Scalars['uuid']['output'];
   message_type: Lookup_App_Material_Request_Message_Type_Enum;
   /** An object relationship */
-  sender: Users_Profile;
-  sender_profile_id: Scalars['uuid']['output'];
+  sender?: Maybe<Users_Profile>;
+  sender_profile_id?: Maybe<Scalars['uuid']['output']>;
   /** An array relationship */
   unread_statuses: Array<App_Material_Request_Message_Unread_Status>;
   /** An aggregate relationship */
   unread_statuses_aggregate: App_Material_Request_Message_Unread_Status_Aggregate;
   updated_at: Scalars['timestamp']['output'];
+};
+
+
+/** contains the conversation history between a material requester and the evaluators of a cp-admin */
+export type App_Material_Request_Messages_And_EventsAttachmentsArgs = {
+  distinct_on?: InputMaybe<Array<App_Material_Request_Messages_Attachments_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<App_Material_Request_Messages_Attachments_Order_By>>;
+  where?: InputMaybe<App_Material_Request_Messages_Attachments_Bool_Exp>;
+};
+
+
+/** contains the conversation history between a material requester and the evaluators of a cp-admin */
+export type App_Material_Request_Messages_And_EventsAttachments_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<App_Material_Request_Messages_Attachments_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<App_Material_Request_Messages_Attachments_Order_By>>;
+  where?: InputMaybe<App_Material_Request_Messages_Attachments_Bool_Exp>;
 };
 
 
@@ -2688,8 +2710,8 @@ export type App_Material_Request_Messages_And_Events_Bool_Exp = {
   _and?: InputMaybe<Array<App_Material_Request_Messages_And_Events_Bool_Exp>>;
   _not?: InputMaybe<App_Material_Request_Messages_And_Events_Bool_Exp>;
   _or?: InputMaybe<Array<App_Material_Request_Messages_And_Events_Bool_Exp>>;
-  attachment_filename?: InputMaybe<String_Comparison_Exp>;
-  attachment_url?: InputMaybe<String_Comparison_Exp>;
+  attachments?: InputMaybe<App_Material_Request_Messages_Attachments_Bool_Exp>;
+  attachments_aggregate?: InputMaybe<App_Material_Request_Messages_Attachments_Aggregate_Bool_Exp>;
   body?: InputMaybe<Jsonb_Comparison_Exp>;
   created_at?: InputMaybe<Timestamp_Comparison_Exp>;
   id?: InputMaybe<Uuid_Comparison_Exp>;
@@ -2726,8 +2748,7 @@ export type App_Material_Request_Messages_And_Events_Delete_Key_Input = {
 
 /** input type for inserting data into table "app.material_request_messages_and_events" */
 export type App_Material_Request_Messages_And_Events_Insert_Input = {
-  attachment_filename?: InputMaybe<Scalars['String']['input']>;
-  attachment_url?: InputMaybe<Scalars['String']['input']>;
+  attachments?: InputMaybe<App_Material_Request_Messages_Attachments_Arr_Rel_Insert_Input>;
   body?: InputMaybe<Scalars['jsonb']['input']>;
   created_at?: InputMaybe<Scalars['timestamp']['input']>;
   id?: InputMaybe<Scalars['uuid']['input']>;
@@ -2743,8 +2764,6 @@ export type App_Material_Request_Messages_And_Events_Insert_Input = {
 /** aggregate max on columns */
 export type App_Material_Request_Messages_And_Events_Max_Fields = {
   __typename?: 'app_material_request_messages_and_events_max_fields';
-  attachment_filename?: Maybe<Scalars['String']['output']>;
-  attachment_url?: Maybe<Scalars['String']['output']>;
   created_at?: Maybe<Scalars['timestamp']['output']>;
   id?: Maybe<Scalars['uuid']['output']>;
   material_request_id?: Maybe<Scalars['uuid']['output']>;
@@ -2754,8 +2773,6 @@ export type App_Material_Request_Messages_And_Events_Max_Fields = {
 
 /** order by max() on columns of table "app.material_request_messages_and_events" */
 export type App_Material_Request_Messages_And_Events_Max_Order_By = {
-  attachment_filename?: InputMaybe<Order_By>;
-  attachment_url?: InputMaybe<Order_By>;
   created_at?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   material_request_id?: InputMaybe<Order_By>;
@@ -2766,8 +2783,6 @@ export type App_Material_Request_Messages_And_Events_Max_Order_By = {
 /** aggregate min on columns */
 export type App_Material_Request_Messages_And_Events_Min_Fields = {
   __typename?: 'app_material_request_messages_and_events_min_fields';
-  attachment_filename?: Maybe<Scalars['String']['output']>;
-  attachment_url?: Maybe<Scalars['String']['output']>;
   created_at?: Maybe<Scalars['timestamp']['output']>;
   id?: Maybe<Scalars['uuid']['output']>;
   material_request_id?: Maybe<Scalars['uuid']['output']>;
@@ -2777,8 +2792,6 @@ export type App_Material_Request_Messages_And_Events_Min_Fields = {
 
 /** order by min() on columns of table "app.material_request_messages_and_events" */
 export type App_Material_Request_Messages_And_Events_Min_Order_By = {
-  attachment_filename?: InputMaybe<Order_By>;
-  attachment_url?: InputMaybe<Order_By>;
   created_at?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   material_request_id?: InputMaybe<Order_By>;
@@ -2795,6 +2808,13 @@ export type App_Material_Request_Messages_And_Events_Mutation_Response = {
   returning: Array<App_Material_Request_Messages_And_Events>;
 };
 
+/** input type for inserting object relation for remote table "app.material_request_messages_and_events" */
+export type App_Material_Request_Messages_And_Events_Obj_Rel_Insert_Input = {
+  data: App_Material_Request_Messages_And_Events_Insert_Input;
+  /** upsert condition */
+  on_conflict?: InputMaybe<App_Material_Request_Messages_And_Events_On_Conflict>;
+};
+
 /** on_conflict condition type for table "app.material_request_messages_and_events" */
 export type App_Material_Request_Messages_And_Events_On_Conflict = {
   constraint: App_Material_Request_Messages_And_Events_Constraint;
@@ -2804,8 +2824,7 @@ export type App_Material_Request_Messages_And_Events_On_Conflict = {
 
 /** Ordering options when selecting data from "app.material_request_messages_and_events". */
 export type App_Material_Request_Messages_And_Events_Order_By = {
-  attachment_filename?: InputMaybe<Order_By>;
-  attachment_url?: InputMaybe<Order_By>;
+  attachments_aggregate?: InputMaybe<App_Material_Request_Messages_Attachments_Aggregate_Order_By>;
   body?: InputMaybe<Order_By>;
   created_at?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
@@ -2831,10 +2850,6 @@ export type App_Material_Request_Messages_And_Events_Prepend_Input = {
 /** select columns of table "app.material_request_messages_and_events" */
 export enum App_Material_Request_Messages_And_Events_Select_Column {
   /** column name */
-  AttachmentFilename = 'attachment_filename',
-  /** column name */
-  AttachmentUrl = 'attachment_url',
-  /** column name */
   Body = 'body',
   /** column name */
   CreatedAt = 'created_at',
@@ -2852,8 +2867,6 @@ export enum App_Material_Request_Messages_And_Events_Select_Column {
 
 /** input type for updating data in table "app.material_request_messages_and_events" */
 export type App_Material_Request_Messages_And_Events_Set_Input = {
-  attachment_filename?: InputMaybe<Scalars['String']['input']>;
-  attachment_url?: InputMaybe<Scalars['String']['input']>;
   body?: InputMaybe<Scalars['jsonb']['input']>;
   created_at?: InputMaybe<Scalars['timestamp']['input']>;
   id?: InputMaybe<Scalars['uuid']['input']>;
@@ -2873,8 +2886,6 @@ export type App_Material_Request_Messages_And_Events_Stream_Cursor_Input = {
 
 /** Initial value of the column from where the streaming should start */
 export type App_Material_Request_Messages_And_Events_Stream_Cursor_Value_Input = {
-  attachment_filename?: InputMaybe<Scalars['String']['input']>;
-  attachment_url?: InputMaybe<Scalars['String']['input']>;
   body?: InputMaybe<Scalars['jsonb']['input']>;
   created_at?: InputMaybe<Scalars['timestamp']['input']>;
   id?: InputMaybe<Scalars['uuid']['input']>;
@@ -2886,10 +2897,6 @@ export type App_Material_Request_Messages_And_Events_Stream_Cursor_Value_Input =
 
 /** update columns of table "app.material_request_messages_and_events" */
 export enum App_Material_Request_Messages_And_Events_Update_Column {
-  /** column name */
-  AttachmentFilename = 'attachment_filename',
-  /** column name */
-  AttachmentUrl = 'attachment_url',
   /** column name */
   Body = 'body',
   /** column name */
@@ -2921,6 +2928,224 @@ export type App_Material_Request_Messages_And_Events_Updates = {
   _set?: InputMaybe<App_Material_Request_Messages_And_Events_Set_Input>;
   /** filter the rows which have to be updated */
   where: App_Material_Request_Messages_And_Events_Bool_Exp;
+};
+
+/** Contains the attachment of a message in the conversation history between a material requester and the evaluators of a cp-admin */
+export type App_Material_Request_Messages_Attachments = {
+  __typename?: 'app_material_request_messages_attachments';
+  attachment_filename: Scalars['String']['output'];
+  attachment_url: Scalars['String']['output'];
+  created_at: Scalars['timestamp']['output'];
+  id: Scalars['uuid']['output'];
+  material_request_message_id: Scalars['uuid']['output'];
+  /** An object relationship */
+  messages_and_event: App_Material_Request_Messages_And_Events;
+};
+
+/** aggregated selection of "app.material_request_messages_attachments" */
+export type App_Material_Request_Messages_Attachments_Aggregate = {
+  __typename?: 'app_material_request_messages_attachments_aggregate';
+  aggregate?: Maybe<App_Material_Request_Messages_Attachments_Aggregate_Fields>;
+  nodes: Array<App_Material_Request_Messages_Attachments>;
+};
+
+export type App_Material_Request_Messages_Attachments_Aggregate_Bool_Exp = {
+  count?: InputMaybe<App_Material_Request_Messages_Attachments_Aggregate_Bool_Exp_Count>;
+};
+
+export type App_Material_Request_Messages_Attachments_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<App_Material_Request_Messages_Attachments_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+  filter?: InputMaybe<App_Material_Request_Messages_Attachments_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
+/** aggregate fields of "app.material_request_messages_attachments" */
+export type App_Material_Request_Messages_Attachments_Aggregate_Fields = {
+  __typename?: 'app_material_request_messages_attachments_aggregate_fields';
+  count: Scalars['Int']['output'];
+  max?: Maybe<App_Material_Request_Messages_Attachments_Max_Fields>;
+  min?: Maybe<App_Material_Request_Messages_Attachments_Min_Fields>;
+};
+
+
+/** aggregate fields of "app.material_request_messages_attachments" */
+export type App_Material_Request_Messages_Attachments_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<App_Material_Request_Messages_Attachments_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+/** order by aggregate values of table "app.material_request_messages_attachments" */
+export type App_Material_Request_Messages_Attachments_Aggregate_Order_By = {
+  count?: InputMaybe<Order_By>;
+  max?: InputMaybe<App_Material_Request_Messages_Attachments_Max_Order_By>;
+  min?: InputMaybe<App_Material_Request_Messages_Attachments_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "app.material_request_messages_attachments" */
+export type App_Material_Request_Messages_Attachments_Arr_Rel_Insert_Input = {
+  data: Array<App_Material_Request_Messages_Attachments_Insert_Input>;
+  /** upsert condition */
+  on_conflict?: InputMaybe<App_Material_Request_Messages_Attachments_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "app.material_request_messages_attachments". All fields are combined with a logical 'AND'. */
+export type App_Material_Request_Messages_Attachments_Bool_Exp = {
+  _and?: InputMaybe<Array<App_Material_Request_Messages_Attachments_Bool_Exp>>;
+  _not?: InputMaybe<App_Material_Request_Messages_Attachments_Bool_Exp>;
+  _or?: InputMaybe<Array<App_Material_Request_Messages_Attachments_Bool_Exp>>;
+  attachment_filename?: InputMaybe<String_Comparison_Exp>;
+  attachment_url?: InputMaybe<String_Comparison_Exp>;
+  created_at?: InputMaybe<Timestamp_Comparison_Exp>;
+  id?: InputMaybe<Uuid_Comparison_Exp>;
+  material_request_message_id?: InputMaybe<Uuid_Comparison_Exp>;
+  messages_and_event?: InputMaybe<App_Material_Request_Messages_And_Events_Bool_Exp>;
+};
+
+/** unique or primary key constraints on table "app.material_request_messages_attachments" */
+export enum App_Material_Request_Messages_Attachments_Constraint {
+  /** unique or primary key constraint on columns "id" */
+  MaterialRequestMessagesAttachmentsPkey = 'material_request_messages_attachments_pkey'
+}
+
+/** input type for inserting data into table "app.material_request_messages_attachments" */
+export type App_Material_Request_Messages_Attachments_Insert_Input = {
+  attachment_filename?: InputMaybe<Scalars['String']['input']>;
+  attachment_url?: InputMaybe<Scalars['String']['input']>;
+  created_at?: InputMaybe<Scalars['timestamp']['input']>;
+  id?: InputMaybe<Scalars['uuid']['input']>;
+  material_request_message_id?: InputMaybe<Scalars['uuid']['input']>;
+  messages_and_event?: InputMaybe<App_Material_Request_Messages_And_Events_Obj_Rel_Insert_Input>;
+};
+
+/** aggregate max on columns */
+export type App_Material_Request_Messages_Attachments_Max_Fields = {
+  __typename?: 'app_material_request_messages_attachments_max_fields';
+  attachment_filename?: Maybe<Scalars['String']['output']>;
+  attachment_url?: Maybe<Scalars['String']['output']>;
+  created_at?: Maybe<Scalars['timestamp']['output']>;
+  id?: Maybe<Scalars['uuid']['output']>;
+  material_request_message_id?: Maybe<Scalars['uuid']['output']>;
+};
+
+/** order by max() on columns of table "app.material_request_messages_attachments" */
+export type App_Material_Request_Messages_Attachments_Max_Order_By = {
+  attachment_filename?: InputMaybe<Order_By>;
+  attachment_url?: InputMaybe<Order_By>;
+  created_at?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  material_request_message_id?: InputMaybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type App_Material_Request_Messages_Attachments_Min_Fields = {
+  __typename?: 'app_material_request_messages_attachments_min_fields';
+  attachment_filename?: Maybe<Scalars['String']['output']>;
+  attachment_url?: Maybe<Scalars['String']['output']>;
+  created_at?: Maybe<Scalars['timestamp']['output']>;
+  id?: Maybe<Scalars['uuid']['output']>;
+  material_request_message_id?: Maybe<Scalars['uuid']['output']>;
+};
+
+/** order by min() on columns of table "app.material_request_messages_attachments" */
+export type App_Material_Request_Messages_Attachments_Min_Order_By = {
+  attachment_filename?: InputMaybe<Order_By>;
+  attachment_url?: InputMaybe<Order_By>;
+  created_at?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  material_request_message_id?: InputMaybe<Order_By>;
+};
+
+/** response of any mutation on the table "app.material_request_messages_attachments" */
+export type App_Material_Request_Messages_Attachments_Mutation_Response = {
+  __typename?: 'app_material_request_messages_attachments_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int']['output'];
+  /** data from the rows affected by the mutation */
+  returning: Array<App_Material_Request_Messages_Attachments>;
+};
+
+/** on_conflict condition type for table "app.material_request_messages_attachments" */
+export type App_Material_Request_Messages_Attachments_On_Conflict = {
+  constraint: App_Material_Request_Messages_Attachments_Constraint;
+  update_columns?: Array<App_Material_Request_Messages_Attachments_Update_Column>;
+  where?: InputMaybe<App_Material_Request_Messages_Attachments_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "app.material_request_messages_attachments". */
+export type App_Material_Request_Messages_Attachments_Order_By = {
+  attachment_filename?: InputMaybe<Order_By>;
+  attachment_url?: InputMaybe<Order_By>;
+  created_at?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  material_request_message_id?: InputMaybe<Order_By>;
+  messages_and_event?: InputMaybe<App_Material_Request_Messages_And_Events_Order_By>;
+};
+
+/** primary key columns input for table: app.material_request_messages_attachments */
+export type App_Material_Request_Messages_Attachments_Pk_Columns_Input = {
+  id: Scalars['uuid']['input'];
+};
+
+/** select columns of table "app.material_request_messages_attachments" */
+export enum App_Material_Request_Messages_Attachments_Select_Column {
+  /** column name */
+  AttachmentFilename = 'attachment_filename',
+  /** column name */
+  AttachmentUrl = 'attachment_url',
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  MaterialRequestMessageId = 'material_request_message_id'
+}
+
+/** input type for updating data in table "app.material_request_messages_attachments" */
+export type App_Material_Request_Messages_Attachments_Set_Input = {
+  attachment_filename?: InputMaybe<Scalars['String']['input']>;
+  attachment_url?: InputMaybe<Scalars['String']['input']>;
+  created_at?: InputMaybe<Scalars['timestamp']['input']>;
+  id?: InputMaybe<Scalars['uuid']['input']>;
+  material_request_message_id?: InputMaybe<Scalars['uuid']['input']>;
+};
+
+/** Streaming cursor of the table "app_material_request_messages_attachments" */
+export type App_Material_Request_Messages_Attachments_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: App_Material_Request_Messages_Attachments_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type App_Material_Request_Messages_Attachments_Stream_Cursor_Value_Input = {
+  attachment_filename?: InputMaybe<Scalars['String']['input']>;
+  attachment_url?: InputMaybe<Scalars['String']['input']>;
+  created_at?: InputMaybe<Scalars['timestamp']['input']>;
+  id?: InputMaybe<Scalars['uuid']['input']>;
+  material_request_message_id?: InputMaybe<Scalars['uuid']['input']>;
+};
+
+/** update columns of table "app.material_request_messages_attachments" */
+export enum App_Material_Request_Messages_Attachments_Update_Column {
+  /** column name */
+  AttachmentFilename = 'attachment_filename',
+  /** column name */
+  AttachmentUrl = 'attachment_url',
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  MaterialRequestMessageId = 'material_request_message_id'
+}
+
+export type App_Material_Request_Messages_Attachments_Updates = {
+  /** sets the columns of the filtered rows to the given values */
+  _set?: InputMaybe<App_Material_Request_Messages_Attachments_Set_Input>;
+  /** filter the rows which have to be updated */
+  where: App_Material_Request_Messages_Attachments_Bool_Exp;
 };
 
 /** columns and relationships of "app.material_request_reuse_form_values" */
@@ -3141,6 +3366,7 @@ export type App_Material_Requests = {
   ie_object_representation_id?: Maybe<Scalars['String']['output']>;
   /** An object relationship */
   intellectualEntity?: Maybe<Graph_Intellectual_Entity>;
+  is_archived: Scalars['Boolean']['output'];
   is_pending: Scalars['Boolean']['output'];
   /** An array relationship */
   material_request_reuse_form_values: Array<App_Material_Request_Reuse_Form_Values>;
@@ -3265,6 +3491,7 @@ export type App_Material_Requests_Bool_Exp = {
   ie_object_id?: InputMaybe<String_Comparison_Exp>;
   ie_object_representation_id?: InputMaybe<String_Comparison_Exp>;
   intellectualEntity?: InputMaybe<Graph_Intellectual_Entity_Bool_Exp>;
+  is_archived?: InputMaybe<Boolean_Comparison_Exp>;
   is_pending?: InputMaybe<Boolean_Comparison_Exp>;
   material_request_reuse_form_values?: InputMaybe<App_Material_Request_Reuse_Form_Values_Bool_Exp>;
   material_request_reuse_form_values_aggregate?: InputMaybe<App_Material_Request_Reuse_Form_Values_Aggregate_Bool_Exp>;
@@ -3314,6 +3541,7 @@ export type App_Material_Requests_Insert_Input = {
   ie_object_id?: InputMaybe<Scalars['String']['input']>;
   ie_object_representation_id?: InputMaybe<Scalars['String']['input']>;
   intellectualEntity?: InputMaybe<Graph_Intellectual_Entity_Obj_Rel_Insert_Input>;
+  is_archived?: InputMaybe<Scalars['Boolean']['input']>;
   is_pending?: InputMaybe<Scalars['Boolean']['input']>;
   material_request_reuse_form_values?: InputMaybe<App_Material_Request_Reuse_Form_Values_Arr_Rel_Insert_Input>;
   messages_and_events?: InputMaybe<App_Material_Request_Messages_And_Events_Arr_Rel_Insert_Input>;
@@ -3423,6 +3651,7 @@ export type App_Material_Requests_Order_By = {
   ie_object_id?: InputMaybe<Order_By>;
   ie_object_representation_id?: InputMaybe<Order_By>;
   intellectualEntity?: InputMaybe<Graph_Intellectual_Entity_Order_By>;
+  is_archived?: InputMaybe<Order_By>;
   is_pending?: InputMaybe<Order_By>;
   material_request_reuse_form_values_aggregate?: InputMaybe<App_Material_Request_Reuse_Form_Values_Aggregate_Order_By>;
   messages_and_events_aggregate?: InputMaybe<App_Material_Request_Messages_And_Events_Aggregate_Order_By>;
@@ -3478,6 +3707,8 @@ export enum App_Material_Requests_Select_Column {
   /** column name */
   IeObjectRepresentationId = 'ie_object_representation_id',
   /** column name */
+  IsArchived = 'is_archived',
+  /** column name */
   IsPending = 'is_pending',
   /** column name */
   Name = 'name',
@@ -3519,6 +3750,7 @@ export type App_Material_Requests_Set_Input = {
   id?: InputMaybe<Scalars['uuid']['input']>;
   ie_object_id?: InputMaybe<Scalars['String']['input']>;
   ie_object_representation_id?: InputMaybe<Scalars['String']['input']>;
+  is_archived?: InputMaybe<Scalars['Boolean']['input']>;
   is_pending?: InputMaybe<Scalars['Boolean']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
   organisation?: InputMaybe<Scalars['String']['input']>;
@@ -3575,6 +3807,7 @@ export type App_Material_Requests_Stream_Cursor_Value_Input = {
   id?: InputMaybe<Scalars['uuid']['input']>;
   ie_object_id?: InputMaybe<Scalars['String']['input']>;
   ie_object_representation_id?: InputMaybe<Scalars['String']['input']>;
+  is_archived?: InputMaybe<Scalars['Boolean']['input']>;
   is_pending?: InputMaybe<Scalars['Boolean']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
   organisation?: InputMaybe<Scalars['String']['input']>;
@@ -3625,6 +3858,8 @@ export enum App_Material_Requests_Update_Column {
   IeObjectId = 'ie_object_id',
   /** column name */
   IeObjectRepresentationId = 'ie_object_representation_id',
+  /** column name */
+  IsArchived = 'is_archived',
   /** column name */
   IsPending = 'is_pending',
   /** column name */
@@ -18838,7 +19073,7 @@ export enum Lookup_App_Material_Request_Download_Status_Enum {
   New = 'NEW',
   /** download was triggered, and mam export job is in progress */
   Pending = 'PENDING',
-  /** download job succeeded, download_url filled in */
+  /** download job failed */
   Succeeded = 'SUCCEEDED'
 }
 
@@ -22302,6 +22537,10 @@ export type Mutation_Root = {
   delete_app_material_request_messages_and_events?: Maybe<App_Material_Request_Messages_And_Events_Mutation_Response>;
   /** delete single row from the table: "app.material_request_messages_and_events" */
   delete_app_material_request_messages_and_events_by_pk?: Maybe<App_Material_Request_Messages_And_Events>;
+  /** delete data from the table: "app.material_request_messages_attachments" */
+  delete_app_material_request_messages_attachments?: Maybe<App_Material_Request_Messages_Attachments_Mutation_Response>;
+  /** delete single row from the table: "app.material_request_messages_attachments" */
+  delete_app_material_request_messages_attachments_by_pk?: Maybe<App_Material_Request_Messages_Attachments>;
   /** delete data from the table: "app.material_request_reuse_form_values" */
   delete_app_material_request_reuse_form_values?: Maybe<App_Material_Request_Reuse_Form_Values_Mutation_Response>;
   /** delete single row from the table: "app.material_request_reuse_form_values" */
@@ -22600,6 +22839,10 @@ export type Mutation_Root = {
   insert_app_material_request_messages_and_events?: Maybe<App_Material_Request_Messages_And_Events_Mutation_Response>;
   /** insert a single row into the table: "app.material_request_messages_and_events" */
   insert_app_material_request_messages_and_events_one?: Maybe<App_Material_Request_Messages_And_Events>;
+  /** insert data into the table: "app.material_request_messages_attachments" */
+  insert_app_material_request_messages_attachments?: Maybe<App_Material_Request_Messages_Attachments_Mutation_Response>;
+  /** insert a single row into the table: "app.material_request_messages_attachments" */
+  insert_app_material_request_messages_attachments_one?: Maybe<App_Material_Request_Messages_Attachments>;
   /** insert data into the table: "app.material_request_reuse_form_values" */
   insert_app_material_request_reuse_form_values?: Maybe<App_Material_Request_Reuse_Form_Values_Mutation_Response>;
   /** insert a single row into the table: "app.material_request_reuse_form_values" */
@@ -22918,6 +23161,12 @@ export type Mutation_Root = {
   update_app_material_request_messages_and_events_by_pk?: Maybe<App_Material_Request_Messages_And_Events>;
   /** update multiples rows of table: "app.material_request_messages_and_events" */
   update_app_material_request_messages_and_events_many?: Maybe<Array<Maybe<App_Material_Request_Messages_And_Events_Mutation_Response>>>;
+  /** update data of the table: "app.material_request_messages_attachments" */
+  update_app_material_request_messages_attachments?: Maybe<App_Material_Request_Messages_Attachments_Mutation_Response>;
+  /** update single row of the table: "app.material_request_messages_attachments" */
+  update_app_material_request_messages_attachments_by_pk?: Maybe<App_Material_Request_Messages_Attachments>;
+  /** update multiples rows of table: "app.material_request_messages_attachments" */
+  update_app_material_request_messages_attachments_many?: Maybe<Array<Maybe<App_Material_Request_Messages_Attachments_Mutation_Response>>>;
   /** update data of the table: "app.material_request_reuse_form_values" */
   update_app_material_request_reuse_form_values?: Maybe<App_Material_Request_Reuse_Form_Values_Mutation_Response>;
   /** update single row of the table: "app.material_request_reuse_form_values" */
@@ -23419,6 +23668,18 @@ export type Mutation_RootDelete_App_Material_Request_Messages_And_EventsArgs = {
 
 /** mutation root */
 export type Mutation_RootDelete_App_Material_Request_Messages_And_Events_By_PkArgs = {
+  id: Scalars['uuid']['input'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_App_Material_Request_Messages_AttachmentsArgs = {
+  where: App_Material_Request_Messages_Attachments_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_App_Material_Request_Messages_Attachments_By_PkArgs = {
   id: Scalars['uuid']['input'];
 };
 
@@ -24362,6 +24623,20 @@ export type Mutation_RootInsert_App_Material_Request_Messages_And_EventsArgs = {
 export type Mutation_RootInsert_App_Material_Request_Messages_And_Events_OneArgs = {
   object: App_Material_Request_Messages_And_Events_Insert_Input;
   on_conflict?: InputMaybe<App_Material_Request_Messages_And_Events_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_App_Material_Request_Messages_AttachmentsArgs = {
+  objects: Array<App_Material_Request_Messages_Attachments_Insert_Input>;
+  on_conflict?: InputMaybe<App_Material_Request_Messages_Attachments_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_App_Material_Request_Messages_Attachments_OneArgs = {
+  object: App_Material_Request_Messages_Attachments_Insert_Input;
+  on_conflict?: InputMaybe<App_Material_Request_Messages_Attachments_On_Conflict>;
 };
 
 
@@ -25526,6 +25801,26 @@ export type Mutation_RootUpdate_App_Material_Request_Messages_And_Events_By_PkAr
 /** mutation root */
 export type Mutation_RootUpdate_App_Material_Request_Messages_And_Events_ManyArgs = {
   updates: Array<App_Material_Request_Messages_And_Events_Updates>;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_App_Material_Request_Messages_AttachmentsArgs = {
+  _set?: InputMaybe<App_Material_Request_Messages_Attachments_Set_Input>;
+  where: App_Material_Request_Messages_Attachments_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_App_Material_Request_Messages_Attachments_By_PkArgs = {
+  _set?: InputMaybe<App_Material_Request_Messages_Attachments_Set_Input>;
+  pk_columns: App_Material_Request_Messages_Attachments_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_App_Material_Request_Messages_Attachments_ManyArgs = {
+  updates: Array<App_Material_Request_Messages_Attachments_Updates>;
 };
 
 
@@ -27189,6 +27484,12 @@ export type Query_Root = {
   app_material_request_messages_and_events_aggregate: App_Material_Request_Messages_And_Events_Aggregate;
   /** fetch data from the table: "app.material_request_messages_and_events" using primary key columns */
   app_material_request_messages_and_events_by_pk?: Maybe<App_Material_Request_Messages_And_Events>;
+  /** fetch data from the table: "app.material_request_messages_attachments" */
+  app_material_request_messages_attachments: Array<App_Material_Request_Messages_Attachments>;
+  /** fetch aggregated fields from the table: "app.material_request_messages_attachments" */
+  app_material_request_messages_attachments_aggregate: App_Material_Request_Messages_Attachments_Aggregate;
+  /** fetch data from the table: "app.material_request_messages_attachments" using primary key columns */
+  app_material_request_messages_attachments_by_pk?: Maybe<App_Material_Request_Messages_Attachments>;
   /** fetch data from the table: "app.material_request_reuse_form_values" */
   app_material_request_reuse_form_values: Array<App_Material_Request_Reuse_Form_Values>;
   /** fetch aggregated fields from the table: "app.material_request_reuse_form_values" */
@@ -27933,6 +28234,29 @@ export type Query_RootApp_Material_Request_Messages_And_Events_AggregateArgs = {
 
 
 export type Query_RootApp_Material_Request_Messages_And_Events_By_PkArgs = {
+  id: Scalars['uuid']['input'];
+};
+
+
+export type Query_RootApp_Material_Request_Messages_AttachmentsArgs = {
+  distinct_on?: InputMaybe<Array<App_Material_Request_Messages_Attachments_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<App_Material_Request_Messages_Attachments_Order_By>>;
+  where?: InputMaybe<App_Material_Request_Messages_Attachments_Bool_Exp>;
+};
+
+
+export type Query_RootApp_Material_Request_Messages_Attachments_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<App_Material_Request_Messages_Attachments_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<App_Material_Request_Messages_Attachments_Order_By>>;
+  where?: InputMaybe<App_Material_Request_Messages_Attachments_Bool_Exp>;
+};
+
+
+export type Query_RootApp_Material_Request_Messages_Attachments_By_PkArgs = {
   id: Scalars['uuid']['input'];
 };
 
@@ -30214,6 +30538,14 @@ export type Subscription_Root = {
   app_material_request_messages_and_events_by_pk?: Maybe<App_Material_Request_Messages_And_Events>;
   /** fetch data from the table in a streaming manner: "app.material_request_messages_and_events" */
   app_material_request_messages_and_events_stream: Array<App_Material_Request_Messages_And_Events>;
+  /** fetch data from the table: "app.material_request_messages_attachments" */
+  app_material_request_messages_attachments: Array<App_Material_Request_Messages_Attachments>;
+  /** fetch aggregated fields from the table: "app.material_request_messages_attachments" */
+  app_material_request_messages_attachments_aggregate: App_Material_Request_Messages_Attachments_Aggregate;
+  /** fetch data from the table: "app.material_request_messages_attachments" using primary key columns */
+  app_material_request_messages_attachments_by_pk?: Maybe<App_Material_Request_Messages_Attachments>;
+  /** fetch data from the table in a streaming manner: "app.material_request_messages_attachments" */
+  app_material_request_messages_attachments_stream: Array<App_Material_Request_Messages_Attachments>;
   /** fetch data from the table: "app.material_request_reuse_form_values" */
   app_material_request_reuse_form_values: Array<App_Material_Request_Reuse_Form_Values>;
   /** fetch aggregated fields from the table: "app.material_request_reuse_form_values" */
@@ -31226,6 +31558,36 @@ export type Subscription_RootApp_Material_Request_Messages_And_Events_StreamArgs
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<App_Material_Request_Messages_And_Events_Stream_Cursor_Input>>;
   where?: InputMaybe<App_Material_Request_Messages_And_Events_Bool_Exp>;
+};
+
+
+export type Subscription_RootApp_Material_Request_Messages_AttachmentsArgs = {
+  distinct_on?: InputMaybe<Array<App_Material_Request_Messages_Attachments_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<App_Material_Request_Messages_Attachments_Order_By>>;
+  where?: InputMaybe<App_Material_Request_Messages_Attachments_Bool_Exp>;
+};
+
+
+export type Subscription_RootApp_Material_Request_Messages_Attachments_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<App_Material_Request_Messages_Attachments_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<App_Material_Request_Messages_Attachments_Order_By>>;
+  where?: InputMaybe<App_Material_Request_Messages_Attachments_Bool_Exp>;
+};
+
+
+export type Subscription_RootApp_Material_Request_Messages_Attachments_By_PkArgs = {
+  id: Scalars['uuid']['input'];
+};
+
+
+export type Subscription_RootApp_Material_Request_Messages_Attachments_StreamArgs = {
+  batch_size: Scalars['Int']['input'];
+  cursor: Array<InputMaybe<App_Material_Request_Messages_Attachments_Stream_Cursor_Input>>;
+  where?: InputMaybe<App_Material_Request_Messages_Attachments_Bool_Exp>;
 };
 
 
@@ -36633,17 +36995,17 @@ export type GetMaterialRequestAttachmentByIdQueryVariables = Exact<{
 }>;
 
 
-export type GetMaterialRequestAttachmentByIdQuery = { __typename?: 'query_root', app_material_request_messages_and_events: Array<{ __typename?: 'app_material_request_messages_and_events', id: any, attachment_url?: string | null, attachment_filename?: string | null, created_at: any }> };
+export type GetMaterialRequestAttachmentByIdQuery = { __typename?: 'query_root', app_material_request_messages_attachments: Array<{ __typename?: 'app_material_request_messages_attachments', id: any, attachment_url: string, attachment_filename: string, created_at: any }> };
 
 export type GetMaterialRequestAttachmentsQueryVariables = Exact<{
   materialRequestId: Scalars['uuid']['input'];
   offset: Scalars['Int']['input'];
   limit: Scalars['Int']['input'];
-  orderBy?: InputMaybe<Array<App_Material_Request_Messages_And_Events_Order_By> | App_Material_Request_Messages_And_Events_Order_By>;
+  orderBy?: InputMaybe<Array<App_Material_Request_Messages_Attachments_Order_By> | App_Material_Request_Messages_Attachments_Order_By>;
 }>;
 
 
-export type GetMaterialRequestAttachmentsQuery = { __typename?: 'query_root', app_material_request_messages_and_events: Array<{ __typename?: 'app_material_request_messages_and_events', id: any, attachment_url?: string | null, attachment_filename?: string | null, created_at: any }>, app_material_request_messages_and_events_aggregate: { __typename?: 'app_material_request_messages_and_events_aggregate', aggregate?: { __typename?: 'app_material_request_messages_and_events_aggregate_fields', count: number } | null } };
+export type GetMaterialRequestAttachmentsQuery = { __typename?: 'query_root', app_material_request_messages_attachments: Array<{ __typename?: 'app_material_request_messages_attachments', id: any, attachment_url: string, attachment_filename: string, created_at: any }>, app_material_request_messages_attachments_aggregate: { __typename?: 'app_material_request_messages_attachments_aggregate', aggregate?: { __typename?: 'app_material_request_messages_attachments_aggregate_fields', count: number } | null } };
 
 export type GetMaterialRequestMessagesQueryVariables = Exact<{
   materialRequestId: Scalars['uuid']['input'];
@@ -36652,20 +37014,19 @@ export type GetMaterialRequestMessagesQueryVariables = Exact<{
 }>;
 
 
-export type GetMaterialRequestMessagesQuery = { __typename?: 'query_root', app_material_request_messages_and_events: Array<{ __typename?: 'app_material_request_messages_and_events', id: any, message_type: Lookup_App_Material_Request_Message_Type_Enum, body?: any | null, sender_profile_id: any, attachment_url?: string | null, attachment_filename?: string | null, created_at: any, material_request_id: any, sender: { __typename?: 'users_profile', first_name?: string | null, last_name?: string | null, mail?: string | null, organisation?: { __typename?: 'graph_organization', org_identifier: string, skos_pref_label?: string | null } | null } }>, app_material_request_messages_and_events_aggregate: { __typename?: 'app_material_request_messages_and_events_aggregate', aggregate?: { __typename?: 'app_material_request_messages_and_events_aggregate_fields', count: number } | null } };
+export type GetMaterialRequestMessagesQuery = { __typename?: 'query_root', app_material_request_messages_and_events: Array<{ __typename?: 'app_material_request_messages_and_events', id: any, message_type: Lookup_App_Material_Request_Message_Type_Enum, body?: any | null, sender_profile_id?: any | null, created_at: any, material_request_id: any, sender?: { __typename?: 'users_profile', first_name?: string | null, last_name?: string | null, mail?: string | null, organisation?: { __typename?: 'graph_organization', org_identifier: string, skos_pref_label?: string | null } | null } | null, attachments: Array<{ __typename?: 'app_material_request_messages_attachments', id: any, attachment_url: string, attachment_filename: string }> }>, app_material_request_messages_and_events_aggregate: { __typename?: 'app_material_request_messages_and_events_aggregate', aggregate?: { __typename?: 'app_material_request_messages_and_events_aggregate_fields', count: number } | null } };
 
 export type InsertMaterialRequestMessageMutationVariables = Exact<{
   materialRequestId: Scalars['uuid']['input'];
   senderProfileId: Scalars['uuid']['input'];
   messageType: Lookup_App_Material_Request_Message_Type_Enum;
   body?: InputMaybe<Scalars['jsonb']['input']>;
-  attachmentUrl?: InputMaybe<Scalars['String']['input']>;
-  attachmentFilename?: InputMaybe<Scalars['String']['input']>;
+  attachments: Array<App_Material_Request_Messages_Attachments_Insert_Input> | App_Material_Request_Messages_Attachments_Insert_Input;
   createdAt: Scalars['timestamp']['input'];
 }>;
 
 
-export type InsertMaterialRequestMessageMutation = { __typename?: 'mutation_root', insert_app_material_request_messages_and_events_one?: { __typename?: 'app_material_request_messages_and_events', id: any, message_type: Lookup_App_Material_Request_Message_Type_Enum, sender_profile_id: any, body?: any | null, attachment_url?: string | null, attachment_filename?: string | null, material_request_id: any, created_at: any, sender: { __typename?: 'users_profile', full_name?: string | null, organisation?: { __typename?: 'graph_organization', org_identifier: string, skos_pref_label?: string | null } | null } } | null };
+export type InsertMaterialRequestMessageMutation = { __typename?: 'mutation_root', insert_app_material_request_messages_and_events_one?: { __typename?: 'app_material_request_messages_and_events', id: any, message_type: Lookup_App_Material_Request_Message_Type_Enum, sender_profile_id?: any | null, body?: any | null, material_request_id: any, created_at: any, sender?: { __typename?: 'users_profile', full_name?: string | null, organisation?: { __typename?: 'graph_organization', org_identifier: string, skos_pref_label?: string | null } | null } | null, attachments: Array<{ __typename?: 'app_material_request_messages_attachments', id: any, attachment_url: string, attachment_filename: string }> } | null };
 
 export type InsertMaterialRequestMessageUnreadStatusMutationVariables = Exact<{
   material_request_message_id: Scalars['uuid']['input'];
@@ -36704,7 +37065,7 @@ export type FindMaterialRequestsByIdQueryVariables = Exact<{
 }>;
 
 
-export type FindMaterialRequestsByIdQuery = { __typename?: 'query_root', app_material_requests: Array<{ __typename?: 'app_material_requests', id: any, ie_object_id: string, profile_id: any, reason: string, type: Lookup_App_Material_Request_Type_Enum, created_at: any, updated_at: any, requested_at?: any | null, is_pending: boolean, status: Lookup_App_Material_Request_Status_Enum, group_id?: any | null, name?: string | null, download_status?: Lookup_App_Material_Request_Download_Status_Enum | null, download_available_at?: any | null, requester_capacity: Lookup_App_Material_Request_Requester_Capacity_Enum, organisation?: string | null, organisation_sector?: string | null, ie_object_representation_id?: string | null, messages_and_events: Array<{ __typename?: 'app_material_request_messages_and_events', id: any, message_type: Lookup_App_Material_Request_Message_Type_Enum, created_at: any, body?: any | null, sender_profile_id: any, sender: { __typename?: 'users_profile', first_name?: string | null, last_name?: string | null, mail?: string | null, organisation?: { __typename?: 'graph_organization', org_identifier: string, skos_pref_label?: string | null } | null } }>, requested_by: { __typename?: 'users_profile', id: any, full_name?: string | null, mail?: string | null, language: Lookup_Languages_Enum, group?: { __typename?: 'users_group', name: string, label: string, description?: string | null, id: any } | null }, intellectualEntity?: { __typename?: 'graph_intellectual_entity', schema_identifier?: string | null, schema_name?: string | null, id: string, schema_date_published?: string | null, created_at?: any | null, premisIdentifier: Array<{ __typename?: 'graph_premis_identifier', value: string }>, dctermsFormat: Array<{ __typename?: 'graph_dcterms_format', dcterms_format: string }>, schemaThumbnail?: { __typename?: 'graph__schema_thumbnail_url', schema_thumbnail_url?: any | null } | null, schemaMaintainer?: { __typename?: 'graph_organization', org_identifier: string, skos_pref_label?: string | null, ha_org_has_logo?: string | null, skos_alt_label?: string | null, ha_org_sector?: string | null, schemaContactPoint: Array<{ __typename?: 'graph_schema_contact_point', schema_contact_type?: string | null, schema_email?: string | null, schema_telephone?: string | null }>, visitorSpace?: { __typename?: 'maintainer_visitor_space', slug?: string | null } | null } | null, schemaLicenses: Array<{ __typename?: 'graph_schema_license', schema_license: string }> } | null, objectRepresentation?: { __typename?: 'graph_representation', id: string, schema_name?: string | null, is_media_fragment_of?: string | null, schema_in_language?: string | null, schema_start_time?: any | null, schema_end_time?: any | null, schema_transcript?: string | null, edm_is_next_in_sequence?: string | null, updated_at?: any | null, schemaTranscriptUrls: Array<{ __typename?: 'graph_schema_transcript_url', schema_transcript: string, schema_transcript_url: string }>, includes: Array<{ __typename?: 'graph_includes', file: { __typename?: 'graph_file', id: string, schema_name?: string | null, ebucore_has_mime_type?: string | null, premis_stored_at?: string | null, schema_thumbnail_url?: string | null, schema_duration?: any | null, edm_is_next_in_sequence?: string | null, created_at?: any | null } }> } | null, material_request_reuse_form_values: Array<{ __typename?: 'app_material_request_reuse_form_values', key: string, value?: string | null }> }> };
+export type FindMaterialRequestsByIdQuery = { __typename?: 'query_root', app_material_requests: Array<{ __typename?: 'app_material_requests', id: any, ie_object_id: string, profile_id: any, reason: string, type: Lookup_App_Material_Request_Type_Enum, created_at: any, updated_at: any, requested_at?: any | null, is_pending: boolean, status: Lookup_App_Material_Request_Status_Enum, group_id?: any | null, name?: string | null, download_status?: Lookup_App_Material_Request_Download_Status_Enum | null, download_available_at?: any | null, requester_capacity: Lookup_App_Material_Request_Requester_Capacity_Enum, organisation?: string | null, organisation_sector?: string | null, ie_object_representation_id?: string | null, messages_and_events: Array<{ __typename?: 'app_material_request_messages_and_events', id: any, message_type: Lookup_App_Material_Request_Message_Type_Enum, created_at: any, body?: any | null, sender_profile_id?: any | null, sender?: { __typename?: 'users_profile', first_name?: string | null, last_name?: string | null, mail?: string | null, organisation?: { __typename?: 'graph_organization', org_identifier: string, skos_pref_label?: string | null } | null } | null }>, requested_by: { __typename?: 'users_profile', id: any, full_name?: string | null, mail?: string | null, language: Lookup_Languages_Enum, group?: { __typename?: 'users_group', name: string, label: string, description?: string | null, id: any } | null }, intellectualEntity?: { __typename?: 'graph_intellectual_entity', schema_identifier?: string | null, schema_name?: string | null, id: string, schema_date_published?: string | null, created_at?: any | null, premisIdentifier: Array<{ __typename?: 'graph_premis_identifier', value: string }>, dctermsFormat: Array<{ __typename?: 'graph_dcterms_format', dcterms_format: string }>, schemaThumbnail?: { __typename?: 'graph__schema_thumbnail_url', schema_thumbnail_url?: any | null } | null, schemaMaintainer?: { __typename?: 'graph_organization', org_identifier: string, skos_pref_label?: string | null, ha_org_has_logo?: string | null, skos_alt_label?: string | null, ha_org_sector?: string | null, schemaContactPoint: Array<{ __typename?: 'graph_schema_contact_point', schema_contact_type?: string | null, schema_email?: string | null, schema_telephone?: string | null }>, visitorSpace?: { __typename?: 'maintainer_visitor_space', slug?: string | null } | null } | null, schemaLicenses: Array<{ __typename?: 'graph_schema_license', schema_license: string }> } | null, objectRepresentation?: { __typename?: 'graph_representation', id: string, schema_name?: string | null, is_media_fragment_of?: string | null, schema_in_language?: string | null, schema_start_time?: any | null, schema_end_time?: any | null, schema_transcript?: string | null, edm_is_next_in_sequence?: string | null, updated_at?: any | null, schemaTranscriptUrls: Array<{ __typename?: 'graph_schema_transcript_url', schema_transcript: string, schema_transcript_url: string }>, includes: Array<{ __typename?: 'graph_includes', file: { __typename?: 'graph_file', id: string, schema_name?: string | null, ebucore_has_mime_type?: string | null, premis_stored_at?: string | null, schema_thumbnail_url?: string | null, schema_duration?: any | null, edm_is_next_in_sequence?: string | null, created_at?: any | null } }> } | null, material_request_reuse_form_values: Array<{ __typename?: 'app_material_request_reuse_form_values', key: string, value?: string | null }> }> };
 
 export type FindMaterialRequestsWithAlmostExpiredDownloadQueryVariables = Exact<{
   warningDate: Scalars['timestamp']['input'];
@@ -36737,7 +37098,7 @@ export type InsertMaterialRequestMutationVariables = Exact<{
 }>;
 
 
-export type InsertMaterialRequestMutation = { __typename?: 'mutation_root', insert_app_material_requests_one?: { __typename?: 'app_material_requests', id: any, ie_object_id: string, profile_id: any, reason: string, type: Lookup_App_Material_Request_Type_Enum, created_at: any, updated_at: any, requested_at?: any | null, is_pending: boolean, status: Lookup_App_Material_Request_Status_Enum, group_id?: any | null, name?: string | null, requester_capacity: Lookup_App_Material_Request_Requester_Capacity_Enum, organisation?: string | null, organisation_sector?: string | null, download_status?: Lookup_App_Material_Request_Download_Status_Enum | null, download_available_at?: any | null, ie_object_representation_id?: string | null, messages_and_events: Array<{ __typename?: 'app_material_request_messages_and_events', message_type: Lookup_App_Material_Request_Message_Type_Enum, created_at: any, body?: any | null, sender_profile_id: any, sender: { __typename?: 'users_profile', first_name?: string | null, last_name?: string | null, mail?: string | null, organisation?: { __typename?: 'graph_organization', org_identifier: string, skos_pref_label?: string | null } | null } }>, requested_by: { __typename?: 'users_profile', id: any, full_name?: string | null, mail?: string | null, language: Lookup_Languages_Enum, group?: { __typename?: 'users_group', name: string, label: string, description?: string | null, id: any } | null }, intellectualEntity?: { __typename?: 'graph_intellectual_entity', schema_identifier?: string | null, schema_name?: string | null, id: string, schema_date_published?: string | null, created_at?: any | null, premisIdentifier: Array<{ __typename?: 'graph_premis_identifier', value: string }>, dctermsFormat: Array<{ __typename?: 'graph_dcterms_format', dcterms_format: string }>, schemaThumbnail?: { __typename?: 'graph__schema_thumbnail_url', schema_thumbnail_url?: any | null } | null, schemaMaintainer?: { __typename?: 'graph_organization', org_identifier: string, skos_pref_label?: string | null, ha_org_has_logo?: string | null, skos_alt_label?: string | null, ha_org_sector?: string | null, schemaContactPoint: Array<{ __typename?: 'graph_schema_contact_point', schema_contact_type?: string | null, schema_email?: string | null, schema_telephone?: string | null }>, visitorSpace?: { __typename?: 'maintainer_visitor_space', slug?: string | null } | null } | null, schemaLicenses: Array<{ __typename?: 'graph_schema_license', schema_license: string }> } | null, objectRepresentation?: { __typename?: 'graph_representation', id: string, schema_name?: string | null, is_media_fragment_of?: string | null, schema_in_language?: string | null, schema_start_time?: any | null, schema_end_time?: any | null, schema_transcript?: string | null, edm_is_next_in_sequence?: string | null, updated_at?: any | null, schemaTranscriptUrls: Array<{ __typename?: 'graph_schema_transcript_url', schema_transcript: string, schema_transcript_url: string }>, includes: Array<{ __typename?: 'graph_includes', file: { __typename?: 'graph_file', id: string, schema_name?: string | null, ebucore_has_mime_type?: string | null, premis_stored_at?: string | null, schema_thumbnail_url?: string | null, schema_duration?: any | null, edm_is_next_in_sequence?: string | null, created_at?: any | null } }> } | null, material_request_reuse_form_values: Array<{ __typename?: 'app_material_request_reuse_form_values', key: string, value?: string | null }> } | null };
+export type InsertMaterialRequestMutation = { __typename?: 'mutation_root', insert_app_material_requests_one?: { __typename?: 'app_material_requests', id: any, ie_object_id: string, profile_id: any, reason: string, type: Lookup_App_Material_Request_Type_Enum, created_at: any, updated_at: any, requested_at?: any | null, is_pending: boolean, status: Lookup_App_Material_Request_Status_Enum, group_id?: any | null, name?: string | null, requester_capacity: Lookup_App_Material_Request_Requester_Capacity_Enum, organisation?: string | null, organisation_sector?: string | null, download_status?: Lookup_App_Material_Request_Download_Status_Enum | null, download_available_at?: any | null, ie_object_representation_id?: string | null, messages_and_events: Array<{ __typename?: 'app_material_request_messages_and_events', message_type: Lookup_App_Material_Request_Message_Type_Enum, created_at: any, body?: any | null, sender_profile_id?: any | null, sender?: { __typename?: 'users_profile', first_name?: string | null, last_name?: string | null, mail?: string | null, organisation?: { __typename?: 'graph_organization', org_identifier: string, skos_pref_label?: string | null } | null } | null }>, requested_by: { __typename?: 'users_profile', id: any, full_name?: string | null, mail?: string | null, language: Lookup_Languages_Enum, group?: { __typename?: 'users_group', name: string, label: string, description?: string | null, id: any } | null }, intellectualEntity?: { __typename?: 'graph_intellectual_entity', schema_identifier?: string | null, schema_name?: string | null, id: string, schema_date_published?: string | null, created_at?: any | null, premisIdentifier: Array<{ __typename?: 'graph_premis_identifier', value: string }>, dctermsFormat: Array<{ __typename?: 'graph_dcterms_format', dcterms_format: string }>, schemaThumbnail?: { __typename?: 'graph__schema_thumbnail_url', schema_thumbnail_url?: any | null } | null, schemaMaintainer?: { __typename?: 'graph_organization', org_identifier: string, skos_pref_label?: string | null, ha_org_has_logo?: string | null, skos_alt_label?: string | null, ha_org_sector?: string | null, schemaContactPoint: Array<{ __typename?: 'graph_schema_contact_point', schema_contact_type?: string | null, schema_email?: string | null, schema_telephone?: string | null }>, visitorSpace?: { __typename?: 'maintainer_visitor_space', slug?: string | null } | null } | null, schemaLicenses: Array<{ __typename?: 'graph_schema_license', schema_license: string }> } | null, objectRepresentation?: { __typename?: 'graph_representation', id: string, schema_name?: string | null, is_media_fragment_of?: string | null, schema_in_language?: string | null, schema_start_time?: any | null, schema_end_time?: any | null, schema_transcript?: string | null, edm_is_next_in_sequence?: string | null, updated_at?: any | null, schemaTranscriptUrls: Array<{ __typename?: 'graph_schema_transcript_url', schema_transcript: string, schema_transcript_url: string }>, includes: Array<{ __typename?: 'graph_includes', file: { __typename?: 'graph_file', id: string, schema_name?: string | null, ebucore_has_mime_type?: string | null, premis_stored_at?: string | null, schema_thumbnail_url?: string | null, schema_duration?: any | null, edm_is_next_in_sequence?: string | null, created_at?: any | null } }> } | null, material_request_reuse_form_values: Array<{ __typename?: 'app_material_request_reuse_form_values', key: string, value?: string | null }> } | null };
 
 export type InsertMaterialRequestReuseFormMutationVariables = Exact<{
   keyValues: Array<App_Material_Request_Reuse_Form_Values_Insert_Input> | App_Material_Request_Reuse_Form_Values_Insert_Input;
@@ -36752,7 +37113,7 @@ export type UpdateMaterialRequestMutationVariables = Exact<{
 }>;
 
 
-export type UpdateMaterialRequestMutation = { __typename?: 'mutation_root', update_app_material_requests?: { __typename?: 'app_material_requests_mutation_response', returning: Array<{ __typename?: 'app_material_requests', id: any, ie_object_id: string, profile_id: any, reason: string, type: Lookup_App_Material_Request_Type_Enum, created_at: any, updated_at: any, requested_at?: any | null, is_pending: boolean, status: Lookup_App_Material_Request_Status_Enum, group_id?: any | null, name?: string | null, requester_capacity: Lookup_App_Material_Request_Requester_Capacity_Enum, organisation?: string | null, organisation_sector?: string | null, download_status?: Lookup_App_Material_Request_Download_Status_Enum | null, download_retries: number, download_available_at?: any | null, download_job_id?: string | null, download_expiry_warning_email_sent: boolean, ie_object_representation_id?: string | null, messages_and_events: Array<{ __typename?: 'app_material_request_messages_and_events', message_type: Lookup_App_Material_Request_Message_Type_Enum, created_at: any, body?: any | null, sender_profile_id: any, sender: { __typename?: 'users_profile', first_name?: string | null, last_name?: string | null, mail?: string | null, organisation?: { __typename?: 'graph_organization', org_identifier: string, skos_pref_label?: string | null } | null } }>, requested_by: { __typename?: 'users_profile', id: any, full_name?: string | null, mail?: string | null, language: Lookup_Languages_Enum, group?: { __typename?: 'users_group', name: string, label: string, description?: string | null, id: any } | null }, intellectualEntity?: { __typename?: 'graph_intellectual_entity', schema_identifier?: string | null, schema_name?: string | null, id: string, schema_date_published?: string | null, created_at?: any | null, premisIdentifier: Array<{ __typename?: 'graph_premis_identifier', value: string }>, dctermsFormat: Array<{ __typename?: 'graph_dcterms_format', dcterms_format: string }>, schemaThumbnail?: { __typename?: 'graph__schema_thumbnail_url', schema_thumbnail_url?: any | null } | null, schemaMaintainer?: { __typename?: 'graph_organization', org_identifier: string, skos_pref_label?: string | null, ha_org_has_logo?: string | null, skos_alt_label?: string | null, ha_org_sector?: string | null, schemaContactPoint: Array<{ __typename?: 'graph_schema_contact_point', schema_contact_type?: string | null, schema_email?: string | null, schema_telephone?: string | null }>, visitorSpace?: { __typename?: 'maintainer_visitor_space', slug?: string | null } | null } | null, schemaLicenses: Array<{ __typename?: 'graph_schema_license', schema_license: string }> } | null, objectRepresentation?: { __typename?: 'graph_representation', id: string, schema_name?: string | null, is_media_fragment_of?: string | null, schema_in_language?: string | null, schema_start_time?: any | null, schema_end_time?: any | null, schema_transcript?: string | null, edm_is_next_in_sequence?: string | null, updated_at?: any | null, schemaTranscriptUrls: Array<{ __typename?: 'graph_schema_transcript_url', schema_transcript: string, schema_transcript_url: string }>, includes: Array<{ __typename?: 'graph_includes', file: { __typename?: 'graph_file', id: string, schema_name?: string | null, ebucore_has_mime_type?: string | null, premis_stored_at?: string | null, schema_thumbnail_url?: string | null, schema_duration?: any | null, edm_is_next_in_sequence?: string | null, created_at?: any | null } }> } | null, material_request_reuse_form_values: Array<{ __typename?: 'app_material_request_reuse_form_values', key: string, value?: string | null }> }> } | null };
+export type UpdateMaterialRequestMutation = { __typename?: 'mutation_root', update_app_material_requests?: { __typename?: 'app_material_requests_mutation_response', returning: Array<{ __typename?: 'app_material_requests', id: any, ie_object_id: string, profile_id: any, reason: string, type: Lookup_App_Material_Request_Type_Enum, created_at: any, updated_at: any, requested_at?: any | null, is_pending: boolean, status: Lookup_App_Material_Request_Status_Enum, group_id?: any | null, name?: string | null, requester_capacity: Lookup_App_Material_Request_Requester_Capacity_Enum, organisation?: string | null, organisation_sector?: string | null, download_status?: Lookup_App_Material_Request_Download_Status_Enum | null, download_retries: number, download_available_at?: any | null, download_job_id?: string | null, download_expiry_warning_email_sent: boolean, ie_object_representation_id?: string | null, messages_and_events: Array<{ __typename?: 'app_material_request_messages_and_events', message_type: Lookup_App_Material_Request_Message_Type_Enum, created_at: any, body?: any | null, sender_profile_id?: any | null, sender?: { __typename?: 'users_profile', first_name?: string | null, last_name?: string | null, mail?: string | null, organisation?: { __typename?: 'graph_organization', org_identifier: string, skos_pref_label?: string | null } | null } | null }>, requested_by: { __typename?: 'users_profile', id: any, full_name?: string | null, mail?: string | null, language: Lookup_Languages_Enum, group?: { __typename?: 'users_group', name: string, label: string, description?: string | null, id: any } | null }, intellectualEntity?: { __typename?: 'graph_intellectual_entity', schema_identifier?: string | null, schema_name?: string | null, id: string, schema_date_published?: string | null, created_at?: any | null, premisIdentifier: Array<{ __typename?: 'graph_premis_identifier', value: string }>, dctermsFormat: Array<{ __typename?: 'graph_dcterms_format', dcterms_format: string }>, schemaThumbnail?: { __typename?: 'graph__schema_thumbnail_url', schema_thumbnail_url?: any | null } | null, schemaMaintainer?: { __typename?: 'graph_organization', org_identifier: string, skos_pref_label?: string | null, ha_org_has_logo?: string | null, skos_alt_label?: string | null, ha_org_sector?: string | null, schemaContactPoint: Array<{ __typename?: 'graph_schema_contact_point', schema_contact_type?: string | null, schema_email?: string | null, schema_telephone?: string | null }>, visitorSpace?: { __typename?: 'maintainer_visitor_space', slug?: string | null } | null } | null, schemaLicenses: Array<{ __typename?: 'graph_schema_license', schema_license: string }> } | null, objectRepresentation?: { __typename?: 'graph_representation', id: string, schema_name?: string | null, is_media_fragment_of?: string | null, schema_in_language?: string | null, schema_start_time?: any | null, schema_end_time?: any | null, schema_transcript?: string | null, edm_is_next_in_sequence?: string | null, updated_at?: any | null, schemaTranscriptUrls: Array<{ __typename?: 'graph_schema_transcript_url', schema_transcript: string, schema_transcript_url: string }>, includes: Array<{ __typename?: 'graph_includes', file: { __typename?: 'graph_file', id: string, schema_name?: string | null, ebucore_has_mime_type?: string | null, premis_stored_at?: string | null, schema_thumbnail_url?: string | null, schema_duration?: any | null, edm_is_next_in_sequence?: string | null, created_at?: any | null } }> } | null, material_request_reuse_form_values: Array<{ __typename?: 'app_material_request_reuse_form_values', key: string, value?: string | null }> }> } | null };
 
 export type UpdateMaterialRequestForUserMutationVariables = Exact<{
   materialRequestId?: InputMaybe<Scalars['uuid']['input']>;
@@ -36761,7 +37122,7 @@ export type UpdateMaterialRequestForUserMutationVariables = Exact<{
 }>;
 
 
-export type UpdateMaterialRequestForUserMutation = { __typename?: 'mutation_root', delete_app_material_request_reuse_form_values?: { __typename?: 'app_material_request_reuse_form_values_mutation_response', affected_rows: number } | null, update_app_material_requests?: { __typename?: 'app_material_requests_mutation_response', returning: Array<{ __typename?: 'app_material_requests', id: any, ie_object_id: string, profile_id: any, reason: string, type: Lookup_App_Material_Request_Type_Enum, created_at: any, updated_at: any, requested_at?: any | null, is_pending: boolean, status: Lookup_App_Material_Request_Status_Enum, group_id?: any | null, name?: string | null, download_status?: Lookup_App_Material_Request_Download_Status_Enum | null, download_available_at?: any | null, requester_capacity: Lookup_App_Material_Request_Requester_Capacity_Enum, organisation?: string | null, organisation_sector?: string | null, ie_object_representation_id?: string | null, messages_and_events: Array<{ __typename?: 'app_material_request_messages_and_events', message_type: Lookup_App_Material_Request_Message_Type_Enum, created_at: any, body?: any | null, sender_profile_id: any, sender: { __typename?: 'users_profile', first_name?: string | null, last_name?: string | null, mail?: string | null, organisation?: { __typename?: 'graph_organization', org_identifier: string, skos_pref_label?: string | null } | null } }>, requested_by: { __typename?: 'users_profile', id: any, full_name?: string | null, mail?: string | null, language: Lookup_Languages_Enum, group?: { __typename?: 'users_group', name: string, label: string, description?: string | null, id: any } | null }, intellectualEntity?: { __typename?: 'graph_intellectual_entity', schema_identifier?: string | null, schema_name?: string | null, id: string, schema_date_published?: string | null, created_at?: any | null, premisIdentifier: Array<{ __typename?: 'graph_premis_identifier', value: string }>, dctermsFormat: Array<{ __typename?: 'graph_dcterms_format', dcterms_format: string }>, schemaThumbnail?: { __typename?: 'graph__schema_thumbnail_url', schema_thumbnail_url?: any | null } | null, schemaMaintainer?: { __typename?: 'graph_organization', org_identifier: string, skos_pref_label?: string | null, ha_org_has_logo?: string | null, skos_alt_label?: string | null, ha_org_sector?: string | null, schemaContactPoint: Array<{ __typename?: 'graph_schema_contact_point', schema_contact_type?: string | null, schema_email?: string | null, schema_telephone?: string | null }>, visitorSpace?: { __typename?: 'maintainer_visitor_space', slug?: string | null } | null } | null, schemaLicenses: Array<{ __typename?: 'graph_schema_license', schema_license: string }> } | null, objectRepresentation?: { __typename?: 'graph_representation', id: string, schema_name?: string | null, is_media_fragment_of?: string | null, schema_in_language?: string | null, schema_start_time?: any | null, schema_end_time?: any | null, schema_transcript?: string | null, edm_is_next_in_sequence?: string | null, updated_at?: any | null, schemaTranscriptUrls: Array<{ __typename?: 'graph_schema_transcript_url', schema_transcript: string, schema_transcript_url: string }>, includes: Array<{ __typename?: 'graph_includes', file: { __typename?: 'graph_file', id: string, schema_name?: string | null, ebucore_has_mime_type?: string | null, premis_stored_at?: string | null, schema_thumbnail_url?: string | null, schema_duration?: any | null, edm_is_next_in_sequence?: string | null, created_at?: any | null } }> } | null, material_request_reuse_form_values: Array<{ __typename?: 'app_material_request_reuse_form_values', key: string, value?: string | null }> }> } | null };
+export type UpdateMaterialRequestForUserMutation = { __typename?: 'mutation_root', delete_app_material_request_reuse_form_values?: { __typename?: 'app_material_request_reuse_form_values_mutation_response', affected_rows: number } | null, update_app_material_requests?: { __typename?: 'app_material_requests_mutation_response', returning: Array<{ __typename?: 'app_material_requests', id: any, ie_object_id: string, profile_id: any, reason: string, type: Lookup_App_Material_Request_Type_Enum, created_at: any, updated_at: any, requested_at?: any | null, is_pending: boolean, status: Lookup_App_Material_Request_Status_Enum, group_id?: any | null, name?: string | null, download_status?: Lookup_App_Material_Request_Download_Status_Enum | null, download_available_at?: any | null, requester_capacity: Lookup_App_Material_Request_Requester_Capacity_Enum, organisation?: string | null, organisation_sector?: string | null, ie_object_representation_id?: string | null, messages_and_events: Array<{ __typename?: 'app_material_request_messages_and_events', message_type: Lookup_App_Material_Request_Message_Type_Enum, created_at: any, body?: any | null, sender_profile_id?: any | null, sender?: { __typename?: 'users_profile', first_name?: string | null, last_name?: string | null, mail?: string | null, organisation?: { __typename?: 'graph_organization', org_identifier: string, skos_pref_label?: string | null } | null } | null }>, requested_by: { __typename?: 'users_profile', id: any, full_name?: string | null, mail?: string | null, language: Lookup_Languages_Enum, group?: { __typename?: 'users_group', name: string, label: string, description?: string | null, id: any } | null }, intellectualEntity?: { __typename?: 'graph_intellectual_entity', schema_identifier?: string | null, schema_name?: string | null, id: string, schema_date_published?: string | null, created_at?: any | null, premisIdentifier: Array<{ __typename?: 'graph_premis_identifier', value: string }>, dctermsFormat: Array<{ __typename?: 'graph_dcterms_format', dcterms_format: string }>, schemaThumbnail?: { __typename?: 'graph__schema_thumbnail_url', schema_thumbnail_url?: any | null } | null, schemaMaintainer?: { __typename?: 'graph_organization', org_identifier: string, skos_pref_label?: string | null, ha_org_has_logo?: string | null, skos_alt_label?: string | null, ha_org_sector?: string | null, schemaContactPoint: Array<{ __typename?: 'graph_schema_contact_point', schema_contact_type?: string | null, schema_email?: string | null, schema_telephone?: string | null }>, visitorSpace?: { __typename?: 'maintainer_visitor_space', slug?: string | null } | null } | null, schemaLicenses: Array<{ __typename?: 'graph_schema_license', schema_license: string }> } | null, objectRepresentation?: { __typename?: 'graph_representation', id: string, schema_name?: string | null, is_media_fragment_of?: string | null, schema_in_language?: string | null, schema_start_time?: any | null, schema_end_time?: any | null, schema_transcript?: string | null, edm_is_next_in_sequence?: string | null, updated_at?: any | null, schemaTranscriptUrls: Array<{ __typename?: 'graph_schema_transcript_url', schema_transcript: string, schema_transcript_url: string }>, includes: Array<{ __typename?: 'graph_includes', file: { __typename?: 'graph_file', id: string, schema_name?: string | null, ebucore_has_mime_type?: string | null, premis_stored_at?: string | null, schema_thumbnail_url?: string | null, schema_duration?: any | null, edm_is_next_in_sequence?: string | null, created_at?: any | null } }> } | null, material_request_reuse_form_values: Array<{ __typename?: 'app_material_request_reuse_form_values', key: string, value?: string | null }> }> } | null };
 
 export type UpdateMaterialRequestStatusMutationVariables = Exact<{
   materialRequestId: Scalars['uuid']['input'];
@@ -36769,7 +37130,7 @@ export type UpdateMaterialRequestStatusMutationVariables = Exact<{
 }>;
 
 
-export type UpdateMaterialRequestStatusMutation = { __typename?: 'mutation_root', update_app_material_requests_by_pk?: { __typename?: 'app_material_requests', id: any, ie_object_id: string, profile_id: any, reason: string, type: Lookup_App_Material_Request_Type_Enum, created_at: any, updated_at: any, requested_at?: any | null, is_pending: boolean, status: Lookup_App_Material_Request_Status_Enum, group_id?: any | null, name?: string | null, download_status?: Lookup_App_Material_Request_Download_Status_Enum | null, download_available_at?: any | null, requester_capacity: Lookup_App_Material_Request_Requester_Capacity_Enum, organisation?: string | null, organisation_sector?: string | null, ie_object_representation_id?: string | null, messages_and_events: Array<{ __typename?: 'app_material_request_messages_and_events', message_type: Lookup_App_Material_Request_Message_Type_Enum, created_at: any, body?: any | null, sender_profile_id: any, sender: { __typename?: 'users_profile', first_name?: string | null, last_name?: string | null, mail?: string | null, organisation?: { __typename?: 'graph_organization', org_identifier: string, skos_pref_label?: string | null } | null } }>, requested_by: { __typename?: 'users_profile', id: any, full_name?: string | null, mail?: string | null, language: Lookup_Languages_Enum, group?: { __typename?: 'users_group', name: string, label: string, description?: string | null, id: any } | null }, intellectualEntity?: { __typename?: 'graph_intellectual_entity', schema_identifier?: string | null, schema_name?: string | null, id: string, schema_date_published?: string | null, created_at?: any | null, premisIdentifier: Array<{ __typename?: 'graph_premis_identifier', value: string }>, dctermsFormat: Array<{ __typename?: 'graph_dcterms_format', dcterms_format: string }>, schemaThumbnail?: { __typename?: 'graph__schema_thumbnail_url', schema_thumbnail_url?: any | null } | null, schemaMaintainer?: { __typename?: 'graph_organization', org_identifier: string, skos_pref_label?: string | null, ha_org_has_logo?: string | null, skos_alt_label?: string | null, ha_org_sector?: string | null, schemaContactPoint: Array<{ __typename?: 'graph_schema_contact_point', schema_contact_type?: string | null, schema_email?: string | null, schema_telephone?: string | null }>, visitorSpace?: { __typename?: 'maintainer_visitor_space', slug?: string | null } | null } | null, schemaLicenses: Array<{ __typename?: 'graph_schema_license', schema_license: string }> } | null, objectRepresentation?: { __typename?: 'graph_representation', id: string, schema_name?: string | null, is_media_fragment_of?: string | null, schema_in_language?: string | null, schema_start_time?: any | null, schema_end_time?: any | null, schema_transcript?: string | null, edm_is_next_in_sequence?: string | null, updated_at?: any | null, schemaTranscriptUrls: Array<{ __typename?: 'graph_schema_transcript_url', schema_transcript: string, schema_transcript_url: string }>, includes: Array<{ __typename?: 'graph_includes', file: { __typename?: 'graph_file', id: string, schema_name?: string | null, ebucore_has_mime_type?: string | null, premis_stored_at?: string | null, schema_thumbnail_url?: string | null, schema_duration?: any | null, edm_is_next_in_sequence?: string | null, created_at?: any | null } }> } | null, material_request_reuse_form_values: Array<{ __typename?: 'app_material_request_reuse_form_values', key: string, value?: string | null }> } | null };
+export type UpdateMaterialRequestStatusMutation = { __typename?: 'mutation_root', update_app_material_requests_by_pk?: { __typename?: 'app_material_requests', id: any, ie_object_id: string, profile_id: any, reason: string, type: Lookup_App_Material_Request_Type_Enum, created_at: any, updated_at: any, requested_at?: any | null, is_pending: boolean, status: Lookup_App_Material_Request_Status_Enum, group_id?: any | null, name?: string | null, download_status?: Lookup_App_Material_Request_Download_Status_Enum | null, download_available_at?: any | null, requester_capacity: Lookup_App_Material_Request_Requester_Capacity_Enum, organisation?: string | null, organisation_sector?: string | null, ie_object_representation_id?: string | null, messages_and_events: Array<{ __typename?: 'app_material_request_messages_and_events', message_type: Lookup_App_Material_Request_Message_Type_Enum, created_at: any, body?: any | null, sender_profile_id?: any | null, sender?: { __typename?: 'users_profile', first_name?: string | null, last_name?: string | null, mail?: string | null, organisation?: { __typename?: 'graph_organization', org_identifier: string, skos_pref_label?: string | null } | null } | null }>, requested_by: { __typename?: 'users_profile', id: any, full_name?: string | null, mail?: string | null, language: Lookup_Languages_Enum, group?: { __typename?: 'users_group', name: string, label: string, description?: string | null, id: any } | null }, intellectualEntity?: { __typename?: 'graph_intellectual_entity', schema_identifier?: string | null, schema_name?: string | null, id: string, schema_date_published?: string | null, created_at?: any | null, premisIdentifier: Array<{ __typename?: 'graph_premis_identifier', value: string }>, dctermsFormat: Array<{ __typename?: 'graph_dcterms_format', dcterms_format: string }>, schemaThumbnail?: { __typename?: 'graph__schema_thumbnail_url', schema_thumbnail_url?: any | null } | null, schemaMaintainer?: { __typename?: 'graph_organization', org_identifier: string, skos_pref_label?: string | null, ha_org_has_logo?: string | null, skos_alt_label?: string | null, ha_org_sector?: string | null, schemaContactPoint: Array<{ __typename?: 'graph_schema_contact_point', schema_contact_type?: string | null, schema_email?: string | null, schema_telephone?: string | null }>, visitorSpace?: { __typename?: 'maintainer_visitor_space', slug?: string | null } | null } | null, schemaLicenses: Array<{ __typename?: 'graph_schema_license', schema_license: string }> } | null, objectRepresentation?: { __typename?: 'graph_representation', id: string, schema_name?: string | null, is_media_fragment_of?: string | null, schema_in_language?: string | null, schema_start_time?: any | null, schema_end_time?: any | null, schema_transcript?: string | null, edm_is_next_in_sequence?: string | null, updated_at?: any | null, schemaTranscriptUrls: Array<{ __typename?: 'graph_schema_transcript_url', schema_transcript: string, schema_transcript_url: string }>, includes: Array<{ __typename?: 'graph_includes', file: { __typename?: 'graph_file', id: string, schema_name?: string | null, ebucore_has_mime_type?: string | null, premis_stored_at?: string | null, schema_thumbnail_url?: string | null, schema_duration?: any | null, edm_is_next_in_sequence?: string | null, created_at?: any | null } }> } | null, material_request_reuse_form_values: Array<{ __typename?: 'app_material_request_reuse_form_values', key: string, value?: string | null }> } | null };
 
 export type GetFileStoredAtByIeObjectIdQueryVariables = Exact<{
   ieObjectId?: InputMaybe<Scalars['String']['input']>;
@@ -37147,10 +37508,10 @@ export const GetVisitRequestForAccessDocument = {"kind":"Document","definitions"
 export const CountUnreadMaterialRequestMessagesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"countUnreadMaterialRequestMessages"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"materialRequestId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"profileId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"app_material_request_message_unread_status_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"receiver_profile_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"profileId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"material_request_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"materialRequestId"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}}]}}]} as unknown as DocumentNode<CountUnreadMaterialRequestMessagesQuery, CountUnreadMaterialRequestMessagesQueryVariables>;
 export const DeleteMessageUnreadEntriesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"deleteMessageUnreadEntries"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"materialRequestId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"profileId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"delete_app_material_request_message_unread_status"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"material_request_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"materialRequestId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"receiver_profile_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"profileId"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"affected_rows"}}]}}]}}]} as unknown as DocumentNode<DeleteMessageUnreadEntriesMutation, DeleteMessageUnreadEntriesMutationVariables>;
 export const GetEvaluatorsForOrganisationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getEvaluatorsForOrganisation"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"organisationId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"users_profile"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"is_evaluator"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"BooleanValue","value":true}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"organisation"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"org_identifier"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"organisationId"}}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"is_evaluator"}},{"kind":"Field","name":{"kind":"Name","value":"is_key_user"}},{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"language"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"mail"}},{"kind":"Field","name":{"kind":"Name","value":"organisation_schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"accepted_tos_at"}},{"kind":"Field","name":{"kind":"Name","value":"last_access_at"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"group_id"}},{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<GetEvaluatorsForOrganisationQuery, GetEvaluatorsForOrganisationQueryVariables>;
-export const GetMaterialRequestAttachmentByIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getMaterialRequestAttachmentById"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"materialRequestId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"attachmentId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"app_material_request_messages_and_events"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"material_request_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"materialRequestId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"attachmentId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"attachment_url"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_is_null"},"value":{"kind":"BooleanValue","value":false}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"IntValue","value":"1"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"attachment_url"}},{"kind":"Field","name":{"kind":"Name","value":"attachment_filename"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}}]}}]}}]} as unknown as DocumentNode<GetMaterialRequestAttachmentByIdQuery, GetMaterialRequestAttachmentByIdQueryVariables>;
-export const GetMaterialRequestAttachmentsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getMaterialRequestAttachments"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"materialRequestId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"offset"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"app_material_request_messages_and_events_order_by"}}}},"defaultValue":{"kind":"ListValue","values":[{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"created_at"},"value":{"kind":"EnumValue","value":"asc"}}]}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"app_material_request_messages_and_events"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"material_request_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"materialRequestId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"attachment_url"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_is_null"},"value":{"kind":"BooleanValue","value":false}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"offset"},"value":{"kind":"Variable","name":{"kind":"Name","value":"offset"}}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}},{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"attachment_url"}},{"kind":"Field","name":{"kind":"Name","value":"attachment_filename"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}}]}},{"kind":"Field","name":{"kind":"Name","value":"app_material_request_messages_and_events_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"material_request_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"materialRequestId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"attachment_url"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_is_null"},"value":{"kind":"BooleanValue","value":false}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}}]}}]} as unknown as DocumentNode<GetMaterialRequestAttachmentsQuery, GetMaterialRequestAttachmentsQueryVariables>;
-export const GetMaterialRequestMessagesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getMaterialRequestMessages"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"materialRequestId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"offset"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"app_material_request_messages_and_events"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"material_request_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"materialRequestId"}}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"offset"},"value":{"kind":"Variable","name":{"kind":"Name","value":"offset"}}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}},{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"created_at"},"value":{"kind":"EnumValue","value":"desc"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"message_type"}},{"kind":"Field","name":{"kind":"Name","value":"body"}},{"kind":"Field","name":{"kind":"Name","value":"sender_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"sender"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"mail"}},{"kind":"Field","name":{"kind":"Name","value":"organisation"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"org_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"skos_pref_label"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"attachment_url"}},{"kind":"Field","name":{"kind":"Name","value":"attachment_filename"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"material_request_id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"app_material_request_messages_and_events_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"material_request_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"materialRequestId"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}}]}}]} as unknown as DocumentNode<GetMaterialRequestMessagesQuery, GetMaterialRequestMessagesQueryVariables>;
-export const InsertMaterialRequestMessageDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"insertMaterialRequestMessage"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"materialRequestId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"senderProfileId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"messageType"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"lookup_app_material_request_message_type_enum"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"body"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"jsonb"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"attachmentUrl"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"attachmentFilename"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"createdAt"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"timestamp"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"insert_app_material_request_messages_and_events_one"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"object"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"material_request_id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"materialRequestId"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"sender_profile_id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"senderProfileId"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"message_type"},"value":{"kind":"Variable","name":{"kind":"Name","value":"messageType"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"body"},"value":{"kind":"Variable","name":{"kind":"Name","value":"body"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"attachment_url"},"value":{"kind":"Variable","name":{"kind":"Name","value":"attachmentUrl"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"attachment_filename"},"value":{"kind":"Variable","name":{"kind":"Name","value":"attachmentFilename"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"created_at"},"value":{"kind":"Variable","name":{"kind":"Name","value":"createdAt"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"message_type"}},{"kind":"Field","name":{"kind":"Name","value":"sender_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"sender"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"full_name"}},{"kind":"Field","name":{"kind":"Name","value":"organisation"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"org_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"skos_pref_label"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"body"}},{"kind":"Field","name":{"kind":"Name","value":"attachment_url"}},{"kind":"Field","name":{"kind":"Name","value":"attachment_filename"}},{"kind":"Field","name":{"kind":"Name","value":"material_request_id"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}}]}}]}}]} as unknown as DocumentNode<InsertMaterialRequestMessageMutation, InsertMaterialRequestMessageMutationVariables>;
+export const GetMaterialRequestAttachmentByIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getMaterialRequestAttachmentById"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"materialRequestId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"attachmentId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"app_material_request_messages_attachments"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"attachmentId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"messages_and_event"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"material_request_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"materialRequestId"}}}]}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"IntValue","value":"1"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"attachment_url"}},{"kind":"Field","name":{"kind":"Name","value":"attachment_filename"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}}]}}]}}]} as unknown as DocumentNode<GetMaterialRequestAttachmentByIdQuery, GetMaterialRequestAttachmentByIdQueryVariables>;
+export const GetMaterialRequestAttachmentsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getMaterialRequestAttachments"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"materialRequestId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"offset"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"app_material_request_messages_attachments_order_by"}}}},"defaultValue":{"kind":"ListValue","values":[{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"created_at"},"value":{"kind":"EnumValue","value":"asc"}}]}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"app_material_request_messages_attachments"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"messages_and_event"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"material_request_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"materialRequestId"}}}]}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"offset"},"value":{"kind":"Variable","name":{"kind":"Name","value":"offset"}}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}},{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"attachment_url"}},{"kind":"Field","name":{"kind":"Name","value":"attachment_filename"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}}]}},{"kind":"Field","name":{"kind":"Name","value":"app_material_request_messages_attachments_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"messages_and_event"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"material_request_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"materialRequestId"}}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}}]}}]} as unknown as DocumentNode<GetMaterialRequestAttachmentsQuery, GetMaterialRequestAttachmentsQueryVariables>;
+export const GetMaterialRequestMessagesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getMaterialRequestMessages"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"materialRequestId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"offset"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"app_material_request_messages_and_events"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"material_request_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"materialRequestId"}}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"offset"},"value":{"kind":"Variable","name":{"kind":"Name","value":"offset"}}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}},{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"created_at"},"value":{"kind":"EnumValue","value":"desc"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"message_type"}},{"kind":"Field","name":{"kind":"Name","value":"body"}},{"kind":"Field","name":{"kind":"Name","value":"sender_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"sender"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"mail"}},{"kind":"Field","name":{"kind":"Name","value":"organisation"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"org_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"skos_pref_label"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"attachments"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"attachment_url"}},{"kind":"Field","name":{"kind":"Name","value":"attachment_filename"}}]}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"material_request_id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"app_material_request_messages_and_events_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"material_request_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"materialRequestId"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}}]}}]} as unknown as DocumentNode<GetMaterialRequestMessagesQuery, GetMaterialRequestMessagesQueryVariables>;
+export const InsertMaterialRequestMessageDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"insertMaterialRequestMessage"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"materialRequestId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"senderProfileId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"messageType"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"lookup_app_material_request_message_type_enum"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"body"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"jsonb"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"attachments"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"app_material_request_messages_attachments_insert_input"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"createdAt"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"timestamp"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"insert_app_material_request_messages_and_events_one"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"object"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"material_request_id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"materialRequestId"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"sender_profile_id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"senderProfileId"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"message_type"},"value":{"kind":"Variable","name":{"kind":"Name","value":"messageType"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"body"},"value":{"kind":"Variable","name":{"kind":"Name","value":"body"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"attachments"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"data"},"value":{"kind":"Variable","name":{"kind":"Name","value":"attachments"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"created_at"},"value":{"kind":"Variable","name":{"kind":"Name","value":"createdAt"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"message_type"}},{"kind":"Field","name":{"kind":"Name","value":"sender_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"sender"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"full_name"}},{"kind":"Field","name":{"kind":"Name","value":"organisation"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"org_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"skos_pref_label"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"body"}},{"kind":"Field","name":{"kind":"Name","value":"attachments"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"attachment_url"}},{"kind":"Field","name":{"kind":"Name","value":"attachment_filename"}}]}},{"kind":"Field","name":{"kind":"Name","value":"material_request_id"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}}]}}]}}]} as unknown as DocumentNode<InsertMaterialRequestMessageMutation, InsertMaterialRequestMessageMutationVariables>;
 export const InsertMaterialRequestMessageUnreadStatusDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"InsertMaterialRequestMessageUnreadStatus"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"material_request_message_id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"receiver_profile_id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"material_request_id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"insert_app_material_request_message_unread_status"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"objects"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"material_request_message_id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"material_request_message_id"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"receiver_profile_id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"receiver_profile_id"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"material_request_id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"material_request_id"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"affected_rows"}},{"kind":"Field","name":{"kind":"Name","value":"returning"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"material_request_message_id"}},{"kind":"Field","name":{"kind":"Name","value":"receiver_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"is_unread"}},{"kind":"Field","name":{"kind":"Name","value":"material_request_id"}}]}}]}}]}}]} as unknown as DocumentNode<InsertMaterialRequestMessageUnreadStatusMutation, InsertMaterialRequestMessageUnreadStatusMutationVariables>;
 export const DeleteMaterialRequestDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"deleteMaterialRequest"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"materialRequestId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"delete_app_material_requests"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"materialRequestId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"profile_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"is_pending"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"BooleanValue","value":true}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"affected_rows"}}]}}]}}]} as unknown as DocumentNode<DeleteMaterialRequestMutation, DeleteMaterialRequestMutationVariables>;
 export const FindMaintainersWithMaterialRequestsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findMaintainersWithMaterialRequests"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"graph_organisations_with_material_requests"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"org_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"skos_pref_label"}},{"kind":"Field","name":{"kind":"Name","value":"skos_alt_label"}}]}}]}}]} as unknown as DocumentNode<FindMaintainersWithMaterialRequestsQuery, FindMaintainersWithMaterialRequestsQueryVariables>;
