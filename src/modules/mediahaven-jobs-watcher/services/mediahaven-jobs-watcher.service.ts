@@ -234,12 +234,6 @@ export class MediahavenJobsWatcherService {
 									null
 								);
 
-								// Generate a summary PDF of the reuse form and store it in a REUSE_SUMMARY message
-								await this.materialRequestMessagesService.createFinalSummaryMessage(
-									updatedRequest,
-									null
-								);
-
 								// Trigger download-available event
 								this.triggerDownloadAvailableEvent(updatedRequest);
 
@@ -347,6 +341,9 @@ export class MediahavenJobsWatcherService {
 						null,
 						null
 					);
+
+					// Generate a final summary PDF of the request and store it in a FINAL_SUMMARY message
+					await this.materialRequestMessagesService.createFinalSummaryMessage(updatedRequest, null);
 				} catch (err) {
 					// Log the error but don't throw, since the main flow of updating the material request is successful
 					console.error('Failed to update material request expired download', err, {
