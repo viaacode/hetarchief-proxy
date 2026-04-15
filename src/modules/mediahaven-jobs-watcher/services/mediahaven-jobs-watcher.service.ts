@@ -30,7 +30,6 @@ import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
 import { mapDcTermsFormatToSimpleType } from '~modules/ie-objects/helpers/map-dc-terms-format-to-simple-type';
 import { MaterialRequestMessagesService } from '~modules/material-request-messages/services/material-request-messages.service';
-import { MaterialRequestPdfGeneratorService } from '~modules/material-request-messages/services/material-request-pdf-generator';
 import {
 	MaterialRequest,
 	MaterialRequestDurationType,
@@ -58,7 +57,6 @@ export class MediahavenJobsWatcherService {
 		@Inject(forwardRef(() => MaterialRequestsService))
 		private materialRequestsService: MaterialRequestsService,
 		private materialRequestMessagesService: MaterialRequestMessagesService,
-		private materialRequestPdfGeneratorService: MaterialRequestPdfGeneratorService,
 		private dataService: DataService,
 		private mediahavenService: MediahavenService,
 		private usersService: UsersService,
