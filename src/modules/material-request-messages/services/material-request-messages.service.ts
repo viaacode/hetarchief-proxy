@@ -160,7 +160,7 @@ export class MaterialRequestMessagesService {
 			senderProfileId: profileId,
 			messageType,
 			body: message || null,
-			attachments: attachments?.map((attachment) => ({
+			attachments: (attachments || []).map((attachment) => ({
 				attachment_filename: attachment.attachmentFilename,
 				attachment_url: attachment.attachmentUrl,
 			})),
