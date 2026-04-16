@@ -27,7 +27,6 @@ import { logAndThrow } from '@meemoo/admin-core-api/dist/src/modules/shared/help
 import { FilesInterceptor } from '@nestjs/platform-express';
 import archiver from 'archiver';
 import { mapLimit } from 'blend-promise-utils';
-import { addMilliseconds } from 'date-fns';
 import type { Request, Response } from 'express';
 import { kebabCase } from 'lodash';
 import {
@@ -154,10 +153,7 @@ export class MaterialRequestMessagesController {
 
 	@Post(':materialRequestId/messages')
 	@ApiOperation({
-		description:
-			'Create one or more material request messages with optional file uploads. ' +
-			'Each file generates a separate message entry. The first entry contains the message text and the first file. ' +
-			'Subsequent entries contain only a file.',
+		description: 'Create one material request messages with optional file uploads. ',
 	})
 	@ApiConsumes('multipart/form-data')
 	@ApiBody({
@@ -199,43 +195,35 @@ export class MaterialRequestMessagesController {
 		@SessionUser() user: SessionUserEntity,
 		@Body('message') message: string,
 		@UploadedFiles() files?: Express.Multer.File[]
-	): Promise<MaterialRequestMessage[]> {
+	): Promise<MaterialRequestMessage> {
 		try {
-			const baseTimestamp = Date.now();
 			const userId = user.getId();
 
 			const materialRequest = await this.verifyAccessToMaterialRequest(materialRequestId, user);
+			const attachments = files?.length
+				? await mapLimit(files, 5, async (file) => {
+						const fileExt = path.extname(file.originalname);
+						const attachmentUrl = await this.assetsService.uploadAndTrack(
+							AvoFileUploadAssetType.MATERIAL_REQUEST_MESSAGE_ATTACHMENT as any,
+							file,
+							userId,
+							randomUUID() + fileExt
+						);
+						return {
+							attachmentUrl,
+							attachmentFilename: file.originalname,
+						};
+					})
+				: null;
 
-			if (!files || files.length === 0) {
-				return [
-					await this.materialRequestMessagesService.createMessage(
-						materialRequest,
-						userId,
-						Lookup_App_Material_Request_Message_Type_Enum.Message,
-						message ? { message } : null
-					),
-				];
-			}
-
-			return await mapLimit(files, 5, async (file, i) => {
-				const fileExt = path.extname(file.originalname);
-				const attachmentUrl = await this.assetsService.uploadAndTrack(
-					AvoFileUploadAssetType.MATERIAL_REQUEST_MESSAGE_ATTACHMENT as any,
-					file,
-					userId,
-					randomUUID() + fileExt
-				);
-				return this.materialRequestMessagesService.createMessage(
-					materialRequest,
-					userId,
-					Lookup_App_Material_Request_Message_Type_Enum.Message,
-					i === 0 ? { message } : null,
-					// To ensure the files appear in-order, we tweak the created at date to ensure they are sequential
-					addMilliseconds(baseTimestamp, i).toISOString(),
-					attachmentUrl,
-					file.originalname
-				);
-			});
+			return this.materialRequestMessagesService.createMessage(
+				materialRequest,
+				userId,
+				Lookup_App_Material_Request_Message_Type_Enum.Message,
+				message ? { message } : null,
+				new Date().toISOString(),
+				attachments
+			);
 		} catch (err) {
 			logAndThrow(
 				new CustomError('Failed to create material request message', err, {

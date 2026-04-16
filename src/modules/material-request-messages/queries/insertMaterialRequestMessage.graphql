@@ -3,8 +3,7 @@ mutation insertMaterialRequestMessage(
 	$senderProfileId: uuid!
 	$messageType: lookup_app_material_request_message_type_enum!
 	$body: jsonb
-	$attachmentUrl: String
-	$attachmentFilename: String
+	$attachments: [app_material_request_messages_attachments_insert_input!]!
 	$createdAt: timestamp!
 ) {
 	insert_app_material_request_messages_and_events_one(
@@ -13,8 +12,7 @@ mutation insertMaterialRequestMessage(
 			sender_profile_id: $senderProfileId
 			message_type: $messageType
 			body: $body
-			attachment_url: $attachmentUrl
-			attachment_filename: $attachmentFilename
+			attachments: { data: $attachments }
 			created_at: $createdAt
 		}
 	) {
@@ -29,8 +27,11 @@ mutation insertMaterialRequestMessage(
 			}
 		}
 		body
-		attachment_url
-		attachment_filename
+		attachments {
+			id
+			attachment_url
+			attachment_filename
+		}
 		material_request_id
 		created_at
 	}
