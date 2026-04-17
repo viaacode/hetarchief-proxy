@@ -130,7 +130,7 @@ export class MaterialRequestMessagesService {
 	): MaterialRequestMessage {
 		return {
 			...this.adaptEvent(message),
-			attachments: message.attachments?.map(this.adaptAttachment) || [],
+			attachments: message.attachments?.map((attachment) => this.adaptAttachment(attachment)) || [],
 		};
 	}
 

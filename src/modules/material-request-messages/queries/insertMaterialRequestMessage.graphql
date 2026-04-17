@@ -31,6 +31,7 @@ mutation insertMaterialRequestMessage(
 			id
 			attachment_url
 			attachment_filename
+			created_at
 		}
 		material_request_id
 		created_at
