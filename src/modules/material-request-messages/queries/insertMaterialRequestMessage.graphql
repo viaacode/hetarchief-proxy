@@ -1,6 +1,6 @@
 mutation insertMaterialRequestMessage(
 	$materialRequestId: uuid!
-	$senderProfileId: uuid!
+	$senderProfileId: uuid
 	$messageType: lookup_app_material_request_message_type_enum!
 	$body: jsonb
 	$attachments: [app_material_request_messages_attachments_insert_input!]!
