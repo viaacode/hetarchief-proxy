@@ -27,7 +27,7 @@ mutation insertMaterialRequestMessage(
 			}
 		}
 		body
-		attachments {
+		attachments(order_by: { created_at: asc }) {
 			id
 			attachment_url
 			attachment_filename

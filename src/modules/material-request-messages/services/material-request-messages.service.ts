@@ -39,7 +39,7 @@ import {
 } from '~generated/graphql-db-types-hetarchief';
 
 import { mapLimit } from 'blend-promise-utils';
-import { format } from 'date-fns';
+import { addMilliseconds, format } from 'date-fns';
 import { MaterialRequestMessageBodyAdditionalConditionsDto } from '~modules/material-request-messages/dto/material-request-message-body-additional-conditions.dto';
 import { MaterialRequestPdfGeneratorService } from '~modules/material-request-messages/services/material-request-pdf-generator';
 import { MaterialRequest } from '~modules/material-requests/material-requests.types';
@@ -130,7 +130,9 @@ export class MaterialRequestMessagesService {
 	): MaterialRequestMessage {
 		return {
 			...this.adaptEvent(message),
-			attachments: message.attachments?.map((attachment) => this.adaptAttachment(attachment)) || [],
+			attachments: (message.attachments || []).map((attachment) =>
+				this.adaptAttachment(attachment)
+			),
 		};
 	}
 
@@ -160,9 +162,11 @@ export class MaterialRequestMessagesService {
 			senderProfileId: profileId,
 			messageType,
 			body: message || null,
-			attachments: (attachments || []).map((attachment) => ({
+			attachments: (attachments || []).map((attachment, i) => ({
 				attachment_filename: attachment.attachmentFilename,
 				attachment_url: attachment.attachmentUrl,
+				// To ensure the files appear in-order, we tweak the created at date to ensure they are sequential
+				created_at: addMilliseconds(new Date(createdAt), i).toISOString(),
 			})),
 			createdAt,
 		});
