@@ -18,7 +18,7 @@ query getMaterialRequestMessages($materialRequestId: uuid!, $offset: Int!, $limi
 				skos_pref_label
 			}
 		}
-		attachments {
+		attachments(order_by: { created_at: asc }) {
 			id
 			attachment_url
 			attachment_filename

@@ -130,12 +130,9 @@ export class MaterialRequestMessagesService {
 	): MaterialRequestMessage {
 		return {
 			...this.adaptEvent(message),
-			attachments: (message.attachments || [])
-				.map((attachment) => this.adaptAttachment(attachment))
-				.sort(
-					(first, second) =>
-						new Date(first.createdAt).getTime() - new Date(second.createdAt).getTime()
-				),
+			attachments: (message.attachments || []).map((attachment) =>
+				this.adaptAttachment(attachment)
+			),
 		};
 	}
 
