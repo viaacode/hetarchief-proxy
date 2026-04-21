@@ -242,10 +242,19 @@ export class MediahavenJobsWatcherService {
 
 							case MamJobStatus.Failed:
 							case MamJobStatus.Cancelled: {
-								await this.materialRequestsService.updateMaterialRequest(materialRequest.id, {
-									download_status: Lookup_App_Material_Request_Download_Status_Enum.Failed,
-									updated_at: new Date().toISOString(),
-								});
+								const updatedRequest = await this.materialRequestsService.updateMaterialRequest(
+									materialRequest.id,
+									{
+										download_status: Lookup_App_Material_Request_Download_Status_Enum.Failed,
+										updated_at: new Date().toISOString(),
+									}
+								);
+								// Todo: check this if we start retrying that this only gets created when it fails completely
+								await this.materialRequestMessagesService.createFinalSummaryMessage(
+									updatedRequest,
+									null
+								);
+
 								// https://meemoo.atlassian.net/browse/ARC-3573
 								// const hasFailed = await this.retryDownloadJobOrFail(materialRequest);
 								// if (hasFailed) {
@@ -256,13 +265,21 @@ export class MediahavenJobsWatcherService {
 								break;
 							}
 
-							case MamJobStatus.AlreadyExists:
-								await this.materialRequestsService.updateMaterialRequest(materialRequest.id, {
-									download_status: Lookup_App_Material_Request_Download_Status_Enum.Failed,
-									updated_at: new Date().toISOString(),
-								});
+							case MamJobStatus.AlreadyExists: {
+								const updatedRequest = await this.materialRequestsService.updateMaterialRequest(
+									materialRequest.id,
+									{
+										download_status: Lookup_App_Material_Request_Download_Status_Enum.Failed,
+										updated_at: new Date().toISOString(),
+									}
+								);
+								await this.materialRequestMessagesService.createFinalSummaryMessage(
+									updatedRequest,
+									null
+								);
 								reportItems.alreadyExists += 1;
 								break;
+							}
 
 							default:
 								throw new CustomError('Unknown Mediahaven job status received', null, {
