@@ -9,7 +9,6 @@ export interface Configuration {
 	CLIENT_HOST: string;
 	PORT: number;
 	PROXY_API_KEY: string;
-	FORCE_ROLE_EVALUATOR_EMAILS: string[];
 	GRAPHQL_ENABLE_WHITELIST: boolean;
 	GRAPHQL_URL_LOGGING: string;
 	GRAPHQL_SECRET_LOGGING: string;

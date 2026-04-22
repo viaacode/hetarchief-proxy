@@ -137,21 +137,13 @@ export class HetArchiefController {
 				(archiefUser?.language || Locale.Nl) as Locale
 			);
 
-			const FORCE_ROLE_EVALUATOR_EMAILS = this.configService
-				.get<string>('FORCE_ROLE_EVALUATOR_EMAILS')
-				.split(',')
-				.map((email) => email.trim());
 			const userDto: CreateOrUpdateUserDto = {
 				firstName: ldapUser.attributes.givenName[0],
 				lastName: ldapUser.attributes.sn[0],
 				email: ldapUser.attributes.mail[0],
 				groupId: userGroup,
 				isKeyUser: apps.includes(LdapApp.CATALOGUS_PRO),
-				isEvaluator:
-					apps.includes(LdapApp.EVALUATOR_ROLE) ||
-					// Temp workaround since email addresses with a "+" do not work very well with groups in the account manager,
-					// So we force the CP admin to always have the evaluator group for testing purposes
-					FORCE_ROLE_EVALUATOR_EMAILS.includes(ldapUser.attributes.mail[0]),
+				isEvaluator: apps.includes(LdapApp.EVALUATOR_ROLE),
 				organisationId,
 				language: info.language || Locale.Nl,
 			};
