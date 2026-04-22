@@ -15,6 +15,7 @@ query findMaterialRequestsWithExpiredDownload($expirationDate: timestamp!) {
 		requested_at
 		type
 		is_pending
+		is_archived
 		status
 		group_id
 		name
