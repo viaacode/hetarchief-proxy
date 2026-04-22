@@ -4,7 +4,16 @@ import { ConfigService } from '@nestjs/config';
 import { Test, type TestingModule } from '@nestjs/testing';
 import type { Cache } from 'cache-manager';
 import { cloneDeep } from 'lodash';
-import { afterEach, beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
+import {
+	afterAll,
+	afterEach,
+	beforeAll,
+	describe,
+	expect,
+	it,
+	type MockInstance,
+	vi,
+} from 'vitest';
 
 import { IeObjectsSearchFilterField, Operator } from '../elasticsearch/elasticsearch.consts';
 import {
@@ -31,7 +40,10 @@ import {
 
 import { IeObjectsService } from './ie-objects.service';
 
-import type { FindIeObjectsForSitemapQuery } from '~generated/graphql-db-types-hetarchief';
+import type {
+	FindIeObjectsForSitemapQuery,
+	GetIeObjectDetailQuery,
+} from '~generated/graphql-db-types-hetarchief';
 import {
 	cleanupRepresentations1,
 	cleanupRepresentations2,
@@ -42,10 +54,6 @@ import {
 	mockAutocompleteQueryResponseNewspaperSeries,
 	representationsNewspaper,
 } from '~modules/ie-objects/services/ie-objects.service.mocks';
-import {
-	IeObjectDetailResponseIndex,
-	type IeObjectDetailResponseTypes,
-} from '~modules/ie-objects/services/ie-objects.service.types';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupId, GroupName } from '~modules/users/types';
@@ -81,15 +89,15 @@ const mockCacheService: Partial<Record<keyof Cache, MockInstance>> = {
 	wrap: vi.fn().mockImplementation((key, cb) => cb()),
 };
 
-const mockIeObject2Metadata =
-	mockIeObject2[IeObjectDetailResponseIndex.IeObject].graph_intellectual_entity[0];
+const mockIeObject2Metadata = mockIeObject2.getIeObject[0];
 const mockObjectSchemaIdentifier = mockIeObject2Metadata.schema_identifier;
 const mockObjectId = mockIeObject2Metadata.id;
 
 describe('ieObjectsService', () => {
+	let module: TestingModule;
 	let ieObjectsService: IeObjectsService;
 
-	beforeEach(async () => {
+	beforeAll(async () => {
 		const module: TestingModule = await Test.createTestingModule({
 			providers: [
 				IeObjectsService,
@@ -125,8 +133,12 @@ describe('ieObjectsService', () => {
 		ieObjectsService = module.get<IeObjectsService>(IeObjectsService);
 	});
 
+	afterAll(async () => {
+		await module.close();
+	});
+
 	afterEach(() => {
-		mockDataService.execute.mockRestore();
+		vi.clearAllMocks();
 	});
 
 	it('services should be defined', () => {
@@ -174,14 +186,14 @@ describe('ieObjectsService', () => {
 
 	describe('findMetadataBySchemaIdentifier', () => {
 		it('returns the metadata object details', async () => {
-			const mockFindByIeObjectIdFunc = vi.fn();
-			mockFindByIeObjectIdFunc.mockResolvedValueOnce(mockIeObject1);
-			ieObjectsService.findByIeObjectId = mockFindByIeObjectIdFunc;
+			vi.spyOn(ieObjectsService, 'findByIeObjectId').mockResolvedValue(mockIeObject1);
+
 			const response = await ieObjectsService.findMetadataByIeObjectId(
 				mockObjectId,
 				'referer',
 				'127.0.0.1'
 			);
+
 			expect(response.schemaIdentifier).toEqual(mockIeObject1.schemaIdentifier);
 			expect(response.pages).toBeUndefined();
 			expect(response.thumbnailUrl).toBeUndefined();
@@ -191,21 +203,13 @@ describe('ieObjectsService', () => {
 	describe('findBySchemaIdentifier', () => {
 		it('returns the full object details as retrieved from the DB', async () => {
 			// Mock the ie object
-			for (const mockObject2Response of mockIeObject2) {
-				mockDataService.execute.mockResolvedValueOnce(mockObject2Response);
-			}
+			mockDataService.execute.mockResolvedValueOnce(mockIeObject2);
 
 			// Mock the parent object
 			const mockParentIeObject = cloneDeep(mockIeObject2);
-			mockParentIeObject[
-				IeObjectDetailResponseIndex.IeObject
-			].graph_intellectual_entity[0].bibframe_edition = 'test_bibframe_edition';
-			mockParentIeObject[IeObjectDetailResponseIndex.IsPartOf] = {
-				isPartOf: [],
-			};
-			for (const mockParentIeObjectResponse of mockParentIeObject) {
-				mockDataService.execute.mockResolvedValueOnce(mockParentIeObjectResponse);
-			}
+			mockParentIeObject.getIeObject[0].bibframe_edition = 'test_bibframe_edition';
+			mockParentIeObject.getIsPartOf = [];
+			mockDataService.execute.mockResolvedValueOnce(mockParentIeObject);
 
 			// Fetch the object
 			const ieObject = await ieObjectsService.findByIeObjectId(
@@ -219,37 +223,26 @@ describe('ieObjectsService', () => {
 			expect(ieObject.schemaIdentifier).toEqual(mockObjectSchemaIdentifier);
 			expect(ieObject.maintainerId).toEqual(mockIeObject2Metadata.schemaMaintainer.org_identifier);
 			expect(ieObject.copyrightHolder).toEqual(
-				mockIeObject2[IeObjectDetailResponseIndex.SchemaCopyrightHolder].schemaCopyrightHolder
+				mockIeObject2.getSchemaCopyrightHolder
 					.map((item) => item.schema_copyright_holder)
 					.join(', ') || undefined
 			);
-			expect(ieObject.keywords?.length || 0).toEqual(
-				mockIeObject2[IeObjectDetailResponseIndex.SchemaKeywords].schemaKeywords.length
-			);
+			expect(ieObject.keywords?.length || 0).toEqual(mockIeObject2.getSchemaKeywords.length);
 
 			// Check parent ie and current ie info is merged: https://meemoo.atlassian.net/browse/ARC-2135
-			expect(ieObject.bibframeEdition).toEqual(
-				mockParentIeObject[IeObjectDetailResponseIndex.IeObject].graph_intellectual_entity[0]
-					.bibframe_edition
-			);
+			expect(ieObject.bibframeEdition).toEqual(mockParentIeObject.getIeObject[0].bibframe_edition);
 		});
 
 		it('returns an empty array if no representations were found', async () => {
 			const objectIeMock = cloneDeep(mockIeObject2);
 
 			// set representations of object to empty array
-			objectIeMock[
-				IeObjectDetailResponseIndex.IsRepresentedBy
-			].graph__intellectual_entity[0].isRepresentedBy = [];
+			objectIeMock.getIsRepresentedBy[0].isRepresentedBy = [];
 			// set representations of child objects to empty array
-			objectIeMock[
-				IeObjectDetailResponseIndex.HasPart
-			].graph_intellectual_entity[0].isRepresentedBy = [];
+			objectIeMock.getHasPart[0].isRepresentedBy = [];
 
 			mockDataService.execute.mockReset();
-			for (const mockObject2Response of objectIeMock) {
-				mockDataService.execute.mockResolvedValueOnce(mockObject2Response);
-			}
+			mockDataService.execute.mockResolvedValue(objectIeMock);
 
 			const ieObject = await ieObjectsService.findByIeObjectId(
 				mockObjectId,
@@ -264,19 +257,16 @@ describe('ieObjectsService', () => {
 
 		it('returns an empty array if no files were found', async () => {
 			const objectIeMock = cloneDeep(mockIeObject2);
-			objectIeMock[IeObjectDetailResponseIndex.HasPart].graph_intellectual_entity = [];
-			objectIeMock[IeObjectDetailResponseIndex.IsRepresentedBy].graph__intellectual_entity[0] = {
+			objectIeMock.getHasPart = [];
+			objectIeMock.getIsRepresentedBy[0] = {
 				isRepresentedBy: [
 					{
-						...(objectIeMock[IeObjectDetailResponseIndex.IsRepresentedBy]
-							.graph__intellectual_entity[0]?.isRepresentedBy || {}),
+						...(objectIeMock.getIsRepresentedBy[0]?.isRepresentedBy || {}),
 						includes: [],
 					},
 				],
 			};
-			for (const mockObject2Response of objectIeMock) {
-				mockDataService.execute.mockResolvedValueOnce(mockObject2Response);
-			}
+			mockDataService.execute.mockResolvedValueOnce(objectIeMock);
 
 			const ieObject = await ieObjectsService.findByIeObjectId(
 				mockObjectId,
@@ -290,7 +280,7 @@ describe('ieObjectsService', () => {
 		});
 
 		it('throws an error when no objects were found', async () => {
-			const mockData: Readonly<IeObjectDetailResponseTypes> = mockIeObjectEmpty;
+			const mockData: Readonly<GetIeObjectDetailQuery> = mockIeObjectEmpty;
 			mockDataService.execute.mockResolvedValueOnce(mockData);
 
 			const ieObject = await ieObjectsService.findByIeObjectId(
@@ -515,9 +505,10 @@ describe('ieObjectsService', () => {
 
 	describe('getMetadataAutocomplete', () => {
 		it('should return a list of autocomplete strings for newspaper series', async () => {
-			ieObjectsService.executeQuery = vi
-				.fn()
-				.mockResolvedValue(mockAutocompleteQueryResponseNewspaperSeries);
+			vi.spyOn(ieObjectsService, 'executeQuery').mockResolvedValue(
+				mockAutocompleteQueryResponseNewspaperSeries
+			);
+
 			const result = await ieObjectsService.getMetadataAutocomplete(
 				AutocompleteField.newspaperSeriesName,
 				'volks',
@@ -527,6 +518,7 @@ describe('ieObjectsService', () => {
 					size: 4,
 				}
 			);
+
 			expect(result).toEqual([
 				'De volksbonder: orgaan van den Liberale Volksbond, Antwerpen',
 				'De volksstem: dagblad',
@@ -536,9 +528,9 @@ describe('ieObjectsService', () => {
 		});
 
 		it('should return a list of autocomplete strings for creator names', async () => {
-			ieObjectsService.executeQuery = vi
-				.fn()
-				.mockResolvedValue(mockAutocompleteQueryResponseCreators);
+			vi.spyOn(ieObjectsService, 'executeQuery').mockResolvedValue(
+				mockAutocompleteQueryResponseCreators
+			);
 			const result = await ieObjectsService.getMetadataAutocomplete(
 				AutocompleteField.creator,
 				'Dirk',

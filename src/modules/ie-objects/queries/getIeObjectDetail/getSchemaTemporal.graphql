@@ -1,5 +1,0 @@
-query getSchemaTemporal($ieObjectId: String!) {
-	schemaTemporal: graph_schema_temporal(where: { intellectual_entity_id: { _eq: $ieObjectId } }) {
-		schema_temporal
-	}
-}

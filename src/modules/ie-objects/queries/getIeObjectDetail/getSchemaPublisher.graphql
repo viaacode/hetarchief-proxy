@@ -1,7 +1,0 @@
-query getSchemaPublisher($ieObjectId: String!) {
-	schemaPublisher: graph__schema_publisher(
-		where: { intellectual_entity_id: { _eq: $ieObjectId } }
-	) {
-		schema_publisher_array
-	}
-}

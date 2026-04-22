@@ -1,7 +1,0 @@
-query getSchemaCopyrightHolder($ieObjectId: String!) {
-	schemaCopyrightHolder: graph_schema_copyright_holder(
-		where: { intellectual_entity_id: { _eq: $ieObjectId } }
-	) {
-		schema_copyright_holder
-	}
-}
