@@ -92,6 +92,19 @@ export class MaterialRequestsQueryDto {
 	})
 	isPending?: boolean | null;
 
+	@IsBoolean()
+	@Type(() => Boolean)
+	@Transform((input) => {
+		return input.obj.isArchived === 'true';
+	})
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: Boolean,
+		description: 'Is the material request archived',
+		default: null,
+	})
+	isArchived?: boolean | null;
+
 	@IsNumber()
 	@Type(() => Number)
 	@IsOptional()

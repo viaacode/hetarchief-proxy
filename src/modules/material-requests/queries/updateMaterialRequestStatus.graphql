@@ -33,6 +33,7 @@ mutation updateMaterialRequestStatus(
 			}
 		}
 		is_pending
+		is_archived
 		status
 		group_id
 		name

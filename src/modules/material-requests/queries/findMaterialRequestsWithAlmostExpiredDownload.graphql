@@ -16,6 +16,7 @@ query findMaterialRequestsWithAlmostExpiredDownload($warningDate: timestamp!) {
 		updated_at
 		requested_at
 		is_pending
+		is_archived
 		status
 		group_id
 		name

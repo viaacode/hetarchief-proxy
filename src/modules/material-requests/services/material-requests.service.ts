@@ -166,6 +166,7 @@ export class MaterialRequestsService {
 			hasDownloadUrl,
 			maintainerIds,
 			isPending,
+			isArchived,
 			page,
 			size,
 			orderProp,
@@ -231,6 +232,12 @@ export class MaterialRequestsService {
 		if (!isNil(isPending)) {
 			where.is_pending = {
 				_eq: isPending,
+			};
+		}
+
+		if (!isNil(isArchived)) {
+			where.is_archived = {
+				_eq: isArchived,
 			};
 		}
 
@@ -1064,6 +1071,7 @@ export class MaterialRequestsService {
 			requestedAt: graphQlMaterialRequest.requested_at,
 			type: graphQlMaterialRequest.type,
 			isPending: graphQlMaterialRequest.is_pending,
+			isArchived: graphQlMaterialRequest.is_archived,
 			status: graphQlMaterialRequest.status,
 			...this.adaptDownloadRelatedData(graphQlMaterialRequest),
 			requestGroupName: graphQlMaterialRequest.name ?? null,
