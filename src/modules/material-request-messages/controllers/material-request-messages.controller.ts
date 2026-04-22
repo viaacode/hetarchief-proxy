@@ -136,6 +136,7 @@ export class MaterialRequestMessagesController {
 		@SessionUser() user: SessionUserEntity
 	): Promise<{ count: number }> {
 		try {
+			await this.verifyAccessToMaterialRequest(materialRequestId, user);
 			const count = await this.materialRequestMessagesService.countUnreadMessages(
 				materialRequestId,
 				user.getId()
@@ -547,6 +548,12 @@ export class MaterialRequestMessagesController {
 		if (!isRequester && !isEvaluatorOfTheCp && !isMeemooAdmin) {
 			throw new ForbiddenException(
 				'You do not have permission to access this material request. Only requester and evaluators of the organisation of the material can access it.'
+			);
+		}
+
+		if (materialRequest.isArchived) {
+			throw new NotFoundException(
+				'This material request is archived. No messages or attachments are available.'
 			);
 		}
 
