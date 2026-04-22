@@ -98,7 +98,7 @@ describe('ieObjectsService', () => {
 	let ieObjectsService: IeObjectsService;
 
 	beforeAll(async () => {
-		const module: TestingModule = await Test.createTestingModule({
+		module = await Test.createTestingModule({
 			providers: [
 				IeObjectsService,
 				{
@@ -186,7 +186,7 @@ describe('ieObjectsService', () => {
 
 	describe('findMetadataBySchemaIdentifier', () => {
 		it('returns the metadata object details', async () => {
-			vi.spyOn(ieObjectsService, 'findByIeObjectId').mockResolvedValue(mockIeObject1);
+			vi.spyOn(ieObjectsService, 'findByIeObjectId').mockResolvedValueOnce(mockIeObject1);
 
 			const response = await ieObjectsService.findMetadataByIeObjectId(
 				mockObjectId,
@@ -241,8 +241,8 @@ describe('ieObjectsService', () => {
 			// set representations of child objects to empty array
 			objectIeMock.getHasPart[0].isRepresentedBy = [];
 
-			mockDataService.execute.mockReset();
-			mockDataService.execute.mockResolvedValue(objectIeMock);
+			mockDataService.execute.mockResolvedValueOnce(objectIeMock);
+			mockDataService.execute.mockResolvedValueOnce(mockIeObjectEmpty);
 
 			const ieObject = await ieObjectsService.findByIeObjectId(
 				mockObjectId,
@@ -267,6 +267,7 @@ describe('ieObjectsService', () => {
 				],
 			};
 			mockDataService.execute.mockResolvedValueOnce(objectIeMock);
+			mockDataService.execute.mockResolvedValueOnce(mockIeObjectEmpty);
 
 			const ieObject = await ieObjectsService.findByIeObjectId(
 				mockObjectId,
@@ -276,7 +277,7 @@ describe('ieObjectsService', () => {
 			);
 
 			expect(ieObject.schemaIdentifier).toEqual(mockObjectSchemaIdentifier);
-			expect(ieObject.pages[0]?.representations[0].files).toEqual([]);
+			expect(ieObject.pages[0]?.representations[0].files).toEqual(undefined);
 		});
 
 		it('throws an error when no objects were found', async () => {
@@ -505,7 +506,7 @@ describe('ieObjectsService', () => {
 
 	describe('getMetadataAutocomplete', () => {
 		it('should return a list of autocomplete strings for newspaper series', async () => {
-			vi.spyOn(ieObjectsService, 'executeQuery').mockResolvedValue(
+			vi.spyOn(ieObjectsService, 'executeQuery').mockResolvedValueOnce(
 				mockAutocompleteQueryResponseNewspaperSeries
 			);
 
@@ -528,7 +529,7 @@ describe('ieObjectsService', () => {
 		});
 
 		it('should return a list of autocomplete strings for creator names', async () => {
-			vi.spyOn(ieObjectsService, 'executeQuery').mockResolvedValue(
+			vi.spyOn(ieObjectsService, 'executeQuery').mockResolvedValueOnce(
 				mockAutocompleteQueryResponseCreators
 			);
 			const result = await ieObjectsService.getMetadataAutocomplete(

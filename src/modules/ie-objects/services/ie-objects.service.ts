@@ -598,6 +598,9 @@ export class IeObjectsService {
 		referer: string,
 		ip: string
 	): Promise<Partial<IeObject>> {
+		if (!ieObjectResponse) {
+			return null;
+		}
 		const ie = ieObjectResponse.getIeObject?.[0];
 		const dctermsFormatResponse = ieObjectResponse.getDctermsFormat?.[0];
 		const isPartOfResponse = ieObjectResponse.getIsPartOf?.[0];
@@ -1095,7 +1098,7 @@ export class IeObjectsService {
 
 		/* istanbul ignore next */
 		return compact(
-			await mapLimit(dbFiles, 20, async (includeFile): Promise<IeObjectFile> => {
+			await mapLimit(dbFiles || [], 20, async (includeFile): Promise<IeObjectFile> => {
 				const file = includeFile.file;
 				if (!file) {
 					return null;
