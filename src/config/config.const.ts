@@ -42,6 +42,7 @@ export const configValidationSchema = Joi.object({
 	ELASTICSEARCH_LOG_QUERIES: Joi.boolean().default(false),
 	ELASTICSEARCH_CACHE_QUERIES: Joi.boolean().default(true),
 	GRAPHQL_LOG_QUERIES: Joi.boolean().default(false),
+	IE_OBJECT_LOG_ACCESS_CHECKS: Joi.boolean().default(false),
 	CLIENT_API_KEY: Joi.string(),
 	MEDIAHAVEN_API_ENDPOINT: Joi.string(),
 	MEDIAHAVEN_TOKEN_ENDPOINT: Joi.string(),

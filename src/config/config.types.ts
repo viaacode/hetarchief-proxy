@@ -66,6 +66,7 @@ export interface Configuration {
 	ELASTICSEARCH_LOG_QUERIES: boolean;
 	ELASTICSEARCH_CACHE_QUERIES: boolean;
 	GRAPHQL_LOG_QUERIES: boolean;
+	IE_OBJECT_LOG_ACCESS_CHECKS: boolean;
 	CLIENT_API_KEY: string;
 	ZENDESK_ENDPOINT: string;
 	ZENDESK_USERNAME: string;

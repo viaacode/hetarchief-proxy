@@ -598,3 +598,7 @@ export const AUTOCOMPLETE_FIELD_TO_ES_FIELD_NAME: Record<AutocompleteField, stri
 	[AutocompleteField.newspaperSeriesName]: AutocompleteEsField.newspaperSeriesName,
 	[AutocompleteField.mentions]: AutocompleteEsField.mentions,
 };
+
+export enum ERROR_CODE {
+	USER_NO_ACCESS_TO_IE_OBJECT = 'USER_NO_ACCESS_TO_IE_OBJECT',
+}

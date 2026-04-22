@@ -19,7 +19,17 @@ import {
 } from '@nestjs/common';
 
 import { ConfigService } from '@nestjs/config';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+	ApiBadRequestResponse,
+	ApiBody,
+	ApiForbiddenResponse,
+	ApiNotFoundResponse,
+	ApiOkResponse,
+	ApiOperation,
+	ApiParam,
+	ApiQuery,
+	ApiTags,
+} from '@nestjs/swagger';
 import type { IPagination } from '@studiohyperdrive/pagination';
 import type { Request, Response } from 'express';
 import { compact, intersection, isNil, kebabCase } from 'lodash';
@@ -44,8 +54,8 @@ import {
 	IeObjectForAccessCheck,
 	IeObjectLicense,
 	type IeObjectSeo,
-	IeObjectType,
 	type IeObjectsWithAggregations,
+	IeObjectType,
 	type RelatedIeObject,
 	type RelatedIeObjects,
 } from '../ie-objects.types';
@@ -53,7 +63,6 @@ import {
 import { IeObjectsService } from '../services/ie-objects.service';
 
 import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
-import { logAndThrow } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/logAndThrow';
 import { mapLimit } from 'blend-promise-utils';
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
@@ -64,6 +73,7 @@ import {
 	OrderProperty,
 } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
 import { mapDcTermsFormatToSimpleType } from '~modules/ie-objects/helpers/map-dc-terms-format-to-simple-type';
+import { ERROR_CODE } from '~modules/ie-objects/ie-objects.conts';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupName } from '~modules/users/types';
 import { AUDIO_WAVE_FORM_URL } from '~shared/consts/audio-wave-form-url';
@@ -86,6 +96,14 @@ export class IeObjectsController {
 	) {}
 
 	@Get('player-ticket')
+	@ApiOperation({ summary: 'Get a playable URL for a given browse path' })
+	@ApiQuery({
+		name: 'browsePath',
+		required: true,
+		description: 'The browse path of the media file',
+	})
+	@ApiOkResponse({ description: 'Returns the playable URL as a string' })
+	@ApiBadRequestResponse({ description: 'Browse path is missing or invalid' })
 	public async getPlayableUrl(
 		@Referer() referer: string,
 		@Ip() ip: string,
@@ -105,6 +123,15 @@ export class IeObjectsController {
 	 * @param filePaths eg: image/3/public%252FOR-1c1tf48%252F13%252F13cdb1aa21704313a6ded7da5fabf53f0a9571a68c6540e18725440376c089c2813e3eec887041e1ab908a4c20a46d15.jp2
 	 */
 	@Get('ticket-service')
+	@ApiOperation({ summary: 'Get ticket service tokens for one or more file paths' })
+	@ApiQuery({
+		name: 'filePaths',
+		required: true,
+		isArray: true,
+		description: 'File paths to request tickets for',
+	})
+	@ApiOkResponse({ description: 'Returns an array of ticket tokens' })
+	@ApiBadRequestResponse({ description: 'filePaths query param is missing' })
 	public async getTicketServiceTokens(
 		@Referer() referer: string,
 		@Ip() ip: string,
@@ -128,6 +155,13 @@ export class IeObjectsController {
 	}
 
 	@Get('thumbnail-ticket')
+	@ApiOperation({ summary: 'Get a thumbnail URL for a given ie-object id' })
+	@ApiQuery({
+		name: 'id',
+		required: true,
+		description: 'The ie-object id to get the thumbnail URL for',
+	})
+	@ApiOkResponse({ description: 'Returns the thumbnail URL as a string' })
 	public async getThumbnailUrl(
 		@Referer() referer: string,
 		@Ip() ip: string,
@@ -137,6 +171,14 @@ export class IeObjectsController {
 	}
 
 	@Get('seo/:schemaIdentifier')
+	@ApiOperation({ summary: 'Get SEO metadata for an ie-object by schema identifier' })
+	@ApiParam({
+		name: 'schemaIdentifier',
+		description: 'The schema identifier of the ie-object',
+		example: '086348mc8s',
+	})
+	@ApiOkResponse({ description: 'Returns SEO metadata for the ie-object' })
+	@ApiNotFoundResponse({ description: 'Ie-object not found' })
 	public async getIeObjectSeoById(
 		@Referer() referer: string,
 		@Ip() ip: string,
@@ -179,6 +221,20 @@ export class IeObjectsController {
 	 */
 	@Get('export/xml')
 	@Header('Content-Type', 'text/xml')
+	@ApiOperation({ summary: 'Export ie-object metadata as XML' })
+	@ApiQuery({
+		name: 'ieObjectId',
+		required: true,
+		description: 'The IRI object id of the ie-object',
+		example: 'https://data.hetarchief.be/id/entity/086348mc8s',
+	})
+	@ApiQuery({
+		name: 'currentPageUrl',
+		required: false,
+		description: 'The current page URL open in the client browser (used for event logging)',
+	})
+	@ApiOkResponse({ description: 'Returns the metadata as an XML file download' })
+	@ApiNotFoundResponse({ description: 'Object not found' })
 	public async exportXml(
 		@Query('ieObjectId') ieObjectId: string,
 		@Query('currentPageUrl') currentPageUrl: string,
@@ -250,6 +306,20 @@ export class IeObjectsController {
 	 */
 	@Get('export/csv')
 	@Header('Content-Type', 'text/csv')
+	@ApiOperation({ summary: 'Export ie-object metadata as CSV' })
+	@ApiQuery({
+		name: 'ieObjectId',
+		required: true,
+		description: 'The IRI object id of the ie-object',
+		example: 'https://data.hetarchief.be/id/entity/086348mc8s',
+	})
+	@ApiQuery({
+		name: 'currentPageUrl',
+		required: false,
+		description: 'The current page URL open in the client browser (used for event logging)',
+	})
+	@ApiOkResponse({ description: 'Returns the metadata as a CSV file download' })
+	@ApiNotFoundResponse({ description: 'Object not found' })
 	public async exportCsv(
 		@Query('ieObjectId') ieObjectId: string,
 		@Query('currentPageUrl') currentPageUrl: string,
@@ -317,9 +387,13 @@ export class IeObjectsController {
 	 */
 	@Get('lookup/v2/:schemaIdentifierV2')
 	@ApiOperation({
+		summary: 'Lookup hetarchief v3 id from the hetarchief v2 id',
 		description:
 			'Returns the new schema identifier for hetarchief v3 when given the old schema identifier from hetarchief v2.',
 	})
+	@ApiParam({ name: 'schemaIdentifierV2', description: 'The old hetarchief v2 schema identifier' })
+	@ApiOkResponse({ description: 'Returns the new v3 schema identifier' })
+	@ApiNotFoundResponse({ description: 'No ie-object found for the given v2 schema identifier' })
 	public async lookupV2Id(
 		@Param('schemaIdentifierV2') schemaIdentifierV2: string
 	): Promise<{ schemaIdentifierV3: string }> {
@@ -332,9 +406,16 @@ export class IeObjectsController {
 	 */
 	@Get('lookup/nvdgo/:mediaMosaId')
 	@ApiOperation({
+		summary: 'Lookup ie-object info from a news of the great war mediaMosa id',
 		description:
 			'Returns the new ie-object info for hetarchief v3 when given the old news of the great war media mosa id.',
 	})
+	@ApiParam({
+		name: 'mediaMosaId',
+		description: 'The mediaMosa id from the news of the great war website',
+	})
+	@ApiOkResponse({ description: 'Returns the schema identifier, title, and maintainer slug' })
+	@ApiNotFoundResponse({ description: 'No ie-object found for the given mediaMosaId' })
 	public async lookupNvdgoId(
 		@Param('mediaMosaId') mediaMosaId: string
 	): Promise<{ schema_identifier: string; title: string; maintainerSlug: string }> {
@@ -347,8 +428,16 @@ export class IeObjectsController {
 
 	@Get('/related')
 	@ApiOperation({
+		summary: 'Get related ie-objects (parent and children)',
 		description: 'Get objects that cover the same subject as the passed object schema identifier.',
 	})
+	@ApiQuery({
+		name: 'ieObjectIri',
+		required: true,
+		description: 'The IRI of the ie-object',
+		example: 'https://data.hetarchief.be/id/entity/086348mc8s',
+	})
+	@ApiOkResponse({ description: 'Returns parent and children ie-objects' })
 	public async getRelatedIeObjects(
 		@Query('ieObjectIri') ieObjectIri: string,
 		@Referer() referer: string,
@@ -404,8 +493,15 @@ export class IeObjectsController {
 	 */
 	@Get(':schemaIdentifier/similar')
 	@ApiOperation({
+		summary: 'Get similar ie-objects',
 		description: 'Get objects that are similar based on the maintainerId.',
 	})
+	@ApiParam({
+		name: 'schemaIdentifier',
+		description: 'Schema identifier of the ie-object',
+		example: '086348mc8s',
+	})
+	@ApiOkResponse({ description: 'Returns a paginated list of similar ie-objects' })
 	public async getSimilar(
 		@Referer() referer: string,
 		@Ip() ip: string,
@@ -461,6 +557,16 @@ export class IeObjectsController {
 	}
 
 	@Post()
+	@ApiOperation({
+		summary: 'Search ie-objects',
+		description: 'Search and filter ie-objects using Elasticsearch',
+	})
+	@ApiBody({
+		type: IeObjectsQueryDto,
+		required: false,
+		description: 'Query filters and pagination settings',
+	})
+	@ApiOkResponse({ description: 'Returns a list of ie-objects with aggregations' })
 	public async getIeObjects(
 		@Referer() referer: string,
 		@Ip() ip: string,
@@ -527,6 +633,16 @@ export class IeObjectsController {
 	}
 
 	@Get('alto-json')
+	@ApiOperation({ summary: 'Fetch ALTO JSON from a whitelisted URL' })
+	@ApiQuery({
+		name: 'altoJsonUrl',
+		required: true,
+		description: 'The URL to fetch the ALTO JSON from (must be from a whitelisted domain)',
+	})
+	@ApiOkResponse({ description: 'Returns the parsed ALTO JSON content' })
+	@ApiBadRequestResponse({
+		description: 'The provided URL is not part of the whitelisted asset service URLs',
+	})
 	public async getAltoJson(@Query('altoJsonUrl') altoJsonUrl: string): Promise<any> {
 		const WHITELISTED_DOMAINS = (process.env.ALTO_JSON_WHITELISTED_DOMAINS || '')
 			.split(',')
@@ -562,6 +678,14 @@ export class IeObjectsController {
 	}
 
 	@Post('metadata/autocomplete')
+	@ApiOperation({ summary: 'Get metadata autocomplete suggestions for a given field' })
+	@ApiBody({
+		type: IeObjectsAutocompleteQueryDto,
+		required: true,
+		description: 'Autocomplete query with field, optional query string, and filters',
+	})
+	@ApiOkResponse({ description: 'Returns an array of autocomplete suggestion strings' })
+	@ApiBadRequestResponse({ description: 'Invalid or missing field, or missing filters' })
 	public async getMetadataAutocomplete(
 		@Body() queryDto: IeObjectsAutocompleteQueryDto | null
 	): Promise<string[]> {
@@ -590,6 +714,23 @@ export class IeObjectsController {
 	 * Endpoint to fetch next and previous ie-object id in a collection (eg: next newspaper edition in the newspaper series)
 	 **/
 	@Get('previous-next-ids')
+	@ApiOperation({
+		summary: 'Get previous and next ie-object ids in a collection',
+		description:
+			'Fetch the next and previous ie-object id in a collection (e.g. next newspaper edition in a newspaper series)',
+	})
+	@ApiQuery({
+		name: 'ieObjectIri',
+		required: true,
+		description: 'The IRI of the current ie-object',
+	})
+	@ApiQuery({
+		name: 'collectionId',
+		required: true,
+		description: 'The id of the collection to navigate in',
+	})
+	@ApiOkResponse({ description: 'Returns the next and previous ie-object ids' })
+	@ApiBadRequestResponse({ description: 'collectionId query param is missing' })
 	public async getNextPreviousIeObject(
 		@Query('ieObjectIri') ieObjectIri: string,
 		@Query('collectionId') collectionId: string
@@ -608,6 +749,20 @@ export class IeObjectsController {
 	 * @param user Currently logged-in user
 	 */
 	@Get('thumbnails')
+	@ApiOperation({ summary: 'Get ie-object thumbnails by schema identifiers' })
+	@ApiQuery({
+		name: 'ids',
+		required: true,
+		isArray: true,
+		description: 'The schema identifiers of the ie-objects',
+		example: ['086348mc8s', 'qstt4fps28'],
+	})
+	@ApiOkResponse({
+		description: 'Returns an array of schema identifiers with their (possibly null) thumbnail URLs',
+	})
+	@ApiForbiddenResponse({
+		description: 'You do not have access to one or more of the requested objects',
+	})
 	public async getIeObjectThumbnailsByIds(
 		@Query('ids') schemaIdentifiers: string[],
 		@Referer() referer: string | null,
@@ -720,7 +875,33 @@ export class IeObjectsController {
 	 * @param referer site making the request. eg: https://qas-v3.hetarchief.be
 	 * @param ip Ip of the client making the request. eg: 172.17.45.216
 	 */
+
 	@Get()
+	@ApiOperation({ summary: 'Get ie-objects by schema identifiers or ie-object ids' })
+	@ApiQuery({
+		name: 'schemaIdentifiers',
+		required: false,
+		isArray: true,
+		description: 'Schema identifiers (PIDs) of the ie-objects',
+		example: ['086348mc8s', 'qstt4fps28'],
+	})
+	@ApiQuery({
+		name: 'ieObjectIds',
+		required: false,
+		isArray: true,
+		description: 'Full IRI ie-object ids',
+		example: ['https://data.hetarchief.be/id/entity/086348mc8s'],
+	})
+	@ApiQuery({
+		name: 'resolveThumbnailUrl',
+		required: false,
+		enum: ['true', 'false'],
+		description: 'Whether to resolve the thumbnail URL to a signed URL',
+	})
+	@ApiOkResponse({ description: 'Returns an array of (partial) ie-objects' })
+	@ApiForbiddenResponse({
+		description: 'You do not have access to one or more of the requested objects',
+	})
 	public async getIeObjectsByIds(
 		@Query('schemaIdentifiers') schemaIdentifiers: string | string[] | undefined,
 		@Query('ieObjectIds') ieObjectIds: string | string[] | undefined,
@@ -765,7 +946,7 @@ export class IeObjectsController {
 			const limitedObjects: Partial<IeObject | null>[] = await mapLimit(
 				ieObjectIdsResolved,
 				20,
-				async (ieObjectId: string): Promise<Partial<IeObject> | null> => {
+				async (ieObjectId: string | null): Promise<Partial<IeObject> | null> => {
 					try {
 						if (
 							!ieObjectId ||
@@ -781,6 +962,10 @@ export class IeObjectsController {
 							referer,
 							ip
 						);
+
+						if (this.configService.get('IE_OBJECT_LOG_ACCESS_CHECKS') === 'true') {
+							console.log('fetching ie-object (before limiting): ', JSON.stringify(ieObject));
+						}
 
 						if (!ieObject) {
 							return null;
@@ -798,8 +983,14 @@ export class IeObjectsController {
 							accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
 						});
 
+						if (this.configService.get('IE_OBJECT_LOG_ACCESS_CHECKS') === 'true') {
+							console.log('fetching ie-object (after limiting): ', JSON.stringify(ieObject));
+						}
+
 						if (!limitedObject) {
-							throw new ForbiddenException('You do not have access to this object');
+							throw new CustomError('You do not have access to this object', null, {
+								code: ERROR_CODE.USER_NO_ACCESS_TO_IE_OBJECT,
+							});
 						}
 
 						// Meemoo admin user always has VISITOR_SPACE_FULL in accessThrough when object has BEZOEKERTOOL licences
@@ -827,12 +1018,24 @@ export class IeObjectsController {
 				}
 			);
 
+			console.log('returning limitedObjects');
 			return limitedObjects;
 		} catch (err) {
+			console.log('error', JSON.stringify(err));
+			const errorJson = JSON.stringify(err);
+			if (errorJson.includes(ERROR_CODE.USER_NO_ACCESS_TO_IE_OBJECT)) {
+				console.log('has USER_NO_ACCESS_TO_IE_OBJECT code');
+				const error = new ForbiddenException(
+					'You do not have access to this object: USER_NO_ACCESS_TO_IE_OBJECT'
+				);
+				console.log(error);
+				throw error;
+			}
 			const error = new CustomError('Failed to retrieve object details in getIeObjectsByIds', err, {
 				schemaIdentifiers,
 			});
-			logAndThrow(error);
+			console.log(error);
+			throw error;
 		}
 	}
 }
