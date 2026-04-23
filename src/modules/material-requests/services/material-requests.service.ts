@@ -1307,16 +1307,19 @@ export class MaterialRequestsService {
 	 */
 	public async checkAllReadyForArchivation(): Promise<void> {
 		try {
-			const MONTHS_BEFORE_ARCHIVATION = Number.parseFloat(
-				this.configService.get('MATERIAL_REQUEST_MONTHS_BEFORE_ARCHIVATION')
+			const TIME_BEFORE_ARCHIVATION = Number.parseFloat(
+				this.configService.get('MATERIAL_REQUEST_TIME_BEFORE_ARCHIVATION')
 			);
+			const USE_DAYS =
+				this.configService.get('MATERIAL_REQUEST_USE_DAYS_INSTEAD_MONTHS_BEFORE_ARCHIVATION') ===
+				'true';
 
 			let expirationDate: string;
 
-			if (MONTHS_BEFORE_ARCHIVATION < 1) {
-				expirationDate = subDays(new Date(), MONTHS_BEFORE_ARCHIVATION * 10).toISOString();
+			if (USE_DAYS) {
+				expirationDate = subDays(new Date(), TIME_BEFORE_ARCHIVATION).toISOString();
 			} else {
-				expirationDate = subMonths(new Date(), MONTHS_BEFORE_ARCHIVATION).toISOString();
+				expirationDate = subMonths(new Date(), TIME_BEFORE_ARCHIVATION).toISOString();
 			}
 
 			const response = await this.dataService.execute<
