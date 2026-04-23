@@ -1,5 +1,5 @@
-import { DataModule, VideoStillsModule } from '@meemoo/admin-core-api';
-import { forwardRef, Module } from '@nestjs/common';
+import { AssetsModule, DataModule, VideoStillsModule } from '@meemoo/admin-core-api';
+import { Module, forwardRef } from '@nestjs/common';
 
 import { MaterialRequestsController } from './controllers/material-requests.controller';
 import { MaterialRequestsService } from './services/material-requests.service';
@@ -28,6 +28,7 @@ import { UsersModule } from '~modules/users';
 		VideoStillsModule,
 		MediahavenJobsWatcherModule,
 		UsersModule,
+		AssetsModule,
 		forwardRef(() => MaterialRequestMessagesModule),
 	],
 	exports: [MaterialRequestsService],

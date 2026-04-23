@@ -1,0 +1,43 @@
+query findMaterialRequestsReadyToArchive($expirationDate: timestamp!) {
+	app_material_requests(
+		where: {
+			is_archived: { _eq: false }
+			messages_and_events: {
+				message_type: { _eq: FINAL_SUMMARY }
+				created_at: { _lte: $expirationDate }
+			}
+		}
+	) {
+		id
+		ie_object_id
+		profile_id
+		reason
+		created_at
+		updated_at
+		requested_at
+		type
+		is_archived
+		requested_by {
+			id
+			full_name
+			mail
+			language
+			group {
+				name
+				label
+				description
+				id
+			}
+		}
+		messages_and_events {
+			message_type
+			created_at
+			attachments(order_by: { created_at: asc }) {
+				id
+				attachment_url
+				attachment_filename
+				created_at
+			}
+		}
+	}
+}

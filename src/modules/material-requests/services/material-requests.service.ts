@@ -1,5 +1,11 @@
 import { parse } from 'node:path';
-import { DataService, Locale, StillsObjectType, VideoStillsService } from '@meemoo/admin-core-api';
+import {
+	AssetsService,
+	DataService,
+	Locale,
+	StillsObjectType,
+	VideoStillsService,
+} from '@meemoo/admin-core-api';
 import {
 	BadRequestException,
 	Injectable,
@@ -61,6 +67,9 @@ import {
 	FindMaterialRequestsDocument,
 	type FindMaterialRequestsQuery,
 	type FindMaterialRequestsQueryVariables,
+	FindMaterialRequestsReadyToArchiveDocument,
+	FindMaterialRequestsReadyToArchiveQuery,
+	FindMaterialRequestsReadyToArchiveQueryVariables,
 	FindMaterialRequestsWithAlmostExpiredDownloadDocument,
 	FindMaterialRequestsWithAlmostExpiredDownloadQuery,
 	FindMaterialRequestsWithAlmostExpiredDownloadQueryVariables,
@@ -116,7 +125,7 @@ import { OrganisationsService } from '~modules/organisations/services/organisati
 import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
 import { ConfigService } from '@nestjs/config';
 import { AvoStillsStillInfo, AvoUserCommonUser } from '@viaa/avo2-types';
-import { addDays, isWithinInterval, subDays } from 'date-fns';
+import { addDays, isWithinInterval, subDays, subMonths } from 'date-fns';
 import type { Configuration } from '~config';
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
@@ -148,7 +157,8 @@ export class MaterialRequestsService {
 		private eventsService: EventsService,
 		private mediahavenJobWatcherService: MediahavenJobsWatcherService,
 		private configService: ConfigService<Configuration>,
-		private materialRequestMessageService: MaterialRequestMessagesService
+		private materialRequestMessageService: MaterialRequestMessagesService,
+		private assetsService: AssetsService
 	) {}
 
 	public async findAll(
@@ -1285,6 +1295,66 @@ export class MaterialRequestsService {
 			const error = customError('Failed to find material requests with expired download', err);
 			console.error(error);
 			return [];
+		}
+	}
+
+	/**
+	 * Finds all the material requests that have a final summary document, meaning these requests are
+	 * - approved but the download is expired
+	 * - approved but the download has failed
+	 * - cancelled
+	 * - denied
+	 */
+	public async checkAllReadyForArchivation(): Promise<void> {
+		try {
+			const MONTHS_BEFORE_ARCHIVATION = Number.parseFloat(
+				this.configService.get('MATERIAL_REQUEST_MONTHS_BEFORE_ARCHIVATION')
+			);
+
+			let expirationDate: string;
+
+			if (MONTHS_BEFORE_ARCHIVATION < 1) {
+				expirationDate = subDays(new Date(), MONTHS_BEFORE_ARCHIVATION * 10).toISOString();
+			} else {
+				expirationDate = subMonths(new Date(), MONTHS_BEFORE_ARCHIVATION).toISOString();
+			}
+
+			const response = await this.dataService.execute<
+				FindMaterialRequestsReadyToArchiveQuery,
+				FindMaterialRequestsReadyToArchiveQueryVariables
+			>(FindMaterialRequestsReadyToArchiveDocument, { expirationDate });
+
+			await mapLimit(response.app_material_requests, 5, async (materialRequest) => {
+				try {
+					await this.updateMaterialRequest(materialRequest.id, {
+						is_archived: true,
+					});
+					const attachmentUrls = materialRequest.messages_and_events.flatMap((item) =>
+						item.attachments.map((attachment) => attachment.attachment_url)
+					);
+					await mapLimit(attachmentUrls, 5, async (url) => {
+						try {
+							await this.assetsService.delete(url);
+						} catch (err) {
+							// Log the error but don't throw, since the main flow of updating the material request is successful
+							console.error('Failed to delete attachment for material request ', err, {
+								materialRequestId: materialRequest.id,
+								attachmentUrl: url,
+							});
+						}
+					});
+				} catch (err) {
+					// Log the error but don't throw, since the main flow of updating the material request is successful
+					console.error('Failed to update material request archived status', err, {
+						materialRequestId: materialRequest.id,
+					});
+				}
+			});
+
+			console.info(`marked ${response.app_material_requests.length} material requests as archived`);
+		} catch (err) {
+			const error = customError('Failed to find material requests with final summary', err);
+			console.error(error);
 		}
 	}
 
