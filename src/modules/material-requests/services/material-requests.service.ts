@@ -27,10 +27,10 @@ import {
 	UpdateMaterialRequestStatusDto,
 } from '../dto/material-requests.dto';
 import {
+	getAdditionEventDate,
 	MAP_MATERIAL_REQUEST_STATUS_TO_EMAIL_TEMPLATE,
 	MAP_MATERIAL_REQUEST_STATUS_TO_EVENT_TYPE,
 	ORDER_PROP_TO_DB_PROP,
-	getAdditionEventDate,
 } from '../material-requests.consts';
 import {
 	GqlMaterialRequest,
@@ -69,6 +69,8 @@ import {
 	FindMaterialRequestsWithExpiredDownloadQueryVariables,
 	FindMaterialRequestsWithUnresolvedDownloadStatusDocument,
 	FindMaterialRequestsWithUnresolvedDownloadStatusQuery,
+	GetMaterialRequestByJobIdForDownloadJobDocument,
+	GetMaterialRequestByJobIdForDownloadJobQueryVariables,
 	GetMaterialRequestForDownloadJobDocument,
 	GetMaterialRequestForDownloadJobQuery,
 	GetMaterialRequestForDownloadJobQueryVariables,
@@ -105,8 +107,8 @@ import {
 	IeObjectAccessThrough,
 	IeObjectLicense,
 	type IeObjectSector,
-	IeObjectType,
 	IeObjectsVisitorSpaceInfo,
+	IeObjectType,
 	SimpleIeObjectType,
 } from '~modules/ie-objects/ie-objects.types';
 import type { Organisation } from '~modules/organisations/organisations.types';
@@ -1292,6 +1294,20 @@ export class MaterialRequestsService {
 
 		const materialRequest = response.app_material_requests?.[0];
 		return materialRequest ? this.adaptMaterialRequestForDownloadJobs(materialRequest) : null;
+	}
+
+	async getMaterialRequestsByJobId(
+		exportJobIds: string[]
+	): Promise<(MaterialRequestForDownload | null)[]> {
+		const response = await this.dataService.execute<
+			GetMaterialRequestForDownloadJobQuery,
+			GetMaterialRequestByJobIdForDownloadJobQueryVariables
+		>(GetMaterialRequestByJobIdForDownloadJobDocument, {
+			jobIds: exportJobIds,
+		});
+
+		const materialRequests = response.app_material_requests;
+		return materialRequests.map(this.adaptMaterialRequestForDownloadJobs);
 	}
 
 	/**

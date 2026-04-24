@@ -37,7 +37,7 @@ import {
 } from '~modules/material-requests/material-requests.types';
 import { MaterialRequestsService } from '~modules/material-requests/services/material-requests.service';
 import {
-	CreateMamJob,
+	CreateMamJobRequestBody,
 	GetMamExportsResponse,
 	MamAccessToken,
 	MamExportQuality,
@@ -381,14 +381,8 @@ export class MediahavenJobsWatcherService {
 		return fpsDecimal;
 	}
 
-	/**
-	 * Create an export job in Mediahaven for the given material request.
-	 * @param materialRequest
-	 * @return The ID of the created export job.
-	 */
-	public async createExportJob(materialRequest: MaterialRequestForDownload): Promise<string> {
-		let url: string | null = null;
-		let body: CreateMamJob | null = null;
+	private async getMediaHavenExportJobRequestBody(materialRequest: MaterialRequestForDownload) {
+		let body: CreateMamJobRequestBody | null = null;
 		try {
 			const exportHighQuality = materialRequest.reuseForm.downloadQuality === 'HIGH';
 			if (materialRequest.objectRepresentationId) {
@@ -451,7 +445,20 @@ export class MediahavenJobsWatcherService {
 					Tag: this.configService.get('MEDIAHAVEN_EXPORT_JOBS_TAG'),
 				};
 			}
+			return body;
+		} catch (err) {}
+	}
 
+	/**
+	 * Create an export job in Mediahaven for the given material request.
+	 * @param materialRequest
+	 * @return The ID of the created export job.
+	 */
+	public async createExportJob(materialRequest: MaterialRequestForDownload): Promise<string> {
+		let url: string | null = null;
+		let body: CreateMamJobRequestBody | null = null;
+		try {
+			body = await this.getMediaHavenExportJobRequestBody(materialRequest);
 			const accessToken = await this.getAccessToken();
 			url = stringifyUrl({
 				url: `${this.configService.get('MEDIAHAVEN_API_ENDPOINT')}/exports`,
@@ -538,6 +545,36 @@ export class MediahavenJobsWatcherService {
 		}
 		const responseJson = (await response.json()) as GetMamExportsResponse;
 		return responseJson.Results;
+	}
+
+	/**
+	 * Get jobs from Mediahaven with the associated request info (CreateMamJob body) for each job.
+	 * The request info is derived from the material request that was used to create the export job.
+	 * Note: the Records field uses the objectRepresentationId or objectId from the material request
+	 * instead of the resolved Mediahaven fragment IDs to avoid additional API calls.
+	 */
+	public async getJobsWithRequestInfo(): Promise<
+		{ requestInfo: CreateMamJobRequestBody; exportJobStatus: MediahavenJobInfo }[]
+	> {
+		const jobs = await this.getJobsFromMediahaven();
+		const materialRequests = await this.materialRequestsService.getMaterialRequestsByJobId(
+			jobs.map((job) => job.ExportJobId)
+		);
+
+		return await mapLimit(
+			jobs,
+			10,
+			async (
+				job
+			): Promise<{ requestInfo: CreateMamJobRequestBody; exportJobStatus: MediahavenJobInfo }> => {
+				const materialRequest = materialRequests.find((mr) => mr.downloadJobId === job.ExportJobId);
+				if (!materialRequest) {
+					return { requestInfo: null, exportJobStatus: job };
+				}
+				const requestInfo = await this.getMediaHavenExportJobRequestBody(materialRequest);
+				return { requestInfo, exportJobStatus: job };
+			}
+		);
 	}
 
 	/**
