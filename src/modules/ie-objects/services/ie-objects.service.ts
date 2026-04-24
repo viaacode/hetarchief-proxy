@@ -4,20 +4,14 @@ import { retry } from 'async';
 
 import { DataService, PlayerTicketService } from '@meemoo/admin-core-api';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import {
-	Inject,
-	Injectable,
-	InternalServerErrorException,
-	Logger,
-	NotFoundException,
-} from '@nestjs/common';
+import { Inject, Injectable, InternalServerErrorException, Logger, NotFoundException, } from '@nestjs/common';
 
 import { ConfigService } from '@nestjs/config';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { mapLimit } from 'blend-promise-utils';
 import type { Cache } from 'cache-manager';
 import got, { type Got } from 'got';
-import { compact, find, isArray, isEmpty, isNil, kebabCase, omitBy, orderBy, uniq } from 'lodash';
+import { compact, find, isArray, isEmpty, isNil, kebabCase, omitBy, uniq } from 'lodash';
 
 import type { Configuration } from '~config';
 
@@ -60,10 +54,12 @@ import {
 	GetChildIeObjectsDocument,
 	type GetChildIeObjectsQuery,
 	type GetChildIeObjectsQueryVariables,
-	type GetHasPartQuery,
 	GetIeObjectChildrenIrisDocument,
 	type GetIeObjectChildrenIrisQuery,
 	type GetIeObjectChildrenIrisQueryVariables,
+	GetIeObjectDetailDocument,
+	GetIeObjectDetailQuery,
+	GetIeObjectDetailQueryVariables,
 	GetIeObjectForThumbnailUrlOnlyDocument,
 	GetIeObjectForThumbnailUrlOnlyQuery,
 	GetIeObjectForThumbnailUrlOnlyQueryVariables,
@@ -73,8 +69,6 @@ import {
 	GetIeObjectV3InfoFromMediaMosaIdDocument,
 	GetIeObjectV3InfoFromMediaMosaIdQuery,
 	GetIeObjectV3InfoFromMediaMosaIdQueryVariables,
-	type GetIsPartOfQuery,
-	type GetIsRepresentedByQuery,
 	GetParentIeObjectDocument,
 	type GetParentIeObjectQuery,
 	type GetParentIeObjectQueryVariables,
@@ -96,25 +90,19 @@ import {
 	MAX_COUNT_SEARCH_RESULTS,
 } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
 import { AND } from '~modules/ie-objects/elasticsearch/queryBuilder.helpers';
-import {
-	convertStringToSearchTerms,
-	type SearchTermParseResult,
-} from '~modules/ie-objects/helpers/convert-string-to-search-terms';
+import { convertStringToSearchTerms, type SearchTermParseResult, } from '~modules/ie-objects/helpers/convert-string-to-search-terms';
 import { AUTOCOMPLETE_FIELD_TO_ES_FIELD_NAME } from '~modules/ie-objects/ie-objects.conts';
 import {
 	CACHE_KEY_PREFIX_IE_OBJECT_DETAIL,
 	CACHE_KEY_PREFIX_IE_OBJECT_PID_TO_ID,
 	CACHE_KEY_PREFIX_IE_OBJECT_THUMBNAIL,
 	CACHE_KEY_PREFIX_IE_OBJECTS_SEARCH,
-	IE_OBJECT_DETAIL_QUERIES,
 } from '~modules/ie-objects/services/ie-objects.service.consts';
 import {
 	type DbFile,
 	type DbIeObjectWithMentions,
 	type DbIeObjectWithRepresentations,
 	type DbRepresentation,
-	IeObjectDetailResponseIndex,
-	type IeObjectDetailResponseTypes,
 } from '~modules/ie-objects/services/ie-objects.service.types';
 import { OrganisationPreference } from '~modules/organisations/organisations.types';
 
@@ -130,7 +118,6 @@ import { VisitStatus, VisitTimeframe } from '~modules/visits/types';
 import { AUDIO_WAVE_FORM_URL } from '~shared/consts/audio-wave-form-url';
 import { customError } from '~shared/helpers/custom-error';
 import { checkRequiredEnvs } from '~shared/helpers/env-check';
-import { getQueryName } from '~shared/helpers/get-query-name';
 
 checkRequiredEnvs(['ELASTICSEARCH_URL', 'IE_OBJECT_ID_PREFIX']);
 
@@ -475,40 +462,15 @@ export class IeObjectsService {
 		};
 	}
 
-	private async getIeObjectByIdFromDb(objectId: string): Promise<IeObjectDetailResponseTypes> {
+	private async getIeObjectByIdFromDb(objectId: string): Promise<GetIeObjectDetailQuery> {
 		const variables = {
 			ieObjectId: objectId,
 		};
-		const performanceTimes: (string | number)[][] = [];
-		const responses = (await Promise.all(
-			IE_OBJECT_DETAIL_QUERIES.map(async (document) => {
-				const queryName = getQueryName(document);
-				const startTime = new Date().getTime();
 
-				const response = await this.dataService.execute(document, variables);
-
-				const endTime = new Date().getTime();
-				performanceTimes.push([
-					'[PERFORMANCE]',
-					objectId.split('/').pop(),
-					queryName,
-					endTime - startTime,
-					'ms',
-				]);
-				return response;
-			})
-		)) as IeObjectDetailResponseTypes;
-
-		if (
-			this.configService.get('NODE_ENV') !== 'test' &&
-			process.env.GRAPHQL_LOG_QUERY_METRICS === 'true'
-		) {
-			// log performance times of sub queries
-			const tableData = orderBy(performanceTimes, (performanceItem) => performanceItem[3], 'desc');
-			console.table(tableData);
-		}
-
-		return responses;
+		return await this.dataService.execute<GetIeObjectDetailQuery, GetIeObjectDetailQueryVariables>(
+			GetIeObjectDetailDocument,
+			variables
+		);
 	}
 
 	private async getIeObjectThumbnailByIdFromDb(
@@ -621,60 +583,56 @@ export class IeObjectsService {
 	// ------------------------------------------------------------------------
 
 	public async adaptFromDB(
-		ieObjectResponseList: IeObjectDetailResponseTypes,
+		ieObjectResponse: GetIeObjectDetailQuery,
 		parentIeObject: Partial<IeObject> | null,
 		resolveThumbnailUrl: boolean,
 		referer: string,
 		ip: string
 	): Promise<Partial<IeObject>> {
-		const [
-			ieObjectResponse,
-			dctermsFormatResponse,
-			isPartOfResponse,
-			hasCarrierResponse,
-			meemooLocalIdResponse,
-			_premisIdentifierResponse, // TODO remove this one => update all indexes in the array and tests
-			mhFragmentIdentifierResponse,
-			parentCollectionResponse,
-			schemaAlternateNameResponse,
-			schemaCopyrightHolderResponse,
-			schemaCreatorResponse,
-			schemaDurationResponse,
-			schemaGenreResponse,
-			schemaInLanguageResponse,
-			_schemaIsPartOfResponse,
-			schemaKeywordsResponse,
-			schemaLicenseResponse,
-			schemaMediumResponse,
-			schemaPublisherResponse,
-			schemaSpatialResponse,
-			schemaTemporalResponse,
-			schemaThumbnailUrlResponse,
-			hasPartResponse,
-			isRepresentedByResponse,
-		]: IeObjectDetailResponseTypes = ieObjectResponseList;
-
 		if (!ieObjectResponse) {
 			return null;
 		}
+		const ie = ieObjectResponse.getIeObject?.[0];
+		const dctermsFormatResponse = ieObjectResponse.getDctermsFormat?.[0];
+		const isPartOfResponse = ieObjectResponse.getIsPartOf?.[0];
+		const hasCarrierResponse = ieObjectResponse.getHasCarrier?.[0];
+		const meemooLocalIdResponse = ieObjectResponse.getMeemooLocalId;
+		const mhFragmentIdentifierResponse = ieObjectResponse.getMhFragmentIdentifier;
+		const parentCollectionResponse = ieObjectResponse.getParentCollection;
+		const schemaAlternateNameResponse = ieObjectResponse.getSchemaAlternateName;
+		const schemaCopyrightHolderResponse = ieObjectResponse.getSchemaCopyrightHolder;
+		const schemaCreatorResponse = ieObjectResponse.getSchemaCreator?.[0];
+		const schemaDurationResponse = ieObjectResponse.getSchemaDuration?.[0];
+		const schemaGenreResponse = ieObjectResponse.getSchemaGenre;
+		const schemaInLanguageResponse = ieObjectResponse.getSchemaInLanguage;
+		const schemaKeywordsResponse = ieObjectResponse.getSchemaKeywords;
+		const schemaLicenseResponse = ieObjectResponse.getSchemaLicense;
+		const schemaMediumResponse = ieObjectResponse.getSchemaMedium?.[0];
+		const schemaPublisherResponse = ieObjectResponse.getSchemaPublisher;
+		const schemaSpatialResponse = ieObjectResponse.getSchemaSpatial;
+		const schemaTemporalResponse = ieObjectResponse.getSchemaTemporal;
+		const schemaThumbnailUrlResponse = ieObjectResponse.getSchemaThumbnailUrl?.[0];
+		const hasPartResponse = ieObjectResponse.getHasPart;
+		const isRepresentedByResponse = ieObjectResponse.getIsRepresentedBy;
 
-		const ie = ieObjectResponse.graph_intellectual_entity?.[0];
+		if (!ie) {
+			return null;
+		}
 
 		const ieObjectId = ie?.id;
-		if (!ieObjectResponse.graph_intellectual_entity?.[0]?.id) {
+		if (!ieObjectId) {
 			return null;
 		}
 
 		const licenses = compact(
-			schemaLicenseResponse?.schemaLicense.map((item) => item?.schema_license)
+			schemaLicenseResponse?.map((item) => item?.schema_license)
 		) as IeObjectLicense[];
 		const isPublicDomain: boolean =
 			licenses.includes(IeObjectLicense.PUBLIEK_CONTENT) &&
 			licenses.includes(IeObjectLicense.PUBLIC_DOMAIN);
 
-		const dctermsFormat = dctermsFormatResponse.dctermsFormat[0]?.dcterms_format as IeObjectType;
-		let thumbnailUrl =
-			schemaThumbnailUrlResponse?.schemaThumbnailUrl?.[0]?.schema_thumbnail_url?.[0];
+		const dctermsFormat = dctermsFormatResponse?.dcterms_format as IeObjectType;
+		let thumbnailUrl = schemaThumbnailUrlResponse?.schema_thumbnail_url?.[0];
 
 		if (mapDcTermsFormatToSimpleType(dctermsFormat) === IeObjectType.AUDIO) {
 			thumbnailUrl = AUDIO_WAVE_FORM_URL; // avoid the ugly speaker
@@ -708,7 +666,7 @@ export class IeObjectsService {
 			ip
 		);
 
-		const isPartOfParentCollections = parentCollectionResponse?.parentCollection?.map((part) => {
+		const isPartOfParentCollections = parentCollectionResponse?.map((part) => {
 			return {
 				iri: part.collection?.id,
 				schemaIdentifier: part.collection?.schema_identifier,
@@ -728,13 +686,13 @@ export class IeObjectsService {
 			iri: ieObjectId,
 			dctermsAvailable: ie?.dcterms_available,
 			dctermsFormat,
-			dctermsMedium: schemaMediumResponse?.schemaMedium?.[0]?.premis_medium,
+			dctermsMedium: schemaMediumResponse?.premis_medium,
 			meemooDescriptionCast: ie?.ebucore_has_cast_member,
-			creator: schemaCreatorResponse?.graph__schema_creator?.[0]?.schema_creator_array,
+			creator: schemaCreatorResponse?.schema_creator_array,
 			dateCreated: ie?.schema_date_created,
 			datePublished: ie?.schema_date_published,
 			description: ie?.schema_description,
-			duration: schemaDurationResponse?.graph__schema_duration?.[0]?.schema_duration,
+			duration: schemaDurationResponse?.schema_duration,
 			licenses,
 			premisIdentifier: premisIdentifiers,
 			abrahamInfo:
@@ -745,25 +703,15 @@ export class IeObjectsService {
 						}
 					: null,
 			abstract: ie?.schema_abstract,
-			genre: compact(schemaGenreResponse?.schemaGenre?.map((item) => item.schema_genre)),
-			inLanguage: compact(
-				schemaInLanguageResponse?.schemaInLanguage?.map((item) => item?.schema_in_language)
-			),
-			keywords: compact(
-				schemaKeywordsResponse?.schemaKeywords?.map((item) => item?.schema_keywords)
-			),
-			publisher: compact(
-				schemaPublisherResponse?.schemaPublisher?.map((item) => item.schema_publisher_array)
-			),
-			spatial: compact(schemaSpatialResponse?.schemaSpatial?.map((item) => item.schema_spatial)), // Location of the content
-			temporal: compact(
-				schemaTemporalResponse?.schemaTemporal?.map((item) => item.schema_temporal)
-			),
+			genre: compact(schemaGenreResponse?.map((item) => item.schema_genre)),
+			inLanguage: compact(schemaInLanguageResponse?.map((item) => item?.schema_in_language)),
+			keywords: compact(schemaKeywordsResponse?.map((item) => item?.schema_keywords)),
+			publisher: compact(schemaPublisherResponse?.map((item) => item.schema_publisher_array)),
+			spatial: compact(schemaSpatialResponse?.map((item) => item.schema_spatial)), // Location of the content
+			temporal: compact(schemaTemporalResponse?.map((item) => item.schema_temporal)),
 			synopsis: ie?.ebucore_synopsis,
 			copyrightHolder: compact(
-				schemaCopyrightHolderResponse?.schemaCopyrightHolder?.map(
-					(item) => item.schema_copyright_holder
-				)
+				schemaCopyrightHolderResponse?.map((item) => item.schema_copyright_holder)
 			).join(', '),
 			maintainerId: schemaMaintainer?.org_identifier,
 			maintainerName: schemaMaintainer?.skos_pref_label,
@@ -786,57 +734,42 @@ export class IeObjectsService {
 			thumbnailUrl,
 			premisIsPartOf: ie?.premis_is_part_of,
 			isPartOf: isPartOfParentCollections,
-			collectionSeasonNumber:
-				parentCollectionResponse?.parentCollection?.[0]?.collection?.schema_season_number,
+			collectionSeasonNumber: parentCollectionResponse?.[0]?.collection?.schema_season_number,
 			numberOfPages: ie?.schema_number_of_pages,
 			pageNumber: ie?.schema_position,
-			meemooLocalId: meemooLocalIdResponse?.meemooLocalId
-				?.map((item) => item?.meemoo_local_id)
-				.join(', '),
-			collectionName: parentCollectionResponse?.parentCollection?.[0]?.collection?.schema_name,
-			collectionId: parentCollectionResponse?.parentCollection?.[0]?.collection?.id,
+			meemooLocalId: meemooLocalIdResponse?.map((item) => item?.meemoo_local_id).join(', '),
+			collectionName: parentCollectionResponse?.[0]?.collection?.schema_name,
+			collectionId: parentCollectionResponse?.[0]?.collection?.id,
 			issueNumber: ie?.schema_issue_number,
 			fragmentId: compact(
-				mhFragmentIdentifierResponse?.graph_mh_fragment_identifier?.map(
-					(item) => item?.mh_fragment_identifier
-				)
+				mhFragmentIdentifierResponse?.map((item) => item?.mh_fragment_identifier)
 			).join(', '),
 			creditText: ie?.schema_credit_text,
 			copyrightNotice: ie?.schema_copyright_notice,
-			alternativeTitle: schemaAlternateNameResponse?.ieObject_schemaAlternateName?.map(
-				(item) => item.schema_alternate_name
-			),
+			alternativeTitle: schemaAlternateNameResponse?.map((item) => item.schema_alternate_name),
 			preceededBy: parentCollectionResponse?.[0]?.collection?.isPreceededBy?.map(
 				(ie) => ie.schema_name
 			),
 			succeededBy: parentCollectionResponse?.[0]?.collection?.isSucceededBy?.map(
 				(ie) => ie.schema_name
 			),
-			width: hasCarrierResponse?.graph_carrier?.[0]?.schema_width,
-			height: hasCarrierResponse?.graph_carrier?.[0]?.schema_height,
-			bibframeProductionMethod: hasCarrierResponse?.graph_carrier?.[0]?.bibframe_production_method, // Text type
+			width: hasCarrierResponse?.schema_width,
+			height: hasCarrierResponse?.schema_height,
+			bibframeProductionMethod: hasCarrierResponse?.bibframe_production_method, // Text type
 			bibframeEdition: ie?.bibframe_edition, // Publication type
 			locationCreated: compact(
-				parentCollectionResponse?.parentCollection?.map(
-					(part) => part?.collection?.schema_location_created
-				)
+				parentCollectionResponse?.map((part) => part?.collection?.schema_location_created)
 			)?.join(', '),
 			startDate: compact(
-				parentCollectionResponse?.parentCollection?.map(
-					(part) => part?.collection?.schema_start_date
-				)
+				parentCollectionResponse?.map((part) => part?.collection?.schema_start_date)
 			)?.join(', '),
 			endDate: compact(
-				parentCollectionResponse?.parentCollection?.map(
-					(part) => part?.collection?.schema_start_date
-				)
+				parentCollectionResponse?.map((part) => part?.collection?.schema_start_date)
 			)?.join(', '),
-			carrierDate: hasCarrierResponse?.graph_carrier?.[0]?.created_at,
-			digitizationDate: hasCarrierResponse?.graph_carrier?.[0]?.digitization_date,
+			carrierDate: hasCarrierResponse?.created_at,
+			digitizationDate: hasCarrierResponse?.digitization_date,
 			newspaperPublisher: compact(
-				parentCollectionResponse?.parentCollection?.map(
-					(part) => part?.collection?.schema_publisher
-				)
+				parentCollectionResponse?.map((part) => part?.collection?.schema_publisher)
 			)?.join(', '),
 			pages: ieObjectByPages?.pages || [],
 			mentions: ieObjectByPages?.mentions || [],
@@ -1038,15 +971,14 @@ export class IeObjectsService {
 	}
 
 	public async adaptRepresentationsPaged(
-		isRepresentedByResponse: GetIsRepresentedByQuery,
-		hasPartResponse: GetHasPartQuery,
+		ieObjectSelf: GetIeObjectDetailQuery['getIsRepresentedBy'],
+		hasPartResponse: GetIeObjectDetailQuery['getHasPart'],
 		resolveThumbnailUrl: boolean,
 		isPublicDomain: boolean,
 		referer: string,
 		ip: string
 	): Promise<IeObjectPages | null> {
-		const ieObjectSelf = isRepresentedByResponse?.graph__intellectual_entity[0];
-		const ieObjectParts = hasPartResponse?.graph_intellectual_entity || [];
+		const ieObjectParts = hasPartResponse || [];
 		const ieObjects = (
 			compact([ieObjectSelf, ...ieObjectParts]) as DbIeObjectWithRepresentations[]
 		).filter((ieObject) => (ieObject.isRepresentedBy?.length || 0) > 0);
@@ -1151,7 +1083,7 @@ export class IeObjectsService {
 		referer: string,
 		ip: string
 	): Promise<IeObjectFile[]> {
-		if (isEmpty(dbFiles)) {
+		if (!dbFiles || isEmpty(dbFiles)) {
 			return [];
 		}
 
@@ -1628,7 +1560,7 @@ export class IeObjectsService {
 		ip: string
 	): Promise<Partial<IeObject> | null> {
 		// Cache the object for 60 minutes since we need it once for server side rendering and once for client side rendering
-		const responses = await this.cacheManager.wrap(
+		const response = await this.cacheManager.wrap(
 			CACHE_KEY_PREFIX_IE_OBJECT_DETAIL + objectId,
 			() => this.getIeObjectByIdFromDb(objectId),
 			// cache for 1 hour
@@ -1636,8 +1568,7 @@ export class IeObjectsService {
 		);
 
 		// Get parent ieObject if it exists
-		const parentIeObjectId = (responses[IeObjectDetailResponseIndex.IsPartOf] as GetIsPartOfQuery)
-			?.isPartOf?.[0]?.isPartOf?.id;
+		const parentIeObjectId = response?.getIsPartOf?.[0]?.isPartOf?.id;
 		let parentIeObject: Partial<IeObject> | null = null;
 		if (parentIeObjectId) {
 			parentIeObject = await this.findByIeObjectId(
@@ -1648,7 +1579,7 @@ export class IeObjectsService {
 			);
 		}
 
-		return await this.adaptFromDB(responses, parentIeObject, resolveThumbnailUrl, referer, ip);
+		return await this.adaptFromDB(response, parentIeObject, resolveThumbnailUrl, referer, ip);
 	}
 
 	private async getObjectIdBySchemaIdentifier(schemaIdentifier: string): Promise<string | null> {

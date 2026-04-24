@@ -1,5 +1,0 @@
-query getSchemaDuration($ieObjectId: String!) {
-	graph__schema_duration(where: { intellectual_entity_id: { _eq: $ieObjectId } }) {
-		schema_duration
-	}
-}

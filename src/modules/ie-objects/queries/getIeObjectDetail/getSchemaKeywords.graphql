@@ -1,5 +1,0 @@
-query getSchemaKeywords($ieObjectId: String!) {
-	schemaKeywords: graph_schema_keywords(where: { intellectual_entity_id: { _eq: $ieObjectId } }) {
-		schema_keywords
-	}
-}
