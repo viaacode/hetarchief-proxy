@@ -4,13 +4,7 @@ import { retry } from 'async';
 
 import { DataService, PlayerTicketService } from '@meemoo/admin-core-api';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import {
-	Inject,
-	Injectable,
-	InternalServerErrorException,
-	Logger,
-	NotFoundException,
-} from '@nestjs/common';
+import { Inject, Injectable, InternalServerErrorException, Logger, NotFoundException, } from '@nestjs/common';
 
 import { ConfigService } from '@nestjs/config';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
@@ -96,10 +90,7 @@ import {
 	MAX_COUNT_SEARCH_RESULTS,
 } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
 import { AND } from '~modules/ie-objects/elasticsearch/queryBuilder.helpers';
-import {
-	convertStringToSearchTerms,
-	type SearchTermParseResult,
-} from '~modules/ie-objects/helpers/convert-string-to-search-terms';
+import { convertStringToSearchTerms, type SearchTermParseResult, } from '~modules/ie-objects/helpers/convert-string-to-search-terms';
 import { AUTOCOMPLETE_FIELD_TO_ES_FIELD_NAME } from '~modules/ie-objects/ie-objects.conts';
 import {
 	CACHE_KEY_PREFIX_IE_OBJECT_DETAIL,
@@ -629,7 +620,7 @@ export class IeObjectsService {
 		}
 
 		const ieObjectId = ie?.id;
-		if (!ie?.id) {
+		if (!ieObjectId) {
 			return null;
 		}
 
@@ -1092,13 +1083,13 @@ export class IeObjectsService {
 		referer: string,
 		ip: string
 	): Promise<IeObjectFile[]> {
-		if (isEmpty(dbFiles)) {
+		if (!dbFiles || isEmpty(dbFiles)) {
 			return [];
 		}
 
 		/* istanbul ignore next */
 		return compact(
-			await mapLimit(dbFiles || [], 20, async (includeFile): Promise<IeObjectFile> => {
+			await mapLimit(dbFiles, 20, async (includeFile): Promise<IeObjectFile> => {
 				const file = includeFile.file;
 				if (!file) {
 					return null;
