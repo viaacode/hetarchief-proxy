@@ -23,7 +23,6 @@ import { randomUUID } from 'node:crypto';
 import path from 'node:path';
 import { AssetsService } from '@meemoo/admin-core-api';
 import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
-import { logAndThrow } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/logAndThrow';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import archiver from 'archiver';
 import { mapLimit } from 'blend-promise-utils';
@@ -115,14 +114,15 @@ export class MaterialRequestMessagesController {
 			// Return messages to client
 			return await this.materialRequestMessagesService.findAll(materialRequestId, page, size);
 		} catch (err) {
-			logAndThrow(
-				new CustomError('Failed to get material request messages', err, {
-					materialRequestId,
-					userId: user?.getId(),
-					page,
-					size,
-				})
-			);
+			const error = new CustomError('Failed to get material request messages', err, {
+				materialRequestId,
+				userId: user?.getId(),
+				page,
+				size,
+			});
+			console.log(error);
+			error.innerException = null;
+			throw error;
 		}
 	}
 
@@ -143,12 +143,13 @@ export class MaterialRequestMessagesController {
 			);
 			return { count };
 		} catch (err) {
-			logAndThrow(
-				new CustomError('Failed to count material request messages', err, {
-					materialRequestId,
-					userId: user?.getId(),
-				})
-			);
+			const error = new CustomError('Failed to count material request messages', err, {
+				materialRequestId,
+				userId: user?.getId(),
+			});
+			console.log(error);
+			error.innerException = null;
+			throw error;
 		}
 	}
 
@@ -226,12 +227,13 @@ export class MaterialRequestMessagesController {
 				attachments
 			);
 		} catch (err) {
-			logAndThrow(
-				new CustomError('Failed to create material request message', err, {
-					materialRequestId,
-					userId: user?.getId(),
-				})
-			);
+			const error = new CustomError('Failed to create material request message', err, {
+				materialRequestId,
+				userId: user?.getId(),
+			});
+			console.log(error);
+			error.innerException = null;
+			throw error;
 		}
 	}
 
@@ -250,13 +252,14 @@ export class MaterialRequestMessagesController {
 				extraConditions
 			);
 		} catch (err) {
-			logAndThrow(
-				new CustomError('Failed to add extra conditions to material request', err, {
-					materialRequestId,
-					userId: user?.getId(),
-					extraConditions,
-				})
-			);
+			const error = new CustomError('Failed to add extra conditions to material request', err, {
+				materialRequestId,
+				userId: user?.getId(),
+				extraConditions,
+			});
+			console.log(error);
+			error.innerException = null;
+			throw error;
 		}
 	}
 
@@ -352,12 +355,13 @@ export class MaterialRequestMessagesController {
 				);
 			}
 		} catch (err) {
-			logAndThrow(
-				new CustomError('Failed to accept extra conditions of material request', err, {
-					materialRequestId,
-					userId: user?.getId(),
-				})
-			);
+			const error = new CustomError('Failed to accept extra conditions of material request', err, {
+				materialRequestId,
+				userId: user?.getId(),
+			});
+			console.log(error);
+			error.innerException = null;
+			throw error;
 		}
 	}
 
@@ -414,16 +418,17 @@ export class MaterialRequestMessagesController {
 				queryDto.orderDirection
 			);
 		} catch (err) {
-			logAndThrow(
-				new CustomError('Failed to get material request attachments', err, {
-					materialRequestId,
-					userId: user?.getId(),
-					page: queryDto.page,
-					size: queryDto.size,
-					orderProp: queryDto.orderProp,
-					orderDirection: queryDto.orderDirection,
-				})
-			);
+			const error = new CustomError('Failed to get material request attachments', err, {
+				materialRequestId,
+				userId: user?.getId(),
+				page: queryDto.page,
+				size: queryDto.size,
+				orderProp: queryDto.orderProp,
+				orderDirection: queryDto.orderDirection,
+			});
+			console.log(error);
+			error.innerException = null;
+			throw error;
 		}
 	}
 
@@ -478,12 +483,16 @@ export class MaterialRequestMessagesController {
 			await archive.finalize();
 		} catch (err) {
 			if (!res.headersSent) {
-				logAndThrow(
-					new CustomError('Failed to download material request attachments as zip', err, {
+				const error = new CustomError(
+					'Failed to download material request attachments as zip',
+					err,
+					{
 						materialRequestId,
 						userId: user?.getId(),
-					})
+					}
 				);
+				console.log(error);
+				throw error;
 			}
 		}
 	}
@@ -518,13 +527,14 @@ export class MaterialRequestMessagesController {
 				filename: attachment.attachmentFilename,
 			};
 		} catch (err) {
-			logAndThrow(
-				new CustomError('Failed to get attachment download URL', err, {
-					materialRequestId,
-					attachmentId,
-					userId: user?.getId(),
-				})
-			);
+			const error = new CustomError('Failed to get attachment download URL', err, {
+				materialRequestId,
+				attachmentId,
+				userId: user?.getId(),
+			});
+			console.log(error);
+			error.innerException = null;
+			throw error;
 		}
 	}
 
@@ -588,11 +598,12 @@ export class MaterialRequestMessagesController {
 				pdfUrl: pdfUrl,
 			};
 		} catch (err) {
-			logAndThrow(
-				new CustomError('Failed to generate material request PDF', err, {
-					materialRequestId,
-				})
-			);
+			const error = new CustomError('Failed to generate material request PDF', err, {
+				materialRequestId,
+			});
+			console.log(error);
+			error.innerException = null;
+			throw error;
 		}
 	}
 
@@ -619,11 +630,12 @@ export class MaterialRequestMessagesController {
 				pdfUrl: pdfUrl,
 			};
 		} catch (err) {
-			logAndThrow(
-				new CustomError('Failed to generate complete summary PDF', err, {
-					materialRequestId,
-				})
-			);
+			const error = new CustomError('Failed to generate complete summary PDF', err, {
+				materialRequestId,
+			});
+			console.log(error);
+			error.innerException = null;
+			throw error;
 		}
 	}
 }

@@ -97,6 +97,12 @@ There are a few debug env vars that can be useful:
   GRAPHQL_LOG_QUERIES=true
   ```
 
+- Log the ie-object and checks that are performed to see if the user has access to the ie-object and to which fields the user has access
+
+  ```
+  IE_OBJECT_LOG_ACCESS_CHECKS=true
+  ```
+
 - Enable sending email and redirect CP emails to a different email address:
 
   ```

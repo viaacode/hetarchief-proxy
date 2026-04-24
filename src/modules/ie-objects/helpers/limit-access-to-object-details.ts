@@ -20,6 +20,9 @@ export const limitAccessToObjectDetails = (
 	ieObject: Pick<IeObject, 'licenses' | 'schemaIdentifier' | 'maintainerId' | 'sector'>,
 	userInfo: LimitAccessUserInfo
 ): Partial<IeObject> => {
+	if (process.env.IE_OBJECT_LOG_ACCESS_CHECKS === 'true') {
+		console.log('limit access to ie-object with user info: ', JSON.stringify(userInfo));
+	}
 	if (!ieObject) {
 		console.error(`Trying to limit metadata on null ie object: ${ieObject}`);
 		return {};
@@ -111,6 +114,12 @@ export const limitAccessToObjectDetails = (
 	}
 
 	const accessibleLicenses = uniq(intersection(ieObjectLicenses, userAccessibleLicenses));
+
+	if (process.env.IE_OBJECT_LOG_ACCESS_CHECKS === 'true') {
+		console.log('userAccessibleLicenses: ', JSON.stringify(userAccessibleLicenses));
+		console.log('ieObjectLicenses: ', JSON.stringify(ieObjectLicenses));
+		console.log('accessibleLicenses: ', JSON.stringify(accessibleLicenses));
+	}
 
 	// Step 2 - Determine ieObject limited props
 	// ---------------------------------------------------
