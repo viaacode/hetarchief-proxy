@@ -66,12 +66,7 @@ import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/help
 import { mapLimit } from 'blend-promise-utils';
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
-import {
-	ALL_INDEXES,
-	IeObjectsSearchFilterField,
-	Operator,
-	OrderProperty,
-} from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
+import { ALL_INDEXES, IeObjectsSearchFilterField, Operator, OrderProperty, } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
 import { mapDcTermsFormatToSimpleType } from '~modules/ie-objects/helpers/map-dc-terms-format-to-simple-type';
 import { ERROR_CODE } from '~modules/ie-objects/ie-objects.conts';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
@@ -984,7 +979,7 @@ export class IeObjectsController {
 						});
 
 						if (this.configService.get('IE_OBJECT_LOG_ACCESS_CHECKS') === 'true') {
-							console.log('fetching ie-object (after limiting): ', JSON.stringify(ieObject));
+							console.log('fetching ie-object (after limiting): ', JSON.stringify(limitedObject));
 						}
 
 						if (!limitedObject) {
@@ -1018,21 +1013,32 @@ export class IeObjectsController {
 				}
 			);
 
-			console.log('returning limitedObjects');
 			return limitedObjects;
 		} catch (err) {
 			console.log('error', JSON.stringify(err));
 			const errorJson = JSON.stringify(err);
 			if (errorJson.includes(ERROR_CODE.USER_NO_ACCESS_TO_IE_OBJECT)) {
-				console.log('has USER_NO_ACCESS_TO_IE_OBJECT code');
-				const error = new ForbiddenException(
+				console.log(
+					new CustomError('has USER_NO_ACCESS_TO_IE_OBJECT code', err, {
+						schemaIdentifiers,
+						ieObjectIds,
+						user,
+						resolveThumbnailUrl,
+						referer,
+						ip,
+					})
+				);
+				throw new ForbiddenException(
 					'You do not have access to this object: USER_NO_ACCESS_TO_IE_OBJECT'
 				);
-				console.log(error);
-				throw error;
 			}
 			const error = new CustomError('Failed to retrieve object details in getIeObjectsByIds', err, {
 				schemaIdentifiers,
+				ieObjectIds,
+				user,
+				resolveThumbnailUrl,
+				referer,
+				ip,
 			});
 			console.log(error);
 			throw error;
