@@ -41,6 +41,7 @@ import {
 	MaterialRequestMessage,
 	MaterialRequestMessageBodyAdditionalConditions,
 } from '~modules/material-request-messages/material-request-messages.types';
+import { getStatusEvent } from '~modules/material-requests/material-requests.consts';
 import { MaterialRequest } from '~modules/material-requests/material-requests.types';
 import { MaterialRequestsService } from '~modules/material-requests/services/material-requests.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
@@ -276,19 +277,17 @@ export class MaterialRequestMessagesController {
 					'Only the requester of the material request can accept or decline additional conditions'
 				);
 			}
-			const additionalConditionsEvent = materialRequest.history.find(
-				(event) =>
-					event.messageType === Lookup_App_Material_Request_Message_Type_Enum.AdditionalConditions
+			const additionalConditionsEvent = getStatusEvent(
+				materialRequest.history,
+				Lookup_App_Material_Request_Message_Type_Enum.AdditionalConditions
 			);
-			const hasAdditionalConditionsAlreadyAccepted: boolean = !!materialRequest.history.find(
-				(event) =>
-					event.messageType ===
-					Lookup_App_Material_Request_Message_Type_Enum.AdditionalConditionsAccepted
+			const hasAdditionalConditionsAlreadyAccepted: boolean = !!getStatusEvent(
+				materialRequest.history,
+				Lookup_App_Material_Request_Message_Type_Enum.AdditionalConditionsAccepted
 			);
-			const hasAdditionalConditionsAlreadyDeclined: boolean = !!materialRequest.history.find(
-				(event) =>
-					event.messageType ===
-					Lookup_App_Material_Request_Message_Type_Enum.AdditionalConditionsDenied
+			const hasAdditionalConditionsAlreadyDeclined: boolean = !!getStatusEvent(
+				materialRequest.history,
+				Lookup_App_Material_Request_Message_Type_Enum.AdditionalConditionsDenied
 			);
 			if (!additionalConditionsEvent) {
 				throw new BadRequestException(
