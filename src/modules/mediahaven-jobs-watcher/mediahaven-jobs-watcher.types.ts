@@ -54,7 +54,7 @@ export enum MamExportQuality {
 	ACCESS = 'Access',
 }
 
-export interface CreateMamJob {
+export interface CreateMamJobRequestBody {
 	Records: {
 		RecordId: string;
 		Partial?: {
