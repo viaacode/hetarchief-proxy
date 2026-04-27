@@ -493,7 +493,8 @@ export class MaterialRequestsService {
 		>,
 		reuseForm: Record<string, string> | MaterialRequestReuseForm | undefined,
 		referer: string,
-		ip: string
+		ip: string,
+		resolveThumbnail = true
 	): Promise<MaterialRequest> {
 		const updateMaterialRequest = {
 			...materialRequestInfo,
@@ -535,7 +536,7 @@ export class MaterialRequestsService {
 
 		return this.adapt(
 			updatedRequest,
-			true,
+			resolveThumbnail,
 			organisations,
 			visitorSpaceAccessInfo,
 			user,
