@@ -1,0 +1,27 @@
+query getMaterialRequestByJobIdForDownloadJob($jobIds: [String!]!) {
+	app_material_requests(where: { download_job_id: { _in: $jobIds } }) {
+		id
+		status
+		download_job_id
+		download_retries
+		download_status
+		download_url
+		download_expiry_warning_email_sent
+		ie_object_id
+		ie_object_representation_id
+		profile_id
+		type
+		updated_at
+		intellectualEntity {
+			schemaMaintainer {
+				org_identifier
+			}
+		}
+		material_request_reuse_form_values(
+			where: { key: { _in: ["downloadQuality", "startTime", "endTime", "durationType"] } }
+		) {
+			key
+			value
+		}
+	}
+}
