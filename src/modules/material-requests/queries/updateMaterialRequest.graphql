@@ -49,6 +49,8 @@ mutation updateMaterialRequest(
 			requested_by {
 				id
 				full_name
+				first_name
+				last_name
 				mail
 				language
 				group {

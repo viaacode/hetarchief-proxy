@@ -66,7 +66,12 @@ import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/help
 import { mapLimit } from 'blend-promise-utils';
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
-import { ALL_INDEXES, IeObjectsSearchFilterField, Operator, OrderProperty, } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
+import {
+	ALL_INDEXES,
+	IeObjectsSearchFilterField,
+	Operator,
+	OrderProperty,
+} from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
 import { mapDcTermsFormatToSimpleType } from '~modules/ie-objects/helpers/map-dc-terms-format-to-simple-type';
 import { ERROR_CODE } from '~modules/ie-objects/ie-objects.conts';
 import { SessionUserEntity } from '~modules/users/classes/session-user';

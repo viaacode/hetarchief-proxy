@@ -59,6 +59,11 @@ export interface MaterialRequestAttachment {
 	createdAt: string;
 }
 
+export enum ExtraConditionsAction {
+	ACCEPT = 'accept',
+	DECLINE = 'decline',
+}
+
 export enum MaterialRequestAttachmentOrderProp {
 	CREATED_AT = 'createdAt',
 	ATTACHMENT_FILENAME = 'attachmentFilename',

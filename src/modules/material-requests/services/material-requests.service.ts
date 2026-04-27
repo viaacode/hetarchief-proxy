@@ -1,17 +1,6 @@
 import { parse } from 'node:path';
-import {
-	AssetsService,
-	DataService,
-	Locale,
-	StillsObjectType,
-	VideoStillsService,
-} from '@meemoo/admin-core-api';
-import {
-	BadRequestException,
-	Injectable,
-	InternalServerErrorException,
-	NotFoundException,
-} from '@nestjs/common';
+import { AssetsService, DataService, Locale, StillsObjectType, VideoStillsService, } from '@meemoo/admin-core-api';
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException, } from '@nestjs/common';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { mapLimit } from 'blend-promise-utils';
 import { compact, groupBy, intersection, isArray, isEmpty, isNil, kebabCase, noop, set, } from 'lodash';
@@ -24,11 +13,10 @@ import {
 } from '../dto/material-requests.dto';
 import {
 	getAdditionEventDate,
+	getStatusEvent,
 	MAP_MATERIAL_REQUEST_STATUS_TO_EMAIL_TEMPLATE,
 	MAP_MATERIAL_REQUEST_STATUS_TO_EVENT_TYPE,
 	ORDER_PROP_TO_DB_PROP,
-	getAdditionEventDate,
-	getStatusEvent,
 } from '../material-requests.consts';
 import {
 	GqlMaterialRequest,
@@ -68,6 +56,9 @@ import {
 	FindMaterialRequestsWithExpiredDownloadDocument,
 	FindMaterialRequestsWithExpiredDownloadQuery,
 	FindMaterialRequestsWithExpiredDownloadQueryVariables,
+	FindMaterialRequestsWithUnresolvedAdditionalConditionsDocument,
+	FindMaterialRequestsWithUnresolvedAdditionalConditionsQuery,
+	FindMaterialRequestsWithUnresolvedAdditionalConditionsQueryVariables,
 	FindMaterialRequestsWithUnresolvedDownloadStatusDocument,
 	FindMaterialRequestsWithUnresolvedDownloadStatusQuery,
 	GetMaterialRequestByJobIdForDownloadJobDocument,
@@ -1076,17 +1067,21 @@ export class MaterialRequestsService {
 			createdAt: graphQlMaterialRequest.created_at,
 			updatedAt: graphQlMaterialRequest.updated_at,
 			requestedAt: graphQlMaterialRequest.requested_at,
-			type: graphQlMaterialRequest.type,
+			type: graphQlMaterialRequest.type as Lookup_App_Material_Request_Type_Enum,
 			isPending: graphQlMaterialRequest.is_pending,
 			...this.adaptArchivationData(graphQlMaterialRequest, history),
-			status: graphQlMaterialRequest.status,
+			status: graphQlMaterialRequest.status as Lookup_App_Material_Request_Status_Enum,
 			...this.adaptDownloadRelatedData(graphQlMaterialRequest),
 			requestGroupName: graphQlMaterialRequest.name ?? null,
 			requestGroupId: graphQlMaterialRequest.group_id ?? null,
 			requesterId: graphQlMaterialRequest.requested_by.id,
 			requesterFullName: graphQlMaterialRequest.requested_by.full_name,
+			requesterFirstName: graphQlMaterialRequest.requested_by.first_name,
+			requesterLastName: graphQlMaterialRequest.requested_by.last_name,
 			requesterMail: graphQlMaterialRequest.requested_by.mail,
-			requesterCapacity: graphQlMaterialRequest.requester_capacity,
+			requesterLanguage: graphQlMaterialRequest.requested_by.language,
+			requesterCapacity:
+				graphQlMaterialRequest.requester_capacity as Lookup_App_Material_Request_Requester_Capacity_Enum,
 			requesterUserGroupId: graphQlMaterialRequest.requested_by.group?.id || null,
 			requesterUserGroupName: graphQlMaterialRequest.requested_by.group?.name || null,
 			requesterUserGroupLabel: graphQlMaterialRequest.requested_by.group?.label || null,
@@ -1133,7 +1128,7 @@ export class MaterialRequestsService {
 
 		return {
 			downloadAvailableAt: download_available_at,
-			downloadStatus,
+			downloadStatus: downloadStatus as Lookup_App_Material_Request_Download_Status_Enum,
 			downloadExpiresAt: download_available_at
 				? addDays(new Date(download_available_at), DAYS_AVAILABLE).toISOString()
 				: null,
@@ -1313,11 +1308,13 @@ export class MaterialRequestsService {
 				expirationDate: subDays(new Date(), DAYS_AVAILABLE).toISOString(),
 			});
 			return await mapLimit(
-				response.app_material_requests,
+				response.app_material_requests as GqlMaterialRequest[],
 				5,
 				// Requires arrow wrapper, because otherwise the second param is the index in the array,
-				// and that's interpreted as the organisations array in the adapt function
-				(materialRequest: GqlMaterialRequest) => this.adapt(materialRequest, false)
+				// and that's interpreted as the organisation array in the adapt function
+				async (materialRequest: GqlMaterialRequest): Promise<MaterialRequest | null> => {
+					return await this.adapt(materialRequest, false);
+				}
 			);
 		} catch (err) {
 			const error = customError('Failed to find material requests with expired download', err);
@@ -1588,5 +1585,27 @@ export class MaterialRequestsService {
 					console.error(error);
 				});
 		}
+	}
+
+	/**
+	 * Finds material requests that have an event "ADDITIONAL_CONDITIONS"
+	 * but don't have a corresponding "ADDITIONAL_CONDITIONS_REMINDER_SENT", "ADDITIONAL_CONDITIONS_ACCEPTED" nor "ADDITIONAL_CONDITIONS_DENIED" event after them.
+	 */
+	public async findMaterialRequestsWithPendingAdditionalConditions(): Promise<MaterialRequest[]> {
+		const reminderInDays = Number.parseFloat(
+			this.configService.get('MATERIAL_REQUEST_ADDITIONAL_REQUIREMENTS_REMINDER_DAYS') || '30'
+		);
+		const response = await this.dataService.execute<
+			FindMaterialRequestsWithUnresolvedAdditionalConditionsQuery,
+			FindMaterialRequestsWithUnresolvedAdditionalConditionsQueryVariables
+		>(FindMaterialRequestsWithUnresolvedAdditionalConditionsDocument, {
+			reminderDate: subDays(new Date(), reminderInDays).toISOString(),
+		});
+
+		const rawMaterialRequests =
+			response.app_material_requests_with_pending_additional_conditions || [];
+		return mapLimit(rawMaterialRequests, 10, async (rawMaterialRequest) => {
+			return this.adapt(rawMaterialRequest, false);
+		});
 	}
 }

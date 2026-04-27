@@ -38,11 +38,20 @@ import {
 	Lookup_App_Material_Request_Message_Type_Enum,
 } from '~generated/graphql-db-types-hetarchief';
 
+import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
+import { ConfigService } from '@nestjs/config';
 import { mapLimit } from 'blend-promise-utils';
 import { addMilliseconds, format } from 'date-fns';
-import { MaterialRequestMessageBodyAdditionalConditionsDto } from '~modules/material-request-messages/dto/material-request-message-body-additional-conditions.dto';
+import type { Configuration } from '~config';
+import { ConsentToTrackOption, EmailTemplate, } from '~modules/campaign-monitor/campaign-monitor.types';
+import { CampaignMonitorSendMailDto } from '~modules/campaign-monitor/dto/campaign-monitor.dto';
+import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
+import {
+	MaterialRequestMessageBodyAdditionalConditionsDto
+} from '~modules/material-request-messages/dto/material-request-message-body-additional-conditions.dto';
 import { MaterialRequestPdfGeneratorService } from '~modules/material-request-messages/services/material-request-pdf-generator';
 import { MaterialRequest } from '~modules/material-requests/material-requests.types';
+import { UsersService } from '~modules/users/services/users.service';
 import { PaginationHelper } from '~shared/helpers/pagination';
 import { SortDirection } from '~shared/types';
 
@@ -54,8 +63,11 @@ const ATTACHMENT_ORDER_PROP_TO_DB_PROP: Record<MaterialRequestAttachmentOrderPro
 @Injectable()
 export class MaterialRequestMessagesService {
 	constructor(
+		private configService: ConfigService<Configuration>,
 		private dataService: DataService,
-		private materialRequestPdfGeneratorService: MaterialRequestPdfGeneratorService
+		private materialRequestPdfGeneratorService: MaterialRequestPdfGeneratorService,
+		private campaignMonitorService: CampaignMonitorService,
+		private usersService: UsersService
 	) {}
 
 	/**
@@ -347,9 +359,7 @@ export class MaterialRequestMessagesService {
 			materialRequest,
 			profileId,
 			Lookup_App_Material_Request_Message_Type_Enum.AdditionalConditions,
-			extraConditions,
-			new Date().toString(),
-			null
+			extraConditions
 		);
 	}
 
@@ -363,8 +373,6 @@ export class MaterialRequestMessagesService {
 			materialRequest,
 			profileId,
 			Lookup_App_Material_Request_Message_Type_Enum.AdditionalConditionsAccepted,
-			null,
-			new Date().toString(),
 			null
 		);
 	}
@@ -379,9 +387,85 @@ export class MaterialRequestMessagesService {
 			materialRequest,
 			profileId,
 			Lookup_App_Material_Request_Message_Type_Enum.AdditionalConditionsDenied,
-			null,
-			new Date().toString(),
 			null
 		);
+	}
+
+	/**
+	 * Sends an e-mail to the requester of a material request when the evaluator of the material request has added additional requirements
+	 * @param materialRequest
+	 */
+	public async sendEmailForAdditionalConditionsToRequester(materialRequest: MaterialRequest) {
+		try {
+			const emailInfo: CampaignMonitorSendMailDto = {
+				template:
+					EmailTemplate.CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_ADDITIONAL_REQUIREMENTS_SENT,
+				data: {
+					to: materialRequest.requesterMail,
+					replyTo: materialRequest.contactMail,
+					data: this.campaignMonitorService.convertMaterialRequestToEmailTemplateFields(
+						materialRequest
+					),
+					consentToTrack: ConsentToTrackOption.UNCHANGED,
+				},
+			};
+			await this.campaignMonitorService.sendTransactionalMail(
+				emailInfo,
+				materialRequest.requesterLanguage
+			);
+		} catch (err) {
+			console.error(
+				new CustomError(
+					'Failed to send email to the requester of a material request for adding additional conditions to a material request by the evaluator',
+					err,
+					{
+						materialRequestId: materialRequest.id,
+					}
+				)
+			);
+		}
+	}
+
+	/**
+	 * Sends an email to the maintainer of the object that was requested with the message that the requester has accepted the additional requirements imposed by the evaluator of the material request
+	 * @param materialRequest
+	 * @param userId
+	 */
+	public async sendEmailForAcceptanceOfAdditionalConditionsToEvaluators(
+		materialRequest: MaterialRequest,
+		userId: string
+	) {
+		try {
+			const emailInfo: CampaignMonitorSendMailDto = {
+				template:
+					EmailTemplate.CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_ADDITIONAL_REQUIREMENTS_ACCEPTED,
+				data: {
+					to: materialRequest.requesterMail,
+					replyTo: materialRequest.contactMail,
+					data: this.campaignMonitorService.convertMaterialRequestToEmailTemplateFields(
+						materialRequest
+					),
+					consentToTrack: ConsentToTrackOption.UNCHANGED,
+				},
+			};
+			await this.campaignMonitorService.sendTransactionalMail(
+				emailInfo,
+				// Same language as the requester:
+				// https://meemoo.atlassian.net/wiki/spaces/HA2/pages/6088949761/Overzicht+transactionele+mails+-+Hermes+CL+4#3.-Bijkomende-gebruiksvoorwaarden-werden-geaccepteerd
+				materialRequest.requesterLanguage
+			);
+		} catch (err) {
+			console.error(
+				new CustomError(
+					'Failed to send email for accepting additional conditions to maintainer of the object in the material request',
+					err,
+					{
+						materialRequestId: materialRequest.id,
+						userId,
+						functionName: 'sendEmailForAcceptanceOfAdditionalConditionsToEvaluators',
+					}
+				)
+			);
+		}
 	}
 }
