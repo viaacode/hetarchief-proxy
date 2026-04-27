@@ -1,0 +1,316 @@
+query getIeObjectDetail($ieObjectId: String!) {
+	getIeObject: graph_intellectual_entity(where: { id: { _eq: $ieObjectId } }) {
+		schema_identifier
+		id
+		schema_position
+		schema_date_published
+		dcterms_available
+		schema_name
+		schema_description
+		schema_date_created
+		ebucore_has_cast_member
+		schema_issue_number
+		schema_credit_text
+		schema_copyright_notice
+		schema_abstract
+		bibframe_edition
+		ebucore_synopsis
+		schema_number_of_pages: ha_des_number_of_pages
+		premis_is_part_of: relation_is_part_of
+		schemaMaintainer {
+			org_identifier
+			skos_pref_label
+			ha_org_has_logo
+			ha_org_request_form
+			dcterms_description
+			ha_org_sector
+			foaf_homepage
+			skos_alt_label
+			hasPreference {
+				ha_pref
+			}
+		}
+	}
+
+	getDctermsFormat: graph__dcterms_format(where: { intellectual_entity_id: { _eq: $ieObjectId } }) {
+		dcterms_format
+	}
+
+	getHasCarrier: graph_carrier(where: { intellectual_entity_id: { _eq: $ieObjectId } }) {
+		premis_medium
+		schema_width
+		schema_height
+		bibframe_production_method
+		created_at
+		digitization_date
+	}
+
+	getHasPart: graph_intellectual_entity(
+		where: { relation_is_part_of: { _eq: $ieObjectId } }
+		order_by: { schema_position: asc }
+	) {
+		schema_position
+		schemaMentions(where: { highlights: {} }) {
+			confidence
+			highlights {
+				x
+				y
+				width
+				height
+			}
+			thing {
+				id
+				schema_name
+				schema_birth_date
+				schema_birth_place
+				schema_death_date
+				schema_death_place
+			}
+		}
+		isRepresentedBy {
+			id
+			schema_name
+			is_media_fragment_of
+			schema_in_language
+			schema_start_time
+			schema_end_time
+			schemaTranscriptUrls {
+				schema_transcript
+				schema_transcript_url
+			}
+			edm_is_next_in_sequence
+			updated_at
+			includes {
+				file {
+					id
+					schema_name
+					ebucore_has_mime_type
+					premis_stored_at
+					schema_thumbnail_url
+					schema_duration
+					edm_is_next_in_sequence
+					created_at
+				}
+			}
+		}
+	}
+
+	getIsPartOf: graph__intellectual_entity(where: { id: { _eq: $ieObjectId } }) {
+		isPartOf {
+			schema_identifier
+			id
+			schema_is_part_of
+			schema_duration
+			schema_number_of_pages
+			schema_position
+			schema_date_published
+			dcterms_available
+			schema_name
+			schema_description
+			schema_creator
+			dcterms_format
+			dcterms_medium
+			schema_thumbnail_url
+			schema_duration
+			schema_license
+			schema_date_created
+			meemoo_local_id
+			premis_is_part_of
+			bibframe_edition
+			schemaMaintainer {
+				org_identifier
+				skos_pref_label
+				skos_alt_label
+				ha_org_has_logo
+				ha_org_request_form
+				dcterms_description
+				ha_org_sector
+				foaf_homepage
+				hasPreference {
+					ha_pref
+				}
+			}
+			schemaInLanguage {
+				schema_in_language
+			}
+			schemaKeywords {
+				schema_keywords
+			}
+			premisIdentifier {
+				premis_identifier
+			}
+			schemaGenre {
+				schema_genre
+			}
+			schemaSpatial {
+				schema_spatial
+			}
+			schemaPublisher {
+				schema_publisher_array
+			}
+			schemaTemporal {
+				schema_temporal
+			}
+			schemaCopyrightHolder {
+				schema_copyright_holder
+			}
+			intellectualEntity {
+				schema_issue_number
+				mhFragmentIdentifier {
+					mh_fragment_identifier
+				}
+				schema_credit_text
+				schema_copyright_notice
+				hasCarrier {
+					premis_medium
+					schema_width
+					schema_height
+					bibframe_production_method
+					created_at
+					digitization_date
+				}
+				schema_abstract
+				schemaAlternateName {
+					schema_alternate_name
+				}
+				bibframe_edition
+				ebucore_synopsis
+			}
+		}
+	}
+
+	getIsRepresentedBy: graph__intellectual_entity(
+		where: { id: { _eq: $ieObjectId } }
+		order_by: { schema_position: asc }
+	) {
+		schema_position
+		isRepresentedBy {
+			id
+			schema_name
+			is_media_fragment_of
+			schema_in_language
+			schema_start_time
+			schema_end_time
+			schema_transcript
+			schemaTranscriptUrls {
+				schema_transcript_url
+			}
+			edm_is_next_in_sequence
+			updated_at
+			includes {
+				file {
+					id
+					schema_name
+					ebucore_has_mime_type
+					premis_stored_at
+					schema_thumbnail_url
+					schema_duration
+					edm_is_next_in_sequence
+					created_at
+				}
+			}
+		}
+	}
+
+	getMeemooLocalId: graph_premis_identifier(
+		where: { intellectual_entity_id: { _eq: $ieObjectId }, type: { _eq: "primary" } }
+	) {
+		meemoo_local_id: value
+	}
+
+	getMhFragmentIdentifier: graph_mh_fragment_identifier(
+		where: { intellectual_entity_id: { _eq: $ieObjectId } }
+	) {
+		mh_fragment_identifier
+	}
+
+	getParentCollection: graph_schema_is_part_of(
+		where: { intellectual_entity_id: { _eq: $ieObjectId } }
+	) {
+		collection {
+			id
+			schema_identifier
+			schema_name
+			collection_type
+			isPreceededBy {
+				schema_name
+			}
+			isSucceededBy {
+				schema_name
+			}
+			schema_location_created
+			schema_start_date
+			schema_end_date
+			schema_publisher
+			schema_season_number
+		}
+	}
+
+	getSchemaAlternateName: graph_schema_alternate_name(
+		where: { intellectual_entity_id: { _eq: $ieObjectId } }
+	) {
+		schema_alternate_name
+	}
+
+	getSchemaCopyrightHolder: graph_schema_copyright_holder(
+		where: { intellectual_entity_id: { _eq: $ieObjectId } }
+	) {
+		schema_copyright_holder
+	}
+
+	getSchemaCreator: graph__schema_creator(where: { intellectual_entity_id: { _eq: $ieObjectId } }) {
+		schema_creator_array
+	}
+
+	getSchemaDuration: graph__schema_duration(
+		where: { intellectual_entity_id: { _eq: $ieObjectId } }
+	) {
+		schema_duration
+	}
+
+	getSchemaGenre: graph_schema_genre(where: { intellectual_entity_id: { _eq: $ieObjectId } }) {
+		schema_genre
+	}
+
+	getSchemaInLanguage: graph_schema_in_language(
+		where: { intellectual_entity_id: { _eq: $ieObjectId } }
+	) {
+		schema_in_language
+	}
+
+	getSchemaKeywords: graph_schema_keywords(
+		where: { intellectual_entity_id: { _eq: $ieObjectId } }
+	) {
+		schema_keywords
+	}
+
+	getSchemaLicense: graph_schema_license(where: { intellectual_entity_id: { _eq: $ieObjectId } }) {
+		schema_license
+	}
+
+	getSchemaMedium: graph__premis_medium(where: { intellectual_entity_id: { _eq: $ieObjectId } }) {
+		premis_medium
+	}
+
+	getSchemaPublisher: graph__schema_publisher(
+		where: { intellectual_entity_id: { _eq: $ieObjectId } }
+	) {
+		schema_publisher_array
+	}
+
+	getSchemaSpatial: graph_schema_spatial(where: { intellectual_entity_id: { _eq: $ieObjectId } }) {
+		schema_spatial
+	}
+
+	getSchemaTemporal: graph_schema_temporal(
+		where: { intellectual_entity_id: { _eq: $ieObjectId } }
+	) {
+		schema_temporal
+	}
+
+	getSchemaThumbnailUrl: graph__schema_thumbnail_url(
+		where: { intellectual_entity_id: { _eq: $ieObjectId } }
+	) {
+		schema_thumbnail_url
+	}
+}

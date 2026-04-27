@@ -1,5 +1,0 @@
-query getSchemaGenre($ieObjectId: String!) {
-	schemaGenre: graph_schema_genre(where: { intellectual_entity_id: { _eq: $ieObjectId } }) {
-		schema_genre
-	}
-}

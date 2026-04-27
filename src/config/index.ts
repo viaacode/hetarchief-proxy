@@ -186,6 +186,7 @@ const config = (): Configuration => {
 		ELASTICSEARCH_LOG_QUERIES: getEnvValue('ELASTICSEARCH_LOG_QUERIES', false) === 'true',
 		ELASTICSEARCH_CACHE_QUERIES: getEnvValue('ELASTICSEARCH_CACHE_QUERIES', true) !== 'false', // If not set, default to true
 		GRAPHQL_LOG_QUERIES: getEnvValue('GRAPHQL_LOG_QUERIES', false) === 'true',
+		IE_OBJECT_LOG_ACCESS_CHECKS: getEnvValue('IE_OBJECT_LOG_ACCESS_CHECKS', false) === 'true',
 		CLIENT_API_KEY: getEnvValue('CLIENT_API_KEY', true),
 		ZENDESK_ENDPOINT: getEnvValue('ZENDESK_ENDPOINT', true),
 		ZENDESK_USERNAME: getEnvValue('ZENDESK_USERNAME', true),
