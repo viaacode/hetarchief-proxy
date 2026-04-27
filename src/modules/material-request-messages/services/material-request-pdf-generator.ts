@@ -4,7 +4,7 @@ import { join } from 'node:path';
 import { AssetsService, TranslationsService } from '@meemoo/admin-core-api';
 import { Injectable } from '@nestjs/common';
 import { AvoFileUploadAssetType } from '@viaa/avo2-types';
-import { format, isValid, Locale as DateFnsLocale, parseISO } from 'date-fns';
+import { Locale as DateFnsLocale, format, isValid, parseISO } from 'date-fns';
 import { enGB, nlBE } from 'date-fns/locale';
 import { drop, take } from 'lodash';
 import PDFDocument from 'pdfkit';
@@ -20,6 +20,7 @@ import {
 	type MaterialRequestMessageBodyStatusUpdateWithMotivation,
 	MaterialRequestTimeUsage,
 } from '~modules/material-request-messages/material-request-messages.types';
+import { getStatusEvent } from '~modules/material-requests/material-requests.consts';
 import {
 	MaterialRequest,
 	MaterialRequestDurationType,
@@ -505,7 +506,7 @@ export class MaterialRequestPdfGeneratorService {
 		locale: Locale
 	): void {
 		const findEvent = (type: Lookup_App_Material_Request_Message_Type_Enum) =>
-			materialRequest.history.find((e) => e.messageType === type);
+			getStatusEvent(materialRequest.history, type);
 
 		const deniedEvent = findEvent(Lookup_App_Material_Request_Message_Type_Enum.Denied);
 		const approvedEvent = findEvent(Lookup_App_Material_Request_Message_Type_Enum.Approved);

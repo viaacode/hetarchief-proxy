@@ -63,7 +63,7 @@ export const getAdditionEventDate = (
 	time?: string;
 } => {
 	if (type === LogEventType.ITEM_REQUEST_APPROVE) {
-		const event = getStatusEventDate(
+		const event = getStatusEvent(
 			request.history,
 			Lookup_App_Material_Request_Message_Type_Enum.Approved
 		);
@@ -74,7 +74,7 @@ export const getAdditionEventDate = (
 	}
 
 	if (type === LogEventType.ITEM_REQUEST_DENY) {
-		const event = getStatusEventDate(
+		const event = getStatusEvent(
 			request.history,
 			Lookup_App_Material_Request_Message_Type_Enum.Denied
 		);
@@ -85,7 +85,7 @@ export const getAdditionEventDate = (
 	}
 
 	if (type === LogEventType.ITEM_REQUEST_CANCEL) {
-		const event = getStatusEventDate(
+		const event = getStatusEvent(
 			request.history,
 			Lookup_App_Material_Request_Message_Type_Enum.Cancelled
 		);
@@ -104,9 +104,9 @@ export const getAdditionEventDate = (
 	return {};
 };
 
-const getStatusEventDate = (
+export const getStatusEvent = (
 	statusEvents: MaterialRequestEvent[],
 	messageType: Lookup_App_Material_Request_Message_Type_Enum
-): MaterialRequestEvent => {
+): MaterialRequestEvent | undefined => {
 	return statusEvents?.find((e) => e.messageType === messageType);
 };

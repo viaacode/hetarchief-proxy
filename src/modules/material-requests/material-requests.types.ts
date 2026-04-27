@@ -47,6 +47,7 @@ export interface MaterialRequest {
 	type: Lookup_App_Material_Request_Type_Enum;
 	isPending: boolean;
 	isArchived: boolean;
+	willBeArchivedAt: string | null;
 	status: Lookup_App_Material_Request_Status_Enum;
 	history: MaterialRequestEvent[];
 
