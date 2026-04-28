@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsNumber, IsOptional, IsString } from 'class-validator';
 
 import { MaterialRequestAttachmentOrderProp } from '../material-request-messages.types';
 
@@ -52,13 +52,12 @@ export class MaterialRequestAttachmentsQueryDto {
 
 export class CreateMaterialRequestMessageDto {
 	@IsString()
-	@IsNotEmpty()
+	@IsOptional()
 	@ApiProperty({
 		type: String,
 		description: 'The message text to send',
-		required: true,
 	})
-	message: string;
+	message?: string;
 
 	@IsOptional()
 	@ApiPropertyOptional({

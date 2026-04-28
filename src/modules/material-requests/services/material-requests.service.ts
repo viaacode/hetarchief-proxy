@@ -610,7 +610,11 @@ export class MaterialRequestsService {
 			}
 
 			// Trying to update the status to APPROVED or DENIED, but user is the one who made the request or the user is not part of the same organisation
-			if (!isUserAllowedToAdvanceStatus && !isAutoAccept) {
+			if (
+				!isUserAllowedToAdvanceStatus &&
+				// Bypass permission check if we're executing an auto approve after accepting the additional conditions
+				!(newStatus === Lookup_App_Material_Request_Status_Enum.Approved && isAutoAccept)
+			) {
 				throw new BadRequestException(
 					`Material request (${currentRequest.id}) could not be set to ${newStatus}. User is not allowed to change the status to ${newStatus}`
 				);
