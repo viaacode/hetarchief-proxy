@@ -27,7 +27,11 @@ import {
 	UpdateMaterialRequestDto,
 	UpdateMaterialRequestStatusDto,
 } from '../dto/material-requests.dto';
-import type { MaterialRequest, MaterialRequestMaintainer } from '../material-requests.types';
+import type {
+	MaterialRequest,
+	MaterialRequestMaintainer,
+	MaterialRequestStatus,
+} from '../material-requests.types';
 
 import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
 import { Lookup_App_Material_Request_Status_Enum } from '~generated/graphql-db-types-hetarchief';
@@ -123,6 +127,17 @@ export class MaterialRequestsController {
 			referer,
 			ip
 		);
+	}
+
+	@Get(':id/status')
+	@RequireAnyPermissions(
+		PermissionName.VIEW_ANY_MATERIAL_REQUESTS,
+		PermissionName.VIEW_OWN_MATERIAL_REQUESTS
+	)
+	public async getMaterialRequestStatusById(
+		@Param('id', ParseUUIDPipe) id: string
+	): Promise<MaterialRequestStatus> {
+		return this.materialRequestsService.findStatusById(id);
 	}
 
 	@Get(':id/download')
