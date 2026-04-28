@@ -28,8 +28,8 @@ import {
 	type VisitEmailInfo,
 } from '../campaign-monitor.types';
 import {
-	CampaignMonitorConfirmationData,
 	CampaignMonitorConfirmMailQueryDto,
+	CampaignMonitorConfirmationData,
 	CampaignMonitorData,
 	CampaignMonitorMaterialRequestData,
 	CampaignMonitorNewsletterUpdatePreferencesQueryDto,
@@ -42,6 +42,7 @@ import { decryptData, encryptData } from '../helpers/crypto-helper';
 import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
 import { Lookup_Languages_Enum } from '~generated/graphql-db-types-hetarchief';
 import {
+	MaterialRequest,
 	MaterialRequestRequesterCapacity,
 	MaterialRequestType,
 } from '~modules/material-requests/material-requests.types';
@@ -598,6 +599,19 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 				MATERIAL_REQUEST_REQUESTER_CAPACITY_TRANSLATIONS[emailInfo.sendRequestListDto.type],
 			user_organisation: emailInfo.sendRequestListDto.organisation,
 			user_email: emailInfo.materialRequests[0]?.requesterMail,
+		};
+	}
+
+	public convertMaterialRequestToEmailTemplateFields(materialRequest: MaterialRequest) {
+		return {
+			user_firstname: materialRequest.requesterFirstName,
+			user_lastname: materialRequest.requesterLastName,
+			user_email: materialRequest.requesterMail,
+			user_organisation: materialRequest.requesterOrganisation,
+			cp_name: materialRequest.maintainerName,
+			cp_email: materialRequest.contactMail,
+			object_name: materialRequest.objectSchemaName,
+			object_id: materialRequest.objectSchemaIdentifier,
 		};
 	}
 

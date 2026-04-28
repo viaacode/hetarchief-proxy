@@ -104,9 +104,20 @@ export const getAdditionEventDate = (
 	return {};
 };
 
-export const getStatusEvent = (
+export function getStatusEvent(
 	statusEvents: MaterialRequestEvent[],
 	messageType: Lookup_App_Material_Request_Message_Type_Enum
-): MaterialRequestEvent | undefined => {
+): MaterialRequestEvent | undefined {
 	return statusEvents?.find((e) => e.messageType === messageType);
-};
+}
+
+export function getLastStatusEventOfType(
+	statusEvents: MaterialRequestEvent[],
+	messageTypes: Lookup_App_Material_Request_Message_Type_Enum[]
+): MaterialRequestEvent | null {
+	return (
+		statusEvents.findLast((event): boolean => {
+			return messageTypes.includes(event.messageType);
+		}) || null
+	);
+}
