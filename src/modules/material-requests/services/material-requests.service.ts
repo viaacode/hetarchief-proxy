@@ -3,7 +3,17 @@ import { AssetsService, DataService, Locale, StillsObjectType, VideoStillsServic
 import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException, } from '@nestjs/common';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { mapLimit } from 'blend-promise-utils';
-import { compact, groupBy, intersection, isArray, isEmpty, isNil, kebabCase, noop, set, } from 'lodash';
+import {
+	compact,
+	groupBy,
+	intersection,
+	isArray,
+	isEmpty,
+	isNil,
+	kebabCase,
+	noop,
+	set,
+} from 'lodash';
 
 import {
 	CreateMaterialRequestDto,
@@ -88,7 +98,10 @@ import {
 	UpdateMaterialRequestStatusMutation,
 	UpdateMaterialRequestStatusMutationVariables,
 } from '~generated/graphql-db-types-hetarchief';
-import { EmailTemplate, type MaterialRequestEmailInfo, } from '~modules/campaign-monitor/campaign-monitor.types';
+import {
+	EmailTemplate,
+	type MaterialRequestEmailInfo,
+} from '~modules/campaign-monitor/campaign-monitor.types';
 
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 import {
@@ -96,8 +109,8 @@ import {
 	IeObjectAccessThrough,
 	IeObjectLicense,
 	type IeObjectSector,
-	IeObjectsVisitorSpaceInfo,
 	IeObjectType,
+	IeObjectsVisitorSpaceInfo,
 	SimpleIeObjectType,
 } from '~modules/ie-objects/ie-objects.types';
 import type { Organisation } from '~modules/organisations/organisations.types';
@@ -476,7 +489,8 @@ export class MaterialRequestsService {
 		>,
 		reuseForm: Record<string, string> | MaterialRequestReuseForm | undefined,
 		referer: string,
-		ip: string
+		ip: string,
+		resolveThumbnail = true
 	): Promise<MaterialRequest> {
 		const updateMaterialRequest = {
 			...materialRequestInfo,
@@ -518,7 +532,7 @@ export class MaterialRequestsService {
 
 		return this.adapt(
 			updatedRequest,
-			true,
+			resolveThumbnail,
 			organisations,
 			visitorSpaceAccessInfo,
 			user,
