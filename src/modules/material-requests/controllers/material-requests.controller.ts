@@ -274,11 +274,16 @@ export class MaterialRequestsController {
 				materialRequest.requestGroupName = sendRequestListDto?.requestGroupName;
 			}
 
-			await this.materialRequestsService.sendRequestList(materialRequests, sendRequestListDto, {
-				firstName: user.getFirstName(),
-				lastName: user.getLastName(),
-				language: user.getLanguage(),
-			});
+			this.materialRequestsService
+				.sendRequestList(materialRequests, sendRequestListDto, {
+					firstName: user.getFirstName(),
+					lastName: user.getLastName(),
+					language: user.getLanguage(),
+				})
+				.then(noop) // Let's not wait on the sending of the lists
+				.catch((err) => {
+					console.error(new CustomError('Failed to send the material requests', err));
+				});
 
 			const material_request_group_id = randomUUID();
 			// store the update requests so we can use them for the events to prevent data loss
@@ -305,16 +310,25 @@ export class MaterialRequestsController {
 							},
 							materialRequest.reuseForm,
 							referer,
-							ip
+							ip,
+							false
 						);
+
 					if (
 						updatedMaterialRequest.status === Lookup_App_Material_Request_Status_Enum.New &&
 						updatedMaterialRequest.reuseForm
 					) {
 						// Generate a summary PDF of the reuse form and store it in a REUSE_SUMMARY message
-						await this.materialRequestMessagesService.createReuseSummaryMessage(
-							updatedMaterialRequest
-						);
+						this.materialRequestMessagesService
+							.createReuseSummaryMessage(updatedMaterialRequest)
+							.then(noop) // Let's not wait on this
+							.catch((err) => {
+								const error = new InternalServerErrorException({
+									message: 'Could not create reuse form summary',
+									innerException: err,
+								});
+								console.error(error);
+							});
 					}
 					return updatedMaterialRequest;
 				})
