@@ -37,6 +37,7 @@ import {
 	MAP_MATERIAL_REQUEST_STATUS_TO_EVENT_TYPE,
 	ORDER_PROP_TO_DB_PROP,
 	getAdditionEventDate,
+	getStatusEvent,
 } from '../material-requests.consts';
 import {
 	GqlMaterialRequest,
@@ -78,6 +79,8 @@ import {
 	FindMaterialRequestsWithExpiredDownloadQueryVariables,
 	FindMaterialRequestsWithUnresolvedDownloadStatusDocument,
 	FindMaterialRequestsWithUnresolvedDownloadStatusQuery,
+	GetMaterialRequestByJobIdForDownloadJobDocument,
+	GetMaterialRequestByJobIdForDownloadJobQueryVariables,
 	GetMaterialRequestForDownloadJobDocument,
 	GetMaterialRequestForDownloadJobQuery,
 	GetMaterialRequestForDownloadJobQueryVariables,
@@ -125,7 +128,7 @@ import { OrganisationsService } from '~modules/organisations/services/organisati
 import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
 import { ConfigService } from '@nestjs/config';
 import { AvoStillsStillInfo, AvoUserCommonUser } from '@viaa/avo2-types';
-import { addDays, isWithinInterval, subDays, subMonths } from 'date-fns';
+import { addDays, addMonths, isWithinInterval, subDays, subMonths } from 'date-fns';
 import type { Configuration } from '~config';
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
@@ -133,6 +136,7 @@ import { limitAccessToObjectDetails } from '~modules/ie-objects/helpers/limit-ac
 import { mapDcTermsFormatToSimpleType } from '~modules/ie-objects/helpers/map-dc-terms-format-to-simple-type';
 import { IE_OBJECT_INTRA_CP_LICENSES } from '~modules/ie-objects/ie-objects.conts';
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
+import { MaterialRequestEvent } from '~modules/material-request-messages/material-request-messages.types';
 import { MaterialRequestMessagesService } from '~modules/material-request-messages/services/material-request-messages.service';
 import { MediahavenJobsWatcherService } from '~modules/mediahaven-jobs-watcher/services/mediahaven-jobs-watcher.service';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
@@ -1062,6 +1066,11 @@ export class MaterialRequestsService {
 			ip
 		);
 
+		const history = (
+			(graphQlMaterialRequest as FindMaterialRequestsByIdQuery['app_material_requests'][0])
+				.messages_and_events || []
+		).map(this.materialRequestMessageService.adaptEvent);
+
 		return {
 			id: graphQlMaterialRequest.id,
 			objectId,
@@ -1082,7 +1091,7 @@ export class MaterialRequestsService {
 			requestedAt: graphQlMaterialRequest.requested_at,
 			type: graphQlMaterialRequest.type,
 			isPending: graphQlMaterialRequest.is_pending,
-			isArchived: graphQlMaterialRequest.is_archived,
+			...this.adaptArchivationData(graphQlMaterialRequest, history),
 			status: graphQlMaterialRequest.status,
 			...this.adaptDownloadRelatedData(graphQlMaterialRequest),
 			requestGroupName: graphQlMaterialRequest.name ?? null,
@@ -1112,10 +1121,7 @@ export class MaterialRequestsService {
 			objectMeemooLocalId:
 				(graphQlMaterialRequest as FindMaterialRequestsQuery['app_material_requests'][0])
 					?.intellectualEntity?.premisIdentifier?.[0]?.value || null,
-			history: (
-				(graphQlMaterialRequest as FindMaterialRequestsByIdQuery['app_material_requests'][0])
-					.messages_and_events || []
-			).map(this.materialRequestMessageService.adaptEvent),
+			history,
 		};
 	}
 
@@ -1144,6 +1150,40 @@ export class MaterialRequestsService {
 			downloadExpiresAt: download_available_at
 				? addDays(new Date(download_available_at), DAYS_AVAILABLE).toISOString()
 				: null,
+		};
+	}
+
+	private adaptArchivationData(
+		graphQlMaterialRequest: GqlMaterialRequest,
+		history: MaterialRequestEvent[]
+	): Pick<MaterialRequest, 'isArchived' | 'willBeArchivedAt'> {
+		const closureEvent = getStatusEvent(
+			history,
+			Lookup_App_Material_Request_Message_Type_Enum.FinalSummary
+		);
+
+		if (!closureEvent) {
+			return { isArchived: false, willBeArchivedAt: null };
+		}
+
+		const TIME_BEFORE_ARCHIVATION = Number.parseFloat(
+			this.configService.get('MATERIAL_REQUEST_TIME_BEFORE_ARCHIVATION')
+		);
+		const USE_DAYS =
+			this.configService.get('MATERIAL_REQUEST_USE_DAYS_INSTEAD_MONTHS_BEFORE_ARCHIVATION') ===
+			'true';
+
+		let willBeArchivedAt: string;
+
+		if (USE_DAYS) {
+			willBeArchivedAt = addDays(new Date(), TIME_BEFORE_ARCHIVATION).toISOString();
+		} else {
+			willBeArchivedAt = addMonths(new Date(), TIME_BEFORE_ARCHIVATION).toISOString();
+		}
+
+		return {
+			isArchived: graphQlMaterialRequest.is_archived,
+			willBeArchivedAt,
 		};
 	}
 
@@ -1374,6 +1414,20 @@ export class MaterialRequestsService {
 
 		const materialRequest = response.app_material_requests?.[0];
 		return materialRequest ? this.adaptMaterialRequestForDownloadJobs(materialRequest) : null;
+	}
+
+	async getMaterialRequestsByJobId(
+		exportJobIds: string[]
+	): Promise<(MaterialRequestForDownload | null)[]> {
+		const response = await this.dataService.execute<
+			GetMaterialRequestForDownloadJobQuery,
+			GetMaterialRequestByJobIdForDownloadJobQueryVariables
+		>(GetMaterialRequestByJobIdForDownloadJobDocument, {
+			jobIds: exportJobIds,
+		});
+
+		const materialRequests = response.app_material_requests;
+		return materialRequests.map(this.adaptMaterialRequestForDownloadJobs);
 	}
 
 	/**
