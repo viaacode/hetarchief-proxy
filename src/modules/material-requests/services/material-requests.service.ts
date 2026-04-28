@@ -545,7 +545,12 @@ export class MaterialRequestsService {
 	private validateStatusTransition(
 		currentRequest: MaterialRequest,
 		newStatus: Lookup_App_Material_Request_Status_Enum,
-		user: SessionUserEntity
+		user: SessionUserEntity,
+		/**
+		 * Allows you to bypass the user permissions check.
+		 * This can be useful for auto approving a material request after the requester accepts the additional conditions.
+		 */
+		isAutoAccept: boolean
 	) {
 		const isRequester = currentRequest.requesterId === user.getId();
 		const isEvaluatorOfCp =
@@ -557,9 +562,9 @@ export class MaterialRequestsService {
 			!isRequester && (isEvaluatorOfCp || user.getGroupName() === GroupName.MEEMOO_ADMIN);
 
 		// User is not allowed to do anything with the status
-		if (!isUserAllowedToCancel && !isUserAllowedToAdvanceStatus) {
+		if (!isUserAllowedToCancel && !isUserAllowedToAdvanceStatus && !isAutoAccept) {
 			throw new BadRequestException(
-				`Material request (${currentRequest.id}) could not be set to ${newStatus}.`
+				`Material request (${currentRequest.id}) could not be set to ${newStatus}. User does not have required permissions.`
 			);
 		}
 
@@ -590,7 +595,7 @@ export class MaterialRequestsService {
 				!isUserAllowedToAdvanceStatus
 			) {
 				throw new BadRequestException(
-					`Material request (${currentRequest.id}) could not be set to ${newStatus}.`
+					`Material request (${currentRequest.id}) could not be set to ${newStatus}. User is not allowed to change the status to ${newStatus}`
 				);
 			}
 		} else if (currentRequest.status === Lookup_App_Material_Request_Status_Enum.Pending) {
@@ -600,14 +605,14 @@ export class MaterialRequestsService {
 				newStatus !== Lookup_App_Material_Request_Status_Enum.Denied
 			) {
 				throw new BadRequestException(
-					`Material request (${currentRequest.id}) could not be set to ${newStatus}.`
+					`Material request (${currentRequest.id}) could not be set to ${newStatus}. Only pending material requests are allowed to bee set to ${newStatus}`
 				);
 			}
 
 			// Trying to update the status to APPROVED or DENIED, but user is the one who made the request or the user is not part of the same organisation
-			if (!isUserAllowedToAdvanceStatus) {
+			if (!isUserAllowedToAdvanceStatus && !isAutoAccept) {
 				throw new BadRequestException(
-					`Material request (${currentRequest.id}) could not be set to ${newStatus}.`
+					`Material request (${currentRequest.id}) could not be set to ${newStatus}. User is not allowed to change the status to ${newStatus}`
 				);
 			}
 		} else {
@@ -625,6 +630,11 @@ export class MaterialRequestsService {
 		referer: string,
 		ip: string,
 		requestPath: string,
+		/**
+		 * Allows you to bypass the user permissions check.
+		 * This can be useful for auto approving a material request after the requester accepts the additional conditions.
+		 */
+		isAutoAccept: boolean,
 		eventId?: string
 	): Promise<MaterialRequest> {
 		const currentRequest = await this.findById(
@@ -637,7 +647,7 @@ export class MaterialRequestsService {
 
 		const { status, motivation } = statusOptions;
 
-		this.validateStatusTransition(currentRequest, status, user);
+		this.validateStatusTransition(currentRequest, status, user, isAutoAccept);
 
 		if (status === Lookup_App_Material_Request_Status_Enum.Cancelled) {
 			await this.materialRequestMessageService.createMessage(

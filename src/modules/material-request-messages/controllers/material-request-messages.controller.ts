@@ -32,7 +32,10 @@ import {
 	Lookup_App_Material_Request_Message_Type_Enum,
 	Lookup_App_Material_Request_Status_Enum,
 } from '~generated/graphql-db-types-hetarchief';
-import { ConsentToTrackOption, EmailTemplate, } from '~modules/campaign-monitor/campaign-monitor.types';
+import {
+	ConsentToTrackOption,
+	EmailTemplate,
+} from '~modules/campaign-monitor/campaign-monitor.types';
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 import { AddExtraConditionsBodyDto } from '~modules/material-request-messages/dto/material-request-message-body-additional-conditions.dto';
 import {
@@ -40,12 +43,13 @@ import {
 	MaterialRequestAttachmentsQueryDto,
 } from '~modules/material-request-messages/dto/material-request-messages.dto';
 import {
+	AdditionalRequirementErrors,
 	ExtraConditionsAction,
 	MaterialRequestAttachment,
 	MaterialRequestMessage,
 	MaterialRequestMessageBodyAdditionalConditions,
 } from '~modules/material-request-messages/material-request-messages.types';
-import { getStatusEvent } from '~modules/material-requests/material-requests.consts';
+import { getLastStatusEventOfType } from '~modules/material-requests/material-requests.consts';
 import { MaterialRequest } from '~modules/material-requests/material-requests.types';
 import { MaterialRequestsService } from '~modules/material-requests/services/material-requests.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
@@ -256,6 +260,25 @@ export class MaterialRequestMessagesController {
 	): Promise<void> {
 		try {
 			const materialRequest = await this.verifyAccessToMaterialRequest(materialRequestId, user);
+
+			const lastAdditionalConditionsEvent = getLastStatusEventOfType(materialRequest.history, [
+				Lookup_App_Material_Request_Message_Type_Enum.AdditionalConditions,
+				Lookup_App_Material_Request_Message_Type_Enum.AdditionalConditionsAccepted,
+				Lookup_App_Material_Request_Message_Type_Enum.AdditionalConditionsDenied,
+			]);
+			if (
+				lastAdditionalConditionsEvent.messageType ===
+				Lookup_App_Material_Request_Message_Type_Enum.AdditionalConditions
+			) {
+				throw new CustomError(
+					'This material request already has pending additional conditions',
+					null,
+					{
+						errorCode: AdditionalRequirementErrors.ALREADY_HAS_PENDING_ADDITIONAL_REQUIREMENTS,
+					}
+				);
+			}
+
 			await this.materialRequestMessagesService.addExtraConditions(
 				materialRequest,
 				user.getId(),
@@ -329,35 +352,50 @@ export class MaterialRequestMessagesController {
 			// Validate access for current user and material request
 			const materialRequest = await this.verifyAccessToMaterialRequest(materialRequestId, user);
 			if (user.getId() !== materialRequest.requesterId) {
-				throw new ForbiddenException(
-					'Only the requester of the material request can accept or decline additional conditions'
+				throw new CustomError(
+					'Only the requester of the material request can accept or decline additional conditions',
+					null,
+					{
+						errorCode: AdditionalRequirementErrors.ONLY_REQUESTER_CAN_ACCEPT_OR_DECLINE,
+					}
 				);
 			}
-			const additionalConditionsEvent = getStatusEvent(
-				materialRequest.history,
-				Lookup_App_Material_Request_Message_Type_Enum.AdditionalConditions
-			);
-			const hasAdditionalConditionsAlreadyAccepted: boolean = !!getStatusEvent(
-				materialRequest.history,
+			const lastAdditionalConditionsEvent = getLastStatusEventOfType(materialRequest.history, [
+				Lookup_App_Material_Request_Message_Type_Enum.AdditionalConditions,
+				Lookup_App_Material_Request_Message_Type_Enum.AdditionalConditionsAccepted,
+				Lookup_App_Material_Request_Message_Type_Enum.AdditionalConditionsDenied,
+			]);
+			if (!lastAdditionalConditionsEvent) {
+				throw new CustomError(
+					'This material request does not have additional conditions to accept',
+					null,
+					{
+						errorCode: AdditionalRequirementErrors.NO_ADDITIONAL_CONDITIONS_TO_ACCEPT,
+					}
+				);
+			}
+			if (
+				lastAdditionalConditionsEvent.messageType ===
 				Lookup_App_Material_Request_Message_Type_Enum.AdditionalConditionsAccepted
-			);
-			const hasAdditionalConditionsAlreadyDeclined: boolean = !!getStatusEvent(
-				materialRequest.history,
+			) {
+				throw new CustomError(
+					'Additional conditions for this material request have already been accepted',
+					null,
+					{
+						errorCode: AdditionalRequirementErrors.ALREADY_ACCEPTED_ADDITIONAL_CONDITIONS,
+					}
+				);
+			}
+			if (
+				lastAdditionalConditionsEvent.messageType ===
 				Lookup_App_Material_Request_Message_Type_Enum.AdditionalConditionsDenied
-			);
-			if (!additionalConditionsEvent) {
-				throw new BadRequestException(
-					'This material request does not have additional conditions to accept'
-				);
-			}
-			if (hasAdditionalConditionsAlreadyAccepted) {
-				throw new BadRequestException(
-					'Additional conditions for this material request have already been accepted'
-				);
-			}
-			if (hasAdditionalConditionsAlreadyDeclined) {
-				throw new BadRequestException(
-					'Additional conditions for this material request have already been declined'
+			) {
+				throw new CustomError(
+					'Additional conditions for this material request have already been declined',
+					null,
+					{
+						errorCode: AdditionalRequirementErrors.ALREADY_DECLINED_ADDITIONAL_CONDITIONS,
+					}
 				);
 			}
 			if (action === ExtraConditionsAction.ACCEPT) {
@@ -372,7 +410,7 @@ export class MaterialRequestMessagesController {
 
 				// Check if whole material request should be approved
 				const autoAccept = (
-					additionalConditionsEvent.body as MaterialRequestMessageBodyAdditionalConditions
+					lastAdditionalConditionsEvent.body as MaterialRequestMessageBodyAdditionalConditions
 				).autoApproveAfterAcceptAdditionalConditions;
 				if (autoAccept) {
 					await this.materialRequestsService.updateMaterialRequestStatus(
@@ -385,6 +423,7 @@ export class MaterialRequestMessagesController {
 						referer,
 						ip,
 						request.path,
+						true, // Approve even though current user is requester
 						EventsHelper.getEventId(request)
 					);
 				} else {
@@ -405,6 +444,7 @@ export class MaterialRequestMessagesController {
 					referer,
 					ip,
 					request.path,
+					false,
 					EventsHelper.getEventId(request)
 				);
 			} else {

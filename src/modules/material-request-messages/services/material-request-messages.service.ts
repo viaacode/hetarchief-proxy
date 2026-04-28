@@ -43,12 +43,13 @@ import { ConfigService } from '@nestjs/config';
 import { mapLimit } from 'blend-promise-utils';
 import { addMilliseconds, format } from 'date-fns';
 import type { Configuration } from '~config';
-import { ConsentToTrackOption, EmailTemplate, } from '~modules/campaign-monitor/campaign-monitor.types';
+import {
+	ConsentToTrackOption,
+	EmailTemplate,
+} from '~modules/campaign-monitor/campaign-monitor.types';
 import { CampaignMonitorSendMailDto } from '~modules/campaign-monitor/dto/campaign-monitor.dto';
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
-import {
-	MaterialRequestMessageBodyAdditionalConditionsDto
-} from '~modules/material-request-messages/dto/material-request-message-body-additional-conditions.dto';
+import { MaterialRequestMessageBodyAdditionalConditionsDto } from '~modules/material-request-messages/dto/material-request-message-body-additional-conditions.dto';
 import { MaterialRequestPdfGeneratorService } from '~modules/material-request-messages/services/material-request-pdf-generator';
 import { MaterialRequest } from '~modules/material-requests/material-requests.types';
 import { UsersService } from '~modules/users/services/users.service';
@@ -450,7 +451,7 @@ export class MaterialRequestMessagesService {
 			};
 			await this.campaignMonitorService.sendTransactionalMail(
 				emailInfo,
-				// Same language as the requester:
+				// Same language as the requester even though we send it to the maintainer contact email
 				// https://meemoo.atlassian.net/wiki/spaces/HA2/pages/6088949761/Overzicht+transactionele+mails+-+Hermes+CL+4#3.-Bijkomende-gebruiksvoorwaarden-werden-geaccepteerd
 				materialRequest.requesterLanguage
 			);
