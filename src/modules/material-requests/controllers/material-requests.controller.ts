@@ -280,7 +280,10 @@ export class MaterialRequestsController {
 					lastName: user.getLastName(),
 					language: user.getLanguage(),
 				})
-				.then(noop); // Let's not wait on the sending of the lists
+				.then(noop) // Let's not wait on the sending of the lists
+				.catch((err) => {
+					console.error(new CustomError('Failed to send the material requests', err));
+				});
 
 			const material_request_group_id = randomUUID();
 			// store the update requests so we can use them for the events to prevent data loss
