@@ -377,6 +377,7 @@ export class MediahavenJobsWatcherService {
 	}
 
 	private getFpsFromMediahavenRecord(record: MediaHavenRecord, exportHighQuality: boolean): number {
+		/* See also: https://meemoo.atlassian.net/browse/OPS-4123?focusedCommentId=82512
 		const browseFps: string | undefined = record?.Internal?.Browses.Browse.find(
 			(browse) => browse.VideoFps
 		)?.VideoFps;
@@ -396,6 +397,9 @@ export class MediahavenJobsWatcherService {
 			});
 		}
 		return fpsDecimal;
+		 */
+
+		return 25;
 	}
 
 	private async getMediaHavenExportJobRequestBody(materialRequest: MaterialRequestForDownload) {
