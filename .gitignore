@@ -66,4 +66,6 @@ query-autocomplete.json
 # husky pre-commit files
 /husky
 
+# ai assistant files
 .claude/
+.github/
