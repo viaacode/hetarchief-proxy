@@ -35,6 +35,7 @@ import {
 	type QueryBuilderInputInfo,
 	QueryType,
 	READABLE_TO_ELASTIC_FILTER_NAMES,
+	REUSABILITY_CATEGORY_URIS,
 	VALUE_OPERATORS,
 } from './elasticsearch.consts';
 
@@ -406,6 +407,7 @@ export class QueryBuilder {
 			IeObjectsSearchFilterField.CONSULTABLE_ONLY_ON_LOCATION,
 			IeObjectsSearchFilterField.CONSULTABLE_MEDIA,
 			IeObjectsSearchFilterField.CONSULTABLE_PUBLIC_DOMAIN,
+			IeObjectsSearchFilterField.REUSABILITY,
 			IeObjectsSearchFilterField.RELEASE_DATE,
 		];
 		let validatedFilters = filters;
@@ -554,6 +556,9 @@ export class QueryBuilder {
 			(filter: SearchFilter) =>
 				filter.field === IeObjectsSearchFilterField.CONSULTABLE_PUBLIC_DOMAIN
 		);
+		const reusabilityFilter = searchRequestFilters.find(
+			(filter: SearchFilter) => filter.field === IeObjectsSearchFilterField.REUSABILITY
+		);
 		const releaseDates = searchRequestFilters.filter(
 			(filter: SearchFilter) => filter.field === IeObjectsSearchFilterField.RELEASE_DATE
 		);
@@ -637,6 +642,26 @@ export class QueryBuilder {
 					},
 				],
 			});
+		}
+
+		// Filter by reusability category: expand selected category keys to their rights statement URIs
+		if (reusabilityFilter?.multiValue?.length) {
+			const uris = reusabilityFilter.multiValue.flatMap(
+				(category) => REUSABILITY_CATEGORY_URIS[category] ?? []
+			);
+			if (uris.length) {
+				toBeAppliedCustomFilters.push({
+					occurrenceType: 'filter',
+					query: [
+						{
+							terms: {
+								_name: 'REUSABILITY',
+								dcterms_rights_statement: uris,
+							},
+						},
+					],
+				});
+			}
 		}
 
 		if (releaseDates.length) {
