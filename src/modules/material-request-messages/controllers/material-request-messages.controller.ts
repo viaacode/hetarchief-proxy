@@ -15,7 +15,7 @@ import {
 	UseGuards,
 	UseInterceptors,
 } from '@nestjs/common';
-import { ApiBody, ApiConsumes, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiConsumes, ApiOperation, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
 import type { IPagination } from '@studiohyperdrive/pagination';
 import { AvoFileUploadAssetType, PermissionName } from '@viaa/avo2-types';
 
@@ -27,20 +27,26 @@ import { FilesInterceptor } from '@nestjs/platform-express';
 import archiver from 'archiver';
 import { mapLimit } from 'blend-promise-utils';
 import type { Request, Response } from 'express';
-import { kebabCase } from 'lodash';
+import { kebabCase, noop } from 'lodash';
 import {
 	Lookup_App_Material_Request_Message_Type_Enum,
 	Lookup_App_Material_Request_Status_Enum,
 } from '~generated/graphql-db-types-hetarchief';
-import { MaterialRequestMessageBodyAdditionalConditionsDto } from '~modules/material-request-messages/dto/material-request-message-body-additional-conditions.dto';
-import { MaterialRequestAttachmentsQueryDto } from '~modules/material-request-messages/dto/material-request-messages.dto';
+import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
+import { AddExtraConditionsBodyDto } from '~modules/material-request-messages/dto/material-request-message-body-additional-conditions.dto';
 import {
+	CreateMaterialRequestMessageDto,
+	MaterialRequestAttachmentsQueryDto,
+} from '~modules/material-request-messages/dto/material-request-messages.dto';
+import {
+	AdditionalRequirementErrors,
+	ExtraConditionsAction,
 	MaterialRequestAttachment,
 	MaterialRequestAttachmentOrderProp,
 	MaterialRequestMessage,
 	MaterialRequestMessageBodyAdditionalConditions,
 } from '~modules/material-request-messages/material-request-messages.types';
-import { getStatusEvent } from '~modules/material-requests/material-requests.consts';
+import { getLastStatusEventOfType } from '~modules/material-requests/material-requests.consts';
 import { MaterialRequest } from '~modules/material-requests/material-requests.types';
 import { MaterialRequestsService } from '~modules/material-requests/services/material-requests.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
@@ -49,6 +55,7 @@ import { Ip } from '~shared/decorators/ip.decorator';
 import { Referer } from '~shared/decorators/referer.decorator';
 import { RequireAnyPermissions } from '~shared/decorators/require-any-permissions.decorator';
 import { SessionUser } from '~shared/decorators/user.decorator';
+import { ApiKeyGuard } from '~shared/guards/api-key.guard';
 import { IsEvaluatorGuard } from '~shared/guards/is-evaluator.guard';
 import { LocalhostGuard } from '~shared/guards/localhost.guard';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
@@ -83,13 +90,26 @@ export class MaterialRequestMessagesController {
 		private materialRequestMessagesService: MaterialRequestMessagesService,
 		private materialRequestsService: MaterialRequestsService,
 		private assetsService: AssetsService,
-		private materialRequestPdfGenerator: MaterialRequestPdfGeneratorService
+		private materialRequestPdfGenerator: MaterialRequestPdfGeneratorService,
+		private campaignMonitorService: CampaignMonitorService
 	) {}
 
 	@Get(':materialRequestId/messages')
 	@ApiOperation({
 		description:
 			'Get messages for a specific materials request. And mark messages as read for the current user.',
+	})
+	@ApiQuery({
+		name: 'page',
+		type: Number,
+		description: 'Which page of results to fetch. Counting starts at 1',
+		example: 1,
+	})
+	@ApiQuery({
+		name: 'size',
+		type: Number,
+		description: 'The max. number of results to return',
+		example: 20,
 	})
 	@RequireAnyPermissions(
 		PermissionName.VIEW_OWN_MATERIAL_REQUESTS,
@@ -159,19 +179,7 @@ export class MaterialRequestMessagesController {
 		description: 'Create one material request messages with optional file uploads. ',
 	})
 	@ApiConsumes('multipart/form-data')
-	@ApiBody({
-		schema: {
-			type: 'object',
-			properties: {
-				message: { type: 'string' },
-				files: {
-					type: 'array',
-					items: { type: 'string', format: 'binary' },
-				},
-			},
-			required: ['message'],
-		},
-	})
+	@ApiBody({ type: CreateMaterialRequestMessageDto })
 	@RequireAnyPermissions(
 		PermissionName.VIEW_OWN_MATERIAL_REQUESTS,
 		PermissionName.VIEW_ANY_MATERIAL_REQUESTS
@@ -254,23 +262,43 @@ export class MaterialRequestMessagesController {
 
 	@Post(':materialRequestId/extra-conditions/add')
 	@UseGuards(IsEvaluatorGuard)
+	@ApiOperation({
+		description: 'Add extra conditions to a material request. Only evaluators can do this.',
+	})
+	@ApiBody({ type: AddExtraConditionsBodyDto })
 	public async addExtraConditions(
 		@Param('materialRequestId') materialRequestId: string,
 		@SessionUser() user: SessionUserEntity,
-		@Body('extraConditions') extraConditions: MaterialRequestMessageBodyAdditionalConditionsDto
+		@Body() body: AddExtraConditionsBodyDto
 	): Promise<void> {
 		try {
 			const materialRequest = await this.verifyAccessToMaterialRequest(materialRequestId, user);
+
+			const lastAdditionalConditionsEvent = getLastStatusEventOfType(materialRequest.history, [
+				Lookup_App_Material_Request_Message_Type_Enum.AdditionalConditions,
+				Lookup_App_Material_Request_Message_Type_Enum.AdditionalConditionsAccepted,
+				Lookup_App_Material_Request_Message_Type_Enum.AdditionalConditionsDenied,
+			]);
+			if (lastAdditionalConditionsEvent) {
+				throw new CustomError('This material request already has additional conditions', null, {
+					errorCode: AdditionalRequirementErrors.ALREADY_HAS_ADDITIONAL_REQUIREMENTS,
+				});
+			}
+
 			await this.materialRequestMessagesService.addExtraConditions(
 				materialRequest,
 				user.getId(),
-				extraConditions
+				body.extraConditions
 			);
+			// send email to notify requester of additional conditions
+			this.materialRequestMessagesService
+				.sendEmailForAdditionalConditionsToRequester(materialRequest)
+				.then(noop);
 		} catch (err) {
 			const error = new CustomError('Failed to add extra conditions to material request', err, {
 				materialRequestId,
 				userId: user?.getId(),
-				extraConditions,
+				extraConditions: body.extraConditions,
 			});
 			console.log(error);
 			error.innerException = null;
@@ -278,56 +306,111 @@ export class MaterialRequestMessagesController {
 		}
 	}
 
+	/**
+	 * Will send a reminder email when additional conditions were added to a material request, but the requester has not yet accepted or declined them within 30 days.
+	 * This endpoint will be triggered by a cron job trigger in the hasura database
+	 */
+	@UseGuards(ApiKeyGuard)
+	@ApiOperation({
+		description:
+			'Will send a reminder email when additional conditions were added to a material request, but the requester has not yet accepted or declined them within 30 days.',
+	})
+	@Post('send-reminders-for-material-request-additional-conditions')
+	public async sendRemindersForAdditionalConditions(): Promise<{ message: string }> {
+		this.materialRequestsService
+			.sendReminderForMaterialRequestsWithPendingAdditionalConditions()
+			.then(noop)
+			.catch((err) => {
+				console.error(
+					new CustomError('Failed to send additional conditions reminder emails', err, {})
+				);
+			});
+		return {
+			message: 'Checking reminders for pending additional conditions for material requests',
+		};
+	}
+
 	@Post(':materialRequestId/extra-conditions/:action')
-	public async acceptExtraConditions(
+	@ApiOperation({
+		description:
+			'Accept or decline extra conditions for a material request. Only the requester can perform this action. Use "accept" or "decline" as the action path parameter.',
+	})
+	@ApiParam({
+		name: 'action',
+		enum: ExtraConditionsAction,
+		description: 'Whether to accept or decline the extra conditions',
+	})
+	public async acceptOrDeclineExtraConditions(
 		@Param('materialRequestId') materialRequestId: string,
-		@Param('action') action: 'accept' | 'decline',
+		@Param('action') action: ExtraConditionsAction,
 		@SessionUser() user: SessionUserEntity,
 		@Referer() referer: string,
 		@Ip() ip: string,
 		@Req() request: Request
 	): Promise<void> {
 		try {
+			// Validate access for current user and material request
 			const materialRequest = await this.verifyAccessToMaterialRequest(materialRequestId, user);
 			if (user.getId() !== materialRequest.requesterId) {
-				throw new ForbiddenException(
-					'Only the requester of the material request can accept or decline additional conditions'
+				throw new CustomError(
+					'Only the requester of the material request can accept or decline additional conditions',
+					null,
+					{
+						errorCode: AdditionalRequirementErrors.ONLY_REQUESTER_CAN_ACCEPT_OR_DECLINE,
+					}
 				);
 			}
-			const additionalConditionsEvent = getStatusEvent(
-				materialRequest.history,
-				Lookup_App_Material_Request_Message_Type_Enum.AdditionalConditions
-			);
-			const hasAdditionalConditionsAlreadyAccepted: boolean = !!getStatusEvent(
-				materialRequest.history,
+			const lastAdditionalConditionsEvent = getLastStatusEventOfType(materialRequest.history, [
+				Lookup_App_Material_Request_Message_Type_Enum.AdditionalConditions,
+				Lookup_App_Material_Request_Message_Type_Enum.AdditionalConditionsAccepted,
+				Lookup_App_Material_Request_Message_Type_Enum.AdditionalConditionsDenied,
+			]);
+			if (!lastAdditionalConditionsEvent) {
+				throw new CustomError(
+					'This material request does not have additional conditions to accept',
+					null,
+					{
+						errorCode: AdditionalRequirementErrors.NO_ADDITIONAL_CONDITIONS_TO_ACCEPT,
+					}
+				);
+			}
+			if (
+				lastAdditionalConditionsEvent.messageType ===
 				Lookup_App_Material_Request_Message_Type_Enum.AdditionalConditionsAccepted
-			);
-			const hasAdditionalConditionsAlreadyDeclined: boolean = !!getStatusEvent(
-				materialRequest.history,
+			) {
+				throw new CustomError(
+					'Additional conditions for this material request have already been accepted',
+					null,
+					{
+						errorCode: AdditionalRequirementErrors.ALREADY_ACCEPTED_ADDITIONAL_CONDITIONS,
+					}
+				);
+			}
+			if (
+				lastAdditionalConditionsEvent.messageType ===
 				Lookup_App_Material_Request_Message_Type_Enum.AdditionalConditionsDenied
-			);
-			if (!additionalConditionsEvent) {
-				throw new BadRequestException(
-					'This material request does not have additional conditions to accept'
+			) {
+				throw new CustomError(
+					'Additional conditions for this material request have already been declined',
+					null,
+					{
+						errorCode: AdditionalRequirementErrors.ALREADY_DECLINED_ADDITIONAL_CONDITIONS,
+					}
 				);
 			}
-			if (hasAdditionalConditionsAlreadyAccepted) {
-				throw new BadRequestException(
-					'Additional conditions for this material request have already been accepted'
-				);
-			}
-			if (hasAdditionalConditionsAlreadyDeclined) {
-				throw new BadRequestException(
-					'Additional conditions for this material request have already been declined'
-				);
-			}
-			if (action === 'accept') {
+			if (action === ExtraConditionsAction.ACCEPT) {
 				await this.materialRequestMessagesService.acceptExtraConditions(
 					materialRequest,
 					user.getId()
 				);
+				// Send email for the acceptance of the additional conditions
+				this.materialRequestMessagesService
+					.sendEmailForAcceptanceOfAdditionalConditionsToEvaluators(materialRequest, user.getId())
+					.then(noop);
+
+				// Check if whole material request should be approved
 				const autoAccept = (
-					additionalConditionsEvent.body as MaterialRequestMessageBodyAdditionalConditions
+					lastAdditionalConditionsEvent.body as MaterialRequestMessageBodyAdditionalConditions
 				).autoApproveAfterAcceptAdditionalConditions;
 				if (autoAccept) {
 					await this.materialRequestsService.updateMaterialRequestStatus(
@@ -340,12 +423,13 @@ export class MaterialRequestMessagesController {
 						referer,
 						ip,
 						request.path,
+						true, // Approve even though current user is requester
 						EventsHelper.getEventId(request)
 					);
 				} else {
 					// The evaluator will still have to manually approve the material request
 				}
-			} else if (action === 'decline') {
+			} else if (action === ExtraConditionsAction.DECLINE) {
 				await this.materialRequestMessagesService.declineExtraConditions(
 					materialRequest,
 					user.getId()
@@ -360,6 +444,7 @@ export class MaterialRequestMessagesController {
 					referer,
 					ip,
 					request.path,
+					false,
 					EventsHelper.getEventId(request)
 				);
 			} else {

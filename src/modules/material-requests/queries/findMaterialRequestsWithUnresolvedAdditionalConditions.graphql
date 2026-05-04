@@ -1,10 +1,10 @@
-query findMaterialRequestsWithAlmostExpiredDownload($warningDate: timestamp!) {
-	app_material_requests(
+query findMaterialRequestsWithUnresolvedAdditionalConditions($reminderDate: timestamp!) {
+	app_material_requests_with_pending_additional_conditions(
 		where: {
-			status: { _eq: APPROVED }
-			download_status: { _eq: SUCCEEDED }
-			download_available_at: { _lte: $warningDate }
-			download_expiry_warning_email_sent: { _eq: false }
+			messages_and_events: {
+				message_type: { _eq: ADDITIONAL_CONDITIONS }
+				created_at: { _lt: $reminderDate }
+			}
 		}
 	) {
 		id

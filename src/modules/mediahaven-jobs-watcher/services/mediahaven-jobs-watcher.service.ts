@@ -225,8 +225,6 @@ export class MediahavenJobsWatcherService {
 									updatedRequest,
 									null,
 									Lookup_App_Material_Request_Message_Type_Enum.DownloadAvailable,
-									null,
-									new Date().toISOString(),
 									null
 								);
 
@@ -349,8 +347,6 @@ export class MediahavenJobsWatcherService {
 						updatedRequest,
 						null,
 						Lookup_App_Material_Request_Message_Type_Enum.DownloadExpired,
-						null,
-						new Date().toISOString(),
 						null
 					);
 

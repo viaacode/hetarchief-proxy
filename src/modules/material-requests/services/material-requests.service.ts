@@ -81,6 +81,9 @@ import {
 	FindMaterialRequestsWithExpiredDownloadDocument,
 	FindMaterialRequestsWithExpiredDownloadQuery,
 	FindMaterialRequestsWithExpiredDownloadQueryVariables,
+	FindMaterialRequestsWithUnresolvedAdditionalConditionsDocument,
+	FindMaterialRequestsWithUnresolvedAdditionalConditionsQuery,
+	FindMaterialRequestsWithUnresolvedAdditionalConditionsQueryVariables,
 	FindMaterialRequestsWithUnresolvedDownloadStatusDocument,
 	FindMaterialRequestsWithUnresolvedDownloadStatusQuery,
 	GetMaterialRequestByJobIdForDownloadJobDocument,
@@ -111,6 +114,7 @@ import {
 	UpdateMaterialRequestStatusMutationVariables,
 } from '~generated/graphql-db-types-hetarchief';
 import {
+	ConsentToTrackOption,
 	EmailTemplate,
 	type MaterialRequestEmailInfo,
 } from '~modules/campaign-monitor/campaign-monitor.types';
@@ -594,7 +598,12 @@ export class MaterialRequestsService {
 	private validateStatusTransition(
 		currentRequest: MaterialRequest,
 		newStatus: Lookup_App_Material_Request_Status_Enum,
-		user: SessionUserEntity
+		user: SessionUserEntity,
+		/**
+		 * Allows you to bypass the user permissions check.
+		 * This can be useful for auto approving a material request after the requester accepts the additional conditions.
+		 */
+		isAutoAccept: boolean
 	) {
 		const isRequester = currentRequest.requesterId === user.getId();
 		const isEvaluatorOfCp =
@@ -606,9 +615,9 @@ export class MaterialRequestsService {
 			!isRequester && (isEvaluatorOfCp || user.getGroupName() === GroupName.MEEMOO_ADMIN);
 
 		// User is not allowed to do anything with the status
-		if (!isUserAllowedToCancel && !isUserAllowedToAdvanceStatus) {
+		if (!isUserAllowedToCancel && !isUserAllowedToAdvanceStatus && !isAutoAccept) {
 			throw new BadRequestException(
-				`Material request (${currentRequest.id}) could not be set to ${newStatus}.`
+				`Material request (${currentRequest.id}) could not be set to ${newStatus}. User does not have required permissions.`
 			);
 		}
 
@@ -639,7 +648,7 @@ export class MaterialRequestsService {
 				!isUserAllowedToAdvanceStatus
 			) {
 				throw new BadRequestException(
-					`Material request (${currentRequest.id}) could not be set to ${newStatus}.`
+					`Material request (${currentRequest.id}) could not be set to ${newStatus}. User is not allowed to change the status to ${newStatus}`
 				);
 			}
 		} else if (currentRequest.status === Lookup_App_Material_Request_Status_Enum.Pending) {
@@ -649,14 +658,25 @@ export class MaterialRequestsService {
 				newStatus !== Lookup_App_Material_Request_Status_Enum.Denied
 			) {
 				throw new BadRequestException(
-					`Material request (${currentRequest.id}) could not be set to ${newStatus}.`
+					`Material request (${currentRequest.id}) could not be set to ${newStatus}. Only pending material requests are allowed to bee set to ${newStatus}`
 				);
 			}
 
-			// Trying to update the status to APPROVED or DENIED, but user is the one who made the request or the user is not part of the same organisation
-			if (!isUserAllowedToAdvanceStatus) {
+			// Trying to update the status to DENIED, but user is the one who made the request or the user is not part of the same organisation
+			if (
+				!isUserAllowedToAdvanceStatus &&
+				newStatus === Lookup_App_Material_Request_Status_Enum.Denied
+			) {
 				throw new BadRequestException(
-					`Material request (${currentRequest.id}) could not be set to ${newStatus}.`
+					`Material request (${currentRequest.id}) could not be set to ${newStatus}. User is not allowed to change the status to ${newStatus}`
+				);
+			}
+
+			// Trying to update the status to APPROVED
+			// but user is the one who made the request or the user is not part of the same organisation and it is no auto accept
+			if (!isUserAllowedToAdvanceStatus && !isAutoAccept) {
+				throw new BadRequestException(
+					`Material request (${currentRequest.id}) could not be set to ${newStatus}. User is not allowed to change the status to ${newStatus}`
 				);
 			}
 		} else {
@@ -674,6 +694,11 @@ export class MaterialRequestsService {
 		referer: string,
 		ip: string,
 		requestPath: string,
+		/**
+		 * Allows you to bypass the user permissions check.
+		 * This can be useful for auto approving a material request after the requester accepts the additional conditions.
+		 */
+		isAutoAccept: boolean,
 		eventId?: string
 	): Promise<MaterialRequest> {
 		const currentRequest = await this.findById(
@@ -686,7 +711,7 @@ export class MaterialRequestsService {
 
 		const { status, motivation } = statusOptions;
 
-		this.validateStatusTransition(currentRequest, status, user);
+		this.validateStatusTransition(currentRequest, status, user, isAutoAccept);
 
 		if (status === Lookup_App_Material_Request_Status_Enum.Cancelled) {
 			await this.materialRequestMessageService.createMessage(
@@ -1127,17 +1152,21 @@ export class MaterialRequestsService {
 			createdAt: graphQlMaterialRequest.created_at,
 			updatedAt: graphQlMaterialRequest.updated_at,
 			requestedAt: graphQlMaterialRequest.requested_at,
-			type: graphQlMaterialRequest.type,
+			type: graphQlMaterialRequest.type as Lookup_App_Material_Request_Type_Enum,
 			isPending: graphQlMaterialRequest.is_pending,
 			...this.adaptArchivationData(graphQlMaterialRequest, history),
-			status: graphQlMaterialRequest.status,
+			status: graphQlMaterialRequest.status as Lookup_App_Material_Request_Status_Enum,
 			...this.adaptDownloadRelatedData(graphQlMaterialRequest),
 			requestGroupName: graphQlMaterialRequest.name ?? null,
 			requestGroupId: graphQlMaterialRequest.group_id ?? null,
 			requesterId: graphQlMaterialRequest.requested_by.id,
 			requesterFullName: graphQlMaterialRequest.requested_by.full_name,
+			requesterFirstName: graphQlMaterialRequest.requested_by.first_name,
+			requesterLastName: graphQlMaterialRequest.requested_by.last_name,
 			requesterMail: graphQlMaterialRequest.requested_by.mail,
-			requesterCapacity: graphQlMaterialRequest.requester_capacity,
+			requesterLanguage: graphQlMaterialRequest.requested_by.language,
+			requesterCapacity:
+				graphQlMaterialRequest.requester_capacity as Lookup_App_Material_Request_Requester_Capacity_Enum,
 			requesterUserGroupId: graphQlMaterialRequest.requested_by.group?.id || null,
 			requesterUserGroupName: graphQlMaterialRequest.requested_by.group?.name || null,
 			requesterUserGroupLabel: graphQlMaterialRequest.requested_by.group?.label || null,
@@ -1184,7 +1213,7 @@ export class MaterialRequestsService {
 
 		return {
 			downloadAvailableAt: download_available_at,
-			downloadStatus,
+			downloadStatus: downloadStatus as Lookup_App_Material_Request_Download_Status_Enum,
 			downloadExpiresAt: download_available_at
 				? addDays(new Date(download_available_at), DAYS_AVAILABLE).toISOString()
 				: null,
@@ -1364,11 +1393,13 @@ export class MaterialRequestsService {
 				expirationDate: subDays(new Date(), DAYS_AVAILABLE).toISOString(),
 			});
 			return await mapLimit(
-				response.app_material_requests,
+				response.app_material_requests as GqlMaterialRequest[],
 				5,
 				// Requires arrow wrapper, because otherwise the second param is the index in the array,
-				// and that's interpreted as the organisations array in the adapt function
-				(materialRequest: GqlMaterialRequest) => this.adapt(materialRequest, false)
+				// and that's interpreted as the organisation array in the adapt function
+				async (materialRequest: GqlMaterialRequest): Promise<MaterialRequest | null> => {
+					return await this.adapt(materialRequest, false);
+				}
 			);
 		} catch (err) {
 			const error = customError('Failed to find material requests with expired download', err);
@@ -1639,5 +1670,43 @@ export class MaterialRequestsService {
 					console.error(error);
 				});
 		}
+	}
+
+	/**
+	 * Finds material requests that have an event "ADDITIONAL_CONDITIONS"
+	 * but don't have a corresponding "ADDITIONAL_CONDITIONS_REMINDER_SENT", "ADDITIONAL_CONDITIONS_ACCEPTED" nor "ADDITIONAL_CONDITIONS_DENIED" event after them.
+	 * And sends a reminder email to the requester
+	 */
+	public async sendReminderForMaterialRequestsWithPendingAdditionalConditions(): Promise<void> {
+		const reminderInDays = Number.parseFloat(
+			this.configService.get('MATERIAL_REQUEST_ADDITIONAL_REQUIREMENTS_REMINDER_DAYS') || '30'
+		);
+		const response = await this.dataService.execute<
+			FindMaterialRequestsWithUnresolvedAdditionalConditionsQuery,
+			FindMaterialRequestsWithUnresolvedAdditionalConditionsQueryVariables
+		>(FindMaterialRequestsWithUnresolvedAdditionalConditionsDocument, {
+			reminderDate: subDays(new Date(), reminderInDays).toISOString(),
+		});
+
+		const rawMaterialRequests =
+			response.app_material_requests_with_pending_additional_conditions || [];
+		await mapLimit(rawMaterialRequests, 10, async (rawMaterialRequest) => {
+			const materialRequest = await this.adapt(rawMaterialRequest, false);
+			await this.campaignMonitorService.sendTransactionalMail(
+				{
+					template:
+						EmailTemplate.CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_ADDITIONAL_REQUIREMENTS_REMINDER,
+					data: {
+						to: materialRequest.requesterMail,
+						replyTo: materialRequest.contactMail,
+						consentToTrack: ConsentToTrackOption.UNCHANGED,
+						data: this.campaignMonitorService.convertMaterialRequestToEmailTemplateFields(
+							materialRequest
+						),
+					},
+				},
+				materialRequest.requesterLanguage
+			);
+		});
 	}
 }

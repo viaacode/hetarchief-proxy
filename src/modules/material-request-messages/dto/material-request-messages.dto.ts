@@ -1,4 +1,4 @@
-import { ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsNumber, IsOptional, IsString } from 'class-validator';
 
@@ -48,4 +48,23 @@ export class MaterialRequestAttachmentsQueryDto {
 		enum: [SortDirection.asc, SortDirection.desc],
 	})
 	orderDirection? = SortDirection.asc;
+}
+
+export class CreateMaterialRequestMessageDto {
+	@IsString()
+	@IsOptional()
+	@ApiProperty({
+		type: String,
+		description: 'The message text to send',
+	})
+	message?: string;
+
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: 'array',
+		items: { type: 'string', format: 'binary' },
+		description:
+			'Optional file attachments. Allowed types: pdf, doc, docx, xls, xlsx, jpg, jpeg, png, csv, gif, tiff, tif. Max 30 MB per file, max 20 files.',
+	})
+	files?: any[];
 }
