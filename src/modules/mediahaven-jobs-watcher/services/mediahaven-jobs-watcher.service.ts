@@ -2,7 +2,7 @@ import { GetObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { DataService, MediahavenService } from '@meemoo/admin-core-api';
 import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AvoUserCommonUser } from '@viaa/avo2-types';
 import { mapLimit } from 'blend-promise-utils';
@@ -41,8 +41,8 @@ import {
 	MamAccessToken,
 	MamExportQuality,
 	MamJobStatus,
-	MediahavenJobInfo,
 	MediaHavenRecord,
+	MediahavenJobInfo,
 	S3ExportLocationToken,
 } from '~modules/mediahaven-jobs-watcher/mediahaven-jobs-watcher.types';
 import { UsersService } from '~modules/users/services/users.service';
@@ -376,6 +376,7 @@ export class MediahavenJobsWatcherService {
 	}
 
 	private getFpsFromMediahavenRecord(record: MediaHavenRecord, exportHighQuality: boolean): number {
+		/* See also: https://meemoo.atlassian.net/browse/OPS-4123?focusedCommentId=82512
 		const browseFps: string | undefined = record?.Internal?.Browses.Browse.find(
 			(browse) => browse.VideoFps
 		)?.VideoFps;
@@ -395,6 +396,9 @@ export class MediahavenJobsWatcherService {
 			});
 		}
 		return fpsDecimal;
+		 */
+
+		return 25;
 	}
 
 	private async getMediaHavenExportJobRequestBody(materialRequest: MaterialRequestForDownload) {
