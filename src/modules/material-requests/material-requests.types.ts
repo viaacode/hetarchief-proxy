@@ -81,6 +81,11 @@ export interface MaterialRequest {
 	downloadJobId?: string;
 }
 
+export type MaterialRequestStatus = Pick<
+	MaterialRequest,
+	'id' | 'status' | 'downloadStatus' | 'updatedAt' | 'history'
+>;
+
 export type MaterialRequestForDownload = Pick<
 	MaterialRequest,
 	| 'id'

@@ -41,10 +41,10 @@ import {
 	type IeObjectPages,
 	type IeObjectRepresentation,
 	type IeObjectSector,
+	IeObjectType,
 	type IeObjectsSitemap,
 	type IeObjectsVisitorSpaceInfo,
 	type IeObjectsWithAggregations,
-	IeObjectType,
 	type IsPartOfKey,
 	type Mention,
 	type RelatedIeObject,
@@ -97,15 +97,15 @@ import {
 } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
 import { AND } from '~modules/ie-objects/elasticsearch/queryBuilder.helpers';
 import {
-	convertStringToSearchTerms,
 	type SearchTermParseResult,
+	convertStringToSearchTerms,
 } from '~modules/ie-objects/helpers/convert-string-to-search-terms';
 import { AUTOCOMPLETE_FIELD_TO_ES_FIELD_NAME } from '~modules/ie-objects/ie-objects.conts';
 import {
+	CACHE_KEY_PREFIX_IE_OBJECTS_SEARCH,
 	CACHE_KEY_PREFIX_IE_OBJECT_DETAIL,
 	CACHE_KEY_PREFIX_IE_OBJECT_PID_TO_ID,
 	CACHE_KEY_PREFIX_IE_OBJECT_THUMBNAIL,
-	CACHE_KEY_PREFIX_IE_OBJECTS_SEARCH,
 } from '~modules/ie-objects/services/ie-objects.service.consts';
 import {
 	type DbFile,
@@ -989,7 +989,10 @@ export class IeObjectsService {
 	): Promise<IeObjectPages | null> {
 		const ieObjectParts = hasPartResponse || [];
 		const ieObjects = (
-			compact([ieObjectSelf, ...ieObjectParts]) as DbIeObjectWithRepresentations[]
+			compact([
+				...(isArray(ieObjectSelf) ? ieObjectSelf : [ieObjectSelf]),
+				...ieObjectParts,
+			]) as DbIeObjectWithRepresentations[]
 		).filter((ieObject) => (ieObject.isRepresentedBy?.length || 0) > 0);
 
 		if (isEmpty(ieObjects)) {

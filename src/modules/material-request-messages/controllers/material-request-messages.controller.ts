@@ -32,7 +32,10 @@ import {
 	Lookup_App_Material_Request_Message_Type_Enum,
 	Lookup_App_Material_Request_Status_Enum,
 } from '~generated/graphql-db-types-hetarchief';
-import { ConsentToTrackOption, EmailTemplate, } from '~modules/campaign-monitor/campaign-monitor.types';
+import {
+	ConsentToTrackOption,
+	EmailTemplate,
+} from '~modules/campaign-monitor/campaign-monitor.types';
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 import { AddExtraConditionsBodyDto } from '~modules/material-request-messages/dto/material-request-message-body-additional-conditions.dto';
 import {
@@ -77,7 +80,7 @@ const ALLOWED_FILE_EXTENSIONS = [
 	'tiff',
 	'tif',
 ];
-const MAX_FILE_SIZE_BYTES = 30 * 1024 * 1024; // 30 MB
+const MAX_FILE_SIZE_BYTES = 25 * 1024 * 1024; // 30 MB
 const UPLOAD_FILE_FIELD = 'files';
 const MAX_FILE_COUNT = 20;
 
@@ -207,11 +210,25 @@ export class MaterialRequestMessagesController {
 		@UploadedFiles() files?: Express.Multer.File[]
 	): Promise<MaterialRequestMessage> {
 		try {
+			let totalFileSize = 0;
+
 			const userId = user.getId();
 
 			const materialRequest = await this.verifyAccessToMaterialRequest(materialRequestId, user);
 			const attachments = files?.length
 				? await mapLimit(files, 5, async (file) => {
+						totalFileSize += file.size;
+
+						if (totalFileSize > MAX_FILE_SIZE_BYTES) {
+							// Not throwing any error since the FE already checks this, we are only uploading until the limit is reached
+							console.error(
+								new CustomError('Maximum total file size reached, not uploading the rest', null, {
+									materialRequest,
+								})
+							);
+							return;
+						}
+
 						const fileExt = path.extname(file.originalname);
 						const attachmentUrl = await this.assetsService.uploadAndTrack(
 							AvoFileUploadAssetType.MATERIAL_REQUEST_MESSAGE_ATTACHMENT as any,

@@ -1,6 +1,17 @@
 import { parse } from 'node:path';
-import { AssetsService, DataService, Locale, StillsObjectType, VideoStillsService, } from '@meemoo/admin-core-api';
-import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException, } from '@nestjs/common';
+import {
+	AssetsService,
+	DataService,
+	Locale,
+	StillsObjectType,
+	VideoStillsService,
+} from '@meemoo/admin-core-api';
+import {
+	BadRequestException,
+	Injectable,
+	InternalServerErrorException,
+	NotFoundException,
+} from '@nestjs/common';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { mapLimit } from 'blend-promise-utils';
 import {
@@ -22,11 +33,11 @@ import {
 	UpdateMaterialRequestStatusDto,
 } from '../dto/material-requests.dto';
 import {
-	getAdditionEventDate,
-	getStatusEvent,
 	MAP_MATERIAL_REQUEST_STATUS_TO_EMAIL_TEMPLATE,
 	MAP_MATERIAL_REQUEST_STATUS_TO_EVENT_TYPE,
 	ORDER_PROP_TO_DB_PROP,
+	getAdditionEventDate,
+	getStatusEvent,
 } from '../material-requests.consts';
 import {
 	GqlMaterialRequest,
@@ -40,6 +51,7 @@ import {
 	MaterialRequestReuseForm,
 	MaterialRequestReuseFormKey,
 	MaterialRequestSendRequestListUserInfo,
+	MaterialRequestStatus,
 } from '../material-requests.types';
 
 import {
@@ -60,6 +72,9 @@ import {
 	FindMaterialRequestsReadyToArchiveDocument,
 	FindMaterialRequestsReadyToArchiveQuery,
 	FindMaterialRequestsReadyToArchiveQueryVariables,
+	FindMaterialRequestsStatusByIdDocument,
+	FindMaterialRequestsStatusByIdQuery,
+	FindMaterialRequestsStatusByIdQueryVariables,
 	FindMaterialRequestsWithAlmostExpiredDownloadDocument,
 	FindMaterialRequestsWithAlmostExpiredDownloadQuery,
 	FindMaterialRequestsWithAlmostExpiredDownloadQueryVariables,
@@ -398,6 +413,29 @@ export class MaterialRequestsService {
 		);
 	}
 
+	public async findStatusById(id: string): Promise<MaterialRequestStatus> {
+		const materialRequestResponse = await this.dataService.execute<
+			FindMaterialRequestsStatusByIdQuery,
+			FindMaterialRequestsStatusByIdQueryVariables
+		>(FindMaterialRequestsStatusByIdDocument, { id });
+
+		if (isNil(materialRequestResponse) || !materialRequestResponse.app_material_requests[0]) {
+			throw new NotFoundException(`Material Request with id '${id}' not found`);
+		}
+
+		const materialRequest = materialRequestResponse.app_material_requests[0];
+
+		return {
+			id: materialRequest.id,
+			status: materialRequest.status,
+			downloadStatus: materialRequest.download_status,
+			updatedAt: materialRequest.updated_at,
+			history: (materialRequest.messages_and_events || []).map(
+				this.materialRequestMessageService.adaptEvent
+			),
+		};
+	}
+
 	public async findMaintainers(): Promise<MaterialRequestMaintainer[] | []> {
 		const response = await this.dataService.execute<
 			FindMaintainersWithMaterialRequestsQuery,
@@ -733,10 +771,15 @@ export class MaterialRequestsService {
 
 		if (updatedRequest.status === Lookup_App_Material_Request_Status_Enum.Approved) {
 			// If the request is approved, we need to start prepping the download
-			const materialRequestForDownload = await this.getMaterialRequestForDownloadJob(
-				updatedRequest.id
-			);
-			await this.mediahavenJobWatcherService.createExportJob(materialRequestForDownload);
+			this.getMaterialRequestForDownloadJob(updatedRequest.id)
+				.then((materialRequestForDownload) =>
+					this.mediahavenJobWatcherService.createExportJob(materialRequestForDownload)
+				)
+				.catch((err) => {
+					console.error(
+						new CustomError('Failed to create downloadJob for request', err, updatedRequest)
+					);
+				});
 		}
 
 		if (
@@ -744,17 +787,23 @@ export class MaterialRequestsService {
 			updatedRequest.status === Lookup_App_Material_Request_Status_Enum.Cancelled
 		) {
 			// Generate a summary PDF of the reuse form and store it in a REUSE_SUMMARY message
-			await this.materialRequestMessageService.createFinalSummaryMessage(
-				updatedRequest,
-				user.getId()
-			);
+			this.materialRequestMessageService
+				.createFinalSummaryMessage(updatedRequest, user.getId())
+				.then(noop) // Not waiting on this
+				.catch((err) => {
+					console.error(
+						new CustomError('Failed to create final summary for request', err, updatedRequest)
+					);
+				});
 		}
 
 		const emailTemplateToSend = MAP_MATERIAL_REQUEST_STATUS_TO_EMAIL_TEMPLATE[status];
 
 		if (updatedRequest && emailTemplateToSend) {
-			const requesterUser = await this.usersService.getById(updatedRequest.requesterId);
-			await this.sentStatusUpdateEmail(emailTemplateToSend, updatedRequest, requesterUser);
+			this.usersService.getById(updatedRequest.requesterId).then(
+				(requesterUser) =>
+					this.sentStatusUpdateEmail(emailTemplateToSend, updatedRequest, requesterUser) // Not waiting on this
+			);
 		}
 
 		return updatedRequest;
