@@ -594,6 +594,101 @@ describe('QueryBuilder', () => {
 			);
 		});
 
+		it('Should produce a terms query on dcterms_rights_statement when vrij-herbruikbaar is selected', () => {
+			const queryObject = QueryBuilder.build(
+				{
+					page: 1,
+					size: 10,
+					filters: [
+						{
+							field: IeObjectsSearchFilterField.REUSABILITY,
+							operator: Operator.IS,
+							multiValue: ['vrij-herbruikbaar'],
+						},
+					],
+				},
+				mockInputInfo as any
+			);
+			const queryString = JSON.stringify(queryObject);
+			expect(queryString).toContain('dcterms_rights_statement');
+			expect(queryString).toContain('https://creativecommons.org/public-domain/pdm/');
+			expect(queryString).toContain('https://creativecommons.org/publicdomain/zero/1.0/');
+			// Should not include URIs from other categories
+			expect(queryString).not.toContain('https://rightsstatements.org/page/InC/1.0/');
+		});
+
+		it('Should merge all URIs into one terms query when all 3 reusability categories are selected', () => {
+			const queryObject = QueryBuilder.build(
+				{
+					page: 1,
+					size: 10,
+					filters: [
+						{
+							field: IeObjectsSearchFilterField.REUSABILITY,
+							operator: Operator.IS,
+							multiValue: [
+								'vrij-herbruikbaar',
+								'herbruikbaar-onder-voorwaarden',
+								'misschien-herbruikbaar',
+							],
+						},
+					],
+				},
+				mockInputInfo as any
+			);
+			const queryString = JSON.stringify(queryObject);
+			// vrij-herbruikbaar
+			expect(queryString).toContain('https://creativecommons.org/public-domain/pdm/');
+			expect(queryString).toContain('https://creativecommons.org/publicdomain/zero/1.0/');
+			// herbruikbaar-onder-voorwaarden
+			expect(queryString).toContain('https://rightsstatements.org/page/NoC-CR/1.0/');
+			expect(queryString).toContain('https://creativecommons.org/licenses/by/4.0/');
+			// misschien-herbruikbaar
+			expect(queryString).toContain('https://rightsstatements.org/page/InC/1.0/');
+			expect(queryString).toContain('https://rightsstatements.org/page/UND/1.0/');
+		});
+
+		it('Should produce no reusability filter clause when multiValue is empty', () => {
+			const queryObject = QueryBuilder.build(
+				{
+					page: 1,
+					size: 10,
+					filters: [
+						{
+							field: IeObjectsSearchFilterField.REUSABILITY,
+							operator: Operator.IS,
+							multiValue: [],
+						},
+					],
+				},
+				mockInputInfo as any
+			);
+			const queryString = JSON.stringify(queryObject);
+			expect(queryString).not.toContain('dcterms_rights_statement');
+		});
+
+		it('Should silently ignore unknown reusability category keys', () => {
+			const queryObject = QueryBuilder.build(
+				{
+					page: 1,
+					size: 10,
+					filters: [
+						{
+							field: IeObjectsSearchFilterField.REUSABILITY,
+							operator: Operator.IS,
+							multiValue: ['unknown-category', 'vrij-herbruikbaar'],
+						},
+					],
+				},
+				mockInputInfo as any
+			);
+			const queryString = JSON.stringify(queryObject);
+			// Known key still works
+			expect(queryString).toContain('https://creativecommons.org/public-domain/pdm/');
+			// Unknown key produces no URIs — no crash
+			expect(queryString).not.toContain('unknown-category');
+		});
+
 		it('Should set two filter when consultableOnlyOnLocation and isConsultableMedia are set to true', () => {
 			const queryObject = QueryBuilder.build(
 				{
