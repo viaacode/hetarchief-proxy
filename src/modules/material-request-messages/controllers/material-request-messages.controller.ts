@@ -32,10 +32,6 @@ import {
 	Lookup_App_Material_Request_Message_Type_Enum,
 	Lookup_App_Material_Request_Status_Enum,
 } from '~generated/graphql-db-types-hetarchief';
-import {
-	ConsentToTrackOption,
-	EmailTemplate,
-} from '~modules/campaign-monitor/campaign-monitor.types';
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 import { AddExtraConditionsBodyDto } from '~modules/material-request-messages/dto/material-request-message-body-additional-conditions.dto';
 import {
@@ -46,6 +42,7 @@ import {
 	AdditionalRequirementErrors,
 	ExtraConditionsAction,
 	MaterialRequestAttachment,
+	MaterialRequestAttachmentOrderProp,
 	MaterialRequestMessage,
 	MaterialRequestMessageBodyAdditionalConditions,
 } from '~modules/material-request-messages/material-request-messages.types';
@@ -63,6 +60,7 @@ import { IsEvaluatorGuard } from '~shared/guards/is-evaluator.guard';
 import { LocalhostGuard } from '~shared/guards/localhost.guard';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
 import { EventsHelper } from '~shared/helpers/events';
+import { SortDirection } from '~shared/types';
 import { MaterialRequestMessagesService } from '../services/material-request-messages.service';
 import { MaterialRequestPdfGeneratorService } from '../services/material-request-pdf-generator';
 
@@ -319,25 +317,8 @@ export class MaterialRequestMessagesController {
 	})
 	@Post('send-reminders-for-material-request-additional-conditions')
 	public async sendRemindersForAdditionalConditions(): Promise<{ message: string }> {
-		const materialRequestsWithPendingAdditionalConditions =
-			await this.materialRequestsService.findMaterialRequestsWithPendingAdditionalConditions();
-		mapLimit(materialRequestsWithPendingAdditionalConditions, 5, async (materialRequest) => {
-			await this.campaignMonitorService.sendTransactionalMail(
-				{
-					template:
-						EmailTemplate.CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_ADDITIONAL_REQUIREMENTS_REMINDER,
-					data: {
-						to: materialRequest.requesterMail,
-						replyTo: materialRequest.contactMail,
-						consentToTrack: ConsentToTrackOption.UNCHANGED,
-						data: this.campaignMonitorService.convertMaterialRequestToEmailTemplateFields(
-							materialRequest
-						),
-					},
-				},
-				materialRequest.requesterLanguage
-			);
-		})
+		this.materialRequestsService
+			.sendReminderForMaterialRequestsWithPendingAdditionalConditions()
 			.then(noop)
 			.catch((err) => {
 				console.error(
@@ -486,6 +467,34 @@ export class MaterialRequestMessagesController {
 	@ApiOperation({
 		description:
 			'Get attachments for a specific material request. Returns paginated list ordered from oldest to newest by default.',
+	})
+	@ApiQuery({
+		name: 'page',
+		required: false,
+		type: Number,
+		description: 'Which page of results to fetch. Counting starts at 1',
+		example: 1,
+	})
+	@ApiQuery({
+		name: 'size',
+		required: false,
+		type: Number,
+		description: 'The max. number of results to return',
+		example: 10,
+	})
+	@ApiQuery({
+		name: 'orderProp',
+		required: false,
+		enum: MaterialRequestAttachmentOrderProp,
+		description: 'Property to sort the results by',
+		example: MaterialRequestAttachmentOrderProp.CREATED_AT,
+	})
+	@ApiQuery({
+		name: 'orderDirection',
+		required: false,
+		enum: SortDirection,
+		description: 'Direction to sort in. either desc or asc',
+		example: SortDirection.asc,
 	})
 	@RequireAnyPermissions(
 		PermissionName.VIEW_OWN_MATERIAL_REQUESTS,

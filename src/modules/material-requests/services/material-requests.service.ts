@@ -114,6 +114,7 @@ import {
 	UpdateMaterialRequestStatusMutationVariables,
 } from '~generated/graphql-db-types-hetarchief';
 import {
+	ConsentToTrackOption,
 	EmailTemplate,
 	type MaterialRequestEmailInfo,
 } from '~modules/campaign-monitor/campaign-monitor.types';
@@ -661,12 +662,19 @@ export class MaterialRequestsService {
 				);
 			}
 
-			// Trying to update the status to APPROVED or DENIED, but user is the one who made the request or the user is not part of the same organisation
+			// Trying to update the status to DENIED, but user is the one who made the request or the user is not part of the same organisation
 			if (
 				!isUserAllowedToAdvanceStatus &&
-				// Bypass permission check if we're executing an auto approve after accepting the additional conditions
-				!(newStatus === Lookup_App_Material_Request_Status_Enum.Approved && isAutoAccept)
+				newStatus === Lookup_App_Material_Request_Status_Enum.Denied
 			) {
+				throw new BadRequestException(
+					`Material request (${currentRequest.id}) could not be set to ${newStatus}. User is not allowed to change the status to ${newStatus}`
+				);
+			}
+
+			// Trying to update the status to APPROVED
+			// but user is the one who made the request or the user is not part of the same organisation and it is no auto accept
+			if (!isUserAllowedToAdvanceStatus && !isAutoAccept) {
 				throw new BadRequestException(
 					`Material request (${currentRequest.id}) could not be set to ${newStatus}. User is not allowed to change the status to ${newStatus}`
 				);
@@ -1667,8 +1675,9 @@ export class MaterialRequestsService {
 	/**
 	 * Finds material requests that have an event "ADDITIONAL_CONDITIONS"
 	 * but don't have a corresponding "ADDITIONAL_CONDITIONS_REMINDER_SENT", "ADDITIONAL_CONDITIONS_ACCEPTED" nor "ADDITIONAL_CONDITIONS_DENIED" event after them.
+	 * And sends a reminder email to the requester
 	 */
-	public async findMaterialRequestsWithPendingAdditionalConditions(): Promise<MaterialRequest[]> {
+	public async sendReminderForMaterialRequestsWithPendingAdditionalConditions(): Promise<void> {
 		const reminderInDays = Number.parseFloat(
 			this.configService.get('MATERIAL_REQUEST_ADDITIONAL_REQUIREMENTS_REMINDER_DAYS') || '30'
 		);
@@ -1681,8 +1690,23 @@ export class MaterialRequestsService {
 
 		const rawMaterialRequests =
 			response.app_material_requests_with_pending_additional_conditions || [];
-		return mapLimit(rawMaterialRequests, 10, async (rawMaterialRequest) => {
-			return this.adapt(rawMaterialRequest, false);
+		await mapLimit(rawMaterialRequests, 10, async (rawMaterialRequest) => {
+			const materialRequest = await this.adapt(rawMaterialRequest, false);
+			await this.campaignMonitorService.sendTransactionalMail(
+				{
+					template:
+						EmailTemplate.CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_ADDITIONAL_REQUIREMENTS_REMINDER,
+					data: {
+						to: materialRequest.requesterMail,
+						replyTo: materialRequest.contactMail,
+						consentToTrack: ConsentToTrackOption.UNCHANGED,
+						data: this.campaignMonitorService.convertMaterialRequestToEmailTemplateFields(
+							materialRequest
+						),
+					},
+				},
+				materialRequest.requesterLanguage
+			);
 		});
 	}
 }
