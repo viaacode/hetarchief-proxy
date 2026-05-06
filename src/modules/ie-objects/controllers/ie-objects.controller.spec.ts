@@ -9,7 +9,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import type { IPagination } from '@studiohyperdrive/pagination';
 import type { Request, Response } from 'express';
 import { cloneDeep } from 'lodash';
-import { afterEach, beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
+import { type MockInstance, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { type IeObject, IeObjectLicense, type RelatedIeObject } from '../ie-objects.types';
 import {
@@ -229,7 +229,9 @@ describe('IeObjectsController', () => {
 				);
 				fail('Expected an error to be thrown if the object does not exist');
 			} catch (err) {
-				expect(err.message).toEqual('Failed to retrieve object details in getIeObjectsByIds');
+				expect(err.message).toEqual(
+					'You do not have access to this object: USER_NO_ACCESS_TO_IE_OBJECT'
+				);
 			}
 		});
 
