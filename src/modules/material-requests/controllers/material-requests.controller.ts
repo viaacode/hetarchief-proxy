@@ -321,7 +321,7 @@ export class MaterialRequestsController {
 									? Lookup_App_Material_Request_Status_Enum.New
 									: Lookup_App_Material_Request_Status_Enum.None,
 								group_id: material_request_group_id,
-								name: materialRequest.reuseForm ? materialRequest.requestGroupName : undefined,
+								name: materialRequest.requestGroupName,
 								requested_at: new Date().toISOString(),
 							},
 							materialRequest.reuseForm,
