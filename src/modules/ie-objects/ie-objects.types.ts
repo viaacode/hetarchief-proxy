@@ -215,7 +215,7 @@ export interface IeObject {
 	alternativeTitle?: string[];
 	digitizationDate?: string;
 	children?: number;
-	rightsInfo?: IeObjectRightsInfo;
+	rightsInfo?: IeObjectRightsInfo | null;
 
 	// ESSENCE
 	thumbnailUrl: string;

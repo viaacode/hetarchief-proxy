@@ -138,7 +138,6 @@ import { checkRequiredEnvs } from '~shared/helpers/env-check';
 
 checkRequiredEnvs(['ELASTICSEARCH_URL', 'IE_OBJECT_ID_PREFIX']);
 
-const NO_RIGHTS_INFO_LABEL = 'geen rechteninformatie beschikbaar';
 
 
 @Injectable()
@@ -676,9 +675,7 @@ export class IeObjectsService {
 			(licenses.includes(IeObjectLicense.PUBLIEK_CONTENT) ||
 				licenses.includes(IeObjectLicense.BEZOEKERTOOL_CONTENT));
 		const rightsInfo = shouldExposeRightsInfo
-			? ((await this.getRightsInfoByIeObjectIdFromDb(ieObjectId)) ?? {
-					reuseLabel: NO_RIGHTS_INFO_LABEL,
-				})
+			? await this.getRightsInfoByIeObjectIdFromDb(ieObjectId)
 			: undefined;
 		let thumbnailUrl = schemaThumbnailUrlResponse?.schema_thumbnail_url?.[0];
 
