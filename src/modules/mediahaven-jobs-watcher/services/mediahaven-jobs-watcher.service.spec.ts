@@ -325,7 +325,8 @@ describe('MediahavenJobsWatcherService', () => {
 						download_status: Lookup_App_Material_Request_Download_Status_Enum.Succeeded,
 						download_url: `${materialRequest.requesterId}/${materialRequest.id}/${job.Name}`,
 						download_available_at: job.FinishDate,
-					})
+					}),
+					true
 				);
 
 				// Should trigger download available event
@@ -528,7 +529,8 @@ describe('MediahavenJobsWatcherService', () => {
 					materialRequest.id,
 					expect.objectContaining({
 						download_status: Lookup_App_Material_Request_Download_Status_Enum.Failed,
-					})
+					}),
+					true
 				);
 			});
 		});
@@ -661,13 +663,15 @@ describe('MediahavenJobsWatcherService', () => {
 					'completed-request',
 					expect.objectContaining({
 						download_status: Lookup_App_Material_Request_Download_Status_Enum.Succeeded,
-					})
+					}),
+					true
 				);
 				expect(mockMaterialRequestsService.updateMaterialRequest).toHaveBeenCalledWith(
 					'failed-request',
 					expect.objectContaining({
 						download_status: Lookup_App_Material_Request_Download_Status_Enum.Failed,
-					})
+					}),
+					true
 				);
 			});
 		});
