@@ -1,5 +1,5 @@
 import { IE_OBJECT_INTRA_CP_LICENSES } from '../ie-objects.conts';
-import { IeObjectAccessThrough, IeObjectLicense, IeObjectSector, IeObjectType } from '../ie-objects.types';
+import { IeObjectAccessThrough, IeObjectLicense, IeObjectSector } from '../ie-objects.types';
 import {
 	mockIeObject1,
 	mockIeObjectWithMetadataSetALL,
@@ -626,7 +626,6 @@ describe('Limit access to object details', () => {
 		const result = limitAccessToObjectDetails(
 			{
 				...mockIeObject1,
-				dctermsFormat: IeObjectType.VIDEO_FRAGMENT,
 				licenses: [IeObjectLicense.PUBLIEK_CONTENT],
 			},
 			user
