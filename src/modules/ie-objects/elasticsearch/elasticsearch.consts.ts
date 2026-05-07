@@ -37,7 +37,7 @@ export enum IeObjectsSearchFilterField {
 	CONSULTABLE_ONLY_ON_LOCATION = 'isConsultableOnlyOnLocation',
 	CONSULTABLE_MEDIA = 'isConsultableMedia',
 	CONSULTABLE_PUBLIC_DOMAIN = 'isConsultablePublicDomain',
-	REUSABILITY = 'herbruikbaarheid',
+	REUSABILITY = 'reusability',
 	CAST = 'cast',
 	IDENTIFIER = 'identifier',
 	CATEGORIE = 'categorie', // Not available in database: https://docs.google.com/spreadsheets/d/1xAtHfkpDi4keSsBol7pw0cQAvCmg2hWRz8oxM6cP7zo/edit#gid=0
@@ -200,19 +200,25 @@ export const DEFAULT_QUERY_TYPE: { [prop in IeObjectsSearchFilterField]: QueryTy
 	[IeObjectsSearchFilterField.REUSABILITY]: QueryType.TERMS,
 };
 
-export const REUSABILITY_CATEGORY_URIS: Record<string, string[]> = {
-	'vrij-herbruikbaar': [
+export enum ReusabilityCategory {
+	FREELY_REUSABLE = 'freely-reusable',
+	REUSABLE_WITH_CONDITIONS = 'reusable-with-conditions',
+	POSSIBLY_REUSABLE = 'possibly-reusable',
+}
+
+export const REUSABILITY_CATEGORY_URIS: Record<ReusabilityCategory, string[]> = {
+	[ReusabilityCategory.FREELY_REUSABLE]: [
 		'https://creativecommons.org/public-domain/pdm/',
 		'https://creativecommons.org/publicdomain/zero/1.0/',
 	],
-	'herbruikbaar-onder-voorwaarden': [
+	[ReusabilityCategory.REUSABLE_WITH_CONDITIONS]: [
 		'https://rightsstatements.org/page/NoC-CR/1.0/',
 		'https://creativecommons.org/licenses/by/4.0/',
 		'https://creativecommons.org/licenses/by-nc-nd/4.0/',
 		'https://creativecommons.org/licenses/by-sa/4.0/',
 		'https://creativecommons.org/licenses/by-nc/4.0/',
 	],
-	'misschien-herbruikbaar': [
+	[ReusabilityCategory.POSSIBLY_REUSABLE]: [
 		'https://rightsstatements.org/page/UND/1.0/',
 		'https://rightsstatements.org/page/InC/1.0/',
 		'https://rightsstatements.org/page/CNE/1.0/',

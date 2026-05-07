@@ -35,6 +35,7 @@ import {
 	type QueryBuilderInputInfo,
 	QueryType,
 	READABLE_TO_ELASTIC_FILTER_NAMES,
+	ReusabilityCategory,
 	REUSABILITY_CATEGORY_URIS,
 	VALUE_OPERATORS,
 } from './elasticsearch.consts';
@@ -647,7 +648,7 @@ export class QueryBuilder {
 		// Filter by reusability category: expand selected category keys to their rights statement URIs
 		if (reusabilityFilter?.multiValue?.length) {
 			const uris = reusabilityFilter.multiValue.flatMap(
-				(category) => REUSABILITY_CATEGORY_URIS[category] ?? []
+				(category) => REUSABILITY_CATEGORY_URIS[category as ReusabilityCategory] ?? []
 			);
 			if (uris.length) {
 				toBeAppliedCustomFilters.push({

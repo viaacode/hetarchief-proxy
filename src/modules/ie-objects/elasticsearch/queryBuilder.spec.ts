@@ -8,6 +8,7 @@ import {
 	MULTI_MATCH_QUERY_MAPPING,
 	Operator,
 	OrderProperty,
+	ReusabilityCategory,
 } from './elasticsearch.consts';
 import { QueryBuilder } from './queryBuilder';
 
@@ -594,7 +595,7 @@ describe('QueryBuilder', () => {
 			);
 		});
 
-		it('Should produce a terms query on dcterms_rights_statement when vrij-herbruikbaar is selected', () => {
+		it('Should produce a terms query on dcterms_rights_statement when freely-reusable is selected', () => {
 			const queryObject = QueryBuilder.build(
 				{
 					page: 1,
@@ -603,7 +604,7 @@ describe('QueryBuilder', () => {
 						{
 							field: IeObjectsSearchFilterField.REUSABILITY,
 							operator: Operator.IS,
-							multiValue: ['vrij-herbruikbaar'],
+							multiValue: [ReusabilityCategory.FREELY_REUSABLE],
 						},
 					],
 				},
@@ -627,9 +628,9 @@ describe('QueryBuilder', () => {
 							field: IeObjectsSearchFilterField.REUSABILITY,
 							operator: Operator.IS,
 							multiValue: [
-								'vrij-herbruikbaar',
-								'herbruikbaar-onder-voorwaarden',
-								'misschien-herbruikbaar',
+								ReusabilityCategory.FREELY_REUSABLE,
+								ReusabilityCategory.REUSABLE_WITH_CONDITIONS,
+								ReusabilityCategory.POSSIBLY_REUSABLE,
 							],
 						},
 					],
@@ -676,7 +677,7 @@ describe('QueryBuilder', () => {
 						{
 							field: IeObjectsSearchFilterField.REUSABILITY,
 							operator: Operator.IS,
-							multiValue: ['unknown-category', 'vrij-herbruikbaar'],
+							multiValue: ['unknown-category', ReusabilityCategory.FREELY_REUSABLE],
 						},
 					],
 				},
