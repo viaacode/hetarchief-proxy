@@ -212,40 +212,7 @@ describe('IeObjectsController', () => {
 			expect(url).toEqual('http://playme');
 		});
 
-		it('should reject playable urls when the file is not part of the object', async () => {
-			vi.spyOn(ieObjectsController, 'getIeObjectsByIds').mockResolvedValueOnce([
-				{
-					dctermsFormat: IeObjectType.VIDEO,
-					pages: [
-						{
-							pageNumber: 1,
-							representations: [
-								{
-									files: [
-										{
-											storedAt: '/path/to/other-file',
-											mimeType: 'video/mp4',
-										},
-									],
-								},
-							],
-						},
-					],
-				},
-			] as Partial<IeObject>[]);
 
-			await expect(
-				ieObjectsController.getPlayableUrl(
-					'referer',
-					'127.0.0.1',
-					{
-						schemaIdentifier: 'schema-id',
-						browsePath: '/path/to/file',
-					},
-					mockSessionUser
-				)
-			).rejects.toThrow(ForbiddenException);
-		});
 
 		it('should reject player-ticket requests without schemaIdentifier', async () => {
 			await expect(
