@@ -1230,7 +1230,7 @@ export class MaterialRequestsService {
 		);
 
 		if (!closureEvent) {
-			return { isArchived: false, willBeArchivedAt: null };
+			return { isArchived: graphQlMaterialRequest.is_archived, willBeArchivedAt: null };
 		}
 
 		const TIME_BEFORE_ARCHIVATION = Number.parseFloat(
