@@ -1505,10 +1505,12 @@ export class MaterialRequestsService {
 	 * and set the download status
 	 * @param materialRequestId
 	 * @param setFields the fields of the material request to update
+	 * @param includeOrganisation whether or not we need the maintainerId on the returned request
 	 */
 	public async updateMaterialRequest(
 		materialRequestId: string,
-		setFields: App_Material_Requests_Set_Input
+		setFields: App_Material_Requests_Set_Input,
+		includeOrganisation = false
 	): Promise<MaterialRequest> {
 		const response = await this.dataService.execute<
 			UpdateMaterialRequestMutation,
@@ -1525,7 +1527,14 @@ export class MaterialRequestsService {
 				response,
 			});
 		}
-		return this.adapt(materialRequest, false);
+
+		const organisations = includeOrganisation
+			? await this.organisationsService.findOrganisationsBySchemaIdentifiers(
+					compact([materialRequest?.intellectualEntity?.schemaMaintainer?.org_identifier])
+				)
+			: [];
+
+		return this.adapt(materialRequest, false, organisations);
 	}
 
 	/**

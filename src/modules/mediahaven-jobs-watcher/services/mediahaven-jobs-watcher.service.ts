@@ -215,7 +215,8 @@ export class MediahavenJobsWatcherService {
 										download_status: Lookup_App_Material_Request_Download_Status_Enum.Succeeded,
 										updated_at: new Date().toISOString(),
 										download_available_at: relatedJob.FinishDate,
-									}
+									},
+									true
 								);
 								const requester = await this.usersService.getById(updatedRequest.requesterId);
 								reportItems.completed += 1;
@@ -244,7 +245,8 @@ export class MediahavenJobsWatcherService {
 									{
 										download_status: Lookup_App_Material_Request_Download_Status_Enum.Failed,
 										updated_at: new Date().toISOString(),
-									}
+									},
+									true
 								);
 								// Todo: check this if we start retrying that this only gets created when it fails completely
 								await this.materialRequestMessagesService.createFinalSummaryMessage(
@@ -268,7 +270,8 @@ export class MediahavenJobsWatcherService {
 									{
 										download_status: Lookup_App_Material_Request_Download_Status_Enum.Failed,
 										updated_at: new Date().toISOString(),
-									}
+									},
+									true
 								);
 								await this.materialRequestMessagesService.createFinalSummaryMessage(
 									updatedRequest,
@@ -339,7 +342,8 @@ export class MediahavenJobsWatcherService {
 						materialRequest.id,
 						{
 							download_status: Lookup_App_Material_Request_Download_Status_Enum.Expired,
-						}
+						},
+						true
 					);
 
 					// Create a material request message event for the expired download
