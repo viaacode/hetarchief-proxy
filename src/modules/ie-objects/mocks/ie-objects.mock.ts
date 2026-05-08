@@ -21,6 +21,19 @@ import { GroupId, GroupName } from '~modules/users/types';
 import { mockConfigService } from '~shared/test/mock-config-service';
 import { Locale } from '~shared/types/types';
 
+const mockReuseCategory = {
+	id: 'https://rightsstatements.org/page/InC/1.0/',
+	label: 'Auteursrechtelijk beschermd',
+	group: 'Misschien herbruikbaar',
+} as const;
+
+export const mockIeObjectRightsInfo = {
+	reuseLabel: '© VRT',
+	reuseCategoryId: mockReuseCategory.id,
+	licenseDistributor: 'VRT',
+	reuseCategory: mockReuseCategory,
+} as const;
+
 export const mockIeObject1: Readonly<IeObject> = {
 	schemaIdentifier: '8911p09j1g',
 	iri: 'https://data-int.hetarchief.be/id/entity/8911p09j1g',
@@ -38,6 +51,7 @@ export const mockIeObject1: Readonly<IeObject> = {
 	durationInSeconds: null,
 	numberOfPages: null,
 	datePublished: '2020-09-01',
+	rightsInfo: mockIeObjectRightsInfo,
 	dctermsAvailable: '2020-08-28T11:48:11',
 	name: 'Durf te vragen R002 A0001',
 	description:
@@ -243,6 +257,7 @@ export const mockIeObjectWithMetadataSetALLWithEssence: Readonly<Partial<IeObjec
 	thumbnailUrl:
 		'https://media.viaa.be/play/v2/VLAAMSPARLEMENT/49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c/keyframes-thumb/keyframes_1_1/keyframe1.jpg',
 	pages: [],
+	rightsInfo: mockIeObjectRightsInfo,
 	meemooOriginalCp: null,
 	schemaIdentifier: '8911p09j1g',
 	iri: 'https://data-int.hetarchief.be/id/entity/8911p09j1g',

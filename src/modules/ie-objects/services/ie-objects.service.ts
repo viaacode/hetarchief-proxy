@@ -508,6 +508,14 @@ export class IeObjectsService {
 		return {
 			reuseLabel: rightsInfo.reuse_label,
 			reuseCategoryId: rightsInfo.reuse_category_id,
+			licenseDistributor: rightsInfo.ha_des_license_distributor,
+			reuseCategory: rightsInfo.reuse_category
+				? {
+						id: rightsInfo.reuse_category.id,
+						label: rightsInfo.reuse_category.label,
+						group: rightsInfo.reuse_category.group,
+					}
+				: null,
 		};
 	}
 
