@@ -92,9 +92,17 @@ export interface IeObjectRepresentation {
 	files: IeObjectFile[];
 }
 
+export interface IeObjectReuseCategory {
+	id: string;
+	label: string;
+	group: string;
+}
+
 export interface IeObjectRightsInfo {
 	reuseLabel: string;
 	reuseCategoryId?: string | null;
+	licenseDistributor?: string | null;
+	reuseCategory?: IeObjectReuseCategory | null;
 }
 
 /**

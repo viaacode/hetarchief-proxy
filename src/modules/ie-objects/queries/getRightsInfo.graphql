@@ -2,5 +2,11 @@ query getRightsInfo($ieObjectId: String!) {
 	graph_rights(where: { intellectual_entity_id: { _eq: $ieObjectId } }, limit: 1) {
 		reuse_label
 		reuse_category_id
+		ha_des_license_distributor
+		reuse_category {
+			id
+			label
+			group
+		}
 	}
 }
