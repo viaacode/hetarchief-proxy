@@ -6,9 +6,9 @@ import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/help
 import { ApiKeyGuard } from '~shared/guards/api-key.guard';
 import { MaterialRequestsService } from '../services/material-requests.service';
 
-@ApiTags('MaterialRequestsArchivation')
+@ApiTags('MaterialRequestsScheduling')
 @Controller('material-requests')
-export class MaterialRequestsArchivationController {
+export class MaterialRequestsSchedulingController {
 	constructor(private materialRequestsService: MaterialRequestsService) {}
 
 	/**
@@ -37,5 +37,29 @@ export class MaterialRequestsArchivationController {
 		} catch (err) {
 			throw new CustomError('Error checking material requests Archivation', err);
 		}
+	}
+
+	/**
+	 * Will send a reminder email when additional conditions were added to a material request, but the requester has not yet accepted or declined them within 30 days.
+	 * This endpoint will be triggered by a cron job trigger in the hasura database
+	 */
+	@UseGuards(ApiKeyGuard)
+	@ApiOperation({
+		description:
+			'Will send a reminder email when additional conditions were added to a material request, but the requester has not yet accepted or declined them within 30 days.',
+	})
+	@Post('send-reminders-for-material-request-additional-conditions')
+	public async sendRemindersForAdditionalConditions(): Promise<{ message: string }> {
+		this.materialRequestsService
+			.sendReminderForMaterialRequestsWithPendingAdditionalConditions()
+			.then(noop)
+			.catch((err) => {
+				console.error(
+					new CustomError('Failed to send additional conditions reminder emails', err, {})
+				);
+			});
+		return {
+			message: 'Checking reminders for pending additional conditions for material requests',
+		};
 	}
 }

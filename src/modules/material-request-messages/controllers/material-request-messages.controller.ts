@@ -32,7 +32,6 @@ import {
 	Lookup_App_Material_Request_Message_Type_Enum,
 	Lookup_App_Material_Request_Status_Enum,
 } from '~generated/graphql-db-types-hetarchief';
-import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 import { AddExtraConditionsBodyDto } from '~modules/material-request-messages/dto/material-request-message-body-additional-conditions.dto';
 import {
 	CreateMaterialRequestMessageDto,
@@ -55,7 +54,6 @@ import { Ip } from '~shared/decorators/ip.decorator';
 import { Referer } from '~shared/decorators/referer.decorator';
 import { RequireAnyPermissions } from '~shared/decorators/require-any-permissions.decorator';
 import { SessionUser } from '~shared/decorators/user.decorator';
-import { ApiKeyGuard } from '~shared/guards/api-key.guard';
 import { IsEvaluatorGuard } from '~shared/guards/is-evaluator.guard';
 import { LocalhostGuard } from '~shared/guards/localhost.guard';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
@@ -90,8 +88,7 @@ export class MaterialRequestMessagesController {
 		private materialRequestMessagesService: MaterialRequestMessagesService,
 		private materialRequestsService: MaterialRequestsService,
 		private assetsService: AssetsService,
-		private materialRequestPdfGenerator: MaterialRequestPdfGeneratorService,
-		private campaignMonitorService: CampaignMonitorService
+		private materialRequestPdfGenerator: MaterialRequestPdfGeneratorService
 	) {}
 
 	@Get(':materialRequestId/messages')
@@ -304,30 +301,6 @@ export class MaterialRequestMessagesController {
 			error.innerException = null;
 			throw error;
 		}
-	}
-
-	/**
-	 * Will send a reminder email when additional conditions were added to a material request, but the requester has not yet accepted or declined them within 30 days.
-	 * This endpoint will be triggered by a cron job trigger in the hasura database
-	 */
-	@UseGuards(ApiKeyGuard)
-	@ApiOperation({
-		description:
-			'Will send a reminder email when additional conditions were added to a material request, but the requester has not yet accepted or declined them within 30 days.',
-	})
-	@Post('send-reminders-for-material-request-additional-conditions')
-	public async sendRemindersForAdditionalConditions(): Promise<{ message: string }> {
-		this.materialRequestsService
-			.sendReminderForMaterialRequestsWithPendingAdditionalConditions()
-			.then(noop)
-			.catch((err) => {
-				console.error(
-					new CustomError('Failed to send additional conditions reminder emails', err, {})
-				);
-			});
-		return {
-			message: 'Checking reminders for pending additional conditions for material requests',
-		};
 	}
 
 	@Post(':materialRequestId/extra-conditions/:action')
