@@ -9,14 +9,14 @@ import { CampaignMonitorModule } from '~modules/campaign-monitor';
 import { EventsModule } from '~modules/events';
 import { IeObjectsModule } from '~modules/ie-objects';
 import { MaterialRequestMessagesModule } from '~modules/material-request-messages';
-import { MaterialRequestsArchivationController } from '~modules/material-requests/controllers/material-requests-archivation.controller';
+import { MaterialRequestsSchedulingController } from '~modules/material-requests/controllers/material-requests-scheduling.controller';
 import { MediahavenJobsWatcherModule } from '~modules/mediahaven-jobs-watcher/mediahaven-jobs-watcher.module';
 import { OrganisationsModule } from '~modules/organisations/organisations.module';
 import { SpacesModule } from '~modules/spaces';
 import { UsersModule } from '~modules/users';
 
 @Module({
-	controllers: [MaterialRequestsController, MaterialRequestsArchivationController],
+	controllers: [MaterialRequestsController, MaterialRequestsSchedulingController],
 	providers: [MaterialRequestsService],
 	imports: [
 		ConfigModule,
