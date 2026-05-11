@@ -1717,5 +1717,9 @@ export class MaterialRequestsService {
 				materialRequest.requesterLanguage
 			);
 		});
+
+		console.info(
+			`Send additional conditions reminder for ${rawMaterialRequests.length} material requests`
+		);
 	}
 }
