@@ -16,6 +16,7 @@ import {
 	NotificationType,
 } from '../types';
 
+import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
 import {
 	type App_Notification_Bool_Exp,
 	type App_Notification_Insert_Input,
@@ -35,9 +36,17 @@ import {
 	type UpdateNotificationMutation,
 	type UpdateNotificationMutationVariables,
 } from '~generated/graphql-db-types-hetarchief';
-import { EmailTemplate } from '~modules/campaign-monitor/campaign-monitor.types';
-
+import {
+	ConsentToTrackOption,
+	EmailTemplate,
+	type MaterialRequestEmailInfo,
+} from '~modules/campaign-monitor/campaign-monitor.types';
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
+import { SendRequestListDto } from '~modules/material-requests/dto/material-requests.dto';
+import {
+	MaterialRequest,
+	MaterialRequestSendRequestListUserInfo,
+} from '~modules/material-requests/material-requests.types';
 import type { VisitorSpace } from '~modules/spaces/spaces.types';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import type { VisitRequest } from '~modules/visits/types';
@@ -167,9 +176,7 @@ export class NotificationsService {
 			where,
 		});
 
-		const affectedRows = response.delete_app_notification.affected_rows;
-
-		return affectedRows;
+		return response.delete_app_notification.affected_rows;
 	}
 
 	/**
@@ -384,5 +391,231 @@ export class NotificationsService {
 				updated_at: new Date().toISOString(),
 			},
 		]);
+	}
+
+	/**
+	 * Send notifications and email on new material request to the maintainer
+	 */
+	public async onCreateMaterialRequestMaintainer(
+		materialRequests: MaterialRequest[],
+		sendRequestListDto: SendRequestListDto,
+		userInfo: MaterialRequestSendRequestListUserInfo,
+		recipients: string[]
+	): Promise<Notification[]> {
+		try {
+			const [notifications] = await Promise.all([
+				this.create(
+					materialRequests.flatMap((materialRequest) =>
+						this.createForMaterialRequest(
+							materialRequest,
+							recipients,
+							NotificationType.NEW_MATERIAL_REQUEST
+						)
+					)
+				),
+				this.campaignMonitorService.sendForMaterialRequest({
+					// Each materialRequest in this group has the same maintainer, otherwise, the maintainer will receive multiple mails
+					to: materialRequests[0].contactMail,
+					replyTo: materialRequests[0]?.requesterMail,
+					template: EmailTemplate.CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_MAINTAINER,
+					materialRequests: materialRequests,
+					sendRequestListDto,
+					requesterFirstName: userInfo.firstName,
+					requesterLastName: userInfo.lastName,
+					language: userInfo.language,
+				}),
+			]);
+			return notifications || [];
+		} catch (err) {
+			throw new HttpException('Failed to send notifications and email', 500, err);
+		}
+	}
+
+	/**
+	 * Send email on new material request to the requester
+	 */
+	public async onCreateMaterialRequestRequester(
+		materialRequests: MaterialRequest[],
+		sendRequestListDto: SendRequestListDto,
+		userInfo: MaterialRequestSendRequestListUserInfo
+	): Promise<void> {
+		try {
+			await this.campaignMonitorService.sendForMaterialRequest({
+				to: materialRequests[0]?.requesterMail,
+				replyTo: null, // Reply to support@meemoo.be
+				template: EmailTemplate.CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_REQUESTER,
+				materialRequests: materialRequests,
+				sendRequestListDto,
+				requesterFirstName: userInfo.firstName,
+				requesterLastName: userInfo.lastName,
+				language: userInfo.language,
+			});
+		} catch (err) {
+			throw new HttpException('Failed to send notifications and email', 500, err);
+		}
+	}
+
+	/**
+	 * Send notifications and email on status updates of material request
+	 */
+	public async onStatusUpdateMaterialRequest(
+		emailInfo: MaterialRequestEmailInfo,
+		type: NotificationType,
+		recipients: string[]
+	): Promise<Notification[]> {
+		try {
+			const [notifications] = await Promise.all([
+				this.create(
+					emailInfo.materialRequests.flatMap((materialRequest) =>
+						this.createForMaterialRequest(materialRequest, recipients, type)
+					)
+				),
+				this.campaignMonitorService.sendForMaterialRequest(emailInfo),
+			]);
+			return notifications;
+		} catch (err) {
+			throw new HttpException('Failed to send notifications and email', 500, err);
+		}
+	}
+
+	/**
+	 * Sends an e-mail and notification to the requester of a material request when the evaluator of the material request has added additional requirements
+	 * @param materialRequest
+	 */
+	public async onSendAdditionalConditionsForMaterialRequest(
+		materialRequest: MaterialRequest
+	): Promise<Notification[]> {
+		try {
+			const [notifications] = await Promise.all([
+				this.create(
+					this.createForMaterialRequest(
+						materialRequest,
+						[materialRequest.requesterId],
+						NotificationType.MATERIAL_REQUEST_ADDITIONAL_CONDITIONS_SEND
+					)
+				),
+				this.campaignMonitorService.sendTransactionalMail(
+					{
+						template:
+							EmailTemplate.CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_ADDITIONAL_REQUIREMENTS_SENT,
+						data: {
+							to: materialRequest.requesterMail,
+							replyTo: materialRequest.contactMail,
+							data: this.campaignMonitorService.convertMaterialRequestToEmailTemplateFields(
+								materialRequest
+							),
+							consentToTrack: ConsentToTrackOption.UNCHANGED,
+						},
+					},
+					materialRequest.requesterLanguage
+				),
+			]);
+			return notifications;
+		} catch (err) {
+			throw new HttpException('Failed to send notifications and email', 500, err);
+		}
+	}
+
+	/**
+	 * Sends a reminder e-mail to the requester of a material request when the evaluator of the material request has added additional requirements
+	 * @param materialRequest
+	 */
+	public async onSendAdditionalConditionsReminderForMaterialRequest(
+		materialRequest: MaterialRequest
+	): Promise<void> {
+		try {
+			await this.campaignMonitorService.sendTransactionalMail(
+				{
+					template:
+						EmailTemplate.CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_ADDITIONAL_REQUIREMENTS_REMINDER,
+					data: {
+						to: materialRequest.requesterMail,
+						replyTo: materialRequest.contactMail,
+						consentToTrack: ConsentToTrackOption.UNCHANGED,
+						data: this.campaignMonitorService.convertMaterialRequestToEmailTemplateFields(
+							materialRequest
+						),
+					},
+				},
+				materialRequest.requesterLanguage
+			);
+		} catch (err) {
+			throw new HttpException('Failed to send notifications and email', 500, err);
+		}
+	}
+
+	/**
+	 * Sends an email and notification to the maintainer of the object that was requested with the message that the requester has accepted the additional requirements imposed by the evaluator of the material request
+	 * @param materialRequest
+	 * @param userId
+	 * @param recipients
+	 */
+	public async sendEmailForAcceptanceOfAdditionalConditionsToEvaluators(
+		materialRequest: MaterialRequest,
+		userId: string,
+		recipients: string[]
+	) {
+		try {
+			const [notifications] = await Promise.all([
+				this.create(
+					this.createForMaterialRequest(
+						materialRequest,
+						recipients,
+						NotificationType.MATERIAL_REQUEST_ADDITIONAL_CONDITIONS_ACCEPTED
+					)
+				),
+				this.campaignMonitorService.sendTransactionalMail(
+					{
+						template:
+							EmailTemplate.CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_ADDITIONAL_REQUIREMENTS_ACCEPTED,
+						data: {
+							to: materialRequest.requesterMail,
+							replyTo: materialRequest.contactMail,
+							data: this.campaignMonitorService.convertMaterialRequestToEmailTemplateFields(
+								materialRequest
+							),
+							consentToTrack: ConsentToTrackOption.UNCHANGED,
+						},
+					},
+					// Same language as the requester even though we send it to the maintainer contact email
+					// https://meemoo.atlassian.net/wiki/spaces/HA2/pages/6088949761/Overzicht+transactionele+mails+-+Hermes+CL+4#3.-Bijkomende-gebruiksvoorwaarden-werden-geaccepteerd
+					materialRequest.requesterLanguage
+				),
+			]);
+			return notifications;
+		} catch (err) {
+			console.error(
+				new CustomError(
+					'Failed to send email for accepting additional conditions to maintainer of the object in the material request',
+					err,
+					{
+						materialRequestId: materialRequest.id,
+						userId,
+						functionName: 'sendEmailForAcceptanceOfAdditionalConditionsToEvaluators',
+					}
+				)
+			);
+		}
+	}
+
+	private createForMaterialRequest(
+		materialRequest: MaterialRequest,
+		recipients: string[],
+		type: NotificationType | undefined
+	): Partial<App_Notification_Insert_Input>[] {
+		if (!type) {
+			return [];
+		}
+
+		return recipients.map((recipient) => ({
+			// Using type for the title and description since this needs to be rendered on the client
+			// depending on desktop and mobile
+			title: type,
+			description: type,
+			material_request_id: materialRequest.id,
+			type,
+			status: NotificationStatus.UNREAD,
+			recipient,
+		}));
 	}
 }

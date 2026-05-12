@@ -24,7 +24,6 @@ import {
 	Lookup_App_Material_Request_Download_Status_Enum,
 	Lookup_App_Material_Request_Message_Type_Enum,
 } from '~generated/graphql-db-types-hetarchief';
-import { EmailTemplate } from '~modules/campaign-monitor/campaign-monitor.types';
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
 import { mapDcTermsFormatToSimpleType } from '~modules/ie-objects/helpers/map-dc-terms-format-to-simple-type';
@@ -45,6 +44,7 @@ import {
 	MediahavenJobInfo,
 	S3ExportLocationToken,
 } from '~modules/mediahaven-jobs-watcher/mediahaven-jobs-watcher.types';
+import { NotificationType } from '~modules/notifications/types';
 import { UsersService } from '~modules/users/services/users.service';
 
 @Injectable()
@@ -142,18 +142,11 @@ export class MediahavenJobsWatcherService {
 		requester: AvoUserCommonUser
 	) {
 		try {
-			await Promise.all([
-				this.materialRequestsService.sentStatusUpdateEmail(
-					EmailTemplate.CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_DOWNLOAD_READY_MAINTAINER,
-					materialRequest,
-					requester
-				),
-				this.materialRequestsService.sentStatusUpdateEmail(
-					EmailTemplate.CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_DOWNLOAD_READY_REQUESTER,
-					materialRequest,
-					requester
-				),
-			]);
+			await this.materialRequestsService.sentStatusUpdateNotification(
+				NotificationType.MATERIAL_REQUEST_DOWNLOAD_AVAILABLE,
+				materialRequest,
+				requester
+			);
 		} catch (err) {
 			// Log the error but don't throw, since the main flow of updating the material request is successful
 			console.error('Failed to send material request export job completed emails', err, {
@@ -310,8 +303,8 @@ export class MediahavenJobsWatcherService {
 			for (const materialRequest of almostExpiredMaterialRequests) {
 				try {
 					const requester = await this.usersService.getById(materialRequest.profileId);
-					await this.materialRequestsService.sentStatusUpdateEmail(
-						EmailTemplate.CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_DOWNLOAD_EXPIRE_SOON,
+					await this.materialRequestsService.sentStatusUpdateNotification(
+						NotificationType.MATERIAL_REQUEST_DOWNLOAD_ALMOST_EXPIRED,
 						materialRequest,
 						requester
 					);

@@ -33,8 +33,9 @@ import {
 	UpdateMaterialRequestStatusDto,
 } from '../dto/material-requests.dto';
 import {
-	MAP_MATERIAL_REQUEST_STATUS_TO_EMAIL_TEMPLATE,
 	MAP_MATERIAL_REQUEST_STATUS_TO_EVENT_TYPE,
+	MAP_MATERIAL_REQUEST_STATUS_TO_NOTIFICATION_TYPE,
+	MAP_NOTIFICATION_TYPE_TO_EMAIL_TEMPLATE,
 	ORDER_PROP_TO_DB_PROP,
 	getAdditionEventDate,
 	getStatusEvent,
@@ -113,13 +114,7 @@ import {
 	UpdateMaterialRequestStatusMutation,
 	UpdateMaterialRequestStatusMutationVariables,
 } from '~generated/graphql-db-types-hetarchief';
-import {
-	ConsentToTrackOption,
-	EmailTemplate,
-	type MaterialRequestEmailInfo,
-} from '~modules/campaign-monitor/campaign-monitor.types';
-
-import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
+import { type MaterialRequestEmailInfo } from '~modules/campaign-monitor/campaign-monitor.types';
 import {
 	type IeObject,
 	IeObjectAccessThrough,
@@ -147,6 +142,8 @@ import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.servic
 import { MaterialRequestEvent } from '~modules/material-request-messages/material-request-messages.types';
 import { MaterialRequestMessagesService } from '~modules/material-request-messages/services/material-request-messages.service';
 import { MediahavenJobsWatcherService } from '~modules/mediahaven-jobs-watcher/services/mediahaven-jobs-watcher.service';
+import { NotificationsService } from '~modules/notifications/services/notifications.service';
+import { NotificationType } from '~modules/notifications/types';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { UsersService } from '~modules/users/services/users.service';
@@ -160,7 +157,7 @@ import { SortDirection } from '~shared/types';
 export class MaterialRequestsService {
 	constructor(
 		private dataService: DataService,
-		private campaignMonitorService: CampaignMonitorService,
+		private notificationsService: NotificationsService,
 		private organisationsService: OrganisationsService,
 		private spacesService: SpacesService,
 		private ieObjectsService: IeObjectsService,
@@ -805,35 +802,41 @@ export class MaterialRequestsService {
 				});
 		}
 
-		const emailTemplateToSend = MAP_MATERIAL_REQUEST_STATUS_TO_EMAIL_TEMPLATE[status];
+		const notificationTypeToSend = MAP_MATERIAL_REQUEST_STATUS_TO_NOTIFICATION_TYPE[status];
 
-		if (updatedRequest && emailTemplateToSend) {
+		if (updatedRequest && notificationTypeToSend) {
 			this.usersService.getById(updatedRequest.requesterId).then(
 				(requesterUser) =>
-					this.sentStatusUpdateEmail(emailTemplateToSend, updatedRequest, requesterUser) // Not waiting on this
+					this.sentStatusUpdateNotification(notificationTypeToSend, updatedRequest, requesterUser) // Not waiting on this
 			);
 		}
 
 		return updatedRequest;
 	}
 
-	public isSendToMaintainerEmailTemplate(template: EmailTemplate): boolean {
-		return (
-			template === EmailTemplate.CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_REQUESTER_CANCELLED ||
-			template ===
-				EmailTemplate.CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_DOWNLOAD_READY_MAINTAINER
-		);
-	}
-
-	public async sentStatusUpdateEmail(
-		template: EmailTemplate,
+	public async sentStatusUpdateNotification(
+		notificationType: NotificationType,
 		request: MaterialRequest,
 		requesterUser: AvoUserCommonUser
 	): Promise<void> {
+		const template = MAP_NOTIFICATION_TYPE_TO_EMAIL_TEMPLATE[notificationType];
+
+		if (!template) {
+			return;
+		}
+
 		try {
-			// Emailed maintainer when the requester cancelled their request
-			// Emailed the requester when the maintainer approved or denied the request
-			const sentToMaintainer = this.isSendToMaintainerEmailTemplate(template);
+			// Emailed maintainer when
+			// 		- the requester cancelled their request
+			// 		- the download was executed
+			// Emailed the requester when
+			// 		- the maintainer approved or denied the request
+			// 		- the download became available
+			// 		- the download will almost expire
+			const sentToMaintainer = [
+				NotificationType.MATERIAL_REQUEST_CANCELLED,
+				NotificationType.MATERIAL_REQUEST_DOWNLOAD_EXECUTED,
+			].includes(notificationType);
 
 			const emailInfo: MaterialRequestEmailInfo = {
 				to: sentToMaintainer ? request.contactMail : request.requesterMail,
@@ -850,9 +853,22 @@ export class MaterialRequestsService {
 				requesterLastName: requesterUser.lastName,
 			};
 
-			await this.campaignMonitorService.sendForMaterialRequest(emailInfo);
+			if (sentToMaintainer) {
+				const receiverIds =
+					await this.materialRequestMessageService.getEvaluatorsForOrganisation(request);
+				await this.notificationsService.onStatusUpdateMaterialRequest(
+					emailInfo,
+					notificationType,
+					receiverIds
+				);
+			} else {
+				await this.notificationsService.onStatusUpdateMaterialRequest(emailInfo, notificationType, [
+					requesterUser.profileId,
+				]);
+			}
 		} catch (err) {
 			const error = customError('Failed to send email about material request status update', err, {
+				notificationType,
 				template,
 				request,
 				requesterUser,
@@ -884,33 +900,24 @@ export class MaterialRequestsService {
 			// Send mail to each maintainer containing only material requests for objects they are the maintainer of
 			await Promise.all(
 				groupedArray.map(async (materialRequests: MaterialRequest[]) => {
-					const emailInfo: MaterialRequestEmailInfo = {
-						// Each materialRequest in this group has the same maintainer, otherwise, the maintainer will receive multiple mails
-						to: materialRequests[0].contactMail,
-						replyTo: materialRequests[0]?.requesterMail,
-						template: EmailTemplate.CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_MAINTAINER,
-						materialRequests: materialRequests,
+					const receiverIds = await this.materialRequestMessageService.getEvaluatorsForOrganisation(
+						materialRequests[0]
+					);
+					await this.notificationsService.onCreateMaterialRequestMaintainer(
+						materialRequests,
 						sendRequestListDto,
-						requesterFirstName: userInfo.firstName,
-						requesterLastName: userInfo.lastName,
-						language: userInfo.language,
-					};
-					await this.campaignMonitorService.sendForMaterialRequest(emailInfo);
+						userInfo,
+						receiverIds
+					);
 				})
 			);
 
 			// Send mail to the requester containing all of their material requests for all the objects they requested
-			const emailInfo: MaterialRequestEmailInfo = {
-				to: materialRequests[0]?.requesterMail,
-				replyTo: null, // Reply to support@meemoo.be
-				template: EmailTemplate.CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_REQUESTER,
-				materialRequests: materialRequests,
+			await this.notificationsService.onCreateMaterialRequestRequester(
+				materialRequests,
 				sendRequestListDto,
-				requesterFirstName: userInfo.firstName,
-				requesterLastName: userInfo.lastName,
-				language: userInfo.language,
-			};
-			await this.campaignMonitorService.sendForMaterialRequest(emailInfo);
+				userInfo
+			);
 		} catch (err) {
 			const error = {
 				message: 'Failed to send the material requests',
@@ -1621,8 +1628,8 @@ export class MaterialRequestsService {
 			.then(noop);
 
 		const requester = await this.usersService.getById(materialRequest.profileId);
-		await this.sentStatusUpdateEmail(
-			EmailTemplate.CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_DOWNLOAD_DOWNLOADED,
+		await this.sentStatusUpdateNotification(
+			NotificationType.MATERIAL_REQUEST_DOWNLOAD_EXECUTED,
 			materialRequest,
 			requester
 		);
@@ -1701,20 +1708,8 @@ export class MaterialRequestsService {
 			response.app_material_requests_with_pending_additional_conditions || [];
 		await mapLimit(rawMaterialRequests, 10, async (rawMaterialRequest) => {
 			const materialRequest = await this.adapt(rawMaterialRequest, false);
-			await this.campaignMonitorService.sendTransactionalMail(
-				{
-					template:
-						EmailTemplate.CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_ADDITIONAL_REQUIREMENTS_REMINDER,
-					data: {
-						to: materialRequest.requesterMail,
-						replyTo: materialRequest.contactMail,
-						consentToTrack: ConsentToTrackOption.UNCHANGED,
-						data: this.campaignMonitorService.convertMaterialRequestToEmailTemplateFields(
-							materialRequest
-						),
-					},
-				},
-				materialRequest.requesterLanguage
+			await this.notificationsService.onSendAdditionalConditionsReminderForMaterialRequest(
+				materialRequest
 			);
 		});
 
