@@ -33,11 +33,16 @@ export interface Notification {
 	title: string;
 	id: string;
 	status: NotificationStatus;
-	visitId: string;
 	createdAt: string;
 	updatedAt: string;
 	type: NotificationType;
-	visitorSpaceSlug: string;
+
+	visitId?: string;
+	visitorSpaceSlug?: string;
+
+	materialRequestId?: string;
+	materialRequestRequester?: string;
+	materialRequestMaintainer?: string;
 }
 
 export type GqlNotification =

@@ -70,17 +70,28 @@ export class NotificationsService {
 		if (!gqlNotification) {
 			return undefined;
 		}
-		/* istanbul ignore next */
+
+		const visitRequest = gqlNotification?.visitor_space_request;
+		const materialRequest = gqlNotification?.material_request;
+
 		return {
 			id: gqlNotification?.id,
 			description: gqlNotification?.description,
 			title: gqlNotification?.title,
 			status: gqlNotification?.status as NotificationStatus,
-			visitId: gqlNotification?.visit_id,
 			createdAt: gqlNotification?.created_at,
 			updatedAt: gqlNotification?.updated_at,
 			type: gqlNotification?.type as NotificationType,
-			visitorSpaceSlug: gqlNotification?.visitor_space_request?.visitor_space?.slug,
+
+			visitId: visitRequest ? gqlNotification?.linked_entity_id : undefined,
+			visitorSpaceSlug: visitRequest?.visitor_space?.slug,
+
+			materialRequestId: materialRequest ? gqlNotification?.linked_entity_id : undefined,
+			materialRequestRequester: materialRequest?.requested_by
+				? `${materialRequest.requested_by.first_name} ${materialRequest.requested_by.last_name}`
+				: undefined,
+			materialRequestMaintainer:
+				materialRequest?.intellectualEntity?.schemaMaintainer?.skos_pref_label,
 		};
 	}
 
@@ -165,7 +176,7 @@ export class NotificationsService {
 
 	public async delete(visitId: string, deleteNotificationDto: DeleteNotificationDto) {
 		const where: App_Notification_Bool_Exp = {
-			visit_id: { _eq: visitId },
+			linked_entity_id: { _eq: visitId },
 			...(deleteNotificationDto.types ? { type: { _in: deleteNotificationDto.types } } : {}),
 		};
 
@@ -208,7 +219,7 @@ export class NotificationsService {
 							},
 							userLanguage
 						),
-						visit_id: visitRequest.id,
+						linked_entity_id: visitRequest.id,
 						type: NotificationType.NEW_VISIT_REQUEST,
 						status: NotificationStatus.UNREAD,
 						recipient: recipient.id,
@@ -263,7 +274,7 @@ export class NotificationsService {
 						},
 						visitRequest.visitorLanguage
 					),
-					visit_id: visitRequest.id,
+					linked_entity_id: visitRequest.id,
 					type: NotificationType.VISIT_REQUEST_APPROVED,
 					status: isPast(convertToDate(visitRequest.startAt))
 						? NotificationStatus.READ
@@ -319,7 +330,7 @@ export class NotificationsService {
 						},
 						visitRequest.visitorLanguage
 					),
-					visit_id: visitRequest.id,
+					linked_entity_id: visitRequest.id,
 					type: NotificationType.VISIT_REQUEST_DENIED,
 					status: NotificationStatus.UNREAD,
 					recipient: visitRequest.visitorId,
@@ -368,7 +379,7 @@ export class NotificationsService {
 				return {
 					title,
 					description,
-					visit_id: visitRequest.id,
+					linked_entity_id: visitRequest.id,
 					type: NotificationType.VISIT_REQUEST_CANCELLED,
 					status: NotificationStatus.UNREAD,
 					recipient: recipient.id,
@@ -386,7 +397,7 @@ export class NotificationsService {
 				description: maintenanceAlert.message,
 				type: NotificationType.MAINTENANCE_ALERT,
 				recipient: profileId,
-				visit_id: null,
+				linked_entity_id: null,
 				created_at: new Date().toISOString(),
 				updated_at: new Date().toISOString(),
 			},
@@ -610,9 +621,7 @@ export class NotificationsService {
 		return recipients.map((recipient) => ({
 			// Using type for the title and description since this needs to be rendered on the client
 			// depending on desktop and mobile
-			title: type,
-			description: type,
-			material_request_id: materialRequest.id,
+			linked_entity_id: materialRequest.id,
 			type,
 			status: NotificationStatus.UNREAD,
 			recipient,

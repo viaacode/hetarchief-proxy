@@ -7,7 +7,7 @@ mutation insertNotifications($objects: [app_notification_insert_input!]!) {
 			status
 			type
 			recipient
-			visit_id
+			linked_entity_id
 			created_at
 			updated_at
 			visitor_space_request {
@@ -16,6 +16,17 @@ mutation insertNotifications($objects: [app_notification_insert_input!]!) {
 					id
 					slug
 					schema_maintainer_id
+				}
+			}
+			material_request {
+				requested_by {
+					first_name
+					last_name
+				}
+				intellectualEntity {
+					schemaMaintainer {
+						skos_pref_label
+					}
 				}
 			}
 		}
