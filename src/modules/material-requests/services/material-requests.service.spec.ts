@@ -2,7 +2,7 @@ vi.mock('~modules/mediahaven-jobs-watcher/services/mediahaven-jobs-watcher.servi
 	MediahavenJobsWatcherService: class MediahavenJobsWatcherService {},
 }));
 
-import { DataService, VideoStillsService } from '@meemoo/admin-core-api';
+import { AssetsService, DataService, VideoStillsService } from '@meemoo/admin-core-api';
 import { Test, type TestingModule } from '@nestjs/testing';
 import { afterEach, beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
 
@@ -87,6 +87,10 @@ const mockIeObjectsService: Partial<Record<keyof IeObjectsService, MockInstance>
 
 const mockVideoStillsService: Partial<Record<keyof VideoStillsService, MockInstance>> = {
 	getFirstVideoStills: vi.fn(() => []),
+};
+
+const mockAssetsService: Partial<Record<keyof AssetsService, MockInstance>> = {
+	delete: vi.fn(() => Promise.resolve()),
 };
 
 const mockIeObjectsVisitorSpaceInfo: IeObjectsVisitorSpaceInfo = {
@@ -202,6 +206,10 @@ describe('MaterialRequestsService', () => {
 				{
 					provide: MaterialRequestMessagesService,
 					useValue: mockMaterialRequestMessageService,
+				},
+				{
+					provide: AssetsService,
+					useValue: mockAssetsService,
 				},
 			],
 		})

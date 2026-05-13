@@ -1,4 +1,5 @@
 import { Lookup_App_Material_Request_Requester_Capacity_Enum } from '@meemoo/admin-core-api/dist/src/modules/shared/generated/graphql-db-types-hetarchief';
+import { ConfigService } from '@nestjs/config';
 import { Test, type TestingModule } from '@nestjs/testing';
 import { afterEach, beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
 
@@ -19,6 +20,7 @@ import { MaterialRequestMessagesService } from '~modules/material-request-messag
 import { MaterialRequestPdfGeneratorService } from '~modules/material-request-messages/services/material-request-pdf-generator';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { TestingLogger } from '~shared/logging/test-logger';
+import { mockConfigService } from '~shared/test/mock-config-service';
 
 const mockMaterialRequestsService: Partial<Record<keyof MaterialRequestsService, MockInstance>> = {
 	findAll: vi.fn(),
@@ -70,6 +72,10 @@ describe('MaterialRequestsController', () => {
 				{
 					provide: EventsService,
 					useValue: mockEventsService,
+				},
+				{
+					provide: ConfigService,
+					useValue: mockConfigService,
 				},
 			],
 		})
