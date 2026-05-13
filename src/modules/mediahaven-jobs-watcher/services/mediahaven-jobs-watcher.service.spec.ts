@@ -333,7 +333,7 @@ describe('MediahavenJobsWatcherService', () => {
 				expect(mockEventsService.insertEvents).toHaveBeenCalled();
 			});
 
-			it('should send emails to requester and maintainer when job is Completed', async () => {
+			it('should send emails to requester when job is Completed', async () => {
 				const materialRequest = createMockMaterialRequest();
 				const job = createMockMediahavenJob({
 					ExportJobId: materialRequest.downloadJobId,
@@ -358,7 +358,7 @@ describe('MediahavenJobsWatcherService', () => {
 				// Wait for async email sending
 				await new Promise((resolve) => setTimeout(resolve, 100));
 
-				expect(mockMaterialRequestsService.sentStatusUpdateNotification).toHaveBeenCalledTimes(2);
+				expect(mockMaterialRequestsService.sentStatusUpdateNotification).toHaveBeenCalledTimes(1);
 			});
 		});
 
