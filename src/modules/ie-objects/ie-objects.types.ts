@@ -92,6 +92,11 @@ export interface IeObjectRepresentation {
 	files: IeObjectFile[];
 }
 
+export interface IeObjectRightsInfo {
+	reuseLabel: string;
+	reuseCategoryId?: string | null;
+}
+
 /**
  * This info now lives in another place and no longer resides under is_part_of
  * alternatief → table: graph.schema_alternate_name, column: schema_alternate_name
@@ -210,6 +215,7 @@ export interface IeObject {
 	alternativeTitle?: string[];
 	digitizationDate?: string;
 	children?: number;
+	rightsInfo?: IeObjectRightsInfo | null;
 
 	// ESSENCE
 	thumbnailUrl: string;

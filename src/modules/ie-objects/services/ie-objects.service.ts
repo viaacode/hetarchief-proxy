@@ -4,13 +4,20 @@ import { retry } from 'async';
 
 import { DataService, PlayerTicketService } from '@meemoo/admin-core-api';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { Inject, Injectable, InternalServerErrorException, Logger, NotFoundException, } from '@nestjs/common';
+import {
+	Inject,
+	Injectable,
+	InternalServerErrorException,
+	Logger,
+	NotFoundException,
+} from '@nestjs/common';
 
 import { ConfigService } from '@nestjs/config';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { mapLimit } from 'blend-promise-utils';
 import type { Cache } from 'cache-manager';
 import got, { type Got } from 'got';
+
 import { compact, find, isArray, isEmpty, isNil, kebabCase, omitBy, uniq } from 'lodash';
 
 import type { Configuration } from '~config';
@@ -34,11 +41,12 @@ import {
 	type IeObjectPage,
 	type IeObjectPages,
 	type IeObjectRepresentation,
+	type IeObjectRightsInfo,
 	type IeObjectSector,
+	IeObjectType,
 	type IeObjectsSitemap,
 	type IeObjectsVisitorSpaceInfo,
 	type IeObjectsWithAggregations,
-	IeObjectType,
 	type IsPartOfKey,
 	type Mention,
 	type RelatedIeObject,
@@ -81,6 +89,9 @@ import {
 	GetVideoFileByRepresentationIdDocument,
 	GetVideoFileByRepresentationIdQuery,
 	GetVideoFileByRepresentationIdQueryVariables,
+	GetRightsInfoDocument,
+	type GetRightsInfoQuery,
+	type GetRightsInfoQueryVariables,
 	Lookup_Maintainer_Visitor_Space_Status_Enum as VisitorSpaceStatus,
 } from '~generated/graphql-db-types-hetarchief';
 import {
@@ -90,13 +101,19 @@ import {
 	MAX_COUNT_SEARCH_RESULTS,
 } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
 import { AND } from '~modules/ie-objects/elasticsearch/queryBuilder.helpers';
-import { convertStringToSearchTerms, type SearchTermParseResult, } from '~modules/ie-objects/helpers/convert-string-to-search-terms';
-import { AUTOCOMPLETE_FIELD_TO_ES_FIELD_NAME } from '~modules/ie-objects/ie-objects.conts';
 import {
+	type SearchTermParseResult,
+	convertStringToSearchTerms,
+} from '~modules/ie-objects/helpers/convert-string-to-search-terms';
+import {
+	AUTOCOMPLETE_FIELD_TO_ES_FIELD_NAME,
+	IE_OBJECT_AV_TYPES,
+} from '~modules/ie-objects/ie-objects.conts';
+import {
+	CACHE_KEY_PREFIX_IE_OBJECTS_SEARCH,
 	CACHE_KEY_PREFIX_IE_OBJECT_DETAIL,
 	CACHE_KEY_PREFIX_IE_OBJECT_PID_TO_ID,
 	CACHE_KEY_PREFIX_IE_OBJECT_THUMBNAIL,
-	CACHE_KEY_PREFIX_IE_OBJECTS_SEARCH,
 } from '~modules/ie-objects/services/ie-objects.service.consts';
 import {
 	type DbFile,
@@ -120,6 +137,8 @@ import { customError } from '~shared/helpers/custom-error';
 import { checkRequiredEnvs } from '~shared/helpers/env-check';
 
 checkRequiredEnvs(['ELASTICSEARCH_URL', 'IE_OBJECT_ID_PREFIX']);
+
+
 
 @Injectable()
 export class IeObjectsService {
@@ -473,6 +492,25 @@ export class IeObjectsService {
 		);
 	}
 
+	private async getRightsInfoByIeObjectIdFromDb(
+		objectId: string
+	): Promise<IeObjectRightsInfo | null> {
+		const response = await this.dataService.execute<
+			GetRightsInfoQuery,
+			GetRightsInfoQueryVariables
+		>(GetRightsInfoDocument, { ieObjectId: objectId });
+		const rightsInfo = response?.graph_rights?.[0];
+
+		if (!rightsInfo) {
+			return null;
+		}
+
+		return {
+			reuseLabel: rightsInfo.reuse_label,
+			reuseCategoryId: rightsInfo.reuse_category_id,
+		};
+	}
+
 	private async getIeObjectThumbnailByIdFromDb(
 		objectId: string
 	): Promise<IeObjectForThumbnailOnly | null> {
@@ -632,6 +670,13 @@ export class IeObjectsService {
 			licenses.includes(IeObjectLicense.PUBLIC_DOMAIN);
 
 		const dctermsFormat = dctermsFormatResponse?.dcterms_format as IeObjectType;
+		const shouldExposeRightsInfo =
+			IE_OBJECT_AV_TYPES.includes(dctermsFormat) &&
+			(licenses.includes(IeObjectLicense.PUBLIEK_CONTENT) ||
+				licenses.includes(IeObjectLicense.BEZOEKERTOOL_CONTENT));
+		const rightsInfo = shouldExposeRightsInfo
+			? await this.getRightsInfoByIeObjectIdFromDb(ieObjectId)
+			: undefined;
 		let thumbnailUrl = schemaThumbnailUrlResponse?.schema_thumbnail_url?.[0];
 
 		if (mapDcTermsFormatToSimpleType(dctermsFormat) === IeObjectType.AUDIO) {
@@ -771,6 +816,7 @@ export class IeObjectsService {
 			newspaperPublisher: compact(
 				parentCollectionResponse?.map((part) => part?.collection?.schema_publisher)
 			)?.join(', '),
+			rightsInfo,
 			pages: ieObjectByPages?.pages || [],
 			mentions: ieObjectByPages?.mentions || [],
 		};
