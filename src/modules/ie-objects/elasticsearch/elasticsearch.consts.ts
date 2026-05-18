@@ -38,6 +38,7 @@ export enum IeObjectsSearchFilterField {
 	CONSULTABLE_MEDIA = 'isConsultableMedia',
 	CONSULTABLE_PUBLIC_DOMAIN = 'isConsultablePublicDomain',
 	REUSABILITY = 'reusability',
+	RIGHTS = 'rights',
 	CAST = 'cast',
 	IDENTIFIER = 'identifier',
 	CATEGORIE = 'categorie', // Not available in database: https://docs.google.com/spreadsheets/d/1xAtHfkpDi4keSsBol7pw0cQAvCmg2hWRz8oxM6cP7zo/edit#gid=0
@@ -78,6 +79,7 @@ export const IE_OBJECTS_SEARCH_FILTER_FIELD_IN_METADATA_LIMITED: IeObjectsSearch
 	IeObjectsSearchFilterField.LICENSES,
 	IeObjectsSearchFilterField.CATEGORIE,
 	IeObjectsSearchFilterField.REUSABILITY,
+	IeObjectsSearchFilterField.RIGHTS,
 ];
 
 export const IE_OBJECTS_SEARCH_FILTER_FIELD_IN_METADATA_ALL: IeObjectsSearchFilterField[] = [
@@ -120,6 +122,7 @@ export interface QueryBuilderInputInfo {
 	visitorSpaceInfo?: IeObjectsVisitorSpaceInfo;
 	spacesIds?: string[];
 	reusabilityRightsIris?: string[];
+	rightsLabelIris?: string[];
 }
 
 export enum MetadataAccessType {
@@ -199,6 +202,7 @@ export const DEFAULT_QUERY_TYPE: { [prop in IeObjectsSearchFilterField]: QueryTy
 	[IeObjectsSearchFilterField.CONSULTABLE_MEDIA]: QueryType.TERMS,
 	[IeObjectsSearchFilterField.CONSULTABLE_PUBLIC_DOMAIN]: QueryType.TERMS,
 	[IeObjectsSearchFilterField.REUSABILITY]: QueryType.TERMS,
+	[IeObjectsSearchFilterField.RIGHTS]: QueryType.TERMS,
 };
 
 export enum ReusabilityCategory {
@@ -240,6 +244,78 @@ export const REUSABILITY_FILTER_VALUES: Record<
 			'https://rightsstatements.org/page/InC-RUU/1.0/',
 		],
 		newspaperRightsStatementUris: ['https://rightsstatements.org/page/UND/1.0/'],
+	},
+};
+
+export enum RightsLabel {
+	PUBLIC_DOMAIN = 'public-domain',
+	COPYRIGHT_UNDETERMINED = 'copyright-undetermined',
+	CC0 = 'cc0',
+	NO_COPYRIGHT_CONTRACTUAL_RESTRICTIONS = 'no-copyright-contractual-restrictions',
+	CC_BY = 'cc-by',
+	CC_BY_NC_ND = 'cc-by-nc-nd',
+	CC_BY_SA = 'cc-by-sa',
+	CC_BY_NC = 'cc-by-nc',
+	IN_COPYRIGHT = 'in-copyright',
+	COPYRIGHT_NOT_EVALUATED = 'copyright-not-evaluated',
+	ORPHAN_WORK_EU = 'orphan-work-eu',
+	RIGHTS_HOLDER_UNLOCATABLE = 'rights-holder-unlocatable',
+}
+
+export const RIGHTS_LABEL_FILTER_VALUES: Record<
+	RightsLabel,
+	{
+		avReuseCategoryIds: string[];
+		newspaperRightsStatementUris: string[];
+	}
+> = {
+	[RightsLabel.PUBLIC_DOMAIN]: {
+		avReuseCategoryIds: ['https://creativecommons.org/public-domain/pdm/'],
+		newspaperRightsStatementUris: ['https://creativecommons.org/publicdomain/mark/1.0/'],
+	},
+	[RightsLabel.COPYRIGHT_UNDETERMINED]: {
+		avReuseCategoryIds: ['https://rightsstatements.org/page/UND/1.0/'],
+		newspaperRightsStatementUris: ['https://rightsstatements.org/page/UND/1.0/'],
+	},
+	[RightsLabel.CC0]: {
+		avReuseCategoryIds: ['https://creativecommons.org/publicdomain/zero/1.0/'],
+		newspaperRightsStatementUris: [],
+	},
+	[RightsLabel.NO_COPYRIGHT_CONTRACTUAL_RESTRICTIONS]: {
+		avReuseCategoryIds: ['https://rightsstatements.org/page/NoC-CR/1.0/'],
+		newspaperRightsStatementUris: [],
+	},
+	[RightsLabel.CC_BY]: {
+		avReuseCategoryIds: ['https://creativecommons.org/licenses/by/4.0/'],
+		newspaperRightsStatementUris: [],
+	},
+	[RightsLabel.CC_BY_NC_ND]: {
+		avReuseCategoryIds: ['https://creativecommons.org/licenses/by-nc-nd/4.0/'],
+		newspaperRightsStatementUris: [],
+	},
+	[RightsLabel.CC_BY_SA]: {
+		avReuseCategoryIds: ['https://creativecommons.org/licenses/by-sa/4.0/'],
+		newspaperRightsStatementUris: [],
+	},
+	[RightsLabel.CC_BY_NC]: {
+		avReuseCategoryIds: ['https://creativecommons.org/licenses/by-nc/4.0/'],
+		newspaperRightsStatementUris: [],
+	},
+	[RightsLabel.IN_COPYRIGHT]: {
+		avReuseCategoryIds: ['https://rightsstatements.org/page/InC/1.0/'],
+		newspaperRightsStatementUris: [],
+	},
+	[RightsLabel.COPYRIGHT_NOT_EVALUATED]: {
+		avReuseCategoryIds: ['https://rightsstatements.org/page/CNE/1.0/'],
+		newspaperRightsStatementUris: [],
+	},
+	[RightsLabel.ORPHAN_WORK_EU]: {
+		avReuseCategoryIds: ['https://rightsstatements.org/page/InC-OW-EU/1.0/'],
+		newspaperRightsStatementUris: [],
+	},
+	[RightsLabel.RIGHTS_HOLDER_UNLOCATABLE]: {
+		avReuseCategoryIds: ['https://rightsstatements.org/page/InC-RUU/1.0/'],
+		newspaperRightsStatementUris: [],
 	},
 };
 
@@ -291,6 +367,7 @@ export const READABLE_TO_ELASTIC_FILTER_NAMES: {
 		| IeObjectsSearchFilterField.CONSULTABLE_MEDIA
 		| IeObjectsSearchFilterField.CONSULTABLE_PUBLIC_DOMAIN
 		| IeObjectsSearchFilterField.REUSABILITY
+		| IeObjectsSearchFilterField.RIGHTS
 		| IeObjectsSearchFilterField.RELEASE_DATE // Custom filter: creation date OR publish date
 	>]: ElasticsearchField | `${ElasticsearchField}.${ElasticsearchField}`;
 } = {

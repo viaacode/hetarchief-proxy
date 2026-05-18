@@ -19,6 +19,7 @@ import {
 	IeObjectsSearchFilterField,
 	Operator,
 	ReusabilityCategory,
+	RightsLabel,
 } from '../elasticsearch/elasticsearch.consts';
 import {
 	AutocompleteField,
@@ -185,6 +186,50 @@ describe('ieObjectsService', () => {
 				'https://data-qas.hetarchief.be/id/entity/free',
 				'https://data-qas.hetarchief.be/id/entity/conditional',
 			]);
+		});
+	});
+
+	describe('getRightsLabelIris', () => {
+		it('fetches graph.rights IE ids for selected rights labels', async () => {
+			mockDataService.execute.mockResolvedValueOnce({
+				graph_rights: [
+					{ intellectual_entity_id: 'https://data-qas.hetarchief.be/id/entity/public-domain' },
+					{ intellectual_entity_id: 'https://data-qas.hetarchief.be/id/entity/public-domain' },
+					{ intellectual_entity_id: 'https://data-qas.hetarchief.be/id/entity/cc0' },
+				],
+			});
+
+			const result = await (ieObjectsService as any).getRightsLabelIris([
+				{
+					field: IeObjectsSearchFilterField.RIGHTS,
+					operator: Operator.IS,
+					multiValue: [RightsLabel.PUBLIC_DOMAIN, RightsLabel.CC0],
+				},
+			]);
+
+			expect(mockDataService.execute).toHaveBeenCalledWith(expect.any(String), {
+				categoryIds: expect.arrayContaining([
+					'https://creativecommons.org/public-domain/pdm/',
+					'https://creativecommons.org/publicdomain/zero/1.0/',
+				]),
+			});
+			expect(result).toEqual([
+				'https://data-qas.hetarchief.be/id/entity/public-domain',
+				'https://data-qas.hetarchief.be/id/entity/cc0',
+			]);
+		});
+
+		it('does not query graph.rights for unknown rights labels', async () => {
+			const result = await (ieObjectsService as any).getRightsLabelIris([
+				{
+					field: IeObjectsSearchFilterField.RIGHTS,
+					operator: Operator.IS,
+					multiValue: ['unknown-rights-label'],
+				},
+			]);
+
+			expect(mockDataService.execute).not.toHaveBeenCalled();
+			expect(result).toEqual([]);
 		});
 	});
 

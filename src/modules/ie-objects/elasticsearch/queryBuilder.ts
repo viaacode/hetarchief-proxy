@@ -37,6 +37,8 @@ import {
 	READABLE_TO_ELASTIC_FILTER_NAMES,
 	ReusabilityCategory,
 	REUSABILITY_FILTER_VALUES,
+	RightsLabel,
+	RIGHTS_LABEL_FILTER_VALUES,
 	VALUE_OPERATORS,
 } from './elasticsearch.consts';
 
@@ -409,6 +411,7 @@ export class QueryBuilder {
 			IeObjectsSearchFilterField.CONSULTABLE_MEDIA,
 			IeObjectsSearchFilterField.CONSULTABLE_PUBLIC_DOMAIN,
 			IeObjectsSearchFilterField.REUSABILITY,
+			IeObjectsSearchFilterField.RIGHTS,
 			IeObjectsSearchFilterField.RELEASE_DATE,
 		];
 		let validatedFilters = filters;
@@ -560,6 +563,9 @@ export class QueryBuilder {
 		const reusabilityFilter = searchRequestFilters.find(
 			(filter: SearchFilter) => filter.field === IeObjectsSearchFilterField.REUSABILITY
 		);
+		const rightsFilter = searchRequestFilters.find(
+			(filter: SearchFilter) => filter.field === IeObjectsSearchFilterField.RIGHTS
+		);
 		const releaseDates = searchRequestFilters.filter(
 			(filter: SearchFilter) => filter.field === IeObjectsSearchFilterField.RELEASE_DATE
 		);
@@ -676,6 +682,44 @@ export class QueryBuilder {
 			toBeAppliedCustomFilters.push({
 				occurrenceType: 'filter',
 				query: [OR(reusabilityQueries) ?? { match_none: { _name: 'REUSABILITY' } }],
+			});
+		}
+
+		// Filter by specific rights label. Newspapers use dcterms_rights_statement in ES,
+		// while AV rights currently live in graph.rights and are added by IRI.
+		if (rightsFilter?.multiValue?.length || rightsFilter?.value) {
+			const rightsValues = rightsFilter.multiValue?.length
+				? rightsFilter.multiValue
+				: [rightsFilter.value as string];
+			const rightsStatementUris = uniq(
+				rightsValues.flatMap(
+					(rightsLabel) =>
+						RIGHTS_LABEL_FILTER_VALUES[rightsLabel as RightsLabel]?.newspaperRightsStatementUris ??
+						[]
+				)
+			);
+			const rightsQueries = [
+				rightsStatementUris.length
+					? {
+							terms: {
+								_name: 'RIGHTS_DCTERMS_RIGHTS_STATEMENT',
+								dcterms_rights_statement: rightsStatementUris,
+							},
+						}
+					: null,
+				inputInfo.rightsLabelIris?.length
+					? {
+							terms: {
+								_name: 'RIGHTS_GRAPH_RIGHTS',
+								[ElasticsearchField.iri]: inputInfo.rightsLabelIris,
+							},
+						}
+					: null,
+			];
+
+			toBeAppliedCustomFilters.push({
+				occurrenceType: QueryBuilder.getOccurrenceType(rightsFilter.operator),
+				query: [OR(rightsQueries) ?? { match_none: { _name: 'RIGHTS' } }],
 			});
 		}
 

@@ -93,6 +93,8 @@ import {
 	MAX_COUNT_SEARCH_RESULTS,
 	ReusabilityCategory,
 	REUSABILITY_FILTER_VALUES,
+	RightsLabel,
+	RIGHTS_LABEL_FILTER_VALUES,
 } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
 import { AND } from '~modules/ie-objects/elasticsearch/queryBuilder.helpers';
 import { convertStringToSearchTerms, type SearchTermParseResult, } from '~modules/ie-objects/helpers/convert-string-to-search-terms';
@@ -125,6 +127,22 @@ import { customError } from '~shared/helpers/custom-error';
 import { checkRequiredEnvs } from '~shared/helpers/env-check';
 
 checkRequiredEnvs(['ELASTICSEARCH_URL', 'IE_OBJECT_ID_PREFIX']);
+
+type GetRightsLabelIrisQuery = {
+	graph_rights: Array<{ intellectual_entity_id: string }>;
+};
+
+type GetRightsLabelIrisQueryVariables = {
+	categoryIds: string[];
+};
+
+const GET_RIGHTS_LABEL_IRIS_QUERY = `
+	query getRightsLabelIris($categoryIds: [String!]!) {
+		graph_rights(where: { reuse_category_id: { _in: $categoryIds } }) {
+			intellectual_entity_id
+		}
+	}
+`;
 
 @Injectable()
 export class IeObjectsService {
@@ -173,6 +191,7 @@ export class IeObjectsService {
 		}
 
 		const reusabilityRightsIris = await this.getReusabilityRightsIris(inputQuery.filters);
+		const rightsLabelIris = await this.getRightsLabelIris(inputQuery.filters);
 
 		let esQuery: any;
 		try {
@@ -181,6 +200,7 @@ export class IeObjectsService {
 				visitorSpaceInfo,
 				spacesIds,
 				reusabilityRightsIris,
+				rightsLabelIris,
 			});
 		} catch (err) {
 			/*
@@ -194,6 +214,7 @@ export class IeObjectsService {
 				visitorSpaceInfo,
 				spacesIds,
 				reusabilityRightsIris,
+				rightsLabelIris,
 			});
 		}
 		return esQuery;
@@ -217,6 +238,32 @@ export class IeObjectsService {
 			GetReusabilityRightsIrisQuery,
 			GetReusabilityRightsIrisQueryVariables
 		>(GetReusabilityRightsIrisDocument, { categoryIds });
+
+		return uniq(response.graph_rights.map((rights) => rights.intellectual_entity_id));
+	}
+
+	private async getRightsLabelIris(filters?: SearchFilter[]): Promise<string[]> {
+		const rightsFilter = filters?.find(
+			(filter) => filter.field === IeObjectsSearchFilterField.RIGHTS
+		);
+		const rightsValues = rightsFilter?.multiValue?.length
+			? rightsFilter.multiValue
+			: compact([rightsFilter?.value]);
+		const categoryIds = uniq(
+			rightsValues.flatMap(
+				(rightsLabel) =>
+					RIGHTS_LABEL_FILTER_VALUES[rightsLabel as RightsLabel]?.avReuseCategoryIds ?? []
+			)
+		);
+
+		if (!categoryIds.length) {
+			return [];
+		}
+
+		const response = await this.dataService.execute<
+			GetRightsLabelIrisQuery,
+			GetRightsLabelIrisQueryVariables
+		>(GET_RIGHTS_LABEL_IRIS_QUERY, { categoryIds });
 
 		return uniq(response.graph_rights.map((rights) => rights.intellectual_entity_id));
 	}
