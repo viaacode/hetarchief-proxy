@@ -1,6 +1,6 @@
 import { BadRequestException, InternalServerErrorException } from '@nestjs/common';
 import jsep from 'jsep';
-import { clamp, forEach, isArray, isEmpty, isNil } from 'lodash';
+import { clamp, forEach, isArray, isEmpty, isNil, uniq } from 'lodash';
 
 import { IeObjectsQueryDto, SearchFilter } from '../dto/ie-objects.dto';
 import {
@@ -36,7 +36,7 @@ import {
 	QueryType,
 	READABLE_TO_ELASTIC_FILTER_NAMES,
 	ReusabilityCategory,
-	REUSABILITY_CATEGORY_URIS,
+	REUSABILITY_FILTER_VALUES,
 	VALUE_OPERATORS,
 } from './elasticsearch.consts';
 
@@ -645,24 +645,38 @@ export class QueryBuilder {
 			});
 		}
 
-		// Filter by reusability category: expand selected category keys to their rights statement URIs
+		// Filter by reusability category. Newspapers use dcterms_rights_statement in ES,
+		// while AV rights currently live in graph.rights and are added by IRI.
 		if (reusabilityFilter?.multiValue?.length) {
-			const uris = reusabilityFilter.multiValue.flatMap(
-				(category) => REUSABILITY_CATEGORY_URIS[category as ReusabilityCategory] ?? []
+			const rightsStatementUris = uniq(
+				reusabilityFilter.multiValue.flatMap(
+					(category) =>
+						REUSABILITY_FILTER_VALUES[category as ReusabilityCategory]?.newspaperRightsStatementUris ?? []
+				)
 			);
-			if (uris.length) {
-				toBeAppliedCustomFilters.push({
-					occurrenceType: 'filter',
-					query: [
-						{
+			const reusabilityQueries = [
+				rightsStatementUris.length
+					? {
 							terms: {
-								_name: 'REUSABILITY',
-								dcterms_rights_statement: uris,
+								_name: 'REUSABILITY_DCTERMS_RIGHTS_STATEMENT',
+								dcterms_rights_statement: rightsStatementUris,
 							},
-						},
-					],
-				});
-			}
+						}
+					: null,
+				inputInfo.reusabilityRightsIris?.length
+					? {
+							terms: {
+								_name: 'REUSABILITY_GRAPH_RIGHTS',
+								[ElasticsearchField.iri]: inputInfo.reusabilityRightsIris,
+							},
+						}
+					: null,
+			];
+
+			toBeAppliedCustomFilters.push({
+				occurrenceType: 'filter',
+				query: [OR(reusabilityQueries) ?? { match_none: { _name: 'REUSABILITY' } }],
+			});
 		}
 
 		if (releaseDates.length) {

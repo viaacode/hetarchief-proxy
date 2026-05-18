@@ -15,7 +15,7 @@ import { compact, find, isArray, isEmpty, isNil, kebabCase, omitBy, uniq } from 
 
 import type { Configuration } from '~config';
 
-import { IeObjectsQueryDto, IeObjectsSimilarQueryDto } from '../dto/ie-objects.dto';
+import { IeObjectsQueryDto, IeObjectsSimilarQueryDto, type SearchFilter } from '../dto/ie-objects.dto';
 import { QueryBuilder } from '../elasticsearch/queryBuilder';
 import { convertQueryToLiteralString } from '../helpers/convert-query-to-literal-string';
 import { getSearchEndpoint } from '../helpers/get-search-endpoint';
@@ -75,6 +75,9 @@ import {
 	GetPreviousNextIeObjectIdsDocument,
 	type GetPreviousNextIeObjectIdsQuery,
 	type GetPreviousNextIeObjectIdsQueryVariables,
+	GetReusabilityRightsIrisDocument,
+	type GetReusabilityRightsIrisQuery,
+	type GetReusabilityRightsIrisQueryVariables,
 	GetSchemaIdentifierV3BySchemaIdentifierV2Document,
 	type GetSchemaIdentifierV3BySchemaIdentifierV2Query,
 	type GetSchemaIdentifierV3BySchemaIdentifierV2QueryVariables,
@@ -88,6 +91,8 @@ import {
 	ElasticsearchField,
 	IeObjectsSearchFilterField,
 	MAX_COUNT_SEARCH_RESULTS,
+	ReusabilityCategory,
+	REUSABILITY_FILTER_VALUES,
 } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
 import { AND } from '~modules/ie-objects/elasticsearch/queryBuilder.helpers';
 import { convertStringToSearchTerms, type SearchTermParseResult, } from '~modules/ie-objects/helpers/convert-string-to-search-terms';
@@ -167,12 +172,15 @@ export class IeObjectsService {
 			}
 		}
 
+		const reusabilityRightsIris = await this.getReusabilityRightsIris(inputQuery.filters);
+
 		let esQuery: any;
 		try {
 			esQuery = QueryBuilder.build(inputQuery, {
 				user,
 				visitorSpaceInfo,
 				spacesIds,
+				reusabilityRightsIris,
 			});
 		} catch (err) {
 			/*
@@ -185,9 +193,32 @@ export class IeObjectsService {
 				user,
 				visitorSpaceInfo,
 				spacesIds,
+				reusabilityRightsIris,
 			});
 		}
 		return esQuery;
+	}
+
+	private async getReusabilityRightsIris(filters?: SearchFilter[]): Promise<string[]> {
+		const reusabilityFilter = filters?.find(
+			(filter) => filter.field === IeObjectsSearchFilterField.REUSABILITY
+		);
+		const categoryIds = uniq(
+			(reusabilityFilter?.multiValue || []).flatMap(
+				(category) => REUSABILITY_FILTER_VALUES[category as ReusabilityCategory]?.avReuseCategoryIds ?? []
+			)
+		);
+
+		if (!categoryIds.length) {
+			return [];
+		}
+
+		const response = await this.dataService.execute<
+			GetReusabilityRightsIrisQuery,
+			GetReusabilityRightsIrisQueryVariables
+		>(GetReusabilityRightsIrisDocument, { categoryIds });
+
+		return uniq(response.graph_rights.map((rights) => rights.intellectual_entity_id));
 	}
 
 	public async findAll(

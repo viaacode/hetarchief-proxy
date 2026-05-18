@@ -15,7 +15,11 @@ import {
 	vi,
 } from 'vitest';
 
-import { IeObjectsSearchFilterField, Operator } from '../elasticsearch/elasticsearch.consts';
+import {
+	IeObjectsSearchFilterField,
+	Operator,
+	ReusabilityCategory,
+} from '../elasticsearch/elasticsearch.consts';
 import {
 	AutocompleteField,
 	type ElasticsearchResponse,
@@ -143,6 +147,45 @@ describe('ieObjectsService', () => {
 
 	it('services should be defined', () => {
 		expect(ieObjectsService).toBeDefined();
+	});
+
+	describe('getReusabilityRightsIris', () => {
+		it('fetches graph.rights IE ids for selected reusability categories', async () => {
+			mockDataService.execute.mockResolvedValueOnce({
+				graph_rights: [
+					{ intellectual_entity_id: 'https://data-qas.hetarchief.be/id/entity/free' },
+					{ intellectual_entity_id: 'https://data-qas.hetarchief.be/id/entity/free' },
+					{ intellectual_entity_id: 'https://data-qas.hetarchief.be/id/entity/conditional' },
+				],
+			});
+
+			const result = await (ieObjectsService as any).getReusabilityRightsIris([
+				{
+					field: IeObjectsSearchFilterField.REUSABILITY,
+					operator: Operator.IS,
+					multiValue: [
+						ReusabilityCategory.FREELY_REUSABLE,
+						ReusabilityCategory.REUSABLE_WITH_CONDITIONS,
+					],
+				},
+			]);
+
+			expect(mockDataService.execute).toHaveBeenCalledWith(expect.any(Object), {
+				categoryIds: expect.arrayContaining([
+					'https://creativecommons.org/public-domain/pdm/',
+					'https://creativecommons.org/publicdomain/zero/1.0/',
+					'https://rightsstatements.org/page/NoC-CR/1.0/',
+					'https://creativecommons.org/licenses/by/4.0/',
+					'https://creativecommons.org/licenses/by-nc-nd/4.0/',
+					'https://creativecommons.org/licenses/by-sa/4.0/',
+					'https://creativecommons.org/licenses/by-nc/4.0/',
+				]),
+			});
+			expect(result).toEqual([
+				'https://data-qas.hetarchief.be/id/entity/free',
+				'https://data-qas.hetarchief.be/id/entity/conditional',
+			]);
+		});
 	});
 
 	describe('adaptESResponse', () => {

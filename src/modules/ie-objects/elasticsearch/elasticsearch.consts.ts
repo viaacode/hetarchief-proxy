@@ -77,6 +77,7 @@ export const IE_OBJECTS_SEARCH_FILTER_FIELD_IN_METADATA_LIMITED: IeObjectsSearch
 	IeObjectsSearchFilterField.IDENTIFIER,
 	IeObjectsSearchFilterField.LICENSES,
 	IeObjectsSearchFilterField.CATEGORIE,
+	IeObjectsSearchFilterField.REUSABILITY,
 ];
 
 export const IE_OBJECTS_SEARCH_FILTER_FIELD_IN_METADATA_ALL: IeObjectsSearchFilterField[] = [
@@ -88,7 +89,6 @@ export const IE_OBJECTS_SEARCH_FILTER_FIELD_IN_METADATA_ALL: IeObjectsSearchFilt
 	IeObjectsSearchFilterField.OBJECT_TYPE,
 	IeObjectsSearchFilterField.CONSULTABLE_MEDIA,
 	IeObjectsSearchFilterField.CONSULTABLE_PUBLIC_DOMAIN,
-	IeObjectsSearchFilterField.REUSABILITY,
 ];
 
 export enum Operator {
@@ -119,6 +119,7 @@ export interface QueryBuilderInputInfo {
 	user?: SessionUserEntity;
 	visitorSpaceInfo?: IeObjectsVisitorSpaceInfo;
 	spacesIds?: string[];
+	reusabilityRightsIris?: string[];
 }
 
 export enum MetadataAccessType {
@@ -206,25 +207,40 @@ export enum ReusabilityCategory {
 	POSSIBLY_REUSABLE = 'possibly-reusable',
 }
 
-export const REUSABILITY_CATEGORY_URIS: Record<ReusabilityCategory, string[]> = {
-	[ReusabilityCategory.FREELY_REUSABLE]: [
-		'https://creativecommons.org/public-domain/pdm/',
-		'https://creativecommons.org/publicdomain/zero/1.0/',
-	],
-	[ReusabilityCategory.REUSABLE_WITH_CONDITIONS]: [
-		'https://rightsstatements.org/page/NoC-CR/1.0/',
-		'https://creativecommons.org/licenses/by/4.0/',
-		'https://creativecommons.org/licenses/by-nc-nd/4.0/',
-		'https://creativecommons.org/licenses/by-sa/4.0/',
-		'https://creativecommons.org/licenses/by-nc/4.0/',
-	],
-	[ReusabilityCategory.POSSIBLY_REUSABLE]: [
-		'https://rightsstatements.org/page/UND/1.0/',
-		'https://rightsstatements.org/page/InC/1.0/',
-		'https://rightsstatements.org/page/CNE/1.0/',
-		'https://rightsstatements.org/page/InC-OW-EU/1.0/',
-		'https://rightsstatements.org/page/InC-RUU/1.0/',
-	],
+export const REUSABILITY_FILTER_VALUES: Record<
+	ReusabilityCategory,
+	{
+		avReuseCategoryIds: string[];
+		newspaperRightsStatementUris: string[];
+	}
+> = {
+	[ReusabilityCategory.FREELY_REUSABLE]: {
+		avReuseCategoryIds: [
+			'https://creativecommons.org/public-domain/pdm/',
+			'https://creativecommons.org/publicdomain/zero/1.0/',
+		],
+		newspaperRightsStatementUris: ['https://creativecommons.org/publicdomain/mark/1.0/'],
+	},
+	[ReusabilityCategory.REUSABLE_WITH_CONDITIONS]: {
+		avReuseCategoryIds: [
+			'https://rightsstatements.org/page/NoC-CR/1.0/',
+			'https://creativecommons.org/licenses/by/4.0/',
+			'https://creativecommons.org/licenses/by-nc-nd/4.0/',
+			'https://creativecommons.org/licenses/by-sa/4.0/',
+			'https://creativecommons.org/licenses/by-nc/4.0/',
+		],
+		newspaperRightsStatementUris: [],
+	},
+	[ReusabilityCategory.POSSIBLY_REUSABLE]: {
+		avReuseCategoryIds: [
+			'https://rightsstatements.org/page/UND/1.0/',
+			'https://rightsstatements.org/page/InC/1.0/',
+			'https://rightsstatements.org/page/CNE/1.0/',
+			'https://rightsstatements.org/page/InC-OW-EU/1.0/',
+			'https://rightsstatements.org/page/InC-RUU/1.0/',
+		],
+		newspaperRightsStatementUris: ['https://rightsstatements.org/page/UND/1.0/'],
+	},
 };
 
 // Max number of search results to return to the client
