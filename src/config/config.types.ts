@@ -18,6 +18,7 @@ export interface Configuration {
 	REDIS_CONNECTION_STRING: string;
 	ELASTICSEARCH_URL: string;
 	SSUM_REGISTRATION_PAGE: string;
+	KEYCLOAK_CLIENT_ID: string;
 	SAML_IDP_META_DATA_ENDPOINT: string;
 	SAML_SP_ENTITY_ID: string;
 	SAML_SP_PRIVATE_KEY: string;
