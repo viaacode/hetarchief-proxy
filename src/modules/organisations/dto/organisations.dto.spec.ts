@@ -9,7 +9,7 @@ describe('OrganisationSlugQueryDto', () => {
 				page: 1,
 				size: 20,
 				orderProp: 'name',
-				orderDirection: 'desc',
+				orderDirection: 'asc',
 			});
 		});
 	});
