@@ -9,6 +9,7 @@ import {
 	Operator,
 	OrderProperty,
 	ReusabilityCategory,
+	RightsLabel,
 } from './elasticsearch.consts';
 import { QueryBuilder } from './queryBuilder';
 
@@ -733,6 +734,77 @@ describe('QueryBuilder', () => {
 			expect(queryString).toContain('https://creativecommons.org/publicdomain/mark/1.0/');
 			// Unknown key produces no URIs — no crash
 			expect(queryString).not.toContain('unknown-category');
+		});
+
+		it('Should combine dcterms rights statements and graph.rights IRIs for selected rights labels', () => {
+			const queryObject = QueryBuilder.build(
+				{
+					page: 1,
+					size: 10,
+					filters: [
+						{
+							field: IeObjectsSearchFilterField.RIGHTS,
+							operator: Operator.IS,
+							multiValue: [RightsLabel.PUBLIC_DOMAIN, RightsLabel.CC0],
+						},
+					],
+				},
+				{
+					...mockInputInfo,
+					rightsLabelIris: [
+						'https://data-qas.hetarchief.be/id/entity/public-domain',
+						'https://data-qas.hetarchief.be/id/entity/cc0',
+					],
+				} as any
+			);
+			const queryString = JSON.stringify(queryObject);
+			expect(queryString).toContain('RIGHTS_DCTERMS_RIGHTS_STATEMENT');
+			expect(queryString).toContain('https://creativecommons.org/publicdomain/mark/1.0/');
+			expect(queryString).toContain('RIGHTS_GRAPH_RIGHTS');
+			expect(queryString).toContain('https://data-qas.hetarchief.be/id/entity/public-domain');
+			expect(queryString).toContain('https://data-qas.hetarchief.be/id/entity/cc0');
+		});
+
+		it('Should produce match_none when a selected rights label has no indexed rights values', () => {
+			const queryObject = QueryBuilder.build(
+				{
+					page: 1,
+					size: 10,
+					filters: [
+						{
+							field: IeObjectsSearchFilterField.RIGHTS,
+							operator: Operator.IS,
+							multiValue: ['unknown-rights-label'],
+						},
+					],
+				},
+				mockInputInfo as any
+			);
+
+			expect(JSON.stringify(queryObject)).toContain('match_none');
+		});
+
+		it('Should place rights query under must_not when operator is isNot', () => {
+			const queryObject = QueryBuilder.build(
+				{
+					page: 1,
+					size: 10,
+					filters: [
+						{
+							field: IeObjectsSearchFilterField.RIGHTS,
+							operator: Operator.IS_NOT,
+							multiValue: [RightsLabel.IN_COPYRIGHT],
+						},
+					],
+				},
+				{
+					...mockInputInfo,
+					rightsLabelIris: ['https://data-qas.hetarchief.be/id/entity/in-copyright'],
+				} as any
+			);
+			const queryString = JSON.stringify(queryObject);
+			expect(queryString).toContain('must_not');
+			expect(queryString).toContain('https://data-qas.hetarchief.be/id/entity/in-copyright');
 		});
 
 		it('Should set two filter when consultableOnlyOnLocation and isConsultableMedia are set to true', () => {
