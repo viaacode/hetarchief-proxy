@@ -9,6 +9,7 @@ import {
 	MaterialRequestMessageBodyStatusUpdateWithMotivation,
 } from '~modules/material-request-messages/material-request-messages.types';
 import { MaterialRequest } from '~modules/material-requests/material-requests.types';
+import { NotificationType } from '~modules/notifications/types';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupName } from '~modules/users/types';
 
@@ -25,19 +26,31 @@ export const ORDER_PROP_TO_DB_PROP: Partial<Record<keyof MaterialRequest, string
 	objectSchemaName: 'intellectualEntity.schema_name',
 };
 
-export const MAP_MATERIAL_REQUEST_STATUS_TO_EMAIL_TEMPLATE = {
-	[Lookup_App_Material_Request_Status_Enum.Cancelled]:
-		EmailTemplate.CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_REQUESTER_CANCELLED,
-	[Lookup_App_Material_Request_Status_Enum.Approved]:
-		EmailTemplate.CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_MAINTAINER_APPROVED,
-	[Lookup_App_Material_Request_Status_Enum.Denied]:
-		EmailTemplate.CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_MAINTAINER_DENIED,
+export const MAP_MATERIAL_REQUEST_STATUS_TO_NOTIFICATION_TYPE = {
+	[Lookup_App_Material_Request_Status_Enum.Cancelled]: NotificationType.MATERIAL_REQUEST_CANCELLED,
+	[Lookup_App_Material_Request_Status_Enum.Approved]: NotificationType.MATERIAL_REQUEST_APPROVED,
+	[Lookup_App_Material_Request_Status_Enum.Denied]: NotificationType.MATERIAL_REQUEST_DENIED,
 };
 
 export const MAP_MATERIAL_REQUEST_STATUS_TO_EVENT_TYPE = {
 	[Lookup_App_Material_Request_Status_Enum.Cancelled]: LogEventType.ITEM_REQUEST_CANCEL,
 	[Lookup_App_Material_Request_Status_Enum.Approved]: LogEventType.ITEM_REQUEST_APPROVE,
 	[Lookup_App_Material_Request_Status_Enum.Denied]: LogEventType.ITEM_REQUEST_DENY,
+};
+
+export const MAP_NOTIFICATION_TYPE_TO_EMAIL_TEMPLATE = {
+	[NotificationType.MATERIAL_REQUEST_CANCELLED]:
+		EmailTemplate.CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_REQUESTER_CANCELLED,
+	[NotificationType.MATERIAL_REQUEST_APPROVED]:
+		EmailTemplate.CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_MAINTAINER_APPROVED,
+	[NotificationType.MATERIAL_REQUEST_DENIED]:
+		EmailTemplate.CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_MAINTAINER_DENIED,
+	[NotificationType.MATERIAL_REQUEST_DOWNLOAD_AVAILABLE]:
+		EmailTemplate.CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_DOWNLOAD_READY_REQUESTER,
+	[NotificationType.MATERIAL_REQUEST_DOWNLOAD_EXECUTED]:
+		EmailTemplate.CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_DOWNLOAD_DOWNLOADED,
+	[NotificationType.MATERIAL_REQUEST_DOWNLOAD_ALMOST_EXPIRED]:
+		EmailTemplate.CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_DOWNLOAD_EXPIRE_SOON,
 };
 
 export const mapUserToGroupNameAndKeyUser = (user: SessionUserEntity): string => {

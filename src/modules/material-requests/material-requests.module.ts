@@ -5,12 +5,12 @@ import { MaterialRequestsController } from './controllers/material-requests.cont
 import { MaterialRequestsService } from './services/material-requests.service';
 
 import { ConfigModule } from '@nestjs/config';
-import { CampaignMonitorModule } from '~modules/campaign-monitor';
 import { EventsModule } from '~modules/events';
 import { IeObjectsModule } from '~modules/ie-objects';
 import { MaterialRequestMessagesModule } from '~modules/material-request-messages';
 import { MaterialRequestsSchedulingController } from '~modules/material-requests/controllers/material-requests-scheduling.controller';
 import { MediahavenJobsWatcherModule } from '~modules/mediahaven-jobs-watcher/mediahaven-jobs-watcher.module';
+import { NotificationsModule } from '~modules/notifications';
 import { OrganisationsModule } from '~modules/organisations/organisations.module';
 import { SpacesModule } from '~modules/spaces';
 import { UsersModule } from '~modules/users';
@@ -21,7 +21,7 @@ import { UsersModule } from '~modules/users';
 	imports: [
 		ConfigModule,
 		DataModule,
-		CampaignMonitorModule,
+		NotificationsModule,
 		OrganisationsModule,
 		EventsModule,
 		SpacesModule,

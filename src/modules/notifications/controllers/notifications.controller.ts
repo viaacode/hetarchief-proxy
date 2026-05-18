@@ -154,7 +154,7 @@ export class NotificationsController {
 						},
 						visitRequest.visitorLanguage
 					),
-					visit_id: visitRequest.id,
+					linked_entity_id: visitRequest.id,
 					type: NotificationType.ACCESS_PERIOD_VISITOR_SPACE_STARTED,
 					status: NotificationStatus.UNREAD,
 					recipient: visitRequest.userProfileId,
@@ -187,7 +187,7 @@ export class NotificationsController {
 					null,
 					visitRequest.visitorLanguage
 				),
-				visit_id: visitRequest.id,
+				linked_entity_id: visitRequest.id,
 				type: NotificationType.ACCESS_PERIOD_VISITOR_SPACE_END_WARNING,
 				status: NotificationStatus.UNREAD,
 				recipient: visitRequest.userProfileId,
@@ -218,7 +218,7 @@ export class NotificationsController {
 					null,
 					visitRequest.visitorLanguage
 				),
-				visit_id: visitRequest.id,
+				linked_entity_id: visitRequest.id,
 				type: NotificationType.ACCESS_PERIOD_VISITOR_SPACE_ENDED,
 				status: NotificationStatus.UNREAD,
 				recipient: visitRequest.userProfileId,

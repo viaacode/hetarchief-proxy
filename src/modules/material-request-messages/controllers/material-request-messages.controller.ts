@@ -48,6 +48,7 @@ import {
 import { getLastStatusEventOfType } from '~modules/material-requests/material-requests.consts';
 import { MaterialRequest } from '~modules/material-requests/material-requests.types';
 import { MaterialRequestsService } from '~modules/material-requests/services/material-requests.service';
+import { NotificationsService } from '~modules/notifications/services/notifications.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupName } from '~modules/users/types';
 import { Ip } from '~shared/decorators/ip.decorator';
@@ -88,7 +89,8 @@ export class MaterialRequestMessagesController {
 		private materialRequestMessagesService: MaterialRequestMessagesService,
 		private materialRequestsService: MaterialRequestsService,
 		private assetsService: AssetsService,
-		private materialRequestPdfGenerator: MaterialRequestPdfGeneratorService
+		private materialRequestPdfGenerator: MaterialRequestPdfGeneratorService,
+		private notificationsService: NotificationsService
 	) {}
 
 	@Get(':materialRequestId/messages')
@@ -288,8 +290,8 @@ export class MaterialRequestMessagesController {
 				body.extraConditions
 			);
 			// send email to notify requester of additional conditions
-			this.materialRequestMessagesService
-				.sendEmailForAdditionalConditionsToRequester(materialRequest)
+			this.notificationsService
+				.onSendAdditionalConditionsForMaterialRequest(materialRequest)
 				.then(noop);
 		} catch (err) {
 			const error = new CustomError('Failed to add extra conditions to material request', err, {
@@ -376,9 +378,16 @@ export class MaterialRequestMessagesController {
 					materialRequest,
 					user.getId()
 				);
+
+				const receiverIds =
+					await this.materialRequestMessagesService.getEvaluatorsForOrganisation(materialRequest);
 				// Send email for the acceptance of the additional conditions
-				this.materialRequestMessagesService
-					.sendEmailForAcceptanceOfAdditionalConditionsToEvaluators(materialRequest, user.getId())
+				this.notificationsService
+					.sendEmailForAcceptanceOfAdditionalConditionsToEvaluators(
+						materialRequest,
+						user.getId(),
+						receiverIds
+					)
 					.then(noop);
 
 				// Check if whole material request should be approved

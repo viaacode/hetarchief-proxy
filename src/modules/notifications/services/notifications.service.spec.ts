@@ -38,7 +38,7 @@ const mockGqlNotification1: GqlNotification = {
 	status: NotificationStatus.UNREAD,
 	type: NotificationType.NEW_VISIT_REQUEST,
 	recipient: 'b6c5419f-6a19-4a41-a400-e0bbc0429c4f',
-	visit_id: 'b21e8536-9818-41e0-a1f6-e3596ac75320',
+	linked_entity_id: 'b21e8536-9818-41e0-a1f6-e3596ac75320',
 	created_at: '2022-04-08T07:29:36.186644+00:00',
 	updated_at: '2022-04-08T07:29:36.186644',
 	visitor_space_request: {
@@ -59,7 +59,7 @@ const mockGqlNotification2: GqlNotification = {
 	status: NotificationStatus.READ,
 	type: NotificationType.VISIT_REQUEST_APPROVED,
 	recipient: 'df8024f9-ebdc-4f45-8390-72980a3f29f6',
-	visit_id: '0fb12a25-a882-42f7-9c79-9d77839c7237',
+	linked_entity_id: '0fb12a25-a882-42f7-9c79-9d77839c7237',
 	created_at: '2022-02-28T17:21:58.937169+00:00',
 	updated_at: '2022-02-28T17:21:58.937169',
 	visitor_space_request: {
@@ -70,6 +70,7 @@ const mockGqlNotification2: GqlNotification = {
 			schema_maintainer_id: 'OR-154dn75',
 		},
 	},
+	material_request: undefined,
 };
 
 const mockGqlNotificationsResult: FindNotificationsByUserQuery = {
@@ -233,7 +234,7 @@ describe('NotificationsService', () => {
 			// test some sample keys
 			expect(adapted.id).toEqual(mockGqlNotification.id);
 			expect(adapted.type).toEqual(mockGqlNotification.type);
-			expect(adapted.visitId).toEqual(mockGqlNotification.visit_id);
+			expect(adapted.visitId).toEqual(mockGqlNotification.linked_entity_id);
 		});
 		it('should return undefined in the gql notification is undefined', () => {
 			const adapted = notificationsService.adaptNotification(undefined);
@@ -265,8 +266,14 @@ describe('NotificationsService', () => {
 				},
 			};
 			mockDataService.execute.mockResolvedValueOnce(mockData);
-			const { id, created_at, updated_at, visitor_space_request, ...mockNotification } =
-				mockGqlNotification1;
+			const {
+				id,
+				created_at,
+				updated_at,
+				visitor_space_request,
+				material_request,
+				...mockNotification
+			} = mockGqlNotification1;
 			const response = await notificationsService.create([
 				mockNotification as Partial<App_Notification_Insert_Input>,
 			]);
@@ -285,6 +292,7 @@ describe('NotificationsService', () => {
 				created_at,
 				updated_at,
 				visitor_space_request,
+				material_request,
 				recipient,
 				...createNotification
 			} = mockGqlNotification1;
@@ -446,8 +454,14 @@ describe('NotificationsService', () => {
 				},
 			};
 			mockDataService.execute.mockResolvedValueOnce(mockData);
-			const { id, created_at, updated_at, visitor_space_request, ...mockNotification } =
-				mockGqlNotification1;
+			const {
+				id,
+				created_at,
+				updated_at,
+				visitor_space_request,
+				material_request,
+				...mockNotification
+			} = mockGqlNotification1;
 			const response = await notificationsService.update(
 				id,
 				mockUser.id,
@@ -463,8 +477,14 @@ describe('NotificationsService', () => {
 				},
 			};
 			mockDataService.execute.mockResolvedValueOnce(mockData);
-			const { id, created_at, updated_at, visitor_space_request, ...mockNotification } =
-				mockGqlNotification1;
+			const {
+				id,
+				created_at,
+				updated_at,
+				visitor_space_request,
+				material_request,
+				...mockNotification
+			} = mockGqlNotification1;
 			let error: any;
 			try {
 				await notificationsService.update(
@@ -491,8 +511,14 @@ describe('NotificationsService', () => {
 				},
 			};
 			mockDataService.execute.mockResolvedValueOnce(mockData);
-			const { id, created_at, updated_at, visitor_space_request, ...mockNotification } =
-				mockGqlNotification1;
+			const {
+				id,
+				created_at,
+				updated_at,
+				visitor_space_request,
+				material_request,
+				...mockNotification
+			} = mockGqlNotification1;
 			const affectedRows = await notificationsService.updateAll(
 				mockUser.id,
 				mockNotification as Partial<App_Notification_Insert_Input>

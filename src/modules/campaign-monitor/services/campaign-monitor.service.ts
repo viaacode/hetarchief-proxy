@@ -594,6 +594,12 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 				}/${materialRequest.objectSchemaIdentifier}`,
 				request_type: MATERIAL_REQUEST_TYPE_TRANSLATIONS[materialRequest.type],
 				request_description: materialRequest.reason,
+				request_url: stringifyUrl({
+					url: `${this.configService.get('CLIENT_HOST')}/accountMyMaterialRequests`,
+					query: {
+						materialRequest: materialRequest.id,
+					},
+				}),
 			})),
 			user_request_context:
 				MATERIAL_REQUEST_REQUESTER_CAPACITY_TRANSLATIONS[emailInfo.sendRequestListDto.type],

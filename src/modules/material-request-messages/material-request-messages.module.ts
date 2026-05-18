@@ -5,9 +5,9 @@ import { MaterialRequestMessagesController } from './controllers/material-reques
 import { MaterialRequestMessagesService } from './services/material-request-messages.service';
 
 import { ConfigModule } from '@nestjs/config';
-import { CampaignMonitorModule } from '~modules/campaign-monitor';
 import { MaterialRequestPdfGeneratorService } from '~modules/material-request-messages/services/material-request-pdf-generator';
 import { MaterialRequestsModule } from '~modules/material-requests';
+import { NotificationsModule } from '~modules/notifications';
 import { UsersModule } from '~modules/users';
 
 @Module({
@@ -19,7 +19,7 @@ import { UsersModule } from '~modules/users';
 		MaterialRequestsModule,
 		AssetsModule,
 		AdminTranslationsModule,
-		CampaignMonitorModule,
+		NotificationsModule,
 		UsersModule,
 	],
 	exports: [MaterialRequestMessagesService, MaterialRequestPdfGeneratorService],

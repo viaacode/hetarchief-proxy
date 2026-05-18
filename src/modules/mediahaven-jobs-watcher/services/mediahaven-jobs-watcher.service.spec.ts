@@ -34,7 +34,7 @@ const mockMediahavenService: Partial<Record<keyof MediahavenService, MockInstanc
 const mockMaterialRequestsService: Partial<Record<keyof MaterialRequestsService, MockInstance>> = {
 	findAllWithUnresolvedDownload: vi.fn(),
 	updateMaterialRequest: vi.fn(),
-	sentStatusUpdateEmail: vi.fn(() => Promise.resolve()),
+	sentStatusUpdateNotification: vi.fn(() => Promise.resolve()),
 };
 
 const mockMaterialRequestMessagesService: Partial<
@@ -333,7 +333,7 @@ describe('MediahavenJobsWatcherService', () => {
 				expect(mockEventsService.insertEvents).toHaveBeenCalled();
 			});
 
-			it('should send emails to requester and maintainer when job is Completed', async () => {
+			it('should send emails to requester when job is Completed', async () => {
 				const materialRequest = createMockMaterialRequest();
 				const job = createMockMediahavenJob({
 					ExportJobId: materialRequest.downloadJobId,
@@ -358,7 +358,7 @@ describe('MediahavenJobsWatcherService', () => {
 				// Wait for async email sending
 				await new Promise((resolve) => setTimeout(resolve, 100));
 
-				expect(mockMaterialRequestsService.sentStatusUpdateEmail).toHaveBeenCalledTimes(2);
+				expect(mockMaterialRequestsService.sentStatusUpdateNotification).toHaveBeenCalledTimes(1);
 			});
 		});
 
