@@ -64,7 +64,12 @@ export interface MaterialRequest {
 	requesterUserGroupName?: string;
 	requesterUserGroupLabel?: string;
 	requesterUserGroupDescription?: string;
-	requesterOrganisation?: string;
+	requesterOrganisationId?: string;
+	requesterOrganisationName?: string;
+	requesterOrganisationAddress?: string;
+	requesterOrganisationPostalCode?: string;
+	requesterOrganisationLocality?: string;
+	requesterOrganisationVAT?: string;
 	requesterOrganisationSector?: string;
 
 	maintainerId: string;

@@ -33,6 +33,10 @@ const mockOrganisation: Organisation = {
 	createdAt: null,
 	updatedAt: null,
 	formUrl: null,
+	vatNumber: null,
+	streetAddress: null,
+	postalCode: null,
+	addressLocality: null,
 };
 
 const getLdapUser = () => ({

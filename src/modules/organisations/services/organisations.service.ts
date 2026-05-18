@@ -59,6 +59,10 @@ export class OrganisationsService {
 			sector: gqlOrganisation?.ha_org_sector as IeObjectSector,
 			formUrl: gqlOrganisation?.ha_org_request_form,
 			slug: gqlOrganisation?.skos_alt_label,
+			vatNumber: gqlOrganisation?.schema_vat_id || null,
+			streetAddress: gqlOrganisation?.schemaPostalAddresses?.[0]?.schema_street_address || null,
+			postalCode: gqlOrganisation?.schemaPostalAddresses?.[0]?.schema_postal_code || null,
+			addressLocality: gqlOrganisation?.schemaPostalAddresses?.[0]?.schema_address_locality || null,
 		};
 	}
 

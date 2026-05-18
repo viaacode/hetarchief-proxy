@@ -69,6 +69,10 @@ export interface Organisation {
 	updatedAt: string;
 	sector: IeObjectSector | null;
 	formUrl: string | null;
+	vatNumber: string | null;
+	streetAddress: string | null;
+	postalCode: string | null;
+	addressLocality: string | null;
 }
 
 export interface OrganisationContactPoint {

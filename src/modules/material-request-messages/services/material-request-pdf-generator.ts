@@ -332,7 +332,7 @@ export class MaterialRequestPdfGeneratorService {
 				locale
 			)
 		);
-		this.text(doc, contentWidth, materialRequest.requesterOrganisation);
+		this.text(doc, contentWidth, materialRequest.requesterOrganisationName);
 		if (materialRequest.requesterOrganisationSector) {
 			this.greyText(doc, contentWidth, materialRequest.requesterOrganisationSector);
 		}

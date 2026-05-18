@@ -575,7 +575,7 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 				}),
 				user_request_context:
 					MATERIAL_REQUEST_REQUESTER_CAPACITY_TRANSLATIONS[emailInfo.sendRequestListDto.type],
-				user_organisation: emailInfo.sendRequestListDto.organisation,
+				user_organisation: emailInfo.sendRequestListDto.organisationName,
 				user_email: emailInfo.materialRequests[0]?.requesterMail,
 			};
 		}
@@ -603,7 +603,7 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 			})),
 			user_request_context:
 				MATERIAL_REQUEST_REQUESTER_CAPACITY_TRANSLATIONS[emailInfo.sendRequestListDto.type],
-			user_organisation: emailInfo.sendRequestListDto.organisation,
+			user_organisation: emailInfo.sendRequestListDto.organisationName,
 			user_email: emailInfo.materialRequests[0]?.requesterMail,
 		};
 	}
@@ -613,7 +613,7 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 			user_firstname: materialRequest.requesterFirstName,
 			user_lastname: materialRequest.requesterLastName,
 			user_email: materialRequest.requesterMail,
-			user_organisation: materialRequest.requesterOrganisation,
+			user_organisation: materialRequest.requesterOrganisationName,
 			cp_name: materialRequest.maintainerName,
 			cp_email: materialRequest.contactMail,
 			object_name: materialRequest.objectSchemaName,

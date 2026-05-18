@@ -31,6 +31,10 @@ export interface User {
 	sector?: IeObjectSector | null;
 	organisationName?: string | null;
 	organisationId?: string | null;
+	organisationAddress?: string | null;
+	organisationPostalCode?: string | null;
+	organisationLocality?: string | null;
+	organisationVAT?: string | null;
 	lastAccessAt?: string | null;
 	createdAt?: string | null;
 }

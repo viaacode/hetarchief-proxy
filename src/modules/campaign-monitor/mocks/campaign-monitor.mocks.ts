@@ -9,8 +9,8 @@ import {
 } from '../campaign-monitor.types';
 
 import {
-	CampaignMonitorConfirmationData,
 	CampaignMonitorConfirmMailQueryDto,
+	CampaignMonitorConfirmationData,
 	CampaignMonitorMaterialRequestData,
 	CampaignMonitorNewsletterUpdatePreferencesQueryDto,
 	RequestListItem,
@@ -79,7 +79,7 @@ export const mockConfirmationData: CampaignMonitorConfirmationData = {
 
 export const mockSendRequestListDto: SendRequestListDto = {
 	type: Lookup_App_Material_Request_Requester_Capacity_Enum.Other,
-	organisation: 'Test Organisation',
+	organisationName: 'Test Organisation',
 };
 
 export const mockMaterialRequestEmailInfo: MaterialRequestEmailInfo = {
@@ -114,6 +114,7 @@ export const mockRequestListItemToRequester: RequestListItem = {
 	}/${mockMaterialRequest1.objectSchemaIdentifier}`,
 	request_type: 'Ik wil dit object hergebruiken',
 	request_description: mockMaterialRequest1.reason,
+	request_url: `${mockConfigService.get('CLIENT_HOST')}/accountMyMaterialRequests?materialRequest=${mockMaterialRequest1.id}`,
 };
 
 export const mockCampaignMonitorMaterialRequestDataToMaintainer: CampaignMonitorMaterialRequestData =
@@ -123,7 +124,7 @@ export const mockCampaignMonitorMaterialRequestDataToMaintainer: CampaignMonitor
 		cp_name: mockMaterialRequestEmailInfo.materialRequests[0].maintainerName,
 		request_list: [mockRequestListItemToMaintainer],
 		user_request_context: 'Andere',
-		user_organisation: mockMaterialRequestEmailInfo.sendRequestListDto.organisation,
+		user_organisation: mockMaterialRequestEmailInfo.sendRequestListDto.organisationName,
 		user_email: mockMaterialRequestEmailInfo.materialRequests[0].requesterMail,
 	};
 
@@ -133,7 +134,7 @@ export const mockCampaignMonitorMaterialRequestDataToRequester: CampaignMonitorM
 		user_lastname: mockMaterialRequestEmailInfo.requesterLastName,
 		request_list: [mockRequestListItemToRequester],
 		user_request_context: 'Andere',
-		user_organisation: mockMaterialRequestEmailInfo.sendRequestListDto.organisation,
+		user_organisation: mockMaterialRequestEmailInfo.sendRequestListDto.organisationName,
 		user_email: mockMaterialRequestEmailInfo.materialRequests[0].requesterMail,
 	};
 
