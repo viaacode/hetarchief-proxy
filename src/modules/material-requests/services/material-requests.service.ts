@@ -465,8 +465,10 @@ export class MaterialRequestsService {
 				created_at: new Date().toISOString(),
 				updated_at: new Date().toISOString(),
 				is_pending: true,
+				// Filled in by the user when said user does not have an organisation
 				organisation_name: createMaterialRequestDto?.organisationName,
-				organisation_id: createMaterialRequestDto?.organisationId || user.getOrganisationName(),
+				// Should be de org_identifier of an organisation when the user is linked to an organisation
+				organisation_id: createMaterialRequestDto?.organisationId || user.getOrganisationId(),
 				requester_capacity:
 					createMaterialRequestDto?.requesterCapacity ||
 					Lookup_App_Material_Request_Requester_Capacity_Enum.Other,

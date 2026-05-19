@@ -114,6 +114,7 @@ export const mockRequestListItemToRequester: RequestListItem = {
 	}/${mockMaterialRequest1.objectSchemaIdentifier}`,
 	request_type: 'Ik wil dit object hergebruiken',
 	request_description: mockMaterialRequest1.reason,
+	// Not using stringifyUrl to see that request url is mapped correctly
 	request_url: `${mockConfigService.get('CLIENT_HOST')}/accountMyMaterialRequests?materialRequest=${mockMaterialRequest1.id}`,
 };
 
