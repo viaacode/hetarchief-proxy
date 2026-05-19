@@ -336,6 +336,22 @@ export class MaterialRequestPdfGeneratorService {
 		if (materialRequest.requesterOrganisationSector) {
 			this.greyText(doc, contentWidth, materialRequest.requesterOrganisationSector);
 		}
+		if (materialRequest.requesterOrganisationAddress) {
+			this.greyText(doc, contentWidth, materialRequest.requesterOrganisationAddress);
+		}
+		if (
+			materialRequest.requesterOrganisationPostalCode ||
+			materialRequest.requesterOrganisationLocality
+		) {
+			this.greyText(
+				doc,
+				contentWidth,
+				`${materialRequest.requesterOrganisationPostalCode || ''} ${materialRequest.requesterOrganisationLocality || ''}`
+			);
+		}
+		if (materialRequest.requesterOrganisationVAT) {
+			this.greyText(doc, contentWidth, materialRequest.requesterOrganisationVAT);
+		}
 		doc.moveDown(0.5);
 
 		this.h3(
