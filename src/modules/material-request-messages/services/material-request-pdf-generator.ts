@@ -16,6 +16,7 @@ import {
 } from '~modules/material-request-messages/material-request-messages.const';
 import {
 	type MaterialRequestEvent,
+	MaterialRequestMessageBodyAdditionalCondition,
 	type MaterialRequestMessageBodyAdditionalConditions,
 	type MaterialRequestMessageBodyStatusUpdateWithMotivation,
 	MaterialRequestTimeUsage,
@@ -659,6 +660,8 @@ export class MaterialRequestPdfGeneratorService {
 		margin: number,
 		contentWidth: number,
 		materialRequest: MaterialRequest,
+		conditions: MaterialRequestMessageBodyAdditionalCondition[],
+		evaluator: string,
 		locale: Locale
 	) {
 		// h1 — page title
@@ -687,15 +690,10 @@ export class MaterialRequestPdfGeneratorService {
 			)
 		);
 
-		const conditions = getStatusEvent(
-			materialRequest.history,
-			Lookup_App_Material_Request_Message_Type_Enum.AdditionalConditions
-		);
-
 		const requestedAtLabel = this.translationsService.tText(
 			'modules/account/components/material-request-detail-blade/material-request-detail-blade___voorwaarden-verstuurd-op',
 			{
-				sendAt: this.formatDateWithTime(conditions?.createdAt),
+				sendAt: this.formatDateWithTime(new Date().toISOString()),
 			},
 			locale
 		);
@@ -704,7 +702,7 @@ export class MaterialRequestPdfGeneratorService {
 		const requestedByLabel = this.translationsService.tText(
 			'modules/account/components/material-request-detail-blade/material-request-detail-blade___voorwaarden-verstuurd-door',
 			{
-				name: `${conditions.senderProfile.firstName} ${conditions.senderProfile.lastName}, ${conditions.senderProfile.mail}`,
+				name: evaluator,
 			},
 			locale
 		);
@@ -726,9 +724,7 @@ export class MaterialRequestPdfGeneratorService {
 		const col1Width = contentWidth * 0.4;
 		const col2Width = contentWidth * 0.6;
 
-		const conditionRows: [string, string][] = (
-			conditions.body as MaterialRequestMessageBodyAdditionalConditions
-		).conditions.map((condition) => [
+		const conditionRows: [string, string][] = conditions.map((condition) => [
 			GET_MATERIAL_REQUEST_EXTRA_CONDITION_LABELS(locale, this.translationsService)[condition.type],
 			condition.text,
 		]);
@@ -873,7 +869,9 @@ export class MaterialRequestPdfGeneratorService {
 	 * Generate the final summary PDF for a material request (sent when the request reaches a terminal status)
 	 */
 	private async generateAdditionalConditionsSummaryPdf(
-		materialRequest: MaterialRequest
+		materialRequest: MaterialRequest,
+		conditions: MaterialRequestMessageBodyAdditionalCondition[],
+		evaluator: string
 	): Promise<Buffer> {
 		const locale = Locale.Nl;
 		const [doc, pdfBufferPromise, margin, contentWidth] = this.setupPdfDoc(
@@ -890,6 +888,8 @@ export class MaterialRequestPdfGeneratorService {
 			margin,
 			contentWidth,
 			materialRequest,
+			conditions,
+			evaluator,
 			Locale.Nl
 		);
 
@@ -900,6 +900,8 @@ export class MaterialRequestPdfGeneratorService {
 			margin,
 			contentWidth,
 			materialRequest,
+			conditions,
+			evaluator,
 			Locale.En
 		);
 
@@ -953,9 +955,15 @@ export class MaterialRequestPdfGeneratorService {
 	}
 
 	public async generateAdditionalConditionsSummaryPdfAndUpload(
-		materialRequest: MaterialRequest
+		materialRequest: MaterialRequest,
+		conditions: MaterialRequestMessageBodyAdditionalCondition[],
+		evaluator: string
 	): Promise<string> {
-		const pdfBuffer = await this.generateAdditionalConditionsSummaryPdf(materialRequest);
+		const pdfBuffer = await this.generateAdditionalConditionsSummaryPdf(
+			materialRequest,
+			conditions,
+			evaluator
+		);
 
 		const fileName = `${randomUUID()}.pdf`;
 		return await this.assetsService.uploadAndTrack(

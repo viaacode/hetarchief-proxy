@@ -245,7 +245,6 @@ export class MaterialRequestMessagesController {
 				userId,
 				Lookup_App_Material_Request_Message_Type_Enum.Message,
 				message ? { message } : null,
-				new Date().toISOString(),
 				attachments
 			);
 		} catch (err) {
@@ -286,7 +285,7 @@ export class MaterialRequestMessagesController {
 
 			await this.materialRequestMessagesService.addExtraConditions(
 				materialRequest,
-				user.getId(),
+				user,
 				body.extraConditions
 			);
 			// send email to notify requester of additional conditions
@@ -711,41 +710,6 @@ export class MaterialRequestMessagesController {
 			};
 		} catch (err) {
 			const error = new CustomError('Failed to generate complete summary PDF', err, {
-				materialRequestId,
-			});
-			console.log(error);
-			error.innerException = null;
-			throw error;
-		}
-	}
-
-	@Get(':materialRequestId/test-generate-additional-conditions-summary-pdf')
-	@UseGuards(LocalhostGuard)
-	@ApiOperation({
-		description:
-			'Test PDF generation for the addition conditions of a material request. Localhost only.',
-	})
-	public async testGenerateAdditionalConditionsSummaryPdf(
-		@Param('materialRequestId') materialRequestId: string,
-		@SessionUser() user: SessionUserEntity
-	): Promise<{ pdfUrl: string }> {
-		try {
-			const materialRequest = await this.materialRequestsService.findById(
-				materialRequestId,
-				user,
-				false,
-				undefined,
-				undefined
-			);
-			const pdfUrl =
-				await this.materialRequestPdfGenerator.generateAdditionalConditionsSummaryPdfAndUpload(
-					materialRequest
-				);
-			return {
-				pdfUrl: pdfUrl,
-			};
-		} catch (err) {
-			const error = new CustomError('Failed to generate addition conditions summary PDF', err, {
 				materialRequestId,
 			});
 			console.log(error);
