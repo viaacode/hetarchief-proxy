@@ -718,4 +718,39 @@ export class MaterialRequestMessagesController {
 			throw error;
 		}
 	}
+
+	@Get(':materialRequestId/test-generate-additional-conditions-summary-pdf')
+	@UseGuards(LocalhostGuard)
+	@ApiOperation({
+		description:
+			'Test PDF generation for the addition conditions of a material request. Localhost only.',
+	})
+	public async testGenerateAdditionalConditionsSummaryPdf(
+		@Param('materialRequestId') materialRequestId: string,
+		@SessionUser() user: SessionUserEntity
+	): Promise<{ pdfUrl: string }> {
+		try {
+			const materialRequest = await this.materialRequestsService.findById(
+				materialRequestId,
+				user,
+				false,
+				undefined,
+				undefined
+			);
+			const pdfUrl =
+				await this.materialRequestPdfGenerator.generateAdditionalConditionsSummaryPdfAndUpload(
+					materialRequest
+				);
+			return {
+				pdfUrl: pdfUrl,
+			};
+		} catch (err) {
+			const error = new CustomError('Failed to generate addition conditions summary PDF', err, {
+				materialRequestId,
+			});
+			console.log(error);
+			error.innerException = null;
+			throw error;
+		}
+	}
 }
