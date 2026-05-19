@@ -92,6 +92,10 @@ const mockVideoStillsService: Partial<Record<keyof VideoStillsService, MockInsta
 	getFirstVideoStills: vi.fn(() => []),
 };
 
+const mockAssetsService: Partial<Record<keyof AssetsService, MockInstance>> = {
+	delete: vi.fn(() => Promise.resolve()),
+};
+
 const mockIeObjectsVisitorSpaceInfo: IeObjectsVisitorSpaceInfo = {
 	objectIds: [],
 	visitorSpaceIds: [],

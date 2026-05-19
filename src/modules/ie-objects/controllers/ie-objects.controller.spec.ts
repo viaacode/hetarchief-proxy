@@ -3,7 +3,7 @@ import {
 	PlayerTicketService,
 	TranslationsService,
 } from '@meemoo/admin-core-api';
-import { NotFoundException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Test, type TestingModule } from '@nestjs/testing';
 import type { IPagination } from '@studiohyperdrive/pagination';
@@ -11,7 +11,12 @@ import type { Request, Response } from 'express';
 import { cloneDeep } from 'lodash';
 import { type MockInstance, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { type IeObject, IeObjectLicense, type RelatedIeObject } from '../ie-objects.types';
+import {
+	type IeObject,
+	IeObjectLicense,
+	IeObjectType,
+	type RelatedIeObject,
+} from '../ie-objects.types';
 import {
 	mockIeObject1,
 	mockIeObjectWithMetadataSetALL,
@@ -71,6 +76,7 @@ const mockPlayerTicketController: Partial<Record<keyof PlayerTicketController, M
 	getPlayableUrl: vi.fn(),
 	getPlayableUrlFromBrowsePath: vi.fn(),
 	getPlayableUrlByExternalId: vi.fn(),
+	getTicketServiceTokenForFilePath: vi.fn(),
 };
 
 const mockEventsService: Partial<Record<keyof EventsService, MockInstance>> = {
@@ -171,13 +177,166 @@ describe('IeObjectsController', () => {
 
 	describe('getPlayableUrl', () => {
 		it('should return a playable url', async () => {
+			vi.spyOn(ieObjectsController, 'getIeObjectsByIds').mockResolvedValueOnce([
+				{
+					dctermsFormat: IeObjectType.VIDEO,
+					pages: [
+						{
+							pageNumber: 1,
+							representations: [
+								{
+									files: [
+										{
+											storedAt: '/path/to/file',
+											mimeType: 'video/mp4',
+										},
+									],
+								},
+							],
+						},
+					],
+				},
+			] as Partial<IeObject>[]);
 			mockPlayerTicketController.getPlayableUrlFromBrowsePath.mockResolvedValueOnce(
 				'http://playme'
 			);
-			const url = await ieObjectsController.getPlayableUrl('referer', '127.0.0.1', {
-				browsePath: '/path/to/file',
-			});
+			const url = await ieObjectsController.getPlayableUrl(
+				'referer',
+				'127.0.0.1',
+				{
+					schemaIdentifier: 'schema-id',
+					browsePath: '/path/to/file',
+				},
+				mockSessionUser
+			);
 			expect(url).toEqual('http://playme');
+		});
+
+		it('should reject playable urls when the file is not part of the object', async () => {
+			vi.spyOn(ieObjectsController, 'getIeObjectsByIds').mockResolvedValueOnce([
+				{
+					dctermsFormat: IeObjectType.VIDEO,
+					pages: [
+						{
+							pageNumber: 1,
+							representations: [
+								{
+									files: [
+										{
+											storedAt: '/path/to/other-file',
+											mimeType: 'video/mp4',
+										},
+									],
+								},
+							],
+						},
+					],
+				},
+			] as Partial<IeObject>[]);
+
+			await expect(
+				ieObjectsController.getPlayableUrl(
+					'referer',
+					'127.0.0.1',
+					{
+						schemaIdentifier: 'schema-id',
+						browsePath: '/path/to/file',
+					},
+					mockSessionUser
+				)
+			).rejects.toThrow(ForbiddenException);
+		});
+
+		it('should reject player-ticket requests without schemaIdentifier', async () => {
+			await expect(
+				ieObjectsController.getPlayableUrl(
+					'referer',
+					'127.0.0.1',
+					{ schemaIdentifier: '', browsePath: '/path/to/file' },
+					mockSessionUser
+				)
+			).rejects.toThrow(BadRequestException);
+		});
+	});
+
+	describe('getTicketServiceTokens', () => {
+		it('should reject ticket-service requests without schemaIdentifier', async () => {
+			await expect(
+				ieObjectsController.getTicketServiceTokens(
+					'referer',
+					'127.0.0.1',
+					['/path/to/file'],
+					'',
+					mockSessionUser
+				)
+			).rejects.toThrow(BadRequestException);
+		});
+
+		it('should reject ticket-service requests for AV files', async () => {
+			vi.spyOn(ieObjectsController, 'getIeObjectsByIds').mockResolvedValueOnce([
+				{
+					dctermsFormat: IeObjectType.VIDEO,
+					pages: [
+						{
+							pageNumber: 1,
+							representations: [
+								{
+									files: [
+										{
+											storedAt: '/path/to/file',
+											mimeType: 'video/mp4',
+										},
+									],
+								},
+							],
+						},
+					],
+				},
+			] as Partial<IeObject>[]);
+
+			await expect(
+				ieObjectsController.getTicketServiceTokens(
+					'referer',
+					'127.0.0.1',
+					['/path/to/file'],
+					'schema-id',
+					mockSessionUser
+				)
+			).rejects.toThrow(ForbiddenException);
+		});
+
+		it('should return ticket-service tokens for newspaper image files', async () => {
+			vi.spyOn(ieObjectsController, 'getIeObjectsByIds').mockResolvedValueOnce([
+				{
+					dctermsFormat: IeObjectType.NEWSPAPER,
+					pages: [
+						{
+							pageNumber: 1,
+							representations: [
+								{
+									files: [
+										{
+											storedAt: 'https://iiif-qas.meemoo.be/image/3/public/newspaper.jp2',
+											mimeType: 'image/jp2',
+										},
+									],
+								},
+							],
+						},
+					],
+				},
+			] as Partial<IeObject>[]);
+			mockPlayerTicketController.getTicketServiceTokenForFilePath.mockResolvedValueOnce('token');
+
+			const tokens = await ieObjectsController.getTicketServiceTokens(
+				'referer',
+				'127.0.0.1',
+				['https://iiif-qas.meemoo.be/image/3/hetarchief/newspaper.jp2'],
+				'schema-id',
+				mockSessionUser
+			);
+
+			expect(tokens).toEqual(['token']);
 		});
 	});
 

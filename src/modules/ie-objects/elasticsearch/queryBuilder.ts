@@ -1,6 +1,6 @@
 import { BadRequestException, InternalServerErrorException } from '@nestjs/common';
 import jsep from 'jsep';
-import { clamp, forEach, isArray, isEmpty, isNil } from 'lodash';
+import { clamp, forEach, isArray, isEmpty, isNil, uniq } from 'lodash';
 
 import { IeObjectsQueryDto, SearchFilter } from '../dto/ie-objects.dto';
 import {
@@ -35,6 +35,8 @@ import {
 	type QueryBuilderInputInfo,
 	QueryType,
 	READABLE_TO_ELASTIC_FILTER_NAMES,
+	ReusabilityCategory,
+	REUSABILITY_FILTER_VALUES,
 	VALUE_OPERATORS,
 } from './elasticsearch.consts';
 
@@ -406,6 +408,7 @@ export class QueryBuilder {
 			IeObjectsSearchFilterField.CONSULTABLE_ONLY_ON_LOCATION,
 			IeObjectsSearchFilterField.CONSULTABLE_MEDIA,
 			IeObjectsSearchFilterField.CONSULTABLE_PUBLIC_DOMAIN,
+			IeObjectsSearchFilterField.REUSABILITY,
 			IeObjectsSearchFilterField.RELEASE_DATE,
 		];
 		let validatedFilters = filters;
@@ -554,6 +557,9 @@ export class QueryBuilder {
 			(filter: SearchFilter) =>
 				filter.field === IeObjectsSearchFilterField.CONSULTABLE_PUBLIC_DOMAIN
 		);
+		const reusabilityFilter = searchRequestFilters.find(
+			(filter: SearchFilter) => filter.field === IeObjectsSearchFilterField.REUSABILITY
+		);
 		const releaseDates = searchRequestFilters.filter(
 			(filter: SearchFilter) => filter.field === IeObjectsSearchFilterField.RELEASE_DATE
 		);
@@ -636,6 +642,40 @@ export class QueryBuilder {
 						},
 					},
 				],
+			});
+		}
+
+		// Filter by reusability category. Newspapers use dcterms_rights_statement in ES,
+		// while AV rights currently live in graph.rights and are added by IRI.
+		if (reusabilityFilter?.multiValue?.length) {
+			const rightsStatementUris = uniq(
+				reusabilityFilter.multiValue.flatMap(
+					(category) =>
+						REUSABILITY_FILTER_VALUES[category as ReusabilityCategory]?.newspaperRightsStatementUris ?? []
+				)
+			);
+			const reusabilityQueries = [
+				rightsStatementUris.length
+					? {
+							terms: {
+								_name: 'REUSABILITY_DCTERMS_RIGHTS_STATEMENT',
+								dcterms_rights_statement: rightsStatementUris,
+							},
+						}
+					: null,
+				inputInfo.reusabilityRightsIris?.length
+					? {
+							terms: {
+								_name: 'REUSABILITY_GRAPH_RIGHTS',
+								[ElasticsearchField.iri]: inputInfo.reusabilityRightsIris,
+							},
+						}
+					: null,
+			];
+
+			toBeAppliedCustomFilters.push({
+				occurrenceType: 'filter',
+				query: [OR(reusabilityQueries) ?? { match_none: { _name: 'REUSABILITY' } }],
 			});
 		}
 
