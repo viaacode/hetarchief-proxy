@@ -38,6 +38,7 @@ import {
 	MAP_NOTIFICATION_TYPE_TO_EMAIL_TEMPLATE,
 	ORDER_PROP_TO_DB_PROP,
 	getAdditionEventDate,
+	getLastStatusEventOfType,
 	getStatusEvent,
 } from '../material-requests.consts';
 import {
@@ -654,7 +655,8 @@ export class MaterialRequestsService {
 			// The current status is PENDING, and we are not trying to set the status to APPROVED or DENIED => Not allowed
 			if (
 				newStatus !== Lookup_App_Material_Request_Status_Enum.Approved &&
-				newStatus !== Lookup_App_Material_Request_Status_Enum.Denied
+				newStatus !== Lookup_App_Material_Request_Status_Enum.Denied &&
+				newStatus !== Lookup_App_Material_Request_Status_Enum.Cancelled
 			) {
 				throw new BadRequestException(
 					`Material request (${currentRequest.id}) could not be set to ${newStatus}. Only pending material requests are allowed to bee set to ${newStatus}`
@@ -671,9 +673,36 @@ export class MaterialRequestsService {
 				);
 			}
 
+			if (newStatus === Lookup_App_Material_Request_Status_Enum.Cancelled) {
+				if (!isUserAllowedToCancel) {
+					throw new BadRequestException(
+						`Material request (${currentRequest.id}) could not be set to ${newStatus}. User is not allowed to change the status to ${newStatus}`
+					);
+				}
+
+				const lastAdditionalConditionsEvent = getLastStatusEventOfType(currentRequest.history, [
+					Lookup_App_Material_Request_Message_Type_Enum.AdditionalConditions,
+					Lookup_App_Material_Request_Message_Type_Enum.AdditionalConditionsAccepted,
+					Lookup_App_Material_Request_Message_Type_Enum.AdditionalConditionsDenied,
+				]);
+
+				if (
+					lastAdditionalConditionsEvent?.messageType !==
+					Lookup_App_Material_Request_Message_Type_Enum.AdditionalConditionsDenied
+				) {
+					throw new BadRequestException(
+						`Material request (${currentRequest.id}) could not be set to ${newStatus}. User is not allowed to change the status to ${newStatus}`
+					);
+				}
+			}
+
 			// Trying to update the status to APPROVED
 			// but user is the one who made the request or the user is not part of the same organisation and it is no auto accept
-			if (!isUserAllowedToAdvanceStatus && !isAutoAccept) {
+			if (
+				!isUserAllowedToAdvanceStatus &&
+				!isAutoAccept &&
+				newStatus === Lookup_App_Material_Request_Status_Enum.Approved
+			) {
 				throw new BadRequestException(
 					`Material request (${currentRequest.id}) could not be set to ${newStatus}. User is not allowed to change the status to ${newStatus}`
 				);
