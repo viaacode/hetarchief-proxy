@@ -64,7 +64,24 @@ export interface MaterialRequest {
 	requesterUserGroupName?: string;
 	requesterUserGroupLabel?: string;
 	requesterUserGroupDescription?: string;
-	requesterOrganisation?: string;
+	requesterOrganisationId?: string;
+	requesterOrganisationName?: string;
+	/**
+	 * First address line eg: 'Auguste Reyerslaan 52'
+	 */
+	requesterOrganisationAddress?: string;
+	/**
+	 * Postal code eg: '1043'
+	 */
+	requesterOrganisationPostalCode?: string;
+	/**
+	 * City/village corresponding with the postal code eg: 'Brussel'
+	 */
+	requesterOrganisationLocality?: string;
+	/**
+	 * VAT number eg: 'BE 0244.142.664'
+	 */
+	requesterOrganisationVAT?: string;
 	requesterOrganisationSector?: string;
 
 	maintainerId: string;

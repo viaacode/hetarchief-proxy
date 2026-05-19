@@ -69,6 +69,22 @@ export interface Organisation {
 	updatedAt: string;
 	sector: IeObjectSector | null;
 	formUrl: string | null;
+	/**
+	 * VAT number eg: 'BE 0244.142.664'
+	 */
+	vatNumber: string | null;
+	/**
+	 * First address line eg: 'Auguste Reyerslaan 52'
+	 */
+	streetAddress: string | null;
+	/**
+	 * Postal code eg: '1043'
+	 */
+	postalCode: string | null;
+	/**
+	 * City/village corresponding with the postal code eg: 'Brussel'
+	 */
+	addressLocality: string | null;
 }
 
 export interface OrganisationContactPoint {

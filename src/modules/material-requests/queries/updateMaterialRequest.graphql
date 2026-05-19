@@ -39,8 +39,18 @@ mutation updateMaterialRequest(
 			group_id
 			name
 			requester_capacity
-			organisation
-			organisation_sector
+			organisation_name
+			organisation {
+				org_identifier
+				skos_pref_label
+				ha_org_sector
+				schema_vat_id
+				schemaPostalAddresses {
+					schema_street_address
+					schema_postal_code
+					schema_address_locality
+				}
+			}
 			download_status
 			download_retries
 			download_available_at

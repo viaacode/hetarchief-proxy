@@ -200,10 +200,19 @@ export class CreateMaterialRequestDto {
 	@IsOptional()
 	@ApiPropertyOptional({
 		type: String,
-		description: 'To which organisation the user belongs to',
+		description: 'To which organisation the user belongs to (user input)',
 		default: null,
 	})
-	organisation?: string | null = null;
+	organisationName?: string | null;
+
+	@IsString()
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		description: 'To which organisation the user belongs to (based on profile)',
+		default: null,
+	})
+	organisationId?: string | null;
 
 	@IsObject()
 	@IsOptional()
@@ -252,9 +261,17 @@ export class UpdateMaterialRequestDto {
 	@IsOptional()
 	@ApiPropertyOptional({
 		type: String,
-		description: 'To which organisation the user belongs to',
+		description: 'To which organisation the user belongs to (user input)',
 	})
-	organisation?: string | null;
+	organisationName?: string | null;
+
+	@IsString()
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		description: 'To which organisation the user belongs to (based on profile)',
+	})
+	organisationId?: string | null;
 
 	@IsObject()
 	@IsOptional()
@@ -279,9 +296,17 @@ export class SendRequestListDto {
 	@IsOptional()
 	@ApiPropertyOptional({
 		type: String,
-		description: 'The name of the organisation to which the user belongs',
+		description: 'To which organisation the user belongs to (user input)',
 	})
-	organisation?: string | null = null;
+	organisationName?: string | null;
+
+	@IsString()
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		description: 'To which organisation the user belongs to (based on profile)',
+	})
+	organisationId?: string | null;
 
 	@IsString()
 	@IsOptional()
