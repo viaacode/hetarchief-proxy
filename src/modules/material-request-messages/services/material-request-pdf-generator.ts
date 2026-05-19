@@ -339,15 +339,13 @@ export class MaterialRequestPdfGeneratorService {
 		if (materialRequest.requesterOrganisationAddress) {
 			this.greyText(doc, contentWidth, materialRequest.requesterOrganisationAddress);
 		}
-		if (
-			materialRequest.requesterOrganisationPostalCode ||
-			materialRequest.requesterOrganisationLocality
-		) {
-			this.greyText(
-				doc,
-				contentWidth,
-				`${materialRequest.requesterOrganisationPostalCode || ''} ${materialRequest.requesterOrganisationLocality || ''}`
-			);
+
+		const secondAddressLine = [
+			materialRequest.requesterOrganisationPostalCode,
+			materialRequest.requesterOrganisationLocality,
+		].filter((item) => !!item);
+		if (secondAddressLine.length > 0) {
+			this.greyText(doc, contentWidth, secondAddressLine.join(' '));
 		}
 		if (materialRequest.requesterOrganisationVAT) {
 			this.greyText(doc, contentWidth, materialRequest.requesterOrganisationVAT);
