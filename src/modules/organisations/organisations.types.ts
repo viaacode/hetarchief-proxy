@@ -1,6 +1,8 @@
-import type {
+import {
+	FindOrganisationSlugsQuery,
 	FindOrganisationsBySchemaIdsQuery,
 	GetOrganisationBySlugQuery,
+	UpdateOrganisationSlugMutation,
 } from '~generated/graphql-db-types-hetarchief';
 import type { IeObjectSector } from '~modules/ie-objects/ie-objects.types';
 
@@ -99,3 +101,19 @@ export interface MaintainerGridOrganisation {
 	homepageUrl: string;
 	slug: string;
 }
+
+export interface OrganisationSlug {
+	org_identifier: string;
+	name: string;
+	slug: string;
+}
+
+export enum OrganisationSlugOrderProp {
+	ORG_IDENTIFIER = 'org_identifier',
+	SLUG = 'slug',
+	NAME = 'name',
+}
+
+export type GqlOrganisationSlug =
+	| FindOrganisationSlugsQuery['maintainer_organization_slug'][0]
+	| UpdateOrganisationSlugMutation['update_maintainer_organization_slug']['returning'][0];

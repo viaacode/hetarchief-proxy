@@ -22311,6 +22311,147 @@ export type Lookup_Schema_Audience_Type_Updates = {
   where: Lookup_Schema_Audience_Type_Bool_Exp;
 };
 
+/** Used to manage the slugs used for organizations */
+export type Maintainer_Organization_Slug = {
+  __typename?: 'maintainer_organization_slug';
+  org_identifier: Scalars['String']['output'];
+  /** An object relationship */
+  organisation?: Maybe<Graph_Organization>;
+  slug: Scalars['String']['output'];
+};
+
+/** aggregated selection of "maintainer.organization_slug" */
+export type Maintainer_Organization_Slug_Aggregate = {
+  __typename?: 'maintainer_organization_slug_aggregate';
+  aggregate?: Maybe<Maintainer_Organization_Slug_Aggregate_Fields>;
+  nodes: Array<Maintainer_Organization_Slug>;
+};
+
+/** aggregate fields of "maintainer.organization_slug" */
+export type Maintainer_Organization_Slug_Aggregate_Fields = {
+  __typename?: 'maintainer_organization_slug_aggregate_fields';
+  count: Scalars['Int']['output'];
+  max?: Maybe<Maintainer_Organization_Slug_Max_Fields>;
+  min?: Maybe<Maintainer_Organization_Slug_Min_Fields>;
+};
+
+
+/** aggregate fields of "maintainer.organization_slug" */
+export type Maintainer_Organization_Slug_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Maintainer_Organization_Slug_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+/** Boolean expression to filter rows from the table "maintainer.organization_slug". All fields are combined with a logical 'AND'. */
+export type Maintainer_Organization_Slug_Bool_Exp = {
+  _and?: InputMaybe<Array<Maintainer_Organization_Slug_Bool_Exp>>;
+  _not?: InputMaybe<Maintainer_Organization_Slug_Bool_Exp>;
+  _or?: InputMaybe<Array<Maintainer_Organization_Slug_Bool_Exp>>;
+  org_identifier?: InputMaybe<String_Comparison_Exp>;
+  organisation?: InputMaybe<Graph_Organization_Bool_Exp>;
+  slug?: InputMaybe<String_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "maintainer.organization_slug" */
+export enum Maintainer_Organization_Slug_Constraint {
+  /** unique or primary key constraint on columns "org_identifier" */
+  OrganizationSlugPkey = 'organization_slug_pkey',
+  /** unique or primary key constraint on columns "slug" */
+  OrganizationSlugSlugKey = 'organization_slug_slug_key'
+}
+
+/** input type for inserting data into table "maintainer.organization_slug" */
+export type Maintainer_Organization_Slug_Insert_Input = {
+  org_identifier?: InputMaybe<Scalars['String']['input']>;
+  organisation?: InputMaybe<Graph_Organization_Obj_Rel_Insert_Input>;
+  slug?: InputMaybe<Scalars['String']['input']>;
+};
+
+/** aggregate max on columns */
+export type Maintainer_Organization_Slug_Max_Fields = {
+  __typename?: 'maintainer_organization_slug_max_fields';
+  org_identifier?: Maybe<Scalars['String']['output']>;
+  slug?: Maybe<Scalars['String']['output']>;
+};
+
+/** aggregate min on columns */
+export type Maintainer_Organization_Slug_Min_Fields = {
+  __typename?: 'maintainer_organization_slug_min_fields';
+  org_identifier?: Maybe<Scalars['String']['output']>;
+  slug?: Maybe<Scalars['String']['output']>;
+};
+
+/** response of any mutation on the table "maintainer.organization_slug" */
+export type Maintainer_Organization_Slug_Mutation_Response = {
+  __typename?: 'maintainer_organization_slug_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int']['output'];
+  /** data from the rows affected by the mutation */
+  returning: Array<Maintainer_Organization_Slug>;
+};
+
+/** on_conflict condition type for table "maintainer.organization_slug" */
+export type Maintainer_Organization_Slug_On_Conflict = {
+  constraint: Maintainer_Organization_Slug_Constraint;
+  update_columns?: Array<Maintainer_Organization_Slug_Update_Column>;
+  where?: InputMaybe<Maintainer_Organization_Slug_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "maintainer.organization_slug". */
+export type Maintainer_Organization_Slug_Order_By = {
+  org_identifier?: InputMaybe<Order_By>;
+  organisation?: InputMaybe<Graph_Organization_Order_By>;
+  slug?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: maintainer.organization_slug */
+export type Maintainer_Organization_Slug_Pk_Columns_Input = {
+  org_identifier: Scalars['String']['input'];
+};
+
+/** select columns of table "maintainer.organization_slug" */
+export enum Maintainer_Organization_Slug_Select_Column {
+  /** column name */
+  OrgIdentifier = 'org_identifier',
+  /** column name */
+  Slug = 'slug'
+}
+
+/** input type for updating data in table "maintainer.organization_slug" */
+export type Maintainer_Organization_Slug_Set_Input = {
+  org_identifier?: InputMaybe<Scalars['String']['input']>;
+  slug?: InputMaybe<Scalars['String']['input']>;
+};
+
+/** Streaming cursor of the table "maintainer_organization_slug" */
+export type Maintainer_Organization_Slug_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: Maintainer_Organization_Slug_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type Maintainer_Organization_Slug_Stream_Cursor_Value_Input = {
+  org_identifier?: InputMaybe<Scalars['String']['input']>;
+  slug?: InputMaybe<Scalars['String']['input']>;
+};
+
+/** update columns of table "maintainer.organization_slug" */
+export enum Maintainer_Organization_Slug_Update_Column {
+  /** column name */
+  OrgIdentifier = 'org_identifier',
+  /** column name */
+  Slug = 'slug'
+}
+
+export type Maintainer_Organization_Slug_Updates = {
+  /** sets the columns of the filtered rows to the given values */
+  _set?: InputMaybe<Maintainer_Organization_Slug_Set_Input>;
+  /** filter the rows which have to be updated */
+  where: Maintainer_Organization_Slug_Bool_Exp;
+};
+
 /** Bezoekersruimte aka leeszaal van een CP */
 export type Maintainer_Visitor_Space = {
   __typename?: 'maintainer_visitor_space';
@@ -23889,6 +24030,10 @@ export type Mutation_Root = {
   delete_lookup_schema_audience_type?: Maybe<Lookup_Schema_Audience_Type_Mutation_Response>;
   /** delete single row from the table: "lookup.schema_audience_type" */
   delete_lookup_schema_audience_type_by_pk?: Maybe<Lookup_Schema_Audience_Type>;
+  /** delete data from the table: "maintainer.organization_slug" */
+  delete_maintainer_organization_slug?: Maybe<Maintainer_Organization_Slug_Mutation_Response>;
+  /** delete single row from the table: "maintainer.organization_slug" */
+  delete_maintainer_organization_slug_by_pk?: Maybe<Maintainer_Organization_Slug>;
   /** delete data from the table: "maintainer.visitor_space" */
   delete_maintainer_visitor_space?: Maybe<Maintainer_Visitor_Space_Mutation_Response>;
   /** delete single row from the table: "maintainer.visitor_space" */
@@ -24205,6 +24350,10 @@ export type Mutation_Root = {
   insert_lookup_schema_audience_type?: Maybe<Lookup_Schema_Audience_Type_Mutation_Response>;
   /** insert a single row into the table: "lookup.schema_audience_type" */
   insert_lookup_schema_audience_type_one?: Maybe<Lookup_Schema_Audience_Type>;
+  /** insert data into the table: "maintainer.organization_slug" */
+  insert_maintainer_organization_slug?: Maybe<Maintainer_Organization_Slug_Mutation_Response>;
+  /** insert a single row into the table: "maintainer.organization_slug" */
+  insert_maintainer_organization_slug_one?: Maybe<Maintainer_Organization_Slug>;
   /** insert data into the table: "maintainer.visitor_space" */
   insert_maintainer_visitor_space?: Maybe<Maintainer_Visitor_Space_Mutation_Response>;
   /** insert a single row into the table: "maintainer.visitor_space" */
@@ -24651,6 +24800,12 @@ export type Mutation_Root = {
   update_lookup_schema_audience_type_by_pk?: Maybe<Lookup_Schema_Audience_Type>;
   /** update multiples rows of table: "lookup.schema_audience_type" */
   update_lookup_schema_audience_type_many?: Maybe<Array<Maybe<Lookup_Schema_Audience_Type_Mutation_Response>>>;
+  /** update data of the table: "maintainer.organization_slug" */
+  update_maintainer_organization_slug?: Maybe<Maintainer_Organization_Slug_Mutation_Response>;
+  /** update single row of the table: "maintainer.organization_slug" */
+  update_maintainer_organization_slug_by_pk?: Maybe<Maintainer_Organization_Slug>;
+  /** update multiples rows of table: "maintainer.organization_slug" */
+  update_maintainer_organization_slug_many?: Maybe<Array<Maybe<Maintainer_Organization_Slug_Mutation_Response>>>;
   /** update data of the table: "maintainer.visitor_space" */
   update_maintainer_visitor_space?: Maybe<Maintainer_Visitor_Space_Mutation_Response>;
   /** update single row of the table: "maintainer.visitor_space" */
@@ -25544,6 +25699,18 @@ export type Mutation_RootDelete_Lookup_Schema_Audience_TypeArgs = {
 /** mutation root */
 export type Mutation_RootDelete_Lookup_Schema_Audience_Type_By_PkArgs = {
   value: Scalars['String']['input'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Maintainer_Organization_SlugArgs = {
+  where: Maintainer_Organization_Slug_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Maintainer_Organization_Slug_By_PkArgs = {
+  org_identifier: Scalars['String']['input'];
 };
 
 
@@ -26623,6 +26790,20 @@ export type Mutation_RootInsert_Lookup_Schema_Audience_TypeArgs = {
 export type Mutation_RootInsert_Lookup_Schema_Audience_Type_OneArgs = {
   object: Lookup_Schema_Audience_Type_Insert_Input;
   on_conflict?: InputMaybe<Lookup_Schema_Audience_Type_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Maintainer_Organization_SlugArgs = {
+  objects: Array<Maintainer_Organization_Slug_Insert_Input>;
+  on_conflict?: InputMaybe<Maintainer_Organization_Slug_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Maintainer_Organization_Slug_OneArgs = {
+  object: Maintainer_Organization_Slug_Insert_Input;
+  on_conflict?: InputMaybe<Maintainer_Organization_Slug_On_Conflict>;
 };
 
 
@@ -28214,6 +28395,26 @@ export type Mutation_RootUpdate_Lookup_Schema_Audience_Type_ManyArgs = {
 
 
 /** mutation root */
+export type Mutation_RootUpdate_Maintainer_Organization_SlugArgs = {
+  _set?: InputMaybe<Maintainer_Organization_Slug_Set_Input>;
+  where: Maintainer_Organization_Slug_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Maintainer_Organization_Slug_By_PkArgs = {
+  _set?: InputMaybe<Maintainer_Organization_Slug_Set_Input>;
+  pk_columns: Maintainer_Organization_Slug_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Maintainer_Organization_Slug_ManyArgs = {
+  updates: Array<Maintainer_Organization_Slug_Updates>;
+};
+
+
+/** mutation root */
 export type Mutation_RootUpdate_Maintainer_Visitor_SpaceArgs = {
   _set?: InputMaybe<Maintainer_Visitor_Space_Set_Input>;
   where: Maintainer_Visitor_Space_Bool_Exp;
@@ -29278,6 +29479,12 @@ export type Query_Root = {
   lookup_schema_audience_type_aggregate: Lookup_Schema_Audience_Type_Aggregate;
   /** fetch data from the table: "lookup.schema_audience_type" using primary key columns */
   lookup_schema_audience_type_by_pk?: Maybe<Lookup_Schema_Audience_Type>;
+  /** fetch data from the table: "maintainer.organization_slug" */
+  maintainer_organization_slug: Array<Maintainer_Organization_Slug>;
+  /** fetch aggregated fields from the table: "maintainer.organization_slug" */
+  maintainer_organization_slug_aggregate: Maintainer_Organization_Slug_Aggregate;
+  /** fetch data from the table: "maintainer.organization_slug" using primary key columns */
+  maintainer_organization_slug_by_pk?: Maybe<Maintainer_Organization_Slug>;
   /** fetch data from the table: "maintainer.visitor_space" */
   maintainer_visitor_space: Array<Maintainer_Visitor_Space>;
   /** fetch aggregated fields from the table: "maintainer.visitor_space" */
@@ -31567,6 +31774,29 @@ export type Query_RootLookup_Schema_Audience_Type_By_PkArgs = {
 };
 
 
+export type Query_RootMaintainer_Organization_SlugArgs = {
+  distinct_on?: InputMaybe<Array<Maintainer_Organization_Slug_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Maintainer_Organization_Slug_Order_By>>;
+  where?: InputMaybe<Maintainer_Organization_Slug_Bool_Exp>;
+};
+
+
+export type Query_RootMaintainer_Organization_Slug_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Maintainer_Organization_Slug_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Maintainer_Organization_Slug_Order_By>>;
+  where?: InputMaybe<Maintainer_Organization_Slug_Bool_Exp>;
+};
+
+
+export type Query_RootMaintainer_Organization_Slug_By_PkArgs = {
+  org_identifier: Scalars['String']['input'];
+};
+
+
 export type Query_RootMaintainer_Visitor_SpaceArgs = {
   distinct_on?: InputMaybe<Array<Maintainer_Visitor_Space_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -32629,6 +32859,14 @@ export type Subscription_Root = {
   lookup_schema_audience_type_by_pk?: Maybe<Lookup_Schema_Audience_Type>;
   /** fetch data from the table in a streaming manner: "lookup.schema_audience_type" */
   lookup_schema_audience_type_stream: Array<Lookup_Schema_Audience_Type>;
+  /** fetch data from the table: "maintainer.organization_slug" */
+  maintainer_organization_slug: Array<Maintainer_Organization_Slug>;
+  /** fetch aggregated fields from the table: "maintainer.organization_slug" */
+  maintainer_organization_slug_aggregate: Maintainer_Organization_Slug_Aggregate;
+  /** fetch data from the table: "maintainer.organization_slug" using primary key columns */
+  maintainer_organization_slug_by_pk?: Maybe<Maintainer_Organization_Slug>;
+  /** fetch data from the table in a streaming manner: "maintainer.organization_slug" */
+  maintainer_organization_slug_stream: Array<Maintainer_Organization_Slug>;
   /** fetch data from the table: "maintainer.visitor_space" */
   maintainer_visitor_space: Array<Maintainer_Visitor_Space>;
   /** fetch aggregated fields from the table: "maintainer.visitor_space" */
@@ -35665,6 +35903,36 @@ export type Subscription_RootLookup_Schema_Audience_Type_StreamArgs = {
 };
 
 
+export type Subscription_RootMaintainer_Organization_SlugArgs = {
+  distinct_on?: InputMaybe<Array<Maintainer_Organization_Slug_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Maintainer_Organization_Slug_Order_By>>;
+  where?: InputMaybe<Maintainer_Organization_Slug_Bool_Exp>;
+};
+
+
+export type Subscription_RootMaintainer_Organization_Slug_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Maintainer_Organization_Slug_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Maintainer_Organization_Slug_Order_By>>;
+  where?: InputMaybe<Maintainer_Organization_Slug_Bool_Exp>;
+};
+
+
+export type Subscription_RootMaintainer_Organization_Slug_By_PkArgs = {
+  org_identifier: Scalars['String']['input'];
+};
+
+
+export type Subscription_RootMaintainer_Organization_Slug_StreamArgs = {
+  batch_size: Scalars['Int']['input'];
+  cursor: Array<InputMaybe<Maintainer_Organization_Slug_Stream_Cursor_Input>>;
+  where?: InputMaybe<Maintainer_Organization_Slug_Bool_Exp>;
+};
+
+
 export type Subscription_RootMaintainer_Visitor_SpaceArgs = {
   distinct_on?: InputMaybe<Array<Maintainer_Visitor_Space_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -38626,6 +38894,16 @@ export type UpdateNotificationMutationVariables = Exact<{
 
 export type UpdateNotificationMutation = { __typename?: 'mutation_root', update_app_notification?: { __typename?: 'app_notification_mutation_response', returning: Array<{ __typename?: 'app_notification', id: any, description?: string | null, title?: string | null, status: string, type: string, recipient: any, linked_entity_id?: any | null, created_at: any, updated_at: any, visitor_space_request?: { __typename?: 'maintainer_visitor_space_request', cp_space_id: any, visitor_space: { __typename?: 'maintainer_visitor_space', id: any, slug?: string | null, schema_maintainer_id: string } } | null, material_request?: { __typename?: 'app_material_requests', requested_by: { __typename?: 'users_profile', first_name?: string | null, last_name?: string | null }, intellectualEntity?: { __typename?: 'graph_intellectual_entity', schemaMaintainer?: { __typename?: 'graph_organization', skos_pref_label?: string | null } | null } | null } | null }> } | null };
 
+export type FindOrganisationSlugsQueryVariables = Exact<{
+  where?: InputMaybe<Maintainer_Organization_Slug_Bool_Exp>;
+  offset: Scalars['Int']['input'];
+  limit: Scalars['Int']['input'];
+  orderBy?: InputMaybe<Array<Maintainer_Organization_Slug_Order_By> | Maintainer_Organization_Slug_Order_By>;
+}>;
+
+
+export type FindOrganisationSlugsQuery = { __typename?: 'query_root', maintainer_organization_slug: Array<{ __typename?: 'maintainer_organization_slug', org_identifier: string, slug: string, organisation?: { __typename?: 'graph_organization', skos_pref_label?: string | null } | null }>, maintainer_organization_slug_aggregate: { __typename?: 'maintainer_organization_slug_aggregate', aggregate?: { __typename?: 'maintainer_organization_slug_aggregate_fields', count: number } | null } };
+
 export type FindOrganisationsBySchemaIdsQueryVariables = Exact<{
   schemaIdentifiers: Array<Scalars['String']['input']> | Scalars['String']['input'];
 }>;
@@ -38644,6 +38922,14 @@ export type GetOrganisationsThatHaveObjectsQueryVariables = Exact<{ [key: string
 
 
 export type GetOrganisationsThatHaveObjectsQuery = { __typename?: 'query_root', graph_organisations_with_objects: Array<{ __typename?: 'graph_organisations_with_objects', id?: string | null, ha_org_has_logo?: string | null, skos_pref_label?: string | null, org_identifier?: string | null, foaf_homepage?: string | null, skos_alt_label?: string | null }> };
+
+export type UpdateOrganisationSlugMutationVariables = Exact<{
+  org_identifier: Scalars['String']['input'];
+  slug: Scalars['String']['input'];
+}>;
+
+
+export type UpdateOrganisationSlugMutation = { __typename?: 'mutation_root', update_maintainer_organization_slug?: { __typename?: 'maintainer_organization_slug_mutation_response', returning: Array<{ __typename?: 'maintainer_organization_slug', org_identifier: string, slug: string, organisation?: { __typename?: 'graph_organization', skos_pref_label?: string | null } | null }> } | null };
 
 export type GetSitemapConfigQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -38943,9 +39229,11 @@ export const FindNotificationsByUserDocument = {"kind":"Document","definitions":
 export const InsertNotificationsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"insertNotifications"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"objects"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"app_notification_insert_input"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"insert_app_notification"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"objects"},"value":{"kind":"Variable","name":{"kind":"Name","value":"objects"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"returning"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"recipient"}},{"kind":"Field","name":{"kind":"Name","value":"linked_entity_id"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"visitor_space_request"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cp_space_id"}},{"kind":"Field","name":{"kind":"Name","value":"visitor_space"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"schema_maintainer_id"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"material_request"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"requested_by"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"intellectualEntity"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schemaMaintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"skos_pref_label"}}]}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<InsertNotificationsMutation, InsertNotificationsMutationVariables>;
 export const UpdateAllNotificationsForUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"updateAllNotificationsForUser"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"notification"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"app_notification_set_input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"update_app_notification"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"recipient"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"Variable","name":{"kind":"Name","value":"notification"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"affected_rows"}}]}}]}}]} as unknown as DocumentNode<UpdateAllNotificationsForUserMutation, UpdateAllNotificationsForUserMutationVariables>;
 export const UpdateNotificationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"updateNotification"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"notificationId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"notification"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"app_notification_set_input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"update_app_notification"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"notificationId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"recipient"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"Variable","name":{"kind":"Name","value":"notification"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"returning"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"recipient"}},{"kind":"Field","name":{"kind":"Name","value":"linked_entity_id"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"visitor_space_request"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cp_space_id"}},{"kind":"Field","name":{"kind":"Name","value":"visitor_space"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"schema_maintainer_id"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"material_request"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"requested_by"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"intellectualEntity"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schemaMaintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"skos_pref_label"}}]}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<UpdateNotificationMutation, UpdateNotificationMutationVariables>;
+export const FindOrganisationSlugsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findOrganisationSlugs"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"where"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"maintainer_organization_slug_bool_exp"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"offset"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"maintainer_organization_slug_order_by"}}}},"defaultValue":{"kind":"ListValue","values":[]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"maintainer_organization_slug"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"Variable","name":{"kind":"Name","value":"where"}}},{"kind":"Argument","name":{"kind":"Name","value":"offset"},"value":{"kind":"Variable","name":{"kind":"Name","value":"offset"}}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}},{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"org_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"organisation"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"skos_pref_label"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"maintainer_organization_slug_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"Variable","name":{"kind":"Name","value":"where"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}}]}}]} as unknown as DocumentNode<FindOrganisationSlugsQuery, FindOrganisationSlugsQueryVariables>;
 export const FindOrganisationsBySchemaIdsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findOrganisationsBySchemaIds"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"schemaIdentifiers"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"graph_organization"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"org_identifier"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_in"},"value":{"kind":"Variable","name":{"kind":"Name","value":"schemaIdentifiers"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"org_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"skos_pref_label"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_description"}},{"kind":"Field","name":{"kind":"Name","value":"foaf_homepage"}},{"kind":"Field","name":{"kind":"Name","value":"ha_org_has_logo"}},{"kind":"Field","name":{"kind":"Name","value":"ha_org_request_form"}},{"kind":"Field","name":{"kind":"Name","value":"ha_org_sector"}},{"kind":"Field","name":{"kind":"Name","value":"skos_alt_label"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"schema_vat_id"}},{"kind":"Field","name":{"kind":"Name","value":"schemaPostalAddresses"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_street_address"}},{"kind":"Field","name":{"kind":"Name","value":"schema_postal_code"}},{"kind":"Field","name":{"kind":"Name","value":"schema_address_locality"}}]}},{"kind":"Field","name":{"kind":"Name","value":"schemaContactPoint"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_contact_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_email"}},{"kind":"Field","name":{"kind":"Name","value":"schema_telephone"}}]}}]}}]}}]} as unknown as DocumentNode<FindOrganisationsBySchemaIdsQuery, FindOrganisationsBySchemaIdsQueryVariables>;
 export const GetOrganisationBySlugDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getOrganisationBySlug"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"slug"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"graph_organization"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"skos_alt_label"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"slug"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"org_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"skos_pref_label"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_description"}},{"kind":"Field","name":{"kind":"Name","value":"foaf_homepage"}},{"kind":"Field","name":{"kind":"Name","value":"ha_org_has_logo"}},{"kind":"Field","name":{"kind":"Name","value":"ha_org_request_form"}},{"kind":"Field","name":{"kind":"Name","value":"ha_org_sector"}},{"kind":"Field","name":{"kind":"Name","value":"skos_alt_label"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"schema_vat_id"}},{"kind":"Field","name":{"kind":"Name","value":"schemaPostalAddresses"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_street_address"}},{"kind":"Field","name":{"kind":"Name","value":"schema_postal_code"}},{"kind":"Field","name":{"kind":"Name","value":"schema_address_locality"}}]}},{"kind":"Field","name":{"kind":"Name","value":"schemaContactPoint"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_contact_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_email"}},{"kind":"Field","name":{"kind":"Name","value":"schema_telephone"}}]}}]}}]}}]} as unknown as DocumentNode<GetOrganisationBySlugQuery, GetOrganisationBySlugQueryVariables>;
 export const GetOrganisationsThatHaveObjectsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getOrganisationsThatHaveObjects"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"graph_organisations_with_objects"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"ha_org_has_logo"}},{"kind":"Field","name":{"kind":"Name","value":"skos_pref_label"}},{"kind":"Field","name":{"kind":"Name","value":"org_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"foaf_homepage"}},{"kind":"Field","name":{"kind":"Name","value":"skos_alt_label"}}]}}]}}]} as unknown as DocumentNode<GetOrganisationsThatHaveObjectsQuery, GetOrganisationsThatHaveObjectsQueryVariables>;
+export const UpdateOrganisationSlugDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"updateOrganisationSlug"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"org_identifier"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"slug"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"update_maintainer_organization_slug"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"org_identifier"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"org_identifier"}}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"slug"},"value":{"kind":"Variable","name":{"kind":"Name","value":"slug"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"returning"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"org_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"organisation"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"skos_pref_label"}}]}}]}}]}}]}}]} as unknown as DocumentNode<UpdateOrganisationSlugMutation, UpdateOrganisationSlugMutationVariables>;
 export const GetSitemapConfigDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getSitemapConfig"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"app_config"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"name"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"StringValue","value":"SITEMAP_CONFIG","block":false}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}}]}}]}}]} as unknown as DocumentNode<GetSitemapConfigQuery, GetSitemapConfigQueryVariables>;
 export const CreateSpaceDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"createSpace"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"createSpace"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"maintainer_visitor_space_insert_input"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"insert_maintainer_visitor_space_one"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"object"},"value":{"kind":"Variable","name":{"kind":"Name","value":"createSpace"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"schema_image"}},{"kind":"Field","name":{"kind":"Name","value":"schema_color"}},{"kind":"Field","name":{"kind":"Name","value":"schema_audience_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_public_access"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description_nl"}},{"kind":"Field","name":{"kind":"Name","value":"schema_service_description_nl"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description_en"}},{"kind":"Field","name":{"kind":"Name","value":"schema_service_description_en"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"organisation"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"skos_pref_label"}},{"kind":"Field","name":{"kind":"Name","value":"org_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"foaf_homepage"}},{"kind":"Field","name":{"kind":"Name","value":"ha_org_has_logo"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_description"}},{"kind":"Field","name":{"kind":"Name","value":"skos_alt_label"}},{"kind":"Field","name":{"kind":"Name","value":"schemaContactPoint"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_contact_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_email"}},{"kind":"Field","name":{"kind":"Name","value":"schema_telephone"}}]}}]}}]}}]}}]} as unknown as DocumentNode<CreateSpaceMutation, CreateSpaceMutationVariables>;
 export const FindSpaceByIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findSpaceById"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"maintainer_visitor_space"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"schema_image"}},{"kind":"Field","name":{"kind":"Name","value":"schema_color"}},{"kind":"Field","name":{"kind":"Name","value":"schema_audience_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_public_access"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description_nl"}},{"kind":"Field","name":{"kind":"Name","value":"schema_service_description_nl"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description_en"}},{"kind":"Field","name":{"kind":"Name","value":"schema_service_description_en"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"organisation"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"skos_pref_label"}},{"kind":"Field","name":{"kind":"Name","value":"org_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"foaf_homepage"}},{"kind":"Field","name":{"kind":"Name","value":"ha_org_has_logo"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_description"}},{"kind":"Field","name":{"kind":"Name","value":"skos_alt_label"}},{"kind":"Field","name":{"kind":"Name","value":"schemaContactPoint"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_contact_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_email"}},{"kind":"Field","name":{"kind":"Name","value":"schema_telephone"}}]}}]}}]}}]}}]} as unknown as DocumentNode<FindSpaceByIdQuery, FindSpaceByIdQueryVariables>;
