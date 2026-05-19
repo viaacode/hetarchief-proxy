@@ -13,12 +13,13 @@ import { ApiTags } from '@nestjs/swagger';
 import { Organisation, OrganisationSlug } from '~modules/organisations/organisations.types';
 
 import { IPagination } from '@studiohyperdrive/pagination';
+import { PermissionName } from '@viaa/avo2-types';
 import {
 	OrganisationSlugQueryDto,
 	UpdateOrganisationSlugDto,
 } from '~modules/organisations/dto/organisations.dto';
 import { OrganisationsService } from '~modules/organisations/services/organisations.service';
-import { IsMeemooAdminGuard } from '~shared/guards/is-meemoo-admin.guard';
+import { RequireAnyPermissions } from '~shared/decorators/require-any-permissions.decorator';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
 
 @ApiTags('Organisations')
@@ -32,7 +33,8 @@ export class OrganisationsController {
 	}
 
 	@Get('slugs')
-	@UseGuards(LoggedInGuard, IsMeemooAdminGuard)
+	@UseGuards(LoggedInGuard)
+	@RequireAnyPermissions(PermissionName.CAN_MANAGE_ORGANISATION_SLUGS)
 	public async getOrganisationSlugs(
 		@Query() queryDto: OrganisationSlugQueryDto
 	): Promise<IPagination<OrganisationSlug>> {
@@ -40,6 +42,8 @@ export class OrganisationsController {
 	}
 
 	@Patch(':orgIdentifier')
+	@UseGuards(LoggedInGuard)
+	@RequireAnyPermissions(PermissionName.CAN_MANAGE_ORGANISATION_SLUGS)
 	async updateOrganisationSlug(
 		@Param('orgIdentifier') orgIdentifier: string,
 		@Body() updateOrganisationSlugDto: UpdateOrganisationSlugDto
