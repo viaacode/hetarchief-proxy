@@ -4,13 +4,20 @@ import { retry } from 'async';
 
 import { DataService, PlayerTicketService } from '@meemoo/admin-core-api';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { Inject, Injectable, InternalServerErrorException, Logger, NotFoundException, } from '@nestjs/common';
+import {
+	Inject,
+	Injectable,
+	InternalServerErrorException,
+	Logger,
+	NotFoundException,
+} from '@nestjs/common';
 
 import { ConfigService } from '@nestjs/config';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { mapLimit } from 'blend-promise-utils';
 import type { Cache } from 'cache-manager';
 import got, { type Got } from 'got';
+
 import { compact, find, isArray, isEmpty, isNil, kebabCase, omitBy, uniq } from 'lodash';
 
 import type { Configuration } from '~config';
@@ -35,10 +42,10 @@ import {
 	type IeObjectPages,
 	type IeObjectRepresentation,
 	type IeObjectSector,
+	IeObjectType,
 	type IeObjectsSitemap,
 	type IeObjectsVisitorSpaceInfo,
 	type IeObjectsWithAggregations,
-	IeObjectType,
 	type IsPartOfKey,
 	type Mention,
 	type RelatedIeObject,
@@ -97,13 +104,19 @@ import {
 	RIGHTS_LABEL_FILTER_VALUES,
 } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
 import { AND } from '~modules/ie-objects/elasticsearch/queryBuilder.helpers';
-import { convertStringToSearchTerms, type SearchTermParseResult, } from '~modules/ie-objects/helpers/convert-string-to-search-terms';
-import { AUTOCOMPLETE_FIELD_TO_ES_FIELD_NAME } from '~modules/ie-objects/ie-objects.conts';
 import {
+	type SearchTermParseResult,
+	convertStringToSearchTerms,
+} from '~modules/ie-objects/helpers/convert-string-to-search-terms';
+import {
+	AUTOCOMPLETE_FIELD_TO_ES_FIELD_NAME,
+	IE_OBJECT_AV_TYPES,
+} from '~modules/ie-objects/ie-objects.conts';
+import {
+	CACHE_KEY_PREFIX_IE_OBJECTS_SEARCH,
 	CACHE_KEY_PREFIX_IE_OBJECT_DETAIL,
 	CACHE_KEY_PREFIX_IE_OBJECT_PID_TO_ID,
 	CACHE_KEY_PREFIX_IE_OBJECT_THUMBNAIL,
-	CACHE_KEY_PREFIX_IE_OBJECTS_SEARCH,
 } from '~modules/ie-objects/services/ie-objects.service.consts';
 import {
 	type DbFile,
@@ -705,12 +718,16 @@ export class IeObjectsService {
 		const licenses = compact(
 			schemaLicenseResponse?.map((item) => item?.schema_license)
 		) as IeObjectLicense[];
-		const rights = ie?.rights;
 		const isPublicDomain: boolean =
 			licenses.includes(IeObjectLicense.PUBLIEK_CONTENT) &&
 			licenses.includes(IeObjectLicense.PUBLIC_DOMAIN);
 
 		const dctermsFormat = dctermsFormatResponse?.dcterms_format as IeObjectType;
+		const shouldExposeRightsInfo =
+			IE_OBJECT_AV_TYPES.includes(dctermsFormat) &&
+			(licenses.includes(IeObjectLicense.PUBLIEK_CONTENT) ||
+				licenses.includes(IeObjectLicense.BEZOEKERTOOL_CONTENT));
+		const rights = shouldExposeRightsInfo ? ie?.rights : undefined;
 		let thumbnailUrl = schemaThumbnailUrlResponse?.schema_thumbnail_url?.[0];
 
 		if (mapDcTermsFormatToSimpleType(dctermsFormat) === IeObjectType.AUDIO) {
