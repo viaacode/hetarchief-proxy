@@ -8,10 +8,12 @@ query findOrganisationsBySchemaIds($schemaIdentifiers: [String!]!) {
 		ha_org_has_logo
 		ha_org_request_form
 		ha_org_sector
-		skos_alt_label
 		updated_at
 		created_at
 		schema_vat_id
+		organizationSlug {
+			slug
+		}
 		schemaPostalAddresses {
 			schema_street_address
 			schema_postal_code

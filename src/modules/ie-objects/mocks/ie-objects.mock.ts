@@ -5,8 +5,8 @@ import {
 	IeObjectAccessThrough,
 	IeObjectLicense,
 	type IeObjectSector,
-	type IeObjectsSitemap,
 	IeObjectType,
+	type IeObjectsSitemap,
 	IsPartOfKey,
 } from '../ie-objects.types';
 
@@ -472,7 +472,6 @@ export const mockIeObject2: GetIeObjectDetailQuery = {
 					'Het stadsarchief Ieper is een regionaal archief dat de documenten van de stad bewaart en ontsluit.',
 				ha_org_sector: 'Cultuur',
 				foaf_homepage: 'https://archief.ieper.be/',
-				skos_alt_label: 'stadsarchief-ieper',
 				hasPreference: [],
 			},
 		},
@@ -513,7 +512,6 @@ export const mockIeObject2: GetIeObjectDetailQuery = {
 				schemaMaintainer: {
 					org_identifier: 'OR-v97zq9j',
 					skos_pref_label: 'Erfgoedbibliotheek Hendrik Conscience',
-					skos_alt_label: 'erfgoedbibliotheek-hendrik-conscience',
 					ha_org_has_logo: 'https://assets-qas.viaa.be/images/OR-v97zq9j',
 					ha_org_request_form: null,
 					dcterms_description:
@@ -783,7 +781,6 @@ const mockRelatedIeObject:
 		org_identifier: 'OR-rf5kf25',
 		skos_pref_label: 'VRT',
 		ha_org_sector: 'Publieke Omroep',
-		skos_alt_label: 'vrt',
 	},
 };
 

@@ -41,7 +41,6 @@ export const mockGqlVisitRequest: GqlVisit = {
 	updated_at: '2022-03-18T08:32:57.256264',
 	visitor_space: {
 		id: 'c3857d2a-a818-4bec-b420-2fe0275604ff',
-		slug: 'bruzz',
 		schema_maintainer_id: 'OR-d79593p',
 		schema_image: null,
 		schema_color: null,
@@ -59,6 +58,9 @@ export const mockGqlVisitRequest: GqlVisit = {
 			id: 'https://data-int.hetarchief.be/id/organization/OR-d79593p',
 			skos_pref_label: 'BRUZZ',
 			org_identifier: 'OR-d79593p',
+			organizationSlug: {
+				slug: 'bruzz',
+			},
 			schemaContactPoint: [
 				{
 					schema_contact_type: 'ontsluiting',

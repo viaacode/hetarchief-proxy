@@ -25,7 +25,9 @@ query getIeObjectDetail($ieObjectId: String!) {
 			dcterms_description
 			ha_org_sector
 			foaf_homepage
-			skos_alt_label
+			organizationSlug {
+				slug
+			}
 			hasPreference {
 				ha_pref
 			}
@@ -120,12 +122,14 @@ query getIeObjectDetail($ieObjectId: String!) {
 			schemaMaintainer {
 				org_identifier
 				skos_pref_label
-				skos_alt_label
 				ha_org_has_logo
 				ha_org_request_form
 				dcterms_description
 				ha_org_sector
 				foaf_homepage
+				organizationSlug {
+					slug
+				}
 				hasPreference {
 					ha_pref
 				}

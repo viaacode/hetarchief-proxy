@@ -6,7 +6,7 @@ query findPendingOrApprovedVisitRequestsForUser(
 	maintainer_visitor_space_request(
 		where: {
 			user_profile_id: { _eq: $userProfileId }
-			visitor_space: { slug: { _eq: $spaceSlug } }
+			visitor_space: { organisation: { organizationSlug: { slug: { _eq: $spaceSlug } } } }
 			_or: [
 				{ end_date: { _gte: $now }, status: { _eq: "APPROVED" } }
 				{ status: { _eq: "PENDING" } }

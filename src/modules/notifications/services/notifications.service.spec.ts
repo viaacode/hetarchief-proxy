@@ -45,8 +45,12 @@ const mockGqlNotification1: GqlNotification = {
 		cp_space_id: 'c3857d2a-a818-4bec-b420-2fe0275604ff',
 		visitor_space: {
 			id: 'c3857d2a-a818-4bec-b420-2fe0275604ff',
-			slug: 'amsab',
 			schema_maintainer_id: 'OR-154dn75',
+			organisation: {
+				organizationSlug: {
+					slug: 'amsab',
+				},
+			},
 		},
 	},
 };
@@ -66,8 +70,12 @@ const mockGqlNotification2: GqlNotification = {
 		cp_space_id: 'c3857d2a-a818-4bec-b420-2fe0275604ff',
 		visitor_space: {
 			id: 'c3857d2a-a818-4bec-b420-2fe0275604ff',
-			slug: 'amsab',
 			schema_maintainer_id: 'OR-154dn75',
+			organisation: {
+				organizationSlug: {
+					slug: 'amsab',
+				},
+			},
 		},
 	},
 	material_request: undefined,

@@ -1,7 +1,8 @@
 query findSpaceBySlug($slug: String!) {
-	maintainer_visitor_space(where: { slug: { _eq: $slug } }) {
+	maintainer_visitor_space(
+		where: { organisation: { organizationSlug: { slug: { _eq: $slug } } } }
+	) {
 		id
-		slug
 		schema_image
 		schema_color
 		schema_audience_type
@@ -21,7 +22,9 @@ query findSpaceBySlug($slug: String!) {
 			foaf_homepage
 			ha_org_has_logo
 			dcterms_description
-			skos_alt_label
+			organizationSlug {
+				slug
+			}
 			schemaContactPoint {
 				schema_contact_type
 				schema_email

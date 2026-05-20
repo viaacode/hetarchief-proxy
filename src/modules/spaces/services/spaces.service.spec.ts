@@ -471,7 +471,11 @@ describe('SpacesService', () => {
 			const mockData: FindSpaceBySlugQuery = {
 				maintainer_visitor_space: [
 					{
-						slug,
+						organisation: {
+							organizationSlug: {
+								slug,
+							},
+						},
 					},
 				] as FindSpaceBySlugQuery['maintainer_visitor_space'],
 			};

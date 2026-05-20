@@ -37,7 +37,6 @@ query findApprovedStartedVisitsWithoutNotification($now: timestamp) {
 		}
 		visitor_space {
 			id
-			slug
 			schema_maintainer_id
 			schema_image
 			schema_color
@@ -58,7 +57,9 @@ query findApprovedStartedVisitsWithoutNotification($now: timestamp) {
 				foaf_homepage
 				ha_org_has_logo
 				dcterms_description
-				skos_alt_label
+				organizationSlug {
+					slug
+				}
 				schemaContactPoint {
 					schema_contact_type
 					schema_email

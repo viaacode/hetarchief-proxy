@@ -18,7 +18,6 @@ export const mockGqlOrganisation: GqlOrganisation = {
 		},
 	],
 	ha_org_has_logo: 'https://assets.viaa.be/images/OR-rf5kf25',
-	skos_alt_label: 'vrt',
 	created_at: '2023-04-03T13:28:01.434203+02:00',
 	updated_at: '2023-04-03T13:28:01.434203+02:00',
 	skos_pref_label: 'VRT',
@@ -36,6 +35,9 @@ export const mockGqlOrganisation: GqlOrganisation = {
 			schema_address_locality: 'Brussel',
 		},
 	],
+	organizationSlug: {
+		slug: 'vrt',
+	},
 };
 
 export const mockOrganisation1: Organisation = {

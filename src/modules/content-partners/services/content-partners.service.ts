@@ -25,6 +25,7 @@ export class ContentPartnersService {
 		return {
 			id: graphQlCp.org_identifier,
 			name: graphQlCp.skos_pref_label,
+			slug: graphQlCp.organization_slug,
 		};
 	}
 

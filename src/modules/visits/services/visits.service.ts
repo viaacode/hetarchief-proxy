@@ -144,7 +144,7 @@ export class VisitsService {
 				graphQlVisit?.visitor_space?.organisation.schemaContactPoint
 			),
 			spaceName: graphQlVisit?.visitor_space?.organisation?.skos_pref_label,
-			spaceSlug: graphQlVisit?.visitor_space?.slug,
+			spaceSlug: graphQlVisit?.visitor_space?.organisation?.organizationSlug?.slug,
 			spaceColor: graphQlVisit?.visitor_space?.schema_color,
 			spaceImage: graphQlVisit?.visitor_space?.schema_image,
 			spaceLogo: graphQlVisit?.visitor_space?.organisation?.ha_org_has_logo,
@@ -374,8 +374,12 @@ export class VisitsService {
 
 		if (!isEmpty(parameters.visitorSpaceSlug)) {
 			where.visitor_space = {
-				slug: {
-					_eq: parameters.visitorSpaceSlug,
+				organisation: {
+					organizationSlug: {
+						slug: {
+							_eq: parameters.visitorSpaceSlug,
+						},
+					},
 				},
 			};
 		}

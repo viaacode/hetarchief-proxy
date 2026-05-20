@@ -6,7 +6,6 @@ query findSpaces(
 ) {
 	maintainer_visitor_space(where: $where, offset: $offset, limit: $limit, order_by: [$orderBy]) {
 		id
-		slug
 		schema_image
 		schema_color
 		schema_audience_type
@@ -26,7 +25,9 @@ query findSpaces(
 			foaf_homepage
 			ha_org_has_logo
 			dcterms_description
-			skos_alt_label
+			organizationSlug {
+				slug
+			}
 			schemaContactPoint {
 				schema_contact_type
 				schema_email

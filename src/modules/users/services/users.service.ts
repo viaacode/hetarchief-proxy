@@ -92,10 +92,10 @@ export class UsersService {
 			};
 		}
 
-		if (graphQlUser?.visitor_space?.slug) {
+		if (graphQlUser?.organisation?.organizationSlug?.slug) {
 			adaptedUser = {
 				...adaptedUser,
-				visitorSpaceSlug: graphQlUser?.visitor_space?.slug,
+				visitorSpaceSlug: graphQlUser.organisation.organizationSlug.slug,
 			};
 		}
 

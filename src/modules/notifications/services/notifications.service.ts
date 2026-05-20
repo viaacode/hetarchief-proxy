@@ -84,7 +84,7 @@ export class NotificationsService {
 			type: gqlNotification?.type as NotificationType,
 
 			visitId: visitRequest ? gqlNotification?.linked_entity_id : undefined,
-			visitorSpaceSlug: visitRequest?.visitor_space?.slug,
+			visitorSpaceSlug: visitRequest?.visitor_space?.organisation?.organizationSlug?.slug,
 
 			materialRequestId: materialRequest ? gqlNotification?.linked_entity_id : undefined,
 			materialRequestRequester: materialRequest?.requested_by
