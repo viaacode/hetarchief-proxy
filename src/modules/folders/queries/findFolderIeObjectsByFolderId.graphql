@@ -48,7 +48,6 @@ query findFolderIeObjectsByFolderId(
 				org_identifier
 				skos_pref_label
 				ha_org_sector
-				skos_alt_label
 				visitorSpace {
 					id
 					slug

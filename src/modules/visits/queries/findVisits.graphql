@@ -65,7 +65,6 @@ query findVisits(
 				foaf_homepage
 				ha_org_has_logo
 				dcterms_description
-				skos_alt_label
 				schemaContactPoint {
 					schema_contact_type
 					schema_email

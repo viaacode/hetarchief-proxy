@@ -29,7 +29,6 @@ mutation updateUserProfile($id: uuid!, $updateUser: users_profile_set_input!) {
 				org_identifier
 				skos_pref_label
 				ha_org_sector
-				skos_alt_label
 				schema_vat_id
 				schemaPostalAddresses {
 					schema_street_address

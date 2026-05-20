@@ -3,7 +3,6 @@ query findContentPartners($where: graph_organisations_with_objects_bool_exp!) {
 		id
 		org_identifier
 		skos_pref_label
-		skos_alt_label
 	}
 	graph_organisations_with_objects_aggregate(where: $where) {
 		aggregate {

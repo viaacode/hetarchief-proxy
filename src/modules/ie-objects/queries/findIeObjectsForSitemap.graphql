@@ -13,7 +13,6 @@ query findIeObjectsForSitemap($licenses: [String!]!, $offset: Int!, $limit: Int)
 		schemaMaintainer {
 			org_identifier
 			skos_pref_label
-			skos_alt_label
 		}
 	}
 }

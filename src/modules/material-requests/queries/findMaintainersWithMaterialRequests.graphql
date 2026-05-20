@@ -3,6 +3,5 @@ query findMaintainersWithMaterialRequests {
 		id
 		org_identifier
 		skos_pref_label
-		skos_alt_label
 	}
 }

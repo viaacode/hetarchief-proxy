@@ -30,7 +30,9 @@ query getParentIeObject($currentObjectIri: String!) {
 				org_identifier
 				ha_org_sector
 				skos_pref_label
-				skos_alt_label
+				organizationSlug {
+					slug
+				}
 			}
 		}
 	}
