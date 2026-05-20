@@ -14154,6 +14154,8 @@ export type Graph_Organisations_With_Objects = {
   organization_slug?: Maybe<Scalars['String']['output']>;
   skos_pref_label?: Maybe<Scalars['String']['output']>;
   updated_at?: Maybe<Scalars['timestamptz']['output']>;
+  /** An object relationship */
+  visitorSpace?: Maybe<Maintainer_Visitor_Space>;
 };
 
 /** aggregated selection of "graph.organisations_with_objects" */
@@ -14194,6 +14196,7 @@ export type Graph_Organisations_With_Objects_Bool_Exp = {
   organization_slug?: InputMaybe<String_Comparison_Exp>;
   skos_pref_label?: InputMaybe<String_Comparison_Exp>;
   updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+  visitorSpace?: InputMaybe<Maintainer_Visitor_Space_Bool_Exp>;
 };
 
 /** aggregate max on columns */
@@ -14241,6 +14244,7 @@ export type Graph_Organisations_With_Objects_Order_By = {
   organization_slug?: InputMaybe<Order_By>;
   skos_pref_label?: InputMaybe<Order_By>;
   updated_at?: InputMaybe<Order_By>;
+  visitorSpace?: InputMaybe<Maintainer_Visitor_Space_Order_By>;
 };
 
 /** select columns of table "graph.organisations_with_objects" */

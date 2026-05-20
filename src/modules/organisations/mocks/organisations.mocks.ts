@@ -35,6 +35,9 @@ export const mockGqlOrganisation: GqlOrganisation = {
 			schema_address_locality: 'Brussel',
 		},
 	],
+	organizationSlug: {
+		slug: 'vrt',
+	},
 };
 
 export const mockOrganisation1: Organisation = {
