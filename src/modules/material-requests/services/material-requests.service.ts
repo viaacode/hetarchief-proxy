@@ -33,8 +33,9 @@ import {
 	UpdateMaterialRequestStatusDto,
 } from '../dto/material-requests.dto';
 import {
-	MAP_MATERIAL_REQUEST_STATUS_TO_EMAIL_TEMPLATE,
 	MAP_MATERIAL_REQUEST_STATUS_TO_EVENT_TYPE,
+	MAP_MATERIAL_REQUEST_STATUS_TO_NOTIFICATION_TYPE,
+	MAP_NOTIFICATION_TYPE_TO_EMAIL_TEMPLATE,
 	ORDER_PROP_TO_DB_PROP,
 	getAdditionEventDate,
 	getStatusEvent,
@@ -81,6 +82,9 @@ import {
 	FindMaterialRequestsWithExpiredDownloadDocument,
 	FindMaterialRequestsWithExpiredDownloadQuery,
 	FindMaterialRequestsWithExpiredDownloadQueryVariables,
+	FindMaterialRequestsWithUnresolvedAdditionalConditionsDocument,
+	FindMaterialRequestsWithUnresolvedAdditionalConditionsQuery,
+	FindMaterialRequestsWithUnresolvedAdditionalConditionsQueryVariables,
 	FindMaterialRequestsWithUnresolvedDownloadStatusDocument,
 	FindMaterialRequestsWithUnresolvedDownloadStatusQuery,
 	GetMaterialRequestByJobIdForDownloadJobDocument,
@@ -110,12 +114,7 @@ import {
 	UpdateMaterialRequestStatusMutation,
 	UpdateMaterialRequestStatusMutationVariables,
 } from '~generated/graphql-db-types-hetarchief';
-import {
-	EmailTemplate,
-	type MaterialRequestEmailInfo,
-} from '~modules/campaign-monitor/campaign-monitor.types';
-
-import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
+import { type MaterialRequestEmailInfo } from '~modules/campaign-monitor/campaign-monitor.types';
 import {
 	type IeObject,
 	IeObjectAccessThrough,
@@ -143,6 +142,8 @@ import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.servic
 import { MaterialRequestEvent } from '~modules/material-request-messages/material-request-messages.types';
 import { MaterialRequestMessagesService } from '~modules/material-request-messages/services/material-request-messages.service';
 import { MediahavenJobsWatcherService } from '~modules/mediahaven-jobs-watcher/services/mediahaven-jobs-watcher.service';
+import { NotificationsService } from '~modules/notifications/services/notifications.service';
+import { NotificationType } from '~modules/notifications/types';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { UsersService } from '~modules/users/services/users.service';
@@ -156,7 +157,7 @@ import { SortDirection } from '~shared/types';
 export class MaterialRequestsService {
 	constructor(
 		private dataService: DataService,
-		private campaignMonitorService: CampaignMonitorService,
+		private notificationsService: NotificationsService,
 		private organisationsService: OrganisationsService,
 		private spacesService: SpacesService,
 		private ieObjectsService: IeObjectsService,
@@ -464,8 +465,10 @@ export class MaterialRequestsService {
 				created_at: new Date().toISOString(),
 				updated_at: new Date().toISOString(),
 				is_pending: true,
-				organisation: createMaterialRequestDto?.organisation || user.getOrganisationName(),
-				organisation_sector: user.getSector(),
+				// Filled in by the user when said user does not have an organisation
+				organisation_name: createMaterialRequestDto?.organisationName,
+				// Should be de org_identifier of an organisation when the user is linked to an organisation
+				organisation_id: createMaterialRequestDto?.organisationId || user.getOrganisationId(),
 				requester_capacity:
 					createMaterialRequestDto?.requesterCapacity ||
 					Lookup_App_Material_Request_Requester_Capacity_Enum.Other,
@@ -512,8 +515,8 @@ export class MaterialRequestsService {
 			App_Material_Requests_Set_Input,
 			| 'type'
 			| 'reason'
-			| 'organisation'
-			| 'organisation_sector'
+			| 'organisation_name'
+			| 'organisation_id'
 			| 'requester_capacity'
 			| 'is_pending'
 			| 'status'
@@ -594,7 +597,12 @@ export class MaterialRequestsService {
 	private validateStatusTransition(
 		currentRequest: MaterialRequest,
 		newStatus: Lookup_App_Material_Request_Status_Enum,
-		user: SessionUserEntity
+		user: SessionUserEntity,
+		/**
+		 * Allows you to bypass the user permissions check.
+		 * This can be useful for auto approving a material request after the requester accepts the additional conditions.
+		 */
+		isAutoAccept: boolean
 	) {
 		const isRequester = currentRequest.requesterId === user.getId();
 		const isEvaluatorOfCp =
@@ -606,9 +614,9 @@ export class MaterialRequestsService {
 			!isRequester && (isEvaluatorOfCp || user.getGroupName() === GroupName.MEEMOO_ADMIN);
 
 		// User is not allowed to do anything with the status
-		if (!isUserAllowedToCancel && !isUserAllowedToAdvanceStatus) {
+		if (!isUserAllowedToCancel && !isUserAllowedToAdvanceStatus && !isAutoAccept) {
 			throw new BadRequestException(
-				`Material request (${currentRequest.id}) could not be set to ${newStatus}.`
+				`Material request (${currentRequest.id}) could not be set to ${newStatus}. User does not have required permissions.`
 			);
 		}
 
@@ -639,7 +647,7 @@ export class MaterialRequestsService {
 				!isUserAllowedToAdvanceStatus
 			) {
 				throw new BadRequestException(
-					`Material request (${currentRequest.id}) could not be set to ${newStatus}.`
+					`Material request (${currentRequest.id}) could not be set to ${newStatus}. User is not allowed to change the status to ${newStatus}`
 				);
 			}
 		} else if (currentRequest.status === Lookup_App_Material_Request_Status_Enum.Pending) {
@@ -649,14 +657,25 @@ export class MaterialRequestsService {
 				newStatus !== Lookup_App_Material_Request_Status_Enum.Denied
 			) {
 				throw new BadRequestException(
-					`Material request (${currentRequest.id}) could not be set to ${newStatus}.`
+					`Material request (${currentRequest.id}) could not be set to ${newStatus}. Only pending material requests are allowed to bee set to ${newStatus}`
 				);
 			}
 
-			// Trying to update the status to APPROVED or DENIED, but user is the one who made the request or the user is not part of the same organisation
-			if (!isUserAllowedToAdvanceStatus) {
+			// Trying to update the status to DENIED, but user is the one who made the request or the user is not part of the same organisation
+			if (
+				!isUserAllowedToAdvanceStatus &&
+				newStatus === Lookup_App_Material_Request_Status_Enum.Denied
+			) {
 				throw new BadRequestException(
-					`Material request (${currentRequest.id}) could not be set to ${newStatus}.`
+					`Material request (${currentRequest.id}) could not be set to ${newStatus}. User is not allowed to change the status to ${newStatus}`
+				);
+			}
+
+			// Trying to update the status to APPROVED
+			// but user is the one who made the request or the user is not part of the same organisation and it is no auto accept
+			if (!isUserAllowedToAdvanceStatus && !isAutoAccept) {
+				throw new BadRequestException(
+					`Material request (${currentRequest.id}) could not be set to ${newStatus}. User is not allowed to change the status to ${newStatus}`
 				);
 			}
 		} else {
@@ -674,6 +693,11 @@ export class MaterialRequestsService {
 		referer: string,
 		ip: string,
 		requestPath: string,
+		/**
+		 * Allows you to bypass the user permissions check.
+		 * This can be useful for auto approving a material request after the requester accepts the additional conditions.
+		 */
+		isAutoAccept: boolean,
 		eventId?: string
 	): Promise<MaterialRequest> {
 		const currentRequest = await this.findById(
@@ -686,7 +710,7 @@ export class MaterialRequestsService {
 
 		const { status, motivation } = statusOptions;
 
-		this.validateStatusTransition(currentRequest, status, user);
+		this.validateStatusTransition(currentRequest, status, user, isAutoAccept);
 
 		if (status === Lookup_App_Material_Request_Status_Enum.Cancelled) {
 			await this.materialRequestMessageService.createMessage(
@@ -780,35 +804,41 @@ export class MaterialRequestsService {
 				});
 		}
 
-		const emailTemplateToSend = MAP_MATERIAL_REQUEST_STATUS_TO_EMAIL_TEMPLATE[status];
+		const notificationTypeToSend = MAP_MATERIAL_REQUEST_STATUS_TO_NOTIFICATION_TYPE[status];
 
-		if (updatedRequest && emailTemplateToSend) {
+		if (updatedRequest && notificationTypeToSend) {
 			this.usersService.getById(updatedRequest.requesterId).then(
 				(requesterUser) =>
-					this.sentStatusUpdateEmail(emailTemplateToSend, updatedRequest, requesterUser) // Not waiting on this
+					this.sentStatusUpdateNotification(notificationTypeToSend, updatedRequest, requesterUser) // Not waiting on this
 			);
 		}
 
 		return updatedRequest;
 	}
 
-	public isSendToMaintainerEmailTemplate(template: EmailTemplate): boolean {
-		return (
-			template === EmailTemplate.CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_REQUESTER_CANCELLED ||
-			template ===
-				EmailTemplate.CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_DOWNLOAD_READY_MAINTAINER
-		);
-	}
-
-	public async sentStatusUpdateEmail(
-		template: EmailTemplate,
+	public async sentStatusUpdateNotification(
+		notificationType: NotificationType,
 		request: MaterialRequest,
 		requesterUser: AvoUserCommonUser
 	): Promise<void> {
+		const template = MAP_NOTIFICATION_TYPE_TO_EMAIL_TEMPLATE[notificationType];
+
+		if (!template) {
+			return;
+		}
+
 		try {
-			// Emailed maintainer when the requester cancelled their request
-			// Emailed the requester when the maintainer approved or denied the request
-			const sentToMaintainer = this.isSendToMaintainerEmailTemplate(template);
+			// Emailed maintainer when
+			// 		- the requester cancelled their request
+			// 		- the download was executed
+			// Emailed the requester when
+			// 		- the maintainer approved or denied the request
+			// 		- the download became available
+			// 		- the download will almost expire
+			const sentToMaintainer = [
+				NotificationType.MATERIAL_REQUEST_CANCELLED,
+				NotificationType.MATERIAL_REQUEST_DOWNLOAD_EXECUTED,
+			].includes(notificationType);
 
 			const emailInfo: MaterialRequestEmailInfo = {
 				to: sentToMaintainer ? request.contactMail : request.requesterMail,
@@ -818,16 +848,30 @@ export class MaterialRequestsService {
 				materialRequests: [request],
 				sendRequestListDto: {
 					type: request.requesterCapacity,
-					organisation: request.requesterOrganisation,
+					organisationName: request.requesterOrganisationName,
+					organisationId: request.requesterOrganisationId,
 					requestGroupName: request.requestGroupName,
 				},
 				requesterFirstName: requesterUser.firstName,
 				requesterLastName: requesterUser.lastName,
 			};
 
-			await this.campaignMonitorService.sendForMaterialRequest(emailInfo);
+			if (sentToMaintainer) {
+				const receiverIds =
+					await this.materialRequestMessageService.getEvaluatorsForOrganisation(request);
+				await this.notificationsService.onStatusUpdateMaterialRequest(
+					emailInfo,
+					notificationType,
+					receiverIds
+				);
+			} else {
+				await this.notificationsService.onStatusUpdateMaterialRequest(emailInfo, notificationType, [
+					requesterUser.profileId,
+				]);
+			}
 		} catch (err) {
 			const error = customError('Failed to send email about material request status update', err, {
+				notificationType,
 				template,
 				request,
 				requesterUser,
@@ -859,33 +903,24 @@ export class MaterialRequestsService {
 			// Send mail to each maintainer containing only material requests for objects they are the maintainer of
 			await Promise.all(
 				groupedArray.map(async (materialRequests: MaterialRequest[]) => {
-					const emailInfo: MaterialRequestEmailInfo = {
-						// Each materialRequest in this group has the same maintainer, otherwise, the maintainer will receive multiple mails
-						to: materialRequests[0].contactMail,
-						replyTo: materialRequests[0]?.requesterMail,
-						template: EmailTemplate.CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_MAINTAINER,
-						materialRequests: materialRequests,
+					const receiverIds = await this.materialRequestMessageService.getEvaluatorsForOrganisation(
+						materialRequests[0]
+					);
+					await this.notificationsService.onCreateMaterialRequestMaintainer(
+						materialRequests,
 						sendRequestListDto,
-						requesterFirstName: userInfo.firstName,
-						requesterLastName: userInfo.lastName,
-						language: userInfo.language,
-					};
-					await this.campaignMonitorService.sendForMaterialRequest(emailInfo);
+						userInfo,
+						receiverIds
+					);
 				})
 			);
 
 			// Send mail to the requester containing all of their material requests for all the objects they requested
-			const emailInfo: MaterialRequestEmailInfo = {
-				to: materialRequests[0]?.requesterMail,
-				replyTo: null, // Reply to support@meemoo.be
-				template: EmailTemplate.CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_REQUESTER,
-				materialRequests: materialRequests,
+			await this.notificationsService.onCreateMaterialRequestRequester(
+				materialRequests,
 				sendRequestListDto,
-				requesterFirstName: userInfo.firstName,
-				requesterLastName: userInfo.lastName,
-				language: userInfo.language,
-			};
-			await this.campaignMonitorService.sendForMaterialRequest(emailInfo);
+				userInfo
+			);
 		} catch (err) {
 			const error = {
 				message: 'Failed to send the material requests',
@@ -1127,23 +1162,26 @@ export class MaterialRequestsService {
 			createdAt: graphQlMaterialRequest.created_at,
 			updatedAt: graphQlMaterialRequest.updated_at,
 			requestedAt: graphQlMaterialRequest.requested_at,
-			type: graphQlMaterialRequest.type,
+			type: graphQlMaterialRequest.type as Lookup_App_Material_Request_Type_Enum,
 			isPending: graphQlMaterialRequest.is_pending,
 			...this.adaptArchivationData(graphQlMaterialRequest, history),
-			status: graphQlMaterialRequest.status,
+			status: graphQlMaterialRequest.status as Lookup_App_Material_Request_Status_Enum,
 			...this.adaptDownloadRelatedData(graphQlMaterialRequest),
 			requestGroupName: graphQlMaterialRequest.name ?? null,
 			requestGroupId: graphQlMaterialRequest.group_id ?? null,
 			requesterId: graphQlMaterialRequest.requested_by.id,
 			requesterFullName: graphQlMaterialRequest.requested_by.full_name,
+			requesterFirstName: graphQlMaterialRequest.requested_by.first_name,
+			requesterLastName: graphQlMaterialRequest.requested_by.last_name,
 			requesterMail: graphQlMaterialRequest.requested_by.mail,
-			requesterCapacity: graphQlMaterialRequest.requester_capacity,
+			requesterLanguage: graphQlMaterialRequest.requested_by.language,
+			requesterCapacity:
+				graphQlMaterialRequest.requester_capacity as Lookup_App_Material_Request_Requester_Capacity_Enum,
 			requesterUserGroupId: graphQlMaterialRequest.requested_by.group?.id || null,
 			requesterUserGroupName: graphQlMaterialRequest.requested_by.group?.name || null,
 			requesterUserGroupLabel: graphQlMaterialRequest.requested_by.group?.label || null,
 			requesterUserGroupDescription: graphQlMaterialRequest.requested_by.group?.description || null,
-			requesterOrganisation: graphQlMaterialRequest.organisation, // Requester organisation (free input field) in some cases
-			requesterOrganisationSector: graphQlMaterialRequest.organisation_sector || null,
+			...this.adaptRequesterOrganisationData(graphQlMaterialRequest),
 			maintainerId: organisation?.schemaIdentifier,
 			maintainerName: organisation?.schemaName,
 			maintainerSlug:
@@ -1160,6 +1198,39 @@ export class MaterialRequestsService {
 				(graphQlMaterialRequest as FindMaterialRequestsQuery['app_material_requests'][0])
 					?.intellectualEntity?.premisIdentifier?.[0]?.value || null,
 			history,
+		};
+	}
+
+	private adaptRequesterOrganisationData(
+		graphQlMaterialRequest: GqlMaterialRequest
+	): Pick<
+		MaterialRequest,
+		| 'requesterOrganisationId'
+		| 'requesterOrganisationName'
+		| 'requesterOrganisationAddress'
+		| 'requesterOrganisationPostalCode'
+		| 'requesterOrganisationLocality'
+		| 'requesterOrganisationVAT'
+		| 'requesterOrganisationSector'
+	> {
+		if (graphQlMaterialRequest.organisation) {
+			return {
+				requesterOrganisationId: graphQlMaterialRequest.organisation.org_identifier,
+				requesterOrganisationName: graphQlMaterialRequest.organisation.skos_pref_label,
+				requesterOrganisationAddress:
+					graphQlMaterialRequest.organisation.schemaPostalAddresses?.[0]?.schema_street_address,
+				requesterOrganisationPostalCode:
+					graphQlMaterialRequest.organisation.schemaPostalAddresses?.[0]?.schema_postal_code,
+				requesterOrganisationLocality:
+					graphQlMaterialRequest.organisation.schemaPostalAddresses?.[0]?.schema_address_locality,
+				requesterOrganisationVAT: graphQlMaterialRequest.organisation.schema_vat_id,
+				requesterOrganisationSector: graphQlMaterialRequest.organisation.ha_org_sector,
+			};
+		}
+
+		// Requester organisation (free input field) in some cases
+		return {
+			requesterOrganisationName: graphQlMaterialRequest.organisation_name,
 		};
 	}
 
@@ -1184,7 +1255,7 @@ export class MaterialRequestsService {
 
 		return {
 			downloadAvailableAt: download_available_at,
-			downloadStatus,
+			downloadStatus: downloadStatus as Lookup_App_Material_Request_Download_Status_Enum,
 			downloadExpiresAt: download_available_at
 				? addDays(new Date(download_available_at), DAYS_AVAILABLE).toISOString()
 				: null,
@@ -1201,7 +1272,7 @@ export class MaterialRequestsService {
 		);
 
 		if (!closureEvent) {
-			return { isArchived: false, willBeArchivedAt: null };
+			return { isArchived: graphQlMaterialRequest.is_archived, willBeArchivedAt: null };
 		}
 
 		const TIME_BEFORE_ARCHIVATION = Number.parseFloat(
@@ -1364,11 +1435,13 @@ export class MaterialRequestsService {
 				expirationDate: subDays(new Date(), DAYS_AVAILABLE).toISOString(),
 			});
 			return await mapLimit(
-				response.app_material_requests,
+				response.app_material_requests as GqlMaterialRequest[],
 				5,
 				// Requires arrow wrapper, because otherwise the second param is the index in the array,
-				// and that's interpreted as the organisations array in the adapt function
-				(materialRequest: GqlMaterialRequest) => this.adapt(materialRequest, false)
+				// and that's interpreted as the organisation array in the adapt function
+				async (materialRequest: GqlMaterialRequest): Promise<MaterialRequest | null> => {
+					return await this.adapt(materialRequest, false);
+				}
 			);
 		} catch (err) {
 			const error = customError('Failed to find material requests with expired download', err);
@@ -1474,10 +1547,12 @@ export class MaterialRequestsService {
 	 * and set the download status
 	 * @param materialRequestId
 	 * @param setFields the fields of the material request to update
+	 * @param includeOrganisation whether or not we need the maintainerId on the returned request
 	 */
 	public async updateMaterialRequest(
 		materialRequestId: string,
-		setFields: App_Material_Requests_Set_Input
+		setFields: App_Material_Requests_Set_Input,
+		includeOrganisation = false
 	): Promise<MaterialRequest> {
 		const response = await this.dataService.execute<
 			UpdateMaterialRequestMutation,
@@ -1494,7 +1569,14 @@ export class MaterialRequestsService {
 				response,
 			});
 		}
-		return this.adapt(materialRequest, false);
+
+		const organisations = includeOrganisation
+			? await this.organisationsService.findOrganisationsBySchemaIdentifiers(
+					compact([materialRequest?.intellectualEntity?.schemaMaintainer?.org_identifier])
+				)
+			: [];
+
+		return this.adapt(materialRequest, false, organisations);
 	}
 
 	/**
@@ -1581,8 +1663,8 @@ export class MaterialRequestsService {
 			.then(noop);
 
 		const requester = await this.usersService.getById(materialRequest.profileId);
-		await this.sentStatusUpdateEmail(
-			EmailTemplate.CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_DOWNLOAD_DOWNLOADED,
+		await this.sentStatusUpdateNotification(
+			NotificationType.MATERIAL_REQUEST_DOWNLOAD_EXECUTED,
 			materialRequest,
 			requester
 		);
@@ -1639,5 +1721,35 @@ export class MaterialRequestsService {
 					console.error(error);
 				});
 		}
+	}
+
+	/**
+	 * Finds material requests that have an event "ADDITIONAL_CONDITIONS"
+	 * but don't have a corresponding "ADDITIONAL_CONDITIONS_REMINDER_SENT", "ADDITIONAL_CONDITIONS_ACCEPTED" nor "ADDITIONAL_CONDITIONS_DENIED" event after them.
+	 * And sends a reminder email to the requester
+	 */
+	public async sendReminderForMaterialRequestsWithPendingAdditionalConditions(): Promise<void> {
+		const reminderInDays = Number.parseFloat(
+			this.configService.get('MATERIAL_REQUEST_ADDITIONAL_REQUIREMENTS_REMINDER_DAYS') || '30'
+		);
+		const response = await this.dataService.execute<
+			FindMaterialRequestsWithUnresolvedAdditionalConditionsQuery,
+			FindMaterialRequestsWithUnresolvedAdditionalConditionsQueryVariables
+		>(FindMaterialRequestsWithUnresolvedAdditionalConditionsDocument, {
+			reminderDate: subDays(new Date(), reminderInDays).toISOString(),
+		});
+
+		const rawMaterialRequests =
+			response.app_material_requests_with_pending_additional_conditions || [];
+		await mapLimit(rawMaterialRequests, 10, async (rawMaterialRequest) => {
+			const materialRequest = await this.adapt(rawMaterialRequest, false);
+			await this.notificationsService.onSendAdditionalConditionsReminderForMaterialRequest(
+				materialRequest
+			);
+		});
+
+		console.info(
+			`Send additional conditions reminder for ${rawMaterialRequests.length} material requests`
+		);
 	}
 }

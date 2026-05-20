@@ -12,7 +12,12 @@ export const mockGqlNotification: GqlNotification = {
 	status: NotificationStatus.UNREAD,
 	type: NotificationType.VISIT_REQUEST_APPROVED,
 	recipient: 'df8024f9-ebdc-4f45-8390-72980a3f29f6',
-	visit_id: '0fb12a25-a882-42f7-9c79-9d77839c7237',
+	linked_entity_id: '0fb12a25-a882-42f7-9c79-9d77839c7237',
 	created_at: '2022-02-28T17:21:58.937169+00:00',
 	updated_at: '2022-02-28T17:21:58.937169',
+
+	visitor_space_request: {
+		cp_space_id: undefined,
+		visitor_space: undefined,
+	},
 };

@@ -14,6 +14,7 @@ export const configValidationSchema = Joi.object({
 	REDIS_CONNECTION_STRING: Joi.string().allow(''),
 	ELASTICSEARCH_URL: Joi.string().required(),
 	SSUM_REGISTRATION_PAGE: Joi.string().required(),
+	KEYCLOAK_CLIENT_ID: Joi.string().optional(),
 	SAML_IDP_META_DATA_ENDPOINT: Joi.string(),
 	SAML_SP_ENTITY_ID: Joi.string(),
 	SAML_SP_PRIVATE_KEY: Joi.string().allow(''),

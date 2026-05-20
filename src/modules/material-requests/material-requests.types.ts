@@ -3,11 +3,13 @@ import {
 	FindMaterialRequestsByIdQuery,
 	FindMaterialRequestsQuery,
 	FindMaterialRequestsWithAlmostExpiredDownloadQuery,
+	FindMaterialRequestsWithUnresolvedAdditionalConditionsQuery,
 	type InsertMaterialRequestMutation,
 	Lookup_App_Material_Request_Download_Status_Enum,
 	Lookup_App_Material_Request_Requester_Capacity_Enum,
 	Lookup_App_Material_Request_Status_Enum,
 	Lookup_App_Material_Request_Type_Enum,
+	Lookup_Languages_Enum,
 	UpdateMaterialRequestForUserMutation,
 	type UpdateMaterialRequestMutation,
 	UpdateMaterialRequestStatusMutation,
@@ -53,19 +55,42 @@ export interface MaterialRequest {
 
 	requesterId: string;
 	requesterFullName: string;
+	requesterFirstName: string;
+	requesterLastName: string;
 	requesterMail: string;
+	requesterLanguage: Lookup_Languages_Enum;
 	requesterCapacity: Lookup_App_Material_Request_Requester_Capacity_Enum;
 	requesterUserGroupId?: string;
 	requesterUserGroupName?: string;
 	requesterUserGroupLabel?: string;
 	requesterUserGroupDescription?: string;
-	requesterOrganisation?: string;
+	requesterOrganisationId?: string;
+	requesterOrganisationName?: string;
+	/**
+	 * First address line eg: 'Auguste Reyerslaan 52'
+	 */
+	requesterOrganisationAddress?: string;
+	/**
+	 * Postal code eg: '1043'
+	 */
+	requesterOrganisationPostalCode?: string;
+	/**
+	 * City/village corresponding with the postal code eg: 'Brussel'
+	 */
+	requesterOrganisationLocality?: string;
+	/**
+	 * VAT number eg: 'BE 0244.142.664'
+	 */
+	requesterOrganisationVAT?: string;
 	requesterOrganisationSector?: string;
 
 	maintainerId: string;
 	maintainerName: string;
 	maintainerSlug: string;
 	maintainerLogo?: string;
+	/**
+	 * Contact email-address of the maintainer
+	 */
 	contactMail?: string;
 
 	downloadRetries?: number;
@@ -191,7 +216,8 @@ export type GqlMaterialRequest =
 	| UpdateMaterialRequestMutation['update_app_material_requests']['returning'][0]
 	| UpdateMaterialRequestStatusMutation['update_app_material_requests_by_pk']
 	| FindMaterialRequestsWithAlmostExpiredDownloadQuery['app_material_requests'][0]
-	| UpdateMaterialRequestForUserMutation['update_app_material_requests']['returning'][0];
+	| UpdateMaterialRequestForUserMutation['update_app_material_requests']['returning'][0]
+	| FindMaterialRequestsWithUnresolvedAdditionalConditionsQuery['app_material_requests_with_pending_additional_conditions'][0];
 
 export type GqlMaterialRequestMaintainer =
 	FindMaintainersWithMaterialRequestsQuery['graph_organisations_with_material_requests'][0];

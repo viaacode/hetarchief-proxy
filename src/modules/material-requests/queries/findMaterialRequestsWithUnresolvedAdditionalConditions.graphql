@@ -1,5 +1,12 @@
-query findMaterialRequestsById($id: uuid!) {
-	app_material_requests(where: { id: { _eq: $id } }) {
+query findMaterialRequestsWithUnresolvedAdditionalConditions($reminderDate: timestamp!) {
+	app_material_requests_with_pending_additional_conditions(
+		where: {
+			messages_and_events: {
+				message_type: { _eq: ADDITIONAL_CONDITIONS }
+				created_at: { _lt: $reminderDate }
+			}
+		}
+	) {
 		id
 		ie_object_id
 		profile_id
@@ -8,25 +15,6 @@ query findMaterialRequestsById($id: uuid!) {
 		created_at
 		updated_at
 		requested_at
-		messages_and_events(
-			where: { message_type: { _nin: [MESSAGE] } }
-			order_by: { created_at: asc }
-		) {
-			id
-			message_type
-			created_at
-			body
-			sender_profile_id
-			sender {
-				first_name
-				last_name
-				mail
-				organisation {
-					org_identifier
-					skos_pref_label
-				}
-			}
-		}
 		is_pending
 		is_archived
 		status

@@ -2,11 +2,20 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsNumber, IsOptional, IsString } from 'class-validator';
 
-import { MaterialRequestAttachmentOrderProp } from '../material-request-messages.types';
-
+import { OrganisationSlugOrderProp } from '~modules/organisations/organisations.types';
 import { SortDirection } from '~shared/types';
 
-export class MaterialRequestAttachmentsQueryDto {
+export class OrganisationSlugQueryDto {
+	@IsString()
+	@Type(() => String)
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		description: 'Text to search for in the name or id or slug.',
+		default: undefined,
+	})
+	query?: string;
+
 	@IsNumber()
 	@Type(() => Number)
 	@IsOptional()
@@ -32,11 +41,11 @@ export class MaterialRequestAttachmentsQueryDto {
 	@IsOptional()
 	@ApiPropertyOptional({
 		type: String,
-		description: 'Property to sort the results by',
-		default: MaterialRequestAttachmentOrderProp.CREATED_AT,
-		enum: MaterialRequestAttachmentOrderProp,
+		description: 'property to sort the results by',
+		default: 'name',
+		enum: OrganisationSlugOrderProp,
 	})
-	orderProp? = MaterialRequestAttachmentOrderProp.CREATED_AT;
+	orderProp? = OrganisationSlugOrderProp.NAME;
 
 	@IsString()
 	@Type(() => String)
@@ -50,21 +59,11 @@ export class MaterialRequestAttachmentsQueryDto {
 	orderDirection? = SortDirection.asc;
 }
 
-export class CreateMaterialRequestMessageDto {
+export class UpdateOrganisationSlugDto {
 	@IsString()
-	@IsOptional()
 	@ApiProperty({
 		type: String,
-		description: 'The message text to send',
+		description: 'The new slug',
 	})
-	message?: string;
-
-	@IsOptional()
-	@ApiPropertyOptional({
-		type: 'array',
-		items: { type: 'string', format: 'binary' },
-		description:
-			'Optional file attachments. Allowed types: pdf, doc, docx, xls, xlsx, jpg, jpeg, png, csv, gif, tiff, tif. Max 30 MB per file, max 20 files.',
-	})
-	files?: any[];
+	slug? = undefined;
 }

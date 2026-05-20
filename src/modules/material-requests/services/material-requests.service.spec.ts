@@ -1,12 +1,13 @@
+import { NotificationsService } from '~modules/notifications/services/notifications.service';
+
 vi.mock('~modules/mediahaven-jobs-watcher/services/mediahaven-jobs-watcher.service', () => ({
 	MediahavenJobsWatcherService: class MediahavenJobsWatcherService {},
 }));
 
 import { AssetsService, DataService, VideoStillsService } from '@meemoo/admin-core-api';
 import { Test, type TestingModule } from '@nestjs/testing';
-import { afterEach, beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
+import { type MockInstance, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { CampaignMonitorService } from '../../campaign-monitor/services/campaign-monitor.service';
 import { MaterialRequestType } from '../material-requests.types';
 import {
 	mockGqlMaintainers,
@@ -46,8 +47,10 @@ const mockDataService: Partial<Record<keyof DataService, MockInstance>> = {
 	execute: vi.fn(),
 };
 
-const mockCampaignMonitorService: Partial<Record<keyof CampaignMonitorService, MockInstance>> = {
-	sendTransactionalMail: vi.fn(),
+const mockNotificationsService: Partial<Record<keyof NotificationsService, MockInstance>> = {
+	onStatusUpdateMaterialRequest: vi.fn(),
+	onCreateMaterialRequestMaintainer: vi.fn(),
+	onSendAdditionalConditionsReminderForMaterialRequest: vi.fn(),
 };
 
 const mockOrganisationsService: Partial<Record<keyof OrganisationsService, MockInstance>> = {
@@ -160,8 +163,8 @@ describe('MaterialRequestsService', () => {
 					useValue: mockDataService,
 				},
 				{
-					provide: CampaignMonitorService,
-					useValue: mockCampaignMonitorService,
+					provide: NotificationsService,
+					useValue: mockNotificationsService,
 				},
 				{
 					provide: OrganisationsService,

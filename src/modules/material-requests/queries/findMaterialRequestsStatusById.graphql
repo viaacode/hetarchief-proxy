@@ -9,6 +9,7 @@ query findMaterialRequestsStatusById($id: uuid!) {
 			id
 			created_at
 			message_type
+			body
 		}
 		status
 		download_status

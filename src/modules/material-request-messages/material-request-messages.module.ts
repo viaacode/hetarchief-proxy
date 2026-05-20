@@ -7,6 +7,8 @@ import { MaterialRequestMessagesService } from './services/material-request-mess
 import { ConfigModule } from '@nestjs/config';
 import { MaterialRequestPdfGeneratorService } from '~modules/material-request-messages/services/material-request-pdf-generator';
 import { MaterialRequestsModule } from '~modules/material-requests';
+import { NotificationsModule } from '~modules/notifications';
+import { UsersModule } from '~modules/users';
 
 @Module({
 	controllers: [MaterialRequestMessagesController],
@@ -17,6 +19,8 @@ import { MaterialRequestsModule } from '~modules/material-requests';
 		MaterialRequestsModule,
 		AssetsModule,
 		AdminTranslationsModule,
+		NotificationsModule,
+		UsersModule,
 	],
 	exports: [MaterialRequestMessagesService, MaterialRequestPdfGeneratorService],
 })

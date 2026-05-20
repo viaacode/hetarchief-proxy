@@ -1,7 +1,7 @@
 import { Lookup_App_Material_Request_Requester_Capacity_Enum } from '@meemoo/admin-core-api/dist/src/modules/shared/generated/graphql-db-types-hetarchief';
 import { ConfigService } from '@nestjs/config';
 import { Test, type TestingModule } from '@nestjs/testing';
-import { afterEach, beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
+import { type MockInstance, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { MaterialRequestType } from '../material-requests.types';
 import {
@@ -57,6 +57,10 @@ describe('MaterialRequestsController', () => {
 			controllers: [MaterialRequestsController],
 			imports: [],
 			providers: [
+				{
+					provide: ConfigService,
+					useValue: mockConfigService,
+				},
 				{
 					provide: MaterialRequestsService,
 					useValue: mockMaterialRequestsService,

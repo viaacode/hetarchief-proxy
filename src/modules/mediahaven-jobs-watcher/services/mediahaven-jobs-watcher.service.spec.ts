@@ -34,7 +34,7 @@ const mockMediahavenService: Partial<Record<keyof MediahavenService, MockInstanc
 const mockMaterialRequestsService: Partial<Record<keyof MaterialRequestsService, MockInstance>> = {
 	findAllWithUnresolvedDownload: vi.fn(),
 	updateMaterialRequest: vi.fn(),
-	sentStatusUpdateEmail: vi.fn(() => Promise.resolve()),
+	sentStatusUpdateNotification: vi.fn(() => Promise.resolve()),
 };
 
 const mockMaterialRequestMessagesService: Partial<
@@ -325,14 +325,15 @@ describe('MediahavenJobsWatcherService', () => {
 						download_status: Lookup_App_Material_Request_Download_Status_Enum.Succeeded,
 						download_url: `${materialRequest.requesterId}/${materialRequest.id}/${job.Name}`,
 						download_available_at: job.FinishDate,
-					})
+					}),
+					true
 				);
 
 				// Should trigger download available event
 				expect(mockEventsService.insertEvents).toHaveBeenCalled();
 			});
 
-			it('should send emails to requester and maintainer when job is Completed', async () => {
+			it('should send emails to requester when job is Completed', async () => {
 				const materialRequest = createMockMaterialRequest();
 				const job = createMockMediahavenJob({
 					ExportJobId: materialRequest.downloadJobId,
@@ -357,7 +358,7 @@ describe('MediahavenJobsWatcherService', () => {
 				// Wait for async email sending
 				await new Promise((resolve) => setTimeout(resolve, 100));
 
-				expect(mockMaterialRequestsService.sentStatusUpdateEmail).toHaveBeenCalledTimes(2);
+				expect(mockMaterialRequestsService.sentStatusUpdateNotification).toHaveBeenCalledTimes(1);
 			});
 		});
 
@@ -528,7 +529,8 @@ describe('MediahavenJobsWatcherService', () => {
 					materialRequest.id,
 					expect.objectContaining({
 						download_status: Lookup_App_Material_Request_Download_Status_Enum.Failed,
-					})
+					}),
+					true
 				);
 			});
 		});
@@ -661,13 +663,15 @@ describe('MediahavenJobsWatcherService', () => {
 					'completed-request',
 					expect.objectContaining({
 						download_status: Lookup_App_Material_Request_Download_Status_Enum.Succeeded,
-					})
+					}),
+					true
 				);
 				expect(mockMaterialRequestsService.updateMaterialRequest).toHaveBeenCalledWith(
 					'failed-request',
 					expect.objectContaining({
 						download_status: Lookup_App_Material_Request_Download_Status_Enum.Failed,
-					})
+					}),
+					true
 				);
 			});
 		});

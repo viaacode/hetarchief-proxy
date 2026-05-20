@@ -82,6 +82,13 @@ export class UsersService {
 				organisationId: graphQlUser?.organisation?.org_identifier || null,
 				organisationName: graphQlUser?.organisation?.skos_pref_label || null,
 				sector: (graphQlUser?.organisation?.ha_org_sector || null) as IeObjectSector | null,
+				organisationAddress:
+					graphQlUser?.organisation?.schemaPostalAddresses?.[0]?.schema_street_address || null,
+				organisationPostalCode:
+					graphQlUser?.organisation?.schemaPostalAddresses?.[0]?.schema_postal_code || null,
+				organisationLocality:
+					graphQlUser?.organisation?.schemaPostalAddresses?.[0]?.schema_address_locality || null,
+				organisationVAT: graphQlUser?.organisation?.schema_vat_id || null,
 			};
 		}
 

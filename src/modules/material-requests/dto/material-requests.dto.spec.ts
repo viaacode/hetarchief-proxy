@@ -22,7 +22,8 @@ describe('MaterialRequestsDto', () => {
 		it('should be able to construct a CreateMaterialRequestDto object', async () => {
 			const createMaterialRequestDto = new CreateMaterialRequestDto();
 			expect(createMaterialRequestDto).toEqual({
-				organisation: null,
+				organisationName: undefined,
+				organisationId: undefined,
 				requesterCapacity: undefined,
 				type: undefined,
 				reason: '',

@@ -136,6 +136,17 @@ export class MaterialRequestMessagesService {
 		};
 	}
 
+	public async getEvaluatorsForOrganisation(materialRequest: MaterialRequest): Promise<string[]> {
+		const evaluatorResponse = await this.dataService.execute<
+			GetEvaluatorsForOrganisationQuery,
+			GetEvaluatorsForOrganisationQueryVariables
+		>(GetEvaluatorsForOrganisationDocument, {
+			organisationId: materialRequest.maintainerId,
+		});
+
+		return evaluatorResponse.users_profile.map((item) => item.id as string);
+	}
+
 	public async deleteMessageUnreadEntries(
 		materialRequestId: string,
 		profileId: string
@@ -180,14 +191,8 @@ export class MaterialRequestMessagesService {
 		// sender is the system => send to the requester and all evaluators of this organisation
 		// sender is the requester => send to all evaluators of this organisation
 		if (profileId === materialRequest.requesterId || !profileId) {
-			const evaluatorResponse = await this.dataService.execute<
-				GetEvaluatorsForOrganisationQuery,
-				GetEvaluatorsForOrganisationQueryVariables
-			>(GetEvaluatorsForOrganisationDocument, {
-				organisationId: materialRequest.maintainerId,
-			});
-
-			receiverIds.push(...evaluatorResponse.users_profile.map((item) => item.id as string));
+			const evaluatorIds = await this.getEvaluatorsForOrganisation(materialRequest);
+			receiverIds.push(...evaluatorIds);
 		}
 
 		if (profileId !== materialRequest.requesterId) {
@@ -347,9 +352,7 @@ export class MaterialRequestMessagesService {
 			materialRequest,
 			profileId,
 			Lookup_App_Material_Request_Message_Type_Enum.AdditionalConditions,
-			extraConditions,
-			new Date().toString(),
-			null
+			extraConditions
 		);
 	}
 
@@ -363,8 +366,6 @@ export class MaterialRequestMessagesService {
 			materialRequest,
 			profileId,
 			Lookup_App_Material_Request_Message_Type_Enum.AdditionalConditionsAccepted,
-			null,
-			new Date().toString(),
 			null
 		);
 	}
@@ -379,8 +380,6 @@ export class MaterialRequestMessagesService {
 			materialRequest,
 			profileId,
 			Lookup_App_Material_Request_Message_Type_Enum.AdditionalConditionsDenied,
-			null,
-			new Date().toString(),
 			null
 		);
 	}

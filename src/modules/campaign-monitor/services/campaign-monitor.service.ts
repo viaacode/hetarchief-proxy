@@ -28,8 +28,8 @@ import {
 	type VisitEmailInfo,
 } from '../campaign-monitor.types';
 import {
-	CampaignMonitorConfirmationData,
 	CampaignMonitorConfirmMailQueryDto,
+	CampaignMonitorConfirmationData,
 	CampaignMonitorData,
 	CampaignMonitorMaterialRequestData,
 	CampaignMonitorNewsletterUpdatePreferencesQueryDto,
@@ -42,6 +42,7 @@ import { decryptData, encryptData } from '../helpers/crypto-helper';
 import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
 import { Lookup_Languages_Enum } from '~generated/graphql-db-types-hetarchief';
 import {
+	MaterialRequest,
 	MaterialRequestRequesterCapacity,
 	MaterialRequestType,
 } from '~modules/material-requests/material-requests.types';
@@ -574,7 +575,7 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 				}),
 				user_request_context:
 					MATERIAL_REQUEST_REQUESTER_CAPACITY_TRANSLATIONS[emailInfo.sendRequestListDto.type],
-				user_organisation: emailInfo.sendRequestListDto.organisation,
+				user_organisation: emailInfo.sendRequestListDto.organisationName,
 				user_email: emailInfo.materialRequests[0]?.requesterMail,
 			};
 		}
@@ -593,11 +594,30 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 				}/${materialRequest.objectSchemaIdentifier}`,
 				request_type: MATERIAL_REQUEST_TYPE_TRANSLATIONS[materialRequest.type],
 				request_description: materialRequest.reason,
+				request_url: stringifyUrl({
+					url: `${this.configService.get('CLIENT_HOST')}/accountMyMaterialRequests`,
+					query: {
+						materialRequest: materialRequest.id,
+					},
+				}),
 			})),
 			user_request_context:
 				MATERIAL_REQUEST_REQUESTER_CAPACITY_TRANSLATIONS[emailInfo.sendRequestListDto.type],
-			user_organisation: emailInfo.sendRequestListDto.organisation,
+			user_organisation: emailInfo.sendRequestListDto.organisationName,
 			user_email: emailInfo.materialRequests[0]?.requesterMail,
+		};
+	}
+
+	public convertMaterialRequestToEmailTemplateFields(materialRequest: MaterialRequest) {
+		return {
+			user_firstname: materialRequest.requesterFirstName,
+			user_lastname: materialRequest.requesterLastName,
+			user_email: materialRequest.requesterMail,
+			user_organisation: materialRequest.requesterOrganisationName,
+			cp_name: materialRequest.maintainerName,
+			cp_email: materialRequest.contactMail,
+			object_name: materialRequest.objectSchemaName,
+			object_id: materialRequest.objectSchemaIdentifier,
 		};
 	}
 

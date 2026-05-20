@@ -177,6 +177,10 @@ export class RequestListItem {
 	@IsString()
 	@IsOptional()
 	request_description?: string;
+
+	@IsString()
+	@IsOptional()
+	request_url?: string;
 }
 
 export class CampaignMonitorData {

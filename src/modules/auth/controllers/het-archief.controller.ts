@@ -296,6 +296,11 @@ export class HetArchiefController {
 				query: {
 					redirect_to: serverRedirectUrl,
 					app_name: this.configService.get('SAML_SP_ENTITY_ID'),
+					client_id: this.configService.get('KEYCLOAK_CLIENT_ID') ?? '',
+					response_type: 'code',
+					redirect_uri: serverRedirectUrl,
+					prompt: 'create',
+					kc_locale: locale,
 				},
 			});
 			return {

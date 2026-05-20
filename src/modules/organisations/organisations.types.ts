@@ -1,6 +1,8 @@
-import type {
+import {
+	FindOrganisationSlugsQuery,
 	FindOrganisationsBySchemaIdsQuery,
 	GetOrganisationBySlugQuery,
+	UpdateOrganisationSlugMutation,
 } from '~generated/graphql-db-types-hetarchief';
 import type { IeObjectSector } from '~modules/ie-objects/ie-objects.types';
 
@@ -69,6 +71,22 @@ export interface Organisation {
 	updatedAt: string;
 	sector: IeObjectSector | null;
 	formUrl: string | null;
+	/**
+	 * VAT number eg: 'BE 0244.142.664'
+	 */
+	vatNumber: string | null;
+	/**
+	 * First address line eg: 'Auguste Reyerslaan 52'
+	 */
+	streetAddress: string | null;
+	/**
+	 * Postal code eg: '1043'
+	 */
+	postalCode: string | null;
+	/**
+	 * City/village corresponding with the postal code eg: 'Brussel'
+	 */
+	addressLocality: string | null;
 }
 
 export interface OrganisationContactPoint {
@@ -83,3 +101,19 @@ export interface MaintainerGridOrganisation {
 	homepageUrl: string;
 	slug: string;
 }
+
+export interface OrganisationSlug {
+	org_identifier: string;
+	name: string;
+	slug: string;
+}
+
+export enum OrganisationSlugOrderProp {
+	ORG_IDENTIFIER = 'org_identifier',
+	SLUG = 'slug',
+	NAME = 'name',
+}
+
+export type GqlOrganisationSlug =
+	| FindOrganisationSlugsQuery['maintainer_organization_slug'][0]
+	| UpdateOrganisationSlugMutation['update_maintainer_organization_slug']['returning'][0];

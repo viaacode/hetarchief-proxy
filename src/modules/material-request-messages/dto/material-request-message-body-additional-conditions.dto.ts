@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsArray, IsBoolean, IsEnum, IsString } from 'class-validator';
+import { IsArray, IsBoolean, IsEnum, IsNotEmpty, IsString, ValidateNested } from 'class-validator';
 
 import {
 	MaterialRequestAdditionalConditionsType,
@@ -40,6 +40,7 @@ export class MaterialRequestMessageBodyAdditionalConditionsDto
 		description:
 			'The conditions that the maintainer wants the requester to accept before they will allow reuse of the material',
 		required: true,
+		isArray: true,
 	})
 	conditions: MaterialRequestMessageBodyAdditionalConditionDto[];
 
@@ -52,4 +53,16 @@ export class MaterialRequestMessageBodyAdditionalConditionsDto
 		required: true,
 	})
 	autoApproveAfterAcceptAdditionalConditions: boolean;
+}
+
+export class AddExtraConditionsBodyDto {
+	@IsNotEmpty()
+	@ValidateNested()
+	@Type(() => MaterialRequestMessageBodyAdditionalConditionsDto)
+	@ApiProperty({
+		type: MaterialRequestMessageBodyAdditionalConditionsDto,
+		description: 'The extra conditions to add to the material request',
+		required: true,
+	})
+	extraConditions: MaterialRequestMessageBodyAdditionalConditionsDto;
 }

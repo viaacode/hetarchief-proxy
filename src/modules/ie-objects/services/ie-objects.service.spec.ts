@@ -5,13 +5,13 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import type { Cache } from 'cache-manager';
 import { cloneDeep } from 'lodash';
 import {
+	type MockInstance,
 	afterAll,
 	afterEach,
 	beforeAll,
 	describe,
 	expect,
 	it,
-	type MockInstance,
 	vi,
 } from 'vitest';
 
@@ -412,7 +412,7 @@ describe('ieObjectsService', () => {
 			);
 
 			expect(ieObject.schemaIdentifier).toEqual(mockObjectSchemaIdentifier);
-			expect(ieObject.pages[0]?.representations[0].files).toEqual(undefined);
+			expect(ieObject.pages[0]?.representations[0].files).toEqual([]);
 		});
 
 		it('throws an error when no objects were found', async () => {

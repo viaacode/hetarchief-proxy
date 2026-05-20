@@ -1083,7 +1083,10 @@ export class IeObjectsService {
 	): Promise<IeObjectPages | null> {
 		const ieObjectParts = hasPartResponse || [];
 		const ieObjects = (
-			compact([ieObjectSelf, ...ieObjectParts]) as DbIeObjectWithRepresentations[]
+			compact([
+				...(isArray(ieObjectSelf) ? ieObjectSelf : [ieObjectSelf]),
+				...ieObjectParts,
+			]) as DbIeObjectWithRepresentations[]
 		).filter((ieObject) => (ieObject.isRepresentedBy?.length || 0) > 0);
 
 		if (isEmpty(ieObjects)) {

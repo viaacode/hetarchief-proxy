@@ -47,7 +47,6 @@ import { Referer } from '~shared/decorators/referer.decorator';
 import { RequireAnyPermissions } from '~shared/decorators/require-any-permissions.decorator';
 import { RequireAllPermissions } from '~shared/decorators/require-permissions.decorator';
 import { SessionUser } from '~shared/decorators/user.decorator';
-import { ApiKeyGuard } from '~shared/guards/api-key.guard';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
 import { EventsHelper } from '~shared/helpers/events';
 import { MaterialRequestsService } from '../services/material-requests.service';
@@ -200,8 +199,11 @@ export class MaterialRequestsController {
 				...(updateMaterialRequestDto.requesterCapacity
 					? { requester_capacity: updateMaterialRequestDto.requesterCapacity }
 					: {}),
-				...(updateMaterialRequestDto.organisation
-					? { organisation: updateMaterialRequestDto.organisation }
+				...(updateMaterialRequestDto.organisationName
+					? { organisation_name: updateMaterialRequestDto.organisationName }
+					: {}),
+				...(updateMaterialRequestDto.organisationId
+					? { organisation_id: updateMaterialRequestDto.organisationId }
 					: {}),
 			},
 			updateMaterialRequestDto.reuseForm,
@@ -233,6 +235,7 @@ export class MaterialRequestsController {
 			referer,
 			ip,
 			request.path,
+			false,
 			EventsHelper.getEventId(request)
 		);
 	}
@@ -285,7 +288,8 @@ export class MaterialRequestsController {
 			for (const materialRequest of materialRequests) {
 				// If the email does not exist, the campaign monitor service will default to process.env.MEEMOO_MAINTAINER_MISSING_EMAIL_FALLBACK
 				materialRequest.requesterCapacity = sendRequestListDto.type;
-				materialRequest.requesterOrganisation = sendRequestListDto?.organisation;
+				materialRequest.requesterOrganisationName = sendRequestListDto?.organisationName;
+				materialRequest.requesterOrganisationId = sendRequestListDto?.organisationId;
 				materialRequest.requestGroupName = sendRequestListDto?.requestGroupName;
 			}
 
@@ -311,16 +315,15 @@ export class MaterialRequestsController {
 							{
 								type: materialRequest.type,
 								reason: materialRequest.reason,
-								organisation: materialRequest.requesterOrganisation,
-								organisation_sector:
-									materialRequest.requesterOrganisationSector || user.getSector(),
+								organisation_name: materialRequest.requesterOrganisationName,
+								organisation_id: materialRequest.requesterOrganisationId,
 								requester_capacity: materialRequest.requesterCapacity,
 								is_pending: false,
 								status: materialRequest.reuseForm
 									? Lookup_App_Material_Request_Status_Enum.New
 									: Lookup_App_Material_Request_Status_Enum.None,
 								group_id: material_request_group_id,
-								name: materialRequest.reuseForm ? materialRequest.requestGroupName : undefined,
+								name: materialRequest.requestGroupName,
 								requested_at: new Date().toISOString(),
 							},
 							materialRequest.reuseForm,
@@ -391,34 +394,6 @@ export class MaterialRequestsController {
 			console.error(error);
 
 			throw error;
-		}
-	}
-
-	/**
-	 * Will check if there are any material requests ready for archivation
-	 * Should be triggered once every day
-	 */
-	@Post('archivation')
-	@ApiOperation({
-		description: 'trigger the poller to check for material requests that can be archived',
-	})
-	@UseGuards(ApiKeyGuard)
-	public async checkMaterialRequestsForArchivation(): Promise<{ message: 'checking' }> {
-		try {
-			this.materialRequestsService
-				.checkAllReadyForArchivation()
-				.then(noop)
-				.catch((err) => {
-					console.log(
-						new CustomError(
-							'Error during checkMaterialRequestsForArchivation => checkAllReadyForArchivation cron',
-							err
-						)
-					);
-				});
-			return { message: 'checking' };
-		} catch (err) {
-			throw new CustomError('Error checking material requests Archivation', err);
 		}
 	}
 
