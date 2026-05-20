@@ -1,0 +1,14 @@
+mutation updateOrganisationSlug($org_identifier: String!, $slug: String!) {
+	update_maintainer_organization_slug(
+		where: { org_identifier: { _eq: $org_identifier } }
+		_set: { slug: $slug }
+	) {
+		returning {
+			org_identifier
+			slug
+			organisation {
+				skos_pref_label
+			}
+		}
+	}
+}

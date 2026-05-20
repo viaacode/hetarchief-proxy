@@ -1,0 +1,5 @@
+query getReusabilityRightsIris($categoryIds: [String!]!) {
+	graph_rights(where: { reuse_category_id: { _in: $categoryIds } }) {
+		intellectual_entity_id
+	}
+}

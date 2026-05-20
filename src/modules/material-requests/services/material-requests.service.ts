@@ -465,8 +465,10 @@ export class MaterialRequestsService {
 				created_at: new Date().toISOString(),
 				updated_at: new Date().toISOString(),
 				is_pending: true,
-				organisation: createMaterialRequestDto?.organisation || user.getOrganisationName(),
-				organisation_sector: user.getSector(),
+				// Filled in by the user when said user does not have an organisation
+				organisation_name: createMaterialRequestDto?.organisationName,
+				// Should be de org_identifier of an organisation when the user is linked to an organisation
+				organisation_id: createMaterialRequestDto?.organisationId || user.getOrganisationId(),
 				requester_capacity:
 					createMaterialRequestDto?.requesterCapacity ||
 					Lookup_App_Material_Request_Requester_Capacity_Enum.Other,
@@ -513,8 +515,8 @@ export class MaterialRequestsService {
 			App_Material_Requests_Set_Input,
 			| 'type'
 			| 'reason'
-			| 'organisation'
-			| 'organisation_sector'
+			| 'organisation_name'
+			| 'organisation_id'
 			| 'requester_capacity'
 			| 'is_pending'
 			| 'status'
@@ -846,7 +848,8 @@ export class MaterialRequestsService {
 				materialRequests: [request],
 				sendRequestListDto: {
 					type: request.requesterCapacity,
-					organisation: request.requesterOrganisation,
+					organisationName: request.requesterOrganisationName,
+					organisationId: request.requesterOrganisationId,
 					requestGroupName: request.requestGroupName,
 				},
 				requesterFirstName: requesterUser.firstName,
@@ -1178,8 +1181,7 @@ export class MaterialRequestsService {
 			requesterUserGroupName: graphQlMaterialRequest.requested_by.group?.name || null,
 			requesterUserGroupLabel: graphQlMaterialRequest.requested_by.group?.label || null,
 			requesterUserGroupDescription: graphQlMaterialRequest.requested_by.group?.description || null,
-			requesterOrganisation: graphQlMaterialRequest.organisation, // Requester organisation (free input field) in some cases
-			requesterOrganisationSector: graphQlMaterialRequest.organisation_sector || null,
+			...this.adaptRequesterOrganisationData(graphQlMaterialRequest),
 			maintainerId: organisation?.schemaIdentifier,
 			maintainerName: organisation?.schemaName,
 			maintainerSlug:
@@ -1196,6 +1198,39 @@ export class MaterialRequestsService {
 				(graphQlMaterialRequest as FindMaterialRequestsQuery['app_material_requests'][0])
 					?.intellectualEntity?.premisIdentifier?.[0]?.value || null,
 			history,
+		};
+	}
+
+	private adaptRequesterOrganisationData(
+		graphQlMaterialRequest: GqlMaterialRequest
+	): Pick<
+		MaterialRequest,
+		| 'requesterOrganisationId'
+		| 'requesterOrganisationName'
+		| 'requesterOrganisationAddress'
+		| 'requesterOrganisationPostalCode'
+		| 'requesterOrganisationLocality'
+		| 'requesterOrganisationVAT'
+		| 'requesterOrganisationSector'
+	> {
+		if (graphQlMaterialRequest.organisation) {
+			return {
+				requesterOrganisationId: graphQlMaterialRequest.organisation.org_identifier,
+				requesterOrganisationName: graphQlMaterialRequest.organisation.skos_pref_label,
+				requesterOrganisationAddress:
+					graphQlMaterialRequest.organisation.schemaPostalAddresses?.[0]?.schema_street_address,
+				requesterOrganisationPostalCode:
+					graphQlMaterialRequest.organisation.schemaPostalAddresses?.[0]?.schema_postal_code,
+				requesterOrganisationLocality:
+					graphQlMaterialRequest.organisation.schemaPostalAddresses?.[0]?.schema_address_locality,
+				requesterOrganisationVAT: graphQlMaterialRequest.organisation.schema_vat_id,
+				requesterOrganisationSector: graphQlMaterialRequest.organisation.ha_org_sector,
+			};
+		}
+
+		// Requester organisation (free input field) in some cases
+		return {
+			requesterOrganisationName: graphQlMaterialRequest.organisation_name,
 		};
 	}
 

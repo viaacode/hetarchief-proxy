@@ -9,9 +9,18 @@ import {
 	IeObjectMetadataSet,
 	IeObjectSector,
 	type IeObjectSectorLicenseMatrix,
+	IeObjectType,
 } from './ie-objects.types';
 
 import { GroupId } from '~modules/users/types';
+
+export const IE_OBJECT_AV_TYPES: Readonly<IeObjectType[]> = [
+	IeObjectType.AUDIO,
+	IeObjectType.AUDIO_FRAGMENT,
+	IeObjectType.FILM,
+	IeObjectType.VIDEO,
+	IeObjectType.VIDEO_FRAGMENT,
+];
 
 export const IE_OBJECT_INTRA_CP_LICENSES: Readonly<IeObjectLicense[]> = [
 	IeObjectLicense.INTRA_CP_CONTENT,
@@ -165,6 +174,7 @@ const IE_OBJECT_PROPS_METADATA_SET_ESSENCE: Readonly<(keyof IeObject)[]> = [
 	'pages',
 	'mentions',
 	'transcript',
+	'rightsInfo',
 ];
 
 export const IE_OBJECT_PROPS_BY_METADATA_SET: Readonly<Record<string, string[]>> = {

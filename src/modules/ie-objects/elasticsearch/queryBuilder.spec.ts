@@ -8,6 +8,8 @@ import {
 	MULTI_MATCH_QUERY_MAPPING,
 	Operator,
 	OrderProperty,
+	ReusabilityCategory,
+	RightsLabel,
 } from './elasticsearch.consts';
 import { QueryBuilder } from './queryBuilder';
 
@@ -592,6 +594,217 @@ describe('QueryBuilder', () => {
 			expect(JSON.stringify(queryObject?.query?.bool?.should?.[0]?.bool, null, 2)).toContain(
 				'visitor-space-id'
 			);
+		});
+
+		it('Should produce a terms query on dcterms_rights_statement when freely-reusable is selected', () => {
+			const queryObject = QueryBuilder.build(
+				{
+					page: 1,
+					size: 10,
+					filters: [
+						{
+							field: IeObjectsSearchFilterField.REUSABILITY,
+							operator: Operator.IS,
+							multiValue: [ReusabilityCategory.FREELY_REUSABLE],
+						},
+					],
+				},
+				mockInputInfo as any
+			);
+			const queryString = JSON.stringify(queryObject);
+			expect(queryString).toContain('dcterms_rights_statement');
+			expect(queryString).toContain('https://creativecommons.org/publicdomain/mark/1.0/');
+			// Should not include URIs from other categories
+			expect(queryString).not.toContain('https://rightsstatements.org/page/InC/1.0/');
+		});
+
+		it('Should combine dcterms rights statements and graph.rights IRIs when all 3 reusability categories are selected', () => {
+			const queryObject = QueryBuilder.build(
+				{
+					page: 1,
+					size: 10,
+					filters: [
+						{
+							field: IeObjectsSearchFilterField.REUSABILITY,
+							operator: Operator.IS,
+							multiValue: [
+								ReusabilityCategory.FREELY_REUSABLE,
+								ReusabilityCategory.REUSABLE_WITH_CONDITIONS,
+								ReusabilityCategory.POSSIBLY_REUSABLE,
+							],
+						},
+					],
+				},
+				{
+					...mockInputInfo,
+					reusabilityRightsIris: [
+						'https://data-qas.hetarchief.be/id/entity/free',
+						'https://data-qas.hetarchief.be/id/entity/conditional',
+					],
+				} as any
+			);
+			const queryString = JSON.stringify(queryObject);
+			expect(queryString).toContain('https://creativecommons.org/publicdomain/mark/1.0/');
+			expect(queryString).toContain('https://rightsstatements.org/page/UND/1.0/');
+			expect(queryString).toContain('https://data-qas.hetarchief.be/id/entity/free');
+			expect(queryString).toContain('https://data-qas.hetarchief.be/id/entity/conditional');
+			expect(queryString).toContain('REUSABILITY_GRAPH_RIGHTS');
+		});
+
+		it('Should apply reusability filters in the public limited metadata branch', () => {
+			const queryObject = QueryBuilder.build(
+				{
+					page: 1,
+					size: 10,
+					filters: [
+						{
+							field: IeObjectsSearchFilterField.REUSABILITY,
+							operator: Operator.IS,
+							multiValue: [ReusabilityCategory.POSSIBLY_REUSABLE],
+						},
+					],
+				},
+				{
+					...mockInputInfo,
+					reusabilityRightsIris: ['https://data-qas.hetarchief.be/id/entity/qs1r6n0v93'],
+				} as any
+			);
+
+			const publicLimitedBranch = JSON.stringify(queryObject.query.bool.should[0]);
+			expect(publicLimitedBranch).toContain('PUBLIC-METDATA_LTD');
+			expect(publicLimitedBranch).toContain('REUSABILITY_GRAPH_RIGHTS');
+			expect(publicLimitedBranch).toContain('https://data-qas.hetarchief.be/id/entity/qs1r6n0v93');
+		});
+
+		it('Should produce no reusability filter clause when multiValue is empty', () => {
+			const queryObject = QueryBuilder.build(
+				{
+					page: 1,
+					size: 10,
+					filters: [
+						{
+							field: IeObjectsSearchFilterField.REUSABILITY,
+							operator: Operator.IS,
+							multiValue: [],
+						},
+					],
+				},
+				mockInputInfo as any
+			);
+			const queryString = JSON.stringify(queryObject);
+			expect(queryString).not.toContain('dcterms_rights_statement');
+		});
+
+		it('Should produce match_none when a selected reusability category has no indexed rights values', () => {
+			const queryObject = QueryBuilder.build(
+				{
+					page: 1,
+					size: 10,
+					filters: [
+						{
+							field: IeObjectsSearchFilterField.REUSABILITY,
+							operator: Operator.IS,
+							multiValue: [ReusabilityCategory.REUSABLE_WITH_CONDITIONS],
+						},
+					],
+				},
+				mockInputInfo as any
+			);
+
+			expect(JSON.stringify(queryObject)).toContain('match_none');
+		});
+
+		it('Should silently ignore unknown reusability category keys', () => {
+			const queryObject = QueryBuilder.build(
+				{
+					page: 1,
+					size: 10,
+					filters: [
+						{
+							field: IeObjectsSearchFilterField.REUSABILITY,
+							operator: Operator.IS,
+							multiValue: ['unknown-category', ReusabilityCategory.FREELY_REUSABLE],
+						},
+					],
+				},
+				mockInputInfo as any
+			);
+			const queryString = JSON.stringify(queryObject);
+			// Known key still works
+			expect(queryString).toContain('https://creativecommons.org/publicdomain/mark/1.0/');
+			// Unknown key produces no URIs — no crash
+			expect(queryString).not.toContain('unknown-category');
+		});
+
+		it('Should combine dcterms rights statements and graph.rights IRIs for selected rights labels', () => {
+			const queryObject = QueryBuilder.build(
+				{
+					page: 1,
+					size: 10,
+					filters: [
+						{
+							field: IeObjectsSearchFilterField.RIGHTS,
+							operator: Operator.IS,
+							multiValue: [RightsLabel.PUBLIC_DOMAIN, RightsLabel.CC0],
+						},
+					],
+				},
+				{
+					...mockInputInfo,
+					rightsLabelIris: [
+						'https://data-qas.hetarchief.be/id/entity/public-domain',
+						'https://data-qas.hetarchief.be/id/entity/cc0',
+					],
+				} as any
+			);
+			const queryString = JSON.stringify(queryObject);
+			expect(queryString).toContain('RIGHTS_DCTERMS_RIGHTS_STATEMENT');
+			expect(queryString).toContain('https://creativecommons.org/publicdomain/mark/1.0/');
+			expect(queryString).toContain('RIGHTS_GRAPH_RIGHTS');
+			expect(queryString).toContain('https://data-qas.hetarchief.be/id/entity/public-domain');
+			expect(queryString).toContain('https://data-qas.hetarchief.be/id/entity/cc0');
+		});
+
+		it('Should produce match_none when a selected rights label has no indexed rights values', () => {
+			const queryObject = QueryBuilder.build(
+				{
+					page: 1,
+					size: 10,
+					filters: [
+						{
+							field: IeObjectsSearchFilterField.RIGHTS,
+							operator: Operator.IS,
+							multiValue: ['unknown-rights-label'],
+						},
+					],
+				},
+				mockInputInfo as any
+			);
+
+			expect(JSON.stringify(queryObject)).toContain('match_none');
+		});
+
+		it('Should place rights query under must_not when operator is isNot', () => {
+			const queryObject = QueryBuilder.build(
+				{
+					page: 1,
+					size: 10,
+					filters: [
+						{
+							field: IeObjectsSearchFilterField.RIGHTS,
+							operator: Operator.IS_NOT,
+							multiValue: [RightsLabel.IN_COPYRIGHT],
+						},
+					],
+				},
+				{
+					...mockInputInfo,
+					rightsLabelIris: ['https://data-qas.hetarchief.be/id/entity/in-copyright'],
+				} as any
+			);
+			const queryString = JSON.stringify(queryObject);
+			expect(queryString).toContain('must_not');
+			expect(queryString).toContain('https://data-qas.hetarchief.be/id/entity/in-copyright');
 		});
 
 		it('Should set two filter when consultableOnlyOnLocation and isConsultableMedia are set to true', () => {

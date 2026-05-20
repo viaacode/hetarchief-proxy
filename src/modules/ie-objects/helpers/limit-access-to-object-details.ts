@@ -17,7 +17,8 @@ import { GroupId } from '~modules/users/types';
 
 // figure out what properties the user can see and which should be stripped
 export const limitAccessToObjectDetails = (
-	ieObject: Pick<IeObject, 'licenses' | 'schemaIdentifier' | 'maintainerId' | 'sector'>,
+	ieObject: Pick<IeObject, 'licenses' | 'schemaIdentifier' | 'maintainerId' | 'sector'> &
+		Partial<IeObject>,
 	userInfo: LimitAccessUserInfo
 ): Partial<IeObject> => {
 	if (process.env.IE_OBJECT_LOG_ACCESS_CHECKS === 'true') {

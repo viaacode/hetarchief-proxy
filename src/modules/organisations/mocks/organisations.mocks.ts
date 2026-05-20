@@ -28,6 +28,14 @@ export const mockGqlOrganisation: GqlOrganisation = {
 	ha_org_sector: IeObjectSector.PUBLIC,
 	ha_org_request_form:
 		'https://www.vrt.be/heb-je-een-vraag/s/contactsupport-vrtarchief?name_user={first_name}&mail_user={email}&local_id={local_cp_id}&viaa_id={pid}&surname_user={last_name}&title={title}&serie={title_serie}',
+	schema_vat_id: 'BE 0244.142.664',
+	schemaPostalAddresses: [
+		{
+			schema_street_address: 'Auguste Reyerslaan 52',
+			schema_postal_code: '1043',
+			schema_address_locality: 'Brussel',
+		},
+	],
 };
 
 export const mockOrganisation1: Organisation = {
@@ -48,6 +56,10 @@ export const mockOrganisation1: Organisation = {
 	sector: IeObjectSector.PUBLIC,
 	formUrl:
 		'https://www.vrt.be/heb-je-een-vraag/s/contactsupport-vrtarchief?name_user={first_name}&mail_user={email}&local_id={local_cp_id}&viaa_id={pid}&surname_user={last_name}&title={title}&serie={title_serie}',
+	vatNumber: 'BE 0244.142.664',
+	streetAddress: 'Auguste Reyerslaan 52',
+	postalCode: '1043',
+	addressLocality: 'Brussel',
 };
 
 export const mockOrganisation2: Organisation = {
@@ -66,6 +78,10 @@ export const mockOrganisation2: Organisation = {
 	updatedAt: '2023-04-03T13:28:01.434203+02:00',
 	sector: IeObjectSector.CULTURE,
 	formUrl: null,
+	vatNumber: 'BE 0885.957.616',
+	streetAddress: 'Fernand Scribedreef 1',
+	postalCode: '9000',
+	addressLocality: 'Gent',
 };
 
 export const mockOrganisationInfoV2: OrganisationInfoV2 = {

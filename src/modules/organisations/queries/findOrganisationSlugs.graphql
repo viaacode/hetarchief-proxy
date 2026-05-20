@@ -1,0 +1,19 @@
+query findOrganisationSlugs(
+	$where: maintainer_organization_slug_bool_exp
+	$offset: Int!
+	$limit: Int!
+	$orderBy: [maintainer_organization_slug_order_by!] = []
+) {
+	maintainer_organization_slug(where: $where, offset: $offset, limit: $limit, order_by: $orderBy) {
+		org_identifier
+		slug
+		organisation {
+			skos_pref_label
+		}
+	}
+	maintainer_organization_slug_aggregate(where: $where) {
+		aggregate {
+			count
+		}
+	}
+}

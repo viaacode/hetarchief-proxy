@@ -42,6 +42,10 @@ describe('OrganisationsController', () => {
 				createdAt: null,
 				updatedAt: null,
 				formUrl: null,
+				vatNumber: null,
+				streetAddress: null,
+				postalCode: null,
+				addressLocality: null,
 			};
 			organisationsService.findOrganisationBySlug.mockResolvedValue(mockOrganisation);
 

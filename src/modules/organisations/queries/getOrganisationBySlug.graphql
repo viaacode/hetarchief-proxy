@@ -11,6 +11,12 @@ query getOrganisationBySlug($slug: String!) {
 		skos_alt_label
 		updated_at
 		created_at
+		schema_vat_id
+		schemaPostalAddresses {
+			schema_street_address
+			schema_postal_code
+			schema_address_locality
+		}
 		schemaContactPoint {
 			schema_contact_type
 			schema_email

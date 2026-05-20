@@ -152,6 +152,15 @@ export class PlayerTicketsQueryDto {
 	@IsString()
 	@ApiProperty({
 		type: String,
+		description: 'The schema identifier of the ie-object that contains the requested file',
+		example: '086348mc8s',
+		required: true,
+	})
+	schemaIdentifier: string;
+
+	@IsString()
+	@ApiProperty({
+		type: String,
 		description: 'Get the playable url for the file with this browsePath',
 		example:
 			'https://media-qas.viaa.be/play/v2/VLAAMSPARLEMENT/d7d7841f8ad946f8bfa5116b30b9041ccec8fc5521d2404cab08b86c2d41466e/browse.mp4',

@@ -2,16 +2,23 @@ import { DataService } from '@meemoo/admin-core-api';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Inject, Injectable, InternalServerErrorException } from '@nestjs/common';
 import type { Cache } from 'cache-manager';
-import { shuffle } from 'lodash';
+import { isEmpty, set, shuffle } from 'lodash';
 
-import type {
+import {
 	GqlOrganisation,
+	GqlOrganisationSlug,
 	MaintainerGridOrganisation,
 	Organisation,
+	OrganisationSlug,
 } from '../organisations.types';
 
+import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
+import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { hoursToSeconds } from 'date-fns';
 import {
+	FindOrganisationSlugsDocument,
+	FindOrganisationSlugsQuery,
+	FindOrganisationSlugsQueryVariables,
 	FindOrganisationsBySchemaIdsDocument,
 	type FindOrganisationsBySchemaIdsQuery,
 	type FindOrganisationsBySchemaIdsQueryVariables,
@@ -20,8 +27,17 @@ import {
 	type GetOrganisationBySlugQueryVariables,
 	GetOrganisationsThatHaveObjectsDocument,
 	type GetOrganisationsThatHaveObjectsQuery,
+	Maintainer_Organization_Slug_Bool_Exp,
+	Maintainer_Organization_Slug_Order_By,
+	UpdateOrganisationSlugDocument,
+	UpdateOrganisationSlugMutation,
+	UpdateOrganisationSlugMutationVariables,
 } from '~generated/graphql-db-types-hetarchief';
 import type { IeObjectSector } from '~modules/ie-objects/ie-objects.types';
+import { OrganisationSlugQueryDto } from '~modules/organisations/dto/organisations.dto';
+import { ORDER_PROP_TO_DB_PROP } from '~modules/organisations/organisations.consts';
+import { PaginationHelper } from '~shared/helpers/pagination';
+import { SortDirection } from '~shared/types';
 
 @Injectable()
 export class OrganisationsService {
@@ -59,6 +75,10 @@ export class OrganisationsService {
 			sector: gqlOrganisation?.ha_org_sector as IeObjectSector,
 			formUrl: gqlOrganisation?.ha_org_request_form,
 			slug: gqlOrganisation?.skos_alt_label,
+			vatNumber: gqlOrganisation?.schema_vat_id || null,
+			streetAddress: gqlOrganisation?.schemaPostalAddresses?.[0]?.schema_street_address || null,
+			postalCode: gqlOrganisation?.schemaPostalAddresses?.[0]?.schema_postal_code || null,
+			addressLocality: gqlOrganisation?.schemaPostalAddresses?.[0]?.schema_address_locality || null,
 		};
 	}
 
@@ -134,5 +154,92 @@ export class OrganisationsService {
 				})
 			);
 		}
+	}
+
+	public async findAll(
+		inputQuery: OrganisationSlugQueryDto
+	): Promise<IPagination<OrganisationSlug>> {
+		const { query, page, size, orderProp, orderDirection } = inputQuery;
+		const { offset, limit } = PaginationHelper.convertPagination(page, size);
+
+		/** Dynamically build the where object  */
+		const where: Maintainer_Organization_Slug_Bool_Exp = {};
+
+		if (!isEmpty(query) && query !== '%' && query !== '%%') {
+			// Everyone should be able to search on the IE Objects name
+			where._or = [
+				{ org_identifier: { _ilike: query } },
+				{ slug: { _ilike: query } },
+				{ organisation: { skos_pref_label: { _ilike: query } } },
+			];
+		}
+
+		const propToOrder = ORDER_PROP_TO_DB_PROP[orderProp] || ORDER_PROP_TO_DB_PROP.name;
+		let orderBy: Maintainer_Organization_Slug_Order_By;
+
+		if (propToOrder === ORDER_PROP_TO_DB_PROP.name) {
+			orderBy = {
+				organisation: set({}, 'skos_pref_label', orderDirection || SortDirection.desc),
+			};
+		} else {
+			orderBy = set({}, propToOrder, orderDirection || SortDirection.desc);
+		}
+
+		const organisationSlugsResponse = await this.dataService.execute<
+			FindOrganisationSlugsQuery,
+			FindOrganisationSlugsQueryVariables
+		>(FindOrganisationSlugsDocument, {
+			where,
+			offset,
+			limit,
+			orderBy,
+		});
+
+		return Pagination<OrganisationSlug>({
+			items: organisationSlugsResponse.maintainer_organization_slug.map((organisation) =>
+				this.adaptOrganisationSlug(organisation)
+			),
+			page,
+			size,
+			total: organisationSlugsResponse.maintainer_organization_slug_aggregate.aggregate.count,
+		});
+	}
+
+	public async updateOrganisationSlug(
+		orgIdentifier: string,
+		slug: string
+	): Promise<OrganisationSlug> {
+		const organisationSlugsResponse = await this.dataService.execute<
+			UpdateOrganisationSlugMutation,
+			UpdateOrganisationSlugMutationVariables
+		>(UpdateOrganisationSlugDocument, {
+			org_identifier: orgIdentifier,
+			slug,
+		});
+
+		if (!organisationSlugsResponse) {
+			throw new CustomError('Could not update organisation slug - not found', null, {
+				orgIdentifier,
+				slug,
+				organisationSlugsResponse,
+			});
+		}
+
+		return this.adaptOrganisationSlug(
+			organisationSlugsResponse.update_maintainer_organization_slug.returning?.[0]
+		);
+	}
+
+	private adaptOrganisationSlug(
+		graphQlOrganisationSlug: GqlOrganisationSlug
+	): OrganisationSlug | null {
+		if (!graphQlOrganisationSlug) {
+			return null;
+		}
+		return {
+			org_identifier: graphQlOrganisationSlug.org_identifier,
+			slug: graphQlOrganisationSlug.slug,
+			name: graphQlOrganisationSlug.organisation.skos_pref_label,
+		};
 	}
 }

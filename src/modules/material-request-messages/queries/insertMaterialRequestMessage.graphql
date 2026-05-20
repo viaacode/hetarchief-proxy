@@ -24,6 +24,12 @@ mutation insertMaterialRequestMessage(
 			organisation {
 				org_identifier
 				skos_pref_label
+				schema_vat_id
+				schemaPostalAddresses {
+					schema_street_address
+					schema_postal_code
+					schema_address_locality
+				}
 			}
 		}
 		body

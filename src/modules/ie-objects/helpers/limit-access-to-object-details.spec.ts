@@ -593,4 +593,178 @@ describe('Limit access to object details', () => {
 		// User can see the object with essence and all metadata
 		expect(limitedAccessIeObject.thumbnailUrl).toBeDefined();
 	});
+
+	it('PUBLIC AV (VIDEO + PUBLIEK_CONTENT) — anonymous user sees essence', () => {
+		const user: LimitAccessUserInfo = {
+			...mockUserInfo,
+			groupId: undefined, // anonymous
+			sector: null,
+			maintainerId: null,
+			accessibleVisitorSpaceIds: [],
+			accessibleObjectIdsThroughFolders: [],
+		};
+		const result = limitAccessToObjectDetails(
+			{
+				...mockIeObject1,
+				licenses: [IeObjectLicense.PUBLIEK_CONTENT],
+			},
+			user
+		);
+		expect(result?.thumbnailUrl).toBeDefined();
+		expect(result?.accessThrough).toEqual([IeObjectAccessThrough.PUBLIC_INFO]);
+	});
+
+	it('PUBLIC AV FRAGMENT (VIDEO_FRAGMENT + PUBLIEK_CONTENT) — anonymous user sees essence', () => {
+		const user: LimitAccessUserInfo = {
+			...mockUserInfo,
+			groupId: undefined,
+			sector: null,
+			maintainerId: null,
+			accessibleVisitorSpaceIds: [],
+			accessibleObjectIdsThroughFolders: [],
+		};
+		const result = limitAccessToObjectDetails(
+			{
+				...mockIeObject1,
+				licenses: [IeObjectLicense.PUBLIEK_CONTENT],
+			},
+			user
+		);
+		expect(result?.thumbnailUrl).toBeDefined();
+		expect(result?.accessThrough).toEqual([IeObjectAccessThrough.PUBLIC_INFO]);
+	});
+
+	it('VISITOR-SPACE AV (BEZOEKERTOOL_CONTENT) — visitor with space access sees essence', () => {
+		const user: LimitAccessUserInfo = {
+			...mockUserInfo,
+			groupId: GroupId.VISITOR,
+			sector: null,
+			accessibleVisitorSpaceIds: [mockIeObject1.maintainerId], // OR-rf5kf25
+			accessibleObjectIdsThroughFolders: [],
+		};
+		const result = limitAccessToObjectDetails(
+			{
+				...mockIeObject1,
+				licenses: [IeObjectLicense.BEZOEKERTOOL_CONTENT],
+			},
+			user
+		);
+		expect(result?.thumbnailUrl).toBeDefined();
+		expect(result?.accessThrough).toContain(IeObjectAccessThrough.VISITOR_SPACE_FULL);
+	});
+
+	it('KIOSK + own-CP public AV — kiosk user sees essence for their own maintainer', () => {
+		const user: LimitAccessUserInfo = {
+			...mockUserInfo,
+			groupId: GroupId.KIOSK_VISITOR,
+			sector: null,
+			maintainerId: mockIeObject1.maintainerId, // OR-rf5kf25 — same as object
+			accessibleVisitorSpaceIds: [],
+			accessibleObjectIdsThroughFolders: [],
+		};
+		const result = limitAccessToObjectDetails(
+			{
+				...mockIeObject1,
+				licenses: [IeObjectLicense.PUBLIEK_CONTENT],
+			},
+			user
+		);
+		expect(result?.thumbnailUrl).toBeDefined();
+		expect(result?.accessThrough).toEqual([IeObjectAccessThrough.PUBLIC_INFO]);
+	});
+
+	it('KIOSK + other-CP public AV — kiosk user sees nothing for a different maintainer', () => {
+		const user: LimitAccessUserInfo = {
+			...mockUserInfo,
+			groupId: GroupId.KIOSK_VISITOR,
+			sector: null,
+			maintainerId: 'OR-other-cp', // different from object's OR-rf5kf25
+			accessibleVisitorSpaceIds: [],
+			accessibleObjectIdsThroughFolders: [],
+		};
+		const result = limitAccessToObjectDetails(
+			{
+				...mockIeObject1,
+				licenses: [IeObjectLicense.PUBLIEK_CONTENT],
+			},
+			user
+		);
+		expect(result).toBeNull();
+	});
+
+	it('METADATA-ONLY AV (PUBLIEK_METADATA_ALL, no PUBLIEK_CONTENT) — anonymous user sees metadata but not essence', () => {
+		const user: LimitAccessUserInfo = {
+			...mockUserInfo,
+			groupId: undefined,
+			sector: null,
+			maintainerId: null,
+			accessibleVisitorSpaceIds: [],
+			accessibleObjectIdsThroughFolders: [],
+		};
+		const result = limitAccessToObjectDetails(
+			{
+				...mockIeObject1,
+				licenses: [IeObjectLicense.PUBLIEK_METADATA_ALL],
+			},
+			user
+		);
+		expect(result).not.toBeNull();
+		expect(result?.name).toBeDefined();
+	expect(result?.thumbnailUrl).toBeUndefined();
+	expect(result?.pages).toBeUndefined();
+	expect((result as any)?.rightsInfo).toBeUndefined();
+});
+
+it('PUBLIC AV with rights info (PUBLIEK_CONTENT) — anonymous user sees rights info with essence', () => {
+	const rightsInfo = {
+			reuseLabel: 'CC0',
+			reuseCategoryUrl: 'https://creativecommons.org/publicdomain/zero/1.0/',
+			licenseDistributor: 'VRT',
+		};
+		const user: LimitAccessUserInfo = {
+			...mockUserInfo,
+			groupId: undefined,
+			sector: null,
+			maintainerId: null,
+			accessibleVisitorSpaceIds: [],
+			accessibleObjectIdsThroughFolders: [],
+		};
+		const result = limitAccessToObjectDetails(
+			{
+				...mockIeObject1,
+				licenses: [IeObjectLicense.PUBLIEK_CONTENT],
+				rightsInfo,
+			},
+			user
+		);
+
+		expect(result?.thumbnailUrl).toBeDefined();
+		expect(result?.rightsInfo).toEqual(rightsInfo);
+	});
+
+	it('METADATA-ONLY AV with rights info — anonymous user does not see rights info', () => {
+		const user: LimitAccessUserInfo = {
+			...mockUserInfo,
+			groupId: undefined,
+			sector: null,
+			maintainerId: null,
+			accessibleVisitorSpaceIds: [],
+			accessibleObjectIdsThroughFolders: [],
+		};
+		const result = limitAccessToObjectDetails(
+			{
+				...mockIeObject1,
+				licenses: [IeObjectLicense.PUBLIEK_METADATA_ALL],
+				rightsInfo: {
+					reuseLabel: 'CC0',
+					reuseCategoryUrl: 'https://creativecommons.org/publicdomain/zero/1.0/',
+				},
+			},
+			user
+		);
+
+	expect(result?.name).toBeDefined();
+	expect(result?.thumbnailUrl).toBeUndefined();
+	expect(result?.rightsInfo).toBeUndefined();
+});
 });

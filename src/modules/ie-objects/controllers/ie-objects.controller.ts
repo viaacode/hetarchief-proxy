@@ -54,8 +54,8 @@ import {
 	IeObjectForAccessCheck,
 	IeObjectLicense,
 	type IeObjectSeo,
-	type IeObjectsWithAggregations,
 	IeObjectType,
+	type IeObjectsWithAggregations,
 	type RelatedIeObject,
 	type RelatedIeObjects,
 } from '../ie-objects.types';
@@ -73,7 +73,7 @@ import {
 	OrderProperty,
 } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
 import { mapDcTermsFormatToSimpleType } from '~modules/ie-objects/helpers/map-dc-terms-format-to-simple-type';
-import { ERROR_CODE } from '~modules/ie-objects/ie-objects.conts';
+import { ERROR_CODE, IE_OBJECT_AV_TYPES } from '~modules/ie-objects/ie-objects.conts';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupName } from '~modules/users/types';
 import { AUDIO_WAVE_FORM_URL } from '~shared/consts/audio-wave-form-url';
@@ -102,13 +102,21 @@ export class IeObjectsController {
 		required: true,
 		description: 'The browse path of the media file',
 	})
+	@ApiQuery({
+		name: 'schemaIdentifier',
+		required: true,
+		description: 'The schema identifier of the ie-object that contains the media file',
+	})
 	@ApiOkResponse({ description: 'Returns the playable URL as a string' })
 	@ApiBadRequestResponse({ description: 'Browse path is missing or invalid' })
 	public async getPlayableUrl(
 		@Referer() referer: string,
 		@Ip() ip: string,
-		@Query() playerTicketsQuery: PlayerTicketsQueryDto
+		@Query() playerTicketsQuery: PlayerTicketsQueryDto,
+		@SessionUser() user: SessionUserEntity
 	): Promise<string> {
+		await this.assertCanGetPlayableTicket(playerTicketsQuery, user, referer, ip);
+
 		return this.playerTicketController.getPlayableUrlFromBrowsePath(
 			playerTicketsQuery.browsePath,
 			referer,
@@ -130,19 +138,34 @@ export class IeObjectsController {
 		isArray: true,
 		description: 'File paths to request tickets for',
 	})
+	@ApiQuery({
+		name: 'schemaIdentifier',
+		required: true,
+		description: 'The schema identifier of the newspaper that contains the requested files',
+	})
 	@ApiOkResponse({ description: 'Returns an array of ticket tokens' })
 	@ApiBadRequestResponse({ description: 'filePaths query param is missing' })
 	public async getTicketServiceTokens(
 		@Referer() referer: string,
 		@Ip() ip: string,
-		@Query('filePaths') filePaths: string[]
+		@Query('filePaths') filePaths: string | string[],
+		@Query('schemaIdentifier') schemaIdentifier: string,
+		@SessionUser() user: SessionUserEntity
 	): Promise<string[]> {
 		if (!filePaths || filePaths.length === 0) {
 			throw new BadRequestException('Query param filePaths is required');
 		}
+		if (!schemaIdentifier) {
+			throw new BadRequestException('Query param schemaIdentifier is required');
+		}
+		const resolvedFilePaths = Array.isArray(filePaths) ? filePaths : [filePaths];
+		if (resolvedFilePaths.some((filePath) => !filePath)) {
+			throw new BadRequestException('Query param filePaths is required');
+		}
+		await this.assertCanGetTicketServiceTokens(schemaIdentifier, user, referer, ip);
 		try {
 			return await Promise.all(
-				filePaths.map((filePath) =>
+				resolvedFilePaths.map((filePath) =>
 					this.playerTicketController.getTicketServiceTokenForFilePath(filePath, referer, ip)
 				)
 			);
@@ -151,6 +174,82 @@ export class IeObjectsController {
 				filePaths,
 				referer,
 			});
+		}
+	}
+
+	private async getAccessibleObjectForTicket(
+		schemaIdentifier: string,
+		user: SessionUserEntity,
+		referer: string,
+		ip: string
+	): Promise<Partial<IeObject>> {
+		if (!schemaIdentifier) {
+			throw new BadRequestException('Query param schemaIdentifier is required');
+		}
+
+		const accessibleObjects = await this.getIeObjectsByIds(
+			[schemaIdentifier],
+			undefined,
+			user,
+			'false',
+			referer,
+			ip
+		);
+		const accessibleObject = accessibleObjects[0];
+
+		if (!accessibleObject) {
+			throw new ForbiddenException('Object not found or you do not have permission to see it');
+		}
+
+		return accessibleObject;
+	}
+
+	private async assertCanGetPlayableTicket(
+		playerTicketsQuery: PlayerTicketsQueryDto,
+		user: SessionUserEntity,
+		referer: string,
+		ip: string
+	): Promise<void> {
+		const accessibleObject = await this.getAccessibleObjectForTicket(
+			playerTicketsQuery.schemaIdentifier,
+			user,
+			referer,
+			ip
+		);
+
+		if (!IE_OBJECT_AV_TYPES.includes(accessibleObject.dctermsFormat as IeObjectType)) {
+			throw new ForbiddenException('You do not have permission to play this file');
+		}
+		if (!this.objectContainsFilePath(accessibleObject, playerTicketsQuery.browsePath)) {
+			throw new ForbiddenException('You do not have permission to play this file');
+		}
+	}
+
+	private objectContainsFilePath(ieObject: Partial<IeObject>, filePath: string): boolean {
+		return Boolean(
+			ieObject.pages?.some((page) =>
+				page.representations?.some((representation) =>
+					representation.files?.some((file) => file.storedAt === filePath)
+				)
+			)
+		);
+	}
+
+	private async assertCanGetTicketServiceTokens(
+		schemaIdentifier: string,
+		user: SessionUserEntity,
+		referer: string,
+		ip: string
+	): Promise<void> {
+		const accessibleObject = await this.getAccessibleObjectForTicket(
+			schemaIdentifier,
+			user,
+			referer,
+			ip
+		);
+
+		if (accessibleObject.dctermsFormat !== IeObjectType.NEWSPAPER) {
+			throw new ForbiddenException('Only newspaper files can use the ticket service endpoint');
 		}
 	}
 
