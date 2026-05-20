@@ -152,12 +152,25 @@ describe('ieObjectsService', () => {
 	});
 
 	describe('getReusabilityRightsIris', () => {
-		it('fetches graph.rights IE ids for selected reusability categories', async () => {
+		it('uses cached graph.rights IE ids for selected reusability categories', async () => {
 			mockDataService.execute.mockResolvedValueOnce({
 				graph_rights: [
-					{ intellectual_entity_id: 'https://data-qas.hetarchief.be/id/entity/free' },
-					{ intellectual_entity_id: 'https://data-qas.hetarchief.be/id/entity/free' },
-					{ intellectual_entity_id: 'https://data-qas.hetarchief.be/id/entity/conditional' },
+					{
+						intellectual_entity_id: 'https://data-qas.hetarchief.be/id/entity/free',
+						reuse_category_id: 'https://creativecommons.org/public-domain/pdm/',
+					},
+					{
+						intellectual_entity_id: 'https://data-qas.hetarchief.be/id/entity/free',
+						reuse_category_id: 'https://creativecommons.org/public-domain/pdm/',
+					},
+					{
+						intellectual_entity_id: 'https://data-qas.hetarchief.be/id/entity/conditional',
+						reuse_category_id: 'https://rightsstatements.org/page/NoC-CR/1.0/',
+					},
+					{
+						intellectual_entity_id: 'https://data-qas.hetarchief.be/id/entity/unmatched',
+						reuse_category_id: 'https://rightsstatements.org/page/InC/1.0/',
+					},
 				],
 			});
 
@@ -172,17 +185,12 @@ describe('ieObjectsService', () => {
 				},
 			]);
 
-			expect(mockDataService.execute).toHaveBeenCalledWith(expect.any(Object), {
-				categoryIds: expect.arrayContaining([
-					'https://creativecommons.org/public-domain/pdm/',
-					'https://creativecommons.org/publicdomain/zero/1.0/',
-					'https://rightsstatements.org/page/NoC-CR/1.0/',
-					'https://creativecommons.org/licenses/by/4.0/',
-					'https://creativecommons.org/licenses/by-nc-nd/4.0/',
-					'https://creativecommons.org/licenses/by-sa/4.0/',
-					'https://creativecommons.org/licenses/by-nc/4.0/',
-				]),
-			});
+			expect(mockCacheService.wrap).toHaveBeenCalledWith(
+				'ie-objects-reusability-rights-iris',
+				expect.any(Function),
+				86400
+			);
+			expect(mockDataService.execute).toHaveBeenCalledWith(expect.any(String));
 			expect(result).toEqual([
 				'https://data-qas.hetarchief.be/id/entity/free',
 				'https://data-qas.hetarchief.be/id/entity/conditional',

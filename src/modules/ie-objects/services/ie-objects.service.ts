@@ -82,9 +82,6 @@ import {
 	GetPreviousNextIeObjectIdsDocument,
 	type GetPreviousNextIeObjectIdsQuery,
 	type GetPreviousNextIeObjectIdsQueryVariables,
-	GetReusabilityRightsIrisDocument,
-	type GetReusabilityRightsIrisQuery,
-	type GetReusabilityRightsIrisQueryVariables,
 	GetSchemaIdentifierV3BySchemaIdentifierV2Document,
 	type GetSchemaIdentifierV3BySchemaIdentifierV2Query,
 	type GetSchemaIdentifierV3BySchemaIdentifierV2QueryVariables,
@@ -113,6 +110,7 @@ import {
 	IE_OBJECT_AV_TYPES,
 } from '~modules/ie-objects/ie-objects.conts';
 import {
+	CACHE_KEY_IE_OBJECT_REUSABILITY_RIGHTS_IRIS,
 	CACHE_KEY_PREFIX_IE_OBJECTS_SEARCH,
 	CACHE_KEY_PREFIX_IE_OBJECT_DETAIL,
 	CACHE_KEY_PREFIX_IE_OBJECT_PID_TO_ID,
@@ -149,10 +147,23 @@ type GetRightsLabelIrisQueryVariables = {
 	categoryIds: string[];
 };
 
+type GetAllReusabilityRightsIrisQuery = {
+	graph_rights: Array<{ intellectual_entity_id: string; reuse_category_id: string }>;
+};
+
 const GET_RIGHTS_LABEL_IRIS_QUERY = `
 	query getRightsLabelIris($categoryIds: [String!]!) {
 		graph_rights(where: { reuse_category_id: { _in: $categoryIds } }) {
 			intellectual_entity_id
+		}
+	}
+`;
+
+const GET_ALL_REUSABILITY_RIGHTS_IRIS_QUERY = `
+	query getAllReusabilityRightsIris {
+		graph_rights {
+			intellectual_entity_id
+			reuse_category_id
 		}
 	}
 `;
@@ -247,12 +258,31 @@ export class IeObjectsService {
 			return [];
 		}
 
-		const response = await this.dataService.execute<
-			GetReusabilityRightsIrisQuery,
-			GetReusabilityRightsIrisQueryVariables
-		>(GetReusabilityRightsIrisDocument, { categoryIds });
+		const categoryIdSet = new Set(categoryIds);
+		const allReusabilityRightsIris = await this.getAllReusabilityRightsIrisCached();
 
-		return uniq(response.graph_rights.map((rights) => rights.intellectual_entity_id));
+		return uniq(
+			allReusabilityRightsIris
+				.filter((rights) => categoryIdSet.has(rights.reuse_category_id))
+				.map((rights) => rights.intellectual_entity_id)
+		);
+	}
+
+	private async getAllReusabilityRightsIrisCached(): Promise<
+		GetAllReusabilityRightsIrisQuery['graph_rights']
+	> {
+		return await this.cacheManager.wrap(
+			CACHE_KEY_IE_OBJECT_REUSABILITY_RIGHTS_IRIS,
+			async () => {
+				const response = await this.dataService.execute<GetAllReusabilityRightsIrisQuery>(
+					GET_ALL_REUSABILITY_RIGHTS_IRIS_QUERY
+				);
+
+				return response.graph_rights;
+			},
+			// cache for 1 day
+			hoursToSeconds(24)
+		);
 	}
 
 	private async getRightsLabelIris(filters?: SearchFilter[]): Promise<string[]> {
