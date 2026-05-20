@@ -388,9 +388,8 @@ describe('IeObjectsController', () => {
 				);
 				fail('Expected an error to be thrown if the object does not exist');
 			} catch (err) {
-				expect(err.message).toEqual(
-					'You do not have access to this object: USER_NO_ACCESS_TO_IE_OBJECT'
-				);
+				expect(err.status).toEqual(403);
+				expect(err.message).toContain('You do not have access to this object');
 			}
 		});
 

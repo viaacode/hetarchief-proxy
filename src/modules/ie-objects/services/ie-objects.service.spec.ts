@@ -38,6 +38,7 @@ import {
 	mockIeObjectDefaultLimitedMetadata,
 	mockIeObjectEmpty,
 	mockIeObjectLimitedInFolder,
+	mockIeObjectRightsInfo,
 	mockParentIeObject,
 	mockSitemapObject,
 	mockUser,
@@ -291,7 +292,13 @@ describe('ieObjectsService', () => {
 	describe('findBySchemaIdentifier', () => {
 		it('returns the full object details as retrieved from the DB', async () => {
 			// Mock the ie object
-			mockDataService.execute.mockResolvedValueOnce(mockIeObject2);
+			const objectIeMock = cloneDeep(mockIeObject2);
+			(objectIeMock.getIeObject[0] as any).rights = {
+				reuse_label: mockIeObjectRightsInfo.reuseLabel,
+				reuse_category_id: mockIeObjectRightsInfo.reuseCategoryUrl,
+				ha_des_license_distributor: mockIeObjectRightsInfo.licenseDistributor,
+			};
+			mockDataService.execute.mockResolvedValueOnce(objectIeMock);
 
 			// Mock the parent object
 			const mockParentIeObject = cloneDeep(mockIeObject2);
@@ -316,6 +323,7 @@ describe('ieObjectsService', () => {
 					.join(', ') || undefined
 			);
 			expect(ieObject.keywords?.length || 0).toEqual(mockIeObject2.getSchemaKeywords.length);
+			expect(ieObject.rightsInfo).toEqual(mockIeObjectRightsInfo);
 
 			// Check parent ie and current ie info is merged: https://meemoo.atlassian.net/browse/ARC-2135
 			expect(ieObject.bibframeEdition).toEqual(mockParentIeObject.getIeObject[0].bibframe_edition);
