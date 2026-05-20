@@ -165,6 +165,7 @@ const IE_OBJECT_PROPS_METADATA_SET_ESSENCE: Readonly<(keyof IeObject)[]> = [
 	'pages',
 	'mentions',
 	'transcript',
+	'rightsInfo',
 ];
 
 export const IE_OBJECT_PROPS_BY_METADATA_SET: Readonly<Record<string, string[]>> = {

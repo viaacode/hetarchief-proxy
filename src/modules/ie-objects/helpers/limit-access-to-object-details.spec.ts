@@ -714,4 +714,57 @@ describe('Limit access to object details', () => {
 		expect(result?.pages).toBeUndefined();
 		expect((result as any)?.rightsInfo).toBeUndefined();
 	});
+
+	it('PUBLIC AV with rights info (PUBLIEK_CONTENT) — anonymous user sees rights info with essence', () => {
+		const rightsInfo = {
+			reuseLabel: 'CC0',
+			reuseCategoryUrl: 'https://creativecommons.org/publicdomain/zero/1.0/',
+			licenseDistributor: 'VRT',
+		};
+		const user: LimitAccessUserInfo = {
+			...mockUserInfo,
+			groupId: undefined,
+			sector: null,
+			maintainerId: null,
+			accessibleVisitorSpaceIds: [],
+			accessibleObjectIdsThroughFolders: [],
+		};
+		const result = limitAccessToObjectDetails(
+			{
+				...mockIeObject1,
+				licenses: [IeObjectLicense.PUBLIEK_CONTENT],
+				rightsInfo,
+			},
+			user
+		);
+
+		expect(result?.thumbnailUrl).toBeDefined();
+		expect(result?.rightsInfo).toEqual(rightsInfo);
+	});
+
+	it('METADATA-ONLY AV with rights info — anonymous user does not see rights info', () => {
+		const user: LimitAccessUserInfo = {
+			...mockUserInfo,
+			groupId: undefined,
+			sector: null,
+			maintainerId: null,
+			accessibleVisitorSpaceIds: [],
+			accessibleObjectIdsThroughFolders: [],
+		};
+		const result = limitAccessToObjectDetails(
+			{
+				...mockIeObject1,
+				licenses: [IeObjectLicense.PUBLIEK_METADATA_ALL],
+				rightsInfo: {
+					reuseLabel: 'CC0',
+					reuseCategoryUrl: 'https://creativecommons.org/publicdomain/zero/1.0/',
+				},
+			},
+			user
+		);
+
+		expect(result?.name).toBeDefined();
+		expect(result?.thumbnailUrl).toBeUndefined();
+		expect(result?.rightsInfo).toBeUndefined();
+	});
 });

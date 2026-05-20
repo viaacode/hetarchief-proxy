@@ -321,6 +321,45 @@ describe('ieObjectsService', () => {
 			expect(ieObject.bibframeEdition).toEqual(mockParentIeObject.getIeObject[0].bibframe_edition);
 		});
 
+		it('maps rights info from graph.rights when available', async () => {
+			const objectIeMock = cloneDeep(mockIeObject2);
+			(objectIeMock.getIeObject[0] as any).rights = {
+				reuse_label: 'CC0',
+				reuse_category_id: 'https://creativecommons.org/publicdomain/zero/1.0/',
+				ha_des_license_distributor: 'VRT',
+			};
+
+			mockDataService.execute.mockResolvedValueOnce(objectIeMock);
+			mockDataService.execute.mockResolvedValueOnce(mockIeObjectEmpty);
+
+			const ieObject = await ieObjectsService.findByIeObjectId(
+				mockObjectId,
+				false,
+				'referer',
+				'127.0.0.1'
+			);
+
+			expect(ieObject.rightsInfo).toEqual({
+				reuseLabel: 'CC0',
+				reuseCategoryUrl: 'https://creativecommons.org/publicdomain/zero/1.0/',
+				licenseDistributor: 'VRT',
+			});
+		});
+
+		it('leaves rights info empty when graph.rights is not available', async () => {
+			mockDataService.execute.mockResolvedValueOnce(mockIeObject2);
+			mockDataService.execute.mockResolvedValueOnce(mockIeObjectEmpty);
+
+			const ieObject = await ieObjectsService.findByIeObjectId(
+				mockObjectId,
+				false,
+				'referer',
+				'127.0.0.1'
+			);
+
+			expect(ieObject.rightsInfo).toBeUndefined();
+		});
+
 		it('returns an empty array if no representations were found', async () => {
 			const objectIeMock = cloneDeep(mockIeObject2);
 

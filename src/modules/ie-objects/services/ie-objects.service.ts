@@ -705,6 +705,7 @@ export class IeObjectsService {
 		const licenses = compact(
 			schemaLicenseResponse?.map((item) => item?.schema_license)
 		) as IeObjectLicense[];
+		const rights = ie?.rights;
 		const isPublicDomain: boolean =
 			licenses.includes(IeObjectLicense.PUBLIEK_CONTENT) &&
 			licenses.includes(IeObjectLicense.PUBLIC_DOMAIN);
@@ -849,6 +850,13 @@ export class IeObjectsService {
 			newspaperPublisher: compact(
 				parentCollectionResponse?.map((part) => part?.collection?.schema_publisher)
 			)?.join(', '),
+			rightsInfo: rights?.reuse_label
+				? {
+						reuseLabel: rights.reuse_label,
+						reuseCategoryUrl: rights.reuse_category_id,
+						licenseDistributor: rights.ha_des_license_distributor || undefined,
+					}
+				: undefined,
 			pages: ieObjectByPages?.pages || [],
 			mentions: ieObjectByPages?.mentions || [],
 		};

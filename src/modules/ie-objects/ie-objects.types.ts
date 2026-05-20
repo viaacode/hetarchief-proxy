@@ -121,6 +121,12 @@ export interface IsPartOfCollection {
 	publisher?: any;
 }
 
+export interface IeObjectRightsInfo {
+	reuseLabel: string;
+	reuseCategoryUrl: string;
+	licenseDistributor?: string;
+}
+
 export enum IeObjectType {
 	VIDEO = 'video',
 	VIDEO_FRAGMENT = 'videofragment',
@@ -210,6 +216,7 @@ export interface IeObject {
 	alternativeTitle?: string[];
 	digitizationDate?: string;
 	children?: number;
+	rightsInfo?: IeObjectRightsInfo;
 
 	// ESSENCE
 	thumbnailUrl: string;
