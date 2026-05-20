@@ -245,7 +245,6 @@ export class MaterialRequestMessagesController {
 				userId,
 				Lookup_App_Material_Request_Message_Type_Enum.Message,
 				message ? { message } : null,
-				new Date().toISOString(),
 				attachments
 			);
 		} catch (err) {
@@ -286,7 +285,7 @@ export class MaterialRequestMessagesController {
 
 			await this.materialRequestMessagesService.addExtraConditions(
 				materialRequest,
-				user.getId(),
+				user,
 				body.extraConditions
 			);
 			// send email to notify requester of additional conditions
