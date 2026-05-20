@@ -220,6 +220,19 @@ export class IeObjectsController {
 		if (!IE_OBJECT_AV_TYPES.includes(accessibleObject.dctermsFormat as IeObjectType)) {
 			throw new ForbiddenException('You do not have permission to play this file');
 		}
+		if (!this.objectContainsFilePath(accessibleObject, playerTicketsQuery.browsePath)) {
+			throw new ForbiddenException('You do not have permission to play this file');
+		}
+	}
+
+	private objectContainsFilePath(ieObject: Partial<IeObject>, filePath: string): boolean {
+		return Boolean(
+			ieObject.pages?.some((page) =>
+				page.representations?.some((representation) =>
+					representation.files?.some((file) => file.storedAt === filePath)
+				)
+			)
+		);
 	}
 
 	private async assertCanGetTicketServiceTokens(
