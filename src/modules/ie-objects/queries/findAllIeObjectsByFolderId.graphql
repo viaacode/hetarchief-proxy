@@ -37,10 +37,8 @@ query findAllIeObjectsByFolderId($folderId: uuid, $userProfileId: uuid) {
 				org_identifier
 				skos_pref_label
 				ha_org_sector
-				visitorSpace {
-					id
+				organizationSlug {
 					slug
-					schema_maintainer_id
 				}
 			}
 		}

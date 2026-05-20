@@ -258,7 +258,7 @@ describe('MaterialRequestsService', () => {
 				mockGqlMaterialRequest1.intellectualEntity.schemaMaintainer.skos_pref_label
 			);
 			expect(adapted.maintainerSlug).toEqual(
-				mockGqlMaterialRequest1.intellectualEntity.schemaMaintainer.visitorSpace.slug
+				mockGqlMaterialRequest1.intellectualEntity.schemaMaintainer.organizationSlug.slug
 			);
 			expect(adapted.reuseForm).toEqual(mockGqlMaterialRequest1.material_request_reuse_form_values);
 		});
@@ -301,7 +301,7 @@ describe('MaterialRequestsService', () => {
 				mockGqlMaterialRequest2.intellectualEntity.schemaMaintainer.skos_pref_label
 			);
 			expect(adapted.maintainerSlug).toEqual(
-				mockGqlMaterialRequest2.intellectualEntity.schemaMaintainer.visitorSpace.slug
+				mockGqlMaterialRequest2.intellectualEntity.schemaMaintainer.organizationSlug.slug
 			);
 			expect(adapted.maintainerLogo).toEqual(
 				mockGqlMaterialRequest2.intellectualEntity.schemaMaintainer.ha_org_has_logo

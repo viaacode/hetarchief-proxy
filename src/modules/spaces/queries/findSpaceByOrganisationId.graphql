@@ -1,7 +1,6 @@
 query findSpaceByOrganisationId($organisationId: String!) {
 	maintainer_visitor_space(where: { schema_maintainer_id: { _eq: $organisationId } }) {
 		id
-		slug
 		schema_image
 		schema_color
 		schema_audience_type
@@ -21,6 +20,9 @@ query findSpaceByOrganisationId($organisationId: String!) {
 			foaf_homepage
 			ha_org_has_logo
 			dcterms_description
+			organizationSlug {
+				slug
+			}
 			schemaContactPoint {
 				schema_contact_type
 				schema_email

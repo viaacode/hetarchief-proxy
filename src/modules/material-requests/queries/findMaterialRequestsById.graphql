@@ -81,13 +81,13 @@ query findMaterialRequestsById($id: uuid!) {
 				skos_pref_label
 				ha_org_has_logo
 				ha_org_sector
+				organizationSlug {
+					slug
+				}
 				schemaContactPoint {
 					schema_contact_type
 					schema_email
 					schema_telephone
-				}
-				visitorSpace {
-					slug
 				}
 			}
 			schemaLicenses {

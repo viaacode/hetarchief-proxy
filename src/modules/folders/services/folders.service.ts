@@ -84,7 +84,7 @@ export class FoldersService {
 			schemaIdentifier: gqlIeObject?.schema_identifier, // Unique for each object
 			maintainerId: gqlIeObject?.schemaMaintainer?.org_identifier,
 			maintainerName: gqlIeObject?.schemaMaintainer?.skos_pref_label,
-			maintainerSlug: gqlIeObject?.schemaMaintainer?.visitorSpace?.slug,
+			maintainerSlug: gqlIeObject?.schemaMaintainer?.organizationSlug?.slug,
 			sector: (gqlIeObject?.schemaMaintainer?.ha_org_sector as IeObjectSector) || null,
 			description: gqlIeObject?.schema_description,
 			dctermsFormat: gqlIeObject?.dctermsFormat?.[0]?.dcterms_format as IeObjectType,

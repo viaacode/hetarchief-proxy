@@ -38,7 +38,6 @@ mutation insertVisit($newVisit: maintainer_visitor_space_request_insert_input!) 
 		}
 		visitor_space {
 			id
-			slug
 			schema_maintainer_id
 			schema_image
 			schema_color
@@ -59,6 +58,9 @@ mutation insertVisit($newVisit: maintainer_visitor_space_request_insert_input!) 
 				foaf_homepage
 				ha_org_has_logo
 				dcterms_description
+				organizationSlug {
+					slug
+				}
 				schemaContactPoint {
 					schema_contact_type
 					schema_email

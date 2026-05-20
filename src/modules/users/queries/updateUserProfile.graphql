@@ -30,16 +30,14 @@ mutation updateUserProfile($id: uuid!, $updateUser: users_profile_set_input!) {
 				skos_pref_label
 				ha_org_sector
 				schema_vat_id
+				organizationSlug {
+					slug
+				}
 				schemaPostalAddresses {
 					schema_street_address
 					schema_postal_code
 					schema_address_locality
 				}
-			}
-			visitor_space {
-				id
-				slug
-				schema_maintainer_id
 			}
 		}
 	}

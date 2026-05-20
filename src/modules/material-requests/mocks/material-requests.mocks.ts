@@ -43,9 +43,6 @@ export const mockGqlMaterialRequest1: FindMaterialRequestsQuery['app_material_re
 			skos_pref_label: 'VRT',
 			ha_org_has_logo: 'https://assets.viaa.be/images/OR-rf5kf25',
 			schemaContactPoint: [],
-			visitorSpace: {
-				slug: 'vrt',
-			},
 		},
 		schema_identifier: '0000003g0k',
 		id: 'https://data-int.hetarchief.be/id/entity/0000003g0k',
@@ -96,9 +93,6 @@ export const mockGqlMaterialRequest2: FindMaterialRequestsByIdQuery['app_materia
 			org_identifier: 'OR-rf5kf25',
 			skos_pref_label: 'VRT',
 			ha_org_has_logo: 'https://assets.viaa.be/images/OR-rf5kf25',
-			visitorSpace: {
-				slug: 'vrt',
-			},
 			schemaContactPoint: [],
 		},
 		schema_identifier: '0000003g0k',

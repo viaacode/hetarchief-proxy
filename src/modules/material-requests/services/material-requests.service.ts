@@ -1185,7 +1185,7 @@ export class MaterialRequestsService {
 			maintainerId: organisation?.schemaIdentifier,
 			maintainerName: organisation?.schemaName,
 			maintainerSlug:
-				rawObject?.schemaMaintainer?.visitorSpace?.slug || kebabCase(organisation?.schemaName),
+				rawObject?.schemaMaintainer?.organizationSlug?.slug || kebabCase(organisation?.schemaName),
 			maintainerLogo: organisation?.logo
 				// TODO remove this workaround once the INT organisations assets are available
 				.replace('https://assets-int.viaa.be/images/', 'https://assets.viaa.be/images/')

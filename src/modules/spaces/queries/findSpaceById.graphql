@@ -1,7 +1,6 @@
 query findSpaceById($id: uuid!) {
 	maintainer_visitor_space(where: { id: { _eq: $id } }) {
 		id
-		slug
 		schema_image
 		schema_color
 		schema_audience_type
@@ -21,6 +20,9 @@ query findSpaceById($id: uuid!) {
 			foaf_homepage
 			ha_org_has_logo
 			dcterms_description
+			organizationSlug {
+				slug
+			}
 			schemaContactPoint {
 				schema_contact_type
 				schema_email
