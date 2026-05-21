@@ -13,6 +13,7 @@ query getIeObjectDetail($ieObjectId: String!) {
 		schema_credit_text
 		schema_copyright_notice
 		schema_abstract
+		ha_des_purl
 		bibframe_edition
 		ebucore_synopsis
 		schema_number_of_pages: ha_des_number_of_pages
@@ -21,6 +22,11 @@ query getIeObjectDetail($ieObjectId: String!) {
 			reuse_label
 			reuse_category_id
 			ha_des_license_distributor
+			reuse_category {
+				id
+				label
+				group
+			}
 		}
 		schemaMaintainer {
 			org_identifier

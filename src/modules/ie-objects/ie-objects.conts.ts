@@ -120,6 +120,7 @@ const IE_OBJECT_PROPS_METADATA_SET_LTD: Readonly<(keyof IeObject)[]> = [
 	'premisIsPartOf',
 	'fragmentId',
 	'meemooLocalId',
+	'providerPurl',
 	'maintainerId',
 	'maintainerName', // Will be replaced by the slug in the future: https://meemoo.atlassian.net/browse/ARC-1372
 	'maintainerSlug',

@@ -22,7 +22,11 @@ import { compact, find, isArray, isEmpty, isNil, kebabCase, omitBy, uniq } from 
 
 import type { Configuration } from '~config';
 
-import { IeObjectsQueryDto, IeObjectsSimilarQueryDto, type SearchFilter } from '../dto/ie-objects.dto';
+import {
+	IeObjectsQueryDto,
+	IeObjectsSimilarQueryDto,
+	type SearchFilter,
+} from '../dto/ie-objects.dto';
 import { QueryBuilder } from '../elasticsearch/queryBuilder';
 import { convertQueryToLiteralString } from '../helpers/convert-query-to-literal-string';
 import { getSearchEndpoint } from '../helpers/get-search-endpoint';
@@ -250,7 +254,8 @@ export class IeObjectsService {
 		);
 		const categoryIds = uniq(
 			(reusabilityFilter?.multiValue || []).flatMap(
-				(category) => REUSABILITY_FILTER_VALUES[category as ReusabilityCategory]?.avReuseCategoryIds ?? []
+				(category) =>
+					REUSABILITY_FILTER_VALUES[category as ReusabilityCategory]?.avReuseCategoryIds ?? []
 			)
 		);
 
@@ -714,6 +719,7 @@ export class IeObjectsService {
 			return null;
 		}
 		const ie = ieObjectResponse.getIeObject?.[0];
+		const ieWithProviderPurl = ie as typeof ie & { ha_des_purl?: string | null };
 		const dctermsFormatResponse = ieObjectResponse.getDctermsFormat?.[0];
 		const isPartOfResponse = ieObjectResponse.getIsPartOf?.[0];
 		const hasCarrierResponse = ieObjectResponse.getHasCarrier?.[0];
@@ -864,6 +870,7 @@ export class IeObjectsService {
 			numberOfPages: ie?.schema_number_of_pages,
 			pageNumber: ie?.schema_position,
 			meemooLocalId: meemooLocalIdResponse?.map((item) => item?.meemoo_local_id).join(', '),
+			providerPurl: ieWithProviderPurl?.ha_des_purl,
 			collectionName: parentCollectionResponse?.[0]?.collection?.schema_name,
 			collectionId: parentCollectionResponse?.[0]?.collection?.id,
 			issueNumber: ie?.schema_issue_number,
@@ -901,6 +908,9 @@ export class IeObjectsService {
 				? {
 						reuseLabel: rights.reuse_label,
 						reuseCategoryUrl: rights.reuse_category_id,
+						reuseCategoryId: rights.reuse_category_id,
+						reuseCategoryLabel: rights.reuse_category?.label,
+						reuseCategoryGroup: rights.reuse_category?.group,
 						licenseDistributor: rights.ha_des_license_distributor || undefined,
 					}
 				: undefined,
@@ -1368,6 +1378,7 @@ export class IeObjectsService {
 			dctermsFormat: ieObject?.dctermsFormat,
 			datePublished: ieObject?.datePublished,
 			meemooLocalId: ieObject?.meemooLocalId,
+			providerPurl: ieObject?.providerPurl,
 			premisIdentifier: ieObject?.premisIdentifier,
 			schemaIdentifier: ieObject?.schemaIdentifier,
 			iri: ieObject?.iri,
