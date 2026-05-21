@@ -105,7 +105,7 @@ export class FoldersController {
 								}
 							)
 						);
-						return {}; // ieObject in folder no longer exists
+						return undefined; // ieObject in folder no longer exists
 					}
 					return this.ieObjectsService.limitObjectInFolder(object, user, visitorSpaceAccessInfo);
 				})
