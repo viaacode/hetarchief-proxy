@@ -4,7 +4,13 @@ import { retry } from 'async';
 
 import { DataService, PlayerTicketService } from '@meemoo/admin-core-api';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { Inject, Injectable, InternalServerErrorException, Logger, NotFoundException, } from '@nestjs/common';
+import {
+	Inject,
+	Injectable,
+	InternalServerErrorException,
+	Logger,
+	NotFoundException,
+} from '@nestjs/common';
 
 import { ConfigService } from '@nestjs/config';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
@@ -99,8 +105,14 @@ import {
 	RightsLabel,
 } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
 import { AND } from '~modules/ie-objects/elasticsearch/queryBuilder.helpers';
-import { convertStringToSearchTerms, type SearchTermParseResult, } from '~modules/ie-objects/helpers/convert-string-to-search-terms';
-import { AUTOCOMPLETE_FIELD_TO_ES_FIELD_NAME, IE_OBJECT_AV_TYPES, } from '~modules/ie-objects/ie-objects.conts';
+import {
+	convertStringToSearchTerms,
+	type SearchTermParseResult,
+} from '~modules/ie-objects/helpers/convert-string-to-search-terms';
+import {
+	AUTOCOMPLETE_FIELD_TO_ES_FIELD_NAME,
+	IE_OBJECT_AV_TYPES,
+} from '~modules/ie-objects/ie-objects.conts';
 import {
 	CACHE_KEY_IE_OBJECT_REUSABILITY_RIGHTS_IRIS,
 	CACHE_KEY_PREFIX_IE_OBJECT_DETAIL,

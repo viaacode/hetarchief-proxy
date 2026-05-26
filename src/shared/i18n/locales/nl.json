@@ -1,5 +1,7 @@
 {
   "modules/account/components/material-request-detail-blade/material-request-detail-blade___aangevraagd-op": "Aangevraagd op",
+  "modules/account/components/material-request-detail-blade/material-request-detail-blade___voorwaarden-verstuurd-door": "Voorwaarden verstuurd door",
+  "modules/account/components/material-request-detail-blade/material-request-detail-blade___voorwaarden-verstuurd-op": "Voorwaarden verstuurd op",
   "modules/auth/controllers/het-archief___account-configuratie": "Account configuratie",
   "modules/auth/services/idp___account-configuratie": "Account configuratie",
   "modules/auth/services/idp___de-account-is-een-beheerder-maar-heeft-geen-organisatie-in-de-acm-voeg-een-organisatie-toe-in-de-acm-no-org-linked": "Er is een probleem met deze admin account: er is geen organisatie geregistreerd. Neem contact op met support@meemoo.be en laat even weten welk e-mailadres je gebruikt om in te loggen. We brengen het zo snel mogelijk in orde.",
@@ -13,6 +15,8 @@
   "modules/campaign-monitor/services/campaign-monitor___ik-wil-meer-info-over-dit-object": "Ik wil meer info over dit object",
   "modules/folders/controllers___default-collection-name": "Favorieten",
   "modules/material-request-messages/services/material-request-pdf-generator___aanvrager": "Aanvrager",
+  "modules/material-request-messages/services/material-request-pdf-generator___additional-conditions": "Additional conditions",
+  "modules/material-request-messages/services/material-request-pdf-generator___additional-conditions-of-material-request": "Additional conditions of material request",
   "modules/material-request-messages/services/material-request-pdf-generator___bedoeld-gebruik-beschrijving-label": "Beschrijf in eigen woorden waarvoor u het materiaal wenst te gebruiken",
   "modules/material-request-messages/services/material-request-pdf-generator___bedoeld-gebruik-label": "Bedoeld gebruik",
   "modules/material-request-messages/services/material-request-pdf-generator___bekijken-beluisteren": "Bekijken/beluisteren",
