@@ -121,6 +121,9 @@ export interface QueryBuilderInputInfo {
 	user?: SessionUserEntity;
 	visitorSpaceInfo?: IeObjectsVisitorSpaceInfo;
 	spacesIds?: string[];
+	/**
+	 * These are the ids of the rights like they are present in the database table:
+	 */
 	reusabilityRightsIris?: string[];
 	rightsLabelIris?: string[];
 }

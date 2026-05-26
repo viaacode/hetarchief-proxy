@@ -4,13 +4,7 @@ import { retry } from 'async';
 
 import { DataService, PlayerTicketService } from '@meemoo/admin-core-api';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import {
-	Inject,
-	Injectable,
-	InternalServerErrorException,
-	Logger,
-	NotFoundException,
-} from '@nestjs/common';
+import { Inject, Injectable, InternalServerErrorException, Logger, NotFoundException, } from '@nestjs/common';
 
 import { ConfigService } from '@nestjs/config';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
@@ -46,10 +40,10 @@ import {
 	type IeObjectPages,
 	type IeObjectRepresentation,
 	type IeObjectSector,
-	IeObjectType,
 	type IeObjectsSitemap,
 	type IeObjectsVisitorSpaceInfo,
 	type IeObjectsWithAggregations,
+	IeObjectType,
 	type IsPartOfKey,
 	type Mention,
 	type RelatedIeObject,
@@ -99,26 +93,20 @@ import {
 	ElasticsearchField,
 	IeObjectsSearchFilterField,
 	MAX_COUNT_SEARCH_RESULTS,
-	ReusabilityCategory,
 	REUSABILITY_FILTER_VALUES,
-	RightsLabel,
+	ReusabilityCategory,
 	RIGHTS_LABEL_FILTER_VALUES,
+	RightsLabel,
 } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
 import { AND } from '~modules/ie-objects/elasticsearch/queryBuilder.helpers';
-import {
-	type SearchTermParseResult,
-	convertStringToSearchTerms,
-} from '~modules/ie-objects/helpers/convert-string-to-search-terms';
-import {
-	AUTOCOMPLETE_FIELD_TO_ES_FIELD_NAME,
-	IE_OBJECT_AV_TYPES,
-} from '~modules/ie-objects/ie-objects.conts';
+import { convertStringToSearchTerms, type SearchTermParseResult, } from '~modules/ie-objects/helpers/convert-string-to-search-terms';
+import { AUTOCOMPLETE_FIELD_TO_ES_FIELD_NAME, IE_OBJECT_AV_TYPES, } from '~modules/ie-objects/ie-objects.conts';
 import {
 	CACHE_KEY_IE_OBJECT_REUSABILITY_RIGHTS_IRIS,
-	CACHE_KEY_PREFIX_IE_OBJECTS_SEARCH,
 	CACHE_KEY_PREFIX_IE_OBJECT_DETAIL,
 	CACHE_KEY_PREFIX_IE_OBJECT_PID_TO_ID,
 	CACHE_KEY_PREFIX_IE_OBJECT_THUMBNAIL,
+	CACHE_KEY_PREFIX_IE_OBJECTS_SEARCH,
 } from '~modules/ie-objects/services/ie-objects.service.consts';
 import {
 	type DbFile,
@@ -366,6 +354,10 @@ export class IeObjectsService {
 				);
 			} else {
 				objectResponse = await this.executeQuery(esIndex, esQuery);
+			}
+
+			if (inputQuery.size > 0 && process.env.NODE_ENV === 'local') {
+				fs.writeFile('response.json', JSON.stringify(objectResponse, null, 2));
 			}
 
 			if (this.configService.get('ELASTICSEARCH_LOG_QUERIES')) {
