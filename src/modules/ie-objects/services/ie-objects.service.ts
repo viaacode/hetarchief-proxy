@@ -326,7 +326,7 @@ export class IeObjectsService {
 		return {
 			schema_identifier: ieObjectInfo.schema_identifier,
 			title: ieObjectInfo.schema_name,
-			maintainerSlug: ieObjectInfo.schemaMaintainer.skos_alt_label,
+			maintainerSlug: ieObjectInfo.schemaMaintainer.organizationSlug?.slug,
 		};
 	}
 
@@ -724,7 +724,7 @@ export class IeObjectsService {
 			).join(', '),
 			maintainerId: schemaMaintainer?.org_identifier,
 			maintainerName: schemaMaintainer?.skos_pref_label,
-			maintainerSlug: schemaMaintainer?.skos_alt_label,
+			maintainerSlug: schemaMaintainer?.organizationSlug?.slug,
 			maintainerLogo: schemaMaintainer?.ha_org_has_logo
 				// TODO remove this workaround once the INT organisations assets are available
 				.replace('https://assets-int.viaa.be/images/', 'https://assets.viaa.be/images/')
@@ -818,7 +818,7 @@ export class IeObjectsService {
 			licenses: gqlIeObject?.schemaLicense?.schema_license,
 			maintainerId: gqlIeObject?.schemaMaintainer?.org_identifier,
 			maintainerName: gqlIeObject?.schemaMaintainer?.skos_pref_label,
-			maintainerSlug: gqlIeObject?.schemaMaintainer?.skos_alt_label,
+			maintainerSlug: gqlIeObject?.schemaMaintainer?.organizationSlug?.slug,
 			sector: gqlIeObject?.schemaMaintainer?.ha_org_sector as IeObjectSector,
 			name: gqlIeObject?.schema_name,
 			thumbnailUrl,

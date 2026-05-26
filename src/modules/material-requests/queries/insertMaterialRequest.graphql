@@ -79,15 +79,14 @@ mutation insertMaterialRequest($newMaterialRequest: app_material_requests_insert
 				org_identifier
 				skos_pref_label
 				ha_org_has_logo
-				skos_alt_label
 				ha_org_sector
+				organizationSlug {
+					slug
+				}
 				schemaContactPoint {
 					schema_contact_type
 					schema_email
 					schema_telephone
-				}
-				visitorSpace {
-					slug
 				}
 			}
 			schemaLicenses {

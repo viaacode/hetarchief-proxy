@@ -32,8 +32,12 @@ query findNotificationsByUser(
 			id
 			visitor_space {
 				id
-				slug
 				schema_maintainer_id
+				organisation {
+					organizationSlug {
+						slug
+					}
+				}
 			}
 		}
 		material_request {

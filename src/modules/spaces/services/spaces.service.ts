@@ -53,7 +53,7 @@ export class SpacesService {
 		/* istanbul ignore next */
 		return {
 			id: graphQlSpace?.id,
-			slug: graphQlSpace?.slug,
+			slug: graphQlSpace?.organisation?.organizationSlug?.slug,
 			maintainerId: graphQlSpace?.organisation?.org_identifier,
 			name: graphQlSpace?.organisation?.skos_pref_label,
 			info: graphQlSpace?.organisation?.dcterms_description,
@@ -99,7 +99,6 @@ export class SpacesService {
 		const inputKeys = Object.keys(inputDto);
 		return {
 			...(inputKeys.includes('orId') ? { schema_maintainer_id: inputDto.orId } : {}),
-			...(inputKeys.includes('slug') ? { slug: inputDto.slug } : {}),
 			...(inputKeys.includes('color') ? { schema_color: inputDto.color } : {}),
 			...(inputKeys.includes('descriptionNl')
 				? { schema_description_nl: inputDto.descriptionNl }

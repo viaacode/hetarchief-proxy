@@ -74,7 +74,7 @@ export class OrganisationsService {
 			updatedAt: gqlOrganisation?.updated_at,
 			sector: gqlOrganisation?.ha_org_sector as IeObjectSector,
 			formUrl: gqlOrganisation?.ha_org_request_form,
-			slug: gqlOrganisation?.skos_alt_label,
+			slug: gqlOrganisation?.organizationSlug?.slug,
 			vatNumber: gqlOrganisation?.schema_vat_id || null,
 			streetAddress: gqlOrganisation?.schemaPostalAddresses?.[0]?.schema_street_address || null,
 			postalCode: gqlOrganisation?.schemaPostalAddresses?.[0]?.schema_postal_code || null,
@@ -90,7 +90,7 @@ export class OrganisationsService {
 			name: gqlOrganisation.skos_pref_label,
 			logoUrl: gqlOrganisation.ha_org_has_logo,
 			homepageUrl: gqlOrganisation.foaf_homepage,
-			slug: gqlOrganisation.skos_alt_label,
+			slug: gqlOrganisation.organization_slug,
 		};
 	}
 

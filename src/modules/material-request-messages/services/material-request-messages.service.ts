@@ -43,6 +43,7 @@ import { addMilliseconds, format } from 'date-fns';
 import { MaterialRequestMessageBodyAdditionalConditionsDto } from '~modules/material-request-messages/dto/material-request-message-body-additional-conditions.dto';
 import { MaterialRequestPdfGeneratorService } from '~modules/material-request-messages/services/material-request-pdf-generator';
 import { MaterialRequest } from '~modules/material-requests/material-requests.types';
+import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { PaginationHelper } from '~shared/helpers/pagination';
 import { SortDirection } from '~shared/types';
 
@@ -162,9 +163,9 @@ export class MaterialRequestMessagesService {
 		profileId: string | null, // if the event was created by the proxy itself. eg: when the download becomes available
 		messageType: Lookup_App_Material_Request_Message_Type_Enum,
 		message?: MaterialRequestMessageBody | null,
-		createdAt: string = new Date().toISOString(),
 		attachments: Pick<MaterialRequestAttachment, 'attachmentUrl' | 'attachmentFilename'>[] = []
 	): Promise<MaterialRequestMessage> {
+		const createdAt = new Date().toISOString();
 		const response = await this.dataService.execute<
 			InsertMaterialRequestMessageMutation,
 			InsertMaterialRequestMessageMutationVariables
@@ -222,7 +223,6 @@ export class MaterialRequestMessagesService {
 			materialRequest.requesterId,
 			Lookup_App_Material_Request_Message_Type_Enum.ReuseSummary,
 			null,
-			new Date().toISOString(),
 			[
 				{
 					attachmentUrl:
@@ -244,7 +244,6 @@ export class MaterialRequestMessagesService {
 			profileId,
 			Lookup_App_Material_Request_Message_Type_Enum.FinalSummary,
 			null,
-			new Date().toISOString(),
 			[
 				{
 					attachmentUrl:
@@ -340,19 +339,30 @@ export class MaterialRequestMessagesService {
 	/**
 	 * Add additional conditions to the material request that the requester has to accept before the material download can be made available.
 	 * @param materialRequest
-	 * @param profileId Evaluator profile id that is added the additional conditions
+	 * @param user Evaluator profile that is added the additional conditions
 	 * @param extraConditions
 	 */
 	public async addExtraConditions(
 		materialRequest: MaterialRequest,
-		profileId: string,
+		user: SessionUserEntity,
 		extraConditions: MaterialRequestMessageBodyAdditionalConditionsDto
 	) {
 		await this.createMessage(
 			materialRequest,
-			profileId,
+			user.getId(),
 			Lookup_App_Material_Request_Message_Type_Enum.AdditionalConditions,
-			extraConditions
+			extraConditions,
+			[
+				{
+					attachmentUrl:
+						await this.materialRequestPdfGeneratorService.generateAdditionalConditionsSummaryPdfAndUpload(
+							materialRequest,
+							extraConditions.conditions,
+							`${user.getFirstName()} ${user.getLastName()}, ${user.getMail()}`
+						),
+					attachmentFilename: `Bijkomende gebruiksvoorwaarden-${format(new Date(), 'ddMMyyyyHHmm')}.pdf`,
+				},
+			]
 		);
 	}
 
