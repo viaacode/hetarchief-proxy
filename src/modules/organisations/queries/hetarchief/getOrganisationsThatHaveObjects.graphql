@@ -5,6 +5,5 @@ query getOrganisationsThatHaveObjects {
 		skos_pref_label
 		org_identifier
 		foaf_homepage
-		organization_slug
 	}
 }

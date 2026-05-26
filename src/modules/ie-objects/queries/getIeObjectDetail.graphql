@@ -17,6 +17,16 @@ query getIeObjectDetail($ieObjectId: String!) {
 		ebucore_synopsis
 		schema_number_of_pages: ha_des_number_of_pages
 		premis_is_part_of: relation_is_part_of
+		rights {
+			reuse_label
+			reuse_category_id
+			ha_des_license_distributor
+			reuse_category {
+				id
+				label
+				group
+			}
+		}
 		schemaMaintainer {
 			org_identifier
 			skos_pref_label

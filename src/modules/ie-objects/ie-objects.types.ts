@@ -121,6 +121,16 @@ export interface IsPartOfCollection {
 	publisher?: any;
 }
 
+export interface IeObjectRightsInfo {
+	reuseLabel: string;
+	reuseCategoryUrl?: string | null;
+	reuseCategoryId?: string | null;
+	reuseCategoryLabel?: string | null;
+	reuseCategoryGroup?: string | null;
+	licenseDistributor?: string | null;
+	broadcastingOrganization?: string | null;
+}
+
 export enum IeObjectType {
 	VIDEO = 'video',
 	VIDEO_FRAGMENT = 'videofragment',
@@ -181,6 +191,7 @@ export interface IeObject {
 	maintainerDescription?: string;
 	maintainerSiteUrl?: string;
 	meemooLocalId?: string;
+	providerPurl?: string | null;
 	meemooOriginalCp?: string;
 	durationInSeconds?: number;
 	copyrightNotice?: string;
@@ -210,6 +221,7 @@ export interface IeObject {
 	alternativeTitle?: string[];
 	digitizationDate?: string;
 	children?: number;
+	rightsInfo?: IeObjectRightsInfo;
 
 	// ESSENCE
 	thumbnailUrl: string;

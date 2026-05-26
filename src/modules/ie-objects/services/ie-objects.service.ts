@@ -17,11 +17,16 @@ import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { mapLimit } from 'blend-promise-utils';
 import type { Cache } from 'cache-manager';
 import got, { type Got } from 'got';
+
 import { compact, find, isArray, isEmpty, isNil, kebabCase, omitBy, uniq } from 'lodash';
 
 import type { Configuration } from '~config';
 
-import { IeObjectsQueryDto, IeObjectsSimilarQueryDto } from '../dto/ie-objects.dto';
+import {
+	IeObjectsQueryDto,
+	IeObjectsSimilarQueryDto,
+	type SearchFilter,
+} from '../dto/ie-objects.dto';
 import { QueryBuilder } from '../elasticsearch/queryBuilder';
 import { convertQueryToLiteralString } from '../helpers/convert-query-to-literal-string';
 import { getSearchEndpoint } from '../helpers/get-search-endpoint';
@@ -94,14 +99,22 @@ import {
 	ElasticsearchField,
 	IeObjectsSearchFilterField,
 	MAX_COUNT_SEARCH_RESULTS,
+	ReusabilityCategory,
+	REUSABILITY_FILTER_VALUES,
+	RightsLabel,
+	RIGHTS_LABEL_FILTER_VALUES,
 } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
 import { AND } from '~modules/ie-objects/elasticsearch/queryBuilder.helpers';
 import {
 	type SearchTermParseResult,
 	convertStringToSearchTerms,
 } from '~modules/ie-objects/helpers/convert-string-to-search-terms';
-import { AUTOCOMPLETE_FIELD_TO_ES_FIELD_NAME } from '~modules/ie-objects/ie-objects.conts';
 import {
+	AUTOCOMPLETE_FIELD_TO_ES_FIELD_NAME,
+	IE_OBJECT_AV_TYPES,
+} from '~modules/ie-objects/ie-objects.conts';
+import {
+	CACHE_KEY_IE_OBJECT_REUSABILITY_RIGHTS_IRIS,
 	CACHE_KEY_PREFIX_IE_OBJECTS_SEARCH,
 	CACHE_KEY_PREFIX_IE_OBJECT_DETAIL,
 	CACHE_KEY_PREFIX_IE_OBJECT_PID_TO_ID,
@@ -129,6 +142,35 @@ import { customError } from '~shared/helpers/custom-error';
 import { checkRequiredEnvs } from '~shared/helpers/env-check';
 
 checkRequiredEnvs(['ELASTICSEARCH_URL', 'IE_OBJECT_ID_PREFIX']);
+
+type GetRightsLabelIrisQuery = {
+	graph_rights: Array<{ intellectual_entity_id: string }>;
+};
+
+type GetRightsLabelIrisQueryVariables = {
+	categoryIds: string[];
+};
+
+type GetAllReusabilityRightsIrisQuery = {
+	graph_rights: Array<{ intellectual_entity_id: string; reuse_category_id: string }>;
+};
+
+const GET_RIGHTS_LABEL_IRIS_QUERY = `
+	query getRightsLabelIris($categoryIds: [String!]!) {
+		graph_rights(where: { reuse_category_id: { _in: $categoryIds } }) {
+			intellectual_entity_id
+		}
+	}
+`;
+
+const GET_ALL_REUSABILITY_RIGHTS_IRIS_QUERY = `
+	query getAllReusabilityRightsIris {
+		graph_rights {
+			intellectual_entity_id
+			reuse_category_id
+		}
+	}
+`;
 
 @Injectable()
 export class IeObjectsService {
@@ -176,12 +218,17 @@ export class IeObjectsService {
 			}
 		}
 
+		const reusabilityRightsIris = await this.getReusabilityRightsIris(inputQuery.filters);
+		const rightsLabelIris = await this.getRightsLabelIris(inputQuery.filters);
+
 		let esQuery: any;
 		try {
 			esQuery = QueryBuilder.build(inputQuery, {
 				user,
 				visitorSpaceInfo,
 				spacesIds,
+				reusabilityRightsIris,
+				rightsLabelIris,
 			});
 		} catch (err) {
 			/*
@@ -194,9 +241,79 @@ export class IeObjectsService {
 				user,
 				visitorSpaceInfo,
 				spacesIds,
+				reusabilityRightsIris,
+				rightsLabelIris,
 			});
 		}
 		return esQuery;
+	}
+
+	private async getReusabilityRightsIris(filters?: SearchFilter[]): Promise<string[]> {
+		const reusabilityFilter = filters?.find(
+			(filter) => filter.field === IeObjectsSearchFilterField.REUSABILITY
+		);
+		const categoryIds = uniq(
+			(reusabilityFilter?.multiValue || []).flatMap(
+				(category) =>
+					REUSABILITY_FILTER_VALUES[category as ReusabilityCategory]?.avReuseCategoryIds ?? []
+			)
+		);
+
+		if (!categoryIds.length) {
+			return [];
+		}
+
+		const categoryIdSet = new Set(categoryIds);
+		const allReusabilityRightsIris = await this.getAllReusabilityRightsIrisCached();
+
+		return uniq(
+			allReusabilityRightsIris
+				.filter((rights) => categoryIdSet.has(rights.reuse_category_id))
+				.map((rights) => rights.intellectual_entity_id)
+		);
+	}
+
+	private async getAllReusabilityRightsIrisCached(): Promise<
+		GetAllReusabilityRightsIrisQuery['graph_rights']
+	> {
+		return await this.cacheManager.wrap(
+			CACHE_KEY_IE_OBJECT_REUSABILITY_RIGHTS_IRIS,
+			async () => {
+				const response = await this.dataService.execute<GetAllReusabilityRightsIrisQuery>(
+					GET_ALL_REUSABILITY_RIGHTS_IRIS_QUERY
+				);
+
+				return response.graph_rights;
+			},
+			// cache for 1 day
+			hoursToSeconds(24)
+		);
+	}
+
+	private async getRightsLabelIris(filters?: SearchFilter[]): Promise<string[]> {
+		const rightsFilter = filters?.find(
+			(filter) => filter.field === IeObjectsSearchFilterField.RIGHTS
+		);
+		const rightsValues = rightsFilter?.multiValue?.length
+			? rightsFilter.multiValue
+			: compact([rightsFilter?.value]);
+		const categoryIds = uniq(
+			rightsValues.flatMap(
+				(rightsLabel) =>
+					RIGHTS_LABEL_FILTER_VALUES[rightsLabel as RightsLabel]?.avReuseCategoryIds ?? []
+			)
+		);
+
+		if (!categoryIds.length) {
+			return [];
+		}
+
+		const response = await this.dataService.execute<
+			GetRightsLabelIrisQuery,
+			GetRightsLabelIrisQueryVariables
+		>(GET_RIGHTS_LABEL_IRIS_QUERY, { categoryIds });
+
+		return uniq(response.graph_rights.map((rights) => rights.intellectual_entity_id));
 	}
 
 	public async findAll(
@@ -602,6 +719,7 @@ export class IeObjectsService {
 			return null;
 		}
 		const ie = ieObjectResponse.getIeObject?.[0];
+		const ieWithProviderPurl = ie as typeof ie & { ha_des_purl?: string | null };
 		const dctermsFormatResponse = ieObjectResponse.getDctermsFormat?.[0];
 		const isPartOfResponse = ieObjectResponse.getIsPartOf?.[0];
 		const hasCarrierResponse = ieObjectResponse.getHasCarrier?.[0];
@@ -641,6 +759,11 @@ export class IeObjectsService {
 			licenses.includes(IeObjectLicense.PUBLIC_DOMAIN);
 
 		const dctermsFormat = dctermsFormatResponse?.dcterms_format as IeObjectType;
+		const shouldExposeRightsInfo =
+			IE_OBJECT_AV_TYPES.includes(dctermsFormat) &&
+			(licenses.includes(IeObjectLicense.PUBLIEK_CONTENT) ||
+				licenses.includes(IeObjectLicense.BEZOEKERTOOL_CONTENT));
+		const rights = shouldExposeRightsInfo ? ie?.rights : undefined;
 		let thumbnailUrl = schemaThumbnailUrlResponse?.schema_thumbnail_url?.[0];
 
 		if (mapDcTermsFormatToSimpleType(dctermsFormat) === IeObjectType.AUDIO) {
@@ -747,6 +870,7 @@ export class IeObjectsService {
 			numberOfPages: ie?.schema_number_of_pages,
 			pageNumber: ie?.schema_position,
 			meemooLocalId: meemooLocalIdResponse?.map((item) => item?.meemoo_local_id).join(', '),
+			providerPurl: ieWithProviderPurl?.ha_des_purl,
 			collectionName: parentCollectionResponse?.[0]?.collection?.schema_name,
 			collectionId: parentCollectionResponse?.[0]?.collection?.id,
 			issueNumber: ie?.schema_issue_number,
@@ -780,6 +904,16 @@ export class IeObjectsService {
 			newspaperPublisher: compact(
 				parentCollectionResponse?.map((part) => part?.collection?.schema_publisher)
 			)?.join(', '),
+			rightsInfo: rights?.reuse_label
+				? {
+						reuseLabel: rights.reuse_label,
+						reuseCategoryUrl: rights.reuse_category_id,
+						reuseCategoryId: rights.reuse_category_id,
+						reuseCategoryLabel: rights.reuse_category?.label,
+						reuseCategoryGroup: rights.reuse_category?.group,
+						licenseDistributor: rights.ha_des_license_distributor || undefined,
+					}
+				: undefined,
 			pages: ieObjectByPages?.pages || [],
 			mentions: ieObjectByPages?.mentions || [],
 		};
@@ -1244,6 +1378,7 @@ export class IeObjectsService {
 			dctermsFormat: ieObject?.dctermsFormat,
 			datePublished: ieObject?.datePublished,
 			meemooLocalId: ieObject?.meemooLocalId,
+			providerPurl: ieObject?.providerPurl,
 			premisIdentifier: ieObject?.premisIdentifier,
 			schemaIdentifier: ieObject?.schemaIdentifier,
 			iri: ieObject?.iri,

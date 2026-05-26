@@ -15,7 +15,12 @@ import {
 	vi,
 } from 'vitest';
 
-import { IeObjectsSearchFilterField, Operator } from '../elasticsearch/elasticsearch.consts';
+import {
+	IeObjectsSearchFilterField,
+	Operator,
+	ReusabilityCategory,
+	RightsLabel,
+} from '../elasticsearch/elasticsearch.consts';
 import {
 	AutocompleteField,
 	type ElasticsearchResponse,
@@ -33,6 +38,7 @@ import {
 	mockIeObjectDefaultLimitedMetadata,
 	mockIeObjectEmpty,
 	mockIeObjectLimitedInFolder,
+	mockIeObjectRightsInfo,
 	mockParentIeObject,
 	mockSitemapObject,
 	mockUser,
@@ -145,6 +151,97 @@ describe('ieObjectsService', () => {
 		expect(ieObjectsService).toBeDefined();
 	});
 
+	describe('getReusabilityRightsIris', () => {
+		it('uses cached graph.rights IE ids for selected reusability categories', async () => {
+			mockDataService.execute.mockResolvedValueOnce({
+				graph_rights: [
+					{
+						intellectual_entity_id: 'https://data-qas.hetarchief.be/id/entity/free',
+						reuse_category_id: 'https://creativecommons.org/public-domain/pdm/',
+					},
+					{
+						intellectual_entity_id: 'https://data-qas.hetarchief.be/id/entity/free',
+						reuse_category_id: 'https://creativecommons.org/public-domain/pdm/',
+					},
+					{
+						intellectual_entity_id: 'https://data-qas.hetarchief.be/id/entity/conditional',
+						reuse_category_id: 'https://rightsstatements.org/page/NoC-CR/1.0/',
+					},
+					{
+						intellectual_entity_id: 'https://data-qas.hetarchief.be/id/entity/unmatched',
+						reuse_category_id: 'https://rightsstatements.org/page/InC/1.0/',
+					},
+				],
+			});
+
+			const result = await (ieObjectsService as any).getReusabilityRightsIris([
+				{
+					field: IeObjectsSearchFilterField.REUSABILITY,
+					operator: Operator.IS,
+					multiValue: [
+						ReusabilityCategory.FREELY_REUSABLE,
+						ReusabilityCategory.REUSABLE_WITH_CONDITIONS,
+					],
+				},
+			]);
+
+			expect(mockCacheService.wrap).toHaveBeenCalledWith(
+				'ie-objects-reusability-rights-iris',
+				expect.any(Function),
+				86400
+			);
+			expect(mockDataService.execute).toHaveBeenCalledWith(expect.any(String));
+			expect(result).toEqual([
+				'https://data-qas.hetarchief.be/id/entity/free',
+				'https://data-qas.hetarchief.be/id/entity/conditional',
+			]);
+		});
+	});
+
+	describe('getRightsLabelIris', () => {
+		it('fetches graph.rights IE ids for selected rights labels', async () => {
+			mockDataService.execute.mockResolvedValueOnce({
+				graph_rights: [
+					{ intellectual_entity_id: 'https://data-qas.hetarchief.be/id/entity/public-domain' },
+					{ intellectual_entity_id: 'https://data-qas.hetarchief.be/id/entity/public-domain' },
+					{ intellectual_entity_id: 'https://data-qas.hetarchief.be/id/entity/cc0' },
+				],
+			});
+
+			const result = await (ieObjectsService as any).getRightsLabelIris([
+				{
+					field: IeObjectsSearchFilterField.RIGHTS,
+					operator: Operator.IS,
+					multiValue: [RightsLabel.PUBLIC_DOMAIN, RightsLabel.CC0],
+				},
+			]);
+
+			expect(mockDataService.execute).toHaveBeenCalledWith(expect.any(String), {
+				categoryIds: expect.arrayContaining([
+					'https://creativecommons.org/public-domain/pdm/',
+					'https://creativecommons.org/publicdomain/zero/1.0/',
+				]),
+			});
+			expect(result).toEqual([
+				'https://data-qas.hetarchief.be/id/entity/public-domain',
+				'https://data-qas.hetarchief.be/id/entity/cc0',
+			]);
+		});
+
+		it('does not query graph.rights for unknown rights labels', async () => {
+			const result = await (ieObjectsService as any).getRightsLabelIris([
+				{
+					field: IeObjectsSearchFilterField.RIGHTS,
+					operator: Operator.IS,
+					multiValue: ['unknown-rights-label'],
+				},
+			]);
+
+			expect(mockDataService.execute).not.toHaveBeenCalled();
+			expect(result).toEqual([]);
+		});
+	});
+
 	describe('adaptESResponse', () => {
 		it('returns the input if no hits were found', async () => {
 			const esResponse = { hits: { hits: [], total: { value: 0 } } } as ElasticsearchResponse;
@@ -203,7 +300,20 @@ describe('ieObjectsService', () => {
 	describe('findBySchemaIdentifier', () => {
 		it('returns the full object details as retrieved from the DB', async () => {
 			// Mock the ie object
-			mockDataService.execute.mockResolvedValueOnce(mockIeObject2);
+			const objectIeMock = cloneDeep(mockIeObject2);
+			(objectIeMock.getIeObject[0] as any).rights = {
+				reuse_label: mockIeObjectRightsInfo.reuseLabel,
+				reuse_category_id: mockIeObjectRightsInfo.reuseCategoryUrl,
+				ha_des_license_distributor: mockIeObjectRightsInfo.licenseDistributor,
+				reuse_category: {
+					id: mockIeObjectRightsInfo.reuseCategoryId,
+					label: mockIeObjectRightsInfo.reuseCategoryLabel,
+					group: mockIeObjectRightsInfo.reuseCategoryGroup,
+				},
+			};
+			(objectIeMock.getIeObject[0] as any).ha_des_purl =
+				'https://archief.ieper.be/object/086350m40w';
+			mockDataService.execute.mockResolvedValueOnce(objectIeMock);
 
 			// Mock the parent object
 			const mockParentIeObject = cloneDeep(mockIeObject2);
@@ -222,15 +332,64 @@ describe('ieObjectsService', () => {
 			// Validate the object
 			expect(ieObject.schemaIdentifier).toEqual(mockObjectSchemaIdentifier);
 			expect(ieObject.maintainerId).toEqual(mockIeObject2Metadata.schemaMaintainer.org_identifier);
+			expect(ieObject.providerPurl).toEqual('https://archief.ieper.be/object/086350m40w');
 			expect(ieObject.copyrightHolder).toEqual(
 				mockIeObject2.getSchemaCopyrightHolder
 					.map((item) => item.schema_copyright_holder)
 					.join(', ') || undefined
 			);
 			expect(ieObject.keywords?.length || 0).toEqual(mockIeObject2.getSchemaKeywords.length);
+			expect(ieObject.rightsInfo).toEqual(mockIeObjectRightsInfo);
 
 			// Check parent ie and current ie info is merged: https://meemoo.atlassian.net/browse/ARC-2135
 			expect(ieObject.bibframeEdition).toEqual(mockParentIeObject.getIeObject[0].bibframe_edition);
+		});
+
+		it('maps rights info from graph.rights when available', async () => {
+			const objectIeMock = cloneDeep(mockIeObject2);
+			(objectIeMock.getIeObject[0] as any).rights = {
+				reuse_label: 'CC0',
+				reuse_category_id: 'https://creativecommons.org/publicdomain/zero/1.0/',
+				ha_des_license_distributor: 'VRT',
+				reuse_category: {
+					id: 'https://creativecommons.org/publicdomain/zero/1.0/',
+					label: 'CC0',
+					group: 'Publiek domein',
+				},
+			};
+
+			mockDataService.execute.mockResolvedValueOnce(objectIeMock);
+			mockDataService.execute.mockResolvedValueOnce(mockIeObjectEmpty);
+
+			const ieObject = await ieObjectsService.findByIeObjectId(
+				mockObjectId,
+				false,
+				'referer',
+				'127.0.0.1'
+			);
+
+			expect(ieObject.rightsInfo).toEqual({
+				reuseLabel: 'CC0',
+				reuseCategoryUrl: 'https://creativecommons.org/publicdomain/zero/1.0/',
+				reuseCategoryId: 'https://creativecommons.org/publicdomain/zero/1.0/',
+				reuseCategoryLabel: 'CC0',
+				reuseCategoryGroup: 'Publiek domein',
+				licenseDistributor: 'VRT',
+			});
+		});
+
+		it('leaves rights info empty when graph.rights is not available', async () => {
+			mockDataService.execute.mockResolvedValueOnce(mockIeObject2);
+			mockDataService.execute.mockResolvedValueOnce(mockIeObjectEmpty);
+
+			const ieObject = await ieObjectsService.findByIeObjectId(
+				mockObjectId,
+				false,
+				'referer',
+				'127.0.0.1'
+			);
+
+			expect(ieObject.rightsInfo).toBeUndefined();
 		});
 
 		it('returns an empty array if no representations were found', async () => {
