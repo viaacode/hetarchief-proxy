@@ -69,3 +69,5 @@ query-autocomplete.json
 # AI assistant files
 .claude/
 .github/
+
+response.json
