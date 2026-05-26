@@ -719,7 +719,6 @@ export class IeObjectsService {
 			return null;
 		}
 		const ie = ieObjectResponse.getIeObject?.[0];
-		const ieWithProviderPurl = ie as typeof ie & { ha_des_purl?: string | null };
 		const dctermsFormatResponse = ieObjectResponse.getDctermsFormat?.[0];
 		const isPartOfResponse = ieObjectResponse.getIsPartOf?.[0];
 		const hasCarrierResponse = ieObjectResponse.getHasCarrier?.[0];
@@ -870,7 +869,8 @@ export class IeObjectsService {
 			numberOfPages: ie?.schema_number_of_pages,
 			pageNumber: ie?.schema_position,
 			meemooLocalId: meemooLocalIdResponse?.map((item) => item?.meemoo_local_id).join(', '),
-			providerPurl: ieWithProviderPurl?.ha_des_purl,
+			// TODO ARC-3604/ARC-3652: Restore providerPurl mapping once graph.intellectual_entity.ha_des_purl is available in Hasura.
+			providerPurl: undefined,
 			collectionName: parentCollectionResponse?.[0]?.collection?.schema_name,
 			collectionId: parentCollectionResponse?.[0]?.collection?.id,
 			issueNumber: ie?.schema_issue_number,

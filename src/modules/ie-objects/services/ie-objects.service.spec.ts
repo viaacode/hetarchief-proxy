@@ -311,8 +311,6 @@ describe('ieObjectsService', () => {
 					group: mockIeObjectRightsInfo.reuseCategoryGroup,
 				},
 			};
-			(objectIeMock.getIeObject[0] as any).ha_des_purl =
-				'https://archief.ieper.be/object/086350m40w';
 			mockDataService.execute.mockResolvedValueOnce(objectIeMock);
 
 			// Mock the parent object
@@ -332,7 +330,8 @@ describe('ieObjectsService', () => {
 			// Validate the object
 			expect(ieObject.schemaIdentifier).toEqual(mockObjectSchemaIdentifier);
 			expect(ieObject.maintainerId).toEqual(mockIeObject2Metadata.schemaMaintainer.org_identifier);
-			expect(ieObject.providerPurl).toEqual('https://archief.ieper.be/object/086350m40w');
+			// TODO ARC-3604/ARC-3652: Restore this assertion once ha_des_purl is available in Hasura.
+			expect(ieObject.providerPurl).toBeUndefined();
 			expect(ieObject.copyrightHolder).toEqual(
 				mockIeObject2.getSchemaCopyrightHolder
 					.map((item) => item.schema_copyright_holder)

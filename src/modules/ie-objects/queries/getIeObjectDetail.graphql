@@ -13,7 +13,6 @@ query getIeObjectDetail($ieObjectId: String!) {
 		schema_credit_text
 		schema_copyright_notice
 		schema_abstract
-		ha_des_purl
 		bibframe_edition
 		ebucore_synopsis
 		schema_number_of_pages: ha_des_number_of_pages
