@@ -24,6 +24,9 @@ import { Locale } from '~shared/types/types';
 export const mockIeObjectRightsInfo = {
 	reuseLabel: '© VRT',
 	reuseCategoryUrl: 'https://rightsstatements.org/page/InC/1.0/',
+	reuseCategoryId: 'https://rightsstatements.org/page/InC/1.0/',
+	reuseCategoryLabel: 'Auteursrechtelijk beschermd',
+	reuseCategoryGroup: 'Auteursrecht',
 	licenseDistributor: 'VRT',
 } as const;
 
@@ -80,6 +83,7 @@ export const mockIeObject1: Readonly<IeObject> = {
 	dateCreated: '[2020-09-01]',
 	meemooOriginalCp: null,
 	meemooLocalId: null,
+	providerPurl: null,
 	ebucoreObjectType: null,
 	meemooDescriptionCast: null,
 	pages: [],
@@ -111,6 +115,7 @@ export const mockIeObjectWithMetadataSetLTD: Readonly<Partial<IeObject>> = {
 	schemaIdentifier: '8911p09j1g',
 	iri: 'https://data-int.hetarchief.be/id/entity/8911p09j1g',
 	meemooLocalId: null,
+	providerPurl: null,
 	maintainerId: 'OR-rf5kf25',
 	maintainerName: 'vrt',
 	maintainerSlug: 'vrt',
@@ -171,6 +176,7 @@ export const mockIeObjectWithMetadataSetALL: Readonly<Partial<IeObject>> = {
 	schemaIdentifier: '8911p09j1g',
 	iri: 'https://data-int.hetarchief.be/id/entity/8911p09j1g',
 	meemooLocalId: null,
+	providerPurl: null,
 	maintainerId: 'OR-zp3w03v',
 	maintainerName: 'vrt',
 	maintainerSlug: 'vrt',
@@ -255,6 +261,7 @@ export const mockIeObjectWithMetadataSetALLWithEssence: Readonly<Partial<IeObjec
 	schemaIdentifier: '8911p09j1g',
 	iri: 'https://data-int.hetarchief.be/id/entity/8911p09j1g',
 	meemooLocalId: null,
+	providerPurl: null,
 	meemooMediaObjectId: '49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c',
 	premisIdentifier: [{ premisid: 'WP00178829' }],
 	maintainerId: 'OR-rf5kf25',
@@ -327,6 +334,7 @@ export const mockIeObjectLimitedInFolder: Readonly<Partial<IeObject>> = {
 	schemaIdentifier: '8911p09j1g',
 	iri: 'https://data-int.hetarchief.be/id/entity/8911p09j1g',
 	meemooLocalId: null,
+	providerPurl: null,
 	maintainerId: 'OR-rf5kf25',
 	maintainerName: 'vrt',
 	maintainerSlug: 'vrt',
@@ -407,6 +415,7 @@ export const mockIeObjectDefaultLimitedMetadata: Readonly<Partial<IeObject>> = {
 	dctermsFormat: IeObjectType.VIDEO,
 	datePublished: '2020-09-01',
 	meemooLocalId: null,
+	providerPurl: null,
 	premisIdentifier: [
 		{
 			premisid: 'WP00178829',

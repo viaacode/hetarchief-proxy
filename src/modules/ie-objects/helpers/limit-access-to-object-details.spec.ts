@@ -15,6 +15,28 @@ import { describe, expect, it } from 'vitest';
 import { GroupId } from '~modules/users/types';
 
 describe('Limit access to object details', () => {
+	it.each([
+		IeObjectLicense.PUBLIEK_METADATA_LTD,
+		IeObjectLicense.PUBLIEK_METADATA_ALL,
+		IeObjectLicense.PUBLIEK_CONTENT,
+	])('keeps providerPurl for %s access', (license) => {
+		const limitedAccessIeObject = limitAccessToObjectDetails(
+			{
+				...mockIeObject1,
+				licenses: [license],
+				providerPurl: 'https://provider.example/object/8911p09j1g',
+			},
+			{
+				...mockUserInfo,
+				groupId: undefined, // anonymous
+			}
+		);
+
+		expect(limitedAccessIeObject?.providerPurl).toEqual(
+			'https://provider.example/object/8911p09j1g'
+		);
+	});
+
 	// INT - ARC2.0: test cases voor licenties en gebruikersgroepen
 	// https://docs.google.com/document/d/1Ejqag9Do7QngIBp2nj6sY0M1dYqO4Dh9ZFw0W3Vuwow/edit
 	it('Test case 1 - user sees metadataset all on detail page', () => {
@@ -710,13 +732,13 @@ describe('Limit access to object details', () => {
 		);
 		expect(result).not.toBeNull();
 		expect(result?.name).toBeDefined();
-	expect(result?.thumbnailUrl).toBeUndefined();
-	expect(result?.pages).toBeUndefined();
-	expect((result as any)?.rightsInfo).toBeUndefined();
-});
+		expect(result?.thumbnailUrl).toBeUndefined();
+		expect(result?.pages).toBeUndefined();
+		expect((result as any)?.rightsInfo).toBeUndefined();
+	});
 
-it('PUBLIC AV with rights info (PUBLIEK_CONTENT) — anonymous user sees rights info with essence', () => {
-	const rightsInfo = {
+	it('PUBLIC AV with rights info (PUBLIEK_CONTENT) — anonymous user sees rights info with essence', () => {
+		const rightsInfo = {
 			reuseLabel: 'CC0',
 			reuseCategoryUrl: 'https://creativecommons.org/publicdomain/zero/1.0/',
 			licenseDistributor: 'VRT',
@@ -763,8 +785,8 @@ it('PUBLIC AV with rights info (PUBLIEK_CONTENT) — anonymous user sees rights 
 			user
 		);
 
-	expect(result?.name).toBeDefined();
-	expect(result?.thumbnailUrl).toBeUndefined();
-	expect(result?.rightsInfo).toBeUndefined();
-});
+		expect(result?.name).toBeDefined();
+		expect(result?.thumbnailUrl).toBeUndefined();
+		expect(result?.rightsInfo).toBeUndefined();
+	});
 });

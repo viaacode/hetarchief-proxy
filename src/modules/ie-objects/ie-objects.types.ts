@@ -123,8 +123,12 @@ export interface IsPartOfCollection {
 
 export interface IeObjectRightsInfo {
 	reuseLabel: string;
-	reuseCategoryUrl: string;
-	licenseDistributor?: string;
+	reuseCategoryUrl?: string | null;
+	reuseCategoryId?: string | null;
+	reuseCategoryLabel?: string | null;
+	reuseCategoryGroup?: string | null;
+	licenseDistributor?: string | null;
+	broadcastingOrganization?: string | null;
 }
 
 export enum IeObjectType {
@@ -187,6 +191,7 @@ export interface IeObject {
 	maintainerDescription?: string;
 	maintainerSiteUrl?: string;
 	meemooLocalId?: string;
+	providerPurl?: string | null;
 	meemooOriginalCp?: string;
 	durationInSeconds?: number;
 	copyrightNotice?: string;

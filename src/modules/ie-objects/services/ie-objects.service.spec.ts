@@ -305,6 +305,11 @@ describe('ieObjectsService', () => {
 				reuse_label: mockIeObjectRightsInfo.reuseLabel,
 				reuse_category_id: mockIeObjectRightsInfo.reuseCategoryUrl,
 				ha_des_license_distributor: mockIeObjectRightsInfo.licenseDistributor,
+				reuse_category: {
+					id: mockIeObjectRightsInfo.reuseCategoryId,
+					label: mockIeObjectRightsInfo.reuseCategoryLabel,
+					group: mockIeObjectRightsInfo.reuseCategoryGroup,
+				},
 			};
 			mockDataService.execute.mockResolvedValueOnce(objectIeMock);
 
@@ -325,6 +330,8 @@ describe('ieObjectsService', () => {
 			// Validate the object
 			expect(ieObject.schemaIdentifier).toEqual(mockObjectSchemaIdentifier);
 			expect(ieObject.maintainerId).toEqual(mockIeObject2Metadata.schemaMaintainer.org_identifier);
+			// TODO ARC-3604/ARC-3652: Restore this assertion once ha_des_purl is available in Hasura.
+			expect(ieObject.providerPurl).toBeUndefined();
 			expect(ieObject.copyrightHolder).toEqual(
 				mockIeObject2.getSchemaCopyrightHolder
 					.map((item) => item.schema_copyright_holder)
@@ -343,6 +350,11 @@ describe('ieObjectsService', () => {
 				reuse_label: 'CC0',
 				reuse_category_id: 'https://creativecommons.org/publicdomain/zero/1.0/',
 				ha_des_license_distributor: 'VRT',
+				reuse_category: {
+					id: 'https://creativecommons.org/publicdomain/zero/1.0/',
+					label: 'CC0',
+					group: 'Publiek domein',
+				},
 			};
 
 			mockDataService.execute.mockResolvedValueOnce(objectIeMock);
@@ -358,6 +370,9 @@ describe('ieObjectsService', () => {
 			expect(ieObject.rightsInfo).toEqual({
 				reuseLabel: 'CC0',
 				reuseCategoryUrl: 'https://creativecommons.org/publicdomain/zero/1.0/',
+				reuseCategoryId: 'https://creativecommons.org/publicdomain/zero/1.0/',
+				reuseCategoryLabel: 'CC0',
+				reuseCategoryGroup: 'Publiek domein',
 				licenseDistributor: 'VRT',
 			});
 		});

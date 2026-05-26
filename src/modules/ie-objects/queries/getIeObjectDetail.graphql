@@ -21,6 +21,11 @@ query getIeObjectDetail($ieObjectId: String!) {
 			reuse_label
 			reuse_category_id
 			ha_des_license_distributor
+			reuse_category {
+				id
+				label
+				group
+			}
 		}
 		schemaMaintainer {
 			org_identifier
