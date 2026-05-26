@@ -753,6 +753,7 @@ export class IeObjectsService {
 		const shouldExposeRightsInfo =
 			IE_OBJECT_AV_TYPES.includes(dctermsFormat) &&
 			(licenses.includes(IeObjectLicense.PUBLIEK_CONTENT) ||
+				licenses.includes(IeObjectLicense.INTRA_CP_CONTENT) ||
 				licenses.includes(IeObjectLicense.BEZOEKERTOOL_CONTENT));
 		const rights = shouldExposeRightsInfo ? ie?.rights : undefined;
 		let thumbnailUrl = schemaThumbnailUrlResponse?.schema_thumbnail_url?.[0];

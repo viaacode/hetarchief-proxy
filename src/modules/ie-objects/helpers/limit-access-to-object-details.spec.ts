@@ -764,6 +764,35 @@ describe('Limit access to object details', () => {
 		expect(result?.rightsInfo).toEqual(rightsInfo);
 	});
 
+	it('INTRA_CP AV with rights info — key user sees rights info with essence', () => {
+		const rightsInfo = {
+			reuseLabel: 'Auteursrechtelijk beschermd',
+			reuseCategoryUrl: 'https://rightsstatements.org/page/InC/1.0/',
+			licenseDistributor: 'ATV',
+		};
+		const result = limitAccessToObjectDetails(
+			{
+				...mockIeObject1,
+				maintainerId: 'OR-mw28d4m',
+				sector: IeObjectSector.REGIONAL,
+				licenses: [IeObjectLicense.INTRA_CP_CONTENT],
+				rightsInfo,
+			},
+			{
+				...mockUserInfo,
+				groupId: GroupId.CP_ADMIN,
+				isKeyUser: true,
+				sector: IeObjectSector.REGIONAL,
+				maintainerId: 'OR-mw28d4m',
+				accessibleVisitorSpaceIds: [],
+				accessibleObjectIdsThroughFolders: [],
+			}
+		);
+
+		expect(result?.thumbnailUrl).toBeDefined();
+		expect(result?.rightsInfo).toEqual(rightsInfo);
+	});
+
 	it('METADATA-ONLY AV with rights info — anonymous user does not see rights info', () => {
 		const user: LimitAccessUserInfo = {
 			...mockUserInfo,
