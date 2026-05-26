@@ -311,8 +311,6 @@ describe('ieObjectsService', () => {
 					group: mockIeObjectRightsInfo.reuseCategoryGroup,
 				},
 			};
-			(objectIeMock.getIeObject[0] as any).ha_des_purl =
-				'https://archief.ieper.be/object/086350m40w';
 			mockDataService.execute.mockResolvedValueOnce(objectIeMock);
 
 			// Mock the parent object
@@ -332,7 +330,8 @@ describe('ieObjectsService', () => {
 			// Validate the object
 			expect(ieObject.schemaIdentifier).toEqual(mockObjectSchemaIdentifier);
 			expect(ieObject.maintainerId).toEqual(mockIeObject2Metadata.schemaMaintainer.org_identifier);
-			expect(ieObject.providerPurl).toEqual('https://archief.ieper.be/object/086350m40w');
+			// TODO ARC-3604/ARC-3652: Restore this assertion once ha_des_purl is available in Hasura.
+			expect(ieObject.providerPurl).toBeUndefined();
 			expect(ieObject.copyrightHolder).toEqual(
 				mockIeObject2.getSchemaCopyrightHolder
 					.map((item) => item.schema_copyright_holder)
@@ -375,6 +374,44 @@ describe('ieObjectsService', () => {
 				reuseCategoryLabel: 'CC0',
 				reuseCategoryGroup: 'Publiek domein',
 				licenseDistributor: 'VRT',
+			});
+		});
+
+		it('maps rights info from graph.rights for intra-CP AV content', async () => {
+			const objectIeMock = cloneDeep(mockIeObject2);
+			objectIeMock.getSchemaLicense = [
+				{
+					schema_license: IeObjectLicense.INTRA_CP_CONTENT,
+				},
+			];
+			(objectIeMock.getIeObject[0] as any).rights = {
+				reuse_label: 'Auteursrechtelijk beschermd',
+				reuse_category_id: 'https://rightsstatements.org/page/InC/1.0/',
+				ha_des_license_distributor: 'ATV',
+				reuse_category: {
+					id: 'https://rightsstatements.org/page/InC/1.0/',
+					label: 'Auteursrechtelijk beschermd',
+					group: 'Auteursrecht',
+				},
+			};
+
+			mockDataService.execute.mockResolvedValueOnce(objectIeMock);
+			mockDataService.execute.mockResolvedValueOnce(mockIeObjectEmpty);
+
+			const ieObject = await ieObjectsService.findByIeObjectId(
+				mockObjectId,
+				false,
+				'referer',
+				'127.0.0.1'
+			);
+
+			expect(ieObject.rightsInfo).toEqual({
+				reuseLabel: 'Auteursrechtelijk beschermd',
+				reuseCategoryUrl: 'https://rightsstatements.org/page/InC/1.0/',
+				reuseCategoryId: 'https://rightsstatements.org/page/InC/1.0/',
+				reuseCategoryLabel: 'Auteursrechtelijk beschermd',
+				reuseCategoryGroup: 'Auteursrecht',
+				licenseDistributor: 'ATV',
 			});
 		});
 

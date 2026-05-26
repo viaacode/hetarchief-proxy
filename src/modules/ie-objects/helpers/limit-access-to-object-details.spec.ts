@@ -28,7 +28,7 @@ describe('Limit access to object details', () => {
 			},
 			{
 				...mockUserInfo,
-				groupId: GroupId.ANONYMOUS,
+				groupId: undefined, // anonymous
 			}
 		);
 
@@ -732,13 +732,13 @@ describe('Limit access to object details', () => {
 		);
 		expect(result).not.toBeNull();
 		expect(result?.name).toBeDefined();
-	expect(result?.thumbnailUrl).toBeUndefined();
-	expect(result?.pages).toBeUndefined();
-	expect((result as any)?.rightsInfo).toBeUndefined();
-});
+		expect(result?.thumbnailUrl).toBeUndefined();
+		expect(result?.pages).toBeUndefined();
+		expect((result as any)?.rightsInfo).toBeUndefined();
+	});
 
-it('PUBLIC AV with rights info (PUBLIEK_CONTENT) — anonymous user sees rights info with essence', () => {
-	const rightsInfo = {
+	it('PUBLIC AV with rights info (PUBLIEK_CONTENT) — anonymous user sees rights info with essence', () => {
+		const rightsInfo = {
 			reuseLabel: 'CC0',
 			reuseCategoryUrl: 'https://creativecommons.org/publicdomain/zero/1.0/',
 			licenseDistributor: 'VRT',
@@ -758,6 +758,35 @@ it('PUBLIC AV with rights info (PUBLIEK_CONTENT) — anonymous user sees rights 
 				rightsInfo,
 			},
 			user
+		);
+
+		expect(result?.thumbnailUrl).toBeDefined();
+		expect(result?.rightsInfo).toEqual(rightsInfo);
+	});
+
+	it('INTRA_CP AV with rights info — key user sees rights info with essence', () => {
+		const rightsInfo = {
+			reuseLabel: 'Auteursrechtelijk beschermd',
+			reuseCategoryUrl: 'https://rightsstatements.org/page/InC/1.0/',
+			licenseDistributor: 'ATV',
+		};
+		const result = limitAccessToObjectDetails(
+			{
+				...mockIeObject1,
+				maintainerId: 'OR-mw28d4m',
+				sector: IeObjectSector.REGIONAL,
+				licenses: [IeObjectLicense.INTRA_CP_CONTENT],
+				rightsInfo,
+			},
+			{
+				...mockUserInfo,
+				groupId: GroupId.CP_ADMIN,
+				isKeyUser: true,
+				sector: IeObjectSector.REGIONAL,
+				maintainerId: 'OR-mw28d4m',
+				accessibleVisitorSpaceIds: [],
+				accessibleObjectIdsThroughFolders: [],
+			}
 		);
 
 		expect(result?.thumbnailUrl).toBeDefined();
@@ -785,8 +814,8 @@ it('PUBLIC AV with rights info (PUBLIEK_CONTENT) — anonymous user sees rights 
 			user
 		);
 
-	expect(result?.name).toBeDefined();
-	expect(result?.thumbnailUrl).toBeUndefined();
-	expect(result?.rightsInfo).toBeUndefined();
-});
+		expect(result?.name).toBeDefined();
+		expect(result?.thumbnailUrl).toBeUndefined();
+		expect(result?.rightsInfo).toBeUndefined();
+	});
 });

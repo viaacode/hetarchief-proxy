@@ -4,13 +4,7 @@ import { retry } from 'async';
 
 import { DataService, PlayerTicketService } from '@meemoo/admin-core-api';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import {
-	Inject,
-	Injectable,
-	InternalServerErrorException,
-	Logger,
-	NotFoundException,
-} from '@nestjs/common';
+import { Inject, Injectable, InternalServerErrorException, Logger, NotFoundException, } from '@nestjs/common';
 
 import { ConfigService } from '@nestjs/config';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
@@ -46,10 +40,10 @@ import {
 	type IeObjectPages,
 	type IeObjectRepresentation,
 	type IeObjectSector,
-	IeObjectType,
 	type IeObjectsSitemap,
 	type IeObjectsVisitorSpaceInfo,
 	type IeObjectsWithAggregations,
+	IeObjectType,
 	type IsPartOfKey,
 	type Mention,
 	type RelatedIeObject,
@@ -99,26 +93,20 @@ import {
 	ElasticsearchField,
 	IeObjectsSearchFilterField,
 	MAX_COUNT_SEARCH_RESULTS,
-	ReusabilityCategory,
 	REUSABILITY_FILTER_VALUES,
-	RightsLabel,
+	ReusabilityCategory,
 	RIGHTS_LABEL_FILTER_VALUES,
+	RightsLabel,
 } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
 import { AND } from '~modules/ie-objects/elasticsearch/queryBuilder.helpers';
-import {
-	type SearchTermParseResult,
-	convertStringToSearchTerms,
-} from '~modules/ie-objects/helpers/convert-string-to-search-terms';
-import {
-	AUTOCOMPLETE_FIELD_TO_ES_FIELD_NAME,
-	IE_OBJECT_AV_TYPES,
-} from '~modules/ie-objects/ie-objects.conts';
+import { convertStringToSearchTerms, type SearchTermParseResult, } from '~modules/ie-objects/helpers/convert-string-to-search-terms';
+import { AUTOCOMPLETE_FIELD_TO_ES_FIELD_NAME, IE_OBJECT_AV_TYPES, } from '~modules/ie-objects/ie-objects.conts';
 import {
 	CACHE_KEY_IE_OBJECT_REUSABILITY_RIGHTS_IRIS,
-	CACHE_KEY_PREFIX_IE_OBJECTS_SEARCH,
 	CACHE_KEY_PREFIX_IE_OBJECT_DETAIL,
 	CACHE_KEY_PREFIX_IE_OBJECT_PID_TO_ID,
 	CACHE_KEY_PREFIX_IE_OBJECT_THUMBNAIL,
+	CACHE_KEY_PREFIX_IE_OBJECTS_SEARCH,
 } from '~modules/ie-objects/services/ie-objects.service.consts';
 import {
 	type DbFile,
@@ -366,6 +354,10 @@ export class IeObjectsService {
 				);
 			} else {
 				objectResponse = await this.executeQuery(esIndex, esQuery);
+			}
+
+			if (inputQuery.size > 0 && process.env.NODE_ENV === 'local') {
+				fs.writeFile('response.json', JSON.stringify(objectResponse, null, 2));
 			}
 
 			if (this.configService.get('ELASTICSEARCH_LOG_QUERIES')) {
@@ -719,7 +711,6 @@ export class IeObjectsService {
 			return null;
 		}
 		const ie = ieObjectResponse.getIeObject?.[0];
-		const ieWithProviderPurl = ie as typeof ie & { ha_des_purl?: string | null };
 		const dctermsFormatResponse = ieObjectResponse.getDctermsFormat?.[0];
 		const isPartOfResponse = ieObjectResponse.getIsPartOf?.[0];
 		const hasCarrierResponse = ieObjectResponse.getHasCarrier?.[0];
@@ -762,6 +753,7 @@ export class IeObjectsService {
 		const shouldExposeRightsInfo =
 			IE_OBJECT_AV_TYPES.includes(dctermsFormat) &&
 			(licenses.includes(IeObjectLicense.PUBLIEK_CONTENT) ||
+				licenses.includes(IeObjectLicense.INTRA_CP_CONTENT) ||
 				licenses.includes(IeObjectLicense.BEZOEKERTOOL_CONTENT));
 		const rights = shouldExposeRightsInfo ? ie?.rights : undefined;
 		let thumbnailUrl = schemaThumbnailUrlResponse?.schema_thumbnail_url?.[0];
@@ -870,7 +862,8 @@ export class IeObjectsService {
 			numberOfPages: ie?.schema_number_of_pages,
 			pageNumber: ie?.schema_position,
 			meemooLocalId: meemooLocalIdResponse?.map((item) => item?.meemoo_local_id).join(', '),
-			providerPurl: ieWithProviderPurl?.ha_des_purl,
+			// TODO ARC-3604/ARC-3652: Restore providerPurl mapping once graph.intellectual_entity.ha_des_purl is available in Hasura.
+			providerPurl: undefined,
 			collectionName: parentCollectionResponse?.[0]?.collection?.schema_name,
 			collectionId: parentCollectionResponse?.[0]?.collection?.id,
 			issueNumber: ie?.schema_issue_number,
