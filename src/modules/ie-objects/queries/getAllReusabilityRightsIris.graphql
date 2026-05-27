@@ -1,0 +1,6 @@
+query getAllReusabilityRightsIris {
+	graph_rights {
+		intellectual_entity_id
+		reuse_category_id
+	}
+}
