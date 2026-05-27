@@ -92,6 +92,11 @@ import {
 	GetVideoFileByRepresentationIdDocument,
 	GetVideoFileByRepresentationIdQuery,
 	GetVideoFileByRepresentationIdQueryVariables,
+	GetAllReusabilityRightsIrisDocument,
+	type GetAllReusabilityRightsIrisQuery,
+	GetReusabilityRightsIrisDocument,
+	type GetReusabilityRightsIrisQuery,
+	type GetReusabilityRightsIrisQueryVariables,
 	Lookup_Maintainer_Visitor_Space_Status_Enum as VisitorSpaceStatus,
 } from '~generated/graphql-db-types-hetarchief';
 import {
@@ -143,34 +148,6 @@ import { checkRequiredEnvs } from '~shared/helpers/env-check';
 
 checkRequiredEnvs(['ELASTICSEARCH_URL', 'IE_OBJECT_ID_PREFIX']);
 
-type GetRightsLabelIrisQuery = {
-	graph_rights: Array<{ intellectual_entity_id: string }>;
-};
-
-type GetRightsLabelIrisQueryVariables = {
-	categoryIds: string[];
-};
-
-type GetAllReusabilityRightsIrisQuery = {
-	graph_rights: Array<{ intellectual_entity_id: string; reuse_category_id: string }>;
-};
-
-const GET_RIGHTS_LABEL_IRIS_QUERY = `
-	query getRightsLabelIris($categoryIds: [String!]!) {
-		graph_rights(where: { reuse_category_id: { _in: $categoryIds } }) {
-			intellectual_entity_id
-		}
-	}
-`;
-
-const GET_ALL_REUSABILITY_RIGHTS_IRIS_QUERY = `
-	query getAllReusabilityRightsIris {
-		graph_rights {
-			intellectual_entity_id
-			reuse_category_id
-		}
-	}
-`;
 
 @Injectable()
 export class IeObjectsService {
@@ -280,7 +257,7 @@ export class IeObjectsService {
 			CACHE_KEY_IE_OBJECT_REUSABILITY_RIGHTS_IRIS,
 			async () => {
 				const response = await this.dataService.execute<GetAllReusabilityRightsIrisQuery>(
-					GET_ALL_REUSABILITY_RIGHTS_IRIS_QUERY
+					GetAllReusabilityRightsIrisDocument
 				);
 
 				return response.graph_rights;
@@ -309,9 +286,9 @@ export class IeObjectsService {
 		}
 
 		const response = await this.dataService.execute<
-			GetRightsLabelIrisQuery,
-			GetRightsLabelIrisQueryVariables
-		>(GET_RIGHTS_LABEL_IRIS_QUERY, { categoryIds });
+			GetReusabilityRightsIrisQuery,
+			GetReusabilityRightsIrisQueryVariables
+		>(GetReusabilityRightsIrisDocument, { categoryIds });
 
 		return uniq(response.graph_rights.map((rights) => rights.intellectual_entity_id));
 	}
