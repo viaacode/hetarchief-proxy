@@ -148,7 +148,6 @@ import { checkRequiredEnvs } from '~shared/helpers/env-check';
 
 checkRequiredEnvs(['ELASTICSEARCH_URL', 'IE_OBJECT_ID_PREFIX']);
 
-
 @Injectable()
 export class IeObjectsService {
 	private logger: Logger = new Logger(IeObjectsService.name, { timestamp: true });

@@ -33,13 +33,13 @@ import {
 	UpdateMaterialRequestStatusDto,
 } from '../dto/material-requests.dto';
 import {
+	getAdditionEventDate,
+	getLastStatusEventOfType,
+	getStatusEvent,
 	MAP_MATERIAL_REQUEST_STATUS_TO_EVENT_TYPE,
 	MAP_MATERIAL_REQUEST_STATUS_TO_NOTIFICATION_TYPE,
 	MAP_NOTIFICATION_TYPE_TO_EMAIL_TEMPLATE,
 	ORDER_PROP_TO_DB_PROP,
-	getAdditionEventDate,
-	getLastStatusEventOfType,
-	getStatusEvent,
 } from '../material-requests.consts';
 import {
 	GqlMaterialRequest,
@@ -121,8 +121,8 @@ import {
 	IeObjectAccessThrough,
 	IeObjectLicense,
 	type IeObjectSector,
-	IeObjectType,
 	IeObjectsVisitorSpaceInfo,
+	IeObjectType,
 	SimpleIeObjectType,
 } from '~modules/ie-objects/ie-objects.types';
 import type { Organisation } from '~modules/organisations/organisations.types';
@@ -457,6 +457,17 @@ export class MaterialRequestsService {
 		referer: string,
 		ip: string
 	): Promise<MaterialRequest> {
+		// Should be de org_identifier of an organisation when the user is linked to an organisation
+		const organisationId =
+			createMaterialRequestDto?.organisationId || user.getOrganisationId() || null;
+
+		// Filled in by the user when said user does not have an organisation linked in the db
+		let organisationName = createMaterialRequestDto?.organisationName || null;
+
+		// Always prefer the linked organisation over the organisation name
+		if (organisationId) {
+			organisationName = null;
+		}
 		const variables: InsertMaterialRequestMutationVariables = {
 			newMaterialRequest: {
 				ie_object_id: createMaterialRequestDto.objectId,
@@ -466,10 +477,8 @@ export class MaterialRequestsService {
 				created_at: new Date().toISOString(),
 				updated_at: new Date().toISOString(),
 				is_pending: true,
-				// Filled in by the user when said user does not have an organisation
-				organisation_name: createMaterialRequestDto?.organisationName,
-				// Should be de org_identifier of an organisation when the user is linked to an organisation
-				organisation_id: createMaterialRequestDto?.organisationId || user.getOrganisationId(),
+				organisation_name: organisationName,
+				organisation_id: organisationId,
 				requester_capacity:
 					createMaterialRequestDto?.requesterCapacity ||
 					Lookup_App_Material_Request_Requester_Capacity_Enum.Other,
@@ -1242,18 +1251,17 @@ export class MaterialRequestsService {
 		| 'requesterOrganisationVAT'
 		| 'requesterOrganisationSector'
 	> {
-		if (graphQlMaterialRequest.organisation) {
+		const org = graphQlMaterialRequest.organisation;
+		if (org) {
+			const address = org.schemaPostalAddresses?.[0];
 			return {
-				requesterOrganisationId: graphQlMaterialRequest.organisation.org_identifier,
-				requesterOrganisationName: graphQlMaterialRequest.organisation.skos_pref_label,
-				requesterOrganisationAddress:
-					graphQlMaterialRequest.organisation.schemaPostalAddresses?.[0]?.schema_street_address,
-				requesterOrganisationPostalCode:
-					graphQlMaterialRequest.organisation.schemaPostalAddresses?.[0]?.schema_postal_code,
-				requesterOrganisationLocality:
-					graphQlMaterialRequest.organisation.schemaPostalAddresses?.[0]?.schema_address_locality,
-				requesterOrganisationVAT: graphQlMaterialRequest.organisation.schema_vat_id,
-				requesterOrganisationSector: graphQlMaterialRequest.organisation.ha_org_sector,
+				requesterOrganisationId: org.org_identifier,
+				requesterOrganisationName: org.skos_pref_label,
+				requesterOrganisationAddress: address?.schema_street_address,
+				requesterOrganisationPostalCode: address?.schema_postal_code,
+				requesterOrganisationLocality: address?.schema_address_locality,
+				requesterOrganisationVAT: org.schema_vat_id,
+				requesterOrganisationSector: org.ha_org_sector,
 			};
 		}
 
