@@ -4,30 +4,10 @@ import { ConfigService } from '@nestjs/config';
 import { Test, type TestingModule } from '@nestjs/testing';
 import type { Cache } from 'cache-manager';
 import { cloneDeep } from 'lodash';
-import {
-	type MockInstance,
-	afterAll,
-	afterEach,
-	beforeAll,
-	describe,
-	expect,
-	it,
-	vi,
-} from 'vitest';
+import { afterAll, afterEach, beforeAll, describe, expect, it, type MockInstance, vi, } from 'vitest';
 
-import {
-	IeObjectsSearchFilterField,
-	Operator,
-	ReusabilityCategory,
-	RightsLabel,
-} from '../elasticsearch/elasticsearch.consts';
-import {
-	AutocompleteField,
-	type ElasticsearchResponse,
-	IeObjectLicense,
-	IeObjectRepresentation,
-	IeObjectType,
-} from '../ie-objects.types';
+import { IeObjectsSearchFilterField, Operator, ReusabilityCategory, RightsLabel, } from '../elasticsearch/elasticsearch.consts';
+import { AutocompleteField, type ElasticsearchResponse, IeObjectLicense, IeObjectRepresentation, IeObjectType, } from '../ie-objects.types';
 import {
 	mockChildrenIeObjects,
 	mockGqlIeObjectFindByFolderId,
@@ -46,10 +26,7 @@ import {
 
 import { IeObjectsService } from './ie-objects.service';
 
-import type {
-	FindIeObjectsForSitemapQuery,
-	GetIeObjectDetailQuery,
-} from '~generated/graphql-db-types-hetarchief';
+import type { FindIeObjectsForSitemapQuery, GetIeObjectDetailQuery, } from '~generated/graphql-db-types-hetarchief';
 import {
 	cleanupRepresentations1,
 	cleanupRepresentations2,
@@ -190,7 +167,7 @@ describe('ieObjectsService', () => {
 				expect.any(Function),
 				86400
 			);
-			expect(mockDataService.execute).toHaveBeenCalledWith(expect.any(String));
+			expect(mockDataService.execute).toHaveBeenCalledWith(expect.any(Object));
 			expect(result).toEqual([
 				'https://data-qas.hetarchief.be/id/entity/free',
 				'https://data-qas.hetarchief.be/id/entity/conditional',
@@ -199,7 +176,7 @@ describe('ieObjectsService', () => {
 	});
 
 	describe('getRightsLabelIris', () => {
-		it('fetches graph.rights IE ids for selected rights labels', async () => {
+		it('fetches graph.rights ids for selected rights labels', async () => {
 			mockDataService.execute.mockResolvedValueOnce({
 				graph_rights: [
 					{ intellectual_entity_id: 'https://data-qas.hetarchief.be/id/entity/public-domain' },
@@ -216,7 +193,7 @@ describe('ieObjectsService', () => {
 				},
 			]);
 
-			expect(mockDataService.execute).toHaveBeenCalledWith(expect.any(String), {
+			expect(mockDataService.execute).toHaveBeenCalledWith(expect.any(Object), {
 				categoryIds: expect.arrayContaining([
 					'https://creativecommons.org/public-domain/pdm/',
 					'https://creativecommons.org/publicdomain/zero/1.0/',
