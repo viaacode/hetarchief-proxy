@@ -46,10 +46,10 @@ import {
 	type IeObjectPages,
 	type IeObjectRepresentation,
 	type IeObjectSector,
+	IeObjectType,
 	type IeObjectsSitemap,
 	type IeObjectsVisitorSpaceInfo,
 	type IeObjectsWithAggregations,
-	IeObjectType,
 	type IsPartOfKey,
 	type Mention,
 	type RelatedIeObject,
@@ -62,6 +62,8 @@ import {
 	FindIeObjectsForSitemapDocument,
 	type FindIeObjectsForSitemapQuery,
 	type FindIeObjectsForSitemapQueryVariables,
+	GetAllReusabilityRightsIrisDocument,
+	type GetAllReusabilityRightsIrisQuery,
 	GetChildIeObjectsDocument,
 	type GetChildIeObjectsQuery,
 	type GetChildIeObjectsQueryVariables,
@@ -92,11 +94,6 @@ import {
 	GetVideoFileByRepresentationIdDocument,
 	GetVideoFileByRepresentationIdQuery,
 	GetVideoFileByRepresentationIdQueryVariables,
-	GetAllReusabilityRightsIrisDocument,
-	type GetAllReusabilityRightsIrisQuery,
-	GetReusabilityRightsIrisDocument,
-	type GetReusabilityRightsIrisQuery,
-	type GetReusabilityRightsIrisQueryVariables,
 	Lookup_Maintainer_Visitor_Space_Status_Enum as VisitorSpaceStatus,
 } from '~generated/graphql-db-types-hetarchief';
 import {
@@ -106,13 +103,11 @@ import {
 	MAX_COUNT_SEARCH_RESULTS,
 	REUSABILITY_FILTER_VALUES,
 	ReusabilityCategory,
-	RIGHTS_LABEL_FILTER_VALUES,
-	RightsLabel,
 } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
 import { AND } from '~modules/ie-objects/elasticsearch/queryBuilder.helpers';
 import {
-	convertStringToSearchTerms,
 	type SearchTermParseResult,
+	convertStringToSearchTerms,
 } from '~modules/ie-objects/helpers/convert-string-to-search-terms';
 import {
 	AUTOCOMPLETE_FIELD_TO_ES_FIELD_NAME,
@@ -120,10 +115,10 @@ import {
 } from '~modules/ie-objects/ie-objects.conts';
 import {
 	CACHE_KEY_IE_OBJECT_REUSABILITY_RIGHTS_IRIS,
+	CACHE_KEY_PREFIX_IE_OBJECTS_SEARCH,
 	CACHE_KEY_PREFIX_IE_OBJECT_DETAIL,
 	CACHE_KEY_PREFIX_IE_OBJECT_PID_TO_ID,
 	CACHE_KEY_PREFIX_IE_OBJECT_THUMBNAIL,
-	CACHE_KEY_PREFIX_IE_OBJECTS_SEARCH,
 } from '~modules/ie-objects/services/ie-objects.service.consts';
 import {
 	type DbFile,
@@ -194,17 +189,12 @@ export class IeObjectsService {
 			}
 		}
 
-		const reusabilityRightsIris = await this.getReusabilityRightsIris(inputQuery.filters);
-		const rightsLabelIris = await this.getRightsLabelIris(inputQuery.filters);
-
 		let esQuery: any;
 		try {
 			esQuery = QueryBuilder.build(inputQuery, {
 				user,
 				visitorSpaceInfo,
 				spacesIds,
-				reusabilityRightsIris,
-				rightsLabelIris,
 			});
 		} catch (err) {
 			/*
@@ -217,79 +207,9 @@ export class IeObjectsService {
 				user,
 				visitorSpaceInfo,
 				spacesIds,
-				reusabilityRightsIris,
-				rightsLabelIris,
 			});
 		}
 		return esQuery;
-	}
-
-	private async getReusabilityRightsIris(filters?: SearchFilter[]): Promise<string[]> {
-		const reusabilityFilter = filters?.find(
-			(filter) => filter.field === IeObjectsSearchFilterField.REUSABILITY
-		);
-		const categoryIds = uniq(
-			(reusabilityFilter?.multiValue || []).flatMap(
-				(category) =>
-					REUSABILITY_FILTER_VALUES[category as ReusabilityCategory]?.avReuseCategoryIds ?? []
-			)
-		);
-
-		if (!categoryIds.length) {
-			return [];
-		}
-
-		const categoryIdSet = new Set(categoryIds);
-		const allReusabilityRightsIris = await this.getAllReusabilityRightsIrisCached();
-
-		return uniq(
-			allReusabilityRightsIris
-				.filter((rights) => categoryIdSet.has(rights.reuse_category_id))
-				.map((rights) => rights.intellectual_entity_id)
-		);
-	}
-
-	private async getAllReusabilityRightsIrisCached(): Promise<
-		GetAllReusabilityRightsIrisQuery['graph_rights']
-	> {
-		return await this.cacheManager.wrap(
-			CACHE_KEY_IE_OBJECT_REUSABILITY_RIGHTS_IRIS,
-			async () => {
-				const response = await this.dataService.execute<GetAllReusabilityRightsIrisQuery>(
-					GetAllReusabilityRightsIrisDocument
-				);
-
-				return response.graph_rights;
-			},
-			// cache for 1 day
-			hoursToSeconds(24)
-		);
-	}
-
-	private async getRightsLabelIris(filters?: SearchFilter[]): Promise<string[]> {
-		const rightsFilter = filters?.find(
-			(filter) => filter.field === IeObjectsSearchFilterField.RIGHTS
-		);
-		const rightsValues = rightsFilter?.multiValue?.length
-			? rightsFilter.multiValue
-			: compact([rightsFilter?.value]);
-		const categoryIds = uniq(
-			rightsValues.flatMap(
-				(rightsLabel) =>
-					RIGHTS_LABEL_FILTER_VALUES[rightsLabel as RightsLabel]?.avReuseCategoryIds ?? []
-			)
-		);
-
-		if (!categoryIds.length) {
-			return [];
-		}
-
-		const response = await this.dataService.execute<
-			GetReusabilityRightsIrisQuery,
-			GetReusabilityRightsIrisQueryVariables
-		>(GetReusabilityRightsIrisDocument, { categoryIds });
-
-		return uniq(response.graph_rights.map((rights) => rights.intellectual_entity_id));
 	}
 
 	public async findAll(

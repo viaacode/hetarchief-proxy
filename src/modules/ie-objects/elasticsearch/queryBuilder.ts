@@ -1,6 +1,6 @@
 import { BadRequestException, InternalServerErrorException } from '@nestjs/common';
 import jsep from 'jsep';
-import { clamp, forEach, isArray, isEmpty, isNil, uniq } from 'lodash';
+import { clamp, compact, forEach, isArray, isEmpty, isNil, uniq } from 'lodash';
 
 import { IeObjectsQueryDto, SearchFilter } from '../dto/ie-objects.dto';
 import {
@@ -21,28 +21,28 @@ import {
 	IeObjectsSearchFilterField,
 	MAX_COUNT_SEARCH_RESULTS,
 	MAX_NUMBER_SEARCH_RESULTS,
-	MetadataAccessType,
 	MULTI_MATCH_FIELDS,
 	MULTI_MATCH_QUERY_MAPPING,
+	MetadataAccessType,
 	NEEDS_AGG_SUFFIX,
 	NEEDS_FILTER_SUFFIX,
 	NUMBER_OF_FILTER_OPTIONS_DEFAULT,
 	NUMBER_OF_OPTIONS_PER_AGGREGATE,
 	OCCURRENCE_TYPE,
-	Operator,
 	ORDER_MAPPINGS,
+	Operator,
 	OrderProperty,
 	type QueryBuilderInputInfo,
 	QueryType,
 	READABLE_TO_ELASTIC_FILTER_NAMES,
 	REUSABILITY_FILTER_VALUES,
-	ReusabilityCategory,
 	RIGHTS_LABEL_FILTER_VALUES,
+	ReusabilityCategory,
 	RightsLabel,
 	VALUE_OPERATORS,
 } from './elasticsearch.consts';
 
-import { AND, applyFilter, OR } from '~modules/ie-objects/elasticsearch/queryBuilder.helpers';
+import { AND, OR, applyFilter } from '~modules/ie-objects/elasticsearch/queryBuilder.helpers';
 import { GroupId, GroupName } from '~modules/users/types';
 import { PaginationHelper } from '~shared/helpers/pagination';
 import type { SortDirection } from '~shared/types';
@@ -655,26 +655,16 @@ export class QueryBuilder {
 		// while AV rights currently live in graph.rights and are added by IRI.
 		if (reusabilityFilter?.multiValue?.length) {
 			const rightsStatementUris = uniq(
-				reusabilityFilter.multiValue.flatMap(
-					(category) =>
-						REUSABILITY_FILTER_VALUES[category as ReusabilityCategory]
-							?.newspaperRightsStatementUris ?? []
-				)
+				reusabilityFilter.multiValue.flatMap((category) => {
+					return REUSABILITY_FILTER_VALUES[category as ReusabilityCategory] ?? [];
+				})
 			);
 			const reusabilityQueries = [
 				rightsStatementUris.length
 					? {
 							terms: {
-								_name: 'REUSABILITY_DCTERMS_RIGHTS_STATEMENT_FOR_NEWSPAPERS',
+								_name: 'REUSABILITY_DCTERMS_RIGHTS_STATEMENT',
 								dcterms_rights_statement: rightsStatementUris,
-							},
-						}
-					: null,
-				inputInfo.reusabilityRightsIris?.length
-					? {
-							terms: {
-								_name: 'REUSABILITY_GRAPH_RIGHTS_FOR_AV_OBJECTS',
-								[ElasticsearchField.iri]: inputInfo.reusabilityRightsIris,
 							},
 						}
 					: null,
@@ -693,10 +683,14 @@ export class QueryBuilder {
 				? rightsFilter.multiValue
 				: [rightsFilter.value as string];
 			const rightsStatementUris = uniq(
-				rightsValues.flatMap(
-					(rightsLabel) =>
-						RIGHTS_LABEL_FILTER_VALUES[rightsLabel as RightsLabel]?.newspaperRightsStatementUris ??
-						[]
+				compact(
+					rightsValues.flatMap((rightsLabel) => {
+						const newspaperRightsIris =
+							RIGHTS_LABEL_FILTER_VALUES[rightsLabel as RightsLabel]?.newspaperRightsStatementUris;
+						const avRightsIris =
+							RIGHTS_LABEL_FILTER_VALUES[rightsLabel as RightsLabel]?.avReuseCategoryIds;
+						return [...(newspaperRightsIris ?? []), ...(avRightsIris ?? [])];
+					})
 				)
 			);
 			const rightsQueries = [
@@ -705,14 +699,6 @@ export class QueryBuilder {
 							terms: {
 								_name: 'RIGHTS_DCTERMS_RIGHTS_STATEMENT',
 								dcterms_rights_statement: rightsStatementUris,
-							},
-						}
-					: null,
-				inputInfo.rightsLabelIris?.length
-					? {
-							terms: {
-								_name: 'RIGHTS_GRAPH_RIGHTS',
-								[ElasticsearchField.iri]: inputInfo.rightsLabelIris,
 							},
 						}
 					: null,
@@ -1013,7 +999,6 @@ export class QueryBuilder {
 						NUMBER_OF_FILTER_OPTIONS_DEFAULT,
 				},
 			};
-			// }
 		});
 		return aggs;
 	}

@@ -745,16 +745,12 @@ describe('QueryBuilder', () => {
 						{
 							field: IeObjectsSearchFilterField.RIGHTS,
 							operator: Operator.IS,
-							multiValue: [RightsLabel.PUBLIC_DOMAIN, RightsLabel.CC0],
+							multiValue: [RightsLabel.PUBLIC_DOMAIN_AUDIO_VIDEO, RightsLabel.CC0],
 						},
 					],
 				},
 				{
 					...mockInputInfo,
-					rightsLabelIris: [
-						'https://data-qas.hetarchief.be/id/entity/public-domain',
-						'https://data-qas.hetarchief.be/id/entity/cc0',
-					],
 				} as any
 			);
 			const queryString = JSON.stringify(queryObject);
@@ -799,7 +795,6 @@ describe('QueryBuilder', () => {
 				},
 				{
 					...mockInputInfo,
-					rightsLabelIris: ['https://data-qas.hetarchief.be/id/entity/in-copyright'],
 				} as any
 			);
 			const queryString = JSON.stringify(queryObject);

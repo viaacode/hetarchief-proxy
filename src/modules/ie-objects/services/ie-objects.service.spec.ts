@@ -4,10 +4,30 @@ import { ConfigService } from '@nestjs/config';
 import { Test, type TestingModule } from '@nestjs/testing';
 import type { Cache } from 'cache-manager';
 import { cloneDeep } from 'lodash';
-import { afterAll, afterEach, beforeAll, describe, expect, it, type MockInstance, vi, } from 'vitest';
+import {
+	type MockInstance,
+	afterAll,
+	afterEach,
+	beforeAll,
+	describe,
+	expect,
+	it,
+	vi,
+} from 'vitest';
 
-import { IeObjectsSearchFilterField, Operator, ReusabilityCategory, RightsLabel, } from '../elasticsearch/elasticsearch.consts';
-import { AutocompleteField, type ElasticsearchResponse, IeObjectLicense, IeObjectRepresentation, IeObjectType, } from '../ie-objects.types';
+import {
+	IeObjectsSearchFilterField,
+	Operator,
+	ReusabilityCategory,
+	RightsLabel,
+} from '../elasticsearch/elasticsearch.consts';
+import {
+	AutocompleteField,
+	type ElasticsearchResponse,
+	IeObjectLicense,
+	IeObjectRepresentation,
+	IeObjectType,
+} from '../ie-objects.types';
 import {
 	mockChildrenIeObjects,
 	mockGqlIeObjectFindByFolderId,
@@ -26,7 +46,10 @@ import {
 
 import { IeObjectsService } from './ie-objects.service';
 
-import type { FindIeObjectsForSitemapQuery, GetIeObjectDetailQuery, } from '~generated/graphql-db-types-hetarchief';
+import type {
+	FindIeObjectsForSitemapQuery,
+	GetIeObjectDetailQuery,
+} from '~generated/graphql-db-types-hetarchief';
 import {
 	cleanupRepresentations1,
 	cleanupRepresentations2,
@@ -189,7 +212,7 @@ describe('ieObjectsService', () => {
 				{
 					field: IeObjectsSearchFilterField.RIGHTS,
 					operator: Operator.IS,
-					multiValue: [RightsLabel.PUBLIC_DOMAIN, RightsLabel.CC0],
+					multiValue: [RightsLabel.PUBLIC_DOMAIN_AUDIO_VIDEO, RightsLabel.CC0],
 				},
 			]);
 

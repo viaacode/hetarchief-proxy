@@ -121,11 +121,6 @@ export interface QueryBuilderInputInfo {
 	user?: SessionUserEntity;
 	visitorSpaceInfo?: IeObjectsVisitorSpaceInfo;
 	spacesIds?: string[];
-	/**
-	 * These are the ids of the rights like they are present in the database table:
-	 */
-	reusabilityRightsIris?: string[];
-	rightsLabelIris?: string[];
 }
 
 export enum MetadataAccessType {
@@ -214,110 +209,99 @@ export enum ReusabilityCategory {
 	POSSIBLY_REUSABLE = 'possibly-reusable',
 }
 
-export const REUSABILITY_FILTER_VALUES: Record<
-	ReusabilityCategory,
-	{
-		avReuseCategoryIds: string[];
-		newspaperRightsStatementUris: string[];
-	}
-> = {
-	[ReusabilityCategory.FREELY_REUSABLE]: {
-		avReuseCategoryIds: [
-			'https://creativecommons.org/public-domain/pdm/',
-			'https://creativecommons.org/publicdomain/zero/1.0/',
-		],
-		newspaperRightsStatementUris: ['https://creativecommons.org/publicdomain/mark/1.0/'],
-	},
-	[ReusabilityCategory.REUSABLE_WITH_CONDITIONS]: {
-		avReuseCategoryIds: [
-			'https://rightsstatements.org/page/NoC-CR/1.0/',
-			'https://creativecommons.org/licenses/by/4.0/',
-			'https://creativecommons.org/licenses/by-nc-nd/4.0/',
-			'https://creativecommons.org/licenses/by-sa/4.0/',
-			'https://creativecommons.org/licenses/by-nc/4.0/',
-		],
-		newspaperRightsStatementUris: [],
-	},
-	[ReusabilityCategory.POSSIBLY_REUSABLE]: {
-		avReuseCategoryIds: [
-			'https://rightsstatements.org/page/UND/1.0/',
-			'https://rightsstatements.org/page/InC/1.0/',
-			'https://rightsstatements.org/page/CNE/1.0/',
-			'https://rightsstatements.org/page/InC-OW-EU/1.0/',
-			'https://rightsstatements.org/page/InC-RUU/1.0/',
-		],
-		newspaperRightsStatementUris: ['https://rightsstatements.org/page/UND/1.0/'],
-	},
-};
-
 export enum RightsLabel {
-	PUBLIC_DOMAIN = 'public-domain',
-	COPYRIGHT_UNDETERMINED = 'copyright-undetermined',
-	CC0 = 'cc0',
-	NO_COPYRIGHT_CONTRACTUAL_RESTRICTIONS = 'no-copyright-contractual-restrictions',
-	CC_BY = 'cc-by',
-	CC_BY_NC_ND = 'cc-by-nc-nd',
-	CC_BY_SA = 'cc-by-sa',
-	CC_BY_NC = 'cc-by-nc',
-	IN_COPYRIGHT = 'in-copyright',
-	COPYRIGHT_NOT_EVALUATED = 'copyright-not-evaluated',
-	ORPHAN_WORK_EU = 'orphan-work-eu',
-	RIGHTS_HOLDER_UNLOCATABLE = 'rights-holder-unlocatable',
+	PUBLIC_DOMAIN_AUDIO_VIDEO = 'https://creativecommons.org/public-domain/pdm/',
+	PUBLIC_DOMAIN_NEWSPAPERS = 'https://creativecommons.org/publicdomain/mark/1.0/',
+	COPYRIGHT_UNDETERMINED = 'https://rightsstatements.org/page/UND/1.0/',
+	CC0 = 'https://creativecommons.org/publicdomain/zero/1.0/',
+	NO_COPYRIGHT_CONTRACTUAL_RESTRICTIONS = 'https://rightsstatements.org/page/NoC-CR/1.0/',
+	CC_BY = 'https://creativecommons.org/licenses/by/4.0/',
+	CC_BY_NC_ND = 'https://creativecommons.org/licenses/by-nc-nd/4.0/',
+	CC_BY_SA = 'https://creativecommons.org/licenses/by-sa/4.0/',
+	CC_BY_NC = 'https://creativecommons.org/licenses/by-nc/4.0/',
+	IN_COPYRIGHT = 'https://rightsstatements.org/page/InC/1.0/',
+	COPYRIGHT_NOT_EVALUATED = 'https://rightsstatements.org/page/CNE/1.0/',
+	ORPHAN_WORK_EU = 'https://rightsstatements.org/page/InC-OW-EU/1.0/',
+	RIGHTS_HOLDER_UNLOCATABLE = 'https://rightsstatements.org/page/InC-RUU/1.0/',
 }
 
-export const RIGHTS_LABEL_FILTER_VALUES: Record<
-	RightsLabel,
-	{
-		avReuseCategoryIds: string[];
-		newspaperRightsStatementUris: string[];
-	}
+export const REUSABILITY_FILTER_VALUES: Record<ReusabilityCategory, RightsLabel[]> = {
+	[ReusabilityCategory.FREELY_REUSABLE]: [
+		RightsLabel.PUBLIC_DOMAIN_AUDIO_VIDEO,
+		RightsLabel.CC0,
+		RightsLabel.PUBLIC_DOMAIN_NEWSPAPERS,
+	],
+	[ReusabilityCategory.REUSABLE_WITH_CONDITIONS]: [
+		RightsLabel.NO_COPYRIGHT_CONTRACTUAL_RESTRICTIONS,
+		RightsLabel.CC_BY,
+		RightsLabel.CC_BY_NC_ND,
+		RightsLabel.CC_BY_SA,
+		RightsLabel.CC_BY_NC,
+	],
+	[ReusabilityCategory.POSSIBLY_REUSABLE]: [
+		RightsLabel.COPYRIGHT_UNDETERMINED, // Applies both to newspapers and audio/video objects
+		RightsLabel.IN_COPYRIGHT,
+		RightsLabel.COPYRIGHT_NOT_EVALUATED,
+		RightsLabel.ORPHAN_WORK_EU,
+		RightsLabel.RIGHTS_HOLDER_UNLOCATABLE,
+	],
+};
+
+export const RIGHTS_LABEL_FILTER_VALUES: Partial<
+	Record<
+		RightsLabel,
+		{
+			avReuseCategoryIds: RightsLabel[];
+			newspaperRightsStatementUris: RightsLabel[];
+		}
+	>
 > = {
-	[RightsLabel.PUBLIC_DOMAIN]: {
-		avReuseCategoryIds: ['https://creativecommons.org/public-domain/pdm/'],
-		newspaperRightsStatementUris: ['https://creativecommons.org/publicdomain/mark/1.0/'],
+	[RightsLabel.PUBLIC_DOMAIN_AUDIO_VIDEO]: {
+		avReuseCategoryIds: [RightsLabel.PUBLIC_DOMAIN_AUDIO_VIDEO],
+		newspaperRightsStatementUris: [RightsLabel.PUBLIC_DOMAIN_NEWSPAPERS],
 	},
 	[RightsLabel.COPYRIGHT_UNDETERMINED]: {
-		avReuseCategoryIds: ['https://rightsstatements.org/page/UND/1.0/'],
-		newspaperRightsStatementUris: ['https://rightsstatements.org/page/UND/1.0/'],
+		avReuseCategoryIds: [RightsLabel.COPYRIGHT_UNDETERMINED],
+		newspaperRightsStatementUris: [RightsLabel.COPYRIGHT_UNDETERMINED],
 	},
 	[RightsLabel.CC0]: {
-		avReuseCategoryIds: ['https://creativecommons.org/publicdomain/zero/1.0/'],
+		avReuseCategoryIds: [RightsLabel.CC0],
 		newspaperRightsStatementUris: [],
 	},
 	[RightsLabel.NO_COPYRIGHT_CONTRACTUAL_RESTRICTIONS]: {
-		avReuseCategoryIds: ['https://rightsstatements.org/page/NoC-CR/1.0/'],
+		avReuseCategoryIds: [RightsLabel.NO_COPYRIGHT_CONTRACTUAL_RESTRICTIONS],
 		newspaperRightsStatementUris: [],
 	},
 	[RightsLabel.CC_BY]: {
-		avReuseCategoryIds: ['https://creativecommons.org/licenses/by/4.0/'],
+		avReuseCategoryIds: [RightsLabel.CC_BY],
 		newspaperRightsStatementUris: [],
 	},
 	[RightsLabel.CC_BY_NC_ND]: {
-		avReuseCategoryIds: ['https://creativecommons.org/licenses/by-nc-nd/4.0/'],
+		avReuseCategoryIds: [RightsLabel.CC_BY_NC_ND],
 		newspaperRightsStatementUris: [],
 	},
 	[RightsLabel.CC_BY_SA]: {
-		avReuseCategoryIds: ['https://creativecommons.org/licenses/by-sa/4.0/'],
+		avReuseCategoryIds: [RightsLabel.CC_BY_SA],
 		newspaperRightsStatementUris: [],
 	},
 	[RightsLabel.CC_BY_NC]: {
-		avReuseCategoryIds: ['https://creativecommons.org/licenses/by-nc/4.0/'],
+		avReuseCategoryIds: [RightsLabel.CC_BY_NC],
 		newspaperRightsStatementUris: [],
 	},
 	[RightsLabel.IN_COPYRIGHT]: {
-		avReuseCategoryIds: ['https://rightsstatements.org/page/InC/1.0/'],
+		avReuseCategoryIds: [RightsLabel.IN_COPYRIGHT],
 		newspaperRightsStatementUris: [],
 	},
 	[RightsLabel.COPYRIGHT_NOT_EVALUATED]: {
-		avReuseCategoryIds: ['https://rightsstatements.org/page/CNE/1.0/'],
+		avReuseCategoryIds: [RightsLabel.COPYRIGHT_NOT_EVALUATED],
 		newspaperRightsStatementUris: [],
 	},
 	[RightsLabel.ORPHAN_WORK_EU]: {
-		avReuseCategoryIds: ['https://rightsstatements.org/page/InC-OW-EU/1.0/'],
+		avReuseCategoryIds: [RightsLabel.ORPHAN_WORK_EU],
 		newspaperRightsStatementUris: [],
 	},
 	[RightsLabel.RIGHTS_HOLDER_UNLOCATABLE]: {
-		avReuseCategoryIds: ['https://rightsstatements.org/page/InC-RUU/1.0/'],
+		avReuseCategoryIds: [RightsLabel.RIGHTS_HOLDER_UNLOCATABLE],
 		newspaperRightsStatementUris: [],
 	},
 };
@@ -361,6 +345,7 @@ export enum ElasticsearchField {
 	schema_is_part_of = 'schema_is_part_of',
 	newspaper = 'newspaper',
 	schema_location_created = 'schema_location_created',
+	dcterms_rights_statement = 'dcterms_rights_statement',
 }
 
 export const READABLE_TO_ELASTIC_FILTER_NAMES: {
@@ -370,7 +355,6 @@ export const READABLE_TO_ELASTIC_FILTER_NAMES: {
 		| IeObjectsSearchFilterField.CONSULTABLE_MEDIA
 		| IeObjectsSearchFilterField.CONSULTABLE_PUBLIC_DOMAIN
 		| IeObjectsSearchFilterField.REUSABILITY
-		| IeObjectsSearchFilterField.RIGHTS
 		| IeObjectsSearchFilterField.RELEASE_DATE // Custom filter: creation date OR publish date
 	>]: ElasticsearchField | `${ElasticsearchField}.${ElasticsearchField}`;
 } = {
@@ -400,6 +384,7 @@ export const READABLE_TO_ELASTIC_FILTER_NAMES: {
 	[IeObjectsSearchFilterField.OBJECT_TYPE]: ElasticsearchField.ebucore_object_type,
 	[IeObjectsSearchFilterField.IDENTIFIER]: ElasticsearchField.schema_identifier,
 	[IeObjectsSearchFilterField.LICENSES]: ElasticsearchField.schema_license,
+	[IeObjectsSearchFilterField.RIGHTS]: ElasticsearchField.dcterms_rights_statement,
 };
 
 export const NUMBER_OF_FILTER_OPTIONS_DEFAULT = 40;
@@ -409,6 +394,7 @@ export const NUMBER_OF_OPTIONS_PER_AGGREGATE = {
 	[IeObjectsSearchFilterField.MEDIUM]: 500, // Fetch all options at once
 	[IeObjectsSearchFilterField.LANGUAGE]: 500, // Fetch all options at once
 	[IeObjectsSearchFilterField.MAINTAINER_ID]: 500, // Fetch all options at once
+	[IeObjectsSearchFilterField.RIGHTS]: 500, // Fetch all options at once
 };
 
 export const ORDER_MAPPINGS: { [prop in OrderProperty]: string } = {
