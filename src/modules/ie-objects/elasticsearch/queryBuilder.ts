@@ -3,10 +3,7 @@ import jsep from 'jsep';
 import { clamp, compact, forEach, isArray, isEmpty, isNil, uniq } from 'lodash';
 
 import { IeObjectsQueryDto, SearchFilter } from '../dto/ie-objects.dto';
-import {
-	buildFreeTextFilter,
-	convertNodeToEsQueryFilterObjects,
-} from '../helpers/convert-node-to-es-query-filter-objects';
+import { buildFreeTextFilter, convertNodeToEsQueryFilterObjects, } from '../helpers/convert-node-to-es-query-filter-objects';
 import { encodeSearchterm } from '../helpers/encode-search-term';
 import { IeObjectLicense } from '../ie-objects.types';
 
@@ -21,28 +18,27 @@ import {
 	IeObjectsSearchFilterField,
 	MAX_COUNT_SEARCH_RESULTS,
 	MAX_NUMBER_SEARCH_RESULTS,
+	MetadataAccessType,
 	MULTI_MATCH_FIELDS,
 	MULTI_MATCH_QUERY_MAPPING,
-	MetadataAccessType,
 	NEEDS_AGG_SUFFIX,
 	NEEDS_FILTER_SUFFIX,
 	NUMBER_OF_FILTER_OPTIONS_DEFAULT,
 	NUMBER_OF_OPTIONS_PER_AGGREGATE,
 	OCCURRENCE_TYPE,
-	ORDER_MAPPINGS,
 	Operator,
+	ORDER_MAPPINGS,
 	OrderProperty,
 	type QueryBuilderInputInfo,
 	QueryType,
 	READABLE_TO_ELASTIC_FILTER_NAMES,
 	REUSABILITY_FILTER_VALUES,
-	RIGHTS_LABEL_FILTER_VALUES,
 	ReusabilityCategory,
 	RightsLabel,
 	VALUE_OPERATORS,
 } from './elasticsearch.consts';
 
-import { AND, OR, applyFilter } from '~modules/ie-objects/elasticsearch/queryBuilder.helpers';
+import { AND, applyFilter, OR } from '~modules/ie-objects/elasticsearch/queryBuilder.helpers';
 import { GroupId, GroupName } from '~modules/users/types';
 import { PaginationHelper } from '~shared/helpers/pagination';
 import type { SortDirection } from '~shared/types';
@@ -681,18 +677,8 @@ export class QueryBuilder {
 		if (rightsFilter?.multiValue?.length || rightsFilter?.value) {
 			const rightsValues = rightsFilter.multiValue?.length
 				? rightsFilter.multiValue
-				: [rightsFilter.value as string];
-			const rightsStatementUris = uniq(
-				compact(
-					rightsValues.flatMap((rightsLabel) => {
-						const newspaperRightsIris =
-							RIGHTS_LABEL_FILTER_VALUES[rightsLabel as RightsLabel]?.newspaperRightsStatementUris;
-						const avRightsIris =
-							RIGHTS_LABEL_FILTER_VALUES[rightsLabel as RightsLabel]?.avReuseCategoryIds;
-						return [...(newspaperRightsIris ?? []), ...(avRightsIris ?? [])];
-					})
-				)
-			);
+				: [rightsFilter.value as RightsLabel];
+			const rightsStatementUris = uniq(compact(rightsValues)) as RightsLabel[];
 			const rightsQueries = [
 				rightsStatementUris.length
 					? {

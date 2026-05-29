@@ -745,7 +745,7 @@ describe('QueryBuilder', () => {
 						{
 							field: IeObjectsSearchFilterField.RIGHTS,
 							operator: Operator.IS,
-							multiValue: [RightsLabel.PUBLIC_DOMAIN_AUDIO_VIDEO, RightsLabel.CC0],
+							multiValue: [RightsLabel.PUBLIC_DOMAIN, RightsLabel.CC0],
 						},
 					],
 				},

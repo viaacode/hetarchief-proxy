@@ -5,13 +5,13 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import type { Cache } from 'cache-manager';
 import { cloneDeep } from 'lodash';
 import {
-	type MockInstance,
 	afterAll,
 	afterEach,
 	beforeAll,
 	describe,
 	expect,
 	it,
+	type MockInstance,
 	vi,
 } from 'vitest';
 
@@ -157,19 +157,19 @@ describe('ieObjectsService', () => {
 				graph_rights: [
 					{
 						intellectual_entity_id: 'https://data-qas.hetarchief.be/id/entity/free',
-						reuse_category_id: 'https://creativecommons.org/public-domain/pdm/',
+						reuse_category_id: RightsLabel.PUBLIC_DOMAIN,
 					},
 					{
 						intellectual_entity_id: 'https://data-qas.hetarchief.be/id/entity/free',
-						reuse_category_id: 'https://creativecommons.org/public-domain/pdm/',
+						reuse_category_id: RightsLabel.PUBLIC_DOMAIN,
 					},
 					{
 						intellectual_entity_id: 'https://data-qas.hetarchief.be/id/entity/conditional',
-						reuse_category_id: 'https://rightsstatements.org/page/NoC-CR/1.0/',
+						reuse_category_id: RightsLabel.NO_COPYRIGHT_CONTRACTUAL_RESTRICTIONS,
 					},
 					{
 						intellectual_entity_id: 'https://data-qas.hetarchief.be/id/entity/unmatched',
-						reuse_category_id: 'https://rightsstatements.org/page/InC/1.0/',
+						reuse_category_id: RightsLabel.IN_COPYRIGHT,
 					},
 				],
 			});
@@ -212,15 +212,12 @@ describe('ieObjectsService', () => {
 				{
 					field: IeObjectsSearchFilterField.RIGHTS,
 					operator: Operator.IS,
-					multiValue: [RightsLabel.PUBLIC_DOMAIN_AUDIO_VIDEO, RightsLabel.CC0],
+					multiValue: [RightsLabel.PUBLIC_DOMAIN, RightsLabel.CC0],
 				},
 			]);
 
 			expect(mockDataService.execute).toHaveBeenCalledWith(expect.any(Object), {
-				categoryIds: expect.arrayContaining([
-					'https://creativecommons.org/public-domain/pdm/',
-					'https://creativecommons.org/publicdomain/zero/1.0/',
-				]),
+				categoryIds: expect.arrayContaining([RightsLabel.PUBLIC_DOMAIN, RightsLabel.CC0]),
 			});
 			expect(result).toEqual([
 				'https://data-qas.hetarchief.be/id/entity/public-domain',
@@ -348,10 +345,10 @@ describe('ieObjectsService', () => {
 			const objectIeMock = cloneDeep(mockIeObject2);
 			(objectIeMock.getIeObject[0] as any).rights = {
 				reuse_label: 'CC0',
-				reuse_category_id: 'https://creativecommons.org/publicdomain/zero/1.0/',
+				reuse_category_id: RightsLabel.CC0,
 				ha_des_license_distributor: 'VRT',
 				reuse_category: {
-					id: 'https://creativecommons.org/publicdomain/zero/1.0/',
+					id: RightsLabel.CC0,
 					label: 'CC0',
 					group: 'Publiek domein',
 				},
@@ -369,8 +366,8 @@ describe('ieObjectsService', () => {
 
 			expect(ieObject.rightsInfo).toEqual({
 				reuseLabel: 'CC0',
-				reuseCategoryUrl: 'https://creativecommons.org/publicdomain/zero/1.0/',
-				reuseCategoryId: 'https://creativecommons.org/publicdomain/zero/1.0/',
+				reuseCategoryUrl: RightsLabel.CC0,
+				reuseCategoryId: RightsLabel.CC0,
 				reuseCategoryLabel: 'CC0',
 				reuseCategoryGroup: 'Publiek domein',
 				licenseDistributor: 'VRT',
@@ -386,10 +383,10 @@ describe('ieObjectsService', () => {
 			];
 			(objectIeMock.getIeObject[0] as any).rights = {
 				reuse_label: 'Auteursrechtelijk beschermd',
-				reuse_category_id: 'https://rightsstatements.org/page/InC/1.0/',
+				reuse_category_id: RightsLabel.IN_COPYRIGHT,
 				ha_des_license_distributor: 'ATV',
 				reuse_category: {
-					id: 'https://rightsstatements.org/page/InC/1.0/',
+					id: RightsLabel.IN_COPYRIGHT,
 					label: 'Auteursrechtelijk beschermd',
 					group: 'Auteursrecht',
 				},
@@ -407,8 +404,8 @@ describe('ieObjectsService', () => {
 
 			expect(ieObject.rightsInfo).toEqual({
 				reuseLabel: 'Auteursrechtelijk beschermd',
-				reuseCategoryUrl: 'https://rightsstatements.org/page/InC/1.0/',
-				reuseCategoryId: 'https://rightsstatements.org/page/InC/1.0/',
+				reuseCategoryUrl: RightsLabel.IN_COPYRIGHT,
+				reuseCategoryId: RightsLabel.IN_COPYRIGHT,
 				reuseCategoryLabel: 'Auteursrechtelijk beschermd',
 				reuseCategoryGroup: 'Auteursrecht',
 				licenseDistributor: 'ATV',

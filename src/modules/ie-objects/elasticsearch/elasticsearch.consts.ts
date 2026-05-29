@@ -210,8 +210,7 @@ export enum ReusabilityCategory {
 }
 
 export enum RightsLabel {
-	PUBLIC_DOMAIN_AUDIO_VIDEO = 'https://creativecommons.org/public-domain/pdm/',
-	PUBLIC_DOMAIN_NEWSPAPERS = 'https://creativecommons.org/publicdomain/mark/1.0/',
+	PUBLIC_DOMAIN = 'https://creativecommons.org/publicdomain/mark/1.0/',
 	COPYRIGHT_UNDETERMINED = 'https://rightsstatements.org/page/UND/1.0/',
 	CC0 = 'https://creativecommons.org/publicdomain/zero/1.0/',
 	NO_COPYRIGHT_CONTRACTUAL_RESTRICTIONS = 'https://rightsstatements.org/page/NoC-CR/1.0/',
@@ -226,11 +225,7 @@ export enum RightsLabel {
 }
 
 export const REUSABILITY_FILTER_VALUES: Record<ReusabilityCategory, RightsLabel[]> = {
-	[ReusabilityCategory.FREELY_REUSABLE]: [
-		RightsLabel.PUBLIC_DOMAIN_AUDIO_VIDEO,
-		RightsLabel.CC0,
-		RightsLabel.PUBLIC_DOMAIN_NEWSPAPERS,
-	],
+	[ReusabilityCategory.FREELY_REUSABLE]: [RightsLabel.PUBLIC_DOMAIN, RightsLabel.CC0],
 	[ReusabilityCategory.REUSABLE_WITH_CONDITIONS]: [
 		RightsLabel.NO_COPYRIGHT_CONTRACTUAL_RESTRICTIONS,
 		RightsLabel.CC_BY,
@@ -247,71 +242,12 @@ export const REUSABILITY_FILTER_VALUES: Record<ReusabilityCategory, RightsLabel[
 	],
 };
 
-export const RIGHTS_LABEL_FILTER_VALUES: Partial<
-	Record<
-		RightsLabel,
-		{
-			avReuseCategoryIds: RightsLabel[];
-			newspaperRightsStatementUris: RightsLabel[];
-		}
-	>
-> = {
-	[RightsLabel.PUBLIC_DOMAIN_AUDIO_VIDEO]: {
-		avReuseCategoryIds: [RightsLabel.PUBLIC_DOMAIN_AUDIO_VIDEO],
-		newspaperRightsStatementUris: [RightsLabel.PUBLIC_DOMAIN_NEWSPAPERS],
-	},
-	[RightsLabel.COPYRIGHT_UNDETERMINED]: {
-		avReuseCategoryIds: [RightsLabel.COPYRIGHT_UNDETERMINED],
-		newspaperRightsStatementUris: [RightsLabel.COPYRIGHT_UNDETERMINED],
-	},
-	[RightsLabel.CC0]: {
-		avReuseCategoryIds: [RightsLabel.CC0],
-		newspaperRightsStatementUris: [],
-	},
-	[RightsLabel.NO_COPYRIGHT_CONTRACTUAL_RESTRICTIONS]: {
-		avReuseCategoryIds: [RightsLabel.NO_COPYRIGHT_CONTRACTUAL_RESTRICTIONS],
-		newspaperRightsStatementUris: [],
-	},
-	[RightsLabel.CC_BY]: {
-		avReuseCategoryIds: [RightsLabel.CC_BY],
-		newspaperRightsStatementUris: [],
-	},
-	[RightsLabel.CC_BY_NC_ND]: {
-		avReuseCategoryIds: [RightsLabel.CC_BY_NC_ND],
-		newspaperRightsStatementUris: [],
-	},
-	[RightsLabel.CC_BY_SA]: {
-		avReuseCategoryIds: [RightsLabel.CC_BY_SA],
-		newspaperRightsStatementUris: [],
-	},
-	[RightsLabel.CC_BY_NC]: {
-		avReuseCategoryIds: [RightsLabel.CC_BY_NC],
-		newspaperRightsStatementUris: [],
-	},
-	[RightsLabel.IN_COPYRIGHT]: {
-		avReuseCategoryIds: [RightsLabel.IN_COPYRIGHT],
-		newspaperRightsStatementUris: [],
-	},
-	[RightsLabel.COPYRIGHT_NOT_EVALUATED]: {
-		avReuseCategoryIds: [RightsLabel.COPYRIGHT_NOT_EVALUATED],
-		newspaperRightsStatementUris: [],
-	},
-	[RightsLabel.ORPHAN_WORK_EU]: {
-		avReuseCategoryIds: [RightsLabel.ORPHAN_WORK_EU],
-		newspaperRightsStatementUris: [],
-	},
-	[RightsLabel.RIGHTS_HOLDER_UNLOCATABLE]: {
-		avReuseCategoryIds: [RightsLabel.RIGHTS_HOLDER_UNLOCATABLE],
-		newspaperRightsStatementUris: [],
-	},
-};
-
 // Max number of search results to return to the client
 export const MAX_NUMBER_SEARCH_RESULTS = 2000;
 // Max count to return to the client to avoid error:
-// -  Result window is too large, from + size must be less than or equal to: [10000] but was [17110].
-// -  See the scroll api for a more efficient way to request large data sets.
-// -  This limit can be set by changing the [index.max_result_window] index level setting.
+// - Result window is too large, from + size must be less than or equal to: [10000] but was [17110].
+// - See the scroll api for a more efficient way to request large data sets.
+// - This limit can be set by changing the [index.max_result_window] index level setting.
 export const MAX_COUNT_SEARCH_RESULTS = 10000;
 
 export enum ElasticsearchField {
