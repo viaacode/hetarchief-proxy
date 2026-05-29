@@ -18,7 +18,6 @@ import {
 import {
 	IeObjectsSearchFilterField,
 	Operator,
-	ReusabilityCategory,
 	RightsLabel,
 } from '../elasticsearch/elasticsearch.consts';
 import {
@@ -149,94 +148,6 @@ describe('ieObjectsService', () => {
 
 	it('services should be defined', () => {
 		expect(ieObjectsService).toBeDefined();
-	});
-
-	describe('getReusabilityRightsIris', () => {
-		it('uses cached graph.rights IE ids for selected reusability categories', async () => {
-			mockDataService.execute.mockResolvedValueOnce({
-				graph_rights: [
-					{
-						intellectual_entity_id: 'https://data-qas.hetarchief.be/id/entity/free',
-						reuse_category_id: RightsLabel.PUBLIC_DOMAIN,
-					},
-					{
-						intellectual_entity_id: 'https://data-qas.hetarchief.be/id/entity/free',
-						reuse_category_id: RightsLabel.PUBLIC_DOMAIN,
-					},
-					{
-						intellectual_entity_id: 'https://data-qas.hetarchief.be/id/entity/conditional',
-						reuse_category_id: RightsLabel.NO_COPYRIGHT_CONTRACTUAL_RESTRICTIONS,
-					},
-					{
-						intellectual_entity_id: 'https://data-qas.hetarchief.be/id/entity/unmatched',
-						reuse_category_id: RightsLabel.IN_COPYRIGHT,
-					},
-				],
-			});
-
-			const result = await (ieObjectsService as any).getReusabilityRightsIris([
-				{
-					field: IeObjectsSearchFilterField.REUSABILITY,
-					operator: Operator.IS,
-					multiValue: [
-						ReusabilityCategory.FREELY_REUSABLE,
-						ReusabilityCategory.REUSABLE_WITH_CONDITIONS,
-					],
-				},
-			]);
-
-			expect(mockCacheService.wrap).toHaveBeenCalledWith(
-				'ie-objects-reusability-rights-iris',
-				expect.any(Function),
-				86400
-			);
-			expect(mockDataService.execute).toHaveBeenCalledWith(expect.any(Object));
-			expect(result).toEqual([
-				'https://data-qas.hetarchief.be/id/entity/free',
-				'https://data-qas.hetarchief.be/id/entity/conditional',
-			]);
-		});
-	});
-
-	describe('getRightsLabelIris', () => {
-		it('fetches graph.rights ids for selected rights labels', async () => {
-			mockDataService.execute.mockResolvedValueOnce({
-				graph_rights: [
-					{ intellectual_entity_id: 'https://data-qas.hetarchief.be/id/entity/public-domain' },
-					{ intellectual_entity_id: 'https://data-qas.hetarchief.be/id/entity/public-domain' },
-					{ intellectual_entity_id: 'https://data-qas.hetarchief.be/id/entity/cc0' },
-				],
-			});
-
-			const result = await (ieObjectsService as any).getRightsLabelIris([
-				{
-					field: IeObjectsSearchFilterField.RIGHTS,
-					operator: Operator.IS,
-					multiValue: [RightsLabel.PUBLIC_DOMAIN, RightsLabel.CC0],
-				},
-			]);
-
-			expect(mockDataService.execute).toHaveBeenCalledWith(expect.any(Object), {
-				categoryIds: expect.arrayContaining([RightsLabel.PUBLIC_DOMAIN, RightsLabel.CC0]),
-			});
-			expect(result).toEqual([
-				'https://data-qas.hetarchief.be/id/entity/public-domain',
-				'https://data-qas.hetarchief.be/id/entity/cc0',
-			]);
-		});
-
-		it('does not query graph.rights for unknown rights labels', async () => {
-			const result = await (ieObjectsService as any).getRightsLabelIris([
-				{
-					field: IeObjectsSearchFilterField.RIGHTS,
-					operator: Operator.IS,
-					multiValue: ['unknown-rights-label'],
-				},
-			]);
-
-			expect(mockDataService.execute).not.toHaveBeenCalled();
-			expect(result).toEqual([]);
-		});
 	});
 
 	describe('adaptESResponse', () => {
