@@ -17,6 +17,7 @@ import {
 } from '../types';
 
 import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
+import { AvoUserCommonUser } from '@viaa/avo2-types';
 import {
 	type App_Notification_Bool_Exp,
 	type App_Notification_Insert_Input,
@@ -486,6 +487,34 @@ export class NotificationsService {
 			return notifications;
 		} catch (err) {
 			throw new HttpException('Failed to send notifications and email', 500, err);
+		}
+	}
+
+	/**
+	 * Send email on download export failed of material request
+	 */
+	public async onDownloadFailedMaterialRequest(
+		request: MaterialRequest,
+		requesterUser: AvoUserCommonUser
+	): Promise<void> {
+		try {
+			await this.campaignMonitorService.sendForMaterialRequest({
+				to: null,
+				replyTo: null,
+				template: EmailTemplate.CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_DOWNLOAD_FAILED,
+				language: Locale.Nl,
+				materialRequests: [request],
+				sendRequestListDto: {
+					type: request.requesterCapacity,
+					organisationName: request.requesterOrganisationName,
+					organisationId: request.requesterOrganisationId,
+					requestGroupName: request.requestGroupName,
+				},
+				requesterFirstName: requesterUser.firstName,
+				requesterLastName: requesterUser.lastName,
+			});
+		} catch (err) {
+			throw new HttpException('Failed to send email', 500, err);
 		}
 	}
 

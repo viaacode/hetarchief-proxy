@@ -33,13 +33,13 @@ import {
 	UpdateMaterialRequestStatusDto,
 } from '../dto/material-requests.dto';
 import {
-	getAdditionEventDate,
-	getLastStatusEventOfType,
-	getStatusEvent,
 	MAP_MATERIAL_REQUEST_STATUS_TO_EVENT_TYPE,
 	MAP_MATERIAL_REQUEST_STATUS_TO_NOTIFICATION_TYPE,
 	MAP_NOTIFICATION_TYPE_TO_EMAIL_TEMPLATE,
 	ORDER_PROP_TO_DB_PROP,
+	getAdditionEventDate,
+	getLastStatusEventOfType,
+	getStatusEvent,
 } from '../material-requests.consts';
 import {
 	GqlMaterialRequest,
@@ -121,8 +121,8 @@ import {
 	IeObjectAccessThrough,
 	IeObjectLicense,
 	type IeObjectSector,
-	IeObjectsVisitorSpaceInfo,
 	IeObjectType,
+	IeObjectsVisitorSpaceInfo,
 	SimpleIeObjectType,
 } from '~modules/ie-objects/ie-objects.types';
 import type { Organisation } from '~modules/organisations/organisations.types';
@@ -917,6 +917,13 @@ export class MaterialRequestsService {
 			console.error(error);
 			// Do not throw errors when email cannot be sent
 		}
+	}
+
+	public async sendEmailsForFailedDownloadExport(
+		request: MaterialRequest,
+		requester: AvoUserCommonUser
+	): Promise<void> {
+		return this.notificationsService.onDownloadFailedMaterialRequest(request, requester);
 	}
 
 	/**
