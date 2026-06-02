@@ -467,12 +467,12 @@ export class MaterialRequestPdfGeneratorService {
 	private renderTableRow(
 		doc: PDFKit.PDFDocument,
 		margin: number,
-		rowY: number,
 		cells: { text: string; width: number }[],
 		isHeader: boolean
-	): number {
+	): void {
 		const cellPadding = 8;
 		const font = isHeader ? SOFIA_PRO_BOLD : SOFIA_PRO_REGULAR;
+		let resolvedRowY = doc.y;
 
 		const cellHeights = cells.map(
 			({ text, width }) =>
@@ -484,23 +484,26 @@ export class MaterialRequestPdfGeneratorService {
 		);
 		const rowHeight = Math.max(28, ...cellHeights);
 
+		if (resolvedRowY + rowHeight > doc.page.height - margin) {
+			doc.addPage();
+			resolvedRowY = margin;
+		}
+
 		let cellX = margin;
 		for (const { text, width } of cells) {
-			doc.rect(cellX, rowY, width, rowHeight).stroke(COLORS.borderColor);
+			doc.rect(cellX, resolvedRowY, width, rowHeight).stroke(COLORS.borderColor);
 			doc
 				.font(font)
 				.fontSize(10)
 				.fillColor(COLORS.text)
-				.text(text, cellX + cellPadding, rowY + cellPadding, {
+				.text(text, cellX + cellPadding, resolvedRowY + cellPadding, {
 					width: width - cellPadding * 2,
 				});
 			cellX += width;
 		}
 
-		doc.y = rowY + rowHeight;
+		doc.y = resolvedRowY + rowHeight;
 		doc.x = margin;
-
-		return rowHeight;
 	}
 
 	private addPageNumbers(doc: PDFKit.PDFDocument, margin: number, contentWidth: number): void {
@@ -729,16 +732,10 @@ export class MaterialRequestPdfGeneratorService {
 			condition.text,
 		]);
 
-		let tableY = doc.y;
 		for (const [status, performer] of conditionRows) {
-			if (tableY + 30 > doc.page.height - margin) {
-				doc.addPage();
-				tableY = margin;
-			}
-			tableY += this.renderTableRow(
+			this.renderTableRow(
 				doc,
 				margin,
-				tableY,
 				[
 					{ text: status, width: col1Width },
 					{ text: performer, width: col2Width },
@@ -747,7 +744,6 @@ export class MaterialRequestPdfGeneratorService {
 			);
 		}
 
-		doc.y = tableY;
 		doc.moveDown(1.5);
 	}
 
@@ -815,11 +811,9 @@ export class MaterialRequestPdfGeneratorService {
 				.filter(([label]) => !!label),
 		];
 
-		let tableY = doc.y;
-		tableY += this.renderTableRow(
+		this.renderTableRow(
 			doc,
 			margin,
-			tableY,
 			[
 				{
 					text: this.translationsService.tText(
@@ -842,14 +836,9 @@ export class MaterialRequestPdfGeneratorService {
 		);
 
 		for (const [status, performer] of historyRows) {
-			if (tableY + 30 > doc.page.height - margin) {
-				doc.addPage();
-				tableY = margin;
-			}
-			tableY += this.renderTableRow(
+			this.renderTableRow(
 				doc,
 				margin,
-				tableY,
 				[
 					{ text: status, width: col1Width },
 					{ text: performer, width: col2Width },
@@ -858,7 +847,6 @@ export class MaterialRequestPdfGeneratorService {
 			);
 		}
 
-		doc.y = tableY;
 		doc.moveDown(1.5);
 
 		// Motivation / additional conditions (only shown if applicable)
