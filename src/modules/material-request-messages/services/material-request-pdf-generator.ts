@@ -693,7 +693,7 @@ export class MaterialRequestPdfGeneratorService {
 		const requestedAtLabel = this.translationsService.tText(
 			'modules/account/components/material-request-detail-blade/material-request-detail-blade___voorwaarden-verstuurd-op',
 			{
-				sendAt: this.formatDateWithTime(new Date().toISOString()),
+				sentAt: this.formatDateWithTime(new Date().toISOString()),
 			},
 			locale
 		);
@@ -757,7 +757,7 @@ export class MaterialRequestPdfGeneratorService {
 		const date = parseISO(value);
 		if (!isValid(date)) return value;
 
-		return format(date, 'dd/MM/yyyy HH:mm');
+		return format(date, 'dd/MM/yyyy, HH:mm');
 	}
 
 	private generateFinalSummaryPdfBody(
