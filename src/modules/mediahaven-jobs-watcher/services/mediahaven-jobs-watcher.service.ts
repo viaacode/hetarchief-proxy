@@ -247,6 +247,11 @@ export class MediahavenJobsWatcherService {
 									null
 								);
 
+								const requester = await this.usersService.getById(updatedRequest.requesterId);
+								this.materialRequestsService
+									.sendEmailsForFailedDownloadExport(updatedRequest, requester)
+									.catch(noop);
+
 								// https://meemoo.atlassian.net/browse/ARC-3573
 								// const hasFailed = await this.retryDownloadJobOrFail(materialRequest);
 								// if (hasFailed) {
