@@ -22,10 +22,7 @@ import { compact, isNil, noop } from 'lodash';
 
 import { type Folder, type FolderShared, FolderStatus } from '../types';
 
-import {
-	ConsentToTrackOption,
-	EmailTemplate,
-} from '~modules/campaign-monitor/campaign-monitor.types';
+import { ConsentToTrackOption, EmailTemplate, } from '~modules/campaign-monitor/campaign-monitor.types';
 
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 
@@ -94,17 +91,17 @@ export class FoldersController {
 			folder.objects = compact(
 				(folder.objects ?? []).map((object) => {
 					if (!object) {
-						console.error(
-							customError(
-								'Folder object returned null. user no longer has access or object no longer exists',
-								null,
-								{
-									object,
-									folderId: folder.id,
-									folderName: folder.name,
-								}
-							)
-						);
+						// console.error(
+						// 	customError(
+						// 		'Folder object returned null. user no longer has access or object no longer exists',
+						// 		null,
+						// 		{
+						// 			object,
+						// 			folderId: folder.id,
+						// 			folderName: folder.name,
+						// 		}
+						// 	)
+						// );
 						return undefined; // ieObject in folder no longer exists
 					}
 					return this.ieObjectsService.limitObjectInFolder(object, user, visitorSpaceAccessInfo);

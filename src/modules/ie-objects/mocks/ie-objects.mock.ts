@@ -5,8 +5,8 @@ import {
 	IeObjectAccessThrough,
 	IeObjectLicense,
 	type IeObjectSector,
-	IeObjectType,
 	type IeObjectsSitemap,
+	IeObjectType,
 	IsPartOfKey,
 } from '../ie-objects.types';
 
@@ -712,6 +712,7 @@ export const mockIeObject2: GetIeObjectDetailQuery = {
 								schema_duration: 1058.44,
 								edm_is_next_in_sequence: null,
 								created_at: '2025-03-10T15:24:56.403442+01:00',
+								hasMediaFragment: [],
 							},
 						},
 						{
@@ -725,6 +726,7 @@ export const mockIeObject2: GetIeObjectDetailQuery = {
 								schema_duration: null,
 								edm_is_next_in_sequence: null,
 								created_at: '2025-03-10T15:24:56.403442+01:00',
+								hasMediaFragment: [],
 							},
 						},
 					],

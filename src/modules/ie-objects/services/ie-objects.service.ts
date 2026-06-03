@@ -4,13 +4,7 @@ import { retry } from 'async';
 
 import { DataService, PlayerTicketService } from '@meemoo/admin-core-api';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import {
-	Inject,
-	Injectable,
-	InternalServerErrorException,
-	Logger,
-	NotFoundException,
-} from '@nestjs/common';
+import { Inject, Injectable, InternalServerErrorException, Logger, NotFoundException, } from '@nestjs/common';
 
 import { ConfigService } from '@nestjs/config';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
@@ -22,11 +16,7 @@ import { compact, find, isArray, isEmpty, isNil, kebabCase, omitBy, uniq } from 
 
 import type { Configuration } from '~config';
 
-import {
-	IeObjectsQueryDto,
-	IeObjectsSimilarQueryDto,
-	type SearchFilter,
-} from '../dto/ie-objects.dto';
+import { IeObjectsQueryDto, IeObjectsSimilarQueryDto } from '../dto/ie-objects.dto';
 import { QueryBuilder } from '../elasticsearch/queryBuilder';
 import { convertQueryToLiteralString } from '../helpers/convert-query-to-literal-string';
 import { getSearchEndpoint } from '../helpers/get-search-endpoint';
@@ -46,10 +36,10 @@ import {
 	type IeObjectPages,
 	type IeObjectRepresentation,
 	type IeObjectSector,
-	IeObjectType,
 	type IeObjectsSitemap,
 	type IeObjectsVisitorSpaceInfo,
 	type IeObjectsWithAggregations,
+	IeObjectType,
 	type IsPartOfKey,
 	type Mention,
 	type RelatedIeObject,
@@ -62,8 +52,6 @@ import {
 	FindIeObjectsForSitemapDocument,
 	type FindIeObjectsForSitemapQuery,
 	type FindIeObjectsForSitemapQueryVariables,
-	GetAllReusabilityRightsIrisDocument,
-	type GetAllReusabilityRightsIrisQuery,
 	GetChildIeObjectsDocument,
 	type GetChildIeObjectsQuery,
 	type GetChildIeObjectsQueryVariables,
@@ -101,24 +89,15 @@ import {
 	ElasticsearchField,
 	IeObjectsSearchFilterField,
 	MAX_COUNT_SEARCH_RESULTS,
-	REUSABILITY_FILTER_VALUES,
-	ReusabilityCategory,
 } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
 import { AND } from '~modules/ie-objects/elasticsearch/queryBuilder.helpers';
+import { convertStringToSearchTerms, type SearchTermParseResult, } from '~modules/ie-objects/helpers/convert-string-to-search-terms';
+import { AUTOCOMPLETE_FIELD_TO_ES_FIELD_NAME, IE_OBJECT_AV_TYPES, } from '~modules/ie-objects/ie-objects.conts';
 import {
-	type SearchTermParseResult,
-	convertStringToSearchTerms,
-} from '~modules/ie-objects/helpers/convert-string-to-search-terms';
-import {
-	AUTOCOMPLETE_FIELD_TO_ES_FIELD_NAME,
-	IE_OBJECT_AV_TYPES,
-} from '~modules/ie-objects/ie-objects.conts';
-import {
-	CACHE_KEY_IE_OBJECT_REUSABILITY_RIGHTS_IRIS,
-	CACHE_KEY_PREFIX_IE_OBJECTS_SEARCH,
 	CACHE_KEY_PREFIX_IE_OBJECT_DETAIL,
 	CACHE_KEY_PREFIX_IE_OBJECT_PID_TO_ID,
 	CACHE_KEY_PREFIX_IE_OBJECT_THUMBNAIL,
+	CACHE_KEY_PREFIX_IE_OBJECTS_SEARCH,
 } from '~modules/ie-objects/services/ie-objects.service.consts';
 import {
 	type DbFile,
@@ -140,6 +119,7 @@ import { VisitStatus, VisitTimeframe } from '~modules/visits/types';
 import { AUDIO_WAVE_FORM_URL } from '~shared/consts/audio-wave-form-url';
 import { customError } from '~shared/helpers/custom-error';
 import { checkRequiredEnvs } from '~shared/helpers/env-check';
+import { formattedDurationToSeconds } from '~shared/helpers/formatted-duration-to-seconds';
 
 checkRequiredEnvs(['ELASTICSEARCH_URL', 'IE_OBJECT_ID_PREFIX']);
 
@@ -1152,6 +1132,8 @@ export class IeObjectsService {
 					);
 				}
 
+				const startTime = file.hasMediaFragment?.[0]?.schema_start_time;
+				const endTime = file.hasMediaFragment?.[0]?.schema_end_time;
 				return {
 					id: file.id,
 					name: file.schema_name,
@@ -1161,6 +1143,8 @@ export class IeObjectsService {
 					duration: file.schema_duration,
 					edmIsNextInSequence: file.edm_is_next_in_sequence,
 					createdAt: file.created_at,
+					startTime: startTime ? formattedDurationToSeconds(startTime) : null,
+					endTime: endTime ? formattedDurationToSeconds(endTime) : null,
 				};
 			})
 		);
@@ -1491,7 +1475,11 @@ export class IeObjectsService {
 		if (!thumbnailUrl || !referer) {
 			return undefined;
 		}
-		return this.playerTicketService.resolveThumbnailUrl(thumbnailUrl, referer, ip, isPublicDomain);
+		return this.playerTicketService.resolveThumbnailUrl(thumbnailUrl, {
+			referer,
+			ip,
+			isPublicDomain,
+		});
 	}
 
 	/**
@@ -1668,5 +1656,22 @@ export class IeObjectsService {
 				}
 			);
 		}
+	}
+
+	public getFileInIeObject(ieObject: Partial<IeObject>, fileId: string): IeObjectFile {
+		// Check if requested file has time codes to cut the fragment out of a video
+		// https://meemoo.atlassian.net/browse/ARC-3690
+		let requestedFile: IeObjectFile | null = null;
+		ieObject.pages?.find((page) => {
+			return page.representations?.find((representation) => {
+				return representation?.files?.find((file) => {
+					if (file.id === fileId) {
+						requestedFile = file;
+						return true; // Stop searching
+					}
+				});
+			});
+		});
+		return requestedFile;
 	}
 }

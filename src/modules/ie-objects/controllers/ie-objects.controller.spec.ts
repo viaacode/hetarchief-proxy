@@ -9,7 +9,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import type { IPagination } from '@studiohyperdrive/pagination';
 import type { Request, Response } from 'express';
 import { cloneDeep } from 'lodash';
-import { type MockInstance, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
 
 import {
 	type IeObject,
@@ -68,7 +68,7 @@ const mockIeObjectsService: Partial<Record<keyof IeObjectsService, MockInstance>
 
 const mockPlayerTicketService: Partial<Record<keyof PlayerTicketService, MockInstance>> = {
 	getPlayableUrl: vi.fn(),
-	getEmbedUrl: vi.fn(),
+	getBrowseUrl: vi.fn(),
 	getThumbnailUrl: vi.fn(),
 };
 
@@ -205,7 +205,7 @@ describe('IeObjectsController', () => {
 				'127.0.0.1',
 				{
 					schemaIdentifier: 'schema-id',
-					browsePath: '/path/to/file',
+					fileId: 'website/id/entity/file-id',
 				},
 				mockSessionUser
 			);
@@ -240,7 +240,7 @@ describe('IeObjectsController', () => {
 					'127.0.0.1',
 					{
 						schemaIdentifier: 'schema-id',
-						browsePath: '/path/to/file',
+						fileId: 'website/id/entity/file-id',
 					},
 					mockSessionUser
 				)
@@ -252,7 +252,7 @@ describe('IeObjectsController', () => {
 				ieObjectsController.getPlayableUrl(
 					'referer',
 					'127.0.0.1',
-					{ schemaIdentifier: '', browsePath: '/path/to/file' },
+					{ schemaIdentifier: '', fileId: 'website/id/entity/file-id' },
 					mockSessionUser
 				)
 			).rejects.toThrow(BadRequestException);
