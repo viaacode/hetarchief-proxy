@@ -7,12 +7,26 @@ describe('convertNodeToSearchStrings', () => {
 			"genetics AND ('dna sequencing' AND crispr AND (cloning OR genomics) AND NOT dna)"
 		);
 		expect(response.plainTextSearchTerms).toEqual([
-			'genetics',
-			'dna sequencing',
-			'crispr',
-			'cloning',
-			'genomics',
-			'dna',
+			{
+				isLiteral: false,
+				value: 'genetics',
+			},
+			{
+				isLiteral: true,
+				value: 'dna sequencing',
+			},
+			{
+				isLiteral: false,
+				value: 'crispr',
+			},
+			{
+				isLiteral: false,
+				value: 'cloning',
+			},
+			{
+				isLiteral: false,
+				value: 'genomics',
+			},
 		]);
 		expect(response.parsedSuccessfully).toEqual(true);
 	});
@@ -22,11 +36,22 @@ describe('convertNodeToSearchStrings', () => {
 			"'Ineke van dam' test AND gent AND brussel AND NOT kortrijk"
 		);
 		expect(response.plainTextSearchTerms).toEqual([
-			'Ineke van dam',
-			'test',
-			'gent',
-			'brussel',
-			'kortrijk',
+			{
+				isLiteral: true,
+				value: 'Ineke van dam',
+			},
+			{
+				isLiteral: false,
+				value: 'test',
+			},
+			{
+				isLiteral: false,
+				value: 'gent',
+			},
+			{
+				isLiteral: false,
+				value: 'brussel',
+			},
 		]);
 		expect(response.parsedSuccessfully).toEqual(true);
 	});
@@ -36,16 +61,42 @@ describe('convertNodeToSearchStrings', () => {
 			"genetics test AND ('dna sequencing' test AND crispr AND (cloning OR genomics) AND NOT dna brecht tafel)"
 		);
 		expect(response.plainTextSearchTerms).toEqual([
-			'genetics',
-			'test',
-			'dna sequencing',
-			'test',
-			'crispr',
-			'cloning',
-			'genomics',
-			'dna',
-			'brecht',
-			'tafel',
+			{
+				isLiteral: false,
+				value: 'genetics',
+			},
+			{
+				isLiteral: false,
+				value: 'test',
+			},
+			{
+				isLiteral: true,
+				value: 'dna sequencing',
+			},
+			{
+				isLiteral: false,
+				value: 'test',
+			},
+			{
+				isLiteral: false,
+				value: 'crispr',
+			},
+			{
+				isLiteral: false,
+				value: 'cloning',
+			},
+			{
+				isLiteral: false,
+				value: 'genomics',
+			},
+			{
+				isLiteral: false,
+				value: 'brecht',
+			},
+			{
+				isLiteral: false,
+				value: 'tafel',
+			},
 		]);
 		expect(response.parsedSuccessfully).toEqual(true);
 	});
@@ -59,7 +110,12 @@ describe('convertNodeToSearchStrings', () => {
 		} catch (err) {
 			// If it fails the first time, we try again with quotes around the whole string
 			const result = convertStringToSearchTerms('"The big -)( test"');
-			expect(result.plainTextSearchTerms).toEqual(['The big -)( test']);
+			expect(result.plainTextSearchTerms).toEqual([
+				{
+					isLiteral: true,
+					value: 'The big -)( test',
+				},
+			]);
 			expect(result.parsedSuccessfully).toEqual(true);
 		}
 	});
