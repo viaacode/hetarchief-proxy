@@ -44,12 +44,12 @@ export function convertStringToSearchTerms(searchQuery: string): SearchTermParse
 export function convertNodeToSearchTerms(
 	node: Expression
 ): { isLiteral: boolean; value: string }[] {
-	node.value = decodeSearchterm(node.value as string);
-	node.name = decodeSearchterm(node.name as string);
-
 	if (node.operator === 'NOT') {
 		return [];
 	}
+
+	node.value = decodeSearchterm(node.value as string);
+	node.name = decodeSearchterm(node.name as string);
 
 	switch (node.type) {
 		case 'Compound':
