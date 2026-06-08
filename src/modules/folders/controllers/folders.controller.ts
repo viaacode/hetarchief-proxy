@@ -91,17 +91,6 @@ export class FoldersController {
 			folder.objects = compact(
 				(folder.objects ?? []).map((object) => {
 					if (!object) {
-						// console.error(
-						// 	customError(
-						// 		'Folder object returned null. user no longer has access or object no longer exists',
-						// 		null,
-						// 		{
-						// 			object,
-						// 			folderId: folder.id,
-						// 			folderName: folder.name,
-						// 		}
-						// 	)
-						// );
 						return undefined; // ieObject in folder no longer exists
 					}
 					return this.ieObjectsService.limitObjectInFolder(object, user, visitorSpaceAccessInfo);
