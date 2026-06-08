@@ -12,7 +12,7 @@ jsep.addBinaryOp('OR', 1);
 jsep.addUnaryOp('NOT');
 
 export interface SearchTermParseResult {
-	plainTextSearchTerms: string[];
+	plainTextSearchTerms: { isLiteral: boolean; value: string }[];
 	parsedSuccessfully: boolean;
 }
 
@@ -34,11 +34,20 @@ export function convertStringToSearchTerms(searchQuery: string): SearchTermParse
 				.replace(/ +/, ' ')
 				.split(' ')
 		);
-		return { plainTextSearchTerms, parsedSuccessfully: false };
+		return {
+			plainTextSearchTerms: plainTextSearchTerms.map((value) => ({ isLiteral: true, value })),
+			parsedSuccessfully: false,
+		};
 	}
 }
 
-export function convertNodeToSearchTerms(node: Expression): string[] {
+export function convertNodeToSearchTerms(
+	node: Expression
+): { isLiteral: boolean; value: string }[] {
+	if (node.operator === 'NOT') {
+		return [];
+	}
+
 	node.value = decodeSearchterm(node.value as string);
 	node.name = decodeSearchterm(node.name as string);
 
@@ -59,10 +68,10 @@ export function convertNodeToSearchTerms(node: Expression): string[] {
 			return convertNodeToSearchTerms(node.argument as Expression);
 
 		case 'Identifier':
-			return [node.name as string];
+			return [{ value: node.name as string, isLiteral: false }];
 
 		case 'Literal':
-			return [node.value as string];
+			return [{ value: node.value as string, isLiteral: true }];
 
 		default:
 			return [];

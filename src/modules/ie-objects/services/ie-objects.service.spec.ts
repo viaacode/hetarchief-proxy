@@ -5,13 +5,13 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import type { Cache } from 'cache-manager';
 import { cloneDeep } from 'lodash';
 import {
+	type MockInstance,
 	afterAll,
 	afterEach,
 	beforeAll,
 	describe,
 	expect,
 	it,
-	type MockInstance,
 	vi,
 } from 'vitest';
 
@@ -562,7 +562,7 @@ describe('ieObjectsService', () => {
 					value: 'example',
 				},
 			]);
-			expect(result.plainTextSearchTerms).toEqual(['example']);
+			expect(result.plainTextSearchTerms).toEqual([{ value: 'example', isLiteral: false }]);
 			expect(result.parsedSuccessfully).toEqual(true);
 		});
 
@@ -579,7 +579,7 @@ describe('ieObjectsService', () => {
 					value: 'example2',
 				},
 			]);
-			expect(result.plainTextSearchTerms).toEqual(['example']);
+			expect(result.plainTextSearchTerms).toEqual([{ value: 'example', isLiteral: false }]);
 			expect(result.parsedSuccessfully).toEqual(true);
 		});
 
@@ -603,7 +603,7 @@ describe('ieObjectsService', () => {
 					value: '"example\'',
 				},
 			]);
-			expect(result.plainTextSearchTerms).toEqual(['example']);
+			expect(result.plainTextSearchTerms).toEqual([{ value: 'example', isLiteral: true }]);
 			expect(result.parsedSuccessfully).toEqual(false);
 		});
 	});
