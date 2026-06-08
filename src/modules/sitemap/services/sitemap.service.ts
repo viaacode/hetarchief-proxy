@@ -298,9 +298,10 @@ export class SitemapService {
 	}
 
 	private renderPage(pageInfo: SitemapItemInfo): string {
+		const url = this.limitUrl(`${this.CLIENT_HOST_RESOLVED}${pageInfo.loc}`);
 		return `
 			<url>
-				<loc>${this.CLIENT_HOST_RESOLVED}${pageInfo.loc}</loc>
+				<loc>${url}</loc>
 				${this.renderPageLinks(pageInfo.links)}
 				${pageInfo.lastmod ? `<lastmod>${pageInfo.lastmod}</lastmod>` : ''}
 				<changefreq>${pageInfo.changefreq}</changefreq>
@@ -311,8 +312,12 @@ export class SitemapService {
 	private renderSitemapIndexEntry(url: string): string {
 		return `
 		<sitemap>
-			<loc>${url}</loc>
+			<loc>${this.limitUrl(url)}</loc>
 		</sitemap>`;
+	}
+
+	private limitUrl(url: string): string {
+		return url.substring(0, 2048);
 	}
 
 	private async uploadXml(xml: string, name: string): Promise<string> {
