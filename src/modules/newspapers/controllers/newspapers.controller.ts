@@ -1,5 +1,14 @@
 import { PlayerTicketService } from '@meemoo/admin-core-api';
-import { Controller, ForbiddenException, Get, Header, Param, Query, Req, Res, } from '@nestjs/common';
+import {
+	Controller,
+	ForbiddenException,
+	Get,
+	Header,
+	Param,
+	Query,
+	Req,
+	Res,
+} from '@nestjs/common';
 
 import { ConfigService } from '@nestjs/config';
 import { ApiTags } from '@nestjs/swagger';
@@ -16,7 +25,11 @@ import { LogEventType } from '~modules/events/types';
 import { IeObjectsController } from '~modules/ie-objects/controllers/ie-objects.controller';
 import { convertObjectToCsv } from '~modules/ie-objects/helpers/convert-objects-to-csv';
 import { convertObjectToXml } from '~modules/ie-objects/helpers/convert-objects-to-xml';
-import { IeObjectPage, NewspaperTitle, SimpleIeObjectType, } from '~modules/ie-objects/ie-objects.types';
+import {
+	IeObjectPage,
+	NewspaperTitle,
+	SimpleIeObjectType,
+} from '~modules/ie-objects/ie-objects.types';
 import {
 	NEWSPAPER_MIME_TYPE_ALTO,
 	NEWSPAPER_MIME_TYPE_BROWSE_COPY,
