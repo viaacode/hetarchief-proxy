@@ -160,7 +160,7 @@ export class SitemapService {
 			`
 			<?xml version="1.0" encoding="UTF-8"?>
 			<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-				${xmlUrls.map(this.renderSitemapIndexEntry).join('\n')}
+				${xmlUrls.map((url) => this.renderSitemapIndexEntry(url)).join('\n')}
 			</sitemapindex>
 		`,
 			{ lineSeparator: '\n' }
