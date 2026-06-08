@@ -75,7 +75,7 @@ const mockDataService: Partial<Record<keyof DataService, MockInstance>> = {
 const mockPlayerTicketService: Partial<Record<keyof PlayerTicketService, MockInstance>> = {
 	getPlayerToken: vi.fn(),
 	getPlayableUrl: vi.fn(),
-	getEmbedUrl: vi.fn(),
+	getBrowseUrl: vi.fn(),
 	resolveThumbnailUrl: vi.fn(),
 	getThumbnailUrl: vi.fn(),
 	getThumbnailPath: vi.fn(),

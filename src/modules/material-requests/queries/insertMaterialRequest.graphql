@@ -118,6 +118,11 @@ mutation insertMaterialRequest($newMaterialRequest: app_material_requests_insert
 					schema_duration
 					edm_is_next_in_sequence
 					created_at
+					hasMediaFragment {
+						schema_start_time
+						schema_end_time
+						schema_name
+					}
 				}
 			}
 		}

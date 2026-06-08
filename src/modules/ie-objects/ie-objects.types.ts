@@ -66,6 +66,8 @@ export interface IeObjectFile {
 	duration: string | number | null;
 	edmIsNextInSequence: string;
 	createdAt: string;
+	startTime?: number | null;
+	endTime?: number | null;
 }
 
 export interface IeObjectPages {

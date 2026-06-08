@@ -119,6 +119,11 @@ query findMaterialRequestsById($id: uuid!) {
 					schema_duration
 					edm_is_next_in_sequence
 					created_at
+					hasMediaFragment {
+						schema_start_time
+						schema_end_time
+						schema_name
+					}
 				}
 			}
 		}
