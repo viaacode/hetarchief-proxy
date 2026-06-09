@@ -3,6 +3,7 @@ import {
 	Body,
 	Controller,
 	Get,
+	NotFoundException,
 	Param,
 	Patch,
 	Query,
@@ -59,7 +60,12 @@ export class OrganisationsController {
 	}
 
 	@Get(':slug')
-	async getOrganisationBySlug(@Param('slug') slug: string): Promise<Organisation | null> {
-		return this.organisationsService.findOrganisationBySlug(slug);
+	async getOrganisationBySlug(@Param('slug') slug: string): Promise<Organisation> {
+		const organisation = await this.organisationsService.findOrganisationBySlug(slug);
+
+		if (!organisation) {
+			throw new NotFoundException('This organisation was not found.');
+		}
+		return organisation;
 	}
 }
