@@ -64,6 +64,7 @@ const mockIeObjectsService: Partial<Record<keyof IeObjectsService, MockInstance>
 		visitorSpaceIds: [],
 	})),
 	getObjectIdBySchemaIdentifierCached: vi.fn().mockResolvedValue('mock-ie-object-id'),
+	getFileInIeObject: vi.fn(),
 };
 
 const mockPlayerTicketService: Partial<Record<keyof PlayerTicketService, MockInstance>> = {
@@ -187,6 +188,7 @@ describe('IeObjectsController', () => {
 								{
 									files: [
 										{
+											id: 'website/id/entity/file-id',
 											storedAt: '/path/to/file',
 											mimeType: 'video/mp4',
 										},
@@ -197,9 +199,12 @@ describe('IeObjectsController', () => {
 					],
 				},
 			] as Partial<IeObject>[]);
-			mockPlayerTicketController.getPlayableUrlFromBrowsePath.mockResolvedValueOnce(
-				'http://playme'
-			);
+			mockPlayerTicketService.getPlayableUrl.mockResolvedValueOnce('http://playme');
+			mockIeObjectsService.getFileInIeObject.mockReturnValueOnce({
+				id: 'website/id/entity/file-id',
+				storedAt: '/path/to/file',
+				mimeType: 'video/mp4',
+			});
 			const url = await ieObjectsController.getPlayableUrl(
 				'referer',
 				'127.0.0.1',

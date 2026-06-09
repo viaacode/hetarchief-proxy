@@ -237,6 +237,15 @@ describe('SitemapService', () => {
 				'https://asset-server.be/bucketname/SITEMAP/object-detail-0'
 			);
 			mockAssetsService.uploadAndTrack.mockResolvedValueOnce(
+				'https://asset-server.be/bucketname/SITEMAP/object-detail-1'
+			);
+			mockAssetsService.uploadAndTrack.mockResolvedValueOnce(
+				'https://asset-server.be/bucketname/SITEMAP/object-detail-2'
+			);
+			mockAssetsService.uploadAndTrack.mockResolvedValueOnce(
+				'https://asset-server.be/bucketname/SITEMAP/object-detail-3'
+			);
+			mockAssetsService.uploadAndTrack.mockResolvedValueOnce(
 				'https://asset-server.be/bucketname/SITEMAP/index'
 			);
 
