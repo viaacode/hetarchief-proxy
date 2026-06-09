@@ -32,10 +32,12 @@ query getUserById($id: uuid!) {
 			organizationSlug {
 				slug
 			}
-			schemaPostalAddresses {
-				schema_street_address
-				schema_postal_code
-				schema_address_locality
+			hasSite {
+				postalAddress {
+					schema_street_address
+					schema_address_locality
+					schema_postal_code
+				}
 			}
 		}
 	}

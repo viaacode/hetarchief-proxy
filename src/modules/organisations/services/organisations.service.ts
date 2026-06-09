@@ -76,9 +76,10 @@ export class OrganisationsService {
 			formUrl: gqlOrganisation?.ha_org_request_form,
 			slug: gqlOrganisation?.organizationSlug?.slug,
 			vatNumber: gqlOrganisation?.schema_vat_id || null,
-			streetAddress: gqlOrganisation?.schemaPostalAddresses?.[0]?.schema_street_address || null,
-			postalCode: gqlOrganisation?.schemaPostalAddresses?.[0]?.schema_postal_code || null,
-			addressLocality: gqlOrganisation?.schemaPostalAddresses?.[0]?.schema_address_locality || null,
+			streetAddress: gqlOrganisation?.hasSite?.[0]?.postalAddress?.schema_street_address || null,
+			postalCode: gqlOrganisation?.hasSite?.[0]?.postalAddress?.schema_postal_code || null,
+			addressLocality:
+				gqlOrganisation?.hasSite?.[0]?.postalAddress?.schema_address_locality || null,
 		};
 	}
 

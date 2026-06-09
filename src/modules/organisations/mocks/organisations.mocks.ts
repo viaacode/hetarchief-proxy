@@ -28,11 +28,13 @@ export const mockGqlOrganisation: GqlOrganisation = {
 	ha_org_request_form:
 		'https://www.vrt.be/heb-je-een-vraag/s/contactsupport-vrtarchief?name_user={first_name}&mail_user={email}&local_id={local_cp_id}&viaa_id={pid}&surname_user={last_name}&title={title}&serie={title_serie}',
 	schema_vat_id: 'BE 0244.142.664',
-	schemaPostalAddresses: [
+	hasSite: [
 		{
-			schema_street_address: 'Auguste Reyerslaan 52',
-			schema_postal_code: '1043',
-			schema_address_locality: 'Brussel',
+			postalAddress: {
+				schema_street_address: 'Auguste Reyerslaan 52',
+				schema_postal_code: '1043',
+				schema_address_locality: 'Brussel',
+			},
 		},
 	],
 	organizationSlug: {

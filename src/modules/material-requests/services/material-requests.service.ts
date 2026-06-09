@@ -1260,7 +1260,7 @@ export class MaterialRequestsService {
 	> {
 		const org = graphQlMaterialRequest.organisation;
 		if (org) {
-			const address = org.schemaPostalAddresses?.[0];
+			const address = org.hasSite?.[0]?.postalAddress;
 			return {
 				requesterOrganisationId: org.org_identifier,
 				requesterOrganisationName: org.skos_pref_label,

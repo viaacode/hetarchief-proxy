@@ -17,10 +17,12 @@ query getMaterialRequestMessages($materialRequestId: uuid!, $offset: Int!, $limi
 				org_identifier
 				skos_pref_label
 				schema_vat_id
-				schemaPostalAddresses {
-					schema_street_address
-					schema_postal_code
-					schema_address_locality
+				hasSite {
+					postalAddress {
+						schema_street_address
+						schema_address_locality
+						schema_postal_code
+					}
 				}
 			}
 		}
