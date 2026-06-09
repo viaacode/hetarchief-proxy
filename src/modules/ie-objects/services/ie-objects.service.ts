@@ -42,10 +42,10 @@ import {
 	type IeObjectPages,
 	type IeObjectRepresentation,
 	type IeObjectSector,
+	IeObjectType,
 	type IeObjectsSitemap,
 	type IeObjectsVisitorSpaceInfo,
 	type IeObjectsWithAggregations,
-	IeObjectType,
 	type IsPartOfKey,
 	type Mention,
 	type RelatedIeObject,
@@ -98,18 +98,18 @@ import {
 } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
 import { AND } from '~modules/ie-objects/elasticsearch/queryBuilder.helpers';
 import {
-	convertStringToSearchTerms,
 	type SearchTermParseResult,
+	convertStringToSearchTerms,
 } from '~modules/ie-objects/helpers/convert-string-to-search-terms';
 import {
 	AUTOCOMPLETE_FIELD_TO_ES_FIELD_NAME,
 	IE_OBJECT_AV_TYPES,
 } from '~modules/ie-objects/ie-objects.conts';
 import {
+	CACHE_KEY_PREFIX_IE_OBJECTS_SEARCH,
 	CACHE_KEY_PREFIX_IE_OBJECT_DETAIL,
 	CACHE_KEY_PREFIX_IE_OBJECT_PID_TO_ID,
 	CACHE_KEY_PREFIX_IE_OBJECT_THUMBNAIL,
-	CACHE_KEY_PREFIX_IE_OBJECTS_SEARCH,
 } from '~modules/ie-objects/services/ie-objects.service.consts';
 import {
 	type DbFile,
@@ -243,17 +243,24 @@ export class IeObjectsService {
 				);
 			}
 
-			let objectResponse: any;
-			if (this.configService.get('ELASTICSEARCH_CACHE_QUERIES')) {
-				const cacheKey = Buffer.from(JSON.stringify(esQuery)).toString('base64');
-				objectResponse = await this.cacheManager.wrap(
-					CACHE_KEY_PREFIX_IE_OBJECTS_SEARCH + cacheKey,
-					() => this.executeQuery(esIndex, esQuery),
-					// cache for 1 hour
-					hoursToSeconds(1)
-				);
-			} else {
-				objectResponse = await this.executeQuery(esIndex, esQuery);
+			let objectResponse: ElasticsearchResponse | undefined;
+			let adaptedESResponse: ElasticsearchResponse | undefined;
+
+			try {
+				if (this.configService.get('ELASTICSEARCH_CACHE_QUERIES')) {
+					const cacheKey = Buffer.from(JSON.stringify(esQuery)).toString('base64');
+					objectResponse = await this.cacheManager.wrap(
+						CACHE_KEY_PREFIX_IE_OBJECTS_SEARCH + cacheKey,
+						() => this.executeQuery(esIndex, esQuery),
+						// cache for 1 hour
+						hoursToSeconds(1)
+					);
+				} else {
+					objectResponse = await this.executeQuery(esIndex, esQuery);
+				}
+				adaptedESResponse = await this.adaptESResponse(objectResponse);
+			} catch (err) {
+				this.logger.error(err);
 			}
 
 			if (inputQuery.size > 0 && process.env.NODE_ENV === 'local') {
@@ -268,22 +275,20 @@ export class IeObjectsService {
 				);
 			}
 
-			const adaptedESResponse = await this.adaptESResponse(objectResponse);
-
 			const searchTermParseResult = this.getSimpleSearchTermsFromBooleanExpression(
 				inputQuery.filters
 			);
 			return {
 				...Pagination<IeObject>({
 					// 24 in parallel, since one search page contains 24 items usually
-					items: await mapLimit(adaptedESResponse.hits.hits, 24, async (esHit) =>
+					items: await mapLimit(adaptedESResponse?.hits?.hits ?? [], 24, async (esHit) =>
 						this.adaptESObjectToObject(esHit._source, referer, ip)
 					),
 					page: inputQuery.page,
-					size: adaptedESResponse.hits.hits.length,
-					total: adaptedESResponse.hits.total.value,
+					size: adaptedESResponse?.hits?.hits?.length ?? 0,
+					total: adaptedESResponse?.hits?.total?.value ?? 0,
 				}),
-				aggregations: adaptedESResponse.aggregations,
+				aggregations: adaptedESResponse?.aggregations,
 				searchTerms: searchTermParseResult.plainTextSearchTerms,
 				searchTermsParsedSuccessfully: searchTermParseResult.parsedSuccessfully,
 			};
@@ -464,18 +469,24 @@ export class IeObjectsService {
 			]),
 		};
 
-		// if esIndex is passed, we only want to return objects that are inside a visitor space
-		const mediaResponse = await this.executeQuery(esIndex || ALL_INDEXES, esQueryObject);
-		const adaptedESResponse = await this.adaptESResponse(mediaResponse);
+		let adaptedESResponse: ElasticsearchResponse | undefined;
+
+		try {
+			// if esIndex is passed, we only want to return objects that are inside a visitor space
+			const mediaResponse = await this.executeQuery(esIndex || ALL_INDEXES, esQueryObject);
+			adaptedESResponse = await this.adaptESResponse(mediaResponse);
+		} catch (err) {
+			this.logger.error(err);
+		}
 
 		return {
 			...Pagination<IeObject>({
-				items: await mapLimit(adaptedESResponse.hits.hits, 20, async (esHit) =>
+				items: await mapLimit(adaptedESResponse?.hits?.hits ?? [], 20, async (esHit) =>
 					this.adaptESObjectToObject(esHit._source, referer, ip)
 				),
 				page: 1,
-				size: adaptedESResponse.hits.hits.length,
-				total: adaptedESResponse.hits.total.value,
+				size: adaptedESResponse?.hits?.hits?.length ?? 0,
+				total: adaptedESResponse?.hits?.total?.value ?? 0,
 			}),
 		};
 	}
@@ -858,9 +869,11 @@ export class IeObjectsService {
 	 * - and audio and audioFragment under audio
 	 * @param esResponse
 	 */
-	public async adaptESResponse(esResponse: ElasticsearchResponse): Promise<ElasticsearchResponse> {
+	public async adaptESResponse(
+		esResponse: ElasticsearchResponse | undefined
+	): Promise<ElasticsearchResponse | undefined> {
 		// merge 'film' aggregations with 'video' if need be
-		if (esResponse.aggregations?.dcterms_format?.buckets) {
+		if (esResponse?.aggregations?.dcterms_format?.buckets) {
 			esResponse.aggregations.dcterms_format.buckets =
 				esResponse.aggregations.dcterms_format.buckets.filter((bucket) => {
 					if (bucket.key === IeObjectType.FILM || bucket.key === IeObjectType.VIDEO_FRAGMENT) {
@@ -1410,10 +1423,13 @@ export class IeObjectsService {
 			);
 		}
 
-		const response: EsQueryAutocompleteMatchPhraseResponse = await this.executeQuery(
-			ALL_INDEXES,
-			esQuery
-		);
+		let response: EsQueryAutocompleteMatchPhraseResponse | undefined;
+
+		try {
+			response = await this.executeQuery(ALL_INDEXES, esQuery);
+		} catch (err) {
+			this.logger.error(err);
+		}
 
 		if (this.configService.get('ELASTICSEARCH_LOG_QUERIES')) {
 			this.logger.log(
@@ -1427,7 +1443,7 @@ export class IeObjectsService {
 
 		// Map elasticsearch response to a list of unique strings
 		const suggestions: string[] = uniq(
-			response.hits?.hits?.flatMap((hit): string[] => {
+			response?.hits?.hits?.flatMap((hit): string[] => {
 				const value = hit.fields[`${esField}.sayt`];
 				if (isArray(value)) {
 					// List of strings

@@ -151,6 +151,11 @@ describe('ieObjectsService', () => {
 	});
 
 	describe('adaptESResponse', () => {
+		it('returns the input if the response is undefined', async () => {
+			const result = await ieObjectsService.adaptESResponse(undefined);
+			expect(result).toEqual(undefined);
+		});
+
 		it('returns the input if no hits were found', async () => {
 			const esResponse = { hits: { hits: [], total: { value: 0 } } } as ElasticsearchResponse;
 			const result = await ieObjectsService.adaptESResponse(esResponse);
