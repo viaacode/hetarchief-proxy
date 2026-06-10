@@ -1,7 +1,7 @@
 {
   "modules/account/components/material-request-detail-blade/material-request-detail-blade___aangevraagd-op": "Aangevraagd op {{requestedAt}}",
   "modules/account/components/material-request-detail-blade/material-request-detail-blade___voorwaarden-verstuurd-door": "Voorwaarden verstuurd door {{name}}",
-  "modules/account/components/material-request-detail-blade/material-request-detail-blade___voorwaarden-verstuurd-op": "Voorwaarden verstuurd op {{sendAt}}",
+  "modules/account/components/material-request-detail-blade/material-request-detail-blade___voorwaarden-verstuurd-op": "Voorwaarden verstuurd op {{sentAt}}",
   "modules/auth/controllers/het-archief___account-configuratie": "Account configuratie",
   "modules/auth/services/idp___account-configuratie": "Account configuratie",
   "modules/auth/services/idp___de-account-is-een-beheerder-maar-heeft-geen-organisatie-in-de-acm-voeg-een-organisatie-toe-in-de-acm-no-org-linked": "Er is een probleem met deze admin account: er is geen organisatie geregistreerd. Neem contact op met support@meemoo.be en laat even weten welk e-mailadres je gebruikt om in te loggen. We brengen het zo snel mogelijk in orde.",
