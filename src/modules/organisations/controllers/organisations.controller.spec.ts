@@ -54,11 +54,12 @@ describe('OrganisationsController', () => {
 			expect(organisationsService.findOrganisationBySlug).toHaveBeenCalledWith('test-slug');
 		});
 
-		it('should return null if organisation is not found', async () => {
+		it('should throw an error if organisation is not found', async () => {
 			organisationsService.findOrganisationBySlug.mockResolvedValue(null);
 
-			const result = await organisationsController.getOrganisationBySlug('non-existent-slug');
-			expect(result).toBeNull();
+			await expect(
+				organisationsController.getOrganisationBySlug('non-existent-slug')
+			).rejects.toThrow('This organisation was not found.');
 			expect(organisationsService.findOrganisationBySlug).toHaveBeenCalledWith('non-existent-slug');
 		});
 	});
