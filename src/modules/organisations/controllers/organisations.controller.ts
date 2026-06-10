@@ -3,7 +3,6 @@ import {
 	Body,
 	Controller,
 	Get,
-	NotFoundException,
 	Param,
 	Patch,
 	Query,
@@ -13,6 +12,7 @@ import { ApiTags } from '@nestjs/swagger';
 
 import { Organisation, OrganisationSlug } from '~modules/organisations/organisations.types';
 
+import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
 import { IPagination } from '@studiohyperdrive/pagination';
 import { PermissionName } from '@viaa/avo2-types';
 import {
@@ -64,7 +64,7 @@ export class OrganisationsController {
 		const organisation = await this.organisationsService.findOrganisationBySlug(slug);
 
 		if (!organisation) {
-			throw new NotFoundException('This organisation was not found.');
+			throw new CustomError('This organisation was not found.', null, { slug }, 404);
 		}
 		return organisation;
 	}
