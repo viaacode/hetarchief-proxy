@@ -432,7 +432,8 @@ export class MaterialRequestPdfGeneratorService {
 					locale
 				);
 			case Lookup_App_Material_Request_Message_Type_Enum.Cancelled:
-			case Lookup_App_Material_Request_Message_Type_Enum.AdditionalConditionsDenied:
+				// Not rendering the additional conditions denied since this also creates a canceled event and there is no need to render twice the same message
+				// case Lookup_App_Material_Request_Message_Type_Enum.AdditionalConditionsDenied:
 				return this.translationsService.tText(
 					'modules/material-request-messages/services/material-request-pdf-generator___geannuleerd-op-cancelled-at',
 					{ cancelledAt: dateStr },
