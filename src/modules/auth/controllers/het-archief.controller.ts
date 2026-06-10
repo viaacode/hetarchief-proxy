@@ -145,7 +145,7 @@ export class HetArchiefController {
 				isKeyUser: apps.includes(LdapApp.CATALOGUS_PRO),
 				isEvaluator: apps.includes(LdapApp.EVALUATOR_ROLE),
 				organisationId,
-				language: info.language || Locale.Nl,
+				language: archiefUser?.language || info.language || Locale.Nl,
 			};
 
 			if (!archiefUser) {

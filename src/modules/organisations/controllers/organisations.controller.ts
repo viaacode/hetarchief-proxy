@@ -12,6 +12,7 @@ import { ApiTags } from '@nestjs/swagger';
 
 import { Organisation, OrganisationSlug } from '~modules/organisations/organisations.types';
 
+import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
 import { IPagination } from '@studiohyperdrive/pagination';
 import { PermissionName } from '@viaa/avo2-types';
 import {
@@ -59,7 +60,12 @@ export class OrganisationsController {
 	}
 
 	@Get(':slug')
-	async getOrganisationBySlug(@Param('slug') slug: string): Promise<Organisation | null> {
-		return this.organisationsService.findOrganisationBySlug(slug);
+	async getOrganisationBySlug(@Param('slug') slug: string): Promise<Organisation> {
+		const organisation = await this.organisationsService.findOrganisationBySlug(slug);
+
+		if (!organisation) {
+			throw new CustomError('This organisation was not found.', null, { slug }, 404);
+		}
+		return organisation;
 	}
 }
