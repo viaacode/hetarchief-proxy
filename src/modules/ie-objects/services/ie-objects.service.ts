@@ -260,7 +260,12 @@ export class IeObjectsService {
 				}
 				adaptedESResponse = await this.adaptESResponse(objectResponse);
 			} catch (err) {
-				this.logger.error(err);
+				this.logger.error(
+					new CustomError('Failed to execute elasticsearch query in IeObjectService.findAll', err, {
+						esIndex,
+						esQuery,
+					})
+				);
 			}
 
 			if (inputQuery.size > 0 && process.env.NODE_ENV === 'local') {
@@ -476,7 +481,12 @@ export class IeObjectsService {
 			const mediaResponse = await this.executeQuery(esIndex || ALL_INDEXES, esQueryObject);
 			adaptedESResponse = await this.adaptESResponse(mediaResponse);
 		} catch (err) {
-			this.logger.error(err);
+			this.logger.error(
+				new CustomError('Failed to execute query inside a single index in elastcisearch', err, {
+					esIndex,
+					esQueryObject,
+				})
+			);
 		}
 
 		return {
