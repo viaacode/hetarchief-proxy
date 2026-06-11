@@ -62,7 +62,7 @@ export class OrganisationsService {
 	}
 
 	public adapt(gqlOrganisation: GqlOrganisation): Organisation {
-		const orgAddress = getOrganisationAddress(gqlOrganisation.hasSite);
+		const orgAddress = getOrganisationAddress(gqlOrganisation.hasSite || []);
 		return {
 			schemaIdentifier: gqlOrganisation?.org_identifier,
 			contactPoint: gqlOrganisation?.schemaContactPoint.map((contactPoint) => ({

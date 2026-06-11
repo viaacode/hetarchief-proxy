@@ -13,7 +13,7 @@ export enum OrganisationPreference {
 }
 
 /**
- * Postal address has it's source in the ldap database and is in English
+ * Postal address has its source in the ldap database and is in English
  */
 export enum PostalAddressType {
 	delivery = 'delivery',

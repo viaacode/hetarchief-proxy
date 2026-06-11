@@ -1,30 +1,9 @@
 import { parse } from 'node:path';
-import {
-	AssetsService,
-	DataService,
-	Locale,
-	StillsObjectType,
-	VideoStillsService,
-} from '@meemoo/admin-core-api';
-import {
-	BadRequestException,
-	Injectable,
-	InternalServerErrorException,
-	NotFoundException,
-} from '@nestjs/common';
+import { AssetsService, DataService, Locale, StillsObjectType, VideoStillsService, } from '@meemoo/admin-core-api';
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException, } from '@nestjs/common';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { mapLimit } from 'blend-promise-utils';
-import {
-	compact,
-	groupBy,
-	intersection,
-	isArray,
-	isEmpty,
-	isNil,
-	kebabCase,
-	noop,
-	set,
-} from 'lodash';
+import { compact, groupBy, intersection, isArray, isEmpty, isNil, kebabCase, noop, set, } from 'lodash';
 
 import {
 	CreateMaterialRequestDto,
@@ -1261,7 +1240,7 @@ export class MaterialRequestsService {
 	> {
 		const org = graphQlMaterialRequest.organisation;
 		if (org) {
-			const address = getOrganisationAddress(org.hasSite);
+			const address = getOrganisationAddress(org.hasSite || []);
 			return {
 				requesterOrganisationId: org.org_identifier,
 				requesterOrganisationName: org.skos_pref_label,
