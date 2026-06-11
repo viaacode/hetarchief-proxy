@@ -33,13 +33,13 @@ import {
 	UpdateMaterialRequestStatusDto,
 } from '../dto/material-requests.dto';
 import {
+	getAdditionEventDate,
+	getLastStatusEventOfType,
+	getStatusEvent,
 	MAP_MATERIAL_REQUEST_STATUS_TO_EVENT_TYPE,
 	MAP_MATERIAL_REQUEST_STATUS_TO_NOTIFICATION_TYPE,
 	MAP_NOTIFICATION_TYPE_TO_EMAIL_TEMPLATE,
 	ORDER_PROP_TO_DB_PROP,
-	getAdditionEventDate,
-	getLastStatusEventOfType,
-	getStatusEvent,
 } from '../material-requests.consts';
 import {
 	GqlMaterialRequest,
@@ -121,8 +121,8 @@ import {
 	IeObjectAccessThrough,
 	IeObjectLicense,
 	type IeObjectSector,
-	IeObjectType,
 	IeObjectsVisitorSpaceInfo,
+	IeObjectType,
 	SimpleIeObjectType,
 } from '~modules/ie-objects/ie-objects.types';
 import type { Organisation } from '~modules/organisations/organisations.types';
@@ -145,6 +145,7 @@ import { MaterialRequestMessagesService } from '~modules/material-request-messag
 import { MediahavenJobsWatcherService } from '~modules/mediahaven-jobs-watcher/services/mediahaven-jobs-watcher.service';
 import { NotificationsService } from '~modules/notifications/services/notifications.service';
 import { NotificationType } from '~modules/notifications/types';
+import { getOrganisationAddress } from '~modules/organisations/helpers/get-organisation-address';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { UsersService } from '~modules/users/services/users.service';
@@ -1260,7 +1261,7 @@ export class MaterialRequestsService {
 	> {
 		const org = graphQlMaterialRequest.organisation;
 		if (org) {
-			const address = org.hasSite?.[0]?.postalAddress;
+			const address = getOrganisationAddress(org.hasSite);
 			return {
 				requesterOrganisationId: org.org_identifier,
 				requesterOrganisationName: org.skos_pref_label,

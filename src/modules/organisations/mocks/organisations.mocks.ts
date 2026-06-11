@@ -31,9 +31,18 @@ export const mockGqlOrganisation: GqlOrganisation = {
 	hasSite: [
 		{
 			postalAddress: {
+				schema_street_address: 'Nero steenstraat 23',
+				schema_postal_code: '3000',
+				schema_address_locality: 'Antwerpen',
+				schema_contact_type: OrganisationContactPointType.primary,
+			},
+		},
+		{
+			postalAddress: {
 				schema_street_address: 'Auguste Reyerslaan 52',
 				schema_postal_code: '1043',
 				schema_address_locality: 'Brussel',
+				schema_contact_type: OrganisationContactPointType.facturatie,
 			},
 		},
 	],

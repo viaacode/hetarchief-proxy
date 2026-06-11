@@ -16,12 +16,12 @@ import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/help
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { hoursToSeconds } from 'date-fns';
 import {
-	FindOrganisationSlugsDocument,
-	FindOrganisationSlugsQuery,
-	FindOrganisationSlugsQueryVariables,
 	FindOrganisationsBySchemaIdsDocument,
 	type FindOrganisationsBySchemaIdsQuery,
 	type FindOrganisationsBySchemaIdsQueryVariables,
+	FindOrganisationSlugsDocument,
+	FindOrganisationSlugsQuery,
+	FindOrganisationSlugsQueryVariables,
 	GetOrganisationBySlugDocument,
 	type GetOrganisationBySlugQuery,
 	type GetOrganisationBySlugQueryVariables,
@@ -35,6 +35,7 @@ import {
 } from '~generated/graphql-db-types-hetarchief';
 import type { IeObjectSector } from '~modules/ie-objects/ie-objects.types';
 import { OrganisationSlugQueryDto } from '~modules/organisations/dto/organisations.dto';
+import { getOrganisationAddress } from '~modules/organisations/helpers/get-organisation-address';
 import { ORDER_PROP_TO_DB_PROP } from '~modules/organisations/organisations.consts';
 import { PaginationHelper } from '~shared/helpers/pagination';
 import { SortDirection } from '~shared/types';
@@ -61,6 +62,7 @@ export class OrganisationsService {
 	}
 
 	public adapt(gqlOrganisation: GqlOrganisation): Organisation {
+		const orgAddress = getOrganisationAddress(gqlOrganisation.hasSite);
 		return {
 			schemaIdentifier: gqlOrganisation?.org_identifier,
 			contactPoint: gqlOrganisation?.schemaContactPoint.map((contactPoint) => ({
@@ -76,10 +78,9 @@ export class OrganisationsService {
 			formUrl: gqlOrganisation?.ha_org_request_form,
 			slug: gqlOrganisation?.organizationSlug?.slug,
 			vatNumber: gqlOrganisation?.schema_vat_id || null,
-			streetAddress: gqlOrganisation?.hasSite?.[0]?.postalAddress?.schema_street_address || null,
-			postalCode: gqlOrganisation?.hasSite?.[0]?.postalAddress?.schema_postal_code || null,
-			addressLocality:
-				gqlOrganisation?.hasSite?.[0]?.postalAddress?.schema_address_locality || null,
+			streetAddress: orgAddress?.schema_street_address || null,
+			postalCode: orgAddress?.schema_postal_code || null,
+			addressLocality: orgAddress?.schema_address_locality || null,
 		};
 	}
 

@@ -1,6 +1,6 @@
 import {
-	FindOrganisationSlugsQuery,
 	FindOrganisationsBySchemaIdsQuery,
+	FindOrganisationSlugsQuery,
 	GetOrganisationBySlugQuery,
 	UpdateOrganisationSlugMutation,
 } from '~generated/graphql-db-types-hetarchief';
@@ -10,6 +10,12 @@ export enum OrganisationPreference {
 	logoEmbedding = 'logo-embedding',
 	iiifDissemination = 'iiif-dissemination',
 	visitorSpacePublication = 'visitor-space-publication',
+}
+
+export enum PostalAddressType {
+	primary = 'primary',
+	delivery = 'delivery',
+	invoicing = 'invoicing',
 }
 
 export enum OrganisationContactPointType {

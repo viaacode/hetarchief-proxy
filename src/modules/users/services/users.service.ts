@@ -1,27 +1,22 @@
-import { DataService, UserInfoType, convertUserInfoToCommonUser } from '@meemoo/admin-core-api';
+import { convertUserInfoToCommonUser, DataService, UserInfoType } from '@meemoo/admin-core-api';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { PermissionName } from '@viaa/avo2-types';
-
-import { CreateOrUpdateUserDto, UpdateAcceptedTosDto, UpdateUserLangDto } from '../dto/users.dto';
 import {
-	type GqlPermissionData,
-	type GqlUser,
-	GroupIdToName,
-	type GroupName,
-	type User,
-} from '../types';
+	AvoAuthIdpType,
+	AvoUserCommonUser,
+	AvoUserHetArchiefUser,
+	PermissionName,
+} from '@viaa/avo2-types';
 
-import { AvoAuthIdpType, AvoUserCommonUser, AvoUserHetArchiefUser } from '@viaa/avo2-types';
 import {
 	GetUserByEmailDocument,
 	type GetUserByEmailQuery,
 	type GetUserByEmailQueryVariables,
 	GetUserByIdDocument,
-	type GetUserByIdQuery,
-	type GetUserByIdQueryVariables,
 	GetUserByIdentityIdDocument,
 	type GetUserByIdentityIdQuery,
 	type GetUserByIdentityIdQueryVariables,
+	type GetUserByIdQuery,
+	type GetUserByIdQueryVariables,
 	InsertUserDocument,
 	InsertUserIdentityDocument,
 	type InsertUserIdentityMutation,
@@ -41,8 +36,17 @@ import {
 	Users_Profile_Set_Input,
 } from '~generated/graphql-db-types-hetarchief';
 import type { IeObjectSector } from '~modules/ie-objects/ie-objects.types';
+import { getOrganisationAddress } from '~modules/organisations/helpers/get-organisation-address';
 import { customError } from '~shared/helpers/custom-error';
 import type { UpdateResponse } from '~shared/types/types';
+import { CreateOrUpdateUserDto, UpdateAcceptedTosDto, UpdateUserLangDto } from '../dto/users.dto';
+import {
+	type GqlPermissionData,
+	type GqlUser,
+	GroupIdToName,
+	type GroupName,
+	type User,
+} from '../types';
 
 @Injectable()
 export class UsersService {
@@ -77,17 +81,15 @@ export class UsersService {
 		};
 
 		if (graphQlUser?.organisation) {
+			const orgAddress = getOrganisationAddress(graphQlUser?.organisation?.hasSite);
 			adaptedUser = {
 				...adaptedUser,
 				organisationId: graphQlUser?.organisation?.org_identifier || null,
 				organisationName: graphQlUser?.organisation?.skos_pref_label || null,
 				sector: (graphQlUser?.organisation?.ha_org_sector || null) as IeObjectSector | null,
-				organisationAddress:
-					graphQlUser?.organisation?.hasSite?.[0]?.postalAddress?.schema_street_address || null,
-				organisationPostalCode:
-					graphQlUser?.organisation?.hasSite?.[0]?.postalAddress?.schema_postal_code || null,
-				organisationLocality:
-					graphQlUser?.organisation?.hasSite?.[0]?.postalAddress?.schema_address_locality || null,
+				organisationAddress: orgAddress?.schema_street_address || null,
+				organisationPostalCode: orgAddress?.schema_postal_code || null,
+				organisationLocality: orgAddress?.schema_address_locality || null,
 				organisationVAT: graphQlUser?.organisation?.schema_vat_id || null,
 			};
 		}
