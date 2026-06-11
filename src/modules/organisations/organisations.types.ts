@@ -12,16 +12,22 @@ export enum OrganisationPreference {
 	visitorSpacePublication = 'visitor-space-publication',
 }
 
+/**
+ * Postal address has it's source in the ldap database and is in English
+ */
 export enum PostalAddressType {
-	primary = 'primary',
 	delivery = 'delivery',
 	invoicing = 'invoicing',
+	primary = 'primary',
 }
 
-export enum OrganisationContactPointType {
+/**
+ * Contact point type is stored in Teamleader and is in Dutch
+ */
+export enum ContactPointType {
+	facturatie = 'facturatie',
 	ontsluiting = 'ontsluiting',
 	primary = 'primary',
-	facturatie = 'facturatie',
 }
 
 export interface OrganisationInfoV2 {
@@ -37,7 +43,7 @@ export interface OrganisationInfoV2 {
 		iri: string;
 	};
 	contact_point: {
-		contact_type: string;
+		contact_type: ContactPointType;
 		email: string | null;
 		telephone: string | null;
 	}[];
@@ -50,15 +56,6 @@ export interface OrganisationInfoV2 {
 			email: string | null;
 			post_office_box_number: string;
 		};
-	};
-}
-
-export interface OrganisationResponse {
-	data: {
-		meemoo: OrganisationInfoV2[];
-		contentPartners: OrganisationInfoV2[];
-		educationalPartner: OrganisationInfoV2[];
-		serviceProviders: OrganisationInfoV2[];
 	};
 }
 

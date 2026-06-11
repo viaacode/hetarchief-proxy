@@ -5,7 +5,7 @@ interface HasSite {
 		schema_street_address: string;
 		schema_address_locality: string;
 		schema_postal_code: string;
-		schema_contact_type: string;
+		schema_contact_type: string; // PostalAddressType
 	}>;
 }
 

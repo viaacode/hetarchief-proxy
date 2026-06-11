@@ -31,10 +31,7 @@ import {
 	type UpdateSpaceMutation,
 	type UpdateSpaceMutationVariables,
 } from '~generated/graphql-db-types-hetarchief';
-import {
-	type GqlOrganisation,
-	OrganisationContactPointType,
-} from '~modules/organisations/organisations.types';
+import { ContactPointType, type GqlOrganisation } from '~modules/organisations/organisations.types';
 import { DuplicateKeyException } from '~shared/exceptions/duplicate-key.exception';
 import { PaginationHelper } from '~shared/helpers/pagination';
 import type { Locale, Recipient } from '~shared/types/types';
@@ -79,16 +76,14 @@ export class SpacesService {
 
 	public adaptEmail(contactPoints: GqlOrganisation['schemaContactPoint'] | undefined): string {
 		const contactPoint = (contactPoints || []).find(
-			(contactPoint) =>
-				contactPoint.schema_contact_type === OrganisationContactPointType.ontsluiting
+			(contactPoint) => contactPoint.schema_contact_type === ContactPointType.ontsluiting
 		);
 		return contactPoint?.schema_email || null;
 	}
 
 	public adaptTelephone(contactPoints: GqlOrganisation['schemaContactPoint'] | undefined): string {
 		const contactPoint = (contactPoints || []).find(
-			(contactPoint) =>
-				contactPoint.schema_contact_type === OrganisationContactPointType.ontsluiting
+			(contactPoint) => contactPoint.schema_contact_type === ContactPointType.ontsluiting
 		);
 		return contactPoint?.schema_telephone || null;
 	}

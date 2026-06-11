@@ -1,4 +1,4 @@
-import { OrganisationContactPointType } from '~modules/organisations/organisations.types';
+import { ContactPointType } from '~modules/organisations/organisations.types';
 import type { GqlSpace } from '~modules/spaces/spaces.types';
 import { AudienceType, VisitorSpaceStatus } from '~shared/types/types';
 
@@ -22,7 +22,7 @@ export const mockGqlSpace: GqlSpace = {
 		org_identifier: 'OR-rf5kf25',
 		schemaContactPoint: [
 			{
-				schema_contact_type: OrganisationContactPointType.ontsluiting,
+				schema_contact_type: ContactPointType.ontsluiting,
 				schema_email: 'test@email.be',
 			},
 		],
