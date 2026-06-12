@@ -348,11 +348,17 @@ export const MULTI_MATCH_FIELDS: Array<IeObjectsSearchFilterField> = [
 	IeObjectsSearchFilterField.IDENTIFIER,
 ];
 
-export const OCCURRENCE_TYPE: { [prop in Operator]?: string } = {
-	contains: 'must',
-	containsNot: 'must_not',
-	is: 'must',
-	isNot: 'must_not',
+export enum OccurenceType {
+	must = 'must',
+	must_not = 'must_not',
+	filter = 'filter',
+}
+
+export const OCCURRENCE_TYPE: { [prop in Operator]?: OccurenceType } = {
+	contains: OccurenceType.must,
+	containsNot: OccurenceType.must_not,
+	is: OccurenceType.must,
+	isNot: OccurenceType.must_not,
 };
 
 export const VALUE_OPERATORS: Operator[] = [Operator.GTE, Operator.LTE];

@@ -25,6 +25,7 @@ import {
 	NEEDS_FILTER_SUFFIX,
 	NUMBER_OF_FILTER_OPTIONS_DEFAULT,
 	NUMBER_OF_OPTIONS_PER_AGGREGATE,
+	OccurenceType,
 	OCCURRENCE_TYPE,
 	Operator,
 	ORDER_MAPPINGS,
@@ -255,8 +256,8 @@ export class QueryBuilder {
 		return sortArray;
 	}
 
-	private static getOccurrenceType(operator: Operator): string {
-		return OCCURRENCE_TYPE[operator] || 'filter';
+	private static getOccurrenceType(operator: Operator): OccurenceType {
+		return OCCURRENCE_TYPE[operator] || OccurenceType.filter;
 	}
 
 	private static buildValue(searchFilter: SearchFilter): any {
@@ -699,32 +700,24 @@ export class QueryBuilder {
 			 * - reuse_category.id
 			 */
 			const rightsQueries = [
-				rightsStatementUris.length
-					? {
-							bool: {
-								should: [
-									{
-										terms: {
-											_name: 'RIGHTS_DCTERMS_RIGHTS_STATEMENT_FOR_NEWSPAPERS',
-											dcterms_rights_statement: rightsStatementUris,
-										},
-									},
-									{
-										terms: {
-											_name: 'RIGHTS_REUSE_CATEGORY_FOR_AUDIO_VIDEO',
-											'reuse_category.id': rightsStatementUris,
-										},
-									},
-								],
-								minimum_should_match: 1,
-							},
-						}
-					: null,
+				{
+					terms: {
+						_name: 'RIGHTS_DCTERMS_RIGHTS_STATEMENT_FOR_NEWSPAPERS',
+						[ElasticsearchField.dcterms_rights_statement]: rightsStatementUris,
+					},
+				},
+				{
+					terms: {
+						_name: 'RIGHTS_REUSE_CATEGORY_FOR_AUDIO_VIDEO',
+						[`${ElasticsearchField.reuse_category}.${ElasticsearchField.id}`]: rightsStatementUris,
+					},
+				},
 			];
 
+			const occurrenceType = QueryBuilder.getOccurrenceType(rightsFilter.operator);
 			toBeAppliedCustomFilters.push({
-				occurrenceType: QueryBuilder.getOccurrenceType(rightsFilter.operator),
-				query: [OR(rightsQueries) ?? { match_none: { _name: 'RIGHTS' } }],
+				occurrenceType,
+				query: occurrenceType === OccurenceType.must_not ? rightsQueries : OR(rightsQueries),
 			});
 		}
 
