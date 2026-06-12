@@ -3,7 +3,7 @@ import { InternalServerErrorException } from '@nestjs/common';
 import { Test, type TestingModule } from '@nestjs/testing';
 import { AvoAuthIdpType, PermissionName } from '@viaa/avo2-types';
 import { cloneDeep } from 'lodash';
-import { type MockInstance, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
 
 import { CreateSpaceDto } from '../dto/spaces.dto';
 
@@ -19,10 +19,7 @@ import type {
 	GetVisitorSpaceCpAdminProfilesQuery,
 	UpdateSpaceMutation,
 } from '~generated/graphql-db-types-hetarchief';
-import {
-	type GqlOrganisation,
-	OrganisationContactPointType,
-} from '~modules/organisations/organisations.types';
+import { ContactPointType, type GqlOrganisation } from '~modules/organisations/organisations.types';
 import { AccessType, VisitorSpaceOrderProps } from '~modules/spaces/spaces.types';
 import { GroupId, GroupName, type User } from '~modules/users/types';
 import { DuplicateKeyException } from '~shared/exceptions/duplicate-key.exception';
@@ -134,12 +131,12 @@ describe('SpacesService', () => {
 		it('returns the correct email address', () => {
 			const email = spacesService.adaptEmail([
 				{
-					schema_contact_type: OrganisationContactPointType.primary,
+					schema_contact_type: ContactPointType.primary,
 					schema_email: 'wrong@mail.be',
 					schema_telephone: '051123456',
 				},
 				{
-					schema_contact_type: OrganisationContactPointType.ontsluiting,
+					schema_contact_type: ContactPointType.ontsluiting,
 					schema_email: 'correct@mail.be',
 					schema_telephone: '051123456',
 				},

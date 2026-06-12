@@ -1,10 +1,4 @@
-import {
-	type GqlOrganisation,
-	type Organisation,
-	OrganisationContactPointType,
-	type OrganisationInfoV2,
-	type OrganisationResponse,
-} from '../organisations.types';
+import { ContactPointType, type GqlOrganisation, type Organisation, PostalAddressType, } from '../organisations.types';
 
 import { IeObjectSector } from '~modules/ie-objects/ie-objects.types';
 
@@ -13,7 +7,7 @@ export const mockGqlOrganisation: GqlOrganisation = {
 	org_identifier: 'OR-rf5kf25',
 	schemaContactPoint: [
 		{
-			schema_contact_type: OrganisationContactPointType.ontsluiting,
+			schema_contact_type: ContactPointType.ontsluiting,
 			schema_email: 'vrtarchief@vrt.be',
 		},
 	],
@@ -31,9 +25,18 @@ export const mockGqlOrganisation: GqlOrganisation = {
 	hasSite: [
 		{
 			postalAddress: {
+				schema_street_address: 'Nero steenstraat 23',
+				schema_postal_code: '3000',
+				schema_address_locality: 'Antwerpen',
+				schema_contact_type: PostalAddressType.primary,
+			},
+		},
+		{
+			postalAddress: {
 				schema_street_address: 'Auguste Reyerslaan 52',
 				schema_postal_code: '1043',
 				schema_address_locality: 'Brussel',
+				schema_contact_type: PostalAddressType.invoicing,
 			},
 		},
 	],
@@ -46,7 +49,7 @@ export const mockOrganisation1: Organisation = {
 	schemaIdentifier: 'OR-rf5kf25',
 	contactPoint: [
 		{
-			contactType: OrganisationContactPointType.ontsluiting,
+			contactType: ContactPointType.ontsluiting,
 			email: 'vrtarchief@vrt.be',
 		},
 	],
@@ -70,7 +73,7 @@ export const mockOrganisation2: Organisation = {
 	schemaIdentifier: 'OR-w66976m',
 	contactPoint: [
 		{
-			contactType: OrganisationContactPointType.ontsluiting,
+			contactType: ContactPointType.ontsluiting,
 			email: 'info@meemoo.be',
 		},
 	],
@@ -86,52 +89,6 @@ export const mockOrganisation2: Organisation = {
 	streetAddress: 'Fernand Scribedreef 1',
 	postalCode: '9000',
 	addressLocality: 'Gent',
-};
-
-export const mockOrganisationInfoV2: OrganisationInfoV2 = {
-	id: 'OR-rf5kf25',
-	label: 'VRT',
-	description:
-		'De Vlaamse Radio- en Televisieomroeporganisatie, afgekort VRT, is de Nederlandstalige openbare omroep voor radio en televisie in België.',
-	sector: IeObjectSector.PUBLIC,
-	form_url:
-		'https://www.vrt.be/heb-je-een-vraag/s/contactsupport-vrtarchief?name_user={first_name}&mail_user={email}&local_id={local_cp_id}&viaa_id={pid}&surname_user={last_name}&title={title}&serie={title_serie}',
-	homepage: 'https://www.vrt.be',
-	logo: {
-		iri: 'https://assets.viaa.be/images/OR-rf5kf25',
-	},
-	slug: 'vrt',
-	overlay: true,
-	contact_point: [
-		{
-			contact_type: OrganisationContactPointType.ontsluiting,
-			telephone: '+32 2 741 37 20',
-			email: 'vrtarchief@vrt.be',
-		},
-		{
-			contact_type: OrganisationContactPointType.facturatie,
-			telephone: null,
-			email: null,
-		},
-	],
-	primary_site: {
-		address: null,
-	},
-};
-
-export const getMockOrganisationResponse = (amount: number): OrganisationResponse => {
-	const mockData = {
-		data: {
-			meemoo: [],
-			contentPartners: [],
-			educationalPartner: [],
-			serviceProviders: [],
-		},
-	};
-	for (let i = 0; i < amount; i++) {
-		mockData.data.contentPartners.push(mockOrganisationInfoV2);
-	}
-	return mockData;
 };
 
 export const mockOrganisations: Organisation[] = [mockOrganisation1, mockOrganisation2];

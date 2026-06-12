@@ -50,6 +50,7 @@ mutation updateMaterialRequest(
 						schema_street_address
 						schema_address_locality
 						schema_postal_code
+						schema_contact_type
 					}
 				}
 			}

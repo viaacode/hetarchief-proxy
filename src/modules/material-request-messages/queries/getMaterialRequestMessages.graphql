@@ -22,6 +22,7 @@ query getMaterialRequestMessages($materialRequestId: uuid!, $offset: Int!, $limi
 						schema_street_address
 						schema_address_locality
 						schema_postal_code
+						schema_contact_type
 					}
 				}
 			}
