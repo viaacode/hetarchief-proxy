@@ -25,6 +25,7 @@ import {
 	NEEDS_FILTER_SUFFIX,
 	NUMBER_OF_FILTER_OPTIONS_DEFAULT,
 	NUMBER_OF_OPTIONS_PER_AGGREGATE,
+	OccurenceType,
 	OCCURRENCE_TYPE,
 	Operator,
 	ORDER_MAPPINGS,
@@ -255,8 +256,8 @@ export class QueryBuilder {
 		return sortArray;
 	}
 
-	private static getOccurrenceType(operator: Operator): string {
-		return OCCURRENCE_TYPE[operator] || 'filter';
+	private static getOccurrenceType(operator: Operator): OccurenceType {
+		return OCCURRENCE_TYPE[operator] || OccurenceType.filter;
 	}
 
 	private static buildValue(searchFilter: SearchFilter): any {
@@ -288,7 +289,7 @@ export class QueryBuilder {
 				occurrenceType: OCCURRENCE_TYPE[searchFilter.operator],
 				query: {
 					term: {
-						'schema_creator_text.keyword': searchFilter.value,
+						[`${ElasticsearchField.schema_creator}_text.keyword`]: searchFilter.value,
 					},
 				},
 			};
@@ -301,7 +302,7 @@ export class QueryBuilder {
 			FLATTENED_FIELDS.includes(searchFilter.field) &&
 			[Operator.CONTAINS, Operator.CONTAINS_NOT].includes(searchFilter.operator)
 		) {
-			// Publisher/Creator are a special cases since they are flattened fields
+			// Publisher/Creator are special cases since they are flattened fields
 			return {
 				occurrenceType: OCCURRENCE_TYPE[searchFilter.operator],
 				query: {
@@ -319,6 +320,9 @@ export class QueryBuilder {
 			[Operator.IS, Operator.IS_NOT].includes(searchFilter.operator)
 		) {
 			elasticKeyResolved = `${elasticKey}.keyword`;
+		} else {
+			// Append .keyword if needed
+			elasticKeyResolved = elasticKeyResolved + QueryBuilder.filterSuffix(searchFilter.field);
 		}
 
 		// Contains, ContainsNot
@@ -348,14 +352,11 @@ export class QueryBuilder {
 		// term, terms, range, match, query_string
 		const queryType: QueryType = QueryBuilder.getQueryType(searchFilter, value);
 
-		// Append .keyword if needed
-		const queryKey = elasticKey + QueryBuilder.filterSuffix(searchFilter.field);
-
 		return {
 			occurrenceType,
 			query: {
 				[queryType]: {
-					[queryKey]: value,
+					[elasticKeyResolved]: value,
 				},
 			},
 		};
@@ -399,9 +400,9 @@ export class QueryBuilder {
 				},
 			});
 		}
-		// Determine consultable filters are present and strip them from standard filter list to be processed later on
+		// Determine consultable filters are present and strip them from the standard filter list to be processed later on
 		// Remark: this needs to happen after the line that checks if filters are empty.
-		// This because if we strip it before it will just return match_all
+		// This because if we strip it earlier, it will just return match_all
 		const customSearchFilterFields: IeObjectsSearchFilterField[] = [
 			IeObjectsSearchFilterField.CONSULTABLE_ONLY_ON_LOCATION,
 			IeObjectsSearchFilterField.CONSULTABLE_MEDIA,
@@ -692,20 +693,31 @@ export class QueryBuilder {
 				? rightsFilter.multiValue
 				: [rightsFilter.value as RightsLabel];
 			const rightsStatementUris = uniq(compact(rightsValues)) as RightsLabel[];
+
+			/**
+			 * RIGHTS is a special case, since we need to look through 2 fields for this filter:
+			 * - dcterms_rights_statement
+			 * - reuse_category.id
+			 */
 			const rightsQueries = [
-				rightsStatementUris.length
-					? {
-							terms: {
-								_name: 'RIGHTS_DCTERMS_RIGHTS_STATEMENT',
-								dcterms_rights_statement: rightsStatementUris,
-							},
-						}
-					: null,
+				{
+					terms: {
+						_name: 'RIGHTS_DCTERMS_RIGHTS_STATEMENT_FOR_NEWSPAPERS',
+						[ElasticsearchField.dcterms_rights_statement]: rightsStatementUris,
+					},
+				},
+				{
+					terms: {
+						_name: 'RIGHTS_REUSE_CATEGORY_FOR_AUDIO_VIDEO',
+						[`${ElasticsearchField.reuse_category}.${ElasticsearchField.id}`]: rightsStatementUris,
+					},
+				},
 			];
 
+			const occurrenceType = QueryBuilder.getOccurrenceType(rightsFilter.operator);
 			toBeAppliedCustomFilters.push({
-				occurrenceType: QueryBuilder.getOccurrenceType(rightsFilter.operator),
-				query: [OR(rightsQueries) ?? { match_none: { _name: 'RIGHTS' } }],
+				occurrenceType,
+				query: occurrenceType === OccurenceType.must_not ? rightsQueries : OR(rightsQueries),
 			});
 		}
 
@@ -986,6 +998,21 @@ export class QueryBuilder {
 		forEach(searchRequest.requestedAggs || AGGS_PROPERTIES, (aggProperty) => {
 			const elasticProperty =
 				READABLE_TO_ELASTIC_FILTER_NAMES[aggProperty as IeObjectsSearchFilterField];
+			if (aggProperty === IeObjectsSearchFilterField.RIGHTS) {
+				aggs[ElasticsearchField.dcterms_rights_statement] = {
+					terms: {
+						field: ElasticsearchField.dcterms_rights_statement,
+						size: 500,
+					},
+				};
+				aggs[`${ElasticsearchField.reuse_category}.${ElasticsearchField.id}`] = {
+					terms: {
+						field: `${ElasticsearchField.reuse_category}.${ElasticsearchField.id}`,
+						size: 500,
+					},
+				};
+				return;
+			}
 			if (!elasticProperty) {
 				throw new InternalServerErrorException(`Failed to resolve agg property: ${aggProperty}`);
 			}

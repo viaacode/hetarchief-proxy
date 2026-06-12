@@ -340,6 +340,26 @@ describe('QueryBuilder', () => {
 			});
 		});
 
+		it('should create two separate aggregations for the RIGHTS field', () => {
+			const esQuery = QueryBuilder.build(
+				{
+					filters: [],
+					size: 10,
+					page: 1,
+					requestedAggs: [IeObjectsSearchFilterField.RIGHTS],
+				},
+				mockInputInfo as any
+			);
+			expect(esQuery.aggs.dcterms_rights_statement.terms).toEqual({
+				field: 'dcterms_rights_statement',
+				size: 500,
+			});
+			expect(esQuery.aggs['reuse_category.id'].terms).toEqual({
+				field: 'reuse_category.id',
+				size: 500,
+			});
+		});
+
 		it('should sort on a given order property', () => {
 			const orderProp = OrderProperty.NAME;
 			const orderDirection = SortDirection.asc;
@@ -612,8 +632,8 @@ describe('QueryBuilder', () => {
 				mockInputInfo as any
 			);
 			const queryString = JSON.stringify(queryObject);
-			expect(queryString).toContain('dcterms_rights_statement');
-			expect(queryString).toContain('reuse_category');
+			expect(queryString).toContain('"dcterms_rights_statement":');
+			expect(queryString).toContain('"reuse_category.id":');
 			expect(queryString).toContain('https://creativecommons.org/publicdomain/mark/1.0/');
 			// Should not include URIs from other categories
 			expect(queryString).not.toContain('https://rightsstatements.org/page/InC/1.0/');
@@ -643,7 +663,7 @@ describe('QueryBuilder', () => {
 			expect(queryString).toContain('https://rightsstatements.org/page/UND/1.0/');
 			expect(queryString).toContain('REUSABILITY_DCTERMS_RIGHTS_STATEMENT_NEWSPAPERS');
 			expect(queryString).toContain('REUSABILITY_REUSE_CATEGORY_AUDIO_VIDEO');
-			expect(queryString).toContain('reuse_category');
+			expect(queryString).toContain('"reuse_category.id":');
 		});
 
 		it('Should apply reusability filters in the public limited metadata branch', () => {
@@ -666,7 +686,7 @@ describe('QueryBuilder', () => {
 			expect(publicLimitedBranch).toContain('PUBLIC-METDATA_LTD');
 			expect(publicLimitedBranch).toContain('REUSABILITY_DCTERMS_RIGHTS_STATEMENT_NEWSPAPERS');
 			expect(publicLimitedBranch).toContain('REUSABILITY_REUSE_CATEGORY_AUDIO_VIDEO');
-			expect(publicLimitedBranch).toContain('reuse_category');
+			expect(publicLimitedBranch).toContain('"reuse_category.id":');
 			expect(publicLimitedBranch).toContain('https://rightsstatements.org/page/UND/1.0/');
 		});
 
@@ -708,7 +728,7 @@ describe('QueryBuilder', () => {
 			const queryString = JSON.stringify(queryObject);
 			expect(queryString).toContain('REUSABILITY_DCTERMS_RIGHTS_STATEMENT_NEWSPAPERS');
 			expect(queryString).toContain('REUSABILITY_REUSE_CATEGORY_AUDIO_VIDEO');
-			expect(queryString).toContain('reuse_category');
+			expect(queryString).toContain('"reuse_category.id":');
 			expect(queryString).toContain('https://rightsstatements.org/page/NoC-CR/1.0/');
 		});
 
@@ -750,7 +770,10 @@ describe('QueryBuilder', () => {
 				mockInputInfo as any
 			);
 			const queryString = JSON.stringify(queryObject);
-			expect(queryString).toContain('RIGHTS_DCTERMS_RIGHTS_STATEMENT');
+			expect(queryString).toContain('RIGHTS_DCTERMS_RIGHTS_STATEMENT_FOR_NEWSPAPERS');
+			expect(queryString).toContain('RIGHTS_REUSE_CATEGORY_FOR_AUDIO_VIDEO');
+			expect(queryString).toContain('"dcterms_rights_statement":');
+			expect(queryString).toContain('"reuse_category.id":');
 			expect(queryString).toContain('https://creativecommons.org/publicdomain/mark/1.0/');
 			expect(queryString).toContain('https://creativecommons.org/publicdomain/zero/1.0/');
 		});
@@ -772,7 +795,10 @@ describe('QueryBuilder', () => {
 			);
 
 			const queryString = JSON.stringify(queryObject);
-			expect(queryString).toContain('RIGHTS_DCTERMS_RIGHTS_STATEMENT');
+			expect(queryString).toContain('RIGHTS_DCTERMS_RIGHTS_STATEMENT_FOR_NEWSPAPERS');
+			expect(queryString).toContain('RIGHTS_REUSE_CATEGORY_FOR_AUDIO_VIDEO');
+			expect(queryString).toContain('"dcterms_rights_statement":');
+			expect(queryString).toContain('"reuse_category.id":');
 			expect(queryString).toContain('unknown-rights-label');
 		});
 
@@ -793,6 +819,8 @@ describe('QueryBuilder', () => {
 			);
 			const queryString = JSON.stringify(queryObject);
 			expect(queryString).toContain('must_not');
+			expect(queryString).toContain('"dcterms_rights_statement":');
+			expect(queryString).toContain('"reuse_category.id":');
 			expect(queryString).toContain('https://rightsstatements.org/page/InC/1.0/');
 		});
 
