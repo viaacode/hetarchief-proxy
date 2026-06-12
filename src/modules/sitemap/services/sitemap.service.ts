@@ -1,9 +1,4 @@
-import {
-	AssetsService,
-	ContentPagesService,
-	DataService,
-	DbContentPage,
-} from '@meemoo/admin-core-api';
+import { AssetsService, ContentPagesService, DataService, DbContentPage, } from '@meemoo/admin-core-api';
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { format } from 'date-fns';
 import { compact, kebabCase, uniqBy } from 'lodash';
@@ -288,10 +283,11 @@ export class SitemapService {
 				const hreflang = translatedPage.hreflang;
 				// Replace the v3 url with the production url, so the sitemap can be generated before the production release
 				// https://meemoo.atlassian.net/browse/ARC-3092
-				const href =
+				const href = this.limitUrl(
 					this.CLIENT_HOST_RESOLVED +
-					(translatedPage.hreflang === Locale.Nl ? '' : `/${translatedPage.hreflang}`) +
-					translatedPage.href;
+						(translatedPage.hreflang === Locale.Nl ? '' : `/${translatedPage.hreflang}`) +
+						translatedPage.href
+				);
 				return `<xhtml:link rel="alternate" hreflang="${hreflang}" href="${href}"/>`;
 			})
 			.join('\n');
@@ -317,7 +313,7 @@ export class SitemapService {
 	}
 
 	private limitUrl(url: string): string {
-		return url.substring(0, 2048);
+		return url.substring(0, 2000); // Stay well below the 2048 limit
 	}
 
 	private async uploadXml(xml: string, name: string): Promise<string> {
