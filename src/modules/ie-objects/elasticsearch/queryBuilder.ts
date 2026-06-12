@@ -288,7 +288,7 @@ export class QueryBuilder {
 				occurrenceType: OCCURRENCE_TYPE[searchFilter.operator],
 				query: {
 					term: {
-						[`${ElasticsearchField.schema_creator}.keyword`]: searchFilter.value,
+						[`${ElasticsearchField.schema_creator}_text.keyword`]: searchFilter.value,
 					},
 				},
 			};
@@ -319,6 +319,9 @@ export class QueryBuilder {
 			[Operator.IS, Operator.IS_NOT].includes(searchFilter.operator)
 		) {
 			elasticKeyResolved = `${elasticKey}.keyword`;
+		} else {
+			// Append .keyword if needed
+			elasticKeyResolved = elasticKeyResolved + QueryBuilder.filterSuffix(searchFilter.field);
 		}
 
 		// Contains, ContainsNot
@@ -348,14 +351,11 @@ export class QueryBuilder {
 		// term, terms, range, match, query_string
 		const queryType: QueryType = QueryBuilder.getQueryType(searchFilter, value);
 
-		// Append .keyword if needed
-		const queryKey = elasticKeyResolved + QueryBuilder.filterSuffix(searchFilter.field);
-
 		return {
 			occurrenceType,
 			query: {
 				[queryType]: {
-					[queryKey]: value,
+					[elasticKeyResolved]: value,
 				},
 			},
 		};
@@ -399,9 +399,9 @@ export class QueryBuilder {
 				},
 			});
 		}
-		// Determine consultable filters are present and strip them from standard filter list to be processed later on
+		// Determine consultable filters are present and strip them from the standard filter list to be processed later on
 		// Remark: this needs to happen after the line that checks if filters are empty.
-		// This because if we strip it before it will just return match_all
+		// This because if we strip it earlier, it will just return match_all
 		const customSearchFilterFields: IeObjectsSearchFilterField[] = [
 			IeObjectsSearchFilterField.CONSULTABLE_ONLY_ON_LOCATION,
 			IeObjectsSearchFilterField.CONSULTABLE_MEDIA,
@@ -504,33 +504,6 @@ export class QueryBuilder {
 				throw new BadRequestException(
 					`Field '${searchFilter.field}' cannot be queried with the '${searchFilter.operator}' operator.`
 				);
-			}
-
-			/**
-			 * RIGHTS is a special case, since we need to look through 2 fields for this filter:
-			 * - dcterms_rights_statement
-			 * - reuse_category.id
-			 */
-			if (searchFilter.field === IeObjectsSearchFilterField.RIGHTS) {
-				applyFilter(filterObject, {
-					occurrenceType: OCCURRENCE_TYPE[searchFilter.operator],
-					query: [
-						{
-							terms: {
-								_name: 'RIGHTS_DCTERMS_RIGHTS_STATEMENT',
-								[ElasticsearchField.dcterms_rights_statement]: searchFilter.multiValue,
-							},
-						},
-						{
-							terms: {
-								_name: 'REUSE_CATEGORY_FOR_AUDIO_VIDEO',
-								[`${ElasticsearchField.reuse_category}.${ElasticsearchField.id}`]:
-									searchFilter.multiValue,
-							},
-						},
-					],
-				});
-				continue;
 			}
 
 			// Map frontend filter names to elasticsearch names
@@ -719,6 +692,12 @@ export class QueryBuilder {
 				? rightsFilter.multiValue
 				: [rightsFilter.value as RightsLabel];
 			const rightsStatementUris = uniq(compact(rightsValues)) as RightsLabel[];
+
+			/**
+			 * RIGHTS is a special case, since we need to look through 2 fields for this filter:
+			 * - dcterms_rights_statement
+			 * - reuse_category.id
+			 */
 			const rightsQueries = [
 				rightsStatementUris.length
 					? {
