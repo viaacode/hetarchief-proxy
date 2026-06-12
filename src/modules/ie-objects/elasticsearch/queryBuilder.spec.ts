@@ -750,7 +750,8 @@ describe('QueryBuilder', () => {
 				mockInputInfo as any
 			);
 			const queryString = JSON.stringify(queryObject);
-			expect(queryString).toContain('RIGHTS_DCTERMS_RIGHTS_STATEMENT');
+			expect(queryString).toContain('RIGHTS_DCTERMS_RIGHTS_STATEMENT_FOR_NEWSPAPERS');
+			expect(queryString).toContain('RIGHTS_REUSE_CATEGORY_FOR_AUDIO_VIDEO');
 			expect(queryString).toContain('https://creativecommons.org/publicdomain/mark/1.0/');
 			expect(queryString).toContain('https://creativecommons.org/publicdomain/zero/1.0/');
 		});
@@ -772,7 +773,8 @@ describe('QueryBuilder', () => {
 			);
 
 			const queryString = JSON.stringify(queryObject);
-			expect(queryString).toContain('RIGHTS_DCTERMS_RIGHTS_STATEMENT');
+			expect(queryString).toContain('RIGHTS_DCTERMS_RIGHTS_STATEMENT_FOR_NEWSPAPERS');
+			expect(queryString).toContain('RIGHTS_REUSE_CATEGORY_FOR_AUDIO_VIDEO');
 			expect(queryString).toContain('unknown-rights-label');
 		});
 

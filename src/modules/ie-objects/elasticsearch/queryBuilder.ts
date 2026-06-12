@@ -288,7 +288,7 @@ export class QueryBuilder {
 				occurrenceType: OCCURRENCE_TYPE[searchFilter.operator],
 				query: {
 					term: {
-						'schema_creator_text.keyword': searchFilter.value,
+						[`${ElasticsearchField.schema_creator}.keyword`]: searchFilter.value,
 					},
 				},
 			};
@@ -301,7 +301,7 @@ export class QueryBuilder {
 			FLATTENED_FIELDS.includes(searchFilter.field) &&
 			[Operator.CONTAINS, Operator.CONTAINS_NOT].includes(searchFilter.operator)
 		) {
-			// Publisher/Creator are a special cases since they are flattened fields
+			// Publisher/Creator are special cases since they are flattened fields
 			return {
 				occurrenceType: OCCURRENCE_TYPE[searchFilter.operator],
 				query: {
@@ -349,7 +349,7 @@ export class QueryBuilder {
 		const queryType: QueryType = QueryBuilder.getQueryType(searchFilter, value);
 
 		// Append .keyword if needed
-		const queryKey = elasticKey + QueryBuilder.filterSuffix(searchFilter.field);
+		const queryKey = elasticKeyResolved + QueryBuilder.filterSuffix(searchFilter.field);
 
 		return {
 			occurrenceType,
@@ -504,6 +504,33 @@ export class QueryBuilder {
 				throw new BadRequestException(
 					`Field '${searchFilter.field}' cannot be queried with the '${searchFilter.operator}' operator.`
 				);
+			}
+
+			/**
+			 * RIGHTS is a special case, since we need to look through 2 fields for this filter:
+			 * - dcterms_rights_statement
+			 * - reuse_category.id
+			 */
+			if (searchFilter.field === IeObjectsSearchFilterField.RIGHTS) {
+				applyFilter(filterObject, {
+					occurrenceType: OCCURRENCE_TYPE[searchFilter.operator],
+					query: [
+						{
+							terms: {
+								_name: 'RIGHTS_DCTERMS_RIGHTS_STATEMENT',
+								[ElasticsearchField.dcterms_rights_statement]: searchFilter.multiValue,
+							},
+						},
+						{
+							terms: {
+								_name: 'REUSE_CATEGORY_FOR_AUDIO_VIDEO',
+								[`${ElasticsearchField.reuse_category}.${ElasticsearchField.id}`]:
+									searchFilter.multiValue,
+							},
+						},
+					],
+				});
+				continue;
 			}
 
 			// Map frontend filter names to elasticsearch names
@@ -695,9 +722,22 @@ export class QueryBuilder {
 			const rightsQueries = [
 				rightsStatementUris.length
 					? {
-							terms: {
-								_name: 'RIGHTS_DCTERMS_RIGHTS_STATEMENT',
-								dcterms_rights_statement: rightsStatementUris,
+							bool: {
+								should: [
+									{
+										terms: {
+											_name: 'RIGHTS_DCTERMS_RIGHTS_STATEMENT_FOR_NEWSPAPERS',
+											dcterms_rights_statement: rightsStatementUris,
+										},
+									},
+									{
+										terms: {
+											_name: 'RIGHTS_REUSE_CATEGORY_FOR_AUDIO_VIDEO',
+											'reuse_category.id': rightsStatementUris,
+										},
+									},
+								],
+								minimum_should_match: 1,
 							},
 						}
 					: null,
@@ -986,6 +1026,21 @@ export class QueryBuilder {
 		forEach(searchRequest.requestedAggs || AGGS_PROPERTIES, (aggProperty) => {
 			const elasticProperty =
 				READABLE_TO_ELASTIC_FILTER_NAMES[aggProperty as IeObjectsSearchFilterField];
+			if (aggProperty === IeObjectsSearchFilterField.RIGHTS) {
+				aggs[ElasticsearchField.dcterms_rights_statement] = {
+					terms: {
+						field: ElasticsearchField.dcterms_rights_statement,
+						size: 500,
+					},
+				};
+				aggs[`${ElasticsearchField.reuse_category}.${ElasticsearchField.id}`] = {
+					terms: {
+						field: `${ElasticsearchField.reuse_category}.${ElasticsearchField.id}`,
+						size: 500,
+					},
+				};
+				return;
+			}
 			if (!elasticProperty) {
 				throw new InternalServerErrorException(`Failed to resolve agg property: ${aggProperty}`);
 			}

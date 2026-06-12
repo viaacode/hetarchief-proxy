@@ -38,7 +38,7 @@ export enum IeObjectsSearchFilterField {
 	CONSULTABLE_MEDIA = 'isConsultableMedia',
 	CONSULTABLE_PUBLIC_DOMAIN = 'isConsultablePublicDomain',
 	REUSABILITY = 'reusability',
-	RIGHTS = 'rights',
+	RIGHTS = 'rights', // Single term to cover both newspaper rights (dcterms_rights_statement) and Audio/Video object rights (reuse_category.id)
 	CAST = 'cast',
 	IDENTIFIER = 'identifier',
 	CATEGORIE = 'categorie', // Not available in database: https://docs.google.com/spreadsheets/d/1xAtHfkpDi4keSsBol7pw0cQAvCmg2hWRz8oxM6cP7zo/edit#gid=0
@@ -282,6 +282,8 @@ export enum ElasticsearchField {
 	newspaper = 'newspaper',
 	schema_location_created = 'schema_location_created',
 	dcterms_rights_statement = 'dcterms_rights_statement',
+	reuse_category = 'reuse_category',
+	id = 'id',
 }
 
 export const READABLE_TO_ELASTIC_FILTER_NAMES: {
@@ -291,6 +293,7 @@ export const READABLE_TO_ELASTIC_FILTER_NAMES: {
 		| IeObjectsSearchFilterField.CONSULTABLE_MEDIA
 		| IeObjectsSearchFilterField.CONSULTABLE_PUBLIC_DOMAIN
 		| IeObjectsSearchFilterField.REUSABILITY
+		| IeObjectsSearchFilterField.RIGHTS // RIGHTS is a special case, since we need to search through 2 fields: dcterms_rights_statement and reuse_category.id
 		| IeObjectsSearchFilterField.RELEASE_DATE // Custom filter: creation date OR publish date
 	>]: ElasticsearchField | `${ElasticsearchField}.${ElasticsearchField}`;
 } = {
@@ -320,7 +323,6 @@ export const READABLE_TO_ELASTIC_FILTER_NAMES: {
 	[IeObjectsSearchFilterField.OBJECT_TYPE]: ElasticsearchField.ebucore_object_type,
 	[IeObjectsSearchFilterField.IDENTIFIER]: ElasticsearchField.schema_identifier,
 	[IeObjectsSearchFilterField.LICENSES]: ElasticsearchField.schema_license,
-	[IeObjectsSearchFilterField.RIGHTS]: ElasticsearchField.dcterms_rights_statement,
 };
 
 export const NUMBER_OF_FILTER_OPTIONS_DEFAULT = 40;
@@ -330,7 +332,6 @@ export const NUMBER_OF_OPTIONS_PER_AGGREGATE = {
 	[IeObjectsSearchFilterField.MEDIUM]: 500, // Fetch all options at once
 	[IeObjectsSearchFilterField.LANGUAGE]: 500, // Fetch all options at once
 	[IeObjectsSearchFilterField.MAINTAINER_ID]: 500, // Fetch all options at once
-	[IeObjectsSearchFilterField.RIGHTS]: 500, // Fetch all options at once
 };
 
 export const ORDER_MAPPINGS: { [prop in OrderProperty]: string } = {
