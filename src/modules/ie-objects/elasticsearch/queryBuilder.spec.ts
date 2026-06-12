@@ -596,7 +596,7 @@ describe('QueryBuilder', () => {
 			);
 		});
 
-		it('Should produce a terms query on dcterms_rights_statement when freely-reusable is selected', () => {
+		it('Should produce a bool/should query on dcterms_rights_statement and reuse_category when freely-reusable is selected', () => {
 			const queryObject = QueryBuilder.build(
 				{
 					page: 1,
@@ -613,12 +613,13 @@ describe('QueryBuilder', () => {
 			);
 			const queryString = JSON.stringify(queryObject);
 			expect(queryString).toContain('dcterms_rights_statement');
+			expect(queryString).toContain('reuse_category');
 			expect(queryString).toContain('https://creativecommons.org/publicdomain/mark/1.0/');
 			// Should not include URIs from other categories
 			expect(queryString).not.toContain('https://rightsstatements.org/page/InC/1.0/');
 		});
 
-		it('Should apply reusability filter using dcterms rights statements for all 3 reusability categories', () => {
+		it('Should apply reusability filter using dcterms rights statements and reuse_category for all 3 reusability categories', () => {
 			const queryObject = QueryBuilder.build(
 				{
 					page: 1,
@@ -640,7 +641,9 @@ describe('QueryBuilder', () => {
 			const queryString = JSON.stringify(queryObject);
 			expect(queryString).toContain('https://creativecommons.org/publicdomain/mark/1.0/');
 			expect(queryString).toContain('https://rightsstatements.org/page/UND/1.0/');
-			expect(queryString).toContain('REUSABILITY_DCTERMS_RIGHTS_STATEMENT');
+			expect(queryString).toContain('REUSABILITY_DCTERMS_RIGHTS_STATEMENT_NEWSPAPERS');
+			expect(queryString).toContain('REUSABILITY_REUSE_CATEGORY_AUDIO_VIDEO');
+			expect(queryString).toContain('reuse_category');
 		});
 
 		it('Should apply reusability filters in the public limited metadata branch', () => {
@@ -661,7 +664,9 @@ describe('QueryBuilder', () => {
 
 			const publicLimitedBranch = JSON.stringify(queryObject.query.bool.should[0]);
 			expect(publicLimitedBranch).toContain('PUBLIC-METDATA_LTD');
-			expect(publicLimitedBranch).toContain('REUSABILITY_DCTERMS_RIGHTS_STATEMENT');
+			expect(publicLimitedBranch).toContain('REUSABILITY_DCTERMS_RIGHTS_STATEMENT_NEWSPAPERS');
+			expect(publicLimitedBranch).toContain('REUSABILITY_REUSE_CATEGORY_AUDIO_VIDEO');
+			expect(publicLimitedBranch).toContain('reuse_category');
 			expect(publicLimitedBranch).toContain('https://rightsstatements.org/page/UND/1.0/');
 		});
 
@@ -684,7 +689,7 @@ describe('QueryBuilder', () => {
 			expect(queryString).not.toContain('dcterms_rights_statement');
 		});
 
-		it('Should apply dcterms rights statements for reusable-with-conditions category', () => {
+		it('Should apply dcterms rights statements and reuse_category for reusable-with-conditions category', () => {
 			const queryObject = QueryBuilder.build(
 				{
 					page: 1,
@@ -701,7 +706,9 @@ describe('QueryBuilder', () => {
 			);
 
 			const queryString = JSON.stringify(queryObject);
-			expect(queryString).toContain('REUSABILITY_DCTERMS_RIGHTS_STATEMENT');
+			expect(queryString).toContain('REUSABILITY_DCTERMS_RIGHTS_STATEMENT_NEWSPAPERS');
+			expect(queryString).toContain('REUSABILITY_REUSE_CATEGORY_AUDIO_VIDEO');
+			expect(queryString).toContain('reuse_category');
 			expect(queryString).toContain('https://rightsstatements.org/page/NoC-CR/1.0/');
 		});
 

@@ -1,4 +1,9 @@
-import { ContactPointType, type GqlOrganisation, type Organisation, PostalAddressType, } from '../organisations.types';
+import {
+	ContactPointType,
+	type GqlOrganisation,
+	type Organisation,
+	PostalAddressType,
+} from '../organisations.types';
 
 import { IeObjectSector } from '~modules/ie-objects/ie-objects.types';
 
