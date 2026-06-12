@@ -3,10 +3,7 @@ import jsep from 'jsep';
 import { clamp, compact, forEach, isArray, isEmpty, isNil, uniq } from 'lodash';
 
 import { IeObjectsQueryDto, SearchFilter } from '../dto/ie-objects.dto';
-import {
-	buildFreeTextFilter,
-	convertNodeToEsQueryFilterObjects,
-} from '../helpers/convert-node-to-es-query-filter-objects';
+import { buildFreeTextFilter, convertNodeToEsQueryFilterObjects, } from '../helpers/convert-node-to-es-query-filter-objects';
 import { encodeSearchterm } from '../helpers/encode-search-term';
 import { IeObjectLicense } from '../ie-objects.types';
 
@@ -661,9 +658,22 @@ export class QueryBuilder {
 			const reusabilityQueries = [
 				rightsStatementUris.length
 					? {
-							terms: {
-								_name: 'REUSABILITY_DCTERMS_RIGHTS_STATEMENT',
-								dcterms_rights_statement: rightsStatementUris,
+							bool: {
+								should: [
+									{
+										terms: {
+											_name: 'REUSABILITY_DCTERMS_RIGHTS_STATEMENT_NEWSPAPERS',
+											dcterms_rights_statement: rightsStatementUris,
+										},
+									},
+									{
+										terms: {
+											_name: 'REUSABILITY_REUSE_CATEGORY_AUDIO_VIDEO',
+											'reuse_category.id': rightsStatementUris,
+										},
+									},
+								],
+								minimum_should_match: 1,
 							},
 						}
 					: null,

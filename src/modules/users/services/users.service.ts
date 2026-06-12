@@ -1,6 +1,11 @@
 import { convertUserInfoToCommonUser, DataService, UserInfoType } from '@meemoo/admin-core-api';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { AvoAuthIdpType, AvoUserCommonUser, AvoUserHetArchiefUser, PermissionName, } from '@viaa/avo2-types';
+import {
+	AvoAuthIdpType,
+	AvoUserCommonUser,
+	AvoUserHetArchiefUser,
+	PermissionName,
+} from '@viaa/avo2-types';
 
 import {
 	GetUserByEmailDocument,
@@ -35,7 +40,13 @@ import { getOrganisationAddress } from '~modules/organisations/helpers/get-organ
 import { customError } from '~shared/helpers/custom-error';
 import type { UpdateResponse } from '~shared/types/types';
 import { CreateOrUpdateUserDto, UpdateAcceptedTosDto, UpdateUserLangDto } from '../dto/users.dto';
-import { type GqlPermissionData, type GqlUser, GroupIdToName, type GroupName, type User, } from '../types';
+import {
+	type GqlPermissionData,
+	type GqlUser,
+	GroupIdToName,
+	type GroupName,
+	type User,
+} from '../types';
 
 @Injectable()
 export class UsersService {
