@@ -11,6 +11,7 @@ import {
 	mockMaterialRequestEmailInfo,
 	mockNewsletterTemplateDataWithNewsletter,
 	mockNewsletterUpdatePreferencesQueryDto,
+	mockRequestListItemToRequester,
 	mockSendMailQueryDto,
 	mockUser,
 	mockUserInfo,
@@ -19,6 +20,7 @@ import {
 import { CampaignMonitorService } from './campaign-monitor.service';
 
 import { Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum } from '~generated/graphql-db-types-hetarchief';
+import { mockMaterialRequest1 } from '~modules/material-requests/mocks/material-requests.mocks';
 import { type VisitRequest, VisitStatus } from '~modules/visits/types';
 import { mockTranslationsService } from '~shared/helpers/mockTranslationsService';
 import { TestingLogger } from '~shared/logging/test-logger';
@@ -232,6 +234,26 @@ describe('CampaignMonitorService', () => {
 			const result =
 				campaignMonitorService.convertMaterialRequestsToEmailTemplateData(materialRequestEmailInfo);
 			expect(result).toEqual(mockCampaignMonitorMaterialRequestDataToRequester);
+		});
+
+		it('should parse materialRequestEmailInfo with Requester Template - english', () => {
+			const materialRequestEmailInfo = {
+				...mockMaterialRequestEmailInfo,
+				language: Locale.En,
+			};
+			materialRequestEmailInfo.template =
+				EmailTemplate.CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_REQUESTER;
+			const result =
+				campaignMonitorService.convertMaterialRequestsToEmailTemplateData(materialRequestEmailInfo);
+			expect(result).toEqual({
+				...mockCampaignMonitorMaterialRequestDataToRequester,
+				request_list: [
+					{
+						...mockRequestListItemToRequester,
+						request_url: `${mockConfigService.get('CLIENT_HOST')}/en/account/my-item-requests?materialRequest=${mockMaterialRequest1.id}`,
+					},
+				],
+			});
 		});
 	});
 

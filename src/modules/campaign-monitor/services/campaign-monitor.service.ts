@@ -580,6 +580,11 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 			};
 		}
 
+		const requestUrl =
+			emailInfo.language === Lookup_Languages_Enum.En
+				? 'en/account/my-item-requests'
+				: 'account/mijn-materiaalaanvragen';
+
 		// Requester Template
 		return {
 			user_firstname: emailInfo.requesterFirstName,
@@ -595,7 +600,7 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 				request_type: MATERIAL_REQUEST_TYPE_TRANSLATIONS[materialRequest.type],
 				request_description: materialRequest.reason,
 				request_url: stringifyUrl({
-					url: `${this.configService.get('CLIENT_HOST')}/accountMyMaterialRequests`,
+					url: `${this.configService.get('CLIENT_HOST')}/${requestUrl}`,
 					query: {
 						materialRequest: materialRequest.id,
 					},
