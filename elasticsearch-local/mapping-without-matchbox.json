@@ -74,6 +74,18 @@
     "premis_is_part_of": {
       "type": "keyword"
     },
+    "reuse_category": {
+      "properties": {
+        "id": {
+          "type": "keyword",
+          "normalizer": "lowercase"
+        },
+        "label": {
+          "type": "keyword",
+          "index": false
+        }
+      }
+    },
     "schema_abstract": {
       "type": "text",
       "fields": {
