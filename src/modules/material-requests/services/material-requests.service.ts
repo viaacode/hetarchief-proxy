@@ -1033,7 +1033,9 @@ export class MaterialRequestsService {
 		representationId: string,
 		reuseForm: Record<string, string> | MaterialRequestReuseForm
 	): Promise<string | null> {
-		const startTime = Number.parseInt(reuseForm?.startTime.toString());
+		const startTime = reuseForm?.startTime
+			? Number.parseInt(reuseForm?.startTime.toString())
+			: undefined;
 
 		if (startTime && startTime > 0 && representationId) {
 			const mediaFile =
