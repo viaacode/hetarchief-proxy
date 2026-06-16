@@ -534,7 +534,7 @@ describe('QueryBuilder', () => {
 			expect(stringified).toContain(IeObjectSector.CULTURE);
 			expect(stringified).toContain(IeObjectSector.RURAL);
 			// The own-organisation clause should be present because the user has an organisation
-			expect(stringified).toContain('INTRA_CP_USERS');
+			expect(stringified).toContain('KEY_USERS_OWN_ORGANISATION_OBJECTS');
 		});
 
 		it('Should not set the own-organisation filter for a key user without an organisation', () => {
@@ -578,7 +578,7 @@ describe('QueryBuilder', () => {
 				`${ElasticsearchField.schema_maintainer}.${ElasticsearchField.organization_sector}`
 			);
 			// But the own-organisation clause should be absent because the user has no organisation
-			expect(stringified).not.toContain('INTRA_CP_USERS');
+			expect(stringified).not.toContain('KEY_USERS_OWN_ORGANISATION_OBJECTS');
 		});
 
 		it('Should restrict the accessible object sectors based on the key user sector', () => {
@@ -619,13 +619,15 @@ describe('QueryBuilder', () => {
 			// A regional key user can access intra cp content of culture/government/regional objects,
 			// but not of public or rural objects (those are only metadata, not consultable content)
 			const stringified = JSON.stringify(queryObject);
-			expect(stringified).toContain(`INTRA_CP_SECTOR_${IeObjectSector.CULTURE}`);
-			expect(stringified).toContain(`INTRA_CP_SECTOR_${IeObjectSector.GOVERNMENT}`);
-			expect(stringified).toContain(`INTRA_CP_SECTOR_${IeObjectSector.REGIONAL}`);
+			// Culture, Government and Regional all share the same license set (INTRA_CP_CONTENT),
+			// so they are merged into one clause
+			expect(stringified).toContain(IeObjectSector.CULTURE);
+			expect(stringified).toContain(IeObjectSector.GOVERNMENT);
+			expect(stringified).toContain(IeObjectSector.REGIONAL);
 			// Public and rural objects do not expose intra cp content to a regional user,
-			// so there should be no consultable sector clause for them
-			expect(stringified).not.toContain(`INTRA_CP_SECTOR_${IeObjectSector.PUBLIC}`);
-			expect(stringified).not.toContain(`INTRA_CP_SECTOR_${IeObjectSector.RURAL}`);
+			// so their sectors should not appear in the consultable-only query
+			expect(stringified).not.toContain(IeObjectSector.PUBLIC);
+			expect(stringified).not.toContain(IeObjectSector.RURAL);
 		});
 
 		it('Should set a filter when consultableOnlyOnLocation is set to true', () => {

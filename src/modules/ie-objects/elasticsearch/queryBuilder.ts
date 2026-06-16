@@ -1,6 +1,6 @@
 import { BadRequestException, InternalServerErrorException } from '@nestjs/common';
 import jsep from 'jsep';
-import { clamp, compact, forEach, intersection, isArray, isEmpty, isNil, uniq } from 'lodash';
+import { clamp, compact, forEach, groupBy, intersection, isArray, isEmpty, isNil, uniq, } from 'lodash';
 
 import { IeObjectsQueryDto, SearchFilter } from '../dto/ie-objects.dto';
 import { buildFreeTextFilter, convertNodeToEsQueryFilterObjects, } from '../helpers/convert-node-to-es-query-filter-objects';
@@ -953,38 +953,40 @@ export class QueryBuilder {
 
 			// 6.1) Check if the object belongs to an organisation whose sector is visible to the
 			// current user's sector, and the object has a license that grants access for that
-			// sector combination
-			const subQueries: ElasticsearchSubQuery[] = compact(
-				Object.entries(accessibleLicensesByObjectSector).map(
-					([objectSector, accessibleLicenses]: [IeObjectSector, IeObjectLicense[]]) => {
-						const licenses = intersection(accessibleLicenses, consideredLicenses);
-
-						if (isEmpty(licenses)) {
-							return null;
-						}
-
-						return {
-							bool: {
-								_name: 'KEY_USERS_OTHER_ORGANISATIONS_BY_SECTOR_LOGIC',
-								minimum_should_match: 2,
-								should: [
-									{
-										terms: {
-											[`${ElasticsearchField.schema_maintainer}.${ElasticsearchField.organization_sector}`]:
-												[objectSector],
-										},
-									},
-									{
-										terms: {
-											[ElasticsearchField.schema_license]: licenses,
-										},
-									},
-								],
-							},
-						};
-					}
-				)
+			// sector combination.
+			// Group sectors that share the same accessible license set so we emit one compact
+			// bool clause per license group instead of one clause per sector.
+			const sectorLicensePairs = compact(
+				(
+					Object.entries(accessibleLicensesByObjectSector) as [IeObjectSector, IeObjectLicense[]][]
+				).map(([objectSector, accessibleLicenses]) => {
+					const licenses = intersection(accessibleLicenses, consideredLicenses);
+					return isEmpty(licenses)
+						? null
+						: { sector: objectSector, licenses, key: [...licenses].sort().join(',') };
+				})
 			);
+			const subQueries: ElasticsearchSubQuery[] = Object.values(
+				groupBy(sectorLicensePairs, 'key')
+			).map((group) => ({
+				bool: {
+					_name: 'KEY_USERS_OTHER_ORGANISATIONS_BY_SECTOR_LOGIC',
+					minimum_should_match: 2,
+					should: [
+						{
+							terms: {
+								[`${ElasticsearchField.schema_maintainer}.${ElasticsearchField.organization_sector}`]:
+									group.map((entry) => entry.sector),
+							},
+						},
+						{
+							terms: {
+								[ElasticsearchField.schema_license]: group[0].licenses,
+							},
+						},
+					],
+				},
+			}));
 			if (user?.getOrganisationId()) {
 				subQueries.push(
 					// 6.2) Check if object is part of own organisation
