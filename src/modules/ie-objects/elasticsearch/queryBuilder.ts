@@ -1,14 +1,12 @@
 import { BadRequestException, InternalServerErrorException } from '@nestjs/common';
 import jsep from 'jsep';
-import { clamp, compact, forEach, isArray, isEmpty, isNil, uniq } from 'lodash';
+import { clamp, compact, forEach, intersection, isArray, isEmpty, isNil, uniq } from 'lodash';
 
 import { IeObjectsQueryDto, SearchFilter } from '../dto/ie-objects.dto';
-import {
-	buildFreeTextFilter,
-	convertNodeToEsQueryFilterObjects,
-} from '../helpers/convert-node-to-es-query-filter-objects';
+import { buildFreeTextFilter, convertNodeToEsQueryFilterObjects, } from '../helpers/convert-node-to-es-query-filter-objects';
 import { encodeSearchterm } from '../helpers/encode-search-term';
-import { IeObjectLicense } from '../ie-objects.types';
+import { IE_OBJECT_METADATA_SET_BY_OBJECT_AND_USER_SECTOR } from '../ie-objects.conts';
+import { IeObjectLicense, type IeObjectSector } from '../ie-objects.types';
 
 import {
 	AGGS_PROPERTIES,
@@ -939,22 +937,60 @@ export class QueryBuilder {
 		const { user } = inputInfo;
 
 		if (user?.getIsKeyUser() && !isNil(user?.getSector())) {
-			const subQueries: ElasticsearchSubQuery[] = [
-				// 6.1) Check if object is part of organisation with favorable sector
-				{
-					terms: {
-						[ElasticsearchField.schema_license]: containsOnlyConsultableFilter
-							? [IeObjectLicense.INTRA_CP_CONTENT]
-							: [IeObjectLicense.INTRA_CP_METADATA_ALL, IeObjectLicense.INTRA_CP_CONTENT],
-					},
-				},
-			];
+			const userSector = user.getSector() as IeObjectSector;
+
+			// The licenses a key user from sector X can access for objects of sector Y
+			const accessibleLicensesByObjectSector =
+				IE_OBJECT_METADATA_SET_BY_OBJECT_AND_USER_SECTOR[userSector];
+
+			// The key user filter lives in the "metadata all" branch of the query, so we only
+			// take into account the METADATA_ALL and CONTENT intra cp licenses (not METADATA_LTD).
+			// If the filter is set to only consultable media, we further restrict to the CONTENT license.
+			// https://meemoo.atlassian.net/browse/ARC-3050
+			const consideredLicenses: IeObjectLicense[] = containsOnlyConsultableFilter
+				? [IeObjectLicense.INTRA_CP_CONTENT]
+				: [IeObjectLicense.INTRA_CP_METADATA_ALL, IeObjectLicense.INTRA_CP_CONTENT];
+
+			// 6.1) Check if the object belongs to an organisation whose sector is visible to the
+			// current user's sector, and the object has a license that grants access for that
+			// sector combination
+			const subQueries: ElasticsearchSubQuery[] = compact(
+				Object.entries(accessibleLicensesByObjectSector).map(
+					([objectSector, accessibleLicenses]: [IeObjectSector, IeObjectLicense[]]) => {
+						const licenses = intersection(accessibleLicenses, consideredLicenses);
+
+						if (isEmpty(licenses)) {
+							return null;
+						}
+
+						return {
+							bool: {
+								_name: 'KEY_USERS_OTHER_ORGANISATIONS_BY_SECTOR_LOGIC',
+								minimum_should_match: 2,
+								should: [
+									{
+										terms: {
+											[`${ElasticsearchField.schema_maintainer}.${ElasticsearchField.organization_sector}`]:
+												[objectSector],
+										},
+									},
+									{
+										terms: {
+											[ElasticsearchField.schema_license]: licenses,
+										},
+									},
+								],
+							},
+						};
+					}
+				)
+			);
 			if (user?.getOrganisationId()) {
 				subQueries.push(
 					// 6.2) Check if object is part of own organisation
 					{
 						bool: {
-							_name: 'INTRA_CP_USERS',
+							_name: 'KEY_USERS_OWN_ORGANISATION_OBJECTS',
 							minimum_should_match: 2,
 							should: [
 								{
@@ -967,9 +1003,7 @@ export class QueryBuilder {
 									terms: {
 										// If the filter is set to only consultable media, we only return objects with the PUBLIEK_CONTENT license
 										// https://meemoo.atlassian.net/browse/ARC-3050
-										[ElasticsearchField.schema_license]: containsOnlyConsultableFilter
-											? [IeObjectLicense.INTRA_CP_CONTENT]
-											: [IeObjectLicense.INTRA_CP_METADATA_ALL, IeObjectLicense.INTRA_CP_CONTENT],
+										[ElasticsearchField.schema_license]: consideredLicenses,
 									},
 								},
 							],
