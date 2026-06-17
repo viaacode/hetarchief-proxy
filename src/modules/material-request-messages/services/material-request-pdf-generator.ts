@@ -4,7 +4,7 @@ import { join } from 'node:path';
 import { AssetsService, TranslationsService } from '@meemoo/admin-core-api';
 import { Injectable } from '@nestjs/common';
 import { AvoFileUploadAssetType } from '@viaa/avo2-types';
-import { Locale as DateFnsLocale, format, isValid, parseISO } from 'date-fns';
+import { format, isValid, Locale as DateFnsLocale, parseISO } from 'date-fns';
 import { enGB, nlBE } from 'date-fns/locale';
 import { drop, take } from 'lodash';
 import PDFDocument from 'pdfkit';
@@ -83,18 +83,19 @@ export class MaterialRequestPdfGeneratorService {
 	}
 
 	/**
-	 * Get's the start and endtime that was selected on the video/audio timeline. eg: 00:12:00 - 00:15:00
+	 * Gets the start and endtime that was selected on the video/audio timeline. e.g.: 00:12:00 - 00:15:00
 	 * @param materialRequest
 	 * @param locale
 	 */
-	private getFragmentSelection = (materialRequest: MaterialRequest, locale) => {
-		return materialRequest.reuseForm?.durationType === MaterialRequestDurationType.PARTIAL
-			? `${this.formatSecondsToTimestamp(materialRequest.reuseForm.startTime)} - ${this.formatSecondsToTimestamp(materialRequest.reuseForm.endTime)}`
-			: this.translationsService.tText(
-					'modules/material-request-messages/services/material-request-pdf-generator___volledig-materiaal',
-					{},
-					locale
-				);
+	private getFragmentSelection = (materialRequest: MaterialRequest, locale: Locale) => {
+		if (materialRequest.reuseForm?.durationType === MaterialRequestDurationType.FULL) {
+			return this.translationsService.tText(
+				'modules/material-request-messages/services/material-request-pdf-generator___volledig-materiaal',
+				{},
+				locale
+			);
+		}
+		return `${this.formatSecondsToTimestamp(materialRequest.reuseForm.startTime)} - ${this.formatSecondsToTimestamp(materialRequest.reuseForm.endTime)}`;
 	};
 
 	/**
