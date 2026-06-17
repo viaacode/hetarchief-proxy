@@ -66,8 +66,10 @@ export interface IeObjectFile {
 	duration: string | number | null;
 	edmIsNextInSequence: string;
 	createdAt: string;
-	startTime?: number | null;
-	endTime?: number | null;
+	mediaFragment: {
+		startTime: number;
+		endTime: number;
+	} | null;
 }
 
 export interface IeObjectPages {
@@ -83,7 +85,6 @@ export interface IeObjectPage {
 export interface IeObjectRepresentation {
 	id: string;
 	schemaName: string;
-	isMediaFragmentOf: string;
 	schemaInLanguage: string;
 	schemaStartTime: string;
 	schemaEndTime: string;
@@ -91,15 +92,16 @@ export interface IeObjectRepresentation {
 	schemaTranscriptUrl?: string | null;
 	edmIsNextInSequence: string;
 	updatedAt: string;
+	isMediaFragmentOf: string;
 	files: IeObjectFile[];
 }
 
 /**
  * This info now lives in another place and no longer resides under is_part_of
  * alternatief → table: graph.schema_alternate_name, column: schema_alternate_name
- * serienummer  → table: graph.collection, column: schema_season_number
+ * serienummer → table: graph.collection, column: schema_season_number
  * seizoennummer → table: graph.collection, column: schema_season_number
- * registratie →  not available for now
+ * registratie → not available for now
  * stuk → not available for now
  */
 export enum IsPartOfKey {

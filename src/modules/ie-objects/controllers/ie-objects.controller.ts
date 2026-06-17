@@ -66,12 +66,7 @@ import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/help
 import { mapLimit } from 'blend-promise-utils';
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
-import {
-	ALL_INDEXES,
-	IeObjectsSearchFilterField,
-	Operator,
-	OrderProperty,
-} from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
+import { ALL_INDEXES, IeObjectsSearchFilterField, Operator, OrderProperty, } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
 import { mapDcTermsFormatToSimpleType } from '~modules/ie-objects/helpers/map-dc-terms-format-to-simple-type';
 import { ERROR_CODE, IE_OBJECT_AV_TYPES } from '~modules/ie-objects/ie-objects.conts';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
@@ -122,16 +117,31 @@ export class IeObjectsController {
 			ip
 		);
 
-		const requestedFile = this.ieObjectsService.getFileInIeObject(
-			accessibleObject,
-			playerTicketsQuery.fileId
-		);
+		const [requestedFile, requestedRepresentation] =
+			this.ieObjectsService.getRepresentationAndFileInIeObject(
+				accessibleObject,
+				playerTicketsQuery.fileId
+			);
+
+		// Check if we need to cut the video / audio file
+		// https://meemoo.atlassian.net/browse/ARC-3690?focusedCommentId=87432
+		let startTime: number | undefined;
+		let endTime: number | undefined;
+		if (requestedRepresentation.isMediaFragmentOf) {
+			// Cut fragment => cut
+			startTime = requestedFile?.mediaFragment?.startTime ?? undefined;
+			endTime = requestedFile?.mediaFragment?.endTime ?? undefined;
+		} else {
+			// Main object => do not cut even if there is a start and end time
+			startTime = undefined;
+			endTime = undefined;
+		}
 		return this.playerTicketService.getPlayableUrl(requestedFile.storedAt, {
 			referer,
 			ip,
 			isPublicDomain: false,
-			startTime: requestedFile?.startTime ?? undefined,
-			endTime: requestedFile?.endTime ?? undefined,
+			startTime,
+			endTime,
 		});
 	}
 

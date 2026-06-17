@@ -120,13 +120,13 @@ export const representationMp3: IeObjectRepresentation = {
 	id: 'https://data.hetarchief.be/id/entity/41ed99a7cab4918da5536322c05a9162',
 	schemaName:
 		"Lageresolutiekopie (mp3): 'Interview met leerlingen van de Europaklassen (week 69)  4-10 februari 1996\n\tschool Anderlecht' (mg7fr16t33)",
-	isMediaFragmentOf: null,
 	schemaInLanguage: null,
 	schemaStartTime: null,
 	schemaEndTime: null,
 	schemaTranscriptUrl: null,
 	edmIsNextInSequence: null,
 	updatedAt: '2025-06-23T07:10:44.031597+00:00',
+	isMediaFragmentOf: null,
 	files: [
 		{
 			id: 'https://data.hetarchief.be/id/entity/4236d6a49512a8787d8ff1425dace297',
@@ -137,6 +137,7 @@ export const representationMp3: IeObjectRepresentation = {
 			duration: 5667.08,
 			edmIsNextInSequence: null,
 			createdAt: '2025-06-23T07:10:47.175853+00:00',
+			mediaFragment: null,
 		},
 		{
 			id: 'https://data.hetarchief.be/id/entity/a57f867f107a4734b183198390974205',
@@ -147,6 +148,7 @@ export const representationMp3: IeObjectRepresentation = {
 			duration: null,
 			edmIsNextInSequence: null,
 			createdAt: '2025-06-23T07:26:28.249917+00:00',
+			mediaFragment: null,
 		},
 	],
 };
@@ -154,13 +156,13 @@ const representationMp4: IeObjectRepresentation = {
 	id: 'https://data.hetarchief.be/id/entity/b510a045a192e5cfda4738dd129af99d',
 	schemaName:
 		"Lageresolutiekopie (mp4): 'Interview met leerlingen van de Europaklassen (week 69)  4-10 februari 1996\n\tschool Anderlecht' (mg7fr16t33)",
-	isMediaFragmentOf: null,
 	schemaInLanguage: null,
 	schemaStartTime: null,
 	schemaEndTime: null,
 	schemaTranscriptUrl: null,
 	edmIsNextInSequence: null,
 	updatedAt: '2025-06-23T07:28:33.301476+00:00',
+	isMediaFragmentOf: null,
 	files: [
 		{
 			id: 'https://data.hetarchief.be/id/entity/e5cad209c5bcddff3e884804825b6e7b',
@@ -173,6 +175,7 @@ const representationMp4: IeObjectRepresentation = {
 			duration: 5667.08,
 			edmIsNextInSequence: null,
 			createdAt: '2025-06-23T07:36:16.188475+00:00',
+			mediaFragment: null,
 		},
 		{
 			id: 'https://data.hetarchief.be/id/entity/a57f867f107a4734b183198390974205',
@@ -183,6 +186,7 @@ const representationMp4: IeObjectRepresentation = {
 			duration: null,
 			edmIsNextInSequence: null,
 			createdAt: '2025-06-23T07:26:28.249917+00:00',
+			mediaFragment: null,
 		},
 	],
 };
@@ -190,13 +194,13 @@ const representationMa4: IeObjectRepresentation = {
 	id: 'https://data.hetarchief.be/id/entity/dc83542dfbfa88127b3107600349d045',
 	schemaName:
 		"Lageresolutiekopie (m4a): 'Interview met leerlingen van de Europaklassen (week 69)  4-10 februari 1996\n\tschool Anderlecht' (mg7fr16t33)",
-	isMediaFragmentOf: null,
 	schemaInLanguage: null,
 	schemaStartTime: null,
 	schemaEndTime: null,
 	schemaTranscriptUrl: null,
 	edmIsNextInSequence: null,
 	updatedAt: '2025-06-23T07:34:47.956169+00:00',
+	isMediaFragmentOf: null,
 	files: [
 		{
 			id: 'https://data.hetarchief.be/id/entity/53db6fbda94c45b7dd0af42fa91e19d6',
@@ -207,6 +211,7 @@ const representationMa4: IeObjectRepresentation = {
 			duration: 5667.08,
 			edmIsNextInSequence: null,
 			createdAt: '2025-06-23T07:13:32.147052+00:00',
+			mediaFragment: null,
 		},
 		{
 			id: 'https://data.hetarchief.be/id/entity/a57f867f107a4734b183198390974205',
@@ -217,6 +222,7 @@ const representationMa4: IeObjectRepresentation = {
 			duration: null,
 			edmIsNextInSequence: null,
 			createdAt: '2025-06-23T07:26:28.249917+00:00',
+			mediaFragment: null,
 		},
 	],
 };
@@ -224,13 +230,13 @@ export const representationsNewspaper: IeObjectRepresentation[] = [
 	{
 		id: 'https://data.hetarchief.be/id/entity/26420d7bcb57fa9bad812876bb2fa44c/b565a828249953ec74bae4d396849891',
 		schemaName: "IIIF kopie (jp2): 'La Libre Belgique' (26420d7bcb57fa9bad812876bb2fa44c)",
-		isMediaFragmentOf: null,
 		schemaInLanguage: null,
 		schemaStartTime: null,
 		schemaEndTime: null,
 		schemaTranscriptUrl: null,
 		edmIsNextInSequence: null,
 		updatedAt: '2025-06-23T07:06:11.271076+00:00',
+		isMediaFragmentOf: null,
 		files: [
 			{
 				id: 'https://data.hetarchief.be/id/entity/26420d7bcb57fa9bad812876bb2fa44c/2f1201c076bcede9f55f79b572a3bc03',
@@ -241,19 +247,20 @@ export const representationsNewspaper: IeObjectRepresentation[] = [
 				duration: null,
 				edmIsNextInSequence: null,
 				createdAt: '2025-06-23T07:06:11.424502+00:00',
+				mediaFragment: null,
 			},
 		],
 	},
 	{
 		id: 'https://data.hetarchief.be/id/entity/c00286fbc2f1209659e70cf508620569',
 		schemaName: "Lageresolutiekopie (jpg): 'La Libre Belgique' (8p5v698x44)",
-		isMediaFragmentOf: null,
 		schemaInLanguage: null,
 		schemaStartTime: null,
 		schemaEndTime: null,
 		schemaTranscriptUrl: null,
 		edmIsNextInSequence: null,
 		updatedAt: '2025-06-23T07:30:24.376609+00:00',
+		isMediaFragmentOf: null,
 		files: [
 			{
 				id: 'https://data.hetarchief.be/id/entity/5787a7741ad5743244a79f5a3e4f876d',
@@ -266,6 +273,7 @@ export const representationsNewspaper: IeObjectRepresentation[] = [
 				duration: null,
 				edmIsNextInSequence: null,
 				createdAt: '2025-06-23T07:14:05.614178+00:00',
+				mediaFragment: null,
 			},
 		],
 	},
@@ -273,7 +281,6 @@ export const representationsNewspaper: IeObjectRepresentation[] = [
 		id: 'https://data.hetarchief.be/id/entity/faf96630b357f09db896c8d1a67bc865',
 		schemaName:
 			"Digitale representatie (alto): '8p5v698x44_19181112_0001_alto.xml' (26420d7bcb57fa9bad812876bb2fa44c)",
-		isMediaFragmentOf: null,
 		schemaInLanguage: null,
 		schemaStartTime: null,
 		schemaEndTime: null,
@@ -283,6 +290,7 @@ export const representationsNewspaper: IeObjectRepresentation[] = [
 			'http://swarmget.do.viaa.be/alto/a22094fa0a494a4b932a33d233ecad588da595dec3144bfbb9d1104102ef8d1b.xml.json?domain=s3.viaa.be',
 		edmIsNextInSequence: null,
 		updatedAt: '2025-06-23T07:39:13.913201+00:00',
+		isMediaFragmentOf: null,
 		files: [
 			{
 				id: 'https://data.hetarchief.be/id/entity/88a85bbb95b56ed0f5ee026d180bb15c',
@@ -293,6 +301,7 @@ export const representationsNewspaper: IeObjectRepresentation[] = [
 				duration: null,
 				edmIsNextInSequence: null,
 				createdAt: '2025-06-23T07:21:49.762545+00:00',
+				mediaFragment: null,
 			},
 		],
 	},
