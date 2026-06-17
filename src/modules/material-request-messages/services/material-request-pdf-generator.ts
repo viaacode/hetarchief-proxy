@@ -83,19 +83,19 @@ export class MaterialRequestPdfGeneratorService {
 	}
 
 	/**
-	 * Gets the start and endtime that was selected on the video/audio timeline. eg: 00:12:00 - 00:15:00
+	 * Gets the start and endtime that was selected on the video/audio timeline. e.g.: 00:12:00 - 00:15:00
 	 * @param materialRequest
 	 * @param locale
 	 */
 	private getFragmentSelection = (materialRequest: MaterialRequest, locale: Locale) => {
-		if (materialRequest.reuseForm?.durationType === MaterialRequestDurationType.PARTIAL) {
-			return `${this.formatSecondsToTimestamp(materialRequest.reuseForm.startTime)} - ${this.formatSecondsToTimestamp(materialRequest.reuseForm.endTime)}`;
+		if (materialRequest.reuseForm?.durationType === MaterialRequestDurationType.FULL) {
+			return this.translationsService.tText(
+				'modules/material-request-messages/services/material-request-pdf-generator___volledig-materiaal',
+				{},
+				locale
+			);
 		}
-		return this.translationsService.tText(
-			'modules/material-request-messages/services/material-request-pdf-generator___volledig-materiaal',
-			{},
-			locale
-		);
+		return `${this.formatSecondsToTimestamp(materialRequest.reuseForm.startTime)} - ${this.formatSecondsToTimestamp(materialRequest.reuseForm.endTime)}`;
 	};
 
 	/**
