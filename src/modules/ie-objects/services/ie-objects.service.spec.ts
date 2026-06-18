@@ -699,4 +699,98 @@ describe('ieObjectsService', () => {
 			expect(result).toHaveLength(3);
 		});
 	});
+
+	describe('adaptRepresentationsPaged', () => {
+		const baseRepresentation = {
+			schema_in_language: null,
+			schema_start_time: null,
+			schema_end_time: null,
+			schemaTranscriptUrls: null,
+			edm_is_next_in_sequence: null,
+			updated_at: '2025-01-01T00:00:00Z',
+			includes: [],
+		};
+
+		it('filters out cut-fragment representations when a main representation (is_media_fragment_of: null) exists', async () => {
+			const adaptRepresentationsSpy = vi
+				.spyOn(ieObjectsService, 'adaptRepresentations')
+				.mockResolvedValue([]);
+
+			const mainRepresentation = {
+				...baseRepresentation,
+				id: 'main-rep-id',
+				schema_name: 'main-rep',
+				is_media_fragment_of: null,
+			};
+			const cutFragmentRepresentation = {
+				...baseRepresentation,
+				id: 'cut-fragment-rep-id',
+				schema_name: 'cut-fragment-rep',
+				is_media_fragment_of: 'parent-id',
+			};
+
+			const ieObjectSelf = [
+				{ isRepresentedBy: [mainRepresentation, cutFragmentRepresentation] },
+			];
+
+			await ieObjectsService.adaptRepresentationsPaged(
+				ieObjectSelf as any,
+				null,
+				false,
+				false,
+				'referer',
+				'127.0.0.1'
+			);
+
+			// Only the main representation should be passed through; cut fragment must be removed
+			expect(adaptRepresentationsSpy).toHaveBeenCalledWith(
+				[mainRepresentation],
+				false,
+				false,
+				'referer',
+				'127.0.0.1'
+			);
+		});
+
+		it('keeps all representations when no main representation exists (cut-fragment object)', async () => {
+			const adaptRepresentationsSpy = vi
+				.spyOn(ieObjectsService, 'adaptRepresentations')
+				.mockResolvedValue([]);
+
+			const cutFragmentRepresentation1 = {
+				...baseRepresentation,
+				id: 'cut-fragment-rep-1',
+				schema_name: 'cut-fragment-rep-1',
+				is_media_fragment_of: 'parent-id',
+			};
+			const cutFragmentRepresentation2 = {
+				...baseRepresentation,
+				id: 'cut-fragment-rep-2',
+				schema_name: 'cut-fragment-rep-2',
+				is_media_fragment_of: 'parent-id',
+			};
+
+			const ieObjectSelf = [
+				{ isRepresentedBy: [cutFragmentRepresentation1, cutFragmentRepresentation2] },
+			];
+
+			await ieObjectsService.adaptRepresentationsPaged(
+				ieObjectSelf as any,
+				null,
+				false,
+				false,
+				'referer',
+				'127.0.0.1'
+			);
+
+			// Both cut-fragment representations must be kept — no filtering applied
+			expect(adaptRepresentationsSpy).toHaveBeenCalledWith(
+				[cutFragmentRepresentation1, cutFragmentRepresentation2],
+				false,
+				false,
+				'referer',
+				'127.0.0.1'
+			);
+		});
+	});
 });
