@@ -4,13 +4,7 @@ import { retry } from 'async';
 
 import { DataService, PlayerTicketService } from '@meemoo/admin-core-api';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import {
-	Inject,
-	Injectable,
-	InternalServerErrorException,
-	Logger,
-	NotFoundException,
-} from '@nestjs/common';
+import { Inject, Injectable, InternalServerErrorException, Logger, NotFoundException, } from '@nestjs/common';
 
 import { ConfigService } from '@nestjs/config';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
@@ -42,10 +36,10 @@ import {
 	type IeObjectPages,
 	type IeObjectRepresentation,
 	type IeObjectSector,
-	IeObjectType,
 	type IeObjectsSitemap,
 	type IeObjectsVisitorSpaceInfo,
 	type IeObjectsWithAggregations,
+	IeObjectType,
 	type IsPartOfKey,
 	type Mention,
 	type RelatedIeObject,
@@ -97,25 +91,19 @@ import {
 	MAX_COUNT_SEARCH_RESULTS,
 } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
 import { AND } from '~modules/ie-objects/elasticsearch/queryBuilder.helpers';
+import { convertStringToSearchTerms, type SearchTermParseResult, } from '~modules/ie-objects/helpers/convert-string-to-search-terms';
+import { AUTOCOMPLETE_FIELD_TO_ES_FIELD_NAME, IE_OBJECT_AV_TYPES, } from '~modules/ie-objects/ie-objects.conts';
 import {
-	type SearchTermParseResult,
-	convertStringToSearchTerms,
-} from '~modules/ie-objects/helpers/convert-string-to-search-terms';
-import {
-	AUTOCOMPLETE_FIELD_TO_ES_FIELD_NAME,
-	IE_OBJECT_AV_TYPES,
-} from '~modules/ie-objects/ie-objects.conts';
-import {
-	CACHE_KEY_PREFIX_IE_OBJECTS_SEARCH,
 	CACHE_KEY_PREFIX_IE_OBJECT_DETAIL,
 	CACHE_KEY_PREFIX_IE_OBJECT_PID_TO_ID,
 	CACHE_KEY_PREFIX_IE_OBJECT_THUMBNAIL,
+	CACHE_KEY_PREFIX_IE_OBJECTS_SEARCH,
 } from '~modules/ie-objects/services/ie-objects.service.consts';
 import {
-	DbFile,
+	type DbFile,
 	type DbIeObjectWithMentions,
 	type DbIeObjectWithRepresentations,
-	DbIncludeFile,
+	type DbIncludeFile,
 	type DbIncludeFiles,
 	type DbRepresentation,
 } from '~modules/ie-objects/services/ie-objects.service.types';
@@ -1055,14 +1043,13 @@ export class IeObjectsService {
 
 		// Check if video is a main video or a cut fragment of a main video
 		// https://meemoo.atlassian.net/browse/ARC-3690?focusedCommentId=87432
-		console.log('ieObjects: ', JSON.stringify(ieObjects));
 		const hasMainFragment = ieObjects.find((ieObject) =>
 			ieObject.isRepresentedBy?.find(
 				(representation) => representation.is_media_fragment_of === null
 			)
 		);
 		if (hasMainFragment) {
-			// Show the ma	in fragment and the DVD chapters
+			// Show the main fragment and the DVD chapters
 			// Delete the cut fragments
 			for (const ieObject of ieObjects) {
 				ieObject.isRepresentedBy = compact(
@@ -1218,10 +1205,13 @@ export class IeObjectsService {
 
 	/**
 	 * Checks if first hasMediaFragment has valid start- and end time
-	 * and returns simplified format
+	 * and returns a simplified format
+	 * schema_start_time and schema_end_time are in the format: HH:mm:ss.µµµ
+	 * and this function converts that to integer seconds
 	 * @param file
 	 */
 	private adaptMediaFragment(file: DbFile): { startTime: number; endTime: number } | null {
+		// format: HH:mm:ss.µµµ
 		const startTimeFormatted: string | undefined | null =
 			file.hasMediaFragment?.[0]?.schema_start_time;
 		const endTimeFormatted: string | undefined | null = file.hasMediaFragment?.[0]?.schema_end_time;
@@ -1229,6 +1219,7 @@ export class IeObjectsService {
 		if (isNil(startTimeFormatted) || isNil(endTimeFormatted)) {
 			return null;
 		}
+		// convert to seconds (integer)
 		const startTime = formattedDurationToSeconds(startTimeFormatted);
 		const endTime = formattedDurationToSeconds(endTimeFormatted);
 
@@ -1755,7 +1746,7 @@ export class IeObjectsService {
 	public getRepresentationAndFileInIeObject(
 		ieObject: Partial<IeObject>,
 		fileId: string
-	): [IeObjectFile, IeObjectRepresentation] {
+	): [IeObjectFile | null, IeObjectRepresentation | null] {
 		// Check if requested file has time codes to cut the fragment out of a video
 		// https://meemoo.atlassian.net/browse/ARC-3690
 		let requestedFile: IeObjectFile | null = null;

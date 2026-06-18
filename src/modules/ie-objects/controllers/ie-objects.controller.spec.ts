@@ -1,8 +1,4 @@
-import {
-	PlayerTicketController,
-	PlayerTicketService,
-	TranslationsService,
-} from '@meemoo/admin-core-api';
+import { PlayerTicketController, PlayerTicketService, TranslationsService, } from '@meemoo/admin-core-api';
 import { BadRequestException, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Test, type TestingModule } from '@nestjs/testing';
@@ -11,12 +7,7 @@ import type { Request, Response } from 'express';
 import { cloneDeep } from 'lodash';
 import { afterEach, beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
 
-import {
-	type IeObject,
-	IeObjectLicense,
-	IeObjectType,
-	type RelatedIeObject,
-} from '../ie-objects.types';
+import { type IeObject, IeObjectLicense, IeObjectType, type RelatedIeObject, } from '../ie-objects.types';
 import {
 	mockIeObject1,
 	mockIeObjectWithMetadataSetALL,
@@ -64,7 +55,7 @@ const mockIeObjectsService: Partial<Record<keyof IeObjectsService, MockInstance>
 		visitorSpaceIds: [],
 	})),
 	getObjectIdBySchemaIdentifierCached: vi.fn().mockResolvedValue('mock-ie-object-id'),
-	getFileInIeObject: vi.fn(),
+	getRepresentationAndFileInIeObject: vi.fn(),
 };
 
 const mockPlayerTicketService: Partial<Record<keyof PlayerTicketService, MockInstance>> = {
@@ -200,11 +191,14 @@ describe('IeObjectsController', () => {
 				},
 			] as Partial<IeObject>[]);
 			mockPlayerTicketService.getPlayableUrl.mockResolvedValueOnce('http://playme');
-			mockIeObjectsService.getFileInIeObject.mockReturnValueOnce({
-				id: 'website/id/entity/file-id',
-				storedAt: '/path/to/file',
-				mimeType: 'video/mp4',
-			});
+			mockIeObjectsService.getRepresentationAndFileInIeObject.mockReturnValueOnce([
+				{
+					id: 'website/id/entity/file-id',
+					storedAt: '/path/to/file',
+					mimeType: 'video/mp4',
+				},
+				{ id: 'representation-id' },
+			]);
 			const url = await ieObjectsController.getPlayableUrl(
 				'referer',
 				'127.0.0.1',

@@ -123,11 +123,22 @@ export class IeObjectsController {
 				playerTicketsQuery.fileId
 			);
 
+		if (!requestedFile || !requestedRepresentation) {
+			throw new CustomError(
+				"Failed to find requested file and/or it's representation in ie-object",
+				null,
+				{
+					playerTicketsQuery,
+				},
+				404
+			);
+		}
+
 		// Check if we need to cut the video / audio file
 		// https://meemoo.atlassian.net/browse/ARC-3690?focusedCommentId=87432
 		let startTime: number | undefined;
 		let endTime: number | undefined;
-		if (requestedRepresentation.isMediaFragmentOf) {
+		if (requestedRepresentation?.isMediaFragmentOf) {
 			// Cut fragment => cut
 			startTime = requestedFile?.mediaFragment?.startTime ?? undefined;
 			endTime = requestedFile?.mediaFragment?.endTime ?? undefined;
@@ -1100,7 +1111,7 @@ export class IeObjectsController {
 						);
 
 						if (this.configService.get('IE_OBJECT_LOG_ACCESS_CHECKS') === 'true') {
-							console.log('fetching ie-object (before limiting): ', JSON.stringify(ieObject));
+							console.info('fetching ie-object (before limiting): ', JSON.stringify(ieObject));
 						}
 
 						if (!ieObject) {
@@ -1120,7 +1131,7 @@ export class IeObjectsController {
 						});
 
 						if (this.configService.get('IE_OBJECT_LOG_ACCESS_CHECKS') === 'true') {
-							console.log('fetching ie-object (after limiting): ', JSON.stringify(limitedObject));
+							console.info('fetching ie-object (after limiting): ', JSON.stringify(limitedObject));
 						}
 
 						if (!limitedObject) {
@@ -1156,10 +1167,10 @@ export class IeObjectsController {
 
 			return limitedObjects;
 		} catch (err) {
-			console.log('error', JSON.stringify(err));
+			console.error('error', JSON.stringify(err));
 			const errorJson = JSON.stringify(err);
 			if (errorJson.includes(ERROR_CODE.USER_NO_ACCESS_TO_IE_OBJECT)) {
-				console.log(
+				console.error(
 					new CustomError('has USER_NO_ACCESS_TO_IE_OBJECT code', err, {
 						schemaIdentifiers,
 						ieObjectIds,
@@ -1181,7 +1192,7 @@ export class IeObjectsController {
 				referer,
 				ip,
 			});
-			console.log(error);
+			console.error(error);
 			throw error;
 		}
 	}
