@@ -1,4 +1,8 @@
-import { PlayerTicketController, PlayerTicketService, TranslationsService, } from '@meemoo/admin-core-api';
+import {
+	PlayerTicketController,
+	PlayerTicketService,
+	TranslationsService,
+} from '@meemoo/admin-core-api';
 import { BadRequestException, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Test, type TestingModule } from '@nestjs/testing';
@@ -7,7 +11,12 @@ import type { Request, Response } from 'express';
 import { cloneDeep } from 'lodash';
 import { afterEach, beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
 
-import { type IeObject, IeObjectLicense, IeObjectType, type RelatedIeObject, } from '../ie-objects.types';
+import {
+	type IeObject,
+	IeObjectLicense,
+	IeObjectType,
+	type RelatedIeObject,
+} from '../ie-objects.types';
 import {
 	mockIeObject1,
 	mockIeObjectWithMetadataSetALL,

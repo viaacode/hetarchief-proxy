@@ -2,7 +2,10 @@ import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/help
 import { Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { noop } from 'lodash';
-import { CreateMamJobRequestBody, MediahavenJobInfo, } from '~modules/mediahaven-jobs-watcher/mediahaven-jobs-watcher.types';
+import {
+	CreateMamJobRequestBody,
+	MediahavenJobInfo,
+} from '~modules/mediahaven-jobs-watcher/mediahaven-jobs-watcher.types';
 import { MediahavenJobsWatcherService } from '~modules/mediahaven-jobs-watcher/services/mediahaven-jobs-watcher.service';
 import { ApiKeyGuard } from '~shared/guards/api-key.guard';
 import { LocalhostGuard } from '~shared/guards/localhost.guard';

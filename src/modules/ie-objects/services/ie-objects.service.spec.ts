@@ -729,9 +729,7 @@ describe('ieObjectsService', () => {
 				is_media_fragment_of: 'parent-id',
 			};
 
-			const ieObjectSelf = [
-				{ isRepresentedBy: [mainRepresentation, cutFragmentRepresentation] },
-			];
+			const ieObjectSelf = [{ isRepresentedBy: [mainRepresentation, cutFragmentRepresentation] }];
 
 			await ieObjectsService.adaptRepresentationsPaged(
 				ieObjectSelf as any,
