@@ -26,7 +26,7 @@ export class MaterialRequestsSchedulingController {
 				.checkAllReadyForArchivation()
 				.then(noop)
 				.catch((err) => {
-					console.log(
+					console.error(
 						new CustomError(
 							'Error during checkMaterialRequestsForArchivation => checkAllReadyForArchivation cron',
 							err

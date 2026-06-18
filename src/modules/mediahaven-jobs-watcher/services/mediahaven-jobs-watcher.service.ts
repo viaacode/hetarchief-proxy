@@ -2,7 +2,7 @@ import { GetObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { DataService, MediahavenService } from '@meemoo/admin-core-api';
 import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
-import { Inject, Injectable, forwardRef } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AvoUserCommonUser } from '@viaa/avo2-types';
 import { mapLimit } from 'blend-promise-utils';
@@ -40,8 +40,8 @@ import {
 	MamAccessToken,
 	MamExportQuality,
 	MamJobStatus,
-	MediaHavenRecord,
 	MediahavenJobInfo,
+	MediaHavenRecord,
 	S3ExportLocationToken,
 } from '~modules/mediahaven-jobs-watcher/mediahaven-jobs-watcher.types';
 import { NotificationType } from '~modules/notifications/types';
@@ -294,7 +294,7 @@ export class MediahavenJobsWatcherService {
 					);
 				}
 			}
-			console.log('Mediahaven jobs check report', reportItems);
+			console.info('Mediahaven jobs check report', reportItems);
 		} catch (err) {
 			throw new CustomError('Error checking mediahaven jobs', err);
 		}
@@ -535,7 +535,7 @@ export class MediahavenJobsWatcherService {
 				url,
 				body,
 			});
-			console.log(error);
+			console.error(error);
 			error.innerException = null;
 			throw error;
 		}

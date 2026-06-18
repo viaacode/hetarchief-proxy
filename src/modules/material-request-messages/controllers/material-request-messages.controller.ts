@@ -140,7 +140,7 @@ export class MaterialRequestMessagesController {
 				page,
 				size,
 			});
-			console.log(error);
+			console.error(error);
 			error.innerException = null;
 			throw error;
 		}
@@ -167,7 +167,7 @@ export class MaterialRequestMessagesController {
 				materialRequestId,
 				userId: user?.getId(),
 			});
-			console.log(error);
+			console.error(error);
 			error.innerException = null;
 			throw error;
 		}
@@ -252,7 +252,7 @@ export class MaterialRequestMessagesController {
 				materialRequestId,
 				userId: user?.getId(),
 			});
-			console.log(error);
+			console.error(error);
 			error.innerException = null;
 			throw error;
 		}
@@ -298,7 +298,7 @@ export class MaterialRequestMessagesController {
 				userId: user?.getId(),
 				extraConditions: body.extraConditions,
 			});
-			console.log(error);
+			console.error(error);
 			error.innerException = null;
 			throw error;
 		}
@@ -438,7 +438,7 @@ export class MaterialRequestMessagesController {
 				materialRequestId,
 				userId: user?.getId(),
 			});
-			console.log(error);
+			console.error(error);
 			error.innerException = null;
 			throw error;
 		}
@@ -505,7 +505,7 @@ export class MaterialRequestMessagesController {
 				orderProp: queryDto.orderProp,
 				orderDirection: queryDto.orderDirection,
 			});
-			console.log(error);
+			console.error(error);
 			error.innerException = null;
 			throw error;
 		}
@@ -570,7 +570,7 @@ export class MaterialRequestMessagesController {
 						userId: user?.getId(),
 					}
 				);
-				console.log(error);
+				console.error(error);
 				throw error;
 			}
 		}
@@ -611,7 +611,7 @@ export class MaterialRequestMessagesController {
 				attachmentId,
 				userId: user?.getId(),
 			});
-			console.log(error);
+			console.error(error);
 			error.innerException = null;
 			throw error;
 		}
@@ -680,7 +680,7 @@ export class MaterialRequestMessagesController {
 			const error = new CustomError('Failed to generate material request PDF', err, {
 				materialRequestId,
 			});
-			console.log(error);
+			console.error(error);
 			error.innerException = null;
 			throw error;
 		}
@@ -712,7 +712,7 @@ export class MaterialRequestMessagesController {
 			const error = new CustomError('Failed to generate complete summary PDF', err, {
 				materialRequestId,
 			});
-			console.log(error);
+			console.error(error);
 			error.innerException = null;
 			throw error;
 		}

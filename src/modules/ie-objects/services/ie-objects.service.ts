@@ -4,13 +4,7 @@ import { retry } from 'async';
 
 import { DataService, PlayerTicketService } from '@meemoo/admin-core-api';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import {
-	Inject,
-	Injectable,
-	InternalServerErrorException,
-	Logger,
-	NotFoundException,
-} from '@nestjs/common';
+import { Inject, Injectable, InternalServerErrorException, Logger, NotFoundException, } from '@nestjs/common';
 
 import { ConfigService } from '@nestjs/config';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
@@ -18,7 +12,7 @@ import { mapLimit } from 'blend-promise-utils';
 import type { Cache } from 'cache-manager';
 import got, { type Got } from 'got';
 
-import { compact, find, isArray, isEmpty, isNil, kebabCase, omitBy, uniq } from 'lodash';
+import { compact, find, isArray, isEmpty, isNil, isNumber, kebabCase, omitBy, uniq } from 'lodash';
 
 import type { Configuration } from '~config';
 
@@ -42,10 +36,10 @@ import {
 	type IeObjectPages,
 	type IeObjectRepresentation,
 	type IeObjectSector,
-	IeObjectType,
 	type IeObjectsSitemap,
 	type IeObjectsVisitorSpaceInfo,
 	type IeObjectsWithAggregations,
+	IeObjectType,
 	type IsPartOfKey,
 	type Mention,
 	type RelatedIeObject,
@@ -97,24 +91,20 @@ import {
 	MAX_COUNT_SEARCH_RESULTS,
 } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
 import { AND } from '~modules/ie-objects/elasticsearch/queryBuilder.helpers';
+import { convertStringToSearchTerms, type SearchTermParseResult, } from '~modules/ie-objects/helpers/convert-string-to-search-terms';
+import { AUTOCOMPLETE_FIELD_TO_ES_FIELD_NAME, IE_OBJECT_AV_TYPES, } from '~modules/ie-objects/ie-objects.conts';
 import {
-	type SearchTermParseResult,
-	convertStringToSearchTerms,
-} from '~modules/ie-objects/helpers/convert-string-to-search-terms';
-import {
-	AUTOCOMPLETE_FIELD_TO_ES_FIELD_NAME,
-	IE_OBJECT_AV_TYPES,
-} from '~modules/ie-objects/ie-objects.conts';
-import {
-	CACHE_KEY_PREFIX_IE_OBJECTS_SEARCH,
 	CACHE_KEY_PREFIX_IE_OBJECT_DETAIL,
 	CACHE_KEY_PREFIX_IE_OBJECT_PID_TO_ID,
 	CACHE_KEY_PREFIX_IE_OBJECT_THUMBNAIL,
+	CACHE_KEY_PREFIX_IE_OBJECTS_SEARCH,
 } from '~modules/ie-objects/services/ie-objects.service.consts';
 import {
 	type DbFile,
 	type DbIeObjectWithMentions,
 	type DbIeObjectWithRepresentations,
+	type DbIncludeFile,
+	type DbIncludeFiles,
 	type DbRepresentation,
 } from '~modules/ie-objects/services/ie-objects.service.types';
 import { OrganisationPreference } from '~modules/organisations/organisations.types';
@@ -1038,7 +1028,7 @@ export class IeObjectsService {
 		ip: string
 	): Promise<IeObjectPages | null> {
 		const ieObjectParts = hasPartResponse || [];
-		const ieObjects = (
+		const ieObjects: DbIeObjectWithRepresentations[] = (
 			compact([
 				...(isArray(ieObjectSelf) ? ieObjectSelf : [ieObjectSelf]),
 				...ieObjectParts,
@@ -1050,6 +1040,32 @@ export class IeObjectsService {
 		}
 
 		const allMentions: Mention[] = [];
+
+		// Check if video is a main video or a cut fragment of a main video
+		// https://meemoo.atlassian.net/browse/ARC-3690?focusedCommentId=87432
+		const hasMainFragment = ieObjects.find((ieObject) =>
+			ieObject.isRepresentedBy?.find(
+				(representation) => representation.is_media_fragment_of === null
+			)
+		);
+		if (hasMainFragment) {
+			// Show the main fragment and the DVD chapters
+			// Delete the cut fragments
+			for (const ieObject of ieObjects) {
+				ieObject.isRepresentedBy = compact(
+					(ieObject.isRepresentedBy || [])?.map(
+						(representation: DbIeObjectWithRepresentations['isRepresentedBy'][0]) => {
+							if (representation.is_media_fragment_of) {
+								return null;
+							}
+							return representation;
+						}
+					)
+				) as DbIeObjectWithRepresentations['isRepresentedBy'];
+			}
+		} else {
+			// This is probably a cut fragment => no need to remove any cut fragments
+		}
 
 		/* istanbul ignore next */
 		// Standardize the isRepresentedBy and the hasPart.isRepresentedBy parts of the query to a list of pages with each their file representations
@@ -1108,6 +1124,7 @@ export class IeObjectsService {
 					if (!representation) {
 						return null;
 					}
+
 					const transcriptInfo = representation.schemaTranscriptUrls?.[0];
 					const schemaTranscript = transcriptInfo?.schema_transcript;
 					const schemaTranscriptUrl = transcriptInfo?.schema_transcript_url || null;
@@ -1115,7 +1132,6 @@ export class IeObjectsService {
 					return {
 						id: representation.id,
 						schemaName: representation.schema_name,
-						isMediaFragmentOf: representation.is_media_fragment_of,
 						schemaInLanguage: representation.schema_in_language,
 						schemaStartTime: representation.schema_start_time,
 						schemaEndTime: representation.schema_end_time,
@@ -1123,6 +1139,7 @@ export class IeObjectsService {
 						schemaTranscriptUrl,
 						edmIsNextInSequence: representation.edm_is_next_in_sequence,
 						updatedAt: representation.updated_at,
+						isMediaFragmentOf: representation.is_media_fragment_of,
 						files: await this.adaptFiles(
 							representation.includes,
 							resolveThumbnailUrl,
@@ -1139,50 +1156,80 @@ export class IeObjectsService {
 	}
 
 	public async adaptFiles(
-		dbFiles: DbFile,
+		dbIncludeFiles: DbIncludeFiles,
 		resolveThumbnailUrl: boolean,
 		isPublicDomain: boolean,
 		referer: string,
 		ip: string
 	): Promise<IeObjectFile[]> {
-		if (!dbFiles || isEmpty(dbFiles)) {
+		if (!dbIncludeFiles || isEmpty(dbIncludeFiles)) {
 			return [];
 		}
 
 		/* istanbul ignore next */
 		return compact(
-			await mapLimit(dbFiles, 20, async (includeFile): Promise<IeObjectFile> => {
-				const file = includeFile.file;
-				if (!file) {
-					return null;
-				}
+			await mapLimit(
+				dbIncludeFiles,
+				20,
+				async (includeFile: DbIncludeFile): Promise<IeObjectFile> => {
+					const file: DbFile = includeFile.file;
+					if (!file) {
+						return null;
+					}
 
-				let thumbnailUrl: string | undefined = undefined;
-				if (resolveThumbnailUrl) {
-					thumbnailUrl = await this.getThumbnailUrlWithToken(
-						file.schema_thumbnail_url,
-						referer,
-						ip,
-						isPublicDomain
-					);
-				}
+					let thumbnailUrl: string | undefined = undefined;
+					if (resolveThumbnailUrl) {
+						thumbnailUrl = await this.getThumbnailUrlWithToken(
+							file.schema_thumbnail_url,
+							referer,
+							ip,
+							isPublicDomain
+						);
+					}
 
-				const startTime = file.hasMediaFragment?.[0]?.schema_start_time;
-				const endTime = file.hasMediaFragment?.[0]?.schema_end_time;
-				return {
-					id: file.id,
-					name: file.schema_name,
-					mimeType: file.ebucore_has_mime_type,
-					storedAt: file.premis_stored_at,
-					thumbnailUrl,
-					duration: file.schema_duration,
-					edmIsNextInSequence: file.edm_is_next_in_sequence,
-					createdAt: file.created_at,
-					startTime: startTime ? formattedDurationToSeconds(startTime) : null,
-					endTime: endTime ? formattedDurationToSeconds(endTime) : null,
-				};
-			})
+					return {
+						id: file.id,
+						name: file.schema_name,
+						mimeType: file.ebucore_has_mime_type,
+						storedAt: file.premis_stored_at,
+						thumbnailUrl,
+						duration: file.schema_duration,
+						edmIsNextInSequence: file.edm_is_next_in_sequence,
+						createdAt: file.created_at,
+						mediaFragment: this.adaptMediaFragment(file),
+					};
+				}
+			)
 		);
+	}
+
+	/**
+	 * Checks if first hasMediaFragment has valid start- and end time
+	 * and returns a simplified format
+	 * schema_start_time and schema_end_time are in the format: HH:mm:ss.µµµ
+	 * and this function converts that to integer seconds
+	 * @param file
+	 */
+	private adaptMediaFragment(file: DbFile): { startTime: number; endTime: number } | null {
+		// format: HH:mm:ss.µµµ
+		const startTimeFormatted: string | undefined | null =
+			file.hasMediaFragment?.[0]?.schema_start_time;
+		const endTimeFormatted: string | undefined | null = file.hasMediaFragment?.[0]?.schema_end_time;
+
+		if (isNil(startTimeFormatted) || isNil(endTimeFormatted)) {
+			return null;
+		}
+		// convert to seconds (integer)
+		const startTime = formattedDurationToSeconds(startTimeFormatted);
+		const endTime = formattedDurationToSeconds(endTimeFormatted);
+
+		if (!isNumber(startTime) || !isNumber(endTime)) {
+			return null;
+		}
+		return {
+			startTime,
+			endTime,
+		};
 	}
 
 	private adaptForSitemap(
@@ -1696,20 +1743,25 @@ export class IeObjectsService {
 		}
 	}
 
-	public getFileInIeObject(ieObject: Partial<IeObject>, fileId: string): IeObjectFile {
+	public getRepresentationAndFileInIeObject(
+		ieObject: Partial<IeObject>,
+		fileId: string
+	): [IeObjectFile | null, IeObjectRepresentation | null] {
 		// Check if requested file has time codes to cut the fragment out of a video
 		// https://meemoo.atlassian.net/browse/ARC-3690
 		let requestedFile: IeObjectFile | null = null;
+		let requestedRepresentation: IeObjectRepresentation | null = null;
 		ieObject.pages?.find((page) => {
 			return page.representations?.find((representation) => {
 				return representation?.files?.find((file) => {
 					if (file.id === fileId) {
 						requestedFile = file;
+						requestedRepresentation = representation;
 						return true; // Stop searching
 					}
 				});
 			});
 		});
-		return requestedFile;
+		return [requestedFile, requestedRepresentation];
 	}
 }

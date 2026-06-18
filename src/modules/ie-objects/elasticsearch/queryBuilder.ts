@@ -1,9 +1,22 @@
 import { BadRequestException, InternalServerErrorException } from '@nestjs/common';
 import jsep from 'jsep';
-import { clamp, compact, forEach, groupBy, intersection, isArray, isEmpty, isNil, uniq, } from 'lodash';
+import {
+	clamp,
+	compact,
+	forEach,
+	groupBy,
+	intersection,
+	isArray,
+	isEmpty,
+	isNil,
+	uniq,
+} from 'lodash';
 
 import { IeObjectsQueryDto, SearchFilter } from '../dto/ie-objects.dto';
-import { buildFreeTextFilter, convertNodeToEsQueryFilterObjects, } from '../helpers/convert-node-to-es-query-filter-objects';
+import {
+	buildFreeTextFilter,
+	convertNodeToEsQueryFilterObjects,
+} from '../helpers/convert-node-to-es-query-filter-objects';
 import { encodeSearchterm } from '../helpers/encode-search-term';
 import { IE_OBJECT_METADATA_SET_BY_OBJECT_AND_USER_SECTOR } from '../ie-objects.conts';
 import { IeObjectLicense, type IeObjectSector } from '../ie-objects.types';
