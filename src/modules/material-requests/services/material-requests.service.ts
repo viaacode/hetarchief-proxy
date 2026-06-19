@@ -1690,29 +1690,29 @@ export class MaterialRequestsService {
 			throw error;
 		}
 
+		// Send event to events database for analytics
+		this.eventsService
+			.insertEvents([
+				{
+					id: eventId,
+					type: LogEventType.ITEM_REQUEST_DOWNLOAD_EXECUTED,
+					source: requestPath,
+					subject: user?.getId(),
+					time: new Date().toISOString(),
+					data: {
+						type: mapDcTermsFormatToSimpleType(materialRequest.objectDctermsFormat),
+						or_id: materialRequest.maintainerId,
+						pid: materialRequest.objectSchemaIdentifier,
+						material_request_group_id: materialRequest.requestGroupId,
+						fragment_id: materialRequest.objectSchemaIdentifier,
+					},
+				},
+			])
+			.then(noop);
+
 		// Only notify evaluators of a download if the requester executed the download
 		// https://meemoo.atlassian.net/browse/ARC-3751
 		if (user.getId() === materialRequest.profileId) {
-			// Send event to events database for analytics
-			this.eventsService
-				.insertEvents([
-					{
-						id: eventId,
-						type: LogEventType.ITEM_REQUEST_DOWNLOAD_EXECUTED,
-						source: requestPath,
-						subject: user?.getId(),
-						time: new Date().toISOString(),
-						data: {
-							type: mapDcTermsFormatToSimpleType(materialRequest.objectDctermsFormat),
-							or_id: materialRequest.maintainerId,
-							pid: materialRequest.objectSchemaIdentifier,
-							material_request_group_id: materialRequest.requestGroupId,
-							fragment_id: materialRequest.objectSchemaIdentifier,
-						},
-					},
-				])
-				.then(noop);
-
 			// Send notification to evaluators of the maintainer organisation of the object
 			const requester = await this.usersService.getById(materialRequest.profileId);
 			await this.sentStatusUpdateNotification(
