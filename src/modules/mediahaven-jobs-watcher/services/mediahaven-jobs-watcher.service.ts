@@ -2,7 +2,7 @@ import { GetObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { DataService, MediahavenService } from '@meemoo/admin-core-api';
 import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AvoUserCommonUser } from '@viaa/avo2-types';
 import { mapLimit } from 'blend-promise-utils';
@@ -40,8 +40,8 @@ import {
 	MamAccessToken,
 	MamExportQuality,
 	MamJobStatus,
-	MediahavenJobInfo,
 	MediaHavenRecord,
+	MediahavenJobInfo,
 	S3ExportLocationToken,
 } from '~modules/mediahaven-jobs-watcher/mediahaven-jobs-watcher.types';
 import { NotificationType } from '~modules/notifications/types';
@@ -233,6 +233,12 @@ export class MediahavenJobsWatcherService {
 
 							case MamJobStatus.Failed:
 							case MamJobStatus.Cancelled: {
+								if (
+									materialRequest.downloadStatus ===
+									Lookup_App_Material_Request_Download_Status_Enum.Failed
+								) {
+									break; // material request is already marked as failed, no need to update it and no need to notify meemoo again
+								}
 								const updatedRequest = await this.materialRequestsService.updateMaterialRequest(
 									materialRequest.id,
 									{
@@ -241,7 +247,7 @@ export class MediahavenJobsWatcherService {
 									},
 									true
 								);
-								// Todo: check this if we start retrying that this only gets created when it fails completely
+								// TODO: check this if we start retrying that this only gets created when it fails completely
 								await this.materialRequestMessagesService.createFinalSummaryMessage(
 									updatedRequest,
 									null
@@ -252,6 +258,7 @@ export class MediahavenJobsWatcherService {
 									.sendEmailsForFailedDownloadExport(updatedRequest, requester)
 									.catch(noop);
 
+								// Restart logic is disabled, since it would spam the MAM api with constant retries
 								// https://meemoo.atlassian.net/browse/ARC-3573
 								// const hasFailed = await this.retryDownloadJobOrFail(materialRequest);
 								// if (hasFailed) {
