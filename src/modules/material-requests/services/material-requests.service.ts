@@ -33,13 +33,13 @@ import {
 	UpdateMaterialRequestStatusDto,
 } from '../dto/material-requests.dto';
 import {
-	getAdditionEventDate,
-	getLastStatusEventOfType,
-	getStatusEvent,
 	MAP_MATERIAL_REQUEST_STATUS_TO_EVENT_TYPE,
 	MAP_MATERIAL_REQUEST_STATUS_TO_NOTIFICATION_TYPE,
 	MAP_NOTIFICATION_TYPE_TO_EMAIL_TEMPLATE,
 	ORDER_PROP_TO_DB_PROP,
+	getAdditionEventDate,
+	getLastStatusEventOfType,
+	getStatusEvent,
 } from '../material-requests.consts';
 import {
 	GqlMaterialRequest,
@@ -121,8 +121,8 @@ import {
 	IeObjectAccessThrough,
 	IeObjectLicense,
 	type IeObjectSector,
-	IeObjectsVisitorSpaceInfo,
 	IeObjectType,
+	IeObjectsVisitorSpaceInfo,
 	SimpleIeObjectType,
 } from '~modules/ie-objects/ie-objects.types';
 import type { Organisation } from '~modules/organisations/organisations.types';
@@ -1690,6 +1690,7 @@ export class MaterialRequestsService {
 			throw error;
 		}
 
+		// Send event to events database for analytics
 		this.eventsService
 			.insertEvents([
 				{
@@ -1709,12 +1710,17 @@ export class MaterialRequestsService {
 			])
 			.then(noop);
 
-		const requester = await this.usersService.getById(materialRequest.profileId);
-		await this.sentStatusUpdateNotification(
-			NotificationType.MATERIAL_REQUEST_DOWNLOAD_EXECUTED,
-			materialRequest,
-			requester
-		);
+		// Only notify evaluators of a download if the requester executed the download
+		// https://meemoo.atlassian.net/browse/ARC-3751
+		if (user.getId() === materialRequest.profileId) {
+			// Send notification to evaluators of the maintainer organisation of the object
+			const requester = await this.usersService.getById(materialRequest.profileId);
+			await this.sentStatusUpdateNotification(
+				NotificationType.MATERIAL_REQUEST_DOWNLOAD_EXECUTED,
+				materialRequest,
+				requester
+			);
+		}
 
 		const objectTitle = kebabCase(materialRequest.objectSchemaName);
 		const maintainerName = kebabCase(materialRequest.maintainerName);
