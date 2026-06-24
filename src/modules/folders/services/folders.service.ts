@@ -2,6 +2,7 @@ import { DataService } from '@meemoo/admin-core-api';
 import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { format } from 'date-fns';
+import type { Request } from 'express';
 import { isEmpty, maxBy } from 'lodash';
 
 import type {
@@ -48,6 +49,7 @@ import type { IeObject, IeObjectSector, IeObjectType } from '~modules/ie-objects
 
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 
+import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
 import { VisitsService } from '~modules/visits/services/visits.service';
 import { PaginationHelper } from '~shared/helpers/pagination';
 
@@ -371,7 +373,10 @@ export class FoldersService {
 		const objectInfo = await this.ieObjectsService.findByIeObjectId(ieObjectId, false, referer, ip);
 
 		if (!objectInfo) {
-			throw new NotFoundException(`Object with id ${ieObjectId} was not found`);
+			throw new CustomError(`Object with id ${ieObjectId} was not found`, null, {
+				folderId,
+				ieObjectId,
+			});
 		}
 
 		const response = await this.dataService.execute<

@@ -39,7 +39,9 @@ import { type IeObject, IeObjectLicense } from '~modules/ie-objects/ie-objects.t
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 
+import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
 import { PermissionName } from '@viaa/avo2-types';
+import { object } from 'joi';
 import { mapDcTermsFormatToSimpleType } from '~modules/ie-objects/helpers/map-dc-terms-format-to-simple-type';
 import { UsersService } from '~modules/users/services/users.service';
 import { Ip } from '~shared/decorators/ip.decorator';
@@ -230,12 +232,10 @@ export class FoldersController {
 			throw new ForbiddenException('You can only add objects to your own folders');
 		}
 
-		const ieObjectId =
-			await this.ieObjectsService.getObjectIdBySchemaIdentifierCached(objectSchemaIdentifier);
-
-		if (!ieObjectId) {
-			throw new NotFoundException('Object not found');
-		}
+		const ieObjectId = await this.ieObjectsService.getIeObjectIdFromObjectSchemaIdentifier(
+			objectSchemaIdentifier,
+			request
+		);
 
 		const folderObject = await this.foldersService.addObjectToFolder(
 			folderId,
@@ -278,14 +278,19 @@ export class FoldersController {
 		@Ip() ip: string,
 		@Param('folderId') folderId: string,
 		@Param('objectSchemaIdentifier') objectSchemaIdentifier: string,
-		@SessionUser() user: SessionUserEntity
+		@SessionUser() user: SessionUserEntity,
+		@Req() request: Request
 	): Promise<{ status: string }> {
 		const collection = await this.foldersService.findFolderById(folderId, referer, ip);
 		if (collection.userProfileId !== user?.getId()) {
 			throw new ForbiddenException('You can only delete objects from your own folders');
 		}
-		const ieObjectId =
-			await this.ieObjectsService.getObjectIdBySchemaIdentifierCached(objectSchemaIdentifier);
+
+		const ieObjectId = await this.ieObjectsService.getIeObjectIdFromObjectSchemaIdentifier(
+			objectSchemaIdentifier,
+			request
+		);
+
 		const affectedRows = await this.foldersService.removeObjectFromFolder(
 			folderId,
 			ieObjectId,
@@ -306,7 +311,8 @@ export class FoldersController {
 		@Param('oldFolderId') oldFolderId: string,
 		@Param('objectSchemaIdentifier') objectSchemaIdentifier: string,
 		@Query('newFolderId') newFolderId: string,
-		@SessionUser() user: SessionUserEntity
+		@SessionUser() user: SessionUserEntity,
+		@Req() request: Request
 	): Promise<Partial<IeObject> & { folderEntryCreatedAt: string }> {
 		// Check user is owner of both folders
 		const [oldFolder, newFolder] = await Promise.all([
@@ -320,8 +326,11 @@ export class FoldersController {
 			throw new ForbiddenException('You can only move objects to your own folders');
 		}
 
-		const ieObjectId =
-			await this.ieObjectsService.getObjectIdBySchemaIdentifierCached(objectSchemaIdentifier);
+		const ieObjectId = await this.ieObjectsService.getIeObjectIdFromObjectSchemaIdentifier(
+			objectSchemaIdentifier,
+			request
+		);
+
 		const folderObject = await this.foldersService.addObjectToFolder(
 			newFolderId,
 			ieObjectId,
@@ -434,6 +443,19 @@ export class FoldersController {
 			await promiseUtils.mapLimit(folderObjects?.items, 20, async (item) => {
 				try {
 					const ieObjectId = item.iri;
+					if (!ieObjectId) {
+						const error = new CustomError(
+							'Failed to add object to accepted shared folder, since the iri is missing',
+							null,
+							{
+								folderId,
+								profileId: user?.getId(),
+								item,
+							}
+						);
+						console.error(error);
+						throw error;
+					}
 					await this.foldersService.addObjectToFolder(createdFolder.id, ieObjectId, referer, ip);
 				} catch (err) {
 					console.error(

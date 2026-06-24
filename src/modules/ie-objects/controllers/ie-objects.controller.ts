@@ -54,8 +54,8 @@ import {
 	IeObjectForAccessCheck,
 	IeObjectLicense,
 	type IeObjectSeo,
-	type IeObjectsWithAggregations,
 	IeObjectType,
+	type IeObjectsWithAggregations,
 	type RelatedIeObject,
 	type RelatedIeObjects,
 } from '../ie-objects.types';
@@ -239,7 +239,8 @@ export class IeObjectsController {
 			user,
 			'false',
 			referer,
-			ip
+			ip,
+			{ path: 'getAccessibleObjectForTicket', params: { schemaIdentifier } } as unknown as Request
 		);
 		const accessibleObject = accessibleObjects[0];
 
@@ -334,10 +335,14 @@ export class IeObjectsController {
 	public async getIeObjectSeoById(
 		@Referer() referer: string,
 		@Ip() ip: string,
-		@Param('schemaIdentifier') schemaIdentifier: string
+		@Param('schemaIdentifier') schemaIdentifier: string,
+		@Req() request: Request
 	): Promise<IeObjectSeo> {
-		const ieObjectId =
-			await this.ieObjectsService.getObjectIdBySchemaIdentifierCached(schemaIdentifier);
+		const ieObjectId = await this.ieObjectsService.getIeObjectIdFromObjectSchemaIdentifier(
+			schemaIdentifier,
+			request
+		);
+
 		const ieObject = await this.ieObjectsService.findByIeObjectId(ieObjectId, true, referer, ip);
 
 		const hasPublicAccess = ieObject?.licenses.some((license: IeObjectLicense) =>
@@ -899,6 +904,7 @@ export class IeObjectsController {
 	 * @param referer site making the request. eg: https://qas-v3.hetarchief.be
 	 * @param ip Ip of the client making the request. eg: 172.17.45.216
 	 * @param user Currently logged-in user
+	 * @param request
 	 */
 	@Get('thumbnails')
 	@ApiOperation({ summary: 'Get ie-object thumbnails by schema identifiers' })
@@ -919,7 +925,8 @@ export class IeObjectsController {
 		@Query('ids') schemaIdentifiers: string[],
 		@Referer() referer: string | null,
 		@Ip() ip: string,
-		@SessionUser() user: SessionUserEntity
+		@SessionUser() user: SessionUserEntity,
+		@Req() request: Request
 	): Promise<
 		{
 			schemaIdentifier: string;
@@ -956,8 +963,10 @@ export class IeObjectsController {
 					return null;
 				}
 
-				const ieObjectId =
-					await this.ieObjectsService.getObjectIdBySchemaIdentifierCached(schemaIdentifier);
+				const ieObjectId = await this.ieObjectsService.getIeObjectIdFromObjectSchemaIdentifier(
+					schemaIdentifier,
+					request
+				);
 				const ieObject = await this.ieObjectsService.findThumbnailByIeObjectId(ieObjectId);
 
 				// Censor the object based on the licenses and sector
@@ -1026,6 +1035,7 @@ export class IeObjectsController {
 	 * @param resolveThumbnailUrl
 	 * @param referer site making the request. eg: https://qas-v3.hetarchief.be
 	 * @param ip Ip of the client making the request. eg: 172.17.45.216
+	 * @param request
 	 */
 
 	@Get()
@@ -1060,7 +1070,8 @@ export class IeObjectsController {
 		@SessionUser() user: SessionUserEntity,
 		@Query('resolveThumbnailUrl') resolveThumbnailUrl: 'true' | 'false',
 		@Referer() referer: string | null,
-		@Ip() ip: string
+		@Ip() ip: string,
+		@Req() request: Request
 	): Promise<(Partial<IeObject> | null)[]> {
 		try {
 			let ieObjectIdsResolved: string[];
@@ -1078,8 +1089,9 @@ export class IeObjectsController {
 						schemaIdentifiersResolved,
 						12,
 						async (schemaIdentifier: string): Promise<string | null> => {
-							return await this.ieObjectsService.getObjectIdBySchemaIdentifierCached(
-								schemaIdentifier
+							return await this.ieObjectsService.getIeObjectIdFromObjectSchemaIdentifier(
+								schemaIdentifier,
+								request
 							);
 						}
 					);
