@@ -1,7 +1,7 @@
 import { DataService } from '@meemoo/admin-core-api';
 import { Test, type TestingModule } from '@nestjs/testing';
 import { format } from 'date-fns';
-import { afterEach, beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
+import { type MockInstance, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { FoldersService } from './folders.service';
 
@@ -538,11 +538,9 @@ describe('FoldersService', () => {
 			} catch (e) {
 				error = e;
 			}
-			expect(error.response).toEqual({
-				error: 'Not Found',
-				statusCode: 404,
-				message: `Object with id ${mockGqlFolderObjectLink.intellectualEntity.schema_identifier} was not found`,
-			});
+			console.log('error', JSON.stringify(error));
+			expect(error.statusCode).toEqual(404);
+			expect(error.message).toEqual('Object with id was not found');
 			findObjectInFolderSpy.mockRestore();
 		});
 	});

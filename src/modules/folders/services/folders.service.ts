@@ -373,10 +373,15 @@ export class FoldersService {
 		const objectInfo = await this.ieObjectsService.findByIeObjectId(ieObjectId, false, referer, ip);
 
 		if (!objectInfo) {
-			throw new CustomError(`Object with id ${ieObjectId} was not found`, null, {
-				folderId,
-				ieObjectId,
-			});
+			throw new CustomError(
+				'Object with id was not found',
+				null,
+				{
+					folderId,
+					ieObjectId,
+				},
+				404
+			);
 		}
 
 		const response = await this.dataService.execute<

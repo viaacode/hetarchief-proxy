@@ -605,6 +605,7 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 						materialRequest: materialRequest.id,
 					},
 				}),
+				material_request_id: materialRequest.id,
 			})),
 			user_request_context:
 				MATERIAL_REQUEST_REQUESTER_CAPACITY_TRANSLATIONS[emailInfo.sendRequestListDto.type],

@@ -116,6 +116,7 @@ export const mockRequestListItemToRequester: RequestListItem = {
 	request_description: mockMaterialRequest1.reason,
 	// Not using stringifyUrl to see that request url is mapped correctly
 	request_url: `${mockConfigService.get('CLIENT_HOST')}/account/mijn-materiaalaanvragen?materialRequest=${mockMaterialRequest1.id}`,
+	material_request_id: mockMaterialRequest1.id,
 };
 
 export const mockCampaignMonitorMaterialRequestDataToMaintainer: CampaignMonitorMaterialRequestData =

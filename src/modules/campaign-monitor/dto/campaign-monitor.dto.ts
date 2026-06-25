@@ -181,6 +181,10 @@ export class RequestListItem {
 	@IsString()
 	@IsOptional()
 	request_url?: string;
+
+	@IsString()
+	@IsOptional()
+	material_request_id?: string;
 }
 
 export class CampaignMonitorData {
