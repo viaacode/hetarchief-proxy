@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import fs from 'node:fs/promises';
 import { retry } from 'async';
+import { Request } from 'express';
 
 import { DataService, PlayerTicketService } from '@meemoo/admin-core-api';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
@@ -42,10 +43,10 @@ import {
 	type IeObjectPages,
 	type IeObjectRepresentation,
 	type IeObjectSector,
+	IeObjectType,
 	type IeObjectsSitemap,
 	type IeObjectsVisitorSpaceInfo,
 	type IeObjectsWithAggregations,
-	IeObjectType,
 	type IsPartOfKey,
 	type Mention,
 	type RelatedIeObject,
@@ -98,18 +99,18 @@ import {
 } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
 import { AND } from '~modules/ie-objects/elasticsearch/queryBuilder.helpers';
 import {
-	convertStringToSearchTerms,
 	type SearchTermParseResult,
+	convertStringToSearchTerms,
 } from '~modules/ie-objects/helpers/convert-string-to-search-terms';
 import {
 	AUTOCOMPLETE_FIELD_TO_ES_FIELD_NAME,
 	IE_OBJECT_AV_TYPES,
 } from '~modules/ie-objects/ie-objects.conts';
 import {
+	CACHE_KEY_PREFIX_IE_OBJECTS_SEARCH,
 	CACHE_KEY_PREFIX_IE_OBJECT_DETAIL,
 	CACHE_KEY_PREFIX_IE_OBJECT_PID_TO_ID,
 	CACHE_KEY_PREFIX_IE_OBJECT_THUMBNAIL,
-	CACHE_KEY_PREFIX_IE_OBJECTS_SEARCH,
 } from '~modules/ie-objects/services/ie-objects.service.consts';
 import {
 	type DbFile,
@@ -419,7 +420,10 @@ export class IeObjectsService {
 				visitorSpaceInfo: visitorSpaceAccessInfo,
 			}
 		);
-		const ieObjectId = await this.getObjectIdBySchemaIdentifierCached(schemaIdentifier);
+		const ieObjectId = await this.getIeObjectIdFromObjectSchemaIdentifier(schemaIdentifier, {
+			path: 'getSimilar',
+			params: { schemaIdentifier, ieObjectSimilarQueryDto, limit },
+		} as unknown as Request);
 		const childrenIris = await this.getIeObjectChildrenIris(ieObjectId);
 
 		const esQueryObject = {
@@ -1734,7 +1738,7 @@ export class IeObjectsService {
 		}
 	}
 
-	public async getObjectIdBySchemaIdentifierCached(
+	private async getObjectIdBySchemaIdentifierCached(
 		schemaIdentifier: string
 	): Promise<string | null> {
 		try {
@@ -1775,5 +1779,47 @@ export class IeObjectsService {
 			});
 		});
 		return [requestedFile, requestedRepresentation];
+	}
+
+	/**
+	 * Gets the ieObjectId from the objectSchemaIdentifier with extra error checking
+	 * objectSchemaIdentifier: pid. eg: qs4t6h385n
+	 * ieObjectId: primary key of the intellectual entity in the database. eg: https://data-qas.hetarchief.be/id/entity/qs4t6h385n
+	 * @param objectSchemaIdentifier
+	 * @param request
+	 */
+	async getIeObjectIdFromObjectSchemaIdentifier(
+		objectSchemaIdentifier: string | null | undefined,
+		request: Request | null
+	): Promise<string> {
+		if (!objectSchemaIdentifier) {
+			const error = new CustomError(
+				'This endpoint requires a objectSchemaIdentifier query param',
+				null,
+				{
+					path: '/folders/:folderId/objects/:objectSchemaIdentifier',
+					requestPath: request?.path,
+					params: request?.params,
+					objectSchemaIdentifier,
+				}
+			);
+			console.error(error);
+			throw error;
+		}
+
+		const ieObjectId = await this.getObjectIdBySchemaIdentifierCached(objectSchemaIdentifier);
+
+		if (!ieObjectId) {
+			const error = new CustomError('No object id was found for objectSchemaIdentifier', null, {
+				path: '/folders/:folderId/objects/:objectSchemaIdentifier',
+				requestPath: request?.path,
+				params: request?.params,
+				objectSchemaIdentifier,
+			});
+			console.error(error);
+			throw error;
+		}
+
+		return ieObjectId;
 	}
 }

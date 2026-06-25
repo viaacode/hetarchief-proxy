@@ -9,7 +9,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import type { IPagination } from '@studiohyperdrive/pagination';
 import type { Request, Response } from 'express';
 import { cloneDeep } from 'lodash';
-import { afterEach, beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
+import { type MockInstance, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
 	type IeObject,
@@ -63,7 +63,7 @@ const mockIeObjectsService: Partial<Record<keyof IeObjectsService, MockInstance>
 		objectIds: [],
 		visitorSpaceIds: [],
 	})),
-	getObjectIdBySchemaIdentifierCached: vi.fn().mockResolvedValue('mock-ie-object-id'),
+	getIeObjectIdFromObjectSchemaIdentifier: vi.fn().mockResolvedValue('mock-ie-object-id'),
 	getRepresentationAndFileInIeObject: vi.fn(),
 };
 
@@ -372,7 +372,8 @@ describe('IeObjectsController', () => {
 				mockSessionUser,
 				'false',
 				undefined,
-				undefined
+				undefined,
+				{ path: '', params: {} } as unknown as Request
 			);
 
 			expect(ieObjects[0]).toBeDefined();
@@ -392,7 +393,8 @@ describe('IeObjectsController', () => {
 					mockSessionUser,
 					'false',
 					undefined,
-					undefined
+					undefined,
+					{ path: '', params: {} } as unknown as Request
 				);
 				fail('Expected an error to be thrown if the object does not exist');
 			} catch (err) {
@@ -413,7 +415,8 @@ describe('IeObjectsController', () => {
 					mockSessionUser,
 					'false',
 					undefined,
-					undefined
+					undefined,
+					{ path: '', params: {} } as unknown as Request
 				);
 				fail('Expected an error to be thrown if the object does not exist');
 			} catch (err) {
@@ -435,7 +438,8 @@ describe('IeObjectsController', () => {
 				mockSessionUser,
 				'true',
 				'referer',
-				'127.0.0.1'
+				'127.0.0.1',
+				{ path: '', params: {} } as unknown as Request
 			);
 
 			expect(ieObjects[0].schemaIdentifier).toEqual(mockIeObject1.schemaIdentifier);
@@ -458,7 +462,8 @@ describe('IeObjectsController', () => {
 				mockSessionUser,
 				'true',
 				'referer',
-				'127.0.0.1'
+				'127.0.0.1',
+				{ path: '', params: {} } as unknown as Request
 			);
 
 			expect(ieObjects[0].thumbnailUrl).toBeUndefined();
@@ -479,7 +484,8 @@ describe('IeObjectsController', () => {
 				mockSessionUser,
 				'true',
 				'referer',
-				'127.0.0.1'
+				'127.0.0.1',
+				{ path: '', params: {} } as unknown as Request
 			);
 
 			expect(ieObjects[0].schemaIdentifier).toEqual(mockResponse.schemaIdentifier);
@@ -496,7 +502,10 @@ describe('IeObjectsController', () => {
 			};
 			mockIeObjectsService.findByIeObjectId.mockResolvedValueOnce(mockResponse);
 
-			const result = await ieObjectsController.getIeObjectSeoById('referer', '127.0.0.1', '1');
+			const result = await ieObjectsController.getIeObjectSeoById('referer', '127.0.0.1', '1', {
+				path: '',
+				params: {},
+			} as unknown as Request);
 
 			expect(result).toEqual({
 				name: mockIeObject1.name,
@@ -513,7 +522,10 @@ describe('IeObjectsController', () => {
 			};
 			mockIeObjectsService.findByIeObjectId.mockResolvedValueOnce(mockResponse);
 
-			const result = await ieObjectsController.getIeObjectSeoById('referer', '127.0.0.1', '1');
+			const result = await ieObjectsController.getIeObjectSeoById('referer', '127.0.0.1', '1', {
+				path: '',
+				params: {},
+			} as unknown as Request);
 
 			expect(result).toEqual({
 				name: mockIeObject1.name,
@@ -530,7 +542,10 @@ describe('IeObjectsController', () => {
 			};
 			mockIeObjectsService.findByIeObjectId.mockResolvedValue(mockResponse);
 
-			const result = await ieObjectsController.getIeObjectSeoById('referer', '127.0.0.1', '1');
+			const result = await ieObjectsController.getIeObjectSeoById('referer', '127.0.0.1', '1', {
+				path: '',
+				params: {},
+			} as unknown as Request);
 
 			expect(result).toEqual({
 				name: mockIeObject1.name,
@@ -547,7 +562,10 @@ describe('IeObjectsController', () => {
 			};
 			mockIeObjectsService.findByIeObjectId.mockResolvedValueOnce(mockResponse);
 
-			const result = await ieObjectsController.getIeObjectSeoById('referer', '127.0.0.1', '1');
+			const result = await ieObjectsController.getIeObjectSeoById('referer', '127.0.0.1', '1', {
+				path: '',
+				params: {},
+			} as unknown as Request);
 
 			expect(result).toEqual({
 				name: null,

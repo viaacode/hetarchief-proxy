@@ -2,7 +2,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import type { IPagination } from '@studiohyperdrive/pagination';
 import { AvoAuthIdpType, PermissionName } from '@viaa/avo2-types';
 import type { Request } from 'express';
-import { afterEach, beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
+import { type MockInstance, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { FoldersService } from '../services/folders.service';
 
@@ -119,7 +119,7 @@ const mockIeObjectsService: Partial<Record<keyof IeObjectsService, MockInstance>
 	findByIeObjectId: vi.fn(),
 	getVisitorSpaceAccessInfoFromUser: vi.fn(),
 	limitObjectInFolder: vi.fn((folderObjectItem: Partial<IeObject>) => folderObjectItem),
-	getObjectIdBySchemaIdentifierCached: vi.fn().mockResolvedValue('mock-ie-object-id'),
+	getIeObjectIdFromObjectSchemaIdentifier: vi.fn(),
 };
 
 const mockVisitsService: Partial<Record<keyof VisitsService, MockInstance>> = {
@@ -282,7 +282,9 @@ describe('FoldersController', () => {
 			mockFoldersService.findFolderById.mockResolvedValueOnce(mockFoldersResponse.items[0]);
 			mockFoldersService.findFolderById.mockResolvedValueOnce(mockFoldersResponse.items[0]);
 			mockFoldersService.findObjectInFolderById.mockResolvedValue(mockFoldersResponse.items[0]);
-			mockIeObjectsService.getObjectIdBySchemaIdentifierCached.mockResolvedValue(mockIeObject1.iri);
+			mockIeObjectsService.getIeObjectIdFromObjectSchemaIdentifier.mockResolvedValue(
+				mockIeObject1.iri
+			);
 			mockIeObjectsService.findByIeObjectId.mockResolvedValue([mockIeObject1]);
 			mockEventsService.insertEvents.mockResolvedValueOnce([]);
 			const folderObject = await foldersController.addObjectToFolder(
@@ -332,7 +334,8 @@ describe('FoldersController', () => {
 				mockFoldersResponse.items[0].id,
 				mockSchemaIdentifier,
 				'127.0.0.1',
-				new SessionUserEntity(mockUser)
+				new SessionUserEntity(mockUser),
+				{ path: '', params: {} } as unknown as Request
 			);
 			expect(folderObject).toEqual({ status: 'the object has been deleted' });
 		});
@@ -345,7 +348,8 @@ describe('FoldersController', () => {
 				mockFoldersResponse.items[0].id,
 				'non-existing-object-id',
 				'127.0.0.1',
-				new SessionUserEntity(mockUser)
+				new SessionUserEntity(mockUser),
+				{ path: '', params: {} } as unknown as Request
 			);
 			expect(folderObject).toEqual({
 				status: 'no object found with that id in that folder',
@@ -366,7 +370,8 @@ describe('FoldersController', () => {
 					mockFoldersResponse.items[0].id,
 					mockSchemaIdentifier,
 					'127.0.0.1',
-					new SessionUserEntity(mockUser)
+					new SessionUserEntity(mockUser),
+					{ path: '', params: {} } as unknown as Request
 				);
 			} catch (e) {
 				error = e;
@@ -390,7 +395,8 @@ describe('FoldersController', () => {
 				mockFoldersResponse.items[0].id,
 				mockSchemaIdentifier,
 				mockFoldersResponse.items[1].id,
-				new SessionUserEntity(mockUser)
+				new SessionUserEntity(mockUser),
+				{ path: '', params: {} } as unknown as Request
 			);
 			expect(folderObject).toEqual(mockFolderObjectsResponse.items[0]);
 		});
@@ -416,7 +422,8 @@ describe('FoldersController', () => {
 					mockFoldersResponse.items[0].id,
 					mockSchemaIdentifier,
 					mockFoldersResponse.items[1].id,
-					new SessionUserEntity(mockUser)
+					new SessionUserEntity(mockUser),
+					{ path: '', params: {} } as unknown as Request
 				);
 			} catch (e) {
 				error = e;
@@ -445,7 +452,8 @@ describe('FoldersController', () => {
 					mockFoldersResponse.items[0].id,
 					mockSchemaIdentifier,
 					mockFoldersResponse.items[1].id,
-					new SessionUserEntity(mockUser)
+					new SessionUserEntity(mockUser),
+					{ path: '', params: {} } as unknown as Request
 				);
 			} catch (e) {
 				error = e;

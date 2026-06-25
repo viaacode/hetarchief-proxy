@@ -74,7 +74,8 @@ export class NewspapersController {
 			// No need to add player tickets to the thumbnail urls
 			'false',
 			null,
-			null
+			null,
+			request
 		);
 		const limitedObjectMetadata = limitedObjectMetadatas[0];
 
@@ -246,7 +247,8 @@ export class NewspapersController {
 			user,
 			'false',
 			undefined,
-			undefined
+			undefined,
+			request
 		);
 		const limitedObjectMetadata = limitedObjectMetadatas[0];
 
