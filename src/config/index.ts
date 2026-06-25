@@ -58,6 +58,7 @@ const config = (): Configuration => {
 		SAML_SP_ENTITY_ID: getEnvValue('SAML_SP_ENTITY_ID', true),
 		SAML_SP_PRIVATE_KEY: cleanMultilineEnv(getEnvValue('SAML_SP_PRIVATE_KEY', false)),
 		SAML_SP_CERTIFICATE: cleanMultilineEnv(getEnvValue('SAML_SP_CERTIFICATE', false)),
+		LOG_SAML_CONFIGURATION: getEnvValue('LOG_SAML_CONFIGURATION', false) === 'true',
 		CORS_ENABLE_WHITELIST: getEnvValue('CORS_ENABLE_WHITELIST', false) === 'true',
 		CORS_OPTIONS: {
 			origin: (origin: string, callback: (err: Error, allow: boolean) => void) => {

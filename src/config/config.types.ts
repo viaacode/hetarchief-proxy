@@ -23,6 +23,7 @@ export interface Configuration {
 	SAML_SP_ENTITY_ID: string;
 	SAML_SP_PRIVATE_KEY: string;
 	SAML_SP_CERTIFICATE: string;
+	LOG_SAML_CONFIGURATION: boolean;
 	CORS_ENABLE_WHITELIST: boolean;
 	CORS_OPTIONS: any;
 	TICKET_SERVICE_URL: string;
