@@ -555,6 +555,7 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 		const mapMaterialRequest = (materialRequest: MaterialRequest) => ({
 			title: materialRequest.objectSchemaName,
 			local_cp_id: materialRequest.objectMeemooLocalId,
+			cp_name: materialRequest.maintainerName,
 			pid: materialRequest.objectSchemaIdentifier,
 			page_url: `${this.configService.get('CLIENT_HOST')}/zoeken/${
 				materialRequest.maintainerSlug
@@ -594,7 +595,6 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 			user_lastname: emailInfo.requesterLastName,
 			request_list: emailInfo.materialRequests.map((materialRequest) => ({
 				...mapMaterialRequest(materialRequest),
-				cp_name: materialRequest.maintainerName,
 				request_url: stringifyUrl({
 					url: `${this.configService.get('CLIENT_HOST')}/${requestUrl}`,
 					query: {
