@@ -82,6 +82,7 @@ const mockPlayerTicketController: Partial<Record<keyof PlayerTicketController, M
 
 const mockEventsService: Partial<Record<keyof EventsService, MockInstance>> = {
 	insertEvents: vi.fn(),
+	mapUserToEventData: vi.fn(),
 };
 
 const mockVisitsService: Partial<Record<keyof VisitsService, MockInstance>> = {

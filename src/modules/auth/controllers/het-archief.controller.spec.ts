@@ -92,6 +92,7 @@ const mockIdpService: Partial<Record<keyof IdpService, MockInstance>> = {
 
 const mockEventsService: Partial<Record<keyof EventsService, MockInstance>> = {
 	insertEvents: vi.fn(),
+	mapUserToEventData: vi.fn(),
 };
 
 const mockOrganisationsService: Partial<Record<keyof OrganisationsService, MockInstance>> = {

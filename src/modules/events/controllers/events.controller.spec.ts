@@ -14,6 +14,7 @@ import { Locale } from '~shared/types/types';
 
 const mockEventsService: Partial<Record<keyof EventsService, MockInstance>> = {
 	insertEvents: vi.fn(),
+	mapUserToEventData: vi.fn(),
 };
 
 const mockUser: User = {
@@ -60,6 +61,9 @@ describe('EventsController', () => {
 				path: 'http://localhost:3200',
 			});
 			expect(result).toBeTruthy();
+			expect(mockEventsService.mapUserToEventData).toHaveBeenCalledWith(
+				new SessionUserEntity(mockUser)
+			);
 		});
 
 		it('should send log events with data', async () => {
@@ -69,6 +73,9 @@ describe('EventsController', () => {
 				data: { test: true },
 			});
 			expect(result).toBeTruthy();
+			expect(mockEventsService.mapUserToEventData).toHaveBeenCalledWith(
+				new SessionUserEntity(mockUser)
+			);
 		});
 	});
 });
