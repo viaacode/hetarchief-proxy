@@ -1,7 +1,7 @@
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Test, type TestingModule } from '@nestjs/testing';
 import type { Request } from 'express';
-import { afterEach, beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
+import { type MockInstance, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
 	mockNewsletterUpdatePreferencesQueryDto,
@@ -10,12 +10,12 @@ import {
 } from '../mocks/campaign-monitor.mocks';
 import { CampaignMonitorService } from '../services/campaign-monitor.service';
 
-import { CampaignMonitorController } from './campaign-monitor.controller';
 import { EventsService } from '~modules/events/services/events.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { UsersService } from '~modules/users/services/users.service';
 import { TestingLogger } from '~shared/logging/test-logger';
 import { mockConfigService } from '~shared/test/mock-config-service';
+import { CampaignMonitorController } from './campaign-monitor.controller';
 
 const mockCampaignMonitorService: Partial<Record<keyof CampaignMonitorService, MockInstance>> = {
 	sendTransactionalMail: vi.fn(),
@@ -27,6 +27,7 @@ const mockCampaignMonitorService: Partial<Record<keyof CampaignMonitorService, M
 
 const mockEventsService: Partial<Record<keyof EventsService, MockInstance>> = {
 	insertEvents: vi.fn(),
+	mapUserToEventData: vi.fn(),
 };
 
 const mockUsersService: Partial<Record<keyof UsersService, MockInstance>> = {

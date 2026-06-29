@@ -180,6 +180,7 @@ const mockSpacesService: Partial<Record<keyof SpacesService, MockInstance>> = {
 
 const mockEventsService: Partial<Record<keyof EventsService, MockInstance>> = {
 	insertEvents: vi.fn(),
+	mapUserToEventData: vi.fn(),
 };
 
 const mockRequest = { path: '/visits', headers: {} } as unknown as Request;

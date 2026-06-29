@@ -5,6 +5,7 @@ import got, { type Got } from 'got';
 
 import type { Configuration } from '~config';
 
+import { GroupName, type User } from '~modules/users/types';
 import { INSERT_EVENTS } from '../queries/queries.gql';
 import type { LogEvent } from '../types';
 
@@ -22,6 +23,20 @@ export class EventsService {
 				'x-hasura-admin-secret': this.configService.get('GRAPHQL_SECRET_LOGGING'),
 			},
 		});
+	}
+
+	public mapUserToEventData(user: User | null): {
+		user_group_name: string;
+		user_group_id: string | null;
+		is_key_user: boolean;
+		is_evaluator: boolean;
+	} {
+		return {
+			user_group_name: user?.groupName || GroupName.ANONYMOUS,
+			user_group_id: user?.groupId ?? null,
+			is_key_user: user?.isKeyUser ?? false,
+			is_evaluator: user?.isEvaluator ?? false,
+		};
 	}
 
 	public async insertEvents(logEvents: LogEvent[]): Promise<any> {

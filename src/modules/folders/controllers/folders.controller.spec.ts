@@ -102,6 +102,7 @@ const mockFoldersService: Partial<Record<keyof FoldersService, MockInstance>> = 
 
 const mockEventsService: Partial<Record<keyof EventsService, MockInstance>> = {
 	insertEvents: vi.fn(),
+	mapUserToEventData: vi.fn(),
 };
 
 const mockCampaignMonitorService: Partial<Record<keyof CampaignMonitorService, MockInstance>> = {

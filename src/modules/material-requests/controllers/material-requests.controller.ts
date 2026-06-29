@@ -39,7 +39,6 @@ import { EventsService } from '~modules/events/services/events.service';
 import { type LogEvent, LogEventType } from '~modules/events/types';
 import { mapDcTermsFormatToSimpleType } from '~modules/ie-objects/helpers/map-dc-terms-format-to-simple-type';
 import { MaterialRequestMessagesService } from '~modules/material-request-messages/services/material-request-messages.service';
-import { mapUserToGroupNameAndKeyUser } from '~modules/material-requests/material-requests.consts';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupId, GroupName } from '~modules/users/types';
 import { Ip } from '~shared/decorators/ip.decorator';
@@ -363,13 +362,12 @@ export class MaterialRequestsController {
 							subject: user?.getId(),
 							time: new Date().toISOString(),
 							data: {
+								...this.eventsService.mapUserToEventData(user?.getUser()),
 								material_request_group_id: materialRequest.requestGroupId,
 								type: mapDcTermsFormatToSimpleType(materialRequest.objectDctermsFormat),
 								external_id: materialRequest.objectSchemaIdentifier,
 								fragment_id: materialRequest.objectSchemaIdentifier,
 								idp: AvoAuthIdpType.HETARCHIEF,
-								user_group_name: mapUserToGroupNameAndKeyUser(user),
-								user_group_id: user.getGroupId(),
 								or_id: materialRequest.maintainerId,
 								contact_form: {
 									user_type: materialRequest.requesterCapacity,
