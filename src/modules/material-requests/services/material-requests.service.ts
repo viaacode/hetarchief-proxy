@@ -1705,7 +1705,7 @@ export class MaterialRequestsService {
 						pid: materialRequest.objectSchemaIdentifier,
 						material_request_group_id: materialRequest.requestGroupId,
 						fragment_id: materialRequest.objectSchemaIdentifier,
-						...this.eventsService.mapUserToEventData(user),
+						...this.eventsService.mapUserToEventData(user?.getUser()),
 					},
 				},
 			])
@@ -1757,7 +1757,7 @@ export class MaterialRequestsService {
 							pid: updatedRequest.objectSchemaIdentifier,
 							material_request_group_id: updatedRequest.requestGroupId,
 							...getAdditionEventDate(eventType, updatedRequest),
-							...this.eventsService.mapUserToEventData(user),
+							...this.eventsService.mapUserToEventData(user?.getUser()),
 						},
 					},
 				])

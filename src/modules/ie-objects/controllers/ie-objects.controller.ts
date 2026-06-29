@@ -422,7 +422,7 @@ export class IeObjectsController {
 				data: {
 					or_id: objectMetadata.maintainerId,
 					type: mapDcTermsFormatToSimpleType(objectMetadata?.dctermsFormat),
-					...this.eventsService.mapUserToEventData(user),
+					...this.eventsService.mapUserToEventData(user?.getUser()),
 				},
 			},
 		]);
@@ -506,7 +506,7 @@ export class IeObjectsController {
 				data: {
 					or_id: objectMetadata.maintainerId,
 					type: mapDcTermsFormatToSimpleType(objectMetadata?.dctermsFormat),
-					...this.eventsService.mapUserToEventData(user),
+					...this.eventsService.mapUserToEventData(user?.getUser()),
 				},
 			},
 		]);

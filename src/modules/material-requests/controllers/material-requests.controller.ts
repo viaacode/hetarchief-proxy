@@ -362,7 +362,7 @@ export class MaterialRequestsController {
 							subject: user?.getId(),
 							time: new Date().toISOString(),
 							data: {
-								...this.eventsService.mapUserToEventData(user),
+								...this.eventsService.mapUserToEventData(user?.getUser()),
 								material_request_group_id: materialRequest.requestGroupId,
 								type: mapDcTermsFormatToSimpleType(materialRequest.objectDctermsFormat),
 								external_id: materialRequest.objectSchemaIdentifier,

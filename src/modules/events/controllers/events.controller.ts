@@ -43,7 +43,7 @@ export class EventsController {
 
 		logEvent.data = {
 			...logEvent.data,
-			...this.eventsService.mapUserToEventData(user),
+			...this.eventsService.mapUserToEventData(user?.getUser()),
 			user_agent: requesterUserAgent,
 		};
 

@@ -369,7 +369,7 @@ export class VisitsController {
 				data: {
 					visitor_space_id: visitorSpace.id,
 					or_id: visit.spaceMaintainerId,
-					...this.eventsService.mapUserToEventData(user),
+					...this.eventsService.mapUserToEventData(user?.getUser()),
 				},
 			},
 		]);
@@ -466,7 +466,7 @@ export class VisitsController {
 						visitor_space_request_id: visit.id,
 						visitor_space_id: visit.spaceId,
 						or_id: visit.spaceMaintainerId,
-						...this.eventsService.mapUserToEventData(user),
+						...this.eventsService.mapUserToEventData(user?.getUser()),
 					},
 				},
 			]);
@@ -488,7 +488,7 @@ export class VisitsController {
 						visitor_space_request_id: visit.id,
 						visitor_space_id: visit.spaceId,
 						or_id: visit.spaceMaintainerId,
-						...this.eventsService.mapUserToEventData(user),
+						...this.eventsService.mapUserToEventData(user?.getUser()),
 					},
 				},
 			]);
@@ -509,7 +509,7 @@ export class VisitsController {
 						visitor_space_request_id: visit.id,
 						visitor_space_id: visit.spaceId,
 						or_id: visit.spaceMaintainerId,
-						...this.eventsService.mapUserToEventData(user),
+						...this.eventsService.mapUserToEventData(user?.getUser()),
 					},
 				},
 			]);

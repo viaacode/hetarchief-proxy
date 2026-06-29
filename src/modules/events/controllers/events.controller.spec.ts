@@ -61,9 +61,7 @@ describe('EventsController', () => {
 				path: 'http://localhost:3200',
 			});
 			expect(result).toBeTruthy();
-			expect(mockEventsService.mapUserToEventData).toHaveBeenCalledWith(
-				new SessionUserEntity(mockUser)
-			);
+			expect(mockEventsService.mapUserToEventData).toHaveBeenCalledWith(mockUser);
 		});
 
 		it('should send log events with data', async () => {
@@ -73,9 +71,7 @@ describe('EventsController', () => {
 				data: { test: true },
 			});
 			expect(result).toBeTruthy();
-			expect(mockEventsService.mapUserToEventData).toHaveBeenCalledWith(
-				new SessionUserEntity(mockUser)
-			);
+			expect(mockEventsService.mapUserToEventData).toHaveBeenCalledWith(mockUser);
 		});
 	});
 });

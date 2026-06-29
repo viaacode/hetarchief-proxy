@@ -218,7 +218,7 @@ export class NewspapersController {
 					pid: limitedObjectMetadata.schemaIdentifier,
 					fragment_id: limitedObjectMetadata.fragmentId,
 					or_id: limitedObjectMetadata.maintainerId,
-					...this.eventsService.mapUserToEventData(user),
+					...this.eventsService.mapUserToEventData(user?.getUser()),
 				},
 			},
 		]);
@@ -318,7 +318,7 @@ export class NewspapersController {
 					pid: limitedObjectMetadata.schemaIdentifier,
 					fragment_id: limitedObjectMetadata.fragmentId,
 					or_id: limitedObjectMetadata.maintainerId,
-					...this.eventsService.mapUserToEventData(user),
+					...this.eventsService.mapUserToEventData(user?.getUser()),
 				},
 			},
 		]);

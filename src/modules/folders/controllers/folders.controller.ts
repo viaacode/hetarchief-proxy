@@ -258,7 +258,7 @@ export class FoldersController {
 						fragment_id: objectSchemaIdentifier,
 						folder_id: folderId,
 						or_id: ieObject.maintainerId,
-						...this.eventsService.mapUserToEventData(user),
+						...this.eventsService.mapUserToEventData(user?.getUser()),
 					},
 				},
 			])
