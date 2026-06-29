@@ -5,7 +5,6 @@ import {
 	ForbiddenException,
 	Get,
 	InternalServerErrorException,
-	NotFoundException,
 	Param,
 	ParseUUIDPipe,
 	Patch,
@@ -41,7 +40,6 @@ import { SessionUserEntity } from '~modules/users/classes/session-user';
 
 import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
 import { PermissionName } from '@viaa/avo2-types';
-import { object } from 'joi';
 import { mapDcTermsFormatToSimpleType } from '~modules/ie-objects/helpers/map-dc-terms-format-to-simple-type';
 import { UsersService } from '~modules/users/services/users.service';
 import { Ip } from '~shared/decorators/ip.decorator';
@@ -259,9 +257,8 @@ export class FoldersController {
 						pid: ieObject.schemaIdentifier,
 						fragment_id: objectSchemaIdentifier,
 						folder_id: folderId,
-						user_group_name: user.getGroupName(),
-						user_group_id: user.getGroupId(),
 						or_id: ieObject.maintainerId,
+						...this.eventsService.mapUserToEventData(user),
 					},
 				},
 			])

@@ -105,10 +105,7 @@ export class CampaignMonitorController {
 						source: request.path,
 						subject: user?.getId(),
 						time: new Date().toISOString(),
-						data: {
-							user_group_id: user.getGroupId(),
-							user_group_name: user.getGroupName(),
-						},
+						data: this.eventsService.mapUserToEventData(user),
 					},
 				]);
 			}

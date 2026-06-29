@@ -174,8 +174,7 @@ export class HetArchiefController {
 						source: '/',
 						data: {
 							idp: AvoAuthIdpType.HETARCHIEF,
-							user_group_id: archiefUser.groupId,
-							user_group_name: archiefUser.groupName,
+							...this.eventsService.mapUserToEventData(archiefUser),
 						},
 						subject: archiefUser.id,
 						type: LogEventType.USER_CREATE,
@@ -229,8 +228,7 @@ export class HetArchiefController {
 					time: new Date().toISOString(),
 					data: {
 						idp: AvoAuthIdpType.HETARCHIEF,
-						user_group_name: archiefUser.groupName,
-						user_group_id: archiefUser.groupId,
+						...this.eventsService.mapUserToEventData(archiefUser),
 					},
 				},
 			]);

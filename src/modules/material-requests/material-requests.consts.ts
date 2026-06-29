@@ -10,8 +10,6 @@ import {
 } from '~modules/material-request-messages/material-request-messages.types';
 import { MaterialRequest } from '~modules/material-requests/material-requests.types';
 import { NotificationType } from '~modules/notifications/types';
-import { SessionUserEntity } from '~modules/users/classes/session-user';
-import { GroupName } from '~modules/users/types';
 
 export const ORDER_PROP_TO_DB_PROP: Partial<Record<keyof MaterialRequest, string>> = {
 	id: 'id',
@@ -51,21 +49,6 @@ export const MAP_NOTIFICATION_TYPE_TO_EMAIL_TEMPLATE = {
 		EmailTemplate.CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_DOWNLOAD_DOWNLOADED,
 	[NotificationType.MATERIAL_REQUEST_DOWNLOAD_ALMOST_EXPIRED]:
 		EmailTemplate.CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_DOWNLOAD_EXPIRE_SOON,
-};
-
-export const mapUserToGroupNameAndKeyUser = (user: SessionUserEntity): string => {
-	if (!user.getIsKeyUser()) {
-		return user.getGroupName();
-	}
-
-	switch (user.getGroupName()) {
-		case GroupName.MEEMOO_ADMIN:
-			return 'MEEMOO_ADMIN_INTRA_CP';
-		case GroupName.CP_ADMIN:
-			return 'CP_ADMIN_INTRA_CP';
-		default:
-			return 'VISITOR_INTRA_CP';
-	}
 };
 
 export const getAdditionEventDate = (

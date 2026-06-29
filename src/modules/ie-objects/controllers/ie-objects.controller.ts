@@ -420,10 +420,9 @@ export class IeObjectsController {
 				subject: user?.getId(),
 				time: new Date().toISOString(),
 				data: {
-					user_group_name: user.getGroupName(),
-					user_group_id: user.getGroupId(),
 					or_id: objectMetadata.maintainerId,
 					type: mapDcTermsFormatToSimpleType(objectMetadata?.dctermsFormat),
+					...this.eventsService.mapUserToEventData(user),
 				},
 			},
 		]);
@@ -505,10 +504,9 @@ export class IeObjectsController {
 				subject: user?.getId(),
 				time: new Date().toISOString(),
 				data: {
-					user_group_name: user.getGroupName(),
-					user_group_id: user.getGroupId(),
 					or_id: objectMetadata.maintainerId,
 					type: mapDcTermsFormatToSimpleType(objectMetadata?.dctermsFormat),
+					...this.eventsService.mapUserToEventData(user),
 				},
 			},
 		]);

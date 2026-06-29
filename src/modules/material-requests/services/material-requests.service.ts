@@ -813,7 +813,7 @@ export class MaterialRequestsService {
 			ip
 		);
 
-		this.trackMaterialRequestStatusChangeEvent(updatedRequest, requestPath, user?.getId(), eventId);
+		this.trackMaterialRequestStatusChangeEvent(updatedRequest, requestPath, user, eventId);
 
 		if (updatedRequest.status === Lookup_App_Material_Request_Status_Enum.Approved) {
 			// If the request is approved, we need to start prepping the download
@@ -1705,6 +1705,7 @@ export class MaterialRequestsService {
 						pid: materialRequest.objectSchemaIdentifier,
 						material_request_group_id: materialRequest.requestGroupId,
 						fragment_id: materialRequest.objectSchemaIdentifier,
+						...this.eventsService.mapUserToEventData(user),
 					},
 				},
 			])
@@ -1735,7 +1736,7 @@ export class MaterialRequestsService {
 	private trackMaterialRequestStatusChangeEvent(
 		updatedRequest: MaterialRequest,
 		requestPath: string,
-		userId: string,
+		user: SessionUserEntity,
 		eventId: string
 	) {
 		const eventType = MAP_MATERIAL_REQUEST_STATUS_TO_EVENT_TYPE[updatedRequest.status];
@@ -1748,7 +1749,7 @@ export class MaterialRequestsService {
 						id: eventId,
 						type: eventType,
 						source: requestPath,
-						subject: userId,
+						subject: user.getId(),
 						time: new Date().toISOString(),
 						data: {
 							type: mapDcTermsFormatToSimpleType(updatedRequest.objectDctermsFormat),
@@ -1756,6 +1757,7 @@ export class MaterialRequestsService {
 							pid: updatedRequest.objectSchemaIdentifier,
 							material_request_group_id: updatedRequest.requestGroupId,
 							...getAdditionEventDate(eventType, updatedRequest),
+							...this.eventsService.mapUserToEventData(user),
 						},
 					},
 				])

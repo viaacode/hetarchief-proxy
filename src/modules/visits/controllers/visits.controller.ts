@@ -368,9 +368,8 @@ export class VisitsController {
 				time: new Date().toISOString(),
 				data: {
 					visitor_space_id: visitorSpace.id,
-					user_group_name: user.getGroupName(),
-					user_group_id: user.getGroupId(),
 					or_id: visit.spaceMaintainerId,
+					...this.eventsService.mapUserToEventData(user),
 				},
 			},
 		]);
@@ -466,9 +465,8 @@ export class VisitsController {
 					data: {
 						visitor_space_request_id: visit.id,
 						visitor_space_id: visit.spaceId,
-						user_group_name: user.getGroupName(),
-						user_group_id: user.getGroupId(),
 						or_id: visit.spaceMaintainerId,
+						...this.eventsService.mapUserToEventData(user),
 					},
 				},
 			]);
@@ -489,9 +487,8 @@ export class VisitsController {
 					data: {
 						visitor_space_request_id: visit.id,
 						visitor_space_id: visit.spaceId,
-						user_group_name: user.getGroupName(),
-						user_group_id: user.getGroupId(),
 						or_id: visit.spaceMaintainerId,
+						...this.eventsService.mapUserToEventData(user),
 					},
 				},
 			]);
@@ -511,9 +508,8 @@ export class VisitsController {
 					data: {
 						visitor_space_request_id: visit.id,
 						visitor_space_id: visit.spaceId,
-						user_group_name: user.getGroupName(),
-						user_group_id: user.getGroupId(),
 						or_id: visit.spaceMaintainerId,
+						...this.eventsService.mapUserToEventData(user),
 					},
 				},
 			]);

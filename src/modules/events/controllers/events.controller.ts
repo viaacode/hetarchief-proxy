@@ -9,7 +9,6 @@ import { EventsService } from '../services/events.service';
 
 import type { LogEvent } from '~modules/events/types';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
-import { GroupName } from '~modules/users/types';
 import { SessionUser } from '~shared/decorators/user.decorator';
 import { EventsHelper } from '~shared/helpers/events';
 
@@ -44,8 +43,7 @@ export class EventsController {
 
 		logEvent.data = {
 			...logEvent.data,
-			user_group_name: user.getGroupName() || GroupName.ANONYMOUS,
-			user_group_id: user.getGroupId() || null,
+			...this.eventsService.mapUserToEventData(user),
 			user_agent: requesterUserAgent,
 		};
 

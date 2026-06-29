@@ -215,11 +215,10 @@ export class NewspapersController {
 				data: {
 					download_type: 'zip',
 					type: SimpleIeObjectType.NEWSPAPER,
-					user_group_name: user.getGroupName(),
-					user_group_id: user.getGroupId(),
 					pid: limitedObjectMetadata.schemaIdentifier,
 					fragment_id: limitedObjectMetadata.fragmentId,
 					or_id: limitedObjectMetadata.maintainerId,
+					...this.eventsService.mapUserToEventData(user),
 				},
 			},
 		]);
@@ -316,11 +315,10 @@ export class NewspapersController {
 				time: new Date().toISOString(),
 				data: {
 					type: SimpleIeObjectType.NEWSPAPER,
-					user_group_name: user.getGroupName(),
-					user_group_id: user.getGroupId(),
 					pid: limitedObjectMetadata.schemaIdentifier,
 					fragment_id: limitedObjectMetadata.fragmentId,
 					or_id: limitedObjectMetadata.maintainerId,
+					...this.eventsService.mapUserToEventData(user),
 				},
 			},
 		]);
