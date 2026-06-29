@@ -552,6 +552,19 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 			),
 		};
 
+		const mapMaterialRequest = (materialRequest: MaterialRequest) => ({
+			title: materialRequest.objectSchemaName,
+			local_cp_id: materialRequest.objectMeemooLocalId,
+			cp_name: materialRequest.maintainerName,
+			pid: materialRequest.objectSchemaIdentifier,
+			page_url: `${this.configService.get('CLIENT_HOST')}/zoeken/${
+				materialRequest.maintainerSlug
+			}/${materialRequest.objectSchemaIdentifier}`,
+			request_type: MATERIAL_REQUEST_TYPE_TRANSLATIONS[materialRequest.type],
+			request_description: materialRequest.reason,
+			material_request_id: materialRequest.id,
+		});
+
 		// Maintainer Template
 		if (
 			emailInfo.template === EmailTemplate.CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_MAINTAINER
@@ -561,18 +574,9 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 				user_lastname: emailInfo.requesterLastName,
 				cp_name: emailInfo.materialRequests[0]?.maintainerName,
 				cp_email: emailInfo.materialRequests[0]?.contactMail,
-				request_list: emailInfo.materialRequests.map((materialRequest) => {
-					return {
-						title: materialRequest.objectSchemaName,
-						local_cp_id: materialRequest.objectMeemooLocalId,
-						pid: materialRequest.objectSchemaIdentifier,
-						page_url: `${this.configService.get('CLIENT_HOST')}/zoeken/${
-							materialRequest.maintainerSlug
-						}/${materialRequest.objectSchemaIdentifier}`,
-						request_type: MATERIAL_REQUEST_TYPE_TRANSLATIONS[materialRequest.type],
-						request_description: materialRequest.reason,
-					};
-				}),
+				request_list: emailInfo.materialRequests.map((materialRequest) =>
+					mapMaterialRequest(materialRequest)
+				),
 				user_request_context:
 					MATERIAL_REQUEST_REQUESTER_CAPACITY_TRANSLATIONS[emailInfo.sendRequestListDto.type],
 				user_organisation: emailInfo.sendRequestListDto.organisationName,
@@ -590,22 +594,13 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 			user_firstname: emailInfo.requesterFirstName,
 			user_lastname: emailInfo.requesterLastName,
 			request_list: emailInfo.materialRequests.map((materialRequest) => ({
-				title: materialRequest.objectSchemaName,
-				cp_name: materialRequest.maintainerName,
-				local_cp_id: materialRequest.objectMeemooLocalId,
-				pid: materialRequest.objectSchemaIdentifier,
-				page_url: `${this.configService.get('CLIENT_HOST')}/zoeken/${
-					materialRequest.maintainerSlug
-				}/${materialRequest.objectSchemaIdentifier}`,
-				request_type: MATERIAL_REQUEST_TYPE_TRANSLATIONS[materialRequest.type],
-				request_description: materialRequest.reason,
+				...mapMaterialRequest(materialRequest),
 				request_url: stringifyUrl({
 					url: `${this.configService.get('CLIENT_HOST')}/${requestUrl}`,
 					query: {
 						materialRequest: materialRequest.id,
 					},
 				}),
-				material_request_id: materialRequest.id,
 			})),
 			user_request_context:
 				MATERIAL_REQUEST_REQUESTER_CAPACITY_TRANSLATIONS[emailInfo.sendRequestListDto.type],
