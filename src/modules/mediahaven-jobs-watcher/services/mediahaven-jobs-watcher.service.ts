@@ -406,10 +406,14 @@ export class MediahavenJobsWatcherService {
 		return 25;
 	}
 
-	private async getMediaHavenExportJobRequestBody(materialRequest: MaterialRequestForDownload) {
-		let body: CreateMamJobRequestBody | null = null;
+	private async getMediaHavenExportJobRequestBody(
+		materialRequest: MaterialRequestForDownload
+	): Promise<CreateMamJobRequestBody | null> {
+		let records: CreateMamJobRequestBody['Records'];
+
 		try {
-			const exportHighQuality = materialRequest.reuseForm.downloadQuality === 'HIGH';
+			let exportHighQuality = materialRequest.reuseForm.downloadQuality === 'HIGH';
+
 			if (materialRequest.objectRepresentationId) {
 				// User has access to essence of the ie object, and wants to export a specific video (representation)
 				const mhFragmentId = await this.getMhFragmentIdByRepresentationId(
@@ -428,6 +432,13 @@ export class MediahavenJobsWatcherService {
 					!isNil(endTime)
 				) {
 					const record = await this.getMediaHavenMetadataByRecordId(mhFragmentId);
+
+					// Technical limitation of MAM does not allow high quality exports for format JPEG2000
+					// https://meemoo.atlassian.net/browse/ARC-3764
+					if (record.Technical.VideoFormat === 'JPEG2000') {
+						exportHighQuality = false;
+					}
+
 					const fpsDecimal = this.getFpsFromMediahavenRecord(record, exportHighQuality);
 
 					partial = {
@@ -437,40 +448,29 @@ export class MediahavenJobsWatcherService {
 					};
 				}
 
-				body = {
-					Records: [
-						{
-							RecordId: mhFragmentId,
-							...(partial ? { Partial: partial } : {}),
-						},
-					],
-					ExportLocationId: this.configService.get('MEDIAHAVEN_EXPORT_LOCATION_ID'),
-					DestinationPath: this.getDownloadFolderPath(materialRequest),
-					ExportSource:
-						materialRequest.reuseForm.downloadQuality === 'HIGH'
-							? MamExportQuality.ORIGINAL
-							: MamExportQuality.ACCESS,
-					Reason: `Export for hetarchief.be material request ${materialRequest.id}`,
-					Tag: this.configService.get('MEDIAHAVEN_EXPORT_JOBS_TAG'),
-				};
+				records = [
+					{
+						RecordId: mhFragmentId,
+						...(partial ? { Partial: partial } : {}),
+					},
+				];
 			} else {
 				// User does not have access to the essence of the ie object, export all materials linked to the ie object
 				const mhFragmentIds = await this.getAllMhFragmentIdsByIeObjectId(materialRequest.objectId);
-				body = {
-					Records: mhFragmentIds.map((mhFragmentId) => ({
-						RecordId: mhFragmentId,
-					})),
-					ExportLocationId: this.configService.get('MEDIAHAVEN_EXPORT_LOCATION_ID'),
-					DestinationPath: this.getDownloadFolderPath(materialRequest),
-					ExportSource:
-						materialRequest.reuseForm.downloadQuality === 'HIGH'
-							? MamExportQuality.ORIGINAL
-							: MamExportQuality.ACCESS,
-					Reason: `Export for hetarchief.be material request ${materialRequest.id}`,
-					Tag: this.configService.get('MEDIAHAVEN_EXPORT_JOBS_TAG'),
-				};
+
+				records = mhFragmentIds.map((mhFragmentId) => ({
+					RecordId: mhFragmentId,
+				}));
 			}
-			return body;
+
+			return {
+				Records: records,
+				ExportLocationId: this.configService.get('MEDIAHAVEN_EXPORT_LOCATION_ID'),
+				DestinationPath: this.getDownloadFolderPath(materialRequest),
+				ExportSource: exportHighQuality ? MamExportQuality.ORIGINAL : MamExportQuality.ACCESS,
+				Reason: `Export for hetarchief.be material request ${materialRequest.id}`,
+				Tag: this.configService.get('MEDIAHAVEN_EXPORT_JOBS_TAG'),
+			};
 		} catch (err) {}
 	}
 
