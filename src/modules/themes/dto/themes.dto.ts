@@ -1,31 +1,46 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsArray, IsInt, IsOptional, IsString, IsUrl, Max, Min } from 'class-validator';
+import {
+	IsArray,
+	IsEnum,
+	IsInt,
+	IsNumber,
+	IsOptional,
+	IsString,
+	IsUrl,
+	Max,
+	Min,
+} from 'class-validator';
+import { SortDirection } from '~shared/types';
+import { ThemeIeObjectOrderProp, ThemeOrderProp } from '../themes.types';
 
 export class CreateThemeDto {
 	@IsString()
-	@ApiProperty({ type: String, description: 'The slug of the theme', example: 'nature' })
+	@ApiProperty({ type: String, description: 'The slug of the theme', example: 'culture-society' })
 	slug: string;
 
 	@IsString()
-	@ApiProperty({ type: String, description: 'The Dutch name of the theme', example: 'Natuur' })
+	@ApiProperty({
+		type: String,
+		description: 'The Dutch name of the theme',
+		example: 'Cultuur & samenleving',
+	})
 	nameNl: string;
 
 	@IsString()
 	@ApiProperty({
 		type: String,
 		description: 'The English name of the theme',
-		example: 'Nature',
+		example: 'Culture & society',
 	})
 	nameEn: string;
 
 	@IsString()
-	@IsUrl()
 	@IsOptional()
 	@ApiPropertyOptional({
 		type: String,
 		nullable: true,
-		description: 'The header image URL of the theme',
+		description: 'The header image URL of the theme (set automatically when a file is uploaded)',
 		example: 'https://example.com/image.jpg',
 	})
 	imageUrl?: string | null;
@@ -34,7 +49,11 @@ export class CreateThemeDto {
 export class UpdateThemeDto {
 	@IsString()
 	@IsOptional()
-	@ApiPropertyOptional({ type: String, description: 'The slug of the theme', example: 'nature' })
+	@ApiPropertyOptional({
+		type: String,
+		description: 'The slug of the theme',
+		example: 'culture-society',
+	})
 	slug?: string;
 
 	@IsString()
@@ -42,7 +61,7 @@ export class UpdateThemeDto {
 	@ApiPropertyOptional({
 		type: String,
 		description: 'The Dutch name of the theme',
-		example: 'Natuur',
+		example: 'Cultuur en samenleving',
 	})
 	nameNl?: string;
 
@@ -51,7 +70,7 @@ export class UpdateThemeDto {
 	@ApiPropertyOptional({
 		type: String,
 		description: 'The English name of the theme',
-		example: 'Nature',
+		example: 'Culture & society',
 	})
 	nameEn?: string;
 
@@ -108,6 +127,92 @@ export class ThemeIeObjectLinkResponseDto {
 
 	@ApiProperty({ type: String, description: 'The intellectual entity id' })
 	intellectualEntityId: string;
+}
+
+export class ThemesQueryDto {
+	@IsNumber()
+	@Min(0)
+	@Type(() => Number)
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: Number,
+		description: 'Which page of results to fetch. Counting starts at 0',
+		default: 0,
+	})
+	page? = 0;
+
+	@IsNumber()
+	@Type(() => Number)
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: Number,
+		description: 'The max. number of results to return',
+		default: 20,
+	})
+	size? = 20;
+
+	@IsEnum(ThemeOrderProp)
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		description: 'Property to sort the results by',
+		default: ThemeOrderProp.NAME_NL,
+		enum: ThemeOrderProp,
+	})
+	orderProp? = ThemeOrderProp.NAME_NL;
+
+	@IsEnum(SortDirection)
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		description: 'Direction to sort in',
+		default: SortDirection.asc,
+		enum: SortDirection,
+	})
+	orderDirection? = SortDirection.asc;
+}
+
+export class ThemeIeObjectsQueryDto {
+	@IsNumber()
+	@Min(0)
+	@Type(() => Number)
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: Number,
+		description: 'Which page of results to fetch. Counting starts at 0',
+		default: 0,
+	})
+	page? = 0;
+
+	@IsNumber()
+	@Type(() => Number)
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: Number,
+		description: 'The max. number of results to return',
+		default: 20,
+	})
+	size? = 20;
+
+	@IsEnum(ThemeIeObjectOrderProp)
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		description: 'Property to sort the results by',
+		default: ThemeIeObjectOrderProp.NAME,
+		enum: ThemeIeObjectOrderProp,
+	})
+	orderProp? = ThemeIeObjectOrderProp.NAME;
+
+	@IsEnum(SortDirection)
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		description: 'Direction to sort in',
+		default: SortDirection.asc,
+		enum: SortDirection,
+	})
+	orderDirection? = SortDirection.asc;
 }
 
 export class IeObjectsInThemeQueryDto {

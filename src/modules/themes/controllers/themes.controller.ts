@@ -1,3 +1,4 @@
+import { AssetsService } from '@meemoo/admin-core-api';
 import {
 	Body,
 	Controller,
@@ -9,9 +10,13 @@ import {
 	Patch,
 	Post,
 	Query,
+	UploadedFile,
+	UseInterceptors,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import {
 	ApiBody,
+	ApiConsumes,
 	ApiCreatedResponse,
 	ApiNotFoundResponse,
 	ApiOkResponse,
@@ -19,14 +24,19 @@ import {
 	ApiParam,
 	ApiTags,
 } from '@nestjs/swagger';
+import { AvoFileUploadAssetType } from '@viaa/avo2-types';
 
+import { type IPagination } from '@studiohyperdrive/pagination';
 import {
 	AddIeObjectsToThemeDto,
 	CreateThemeDto,
+	IeObjectInThemeResponseDto,
 	IeObjectsInThemeQueryDto,
 	IeObjectsInThemeResponseDto,
 	ThemeIeObjectLinkResponseDto,
+	ThemeIeObjectsQueryDto,
 	ThemeResponseDto,
+	ThemesQueryDto,
 	UpdateThemeDto,
 } from '../dto/themes.dto';
 import { ThemesService } from '../services/themes.service';
@@ -34,33 +44,62 @@ import { ThemesService } from '../services/themes.service';
 @ApiTags('Themes')
 @Controller('themes')
 export class ThemesController {
-	constructor(private themesService: ThemesService) {}
+	constructor(
+		private themesService: ThemesService,
+		private assetsService: AssetsService
+	) {}
 
 	@Get()
 	@ApiOperation({
 		summary: 'Get all themes',
-		description: 'Returns a list of all themes ordered by Dutch name.',
+		description: 'Returns a paginated list of themes.',
 	})
 	@ApiOkResponse({
-		description: 'Returns all themes',
+		description: 'Returns a paginated list of themes',
 		type: ThemeResponseDto,
 		isArray: true,
 	})
-	public async getThemes(): Promise<ThemeResponseDto[]> {
-		return this.themesService.getThemes();
+	public async getThemes(
+		@Query() queryDto: ThemesQueryDto
+	): Promise<IPagination<ThemeResponseDto>> {
+		return this.themesService.getThemes(queryDto);
 	}
 
 	@Post()
+	@UseInterceptors(FileInterceptor('file'))
 	@ApiOperation({
 		summary: 'Create a new theme',
-		description: 'Creates a new theme with the provided data.',
+		description: 'Creates a new theme. Optionally upload a file to set the image.',
 	})
-	@ApiBody({ type: CreateThemeDto })
+	@ApiConsumes('multipart/form-data')
+	@ApiBody({
+		schema: {
+			type: 'object',
+			required: ['slug', 'nameNl', 'nameEn'],
+			properties: {
+				slug: { type: 'string', example: 'culture-society' },
+				nameNl: { type: 'string', example: 'Cultuur & Samenleving' },
+				nameEn: { type: 'string', example: 'Culture & society' },
+				imageUrl: { type: 'string', example: 'https://example.com/image.jpg' },
+				file: { type: 'string', format: 'binary' },
+			},
+		},
+	})
 	@ApiCreatedResponse({
 		description: 'Returns the newly created theme',
 		type: ThemeResponseDto,
 	})
-	public async createTheme(@Body() createThemeDto: CreateThemeDto): Promise<ThemeResponseDto> {
+	public async createTheme(
+		@Body() createThemeDto: CreateThemeDto,
+		@UploadedFile() file: Express.Multer.File
+	): Promise<ThemeResponseDto> {
+		if (file) {
+			createThemeDto.imageUrl = await this.assetsService.uploadAndTrack(
+				AvoFileUploadAssetType.IE_OBJECT_THEME as any,
+				file,
+				createThemeDto.slug
+			);
+		}
 		return this.themesService.createTheme(createThemeDto);
 	}
 
@@ -115,13 +154,13 @@ export class ThemesController {
 	@ApiOperation({
 		summary: 'Get ie-objects linked to a theme',
 		description:
-			'Accepts either a UUID or a slug. When a UUID is provided the ie-objects are returned in stable insertion order. When a slug is provided a random selection is returned (use the optional `limit` query param to cap the count).',
+			'Accepts either a UUID or a slug. When a UUID is provided the ie-objects are returned paginated and in stable order (supports page, size, orderProp, orderDirection). When a slug is provided a random selection is returned (use the optional `limit` query param to cap the count).',
 	})
 	@ApiParam({
 		name: 'themeIdentifier',
 		description: 'The UUID or slug of the theme',
 		type: String,
-		example: 'nature',
+		example: 'culture-society',
 	})
 	@ApiOkResponse({
 		description: 'Returns the theme with its linked ie-objects',
@@ -130,11 +169,11 @@ export class ThemesController {
 	@ApiNotFoundResponse({ description: 'Theme with the given identifier was not found' })
 	public async getIeObjects(
 		@Param('themeIdentifier') themeIdentifier: string,
-		@Query() queryDto: IeObjectsInThemeQueryDto
-	): Promise<IeObjectsInThemeResponseDto> {
+		@Query() queryDto: ThemeIeObjectsQueryDto & IeObjectsInThemeQueryDto
+	): Promise<IeObjectsInThemeResponseDto | IPagination<IeObjectInThemeResponseDto>> {
 		const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 		if (UUID_PATTERN.test(themeIdentifier)) {
-			return this.themesService.getIeObjectsByThemeUuid(themeIdentifier);
+			return this.themesService.getIeObjectsByThemeUuid(themeIdentifier, queryDto);
 		}
 		return this.themesService.getIeObjectsByThemeSlug(themeIdentifier, queryDto.limit);
 	}

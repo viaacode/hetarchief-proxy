@@ -7,15 +7,15 @@ import { GetIeObjectsInThemeQuery } from '~generated/graphql-db-types-hetarchief
 import { TestingLogger } from '~shared/logging/test-logger';
 import { ThemesService } from './themes.service';
 
-const mockThemeSlug = 'nature';
+const mockThemeSlug = 'culture-society';
 
 const mockGetIeObjectsInThemeResponse: GetIeObjectsInThemeQuery = {
 	app_theme: [
 		{
 			id: 'theme-uuid-1',
 			slug: mockThemeSlug,
-			name_nl: 'Natuur',
-			name_en: 'Nature',
+			name_nl: 'Cultuur en samenleving',
+			name_en: 'Culture & Society',
 			image_url: 'https://example.com/nature.jpg',
 			ieObjectLinksRandomOrder: [
 				{
@@ -82,8 +82,8 @@ describe('ThemesService', () => {
 			const result = await themesService.getIeObjectsByThemeSlug(mockThemeSlug, 20);
 
 			expect(result.slug).toEqual(mockThemeSlug);
-			expect(result.nameNl).toEqual('Natuur');
-			expect(result.nameEn).toEqual('Nature');
+			expect(result.nameNl).toEqual('Cultuur en samenleving');
+			expect(result.nameEn).toEqual('Culture & Society');
 			expect(result.imageUrl).toEqual('https://example.com/nature.jpg');
 			// null ieObjects entries are filtered out
 			expect(result.ieObjects).toHaveLength(2);

@@ -2,7 +2,8 @@ import { DataService } from '@meemoo/admin-core-api';
 import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
 import { Injectable, NotFoundException } from '@nestjs/common';
 
-import { compact, isNil } from 'lodash';
+import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
+import { compact, isNil, set } from 'lodash';
 import type {
 	DeleteIeObjectFromThemeMutation,
 	DeleteIeObjectFromThemeMutationVariables,
@@ -13,6 +14,7 @@ import type {
 	GetIeObjectsInThemeQuery,
 	GetIeObjectsInThemeQueryVariables,
 	GetThemesQuery,
+	GetThemesQueryVariables,
 	InsertIeObjectsIntoThemeMutation,
 	InsertIeObjectsIntoThemeMutationVariables,
 	InsertThemeMutation,
@@ -28,6 +30,7 @@ import {
 	GetThemesDocument,
 	InsertIeObjectsIntoThemeDocument,
 	InsertThemeDocument,
+	Order_By,
 	UpdateThemeDocument,
 } from '~generated/graphql-db-types-hetarchief';
 import {
@@ -35,16 +38,46 @@ import {
 	IeObjectInThemeResponseDto,
 	IeObjectsInThemeResponseDto,
 	ThemeIeObjectLinkResponseDto,
+	ThemeIeObjectsQueryDto,
 	ThemeResponseDto,
+	ThemesQueryDto,
 	UpdateThemeDto,
-} from '../dto/themes.dto';
+} from '../dto/themes.dto';import {
+	THEME_ORDER_PROP_TO_DB_PROP,
+	ThemeIeObjectOrderProp,
+	ThemeOrderProp,
+} from '../themes.types';
+import { SortDirection } from '~shared/types';
+
 @Injectable()
 export class ThemesService {
 	constructor(private dataService: DataService) {}
 
-	public async getThemes(): Promise<ThemeResponseDto[]> {
-		const response = await this.dataService.execute<GetThemesQuery>(GetThemesDocument);
-		return response.app_theme.map((theme) => this.adaptTheme(theme));
+	private toOrderBy(direction: SortDirection): Order_By {
+		return direction as unknown as Order_By;
+	}
+
+	public async getThemes(queryDto: ThemesQueryDto): Promise<IPagination<ThemeResponseDto>> {
+		const { page, size, orderProp, orderDirection } = queryDto;
+		const offset = page * size;
+
+		const dbProp = THEME_ORDER_PROP_TO_DB_PROP[orderProp] ?? THEME_ORDER_PROP_TO_DB_PROP[ThemeOrderProp.NAME_NL];
+		const direction = this.toOrderBy(orderDirection ?? SortDirection.asc);
+		const orderBy = [set({}, dbProp, direction)];
+
+		const response = await this.dataService.execute<GetThemesQuery, GetThemesQueryVariables>(
+			GetThemesDocument,
+			{ offset, limit: size, orderBy }
+		);
+
+		const total = response.app_theme_aggregate.aggregate.count;
+
+		return Pagination<ThemeResponseDto>({
+			items: response.app_theme.map((theme) => this.adaptTheme(theme)),
+			page,
+			size,
+			total,
+		});
 	}
 
 	public async createTheme(dto: CreateThemeDto): Promise<ThemeResponseDto> {
@@ -123,17 +156,33 @@ export class ThemesService {
 		return response.delete_app_theme_intellectual_entity.affected_rows ?? 0;
 	}
 
-	public async getIeObjectsByThemeUuid(themeId: string): Promise<IeObjectsInThemeResponseDto> {
+	public async getIeObjectsByThemeUuid(
+		themeId: string,
+		queryDto: ThemeIeObjectsQueryDto
+	): Promise<IPagination<IeObjectInThemeResponseDto>> {
+		const { page, size, orderProp, orderDirection } = queryDto;
+		const offset = page * size;
+
+		const direction = this.toOrderBy(orderDirection ?? SortDirection.asc);
+		let orderBy: GetIeObjectsByThemeIdQueryVariables['orderBy'];
+		if (orderProp === ThemeIeObjectOrderProp.NAME) {
+			orderBy = [{ ieObject: { schema_name: direction } }];
+		} else {
+			orderBy = [set({}, 'intellectual_entity_id', direction)];
+		}
+
 		const response = await this.dataService.execute<
 			GetIeObjectsByThemeIdQuery,
 			GetIeObjectsByThemeIdQueryVariables
-		>(GetIeObjectsByThemeIdDocument, { themeId });
+		>(GetIeObjectsByThemeIdDocument, { themeId, offset, limit: size, orderBy });
 
 		const theme = response.app_theme_by_pk;
 
 		if (!theme) {
 			throw new NotFoundException(`Theme with id '${themeId}' not found`);
 		}
+
+		const total = theme.ieObjectLinks_aggregate.aggregate?.count ?? 0;
 
 		const ieObjects: IeObjectInThemeResponseDto[] = compact(
 			theme.ieObjectLinks.flatMap((ieObjectLink) => {
@@ -151,14 +200,7 @@ export class ThemesService {
 			})
 		);
 
-		return {
-			id: theme.id,
-			slug: theme.slug,
-			nameNl: theme.name_nl,
-			nameEn: theme.name_en,
-			imageUrl: theme.image_url ?? null,
-			ieObjects,
-		};
+		return Pagination<IeObjectInThemeResponseDto>({ items: ieObjects, page, size, total });
 	}
 
 	public async getIeObjectsByThemeSlug(

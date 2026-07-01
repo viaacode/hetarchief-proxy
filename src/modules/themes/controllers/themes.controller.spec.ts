@@ -1,20 +1,21 @@
+import { AssetsService } from '@meemoo/admin-core-api';
 import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
 import { Test, type TestingModule } from '@nestjs/testing';
 import { type MockInstance, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { ThemesController } from './themes.controller';
-import { ThemesService } from '../services/themes.service';
-import type { IeObjectsInThemeResponseDto } from '../dto/themes.dto';
 import { TestingLogger } from '~shared/logging/test-logger';
+import type { IeObjectsInThemeResponseDto } from '../dto/themes.dto';
+import { ThemesService } from '../services/themes.service';
+import { ThemesController } from './themes.controller';
 
-const mockThemeSlug = 'nature';
+const mockThemeSlug = 'culture-society';
 
 const mockIeObjectsInThemeResponse: IeObjectsInThemeResponseDto = {
 	id: 'theme-uuid-1',
 	slug: mockThemeSlug,
-	nameNl: 'Natuur',
-	nameEn: 'Nature',
-	imageUrl: 'https://example.com/nature.jpg',
+	nameNl: 'Cultuur en samenleving',
+	nameEn: 'Culture & Society',
+	imageUrl: 'https://example.com/culture-society.jpg',
 	ieObjects: [
 		{
 			id: 'ie-uuid-1',
@@ -28,8 +29,8 @@ const mockIeObjectsInThemeResponse: IeObjectsInThemeResponseDto = {
 };
 
 const mockThemesService: Partial<Record<keyof ThemesService, MockInstance>> = {
-	getIeObjectsInTheme: vi.fn(),
-	getIeObjectsByThemeId: vi.fn(),
+	getIeObjectsByThemeSlug: vi.fn(),
+	getIeObjectsByThemeUuid: vi.fn(),
 };
 
 describe('ThemesController', () => {
@@ -42,6 +43,10 @@ describe('ThemesController', () => {
 				{
 					provide: ThemesService,
 					useValue: mockThemesService,
+				},
+				{
+					provide: AssetsService,
+					useValue: { uploadAndTrack: vi.fn() },
 				},
 			],
 		})
@@ -61,52 +66,53 @@ describe('ThemesController', () => {
 
 	describe('getIeObjects (by slug)', () => {
 		it('returns the theme with its linked ie-objects for a slug', async () => {
-			mockThemesService.getIeObjectsInTheme.mockResolvedValueOnce(
-				mockIeObjectsInThemeResponse
-			);
+			mockThemesService.getIeObjectsByThemeSlug.mockResolvedValueOnce(mockIeObjectsInThemeResponse);
 
 			const result = await themesController.getIeObjects(mockThemeSlug, {
 				limit: 20,
 			});
 
 			expect(result).toEqual(mockIeObjectsInThemeResponse);
-			expect(mockThemesService.getIeObjectsInTheme).toHaveBeenCalledWith(mockThemeSlug, 20);
+			expect(mockThemesService.getIeObjectsByThemeSlug).toHaveBeenCalledWith(mockThemeSlug, 20);
 		});
 
 		it('forwards the limit query param to the service', async () => {
-			mockThemesService.getIeObjectsInTheme.mockResolvedValueOnce(
-				mockIeObjectsInThemeResponse
-			);
+			mockThemesService.getIeObjectsByThemeSlug.mockResolvedValueOnce(mockIeObjectsInThemeResponse);
 
 			await themesController.getIeObjects(mockThemeSlug, { limit: 5 });
 
-			expect(mockThemesService.getIeObjectsInTheme).toHaveBeenCalledWith(mockThemeSlug, 5);
+			expect(mockThemesService.getIeObjectsByThemeSlug).toHaveBeenCalledWith(mockThemeSlug, 5);
 		});
 
 		it('throws CustomError with 404 when the theme does not exist', async () => {
-			mockThemesService.getIeObjectsInTheme.mockRejectedValueOnce(
-				new CustomError(`Theme with slug '${mockThemeSlug}' not found`, null, { mockThemeSlug }, 404)
+			mockThemesService.getIeObjectsByThemeSlug.mockRejectedValueOnce(
+				new CustomError(
+					`Theme with slug '${mockThemeSlug}' not found`,
+					null,
+					{ mockThemeSlug },
+					404
+				)
 			);
 
-			await expect(
-				themesController.getIeObjects(mockThemeSlug, { limit: 20 })
-			).rejects.toThrow(CustomError);
+			await expect(themesController.getIeObjects(mockThemeSlug, { limit: 20 })).rejects.toThrow(
+				CustomError
+			);
 		});
 	});
 
 	describe('getIeObjects (by UUID)', () => {
-		const mockThemeId = 'theme-uuid-0000-0000-000000000001';
+		const mockThemeId = '00000000-0000-0000-0000-000000000001';
 
-		it('delegates to getIeObjectsByThemeId when a UUID is provided', async () => {
-			mockThemesService.getIeObjectsByThemeId.mockResolvedValueOnce(
-				mockIeObjectsInThemeResponse
-			);
+		it('delegates to getIeObjectsByThemeUuid when a UUID is provided', async () => {
+			mockThemesService.getIeObjectsByThemeUuid.mockResolvedValueOnce(mockIeObjectsInThemeResponse);
 
 			const result = await themesController.getIeObjects(mockThemeId, { limit: 20 });
 
 			expect(result).toEqual(mockIeObjectsInThemeResponse);
-			expect(mockThemesService.getIeObjectsByThemeId).toHaveBeenCalledWith(mockThemeId);
-			expect(mockThemesService.getIeObjectsInTheme).not.toHaveBeenCalled();
+			expect(mockThemesService.getIeObjectsByThemeUuid).toHaveBeenCalledWith(mockThemeId, {
+				limit: 20,
+			});
+			expect(mockThemesService.getIeObjectsByThemeSlug).not.toHaveBeenCalled();
 		});
 	});
 });

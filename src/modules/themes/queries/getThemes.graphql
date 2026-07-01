@@ -1,9 +1,14 @@
-query getThemes {
-	app_theme(order_by: { name_nl: asc }) {
+query getThemes($offset: Int, $limit: Int, $orderBy: [app_theme_order_by!]) {
+	app_theme(offset: $offset, limit: $limit, order_by: $orderBy) {
 		id
 		slug
 		name_nl
 		name_en
 		image_url
+	}
+	app_theme_aggregate {
+		aggregate {
+			count
+		}
 	}
 }
