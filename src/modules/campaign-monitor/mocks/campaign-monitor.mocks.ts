@@ -96,12 +96,14 @@ export const mockMaterialRequestEmailInfo: MaterialRequestEmailInfo = {
 export const mockRequestListItemToMaintainer: RequestListItem = {
 	title: mockMaterialRequest1.objectSchemaName,
 	local_cp_id: mockMaterialRequest1.objectMeemooLocalId,
+	cp_name: mockMaterialRequest1.maintainerName,
 	pid: mockMaterialRequest1.objectSchemaIdentifier,
 	page_url: `${mockConfigService.get('CLIENT_HOST')}/zoeken/${
 		mockMaterialRequest1.maintainerSlug
 	}/${mockMaterialRequest1.objectSchemaIdentifier}`,
 	request_type: 'Ik wil dit object hergebruiken',
 	request_description: mockMaterialRequest1.reason,
+	material_request_id: mockMaterialRequest1.id,
 };
 
 export const mockRequestListItemToRequester: RequestListItem = {
