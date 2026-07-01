@@ -29,6 +29,7 @@ const mockIeObjectsInThemeResponse: IeObjectsInThemeResponseDto = {
 
 const mockThemesService: Partial<Record<keyof ThemesService, MockInstance>> = {
 	getIeObjectsInTheme: vi.fn(),
+	getIeObjectsByThemeId: vi.fn(),
 };
 
 describe('ThemesController', () => {
@@ -58,13 +59,13 @@ describe('ThemesController', () => {
 		expect(themesController).toBeDefined();
 	});
 
-	describe('getIeObjectsInTheme', () => {
-		it('returns the theme with its linked ie-objects', async () => {
+	describe('getIeObjects (by slug)', () => {
+		it('returns the theme with its linked ie-objects for a slug', async () => {
 			mockThemesService.getIeObjectsInTheme.mockResolvedValueOnce(
 				mockIeObjectsInThemeResponse
 			);
 
-			const result = await themesController.getIeObjectsInTheme(mockThemeSlug, {
+			const result = await themesController.getIeObjects(mockThemeSlug, {
 				limit: 20,
 			});
 
@@ -77,7 +78,7 @@ describe('ThemesController', () => {
 				mockIeObjectsInThemeResponse
 			);
 
-			await themesController.getIeObjectsInTheme(mockThemeSlug, { limit: 5 });
+			await themesController.getIeObjects(mockThemeSlug, { limit: 5 });
 
 			expect(mockThemesService.getIeObjectsInTheme).toHaveBeenCalledWith(mockThemeSlug, 5);
 		});
@@ -88,8 +89,24 @@ describe('ThemesController', () => {
 			);
 
 			await expect(
-				themesController.getIeObjectsInTheme(mockThemeSlug, { limit: 20 })
+				themesController.getIeObjects(mockThemeSlug, { limit: 20 })
 			).rejects.toThrow(CustomError);
+		});
+	});
+
+	describe('getIeObjects (by UUID)', () => {
+		const mockThemeId = 'theme-uuid-0000-0000-000000000001';
+
+		it('delegates to getIeObjectsByThemeId when a UUID is provided', async () => {
+			mockThemesService.getIeObjectsByThemeId.mockResolvedValueOnce(
+				mockIeObjectsInThemeResponse
+			);
+
+			const result = await themesController.getIeObjects(mockThemeId, { limit: 20 });
+
+			expect(result).toEqual(mockIeObjectsInThemeResponse);
+			expect(mockThemesService.getIeObjectsByThemeId).toHaveBeenCalledWith(mockThemeId);
+			expect(mockThemesService.getIeObjectsInTheme).not.toHaveBeenCalled();
 		});
 	});
 });

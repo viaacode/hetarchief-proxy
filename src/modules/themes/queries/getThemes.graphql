@@ -1,0 +1,9 @@
+query getThemes {
+	app_theme(order_by: { name_nl: asc }) {
+		id
+		slug
+		name_nl
+		name_en
+		image_url
+	}
+}

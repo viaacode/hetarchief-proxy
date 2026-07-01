@@ -1,0 +1,9 @@
+mutation insertTheme($object: app_theme_insert_input!) {
+	insert_app_theme_one(object: $object) {
+		id
+		slug
+		name_nl
+		name_en
+		image_url
+	}
+}

@@ -1,0 +1,25 @@
+query getIeObjectsByThemeId($themeId: uuid!) {
+	app_theme_by_pk(id: $themeId) {
+		id
+		slug
+		name_nl
+		name_en
+		image_url
+		ieObjectLinks {
+			ieObject {
+				id
+				schema_name
+				dctermsFormat {
+					dcterms_format
+				}
+				schemaThumbnail {
+					schema_thumbnail_url
+				}
+				schemaMaintainer {
+					id
+					skos_pref_label
+				}
+			}
+		}
+	}
+}

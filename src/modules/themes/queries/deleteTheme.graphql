@@ -1,0 +1,5 @@
+mutation deleteTheme($themeId: uuid!) {
+	delete_app_theme_by_pk(id: $themeId) {
+		id
+	}
+}

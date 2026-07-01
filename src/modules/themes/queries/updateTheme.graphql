@@ -1,0 +1,9 @@
+mutation updateTheme($themeId: uuid!, $theme: app_theme_set_input!) {
+	update_app_theme_by_pk(pk_columns: { id: $themeId }, _set: $theme) {
+		id
+		slug
+		name_nl
+		name_en
+		image_url
+	}
+}

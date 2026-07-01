@@ -1,6 +1,114 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsInt, IsOptional, Max, Min } from 'class-validator';
+import { IsArray, IsInt, IsOptional, IsString, IsUrl, Max, Min } from 'class-validator';
+
+export class CreateThemeDto {
+	@IsString()
+	@ApiProperty({ type: String, description: 'The slug of the theme', example: 'nature' })
+	slug: string;
+
+	@IsString()
+	@ApiProperty({ type: String, description: 'The Dutch name of the theme', example: 'Natuur' })
+	nameNl: string;
+
+	@IsString()
+	@ApiProperty({
+		type: String,
+		description: 'The English name of the theme',
+		example: 'Nature',
+	})
+	nameEn: string;
+
+	@IsString()
+	@IsUrl()
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		nullable: true,
+		description: 'The header image URL of the theme',
+		example: 'https://example.com/image.jpg',
+	})
+	imageUrl?: string | null;
+}
+
+export class UpdateThemeDto {
+	@IsString()
+	@IsOptional()
+	@ApiPropertyOptional({ type: String, description: 'The slug of the theme', example: 'nature' })
+	slug?: string;
+
+	@IsString()
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		description: 'The Dutch name of the theme',
+		example: 'Natuur',
+	})
+	nameNl?: string;
+
+	@IsString()
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		description: 'The English name of the theme',
+		example: 'Nature',
+	})
+	nameEn?: string;
+
+	@IsString()
+	@IsUrl()
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		nullable: true,
+		description: 'The header image URL of the theme',
+		example: 'https://example.com/image.jpg',
+	})
+	imageUrl?: string | null;
+}
+
+export class AddIeObjectsToThemeDto {
+	@IsArray()
+	@IsString({ each: true })
+	@ApiProperty({
+		type: [String],
+		description: 'The schema identifiers (ie-object ids) to link to the theme',
+		example: ['id-1', 'id-2', 'id-3'],
+	})
+	ieObjectSchemaIdentifiers: string[];
+}
+
+export class ThemeResponseDto {
+	@ApiProperty({ type: String, description: 'The id of the theme' })
+	id: string;
+
+	@ApiProperty({ type: String, description: 'The slug of the theme' })
+	slug: string;
+
+	@ApiProperty({ type: String, description: 'The Dutch name of the theme' })
+	nameNl: string;
+
+	@ApiProperty({ type: String, description: 'The English name of the theme' })
+	nameEn: string;
+
+	@ApiProperty({
+		type: String,
+		nullable: true,
+		description: 'The header image URL of the theme',
+	})
+	imageUrl: string | null;
+}
+
+export class ThemeIeObjectLinkResponseDto {
+	@ApiProperty({ type: String, description: 'The id of the link entry' })
+	id: string;
+
+	@ApiProperty({ type: String, description: 'The id of the theme' })
+	themeId: string;
+
+	@ApiProperty({ type: String, description: 'The intellectual entity id' })
+	intellectualEntityId: string;
+}
 
 export class IeObjectsInThemeQueryDto {
 	@IsInt()
