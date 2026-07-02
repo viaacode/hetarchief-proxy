@@ -1,0 +1,10 @@
+mutation deleteIeObjectFromTheme($themeId: uuid!, $ieObjectId: String!) {
+	delete_app_theme_intellectual_entity(
+		where: {
+			theme_id: { _eq: $themeId }
+			intellectual_entity_id: { _eq: $ieObjectId }
+		}
+	) {
+		affected_rows
+	}
+}

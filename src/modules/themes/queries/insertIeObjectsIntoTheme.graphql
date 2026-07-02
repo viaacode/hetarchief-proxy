@@ -1,0 +1,15 @@
+mutation insertIeObjectsIntoTheme($objects: [app_theme_intellectual_entity_insert_input!]!) {
+	insert_app_theme_intellectual_entity(
+		objects: $objects
+		on_conflict: {
+			constraint: theme_intellectual_entity_theme_id_intellectual_entity_id_key
+			update_columns: []
+		}
+	) {
+		returning {
+			id
+			theme_id
+			intellectual_entity_id
+		}
+	}
+}

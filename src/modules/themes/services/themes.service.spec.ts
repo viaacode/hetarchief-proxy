@@ -7,15 +7,15 @@ import { GetIeObjectsInThemeQuery } from '~generated/graphql-db-types-hetarchief
 import { TestingLogger } from '~shared/logging/test-logger';
 import { ThemesService } from './themes.service';
 
-const mockThemeSlug = 'nature';
+const mockThemeSlug = 'culture-society';
 
 const mockGetIeObjectsInThemeResponse: GetIeObjectsInThemeQuery = {
 	app_theme: [
 		{
 			id: 'theme-uuid-1',
 			slug: mockThemeSlug,
-			name_nl: 'Natuur',
-			name_en: 'Nature',
+			name_nl: 'Cultuur en samenleving',
+			name_en: 'Culture & Society',
 			image_url: 'https://example.com/nature.jpg',
 			ieObjectLinksRandomOrder: [
 				{
@@ -79,11 +79,11 @@ describe('ThemesService', () => {
 		it('returns the theme with its linked ie-objects', async () => {
 			mockDataService.execute.mockResolvedValueOnce(mockGetIeObjectsInThemeResponse);
 
-			const result = await themesService.getIeObjectsInTheme(mockThemeSlug, 20);
+			const result = await themesService.getIeObjectsByThemeSlug(mockThemeSlug, 20);
 
 			expect(result.slug).toEqual(mockThemeSlug);
-			expect(result.nameNl).toEqual('Natuur');
-			expect(result.nameEn).toEqual('Nature');
+			expect(result.nameNl).toEqual('Cultuur en samenleving');
+			expect(result.nameEn).toEqual('Culture & Society');
 			expect(result.imageUrl).toEqual('https://example.com/nature.jpg');
 			// null ieObjects entries are filtered out
 			expect(result.ieObjects).toHaveLength(2);
@@ -92,7 +92,7 @@ describe('ThemesService', () => {
 		it('correctly maps ie-object fields', async () => {
 			mockDataService.execute.mockResolvedValueOnce(mockGetIeObjectsInThemeResponse);
 
-			const result = await themesService.getIeObjectsInTheme(mockThemeSlug, 20);
+			const result = await themesService.getIeObjectsByThemeSlug(mockThemeSlug, 20);
 			const [first] = result.ieObjects;
 
 			expect(first.id).toEqual('ie-uuid-1');
@@ -106,7 +106,7 @@ describe('ThemesService', () => {
 		it('returns null for missing optional fields', async () => {
 			mockDataService.execute.mockResolvedValueOnce(mockGetIeObjectsInThemeResponse);
 
-			const result = await themesService.getIeObjectsInTheme(mockThemeSlug, 20);
+			const result = await themesService.getIeObjectsByThemeSlug(mockThemeSlug, 20);
 			const second = result.ieObjects[1];
 
 			expect(second.thumbnailUrl).toBeNull();
@@ -115,7 +115,7 @@ describe('ThemesService', () => {
 		it('throws CustomError with 404 when the theme does not exist', async () => {
 			mockDataService.execute.mockResolvedValueOnce({ app_theme: [] });
 
-			await expect(themesService.getIeObjectsInTheme('non-existing-slug', 20)).rejects.toThrow(
+			await expect(themesService.getIeObjectsByThemeSlug('non-existing-slug', 20)).rejects.toThrow(
 				CustomError
 			);
 		});
@@ -123,7 +123,7 @@ describe('ThemesService', () => {
 		it('passes the limit to the query', async () => {
 			mockDataService.execute.mockResolvedValueOnce(mockGetIeObjectsInThemeResponse);
 
-			await themesService.getIeObjectsInTheme(mockThemeSlug, 5);
+			await themesService.getIeObjectsByThemeSlug(mockThemeSlug, 5);
 
 			expect(mockDataService.execute).toHaveBeenCalledWith(
 				expect.anything(),

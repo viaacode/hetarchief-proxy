@@ -15,3 +15,20 @@ export interface IeObjectsInThemeResponse {
 	imageUrl: string | null;
 	ieObjects: IeObjectInTheme[];
 }
+
+export enum ThemeOrderProp {
+	NAME_NL = 'nameNl',
+	NAME_EN = 'nameEn',
+	SLUG = 'slug',
+}
+
+export const THEME_ORDER_PROP_TO_DB_PROP: Record<ThemeOrderProp, string> = {
+	[ThemeOrderProp.NAME_NL]: 'name_nl',
+	[ThemeOrderProp.NAME_EN]: 'name_en',
+	[ThemeOrderProp.SLUG]: 'slug',
+};
+
+export enum ThemeIeObjectOrderProp {
+	NAME = 'name',
+	INTELLECTUAL_ENTITY_ID = 'intellectualEntityId',
+}

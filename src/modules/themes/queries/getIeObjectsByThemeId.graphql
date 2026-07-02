@@ -1,0 +1,35 @@
+query getIeObjectsByThemeId(
+	$themeId: uuid!
+	$offset: Int
+	$limit: Int
+	$orderBy: [app_theme_intellectual_entity_order_by!]
+) {
+	app_theme_by_pk(id: $themeId) {
+		id
+		slug
+		name_nl
+		name_en
+		image_url
+		ieObjectLinks(offset: $offset, limit: $limit, order_by: $orderBy) {
+			ieObject {
+				id
+				schema_name
+				dctermsFormat {
+					dcterms_format
+				}
+				schemaThumbnail {
+					schema_thumbnail_url
+				}
+				schemaMaintainer {
+					id
+					skos_pref_label
+				}
+			}
+		}
+		ieObjectLinks_aggregate {
+			aggregate {
+				count
+			}
+		}
+	}
+}
