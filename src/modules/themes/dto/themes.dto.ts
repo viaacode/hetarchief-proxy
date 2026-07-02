@@ -2,6 +2,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
 	IsArray,
+	IsBoolean,
 	IsEnum,
 	IsInt,
 	IsNumber,
@@ -11,7 +12,7 @@ import {
 	Max,
 	Min,
 } from 'class-validator';
-import { SortDirection } from '~shared/types';
+import { SortDirection, SortDirectionWithRandom } from '~shared/types';
 import { ThemeIeObjectOrderProp, ThemeOrderProp } from '../themes.types';
 
 export class CreateThemeDto {
@@ -179,7 +180,7 @@ export class ThemeIeObjectsQueryDto {
 	@IsOptional()
 	@ApiPropertyOptional({
 		type: Number,
-		description: 'Which page of results to fetch. Counting starts at 0',
+		description: 'Which page of ie-objects under this theme to fetch. Counting starts at 0',
 		default: 0,
 	})
 	page? = 0;
@@ -189,7 +190,7 @@ export class ThemeIeObjectsQueryDto {
 	@IsOptional()
 	@ApiPropertyOptional({
 		type: Number,
-		description: 'The max. number of results to return',
+		description: 'The max. number of ie-objects under this theme to return',
 		default: 20,
 	})
 	size? = 20;
@@ -198,37 +199,22 @@ export class ThemeIeObjectsQueryDto {
 	@IsOptional()
 	@ApiPropertyOptional({
 		type: String,
-		description: 'Property to sort the results by',
+		description: 'Property to sort the ie-objects by',
 		default: ThemeIeObjectOrderProp.NAME,
 		enum: ThemeIeObjectOrderProp,
 	})
 	orderProp? = ThemeIeObjectOrderProp.NAME;
 
-	@IsEnum(SortDirection)
+	@IsEnum(SortDirectionWithRandom)
 	@IsOptional()
 	@ApiPropertyOptional({
 		type: String,
-		description: 'Direction to sort in',
-		default: SortDirection.asc,
-		enum: SortDirection,
+		description:
+			'Direction to sort the ie-objects in or random order. if random order is specified, the orderProp will be ignored',
+		default: SortDirectionWithRandom.asc,
+		enum: SortDirectionWithRandom,
 	})
-	orderDirection? = SortDirection.asc;
-}
-
-export class IeObjectsInThemeQueryDto {
-	@IsInt()
-	@IsOptional()
-	@Min(1)
-	@Max(100)
-	@Type(() => Number)
-	@ApiPropertyOptional({
-		type: Number,
-		description: 'The maximum number of ie-objects to return',
-		default: 20,
-		minimum: 1,
-		maximum: 100,
-	})
-	limit? = 20;
+	orderDirection? = SortDirectionWithRandom.asc;
 }
 
 export class IeObjectInThemeResponseDto {
@@ -289,4 +275,10 @@ export class IeObjectsInThemeResponseDto {
 		description: 'The ie-objects linked to this theme',
 	})
 	ieObjects: IeObjectInThemeResponseDto[];
+
+	@ApiPropertyOptional({
+		type: Number,
+		description: 'The total ie-objects linked to this theme. Is null if random order is specified',
+	})
+	total: number | null;
 }

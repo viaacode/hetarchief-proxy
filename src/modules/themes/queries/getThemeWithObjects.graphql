@@ -1,4 +1,4 @@
-query getIeObjectsByThemeId(
+query getThemeWithObjects(
 	$themeId: uuid!
 	$offset: Int
 	$limit: Int

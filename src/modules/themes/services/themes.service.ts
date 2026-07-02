@@ -4,35 +4,34 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { compact, isNil, set } from 'lodash';
-import type {
+import {
+	DeleteIeObjectFromThemeDocument,
 	DeleteIeObjectFromThemeMutation,
 	DeleteIeObjectFromThemeMutationVariables,
+	DeleteThemeDocument,
 	DeleteThemeMutation,
 	DeleteThemeMutationVariables,
-	GetIeObjectsByThemeIdQuery,
-	GetIeObjectsByThemeIdQueryVariables,
-	GetIeObjectsInThemeQuery,
-	GetIeObjectsInThemeQueryVariables,
+	GetThemeWithObjectsDocument,
+	GetThemeWithObjectsInRandomOrderDocument,
+	GetThemeWithObjectsInRandomOrderQuery,
+	GetThemeWithObjectsInRandomOrderQueryVariables,
+	GetThemeWithObjectsQuery,
+	GetThemeWithObjectsQueryVariables,
+	GetThemesDocument,
 	GetThemesQuery,
 	GetThemesQueryVariables,
+	InsertIeObjectsIntoThemeDocument,
 	InsertIeObjectsIntoThemeMutation,
 	InsertIeObjectsIntoThemeMutationVariables,
+	InsertThemeDocument,
 	InsertThemeMutation,
 	InsertThemeMutationVariables,
+	Order_By,
+	UpdateThemeDocument,
 	UpdateThemeMutation,
 	UpdateThemeMutationVariables,
 } from '~generated/graphql-db-types-hetarchief';
-import {
-	DeleteIeObjectFromThemeDocument,
-	DeleteThemeDocument,
-	GetIeObjectsByThemeIdDocument,
-	GetIeObjectsInThemeDocument,
-	GetThemesDocument,
-	InsertIeObjectsIntoThemeDocument,
-	InsertThemeDocument,
-	Order_By,
-	UpdateThemeDocument,
-} from '~generated/graphql-db-types-hetarchief';
+import { SortDirection, SortDirectionWithRandom } from '~shared/types';
 import {
 	CreateThemeDto,
 	IeObjectInThemeResponseDto,
@@ -42,27 +41,25 @@ import {
 	ThemeResponseDto,
 	ThemesQueryDto,
 	UpdateThemeDto,
-} from '../dto/themes.dto';import {
+} from '../dto/themes.dto';
+import {
+	RawThemeIeObject,
 	THEME_ORDER_PROP_TO_DB_PROP,
 	ThemeIeObjectOrderProp,
 	ThemeOrderProp,
 } from '../themes.types';
-import { SortDirection } from '~shared/types';
 
 @Injectable()
 export class ThemesService {
 	constructor(private dataService: DataService) {}
 
-	private toOrderBy(direction: SortDirection): Order_By {
-		return direction as unknown as Order_By;
-	}
-
 	public async getThemes(queryDto: ThemesQueryDto): Promise<IPagination<ThemeResponseDto>> {
 		const { page, size, orderProp, orderDirection } = queryDto;
 		const offset = page * size;
 
-		const dbProp = THEME_ORDER_PROP_TO_DB_PROP[orderProp] ?? THEME_ORDER_PROP_TO_DB_PROP[ThemeOrderProp.NAME_NL];
-		const direction = this.toOrderBy(orderDirection ?? SortDirection.asc);
+		const dbProp =
+			THEME_ORDER_PROP_TO_DB_PROP[orderProp] ?? THEME_ORDER_PROP_TO_DB_PROP[ThemeOrderProp.NAME_NL];
+		const direction = (orderDirection ?? SortDirection.asc) as unknown as Order_By;
 		const orderBy = [set({}, dbProp, direction)];
 
 		const response = await this.dataService.execute<GetThemesQuery, GetThemesQueryVariables>(
@@ -157,71 +154,73 @@ export class ThemesService {
 	}
 
 	public async getIeObjectsByThemeUuid(
-		themeId: string,
+		themeUuid: string,
 		queryDto: ThemeIeObjectsQueryDto
-	): Promise<IPagination<IeObjectInThemeResponseDto>> {
+	): Promise<IeObjectsInThemeResponseDto> {
 		const { page, size, orderProp, orderDirection } = queryDto;
 		const offset = page * size;
 
-		const direction = this.toOrderBy(orderDirection ?? SortDirection.asc);
-		let orderBy: GetIeObjectsByThemeIdQueryVariables['orderBy'];
-		if (orderProp === ThemeIeObjectOrderProp.NAME) {
-			orderBy = [{ ieObject: { schema_name: direction } }];
+		let rawIeObjects: RawThemeIeObject[];
+		let rawTheme:
+			| GetThemeWithObjectsInRandomOrderQuery['app_theme_by_pk']
+			| GetThemeWithObjectsQuery['app_theme_by_pk'];
+		if (orderDirection && orderDirection === SortDirectionWithRandom.random) {
+			// random
+			const response = await this.dataService.execute<
+				GetThemeWithObjectsInRandomOrderQuery,
+				GetThemeWithObjectsInRandomOrderQueryVariables
+			>(GetThemeWithObjectsInRandomOrderDocument, { themeId: themeUuid, objectsLimit: size });
+			rawTheme = response.app_theme_by_pk;
+			rawIeObjects =
+				compact(response.app_theme_by_pk?.ieObjectLinksRandomOrder.map((link) => link.ieObject)) ??
+				[];
 		} else {
-			orderBy = [set({}, 'intellectual_entity_id', direction)];
+			// asc or desc
+			const direction = (orderDirection ?? SortDirectionWithRandom.asc) as unknown as Order_By;
+			let orderBy: GetThemeWithObjectsQueryVariables['orderBy'];
+			switch (orderProp) {
+				case ThemeIeObjectOrderProp.MAINTAINER_NAME:
+					orderBy = [{ ieObject: { schemaMaintainer: { skos_pref_label: direction } } }];
+					break;
+				default: // ThemeIeObjectOrderProp.NAME
+					orderBy = [{ ieObject: { schema_name: direction } }];
+					break;
+			}
+
+			const response = await this.dataService.execute<
+				GetThemeWithObjectsQuery,
+				GetThemeWithObjectsQueryVariables
+			>(GetThemeWithObjectsDocument, { themeId: themeUuid, offset, limit: size, orderBy });
+			rawTheme = response.app_theme_by_pk;
+			rawIeObjects = response.app_theme_by_pk?.ieObjectLinks?.map((link) => link.ieObject) ?? [];
 		}
 
-		const response = await this.dataService.execute<
-			GetIeObjectsByThemeIdQuery,
-			GetIeObjectsByThemeIdQueryVariables
-		>(GetIeObjectsByThemeIdDocument, { themeId, offset, limit: size, orderBy });
-
-		const theme = response.app_theme_by_pk;
-
-		if (!theme) {
-			throw new NotFoundException(`Theme with id '${themeId}' not found`);
+		if (!rawTheme) {
+			throw new CustomError('Theme was not found', null, { themeUuid, queryDto });
 		}
 
-		const total = theme.ieObjectLinks_aggregate.aggregate?.count ?? 0;
+		let total: number | null = null;
+		if (orderDirection !== SortDirectionWithRandom.random) {
+			total =
+				(rawTheme as GetThemeWithObjectsQuery['app_theme_by_pk']).ieObjectLinks_aggregate.aggregate
+					?.count ?? 0;
+		}
 
 		const ieObjects: IeObjectInThemeResponseDto[] = compact(
-			theme.ieObjectLinks.flatMap((ieObjectLink) => {
-				if (isNil(ieObjectLink.ieObject)) {
+			rawIeObjects.map((rawIeObject) => {
+				if (isNil(rawIeObject)) {
 					return null;
 				}
-				return {
-					id: ieObjectLink.ieObject.id,
-					name: ieObjectLink.ieObject.schema_name ?? null,
-					format: ieObjectLink.ieObject.dctermsFormat?.[0]?.dcterms_format ?? null,
-					thumbnailUrl: ieObjectLink.ieObject.schemaThumbnail?.schema_thumbnail_url ?? null,
-					maintainerId: ieObjectLink.ieObject.schemaMaintainer?.id ?? null,
-					maintainerName: ieObjectLink.ieObject.schemaMaintainer?.skos_pref_label ?? null,
-				};
+				return this.adaptIeObject(rawIeObject);
 			})
 		);
 
-		return Pagination<IeObjectInThemeResponseDto>({ items: ieObjects, page, size, total });
-	}
-
-	public async getIeObjectsByThemeSlug(
-		themeSlug: string,
-		limit: number
-	): Promise<IeObjectsInThemeResponseDto> {
-		const response = await this.dataService.execute<
-			GetIeObjectsInThemeQuery,
-			GetIeObjectsInThemeQueryVariables
-		>(GetIeObjectsInThemeDocument, {
-			themeSlug,
-			objectsLimit: limit,
-		});
-
-		const theme = response.app_theme?.[0];
-
-		if (!theme) {
-			throw new CustomError(`Theme with slug '${themeSlug}' not found`, null, { themeSlug }, 404);
-		}
-
-		return this.adaptIeObjectsInTheme(theme);
+		const theme = this.adaptTheme(rawTheme);
+		return {
+			...theme,
+			ieObjects: ieObjects,
+			total,
+		};
 	}
 
 	private adaptTheme(theme: {
@@ -240,32 +239,14 @@ export class ThemesService {
 		};
 	}
 
-	private adaptIeObjectsInTheme(
-		theme: GetIeObjectsInThemeQuery['app_theme'][0]
-	): IeObjectsInThemeResponseDto {
-		const ieObjects: IeObjectInThemeResponseDto[] = compact(
-			theme.ieObjectLinksRandomOrder.flatMap((ieObjectLink) => {
-				if (isNil(ieObjectLink.ieObject)) {
-					return null;
-				}
-				return {
-					id: ieObjectLink.ieObject.id,
-					name: ieObjectLink.ieObject.schema_name ?? null,
-					format: ieObjectLink.ieObject.dctermsFormat?.[0]?.dcterms_format ?? null,
-					thumbnailUrl: ieObjectLink.ieObject.schemaThumbnail?.schema_thumbnail_url ?? null,
-					maintainerId: ieObjectLink.ieObject.schemaMaintainer?.id ?? null,
-					maintainerName: ieObjectLink.ieObject.schemaMaintainer?.skos_pref_label ?? null,
-				};
-			})
-		);
-
+	private adaptIeObject(rawIeObject: RawThemeIeObject): IeObjectInThemeResponseDto {
 		return {
-			id: theme.id,
-			slug: theme.slug,
-			nameNl: theme.name_nl,
-			nameEn: theme.name_en,
-			imageUrl: theme.image_url ?? null,
-			ieObjects,
+			id: rawIeObject.id,
+			name: rawIeObject.schema_name ?? null,
+			format: rawIeObject.dctermsFormat?.[0]?.dcterms_format ?? null,
+			thumbnailUrl: rawIeObject.schemaThumbnail?.schema_thumbnail_url ?? null,
+			maintainerId: rawIeObject.schemaMaintainer?.id ?? null,
+			maintainerName: rawIeObject.schemaMaintainer?.skos_pref_label ?? null,
 		};
 	}
 }

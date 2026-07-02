@@ -1,5 +1,5 @@
-query getIeObjectsInTheme($themeSlug: String, $objectsLimit: Int) {
-	app_theme(where: { slug: { _eq: $themeSlug } }) {
+query getThemeWithObjectsInRandomOrder($themeId: uuid!, $objectsLimit: Int!) {
+	app_theme_by_pk(id: $themeId) {
 		id
 		slug
 		name_nl
