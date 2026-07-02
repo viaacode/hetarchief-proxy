@@ -18,6 +18,9 @@ import {
 	GetThemeWithObjectsQuery,
 	GetThemeWithObjectsQueryVariables,
 	GetThemesDocument,
+	GetThemesInRandomOrderDocument,
+	GetThemesInRandomOrderQuery,
+	GetThemesInRandomOrderQueryVariables,
 	GetThemesQuery,
 	GetThemesQueryVariables,
 	InsertIeObjectsIntoThemeDocument,
@@ -31,7 +34,7 @@ import {
 	UpdateThemeMutation,
 	UpdateThemeMutationVariables,
 } from '~generated/graphql-db-types-hetarchief';
-import { SortDirection, SortDirectionWithRandom } from '~shared/types';
+import { SortDirectionWithRandom } from '~shared/types';
 import {
 	CreateThemeDto,
 	IeObjectInThemeResponseDto,
@@ -57,9 +60,23 @@ export class ThemesService {
 		const { page, size, orderProp, orderDirection } = queryDto;
 		const offset = page * size;
 
+		if (orderDirection === SortDirectionWithRandom.random) {
+			const response = await this.dataService.execute<
+				GetThemesInRandomOrderQuery,
+				GetThemesInRandomOrderQueryVariables
+			>(GetThemesInRandomOrderDocument, { limit: size });
+
+			return Pagination<ThemeResponseDto>({
+				items: response.app_theme_random_order.map((theme) => this.adaptTheme(theme)),
+				page,
+				size,
+				total: 0,
+			});
+		}
+
 		const dbProp =
 			THEME_ORDER_PROP_TO_DB_PROP[orderProp] ?? THEME_ORDER_PROP_TO_DB_PROP[ThemeOrderProp.NAME_NL];
-		const direction = (orderDirection ?? SortDirection.asc) as unknown as Order_By;
+		const direction = (orderDirection ?? SortDirectionWithRandom.asc) as unknown as Order_By;
 		const orderBy = [set({}, dbProp, direction)];
 
 		const response = await this.dataService.execute<GetThemesQuery, GetThemesQueryVariables>(
@@ -224,17 +241,17 @@ export class ThemesService {
 	}
 
 	private adaptTheme(theme: {
-		id: string;
-		slug: string;
-		name_nl: string;
-		name_en: string;
+		id?: string;
+		slug?: string | null;
+		name_nl?: string | null;
+		name_en?: string | null;
 		image_url?: string | null;
 	}): ThemeResponseDto {
 		return {
 			id: theme.id,
-			slug: theme.slug,
-			nameNl: theme.name_nl,
-			nameEn: theme.name_en,
+			slug: theme.slug ?? '',
+			nameNl: theme.name_nl ?? '',
+			nameEn: theme.name_en ?? '',
 			imageUrl: theme.image_url ?? null,
 		};
 	}
