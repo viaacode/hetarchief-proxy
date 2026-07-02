@@ -22,6 +22,7 @@ import { NotificationsModule } from '~modules/notifications';
 import { OrganisationsModule } from '~modules/organisations/organisations.module';
 import { SitemapModule } from '~modules/sitemap';
 import { SpacesModule } from '~modules/spaces';
+import { ThemesModule } from '~modules/themes';
 import { StatusModule } from '~modules/status';
 import { TosModule } from '~modules/tos';
 import { UsersModule } from '~modules/users';
@@ -67,6 +68,7 @@ checkRequiredEnvs(['ADMIN_CORE_ROUTES_PREFIX']);
 		ZendeskModule,
 		SitemapModule,
 		MediahavenJobsWatcherModule,
+		ThemesModule,
 	],
 	controllers: [],
 	providers: [

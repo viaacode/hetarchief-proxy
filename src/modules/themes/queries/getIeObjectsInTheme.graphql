@@ -1,0 +1,25 @@
+query getIeObjectsInTheme($themeSlug: String, $objectsLimit: Int) {
+	app_theme(where: { slug: { _eq: $themeSlug } }) {
+		id
+		slug
+		name_nl
+		name_en
+		image_url
+		ieObjectLinksRandomOrder(limit: $objectsLimit) {
+			ieObject {
+				id
+				schema_name
+				dctermsFormat {
+					dcterms_format
+				}
+				schemaThumbnail {
+					schema_thumbnail_url
+				}
+				schemaMaintainer {
+					id
+					skos_pref_label
+				}
+			}
+		}
+	}
+}
