@@ -15,7 +15,12 @@ import { stringifyUrl } from 'query-string';
 
 import type { Configuration } from '~config';
 
-import { getTemplateEnvVarName, getTemplateId } from '../campaign-monitor.consts';
+import {
+	MATERIAL_REQUEST_REQUESTER_CAPACITY_TRANSLATIONS,
+	MATERIAL_REQUEST_TYPE_TRANSLATIONS,
+	getTemplateEnvVarName,
+	getTemplateId,
+} from '../campaign-monitor.consts';
 import {
 	CampaignMonitorCustomFieldName,
 	type CampaignMonitorNewsletterPreferences,
@@ -508,63 +513,6 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 	public convertMaterialRequestsToEmailTemplateData(
 		emailInfo: MaterialRequestEmailInfo
 	): CampaignMonitorMaterialRequestData {
-		const MATERIAL_REQUEST_TYPE_TRANSLATIONS: Record<MaterialRequestType, string> = {
-			[MaterialRequestType.VIEW]: this.translationsService.tText(
-				'modules/campaign-monitor/services/campaign-monitor___ik-wil-dit-object-bekijken-beluisteren',
-				null,
-				emailInfo.language
-			),
-			[MaterialRequestType.REUSE]: this.translationsService.tText(
-				'modules/campaign-monitor/services/campaign-monitor___ik-wil-dit-object-hergebruiken',
-				null,
-				emailInfo.language
-			),
-			[MaterialRequestType.MORE_INFO]: this.translationsService.tText(
-				'modules/campaign-monitor/services/campaign-monitor___ik-wil-meer-info-over-dit-object',
-				null,
-				emailInfo.language
-			),
-		};
-
-		const MATERIAL_REQUEST_REQUESTER_CAPACITY_TRANSLATIONS: Record<
-			MaterialRequestRequesterCapacity,
-			string
-		> = {
-			[MaterialRequestRequesterCapacity.OTHER]: this.translationsService.tText(
-				'modules/campaign-monitor/services/campaign-monitor___andere',
-				null,
-				emailInfo.language
-			),
-			[MaterialRequestRequesterCapacity.WORK]: this.translationsService.tText(
-				'modules/campaign-monitor/services/campaign-monitor___ik-vraag-de-fragmenten-op-in-het-kader-van-mijn-beroep-uitgezonderd-onderwijs',
-				null,
-				emailInfo.language
-			),
-			[MaterialRequestRequesterCapacity.PRIVATE_RESEARCH]: this.translationsService.tText(
-				'modules/campaign-monitor/services/campaign-monitor___ik-vraag-de-fragmenten-aan-in-het-kader-van-prive-onderzoek',
-				null,
-				emailInfo.language
-			),
-			[MaterialRequestRequesterCapacity.EDUCATION]: this.translationsService.tText(
-				'modules/campaign-monitor/services/campaign-monitor___ik-ben-verbonden-aan-een-onderwijsinstelling-als-student-onderzoeker-of-lesgever',
-				null,
-				emailInfo.language
-			),
-		};
-
-		const mapMaterialRequest = (materialRequest: MaterialRequest) => ({
-			title: materialRequest.objectSchemaName,
-			local_cp_id: materialRequest.objectMeemooLocalId,
-			cp_name: materialRequest.maintainerName,
-			pid: materialRequest.objectSchemaIdentifier,
-			page_url: `${this.configService.get('CLIENT_HOST')}/zoeken/${
-				materialRequest.maintainerSlug
-			}/${materialRequest.objectSchemaIdentifier}`,
-			request_type: MATERIAL_REQUEST_TYPE_TRANSLATIONS[materialRequest.type],
-			request_description: materialRequest.reason,
-			material_request_id: materialRequest.id,
-		});
-
 		// Maintainer Template
 		if (
 			emailInfo.template === EmailTemplate.CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_MAINTAINER
@@ -575,10 +523,12 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 				cp_name: emailInfo.materialRequests[0]?.maintainerName,
 				cp_email: emailInfo.materialRequests[0]?.contactMail,
 				request_list: emailInfo.materialRequests.map((materialRequest) =>
-					mapMaterialRequest(materialRequest)
+					this.convertMaterialRequestToEmailTemplateFields(materialRequest, emailInfo.language)
 				),
-				user_request_context:
-					MATERIAL_REQUEST_REQUESTER_CAPACITY_TRANSLATIONS[emailInfo.sendRequestListDto.type],
+				user_request_context: MATERIAL_REQUEST_REQUESTER_CAPACITY_TRANSLATIONS(
+					emailInfo.language,
+					this.translationsService
+				)[emailInfo.sendRequestListDto.type],
 				user_organisation: emailInfo.sendRequestListDto.organisationName,
 				user_email: emailInfo.materialRequests[0]?.requesterMail,
 			};
@@ -594,7 +544,7 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 			user_firstname: emailInfo.requesterFirstName,
 			user_lastname: emailInfo.requesterLastName,
 			request_list: emailInfo.materialRequests.map((materialRequest) => ({
-				...mapMaterialRequest(materialRequest),
+				...this.convertMaterialRequestToEmailTemplateFields(materialRequest, emailInfo.language),
 				request_url: stringifyUrl({
 					url: `${this.configService.get('CLIENT_HOST')}/${requestUrl}`,
 					query: {
@@ -602,14 +552,19 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 					},
 				}),
 			})),
-			user_request_context:
-				MATERIAL_REQUEST_REQUESTER_CAPACITY_TRANSLATIONS[emailInfo.sendRequestListDto.type],
+			user_request_context: MATERIAL_REQUEST_REQUESTER_CAPACITY_TRANSLATIONS(
+				emailInfo.language,
+				this.translationsService
+			)[emailInfo.sendRequestListDto.type],
 			user_organisation: emailInfo.sendRequestListDto.organisationName,
 			user_email: emailInfo.materialRequests[0]?.requesterMail,
 		};
 	}
 
-	public convertMaterialRequestToEmailTemplateFields(materialRequest: MaterialRequest) {
+	public convertMaterialRequestsToAdditionalConditionsEmailTemplateData(
+		materialRequest: MaterialRequest,
+		language: Locale
+	): CampaignMonitorMaterialRequestData {
 		return {
 			user_firstname: materialRequest.requesterFirstName,
 			user_lastname: materialRequest.requesterLastName,
@@ -617,8 +572,27 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 			user_organisation: materialRequest.requesterOrganisationName,
 			cp_name: materialRequest.maintainerName,
 			cp_email: materialRequest.contactMail,
-			object_name: materialRequest.objectSchemaName,
-			object_id: materialRequest.objectSchemaIdentifier,
+			request_list: [this.convertMaterialRequestToEmailTemplateFields(materialRequest, language)],
+		};
+	}
+
+	private convertMaterialRequestToEmailTemplateFields(
+		materialRequest: MaterialRequest,
+		language: Locale
+	) {
+		return {
+			title: materialRequest.objectSchemaName,
+			local_cp_id: materialRequest.objectMeemooLocalId,
+			cp_name: materialRequest.maintainerName,
+			pid: materialRequest.objectSchemaIdentifier,
+			page_url: `${this.configService.get('CLIENT_HOST')}/zoeken/${
+				materialRequest.maintainerSlug
+			}/${materialRequest.objectSchemaIdentifier}`,
+			request_type: MATERIAL_REQUEST_TYPE_TRANSLATIONS(language, this.translationsService)[
+				materialRequest.type
+			],
+			request_description: materialRequest.reason,
+			material_request_id: materialRequest.id,
 		};
 	}
 
