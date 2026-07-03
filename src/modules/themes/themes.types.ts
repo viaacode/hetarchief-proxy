@@ -1,3 +1,8 @@
+import {
+	GetThemeWithObjectsInRandomOrderQuery,
+	GetThemeWithObjectsQuery,
+} from '~generated/graphql-db-types-hetarchief';
+
 export interface IeObjectInTheme {
 	id: string;
 	name: string | null;
@@ -30,5 +35,9 @@ export const THEME_ORDER_PROP_TO_DB_PROP: Record<ThemeOrderProp, string> = {
 
 export enum ThemeIeObjectOrderProp {
 	NAME = 'name',
-	INTELLECTUAL_ENTITY_ID = 'intellectualEntityId',
+	MAINTAINER_NAME = 'maintainerName',
 }
+
+export type RawThemeIeObject =
+	| GetThemeWithObjectsInRandomOrderQuery['app_theme_by_pk']['ieObjectLinksRandomOrder'][0]['ieObject']
+	| GetThemeWithObjectsQuery['app_theme_by_pk']['ieObjectLinks'][0]['ieObject'];

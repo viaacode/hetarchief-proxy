@@ -31,7 +31,6 @@ import {
 	AddIeObjectsToThemeDto,
 	CreateThemeDto,
 	IeObjectInThemeResponseDto,
-	IeObjectsInThemeQueryDto,
 	IeObjectsInThemeResponseDto,
 	ThemeIeObjectLinkResponseDto,
 	ThemeIeObjectsQueryDto,
@@ -150,17 +149,17 @@ export class ThemesController {
 		throw new NotFoundException(`Theme with id '${themeId}' not found`);
 	}
 
-	@Get(':themeIdentifier/ie-objects')
+	@Get(':themeUuid/ie-objects')
 	@ApiOperation({
-		summary: 'Get ie-objects linked to a theme',
+		summary: 'Get theme info and their ie-objects',
 		description:
-			'Accepts either a UUID or a slug. When a UUID is provided the ie-objects are returned paginated and in stable order (supports page, size, orderProp, orderDirection). When a slug is provided a random selection is returned (use the optional `limit` query param to cap the count).',
+			'Accepts a UUID. Ie-objects are returned paginated (orderProp supports page, size, orderProp, orderDirection).',
 	})
 	@ApiParam({
-		name: 'themeIdentifier',
-		description: 'The UUID or slug of the theme',
+		name: 'themeUuid',
+		description: 'The UUID of the theme',
 		type: String,
-		example: 'culture-society',
+		example: '8fc4fb4a-7752-4955-aa49-6ea6e91e8529',
 	})
 	@ApiOkResponse({
 		description: 'Returns the theme with its linked ie-objects',
@@ -168,14 +167,10 @@ export class ThemesController {
 	})
 	@ApiNotFoundResponse({ description: 'Theme with the given identifier was not found' })
 	public async getIeObjects(
-		@Param('themeIdentifier') themeIdentifier: string,
-		@Query() queryDto: ThemeIeObjectsQueryDto & IeObjectsInThemeQueryDto
+		@Param('themeUuid') themeUuid: string,
+		@Query() queryDto: ThemeIeObjectsQueryDto
 	): Promise<IeObjectsInThemeResponseDto | IPagination<IeObjectInThemeResponseDto>> {
-		const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-		if (UUID_PATTERN.test(themeIdentifier)) {
-			return this.themesService.getIeObjectsByThemeUuid(themeIdentifier, queryDto);
-		}
-		return this.themesService.getIeObjectsByThemeSlug(themeIdentifier, queryDto.limit);
+		return this.themesService.getIeObjectsByThemeUuid(themeUuid, queryDto);
 	}
 
 	@Post(':themeId/ie-objects')
