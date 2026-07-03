@@ -541,8 +541,9 @@ export class NotificationsService {
 						data: {
 							to: materialRequest.requesterMail,
 							replyTo: materialRequest.contactMail,
-							data: this.campaignMonitorService.convertMaterialRequestToEmailTemplateFields(
-								materialRequest
+							data: this.campaignMonitorService.convertMaterialRequestsToAdditionalConditionsEmailTemplateData(
+								materialRequest,
+								materialRequest.requesterLanguage
 							),
 							consentToTrack: ConsentToTrackOption.UNCHANGED,
 						},
@@ -572,8 +573,9 @@ export class NotificationsService {
 						to: materialRequest.requesterMail,
 						replyTo: materialRequest.contactMail,
 						consentToTrack: ConsentToTrackOption.UNCHANGED,
-						data: this.campaignMonitorService.convertMaterialRequestToEmailTemplateFields(
-							materialRequest
+						data: this.campaignMonitorService.convertMaterialRequestsToAdditionalConditionsEmailTemplateData(
+							materialRequest,
+							materialRequest.requesterLanguage
 						),
 					},
 				},
@@ -611,8 +613,9 @@ export class NotificationsService {
 						data: {
 							to: materialRequest.requesterMail,
 							replyTo: materialRequest.contactMail,
-							data: this.campaignMonitorService.convertMaterialRequestToEmailTemplateFields(
-								materialRequest
+							data: this.campaignMonitorService.convertMaterialRequestsToAdditionalConditionsEmailTemplateData(
+								materialRequest,
+								materialRequest.requesterLanguage
 							),
 							consentToTrack: ConsentToTrackOption.UNCHANGED,
 						},
