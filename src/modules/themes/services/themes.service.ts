@@ -61,6 +61,9 @@ export class ThemesService {
 		const offset = page * size;
 
 		if (orderDirection === SortDirectionWithRandom.random) {
+			// Gets themes from the app_theme_random_order view
+			// Which has a computed column that is filled in by the postgres function RANDOM()
+			// And rows are sorted by that random column, so we get a random selection of themes
 			const response = await this.dataService.execute<
 				GetThemesInRandomOrderQuery,
 				GetThemesInRandomOrderQueryVariables
@@ -183,6 +186,9 @@ export class ThemesService {
 			| GetThemeWithObjectsQuery['app_theme_by_pk'];
 		if (orderDirection && orderDirection === SortDirectionWithRandom.random) {
 			// random
+			// Gets a theme with ieObjects from the app_theme_intellectual_entity_random_order view
+			// Which has a computed column that is filled in by the postgres function RANDOM()
+			// And rows are sorted by that random column, so we get a random selection of ieObjects
 			const response = await this.dataService.execute<
 				GetThemeWithObjectsInRandomOrderQuery,
 				GetThemeWithObjectsInRandomOrderQueryVariables
