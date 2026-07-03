@@ -1,0 +1,9 @@
+query getThemesInRandomOrder($limit: Int) {
+	app_theme_random_order(limit: $limit, order_by: { random_sort: asc }) {
+		id
+		slug
+		name_nl
+		name_en
+		image_url
+	}
+}

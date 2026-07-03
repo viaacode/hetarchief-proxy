@@ -12,7 +12,7 @@ import {
 	Max,
 	Min,
 } from 'class-validator';
-import { SortDirection, SortDirectionWithRandom } from '~shared/types';
+import { SortDirectionWithRandom } from '~shared/types';
 import { ThemeIeObjectOrderProp, ThemeOrderProp } from '../themes.types';
 
 export class CreateThemeDto {
@@ -162,15 +162,16 @@ export class ThemesQueryDto {
 	})
 	orderProp? = ThemeOrderProp.NAME_NL;
 
-	@IsEnum(SortDirection)
+	@IsEnum(SortDirectionWithRandom)
 	@IsOptional()
 	@ApiPropertyOptional({
 		type: String,
-		description: 'Direction to sort in',
-		default: SortDirection.asc,
-		enum: SortDirection,
+		description:
+			'Direction to sort in or random order. If random order is specified, the orderProp will be ignored',
+		default: SortDirectionWithRandom.asc,
+		enum: SortDirectionWithRandom,
 	})
-	orderDirection? = SortDirection.asc;
+	orderDirection? = SortDirectionWithRandom.asc;
 }
 
 export class ThemeIeObjectsQueryDto {
