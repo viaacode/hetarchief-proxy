@@ -143,5 +143,15 @@
   "overrides": {
     "typescript": "5.9.3",
     "sharp": "^0.33.5"
+  },
+  "allowScripts": {
+    "@biomejs/biome@1.9.4":  true,
+    "@nestjs/core@9.4.3": true,
+    "@swc/core@1.11.7":  true,
+    "core-js@3.36.0": true,
+    "esbuild@0.27.2":  true,
+    "fsevents@2.3.3": true,
+    "lefthook@1.11.13":  true,
+    "sharp@0.33.5": true
   }
 }
