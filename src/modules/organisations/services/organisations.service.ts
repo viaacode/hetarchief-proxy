@@ -16,12 +16,12 @@ import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/help
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { hoursToSeconds } from 'date-fns';
 import {
-	FindOrganisationsBySchemaIdsDocument,
-	type FindOrganisationsBySchemaIdsQuery,
-	type FindOrganisationsBySchemaIdsQueryVariables,
 	FindOrganisationSlugsDocument,
 	FindOrganisationSlugsQuery,
 	FindOrganisationSlugsQueryVariables,
+	FindOrganisationsBySchemaIdsDocument,
+	type FindOrganisationsBySchemaIdsQuery,
+	type FindOrganisationsBySchemaIdsQueryVariables,
 	GetOrganisationBySlugDocument,
 	type GetOrganisationBySlugQuery,
 	type GetOrganisationBySlugQueryVariables,
@@ -191,7 +191,10 @@ export class OrganisationsService {
 			FindOrganisationSlugsQuery,
 			FindOrganisationSlugsQueryVariables
 		>(FindOrganisationSlugsDocument, {
-			where,
+			where: {
+				// Only keep organisations that have users
+				_and: [where, { organisation: { users: {} } }],
+			},
 			offset,
 			limit,
 			orderBy,
