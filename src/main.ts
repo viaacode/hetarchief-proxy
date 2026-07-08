@@ -22,7 +22,7 @@ async function bootstrap() {
 	const port = configService.get('PORT');
 
 	/** Logging */
-	if (process.env.NODE_ENV === 'local') {
+	if (process.env.LOG_PROXY_REQUEST_PATHS === 'true') {
 		app.use((req, _res, next) => {
 			if (!['GET', 'POST', 'PATCH', 'PUT', 'DELETE'].includes(req.method)) {
 				next();
