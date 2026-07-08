@@ -28,11 +28,10 @@ async function bootstrap() {
 				next();
 				return;
 			}
-			if (req.path === '/admin/content-pages/by-language-and-path') {
-				console.info(`${req.method} ${req.url}`);
-			} else {
-				console.info(`${req.method} ${req.path}`);
-			}
+			const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+			const LOG_QUERY_PARAM_PATHS = process.env.LOG_QUERY_PARAM_PATHS || [];
+			const path = LOG_QUERY_PARAM_PATHS.includes(req.path) ? req.url : req.path;
+			console.info(`[${ip}] ${req.method} ${path}`);
 			next();
 		});
 	}
