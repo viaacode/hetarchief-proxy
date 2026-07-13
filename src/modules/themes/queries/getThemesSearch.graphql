@@ -1,0 +1,38 @@
+query getThemesSearch(
+	$offset: Int
+	$limit: Int
+	$orderBy: [app_theme_order_by!]
+	$searchTerm: String
+) {
+	app_theme(
+		offset: $offset
+		limit: $limit
+		order_by: $orderBy
+		where: {
+			_or: [
+				{ name_nl: { _ilike: $searchTerm } }
+				{ name_en: { _ilike: $searchTerm } }
+				{ slug: { _ilike: $searchTerm } }
+			]
+		}
+	) {
+		id
+		slug
+		name_nl
+		name_en
+		image_url
+	}
+	app_theme_aggregate(
+		where: {
+			_or: [
+				{ name_nl: { _ilike: $searchTerm } }
+				{ name_en: { _ilike: $searchTerm } }
+				{ slug: { _ilike: $searchTerm } }
+			]
+		}
+	) {
+		aggregate {
+			count
+		}
+	}
+}

@@ -30,7 +30,7 @@
     "test:ci": "vitest run --maxWorkers=1 --no-color",
     "test:watch": "vitest",
     "test:cov": "vitest run --coverage",
-    "test:debug": "vitest --inspect-brk --no-file-parallelism",
+    "test:debug": "vitest run --inspect --no-file-parallelism",
     "test:e2e": "vitest run --config ./vitest-e2e.config.ts",
     "install-pre-commit-hook": "lefthook install",
     "generate-database-types": "dotenv -e ./.env/.env.local graphql-codegen -- --config codegen-hetarchief.yml",

@@ -131,6 +131,15 @@ export class ThemeIeObjectLinkResponseDto {
 }
 
 export class ThemesQueryDto {
+	@IsString()
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		description: 'Search term to filter themes by name (Dutch or English)',
+		example: 'cultuur',
+	})
+	searchTerm?: string;
+
 	@IsNumber()
 	@Min(0)
 	@Type(() => Number)
