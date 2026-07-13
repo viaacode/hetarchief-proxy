@@ -25,6 +25,9 @@ import {
 	ApiTags,
 } from '@nestjs/swagger';
 import { AvoFileUploadAssetType } from '@viaa/avo2-types';
+import { PermissionName } from '@viaa/avo2-types';
+
+import { RequireAllPermissions } from '~shared/decorators/require-permissions.decorator';
 
 import { type IPagination } from '@studiohyperdrive/pagination';
 import {
@@ -65,6 +68,7 @@ export class ThemesController {
 	}
 
 	@Post()
+	@RequireAllPermissions(PermissionName.MANAGE_IE_OBJECT_THEMES)
 	@UseInterceptors(FileInterceptor('file'))
 	@ApiOperation({
 		summary: 'Create a new theme',
@@ -103,6 +107,7 @@ export class ThemesController {
 	}
 
 	@Patch(':themeId')
+	@RequireAllPermissions(PermissionName.MANAGE_IE_OBJECT_THEMES)
 	@ApiOperation({
 		summary: 'Update a theme',
 		description: 'Partially updates a theme by its UUID.',
@@ -127,6 +132,7 @@ export class ThemesController {
 	}
 
 	@Delete(':themeId')
+	@RequireAllPermissions(PermissionName.MANAGE_IE_OBJECT_THEMES)
 	@ApiOperation({
 		summary: 'Delete a theme',
 		description: 'Deletes a theme by its UUID.',
@@ -174,6 +180,7 @@ export class ThemesController {
 	}
 
 	@Post(':themeId/ie-objects')
+	@RequireAllPermissions(PermissionName.MANAGE_IE_OBJECT_THEMES)
 	@ApiOperation({
 		summary: 'Add ie-objects to a theme',
 		description: 'Links one or more ie-objects (by schema identifier) to a theme.',
@@ -198,6 +205,7 @@ export class ThemesController {
 	}
 
 	@Delete(':themeId/ie-objects/:ieObjectId')
+	@RequireAllPermissions(PermissionName.MANAGE_IE_OBJECT_THEMES)
 	@ApiOperation({
 		summary: 'Remove an ie-object from a theme',
 		description: 'Removes the link between a theme and a specific ie-object.',

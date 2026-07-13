@@ -46,7 +46,7 @@
     "@nestjs/schedule": "3.0.4",
     "@nestjs/swagger": "7.4.0",
     "@studiohyperdrive/pagination": "1.0.0",
-    "@viaa/avo2-types": "5.0.17",
+    "@viaa/avo2-types": "5.0.18",
     "app-root-path": "3.0.0",
     "archiver": "7.0.1",
     "async": "^3.2.6",
@@ -143,7 +143,7 @@
   "overrides": {
     "typescript": "5.9.3",
     "sharp": "^0.33.5",
-    "@viaa/avo2-types": "5.0.17"
+    "@viaa/avo2-types": "5.0.18"
   },
   "allowScripts": {
     "@biomejs/biome@1.9.4":  true,
