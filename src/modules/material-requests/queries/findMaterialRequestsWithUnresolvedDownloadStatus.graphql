@@ -4,7 +4,12 @@ query findMaterialRequestsWithUnresolvedDownloadStatus {
 			status: { _eq: APPROVED }
 			_or: [
 				{ download_status: { _in: [NEW, PENDING] } }
+				"""
+				disable retries for failed material requests
+				"""
+				"""
 				{ download_status: { _eq: FAILED }, download_retries: { _lt: 3 } }
+				"""
 				{ download_status: { _is_null: true } }
 			]
 		}
