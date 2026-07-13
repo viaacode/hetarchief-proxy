@@ -1,6 +1,6 @@
 {
   "name": "hetarchief-proxy",
-  "version": "4.2.19",
+  "version": "4.2.20",
   "description": "",
   "author": "",
   "private": true,
@@ -144,5 +144,15 @@
     "typescript": "5.9.3",
     "sharp": "^0.33.5",
     "@viaa/avo2-types": "5.0.17"
+  },
+  "allowScripts": {
+    "@biomejs/biome@1.9.4":  true,
+    "@nestjs/core@9.4.3": true,
+    "@swc/core@1.11.7":  true,
+    "core-js@3.36.0": true,
+    "esbuild@0.27.2":  true,
+    "fsevents@2.3.3": true,
+    "lefthook@1.11.13":  true,
+    "sharp@0.33.5": true
   }
 }

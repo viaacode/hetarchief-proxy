@@ -408,7 +408,7 @@ export class MediahavenJobsWatcherService {
 
 	private async getMediaHavenExportJobRequestBody(
 		materialRequest: MaterialRequestForDownload
-	): Promise<CreateMamJobRequestBody | null> {
+	): Promise<CreateMamJobRequestBody> {
 		let records: CreateMamJobRequestBody['Records'];
 
 		try {
@@ -471,7 +471,13 @@ export class MediahavenJobsWatcherService {
 				Reason: `Export for hetarchief.be material request ${materialRequest.id}`,
 				Tag: this.configService.get('MEDIAHAVEN_EXPORT_JOBS_TAG'),
 			};
-		} catch (err) {}
+		} catch (err) {
+			const error = new CustomError('Failed to create mediahaven export job', err, {
+				materialRequestId: materialRequest.id,
+			});
+			console.error(error);
+			throw error;
+		}
 	}
 
 	/**
@@ -502,7 +508,7 @@ export class MediahavenJobsWatcherService {
 				try {
 					responseBody = await response.text();
 				} catch (err) {
-					// ignore error, we don't need the response body perse
+					// ignore error, we don't need the response body necessarily
 				}
 				throw new CustomError(
 					'Error received when creating mediahaven export job',
@@ -588,20 +594,25 @@ export class MediahavenJobsWatcherService {
 			jobs.map((job) => job.ExportJobId)
 		);
 
-		return await mapLimit(
-			jobs,
-			10,
-			async (
-				job
-			): Promise<{ requestInfo: CreateMamJobRequestBody; exportJobStatus: MediahavenJobInfo }> => {
+		const getJobInfo = async (
+			job: MediahavenJobInfo
+		): Promise<{
+			requestInfo: CreateMamJobRequestBody;
+			exportJobStatus: MediahavenJobInfo;
+		}> => {
+			try {
 				const materialRequest = materialRequests.find((mr) => mr.downloadJobId === job.ExportJobId);
 				if (!materialRequest) {
 					return { requestInfo: null, exportJobStatus: job };
 				}
 				const requestInfo = await this.getMediaHavenExportJobRequestBody(materialRequest);
 				return { requestInfo, exportJobStatus: job };
+			} catch (err) {
+				return null;
 			}
-		);
+		};
+		const jobInfos = await mapLimit(jobs, 10, getJobInfo);
+		return compact(jobInfos);
 	}
 
 	/**
