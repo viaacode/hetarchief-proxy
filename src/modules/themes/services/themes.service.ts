@@ -11,6 +11,9 @@ import {
 	DeleteThemeDocument,
 	DeleteThemeMutation,
 	DeleteThemeMutationVariables,
+	GetIeObjectsInThemeDocument,
+	GetIeObjectsInThemeQuery,
+	GetIeObjectsInThemeQueryVariables,
 	GetThemeWithObjectsDocument,
 	GetThemeWithObjectsInRandomOrderDocument,
 	GetThemeWithObjectsInRandomOrderQuery,
@@ -23,6 +26,9 @@ import {
 	GetThemesInRandomOrderQueryVariables,
 	GetThemesQuery,
 	GetThemesQueryVariables,
+	GetThemesSearchDocument,
+	GetThemesSearchQuery,
+	GetThemesSearchQueryVariables,
 	InsertIeObjectsIntoThemeDocument,
 	InsertIeObjectsIntoThemeMutation,
 	InsertIeObjectsIntoThemeMutationVariables,
@@ -57,8 +63,9 @@ export class ThemesService {
 	constructor(private dataService: DataService) {}
 
 	public async getThemes(queryDto: ThemesQueryDto): Promise<IPagination<ThemeResponseDto>> {
-		const { page, size, orderProp, orderDirection } = queryDto;
+		const { page, size, orderProp, orderDirection, searchTerm } = queryDto;
 		const offset = page * size;
+		const searchPattern = searchTerm ? `%${searchTerm}%` : undefined;
 
 		if (orderDirection === SortDirectionWithRandom.random) {
 			// Gets themes from the app_theme_random_order view
@@ -81,6 +88,20 @@ export class ThemesService {
 			THEME_ORDER_PROP_TO_DB_PROP[orderProp] ?? THEME_ORDER_PROP_TO_DB_PROP[ThemeOrderProp.NAME_NL];
 		const direction = (orderDirection ?? SortDirectionWithRandom.asc) as unknown as Order_By;
 		const orderBy = [set({}, dbProp, direction)];
+
+		if (searchPattern) {
+			const response = await this.dataService.execute<
+				GetThemesSearchQuery,
+				GetThemesSearchQueryVariables
+			>(GetThemesSearchDocument, { offset, limit: size, orderBy, searchTerm: searchPattern });
+
+			return Pagination<ThemeResponseDto>({
+				items: response.app_theme.map((theme) => this.adaptTheme(theme)),
+				page,
+				size,
+				total: response.app_theme_aggregate.aggregate.count,
+			});
+		}
 
 		const response = await this.dataService.execute<GetThemesQuery, GetThemesQueryVariables>(
 			GetThemesDocument,

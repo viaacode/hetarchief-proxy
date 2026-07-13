@@ -3,45 +3,45 @@ import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/help
 import { Test, type TestingModule } from '@nestjs/testing';
 import { type MockInstance, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 
-import { GetIeObjectsInThemeQuery } from '~generated/graphql-db-types-hetarchief';
+import { GetThemeWithObjectsInRandomOrderQuery } from '~generated/graphql-db-types-hetarchief';
 import { TestingLogger } from '~shared/logging/test-logger';
+import { SortDirectionWithRandom } from '~shared/types';
 import { ThemesService } from './themes.service';
 
 const mockThemeSlug = 'culture-society';
+const mockThemeUuid = 'c619c4b1-5cd6-4277-95e8-8137f10a09ea';
 
-const mockGetIeObjectsInThemeResponse: GetIeObjectsInThemeQuery = {
-	app_theme: [
-		{
-			id: 'theme-uuid-1',
-			slug: mockThemeSlug,
-			name_nl: 'Cultuur en samenleving',
-			name_en: 'Culture & Society',
-			image_url: 'https://example.com/nature.jpg',
-			ieObjectLinksRandomOrder: [
-				{
-					ieObject: {
-						id: 'ie-uuid-1',
-						schema_name: 'Natuur documentaire',
-						dctermsFormat: [{ dcterms_format: 'video' }],
-						schemaThumbnail: { schema_thumbnail_url: 'https://example.com/thumb1.jpg' },
-						schemaMaintainer: { id: 'or-abc123', skos_pref_label: 'VRT' },
-					},
+const mockGetIeObjectsInThemeResponse: GetThemeWithObjectsInRandomOrderQuery = {
+	app_theme_by_pk: {
+		id: 'theme-uuid-1',
+		slug: mockThemeSlug,
+		name_nl: 'Cultuur en samenleving',
+		name_en: 'Culture & Society',
+		image_url: 'https://example.com/nature.jpg',
+		ieObjectLinksRandomOrder: [
+			{
+				ieObject: {
+					id: 'ie-uuid-1',
+					schema_name: 'Natuur documentaire',
+					dctermsFormat: [{ dcterms_format: 'video' }],
+					schemaThumbnail: { schema_thumbnail_url: 'https://example.com/thumb1.jpg' },
+					schemaMaintainer: { id: 'or-abc123', skos_pref_label: 'VRT' },
 				},
-				{
-					ieObject: {
-						id: 'ie-uuid-2',
-						schema_name: 'Natuur foto',
-						dctermsFormat: [{ dcterms_format: 'image' }],
-						schemaThumbnail: null,
-						schemaMaintainer: { id: 'or-def456', skos_pref_label: 'RTBF' },
-					},
+			},
+			{
+				ieObject: {
+					id: 'ie-uuid-2',
+					schema_name: 'Natuur foto',
+					dctermsFormat: [{ dcterms_format: 'image' }],
+					schemaThumbnail: null,
+					schemaMaintainer: { id: 'or-def456', skos_pref_label: 'RTBF' },
 				},
-				{
-					ieObject: null,
-				},
-			],
-		},
-	],
+			},
+			{
+				ieObject: null,
+			},
+		],
+	},
 };
 
 const mockDataService: Partial<Record<keyof DataService, MockInstance>> = {
@@ -79,7 +79,10 @@ describe('ThemesService', () => {
 		it('returns the theme with its linked ie-objects', async () => {
 			mockDataService.execute.mockResolvedValueOnce(mockGetIeObjectsInThemeResponse);
 
-			const result = await themesService.getIeObjectsByThemeSlug(mockThemeSlug, 20);
+			const result = await themesService.getIeObjectsByThemeUuid(mockThemeUuid, {
+				size: 20,
+				orderDirection: SortDirectionWithRandom.random,
+			});
 
 			expect(result.slug).toEqual(mockThemeSlug);
 			expect(result.nameNl).toEqual('Cultuur en samenleving');
@@ -92,7 +95,10 @@ describe('ThemesService', () => {
 		it('correctly maps ie-object fields', async () => {
 			mockDataService.execute.mockResolvedValueOnce(mockGetIeObjectsInThemeResponse);
 
-			const result = await themesService.getIeObjectsByThemeSlug(mockThemeSlug, 20);
+			const result = await themesService.getIeObjectsByThemeUuid(mockThemeUuid, {
+				size: 20,
+				orderDirection: SortDirectionWithRandom.random,
+			});
 			const [first] = result.ieObjects;
 
 			expect(first.id).toEqual('ie-uuid-1');
@@ -106,24 +112,33 @@ describe('ThemesService', () => {
 		it('returns null for missing optional fields', async () => {
 			mockDataService.execute.mockResolvedValueOnce(mockGetIeObjectsInThemeResponse);
 
-			const result = await themesService.getIeObjectsByThemeSlug(mockThemeSlug, 20);
+			const result = await themesService.getIeObjectsByThemeUuid(mockThemeUuid, {
+				size: 20,
+				orderDirection: SortDirectionWithRandom.random,
+			});
 			const second = result.ieObjects[1];
 
 			expect(second.thumbnailUrl).toBeNull();
 		});
 
 		it('throws CustomError with 404 when the theme does not exist', async () => {
-			mockDataService.execute.mockResolvedValueOnce({ app_theme: [] });
+			mockDataService.execute.mockResolvedValueOnce({ app_theme_by_pk: null });
 
-			await expect(themesService.getIeObjectsByThemeSlug('non-existing-slug', 20)).rejects.toThrow(
-				CustomError
-			);
+			await expect(
+				themesService.getIeObjectsByThemeUuid('non-existing-uuid', {
+					size: 20,
+					orderDirection: SortDirectionWithRandom.random,
+				})
+			).rejects.toThrow(CustomError);
 		});
 
 		it('passes the limit to the query', async () => {
 			mockDataService.execute.mockResolvedValueOnce(mockGetIeObjectsInThemeResponse);
 
-			await themesService.getIeObjectsByThemeSlug(mockThemeSlug, 5);
+			await themesService.getIeObjectsByThemeUuid(mockThemeUuid, {
+				size: 5,
+				orderDirection: SortDirectionWithRandom.random,
+			});
 
 			expect(mockDataService.execute).toHaveBeenCalledWith(
 				expect.anything(),
