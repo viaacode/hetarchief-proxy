@@ -15,6 +15,7 @@ export type Scalars = {
   Float: { input: number; output: number; }
   bigint: { input: any; output: any; }
   date: { input: any; output: any; }
+  float8: { input: any; output: any; }
   interval: { input: any; output: any; }
   json: { input: any; output: any; }
   jsonb: { input: any; output: any; }
@@ -5081,6 +5082,1141 @@ export type App_Notification_Updates = {
   where: App_Notification_Bool_Exp;
 };
 
+/** contains the themes that can group mutiple intellectual entities */
+export type App_Theme = {
+  __typename?: 'app_theme';
+  id: Scalars['uuid']['output'];
+  /** An array relationship */
+  ieObjectLinks: Array<App_Theme_Intellectual_Entity>;
+  /** An array relationship */
+  ieObjectLinksRandomOrder: Array<App_Theme_Intellectual_Entity_Random_Order>;
+  /** An aggregate relationship */
+  ieObjectLinksRandomOrder_aggregate: App_Theme_Intellectual_Entity_Random_Order_Aggregate;
+  /** An aggregate relationship */
+  ieObjectLinks_aggregate: App_Theme_Intellectual_Entity_Aggregate;
+  image_url?: Maybe<Scalars['String']['output']>;
+  name_en: Scalars['String']['output'];
+  name_nl: Scalars['String']['output'];
+  slug: Scalars['String']['output'];
+};
+
+
+/** contains the themes that can group mutiple intellectual entities */
+export type App_ThemeIeObjectLinksArgs = {
+  distinct_on?: InputMaybe<Array<App_Theme_Intellectual_Entity_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<App_Theme_Intellectual_Entity_Order_By>>;
+  where?: InputMaybe<App_Theme_Intellectual_Entity_Bool_Exp>;
+};
+
+
+/** contains the themes that can group mutiple intellectual entities */
+export type App_ThemeIeObjectLinksRandomOrderArgs = {
+  distinct_on?: InputMaybe<Array<App_Theme_Intellectual_Entity_Random_Order_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<App_Theme_Intellectual_Entity_Random_Order_Order_By>>;
+  where?: InputMaybe<App_Theme_Intellectual_Entity_Random_Order_Bool_Exp>;
+};
+
+
+/** contains the themes that can group mutiple intellectual entities */
+export type App_ThemeIeObjectLinksRandomOrder_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<App_Theme_Intellectual_Entity_Random_Order_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<App_Theme_Intellectual_Entity_Random_Order_Order_By>>;
+  where?: InputMaybe<App_Theme_Intellectual_Entity_Random_Order_Bool_Exp>;
+};
+
+
+/** contains the themes that can group mutiple intellectual entities */
+export type App_ThemeIeObjectLinks_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<App_Theme_Intellectual_Entity_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<App_Theme_Intellectual_Entity_Order_By>>;
+  where?: InputMaybe<App_Theme_Intellectual_Entity_Bool_Exp>;
+};
+
+/** aggregated selection of "app.theme" */
+export type App_Theme_Aggregate = {
+  __typename?: 'app_theme_aggregate';
+  aggregate?: Maybe<App_Theme_Aggregate_Fields>;
+  nodes: Array<App_Theme>;
+};
+
+export type App_Theme_Aggregate_Bool_Exp = {
+  count?: InputMaybe<App_Theme_Aggregate_Bool_Exp_Count>;
+};
+
+export type App_Theme_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<App_Theme_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+  filter?: InputMaybe<App_Theme_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
+/** aggregate fields of "app.theme" */
+export type App_Theme_Aggregate_Fields = {
+  __typename?: 'app_theme_aggregate_fields';
+  count: Scalars['Int']['output'];
+  max?: Maybe<App_Theme_Max_Fields>;
+  min?: Maybe<App_Theme_Min_Fields>;
+};
+
+
+/** aggregate fields of "app.theme" */
+export type App_Theme_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<App_Theme_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+/** order by aggregate values of table "app.theme" */
+export type App_Theme_Aggregate_Order_By = {
+  count?: InputMaybe<Order_By>;
+  max?: InputMaybe<App_Theme_Max_Order_By>;
+  min?: InputMaybe<App_Theme_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "app.theme" */
+export type App_Theme_Arr_Rel_Insert_Input = {
+  data: Array<App_Theme_Insert_Input>;
+  /** upsert condition */
+  on_conflict?: InputMaybe<App_Theme_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "app.theme". All fields are combined with a logical 'AND'. */
+export type App_Theme_Bool_Exp = {
+  _and?: InputMaybe<Array<App_Theme_Bool_Exp>>;
+  _not?: InputMaybe<App_Theme_Bool_Exp>;
+  _or?: InputMaybe<Array<App_Theme_Bool_Exp>>;
+  id?: InputMaybe<Uuid_Comparison_Exp>;
+  ieObjectLinks?: InputMaybe<App_Theme_Intellectual_Entity_Bool_Exp>;
+  ieObjectLinksRandomOrder?: InputMaybe<App_Theme_Intellectual_Entity_Random_Order_Bool_Exp>;
+  ieObjectLinksRandomOrder_aggregate?: InputMaybe<App_Theme_Intellectual_Entity_Random_Order_Aggregate_Bool_Exp>;
+  ieObjectLinks_aggregate?: InputMaybe<App_Theme_Intellectual_Entity_Aggregate_Bool_Exp>;
+  image_url?: InputMaybe<String_Comparison_Exp>;
+  name_en?: InputMaybe<String_Comparison_Exp>;
+  name_nl?: InputMaybe<String_Comparison_Exp>;
+  slug?: InputMaybe<String_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "app.theme" */
+export enum App_Theme_Constraint {
+  /** unique or primary key constraint on columns "id" */
+  IntellectualEntityThemesPkey = 'intellectual_entity_themes_pkey',
+  /** unique or primary key constraint on columns "slug" */
+  IntellectualEntityThemesSlugKey = 'intellectual_entity_themes_slug_key'
+}
+
+/** input type for inserting data into table "app.theme" */
+export type App_Theme_Insert_Input = {
+  id?: InputMaybe<Scalars['uuid']['input']>;
+  ieObjectLinks?: InputMaybe<App_Theme_Intellectual_Entity_Arr_Rel_Insert_Input>;
+  ieObjectLinksRandomOrder?: InputMaybe<App_Theme_Intellectual_Entity_Random_Order_Arr_Rel_Insert_Input>;
+  image_url?: InputMaybe<Scalars['String']['input']>;
+  name_en?: InputMaybe<Scalars['String']['input']>;
+  name_nl?: InputMaybe<Scalars['String']['input']>;
+  slug?: InputMaybe<Scalars['String']['input']>;
+};
+
+/** table that contains the links between the app.theme table and the graph.intellectual_entity table */
+export type App_Theme_Intellectual_Entity = {
+  __typename?: 'app_theme_intellectual_entity';
+  id: Scalars['uuid']['output'];
+  /** An object relationship */
+  ieObject?: Maybe<Graph_Intellectual_Entity>;
+  intellectual_entity_id: Scalars['String']['output'];
+  theme_id: Scalars['uuid']['output'];
+  /** An array relationship */
+  themes: Array<App_Theme>;
+  /** An aggregate relationship */
+  themes_aggregate: App_Theme_Aggregate;
+};
+
+
+/** table that contains the links between the app.theme table and the graph.intellectual_entity table */
+export type App_Theme_Intellectual_EntityThemesArgs = {
+  distinct_on?: InputMaybe<Array<App_Theme_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<App_Theme_Order_By>>;
+  where?: InputMaybe<App_Theme_Bool_Exp>;
+};
+
+
+/** table that contains the links between the app.theme table and the graph.intellectual_entity table */
+export type App_Theme_Intellectual_EntityThemes_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<App_Theme_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<App_Theme_Order_By>>;
+  where?: InputMaybe<App_Theme_Bool_Exp>;
+};
+
+/** aggregated selection of "app.theme_intellectual_entity" */
+export type App_Theme_Intellectual_Entity_Aggregate = {
+  __typename?: 'app_theme_intellectual_entity_aggregate';
+  aggregate?: Maybe<App_Theme_Intellectual_Entity_Aggregate_Fields>;
+  nodes: Array<App_Theme_Intellectual_Entity>;
+};
+
+export type App_Theme_Intellectual_Entity_Aggregate_Bool_Exp = {
+  count?: InputMaybe<App_Theme_Intellectual_Entity_Aggregate_Bool_Exp_Count>;
+};
+
+export type App_Theme_Intellectual_Entity_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<App_Theme_Intellectual_Entity_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+  filter?: InputMaybe<App_Theme_Intellectual_Entity_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
+/** aggregate fields of "app.theme_intellectual_entity" */
+export type App_Theme_Intellectual_Entity_Aggregate_Fields = {
+  __typename?: 'app_theme_intellectual_entity_aggregate_fields';
+  count: Scalars['Int']['output'];
+  max?: Maybe<App_Theme_Intellectual_Entity_Max_Fields>;
+  min?: Maybe<App_Theme_Intellectual_Entity_Min_Fields>;
+};
+
+
+/** aggregate fields of "app.theme_intellectual_entity" */
+export type App_Theme_Intellectual_Entity_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<App_Theme_Intellectual_Entity_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+/** order by aggregate values of table "app.theme_intellectual_entity" */
+export type App_Theme_Intellectual_Entity_Aggregate_Order_By = {
+  count?: InputMaybe<Order_By>;
+  max?: InputMaybe<App_Theme_Intellectual_Entity_Max_Order_By>;
+  min?: InputMaybe<App_Theme_Intellectual_Entity_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "app.theme_intellectual_entity" */
+export type App_Theme_Intellectual_Entity_Arr_Rel_Insert_Input = {
+  data: Array<App_Theme_Intellectual_Entity_Insert_Input>;
+  /** upsert condition */
+  on_conflict?: InputMaybe<App_Theme_Intellectual_Entity_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "app.theme_intellectual_entity". All fields are combined with a logical 'AND'. */
+export type App_Theme_Intellectual_Entity_Bool_Exp = {
+  _and?: InputMaybe<Array<App_Theme_Intellectual_Entity_Bool_Exp>>;
+  _not?: InputMaybe<App_Theme_Intellectual_Entity_Bool_Exp>;
+  _or?: InputMaybe<Array<App_Theme_Intellectual_Entity_Bool_Exp>>;
+  id?: InputMaybe<Uuid_Comparison_Exp>;
+  ieObject?: InputMaybe<Graph_Intellectual_Entity_Bool_Exp>;
+  intellectual_entity_id?: InputMaybe<String_Comparison_Exp>;
+  theme_id?: InputMaybe<Uuid_Comparison_Exp>;
+  themes?: InputMaybe<App_Theme_Bool_Exp>;
+  themes_aggregate?: InputMaybe<App_Theme_Aggregate_Bool_Exp>;
+};
+
+/** unique or primary key constraints on table "app.theme_intellectual_entity" */
+export enum App_Theme_Intellectual_Entity_Constraint {
+  /** unique or primary key constraint on columns "id" */
+  ThemeIntellectualEntityPkey = 'theme_intellectual_entity_pkey',
+  /** unique or primary key constraint on columns "theme_id", "intellectual_entity_id" */
+  ThemeIntellectualEntityThemeIdIntellectualEntityIdKey = 'theme_intellectual_entity_theme_id_intellectual_entity_id_key'
+}
+
+/** input type for inserting data into table "app.theme_intellectual_entity" */
+export type App_Theme_Intellectual_Entity_Insert_Input = {
+  id?: InputMaybe<Scalars['uuid']['input']>;
+  ieObject?: InputMaybe<Graph_Intellectual_Entity_Obj_Rel_Insert_Input>;
+  intellectual_entity_id?: InputMaybe<Scalars['String']['input']>;
+  theme_id?: InputMaybe<Scalars['uuid']['input']>;
+  themes?: InputMaybe<App_Theme_Arr_Rel_Insert_Input>;
+};
+
+/** aggregate max on columns */
+export type App_Theme_Intellectual_Entity_Max_Fields = {
+  __typename?: 'app_theme_intellectual_entity_max_fields';
+  id?: Maybe<Scalars['uuid']['output']>;
+  intellectual_entity_id?: Maybe<Scalars['String']['output']>;
+  theme_id?: Maybe<Scalars['uuid']['output']>;
+};
+
+/** order by max() on columns of table "app.theme_intellectual_entity" */
+export type App_Theme_Intellectual_Entity_Max_Order_By = {
+  id?: InputMaybe<Order_By>;
+  intellectual_entity_id?: InputMaybe<Order_By>;
+  theme_id?: InputMaybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type App_Theme_Intellectual_Entity_Min_Fields = {
+  __typename?: 'app_theme_intellectual_entity_min_fields';
+  id?: Maybe<Scalars['uuid']['output']>;
+  intellectual_entity_id?: Maybe<Scalars['String']['output']>;
+  theme_id?: Maybe<Scalars['uuid']['output']>;
+};
+
+/** order by min() on columns of table "app.theme_intellectual_entity" */
+export type App_Theme_Intellectual_Entity_Min_Order_By = {
+  id?: InputMaybe<Order_By>;
+  intellectual_entity_id?: InputMaybe<Order_By>;
+  theme_id?: InputMaybe<Order_By>;
+};
+
+/** response of any mutation on the table "app.theme_intellectual_entity" */
+export type App_Theme_Intellectual_Entity_Mutation_Response = {
+  __typename?: 'app_theme_intellectual_entity_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int']['output'];
+  /** data from the rows affected by the mutation */
+  returning: Array<App_Theme_Intellectual_Entity>;
+};
+
+/** on_conflict condition type for table "app.theme_intellectual_entity" */
+export type App_Theme_Intellectual_Entity_On_Conflict = {
+  constraint: App_Theme_Intellectual_Entity_Constraint;
+  update_columns?: Array<App_Theme_Intellectual_Entity_Update_Column>;
+  where?: InputMaybe<App_Theme_Intellectual_Entity_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "app.theme_intellectual_entity". */
+export type App_Theme_Intellectual_Entity_Order_By = {
+  id?: InputMaybe<Order_By>;
+  ieObject?: InputMaybe<Graph_Intellectual_Entity_Order_By>;
+  intellectual_entity_id?: InputMaybe<Order_By>;
+  theme_id?: InputMaybe<Order_By>;
+  themes_aggregate?: InputMaybe<App_Theme_Aggregate_Order_By>;
+};
+
+/** primary key columns input for table: app.theme_intellectual_entity */
+export type App_Theme_Intellectual_Entity_Pk_Columns_Input = {
+  id: Scalars['uuid']['input'];
+};
+
+/** columns and relationships of "app.theme_intellectual_entity_random_order" */
+export type App_Theme_Intellectual_Entity_Random_Order = {
+  __typename?: 'app_theme_intellectual_entity_random_order';
+  id?: Maybe<Scalars['uuid']['output']>;
+  /** An object relationship */
+  ieObject?: Maybe<Graph_Intellectual_Entity>;
+  intellectual_entity_id?: Maybe<Scalars['String']['output']>;
+  random_sort?: Maybe<Scalars['float8']['output']>;
+  theme_id?: Maybe<Scalars['uuid']['output']>;
+  /** An array relationship */
+  themes: Array<App_Theme>;
+  /** An aggregate relationship */
+  themes_aggregate: App_Theme_Aggregate;
+};
+
+
+/** columns and relationships of "app.theme_intellectual_entity_random_order" */
+export type App_Theme_Intellectual_Entity_Random_OrderThemesArgs = {
+  distinct_on?: InputMaybe<Array<App_Theme_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<App_Theme_Order_By>>;
+  where?: InputMaybe<App_Theme_Bool_Exp>;
+};
+
+
+/** columns and relationships of "app.theme_intellectual_entity_random_order" */
+export type App_Theme_Intellectual_Entity_Random_OrderThemes_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<App_Theme_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<App_Theme_Order_By>>;
+  where?: InputMaybe<App_Theme_Bool_Exp>;
+};
+
+/** aggregated selection of "app.theme_intellectual_entity_random_order" */
+export type App_Theme_Intellectual_Entity_Random_Order_Aggregate = {
+  __typename?: 'app_theme_intellectual_entity_random_order_aggregate';
+  aggregate?: Maybe<App_Theme_Intellectual_Entity_Random_Order_Aggregate_Fields>;
+  nodes: Array<App_Theme_Intellectual_Entity_Random_Order>;
+};
+
+export type App_Theme_Intellectual_Entity_Random_Order_Aggregate_Bool_Exp = {
+  avg?: InputMaybe<App_Theme_Intellectual_Entity_Random_Order_Aggregate_Bool_Exp_Avg>;
+  corr?: InputMaybe<App_Theme_Intellectual_Entity_Random_Order_Aggregate_Bool_Exp_Corr>;
+  count?: InputMaybe<App_Theme_Intellectual_Entity_Random_Order_Aggregate_Bool_Exp_Count>;
+  covar_samp?: InputMaybe<App_Theme_Intellectual_Entity_Random_Order_Aggregate_Bool_Exp_Covar_Samp>;
+  max?: InputMaybe<App_Theme_Intellectual_Entity_Random_Order_Aggregate_Bool_Exp_Max>;
+  min?: InputMaybe<App_Theme_Intellectual_Entity_Random_Order_Aggregate_Bool_Exp_Min>;
+  stddev_samp?: InputMaybe<App_Theme_Intellectual_Entity_Random_Order_Aggregate_Bool_Exp_Stddev_Samp>;
+  sum?: InputMaybe<App_Theme_Intellectual_Entity_Random_Order_Aggregate_Bool_Exp_Sum>;
+  var_samp?: InputMaybe<App_Theme_Intellectual_Entity_Random_Order_Aggregate_Bool_Exp_Var_Samp>;
+};
+
+export type App_Theme_Intellectual_Entity_Random_Order_Aggregate_Bool_Exp_Avg = {
+  arguments: App_Theme_Intellectual_Entity_Random_Order_Select_Column_App_Theme_Intellectual_Entity_Random_Order_Aggregate_Bool_Exp_Avg_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+  filter?: InputMaybe<App_Theme_Intellectual_Entity_Random_Order_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type App_Theme_Intellectual_Entity_Random_Order_Aggregate_Bool_Exp_Corr = {
+  arguments: App_Theme_Intellectual_Entity_Random_Order_Aggregate_Bool_Exp_Corr_Arguments;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+  filter?: InputMaybe<App_Theme_Intellectual_Entity_Random_Order_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type App_Theme_Intellectual_Entity_Random_Order_Aggregate_Bool_Exp_Corr_Arguments = {
+  X: App_Theme_Intellectual_Entity_Random_Order_Select_Column_App_Theme_Intellectual_Entity_Random_Order_Aggregate_Bool_Exp_Corr_Arguments_Columns;
+  Y: App_Theme_Intellectual_Entity_Random_Order_Select_Column_App_Theme_Intellectual_Entity_Random_Order_Aggregate_Bool_Exp_Corr_Arguments_Columns;
+};
+
+export type App_Theme_Intellectual_Entity_Random_Order_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<App_Theme_Intellectual_Entity_Random_Order_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+  filter?: InputMaybe<App_Theme_Intellectual_Entity_Random_Order_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
+export type App_Theme_Intellectual_Entity_Random_Order_Aggregate_Bool_Exp_Covar_Samp = {
+  arguments: App_Theme_Intellectual_Entity_Random_Order_Aggregate_Bool_Exp_Covar_Samp_Arguments;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+  filter?: InputMaybe<App_Theme_Intellectual_Entity_Random_Order_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type App_Theme_Intellectual_Entity_Random_Order_Aggregate_Bool_Exp_Covar_Samp_Arguments = {
+  X: App_Theme_Intellectual_Entity_Random_Order_Select_Column_App_Theme_Intellectual_Entity_Random_Order_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
+  Y: App_Theme_Intellectual_Entity_Random_Order_Select_Column_App_Theme_Intellectual_Entity_Random_Order_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
+};
+
+export type App_Theme_Intellectual_Entity_Random_Order_Aggregate_Bool_Exp_Max = {
+  arguments: App_Theme_Intellectual_Entity_Random_Order_Select_Column_App_Theme_Intellectual_Entity_Random_Order_Aggregate_Bool_Exp_Max_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+  filter?: InputMaybe<App_Theme_Intellectual_Entity_Random_Order_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type App_Theme_Intellectual_Entity_Random_Order_Aggregate_Bool_Exp_Min = {
+  arguments: App_Theme_Intellectual_Entity_Random_Order_Select_Column_App_Theme_Intellectual_Entity_Random_Order_Aggregate_Bool_Exp_Min_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+  filter?: InputMaybe<App_Theme_Intellectual_Entity_Random_Order_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type App_Theme_Intellectual_Entity_Random_Order_Aggregate_Bool_Exp_Stddev_Samp = {
+  arguments: App_Theme_Intellectual_Entity_Random_Order_Select_Column_App_Theme_Intellectual_Entity_Random_Order_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+  filter?: InputMaybe<App_Theme_Intellectual_Entity_Random_Order_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type App_Theme_Intellectual_Entity_Random_Order_Aggregate_Bool_Exp_Sum = {
+  arguments: App_Theme_Intellectual_Entity_Random_Order_Select_Column_App_Theme_Intellectual_Entity_Random_Order_Aggregate_Bool_Exp_Sum_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+  filter?: InputMaybe<App_Theme_Intellectual_Entity_Random_Order_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type App_Theme_Intellectual_Entity_Random_Order_Aggregate_Bool_Exp_Var_Samp = {
+  arguments: App_Theme_Intellectual_Entity_Random_Order_Select_Column_App_Theme_Intellectual_Entity_Random_Order_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+  filter?: InputMaybe<App_Theme_Intellectual_Entity_Random_Order_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+/** aggregate fields of "app.theme_intellectual_entity_random_order" */
+export type App_Theme_Intellectual_Entity_Random_Order_Aggregate_Fields = {
+  __typename?: 'app_theme_intellectual_entity_random_order_aggregate_fields';
+  avg?: Maybe<App_Theme_Intellectual_Entity_Random_Order_Avg_Fields>;
+  count: Scalars['Int']['output'];
+  max?: Maybe<App_Theme_Intellectual_Entity_Random_Order_Max_Fields>;
+  min?: Maybe<App_Theme_Intellectual_Entity_Random_Order_Min_Fields>;
+  stddev?: Maybe<App_Theme_Intellectual_Entity_Random_Order_Stddev_Fields>;
+  stddev_pop?: Maybe<App_Theme_Intellectual_Entity_Random_Order_Stddev_Pop_Fields>;
+  stddev_samp?: Maybe<App_Theme_Intellectual_Entity_Random_Order_Stddev_Samp_Fields>;
+  sum?: Maybe<App_Theme_Intellectual_Entity_Random_Order_Sum_Fields>;
+  var_pop?: Maybe<App_Theme_Intellectual_Entity_Random_Order_Var_Pop_Fields>;
+  var_samp?: Maybe<App_Theme_Intellectual_Entity_Random_Order_Var_Samp_Fields>;
+  variance?: Maybe<App_Theme_Intellectual_Entity_Random_Order_Variance_Fields>;
+};
+
+
+/** aggregate fields of "app.theme_intellectual_entity_random_order" */
+export type App_Theme_Intellectual_Entity_Random_Order_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<App_Theme_Intellectual_Entity_Random_Order_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+/** order by aggregate values of table "app.theme_intellectual_entity_random_order" */
+export type App_Theme_Intellectual_Entity_Random_Order_Aggregate_Order_By = {
+  avg?: InputMaybe<App_Theme_Intellectual_Entity_Random_Order_Avg_Order_By>;
+  count?: InputMaybe<Order_By>;
+  max?: InputMaybe<App_Theme_Intellectual_Entity_Random_Order_Max_Order_By>;
+  min?: InputMaybe<App_Theme_Intellectual_Entity_Random_Order_Min_Order_By>;
+  stddev?: InputMaybe<App_Theme_Intellectual_Entity_Random_Order_Stddev_Order_By>;
+  stddev_pop?: InputMaybe<App_Theme_Intellectual_Entity_Random_Order_Stddev_Pop_Order_By>;
+  stddev_samp?: InputMaybe<App_Theme_Intellectual_Entity_Random_Order_Stddev_Samp_Order_By>;
+  sum?: InputMaybe<App_Theme_Intellectual_Entity_Random_Order_Sum_Order_By>;
+  var_pop?: InputMaybe<App_Theme_Intellectual_Entity_Random_Order_Var_Pop_Order_By>;
+  var_samp?: InputMaybe<App_Theme_Intellectual_Entity_Random_Order_Var_Samp_Order_By>;
+  variance?: InputMaybe<App_Theme_Intellectual_Entity_Random_Order_Variance_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "app.theme_intellectual_entity_random_order" */
+export type App_Theme_Intellectual_Entity_Random_Order_Arr_Rel_Insert_Input = {
+  data: Array<App_Theme_Intellectual_Entity_Random_Order_Insert_Input>;
+};
+
+/** aggregate avg on columns */
+export type App_Theme_Intellectual_Entity_Random_Order_Avg_Fields = {
+  __typename?: 'app_theme_intellectual_entity_random_order_avg_fields';
+  random_sort?: Maybe<Scalars['Float']['output']>;
+};
+
+/** order by avg() on columns of table "app.theme_intellectual_entity_random_order" */
+export type App_Theme_Intellectual_Entity_Random_Order_Avg_Order_By = {
+  random_sort?: InputMaybe<Order_By>;
+};
+
+/** Boolean expression to filter rows from the table "app.theme_intellectual_entity_random_order". All fields are combined with a logical 'AND'. */
+export type App_Theme_Intellectual_Entity_Random_Order_Bool_Exp = {
+  _and?: InputMaybe<Array<App_Theme_Intellectual_Entity_Random_Order_Bool_Exp>>;
+  _not?: InputMaybe<App_Theme_Intellectual_Entity_Random_Order_Bool_Exp>;
+  _or?: InputMaybe<Array<App_Theme_Intellectual_Entity_Random_Order_Bool_Exp>>;
+  id?: InputMaybe<Uuid_Comparison_Exp>;
+  ieObject?: InputMaybe<Graph_Intellectual_Entity_Bool_Exp>;
+  intellectual_entity_id?: InputMaybe<String_Comparison_Exp>;
+  random_sort?: InputMaybe<Float8_Comparison_Exp>;
+  theme_id?: InputMaybe<Uuid_Comparison_Exp>;
+  themes?: InputMaybe<App_Theme_Bool_Exp>;
+  themes_aggregate?: InputMaybe<App_Theme_Aggregate_Bool_Exp>;
+};
+
+/** input type for incrementing numeric columns in table "app.theme_intellectual_entity_random_order" */
+export type App_Theme_Intellectual_Entity_Random_Order_Inc_Input = {
+  random_sort?: InputMaybe<Scalars['float8']['input']>;
+};
+
+/** input type for inserting data into table "app.theme_intellectual_entity_random_order" */
+export type App_Theme_Intellectual_Entity_Random_Order_Insert_Input = {
+  id?: InputMaybe<Scalars['uuid']['input']>;
+  ieObject?: InputMaybe<Graph_Intellectual_Entity_Obj_Rel_Insert_Input>;
+  intellectual_entity_id?: InputMaybe<Scalars['String']['input']>;
+  random_sort?: InputMaybe<Scalars['float8']['input']>;
+  theme_id?: InputMaybe<Scalars['uuid']['input']>;
+  themes?: InputMaybe<App_Theme_Arr_Rel_Insert_Input>;
+};
+
+/** aggregate max on columns */
+export type App_Theme_Intellectual_Entity_Random_Order_Max_Fields = {
+  __typename?: 'app_theme_intellectual_entity_random_order_max_fields';
+  id?: Maybe<Scalars['uuid']['output']>;
+  intellectual_entity_id?: Maybe<Scalars['String']['output']>;
+  random_sort?: Maybe<Scalars['float8']['output']>;
+  theme_id?: Maybe<Scalars['uuid']['output']>;
+};
+
+/** order by max() on columns of table "app.theme_intellectual_entity_random_order" */
+export type App_Theme_Intellectual_Entity_Random_Order_Max_Order_By = {
+  id?: InputMaybe<Order_By>;
+  intellectual_entity_id?: InputMaybe<Order_By>;
+  random_sort?: InputMaybe<Order_By>;
+  theme_id?: InputMaybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type App_Theme_Intellectual_Entity_Random_Order_Min_Fields = {
+  __typename?: 'app_theme_intellectual_entity_random_order_min_fields';
+  id?: Maybe<Scalars['uuid']['output']>;
+  intellectual_entity_id?: Maybe<Scalars['String']['output']>;
+  random_sort?: Maybe<Scalars['float8']['output']>;
+  theme_id?: Maybe<Scalars['uuid']['output']>;
+};
+
+/** order by min() on columns of table "app.theme_intellectual_entity_random_order" */
+export type App_Theme_Intellectual_Entity_Random_Order_Min_Order_By = {
+  id?: InputMaybe<Order_By>;
+  intellectual_entity_id?: InputMaybe<Order_By>;
+  random_sort?: InputMaybe<Order_By>;
+  theme_id?: InputMaybe<Order_By>;
+};
+
+/** response of any mutation on the table "app.theme_intellectual_entity_random_order" */
+export type App_Theme_Intellectual_Entity_Random_Order_Mutation_Response = {
+  __typename?: 'app_theme_intellectual_entity_random_order_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int']['output'];
+  /** data from the rows affected by the mutation */
+  returning: Array<App_Theme_Intellectual_Entity_Random_Order>;
+};
+
+/** Ordering options when selecting data from "app.theme_intellectual_entity_random_order". */
+export type App_Theme_Intellectual_Entity_Random_Order_Order_By = {
+  id?: InputMaybe<Order_By>;
+  ieObject?: InputMaybe<Graph_Intellectual_Entity_Order_By>;
+  intellectual_entity_id?: InputMaybe<Order_By>;
+  random_sort?: InputMaybe<Order_By>;
+  theme_id?: InputMaybe<Order_By>;
+  themes_aggregate?: InputMaybe<App_Theme_Aggregate_Order_By>;
+};
+
+/** select columns of table "app.theme_intellectual_entity_random_order" */
+export enum App_Theme_Intellectual_Entity_Random_Order_Select_Column {
+  /** column name */
+  Id = 'id',
+  /** column name */
+  IntellectualEntityId = 'intellectual_entity_id',
+  /** column name */
+  RandomSort = 'random_sort',
+  /** column name */
+  ThemeId = 'theme_id'
+}
+
+/** select "app_theme_intellectual_entity_random_order_aggregate_bool_exp_avg_arguments_columns" columns of table "app.theme_intellectual_entity_random_order" */
+export enum App_Theme_Intellectual_Entity_Random_Order_Select_Column_App_Theme_Intellectual_Entity_Random_Order_Aggregate_Bool_Exp_Avg_Arguments_Columns {
+  /** column name */
+  RandomSort = 'random_sort'
+}
+
+/** select "app_theme_intellectual_entity_random_order_aggregate_bool_exp_corr_arguments_columns" columns of table "app.theme_intellectual_entity_random_order" */
+export enum App_Theme_Intellectual_Entity_Random_Order_Select_Column_App_Theme_Intellectual_Entity_Random_Order_Aggregate_Bool_Exp_Corr_Arguments_Columns {
+  /** column name */
+  RandomSort = 'random_sort'
+}
+
+/** select "app_theme_intellectual_entity_random_order_aggregate_bool_exp_covar_samp_arguments_columns" columns of table "app.theme_intellectual_entity_random_order" */
+export enum App_Theme_Intellectual_Entity_Random_Order_Select_Column_App_Theme_Intellectual_Entity_Random_Order_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns {
+  /** column name */
+  RandomSort = 'random_sort'
+}
+
+/** select "app_theme_intellectual_entity_random_order_aggregate_bool_exp_max_arguments_columns" columns of table "app.theme_intellectual_entity_random_order" */
+export enum App_Theme_Intellectual_Entity_Random_Order_Select_Column_App_Theme_Intellectual_Entity_Random_Order_Aggregate_Bool_Exp_Max_Arguments_Columns {
+  /** column name */
+  RandomSort = 'random_sort'
+}
+
+/** select "app_theme_intellectual_entity_random_order_aggregate_bool_exp_min_arguments_columns" columns of table "app.theme_intellectual_entity_random_order" */
+export enum App_Theme_Intellectual_Entity_Random_Order_Select_Column_App_Theme_Intellectual_Entity_Random_Order_Aggregate_Bool_Exp_Min_Arguments_Columns {
+  /** column name */
+  RandomSort = 'random_sort'
+}
+
+/** select "app_theme_intellectual_entity_random_order_aggregate_bool_exp_stddev_samp_arguments_columns" columns of table "app.theme_intellectual_entity_random_order" */
+export enum App_Theme_Intellectual_Entity_Random_Order_Select_Column_App_Theme_Intellectual_Entity_Random_Order_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns {
+  /** column name */
+  RandomSort = 'random_sort'
+}
+
+/** select "app_theme_intellectual_entity_random_order_aggregate_bool_exp_sum_arguments_columns" columns of table "app.theme_intellectual_entity_random_order" */
+export enum App_Theme_Intellectual_Entity_Random_Order_Select_Column_App_Theme_Intellectual_Entity_Random_Order_Aggregate_Bool_Exp_Sum_Arguments_Columns {
+  /** column name */
+  RandomSort = 'random_sort'
+}
+
+/** select "app_theme_intellectual_entity_random_order_aggregate_bool_exp_var_samp_arguments_columns" columns of table "app.theme_intellectual_entity_random_order" */
+export enum App_Theme_Intellectual_Entity_Random_Order_Select_Column_App_Theme_Intellectual_Entity_Random_Order_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns {
+  /** column name */
+  RandomSort = 'random_sort'
+}
+
+/** input type for updating data in table "app.theme_intellectual_entity_random_order" */
+export type App_Theme_Intellectual_Entity_Random_Order_Set_Input = {
+  id?: InputMaybe<Scalars['uuid']['input']>;
+  intellectual_entity_id?: InputMaybe<Scalars['String']['input']>;
+  random_sort?: InputMaybe<Scalars['float8']['input']>;
+  theme_id?: InputMaybe<Scalars['uuid']['input']>;
+};
+
+/** aggregate stddev on columns */
+export type App_Theme_Intellectual_Entity_Random_Order_Stddev_Fields = {
+  __typename?: 'app_theme_intellectual_entity_random_order_stddev_fields';
+  random_sort?: Maybe<Scalars['Float']['output']>;
+};
+
+/** order by stddev() on columns of table "app.theme_intellectual_entity_random_order" */
+export type App_Theme_Intellectual_Entity_Random_Order_Stddev_Order_By = {
+  random_sort?: InputMaybe<Order_By>;
+};
+
+/** aggregate stddev_pop on columns */
+export type App_Theme_Intellectual_Entity_Random_Order_Stddev_Pop_Fields = {
+  __typename?: 'app_theme_intellectual_entity_random_order_stddev_pop_fields';
+  random_sort?: Maybe<Scalars['Float']['output']>;
+};
+
+/** order by stddev_pop() on columns of table "app.theme_intellectual_entity_random_order" */
+export type App_Theme_Intellectual_Entity_Random_Order_Stddev_Pop_Order_By = {
+  random_sort?: InputMaybe<Order_By>;
+};
+
+/** aggregate stddev_samp on columns */
+export type App_Theme_Intellectual_Entity_Random_Order_Stddev_Samp_Fields = {
+  __typename?: 'app_theme_intellectual_entity_random_order_stddev_samp_fields';
+  random_sort?: Maybe<Scalars['Float']['output']>;
+};
+
+/** order by stddev_samp() on columns of table "app.theme_intellectual_entity_random_order" */
+export type App_Theme_Intellectual_Entity_Random_Order_Stddev_Samp_Order_By = {
+  random_sort?: InputMaybe<Order_By>;
+};
+
+/** Streaming cursor of the table "app_theme_intellectual_entity_random_order" */
+export type App_Theme_Intellectual_Entity_Random_Order_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: App_Theme_Intellectual_Entity_Random_Order_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type App_Theme_Intellectual_Entity_Random_Order_Stream_Cursor_Value_Input = {
+  id?: InputMaybe<Scalars['uuid']['input']>;
+  intellectual_entity_id?: InputMaybe<Scalars['String']['input']>;
+  random_sort?: InputMaybe<Scalars['float8']['input']>;
+  theme_id?: InputMaybe<Scalars['uuid']['input']>;
+};
+
+/** aggregate sum on columns */
+export type App_Theme_Intellectual_Entity_Random_Order_Sum_Fields = {
+  __typename?: 'app_theme_intellectual_entity_random_order_sum_fields';
+  random_sort?: Maybe<Scalars['float8']['output']>;
+};
+
+/** order by sum() on columns of table "app.theme_intellectual_entity_random_order" */
+export type App_Theme_Intellectual_Entity_Random_Order_Sum_Order_By = {
+  random_sort?: InputMaybe<Order_By>;
+};
+
+export type App_Theme_Intellectual_Entity_Random_Order_Updates = {
+  /** increments the numeric columns with given value of the filtered values */
+  _inc?: InputMaybe<App_Theme_Intellectual_Entity_Random_Order_Inc_Input>;
+  /** sets the columns of the filtered rows to the given values */
+  _set?: InputMaybe<App_Theme_Intellectual_Entity_Random_Order_Set_Input>;
+  /** filter the rows which have to be updated */
+  where: App_Theme_Intellectual_Entity_Random_Order_Bool_Exp;
+};
+
+/** aggregate var_pop on columns */
+export type App_Theme_Intellectual_Entity_Random_Order_Var_Pop_Fields = {
+  __typename?: 'app_theme_intellectual_entity_random_order_var_pop_fields';
+  random_sort?: Maybe<Scalars['Float']['output']>;
+};
+
+/** order by var_pop() on columns of table "app.theme_intellectual_entity_random_order" */
+export type App_Theme_Intellectual_Entity_Random_Order_Var_Pop_Order_By = {
+  random_sort?: InputMaybe<Order_By>;
+};
+
+/** aggregate var_samp on columns */
+export type App_Theme_Intellectual_Entity_Random_Order_Var_Samp_Fields = {
+  __typename?: 'app_theme_intellectual_entity_random_order_var_samp_fields';
+  random_sort?: Maybe<Scalars['Float']['output']>;
+};
+
+/** order by var_samp() on columns of table "app.theme_intellectual_entity_random_order" */
+export type App_Theme_Intellectual_Entity_Random_Order_Var_Samp_Order_By = {
+  random_sort?: InputMaybe<Order_By>;
+};
+
+/** aggregate variance on columns */
+export type App_Theme_Intellectual_Entity_Random_Order_Variance_Fields = {
+  __typename?: 'app_theme_intellectual_entity_random_order_variance_fields';
+  random_sort?: Maybe<Scalars['Float']['output']>;
+};
+
+/** order by variance() on columns of table "app.theme_intellectual_entity_random_order" */
+export type App_Theme_Intellectual_Entity_Random_Order_Variance_Order_By = {
+  random_sort?: InputMaybe<Order_By>;
+};
+
+/** select columns of table "app.theme_intellectual_entity" */
+export enum App_Theme_Intellectual_Entity_Select_Column {
+  /** column name */
+  Id = 'id',
+  /** column name */
+  IntellectualEntityId = 'intellectual_entity_id',
+  /** column name */
+  ThemeId = 'theme_id'
+}
+
+/** input type for updating data in table "app.theme_intellectual_entity" */
+export type App_Theme_Intellectual_Entity_Set_Input = {
+  id?: InputMaybe<Scalars['uuid']['input']>;
+  intellectual_entity_id?: InputMaybe<Scalars['String']['input']>;
+  theme_id?: InputMaybe<Scalars['uuid']['input']>;
+};
+
+/** Streaming cursor of the table "app_theme_intellectual_entity" */
+export type App_Theme_Intellectual_Entity_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: App_Theme_Intellectual_Entity_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type App_Theme_Intellectual_Entity_Stream_Cursor_Value_Input = {
+  id?: InputMaybe<Scalars['uuid']['input']>;
+  intellectual_entity_id?: InputMaybe<Scalars['String']['input']>;
+  theme_id?: InputMaybe<Scalars['uuid']['input']>;
+};
+
+/** update columns of table "app.theme_intellectual_entity" */
+export enum App_Theme_Intellectual_Entity_Update_Column {
+  /** column name */
+  Id = 'id',
+  /** column name */
+  IntellectualEntityId = 'intellectual_entity_id',
+  /** column name */
+  ThemeId = 'theme_id'
+}
+
+export type App_Theme_Intellectual_Entity_Updates = {
+  /** sets the columns of the filtered rows to the given values */
+  _set?: InputMaybe<App_Theme_Intellectual_Entity_Set_Input>;
+  /** filter the rows which have to be updated */
+  where: App_Theme_Intellectual_Entity_Bool_Exp;
+};
+
+/** aggregate max on columns */
+export type App_Theme_Max_Fields = {
+  __typename?: 'app_theme_max_fields';
+  id?: Maybe<Scalars['uuid']['output']>;
+  image_url?: Maybe<Scalars['String']['output']>;
+  name_en?: Maybe<Scalars['String']['output']>;
+  name_nl?: Maybe<Scalars['String']['output']>;
+  slug?: Maybe<Scalars['String']['output']>;
+};
+
+/** order by max() on columns of table "app.theme" */
+export type App_Theme_Max_Order_By = {
+  id?: InputMaybe<Order_By>;
+  image_url?: InputMaybe<Order_By>;
+  name_en?: InputMaybe<Order_By>;
+  name_nl?: InputMaybe<Order_By>;
+  slug?: InputMaybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type App_Theme_Min_Fields = {
+  __typename?: 'app_theme_min_fields';
+  id?: Maybe<Scalars['uuid']['output']>;
+  image_url?: Maybe<Scalars['String']['output']>;
+  name_en?: Maybe<Scalars['String']['output']>;
+  name_nl?: Maybe<Scalars['String']['output']>;
+  slug?: Maybe<Scalars['String']['output']>;
+};
+
+/** order by min() on columns of table "app.theme" */
+export type App_Theme_Min_Order_By = {
+  id?: InputMaybe<Order_By>;
+  image_url?: InputMaybe<Order_By>;
+  name_en?: InputMaybe<Order_By>;
+  name_nl?: InputMaybe<Order_By>;
+  slug?: InputMaybe<Order_By>;
+};
+
+/** response of any mutation on the table "app.theme" */
+export type App_Theme_Mutation_Response = {
+  __typename?: 'app_theme_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int']['output'];
+  /** data from the rows affected by the mutation */
+  returning: Array<App_Theme>;
+};
+
+/** on_conflict condition type for table "app.theme" */
+export type App_Theme_On_Conflict = {
+  constraint: App_Theme_Constraint;
+  update_columns?: Array<App_Theme_Update_Column>;
+  where?: InputMaybe<App_Theme_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "app.theme". */
+export type App_Theme_Order_By = {
+  id?: InputMaybe<Order_By>;
+  ieObjectLinksRandomOrder_aggregate?: InputMaybe<App_Theme_Intellectual_Entity_Random_Order_Aggregate_Order_By>;
+  ieObjectLinks_aggregate?: InputMaybe<App_Theme_Intellectual_Entity_Aggregate_Order_By>;
+  image_url?: InputMaybe<Order_By>;
+  name_en?: InputMaybe<Order_By>;
+  name_nl?: InputMaybe<Order_By>;
+  slug?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: app.theme */
+export type App_Theme_Pk_Columns_Input = {
+  id: Scalars['uuid']['input'];
+};
+
+/** columns and relationships of "app.theme_random_order" */
+export type App_Theme_Random_Order = {
+  __typename?: 'app_theme_random_order';
+  id?: Maybe<Scalars['uuid']['output']>;
+  image_url?: Maybe<Scalars['String']['output']>;
+  name_en?: Maybe<Scalars['String']['output']>;
+  name_nl?: Maybe<Scalars['String']['output']>;
+  random_sort?: Maybe<Scalars['float8']['output']>;
+  slug?: Maybe<Scalars['String']['output']>;
+};
+
+/** aggregated selection of "app.theme_random_order" */
+export type App_Theme_Random_Order_Aggregate = {
+  __typename?: 'app_theme_random_order_aggregate';
+  aggregate?: Maybe<App_Theme_Random_Order_Aggregate_Fields>;
+  nodes: Array<App_Theme_Random_Order>;
+};
+
+/** aggregate fields of "app.theme_random_order" */
+export type App_Theme_Random_Order_Aggregate_Fields = {
+  __typename?: 'app_theme_random_order_aggregate_fields';
+  avg?: Maybe<App_Theme_Random_Order_Avg_Fields>;
+  count: Scalars['Int']['output'];
+  max?: Maybe<App_Theme_Random_Order_Max_Fields>;
+  min?: Maybe<App_Theme_Random_Order_Min_Fields>;
+  stddev?: Maybe<App_Theme_Random_Order_Stddev_Fields>;
+  stddev_pop?: Maybe<App_Theme_Random_Order_Stddev_Pop_Fields>;
+  stddev_samp?: Maybe<App_Theme_Random_Order_Stddev_Samp_Fields>;
+  sum?: Maybe<App_Theme_Random_Order_Sum_Fields>;
+  var_pop?: Maybe<App_Theme_Random_Order_Var_Pop_Fields>;
+  var_samp?: Maybe<App_Theme_Random_Order_Var_Samp_Fields>;
+  variance?: Maybe<App_Theme_Random_Order_Variance_Fields>;
+};
+
+
+/** aggregate fields of "app.theme_random_order" */
+export type App_Theme_Random_Order_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<App_Theme_Random_Order_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+/** aggregate avg on columns */
+export type App_Theme_Random_Order_Avg_Fields = {
+  __typename?: 'app_theme_random_order_avg_fields';
+  random_sort?: Maybe<Scalars['Float']['output']>;
+};
+
+/** Boolean expression to filter rows from the table "app.theme_random_order". All fields are combined with a logical 'AND'. */
+export type App_Theme_Random_Order_Bool_Exp = {
+  _and?: InputMaybe<Array<App_Theme_Random_Order_Bool_Exp>>;
+  _not?: InputMaybe<App_Theme_Random_Order_Bool_Exp>;
+  _or?: InputMaybe<Array<App_Theme_Random_Order_Bool_Exp>>;
+  id?: InputMaybe<Uuid_Comparison_Exp>;
+  image_url?: InputMaybe<String_Comparison_Exp>;
+  name_en?: InputMaybe<String_Comparison_Exp>;
+  name_nl?: InputMaybe<String_Comparison_Exp>;
+  random_sort?: InputMaybe<Float8_Comparison_Exp>;
+  slug?: InputMaybe<String_Comparison_Exp>;
+};
+
+/** input type for incrementing numeric columns in table "app.theme_random_order" */
+export type App_Theme_Random_Order_Inc_Input = {
+  random_sort?: InputMaybe<Scalars['float8']['input']>;
+};
+
+/** input type for inserting data into table "app.theme_random_order" */
+export type App_Theme_Random_Order_Insert_Input = {
+  id?: InputMaybe<Scalars['uuid']['input']>;
+  image_url?: InputMaybe<Scalars['String']['input']>;
+  name_en?: InputMaybe<Scalars['String']['input']>;
+  name_nl?: InputMaybe<Scalars['String']['input']>;
+  random_sort?: InputMaybe<Scalars['float8']['input']>;
+  slug?: InputMaybe<Scalars['String']['input']>;
+};
+
+/** aggregate max on columns */
+export type App_Theme_Random_Order_Max_Fields = {
+  __typename?: 'app_theme_random_order_max_fields';
+  id?: Maybe<Scalars['uuid']['output']>;
+  image_url?: Maybe<Scalars['String']['output']>;
+  name_en?: Maybe<Scalars['String']['output']>;
+  name_nl?: Maybe<Scalars['String']['output']>;
+  random_sort?: Maybe<Scalars['float8']['output']>;
+  slug?: Maybe<Scalars['String']['output']>;
+};
+
+/** aggregate min on columns */
+export type App_Theme_Random_Order_Min_Fields = {
+  __typename?: 'app_theme_random_order_min_fields';
+  id?: Maybe<Scalars['uuid']['output']>;
+  image_url?: Maybe<Scalars['String']['output']>;
+  name_en?: Maybe<Scalars['String']['output']>;
+  name_nl?: Maybe<Scalars['String']['output']>;
+  random_sort?: Maybe<Scalars['float8']['output']>;
+  slug?: Maybe<Scalars['String']['output']>;
+};
+
+/** response of any mutation on the table "app.theme_random_order" */
+export type App_Theme_Random_Order_Mutation_Response = {
+  __typename?: 'app_theme_random_order_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int']['output'];
+  /** data from the rows affected by the mutation */
+  returning: Array<App_Theme_Random_Order>;
+};
+
+/** Ordering options when selecting data from "app.theme_random_order". */
+export type App_Theme_Random_Order_Order_By = {
+  id?: InputMaybe<Order_By>;
+  image_url?: InputMaybe<Order_By>;
+  name_en?: InputMaybe<Order_By>;
+  name_nl?: InputMaybe<Order_By>;
+  random_sort?: InputMaybe<Order_By>;
+  slug?: InputMaybe<Order_By>;
+};
+
+/** select columns of table "app.theme_random_order" */
+export enum App_Theme_Random_Order_Select_Column {
+  /** column name */
+  Id = 'id',
+  /** column name */
+  ImageUrl = 'image_url',
+  /** column name */
+  NameEn = 'name_en',
+  /** column name */
+  NameNl = 'name_nl',
+  /** column name */
+  RandomSort = 'random_sort',
+  /** column name */
+  Slug = 'slug'
+}
+
+/** input type for updating data in table "app.theme_random_order" */
+export type App_Theme_Random_Order_Set_Input = {
+  id?: InputMaybe<Scalars['uuid']['input']>;
+  image_url?: InputMaybe<Scalars['String']['input']>;
+  name_en?: InputMaybe<Scalars['String']['input']>;
+  name_nl?: InputMaybe<Scalars['String']['input']>;
+  random_sort?: InputMaybe<Scalars['float8']['input']>;
+  slug?: InputMaybe<Scalars['String']['input']>;
+};
+
+/** aggregate stddev on columns */
+export type App_Theme_Random_Order_Stddev_Fields = {
+  __typename?: 'app_theme_random_order_stddev_fields';
+  random_sort?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate stddev_pop on columns */
+export type App_Theme_Random_Order_Stddev_Pop_Fields = {
+  __typename?: 'app_theme_random_order_stddev_pop_fields';
+  random_sort?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate stddev_samp on columns */
+export type App_Theme_Random_Order_Stddev_Samp_Fields = {
+  __typename?: 'app_theme_random_order_stddev_samp_fields';
+  random_sort?: Maybe<Scalars['Float']['output']>;
+};
+
+/** Streaming cursor of the table "app_theme_random_order" */
+export type App_Theme_Random_Order_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: App_Theme_Random_Order_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type App_Theme_Random_Order_Stream_Cursor_Value_Input = {
+  id?: InputMaybe<Scalars['uuid']['input']>;
+  image_url?: InputMaybe<Scalars['String']['input']>;
+  name_en?: InputMaybe<Scalars['String']['input']>;
+  name_nl?: InputMaybe<Scalars['String']['input']>;
+  random_sort?: InputMaybe<Scalars['float8']['input']>;
+  slug?: InputMaybe<Scalars['String']['input']>;
+};
+
+/** aggregate sum on columns */
+export type App_Theme_Random_Order_Sum_Fields = {
+  __typename?: 'app_theme_random_order_sum_fields';
+  random_sort?: Maybe<Scalars['float8']['output']>;
+};
+
+export type App_Theme_Random_Order_Updates = {
+  /** increments the numeric columns with given value of the filtered values */
+  _inc?: InputMaybe<App_Theme_Random_Order_Inc_Input>;
+  /** sets the columns of the filtered rows to the given values */
+  _set?: InputMaybe<App_Theme_Random_Order_Set_Input>;
+  /** filter the rows which have to be updated */
+  where: App_Theme_Random_Order_Bool_Exp;
+};
+
+/** aggregate var_pop on columns */
+export type App_Theme_Random_Order_Var_Pop_Fields = {
+  __typename?: 'app_theme_random_order_var_pop_fields';
+  random_sort?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate var_samp on columns */
+export type App_Theme_Random_Order_Var_Samp_Fields = {
+  __typename?: 'app_theme_random_order_var_samp_fields';
+  random_sort?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate variance on columns */
+export type App_Theme_Random_Order_Variance_Fields = {
+  __typename?: 'app_theme_random_order_variance_fields';
+  random_sort?: Maybe<Scalars['Float']['output']>;
+};
+
+/** select columns of table "app.theme" */
+export enum App_Theme_Select_Column {
+  /** column name */
+  Id = 'id',
+  /** column name */
+  ImageUrl = 'image_url',
+  /** column name */
+  NameEn = 'name_en',
+  /** column name */
+  NameNl = 'name_nl',
+  /** column name */
+  Slug = 'slug'
+}
+
+/** input type for updating data in table "app.theme" */
+export type App_Theme_Set_Input = {
+  id?: InputMaybe<Scalars['uuid']['input']>;
+  image_url?: InputMaybe<Scalars['String']['input']>;
+  name_en?: InputMaybe<Scalars['String']['input']>;
+  name_nl?: InputMaybe<Scalars['String']['input']>;
+  slug?: InputMaybe<Scalars['String']['input']>;
+};
+
+/** Streaming cursor of the table "app_theme" */
+export type App_Theme_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: App_Theme_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type App_Theme_Stream_Cursor_Value_Input = {
+  id?: InputMaybe<Scalars['uuid']['input']>;
+  image_url?: InputMaybe<Scalars['String']['input']>;
+  name_en?: InputMaybe<Scalars['String']['input']>;
+  name_nl?: InputMaybe<Scalars['String']['input']>;
+  slug?: InputMaybe<Scalars['String']['input']>;
+};
+
+/** update columns of table "app.theme" */
+export enum App_Theme_Update_Column {
+  /** column name */
+  Id = 'id',
+  /** column name */
+  ImageUrl = 'image_url',
+  /** column name */
+  NameEn = 'name_en',
+  /** column name */
+  NameNl = 'name_nl',
+  /** column name */
+  Slug = 'slug'
+}
+
+export type App_Theme_Updates = {
+  /** sets the columns of the filtered rows to the given values */
+  _set?: InputMaybe<App_Theme_Set_Input>;
+  /** filter the rows which have to be updated */
+  where: App_Theme_Bool_Exp;
+};
+
 /** Contains the translated labels in all languages for the hetarchief frontend client */
 export type App_Translations = {
   __typename?: 'app_translations';
@@ -5296,6 +6432,19 @@ export type Date_Comparison_Exp = {
   _lte?: InputMaybe<Scalars['date']['input']>;
   _neq?: InputMaybe<Scalars['date']['input']>;
   _nin?: InputMaybe<Array<Scalars['date']['input']>>;
+};
+
+/** Boolean expression to compare columns of type "float8". All fields are combined with logical 'AND'. */
+export type Float8_Comparison_Exp = {
+  _eq?: InputMaybe<Scalars['float8']['input']>;
+  _gt?: InputMaybe<Scalars['float8']['input']>;
+  _gte?: InputMaybe<Scalars['float8']['input']>;
+  _in?: InputMaybe<Array<Scalars['float8']['input']>>;
+  _is_null?: InputMaybe<Scalars['Boolean']['input']>;
+  _lt?: InputMaybe<Scalars['float8']['input']>;
+  _lte?: InputMaybe<Scalars['float8']['input']>;
+  _neq?: InputMaybe<Scalars['float8']['input']>;
+  _nin?: InputMaybe<Array<Scalars['float8']['input']>>;
 };
 
 /** columns and relationships of "graph._dcterms_format" */
@@ -19802,6 +20951,7 @@ export enum Lookup_App_Content_Block_Type_Enum {
   MediaPlayer = 'MEDIA_PLAYER',
   MediaPlayerTitleTextButton = 'MEDIA_PLAYER_TITLE_TEXT_BUTTON',
   OverviewNewspaperTitles = 'OVERVIEW_NEWSPAPER_TITLES',
+  OverviewWithCarousel = 'OVERVIEW_WITH_CAROUSEL',
   PageOverview = 'PAGE_OVERVIEW',
   ProjectsSpotlight = 'PROJECTS_SPOTLIGHT',
   Quote = 'QUOTE',
@@ -23914,6 +25064,18 @@ export type Mutation_Root = {
   delete_app_notification?: Maybe<App_Notification_Mutation_Response>;
   /** delete single row from the table: "app.notification" */
   delete_app_notification_by_pk?: Maybe<App_Notification>;
+  /** delete data from the table: "app.theme" */
+  delete_app_theme?: Maybe<App_Theme_Mutation_Response>;
+  /** delete single row from the table: "app.theme" */
+  delete_app_theme_by_pk?: Maybe<App_Theme>;
+  /** delete data from the table: "app.theme_intellectual_entity" */
+  delete_app_theme_intellectual_entity?: Maybe<App_Theme_Intellectual_Entity_Mutation_Response>;
+  /** delete single row from the table: "app.theme_intellectual_entity" */
+  delete_app_theme_intellectual_entity_by_pk?: Maybe<App_Theme_Intellectual_Entity>;
+  /** delete data from the table: "app.theme_intellectual_entity_random_order" */
+  delete_app_theme_intellectual_entity_random_order?: Maybe<App_Theme_Intellectual_Entity_Random_Order_Mutation_Response>;
+  /** delete data from the table: "app.theme_random_order" */
+  delete_app_theme_random_order?: Maybe<App_Theme_Random_Order_Mutation_Response>;
   /** delete data from the table: "app.translations" */
   delete_app_translations?: Maybe<App_Translations_Mutation_Response>;
   /** delete single row from the table: "app.translations" */
@@ -24238,6 +25400,22 @@ export type Mutation_Root = {
   insert_app_notification?: Maybe<App_Notification_Mutation_Response>;
   /** insert a single row into the table: "app.notification" */
   insert_app_notification_one?: Maybe<App_Notification>;
+  /** insert data into the table: "app.theme" */
+  insert_app_theme?: Maybe<App_Theme_Mutation_Response>;
+  /** insert data into the table: "app.theme_intellectual_entity" */
+  insert_app_theme_intellectual_entity?: Maybe<App_Theme_Intellectual_Entity_Mutation_Response>;
+  /** insert a single row into the table: "app.theme_intellectual_entity" */
+  insert_app_theme_intellectual_entity_one?: Maybe<App_Theme_Intellectual_Entity>;
+  /** insert data into the table: "app.theme_intellectual_entity_random_order" */
+  insert_app_theme_intellectual_entity_random_order?: Maybe<App_Theme_Intellectual_Entity_Random_Order_Mutation_Response>;
+  /** insert a single row into the table: "app.theme_intellectual_entity_random_order" */
+  insert_app_theme_intellectual_entity_random_order_one?: Maybe<App_Theme_Intellectual_Entity_Random_Order>;
+  /** insert a single row into the table: "app.theme" */
+  insert_app_theme_one?: Maybe<App_Theme>;
+  /** insert data into the table: "app.theme_random_order" */
+  insert_app_theme_random_order?: Maybe<App_Theme_Random_Order_Mutation_Response>;
+  /** insert a single row into the table: "app.theme_random_order" */
+  insert_app_theme_random_order_one?: Maybe<App_Theme_Random_Order>;
   /** insert data into the table: "app.translations" */
   insert_app_translations?: Maybe<App_Translations_Mutation_Response>;
   /** insert a single row into the table: "app.translations" */
@@ -24590,6 +25768,26 @@ export type Mutation_Root = {
   update_app_notification_by_pk?: Maybe<App_Notification>;
   /** update multiples rows of table: "app.notification" */
   update_app_notification_many?: Maybe<Array<Maybe<App_Notification_Mutation_Response>>>;
+  /** update data of the table: "app.theme" */
+  update_app_theme?: Maybe<App_Theme_Mutation_Response>;
+  /** update single row of the table: "app.theme" */
+  update_app_theme_by_pk?: Maybe<App_Theme>;
+  /** update data of the table: "app.theme_intellectual_entity" */
+  update_app_theme_intellectual_entity?: Maybe<App_Theme_Intellectual_Entity_Mutation_Response>;
+  /** update single row of the table: "app.theme_intellectual_entity" */
+  update_app_theme_intellectual_entity_by_pk?: Maybe<App_Theme_Intellectual_Entity>;
+  /** update multiples rows of table: "app.theme_intellectual_entity" */
+  update_app_theme_intellectual_entity_many?: Maybe<Array<Maybe<App_Theme_Intellectual_Entity_Mutation_Response>>>;
+  /** update data of the table: "app.theme_intellectual_entity_random_order" */
+  update_app_theme_intellectual_entity_random_order?: Maybe<App_Theme_Intellectual_Entity_Random_Order_Mutation_Response>;
+  /** update multiples rows of table: "app.theme_intellectual_entity_random_order" */
+  update_app_theme_intellectual_entity_random_order_many?: Maybe<Array<Maybe<App_Theme_Intellectual_Entity_Random_Order_Mutation_Response>>>;
+  /** update multiples rows of table: "app.theme" */
+  update_app_theme_many?: Maybe<Array<Maybe<App_Theme_Mutation_Response>>>;
+  /** update data of the table: "app.theme_random_order" */
+  update_app_theme_random_order?: Maybe<App_Theme_Random_Order_Mutation_Response>;
+  /** update multiples rows of table: "app.theme_random_order" */
+  update_app_theme_random_order_many?: Maybe<Array<Maybe<App_Theme_Random_Order_Mutation_Response>>>;
   /** update data of the table: "app.translations" */
   update_app_translations?: Maybe<App_Translations_Mutation_Response>;
   /** update single row of the table: "app.translations" */
@@ -25160,6 +26358,42 @@ export type Mutation_RootDelete_App_NotificationArgs = {
 /** mutation root */
 export type Mutation_RootDelete_App_Notification_By_PkArgs = {
   id: Scalars['uuid']['input'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_App_ThemeArgs = {
+  where: App_Theme_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_App_Theme_By_PkArgs = {
+  id: Scalars['uuid']['input'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_App_Theme_Intellectual_EntityArgs = {
+  where: App_Theme_Intellectual_Entity_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_App_Theme_Intellectual_Entity_By_PkArgs = {
+  id: Scalars['uuid']['input'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_App_Theme_Intellectual_Entity_Random_OrderArgs = {
+  where: App_Theme_Intellectual_Entity_Random_Order_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_App_Theme_Random_OrderArgs = {
+  where: App_Theme_Random_Order_Bool_Exp;
 };
 
 
@@ -26191,6 +27425,58 @@ export type Mutation_RootInsert_App_NotificationArgs = {
 export type Mutation_RootInsert_App_Notification_OneArgs = {
   object: App_Notification_Insert_Input;
   on_conflict?: InputMaybe<App_Notification_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_App_ThemeArgs = {
+  objects: Array<App_Theme_Insert_Input>;
+  on_conflict?: InputMaybe<App_Theme_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_App_Theme_Intellectual_EntityArgs = {
+  objects: Array<App_Theme_Intellectual_Entity_Insert_Input>;
+  on_conflict?: InputMaybe<App_Theme_Intellectual_Entity_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_App_Theme_Intellectual_Entity_OneArgs = {
+  object: App_Theme_Intellectual_Entity_Insert_Input;
+  on_conflict?: InputMaybe<App_Theme_Intellectual_Entity_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_App_Theme_Intellectual_Entity_Random_OrderArgs = {
+  objects: Array<App_Theme_Intellectual_Entity_Random_Order_Insert_Input>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_App_Theme_Intellectual_Entity_Random_Order_OneArgs = {
+  object: App_Theme_Intellectual_Entity_Random_Order_Insert_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_App_Theme_OneArgs = {
+  object: App_Theme_Insert_Input;
+  on_conflict?: InputMaybe<App_Theme_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_App_Theme_Random_OrderArgs = {
+  objects: Array<App_Theme_Random_Order_Insert_Input>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_App_Theme_Random_Order_OneArgs = {
+  object: App_Theme_Random_Order_Insert_Input;
 };
 
 
@@ -27485,6 +28771,74 @@ export type Mutation_RootUpdate_App_Notification_By_PkArgs = {
 /** mutation root */
 export type Mutation_RootUpdate_App_Notification_ManyArgs = {
   updates: Array<App_Notification_Updates>;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_App_ThemeArgs = {
+  _set?: InputMaybe<App_Theme_Set_Input>;
+  where: App_Theme_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_App_Theme_By_PkArgs = {
+  _set?: InputMaybe<App_Theme_Set_Input>;
+  pk_columns: App_Theme_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_App_Theme_Intellectual_EntityArgs = {
+  _set?: InputMaybe<App_Theme_Intellectual_Entity_Set_Input>;
+  where: App_Theme_Intellectual_Entity_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_App_Theme_Intellectual_Entity_By_PkArgs = {
+  _set?: InputMaybe<App_Theme_Intellectual_Entity_Set_Input>;
+  pk_columns: App_Theme_Intellectual_Entity_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_App_Theme_Intellectual_Entity_ManyArgs = {
+  updates: Array<App_Theme_Intellectual_Entity_Updates>;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_App_Theme_Intellectual_Entity_Random_OrderArgs = {
+  _inc?: InputMaybe<App_Theme_Intellectual_Entity_Random_Order_Inc_Input>;
+  _set?: InputMaybe<App_Theme_Intellectual_Entity_Random_Order_Set_Input>;
+  where: App_Theme_Intellectual_Entity_Random_Order_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_App_Theme_Intellectual_Entity_Random_Order_ManyArgs = {
+  updates: Array<App_Theme_Intellectual_Entity_Random_Order_Updates>;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_App_Theme_ManyArgs = {
+  updates: Array<App_Theme_Updates>;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_App_Theme_Random_OrderArgs = {
+  _inc?: InputMaybe<App_Theme_Random_Order_Inc_Input>;
+  _set?: InputMaybe<App_Theme_Random_Order_Set_Input>;
+  where: App_Theme_Random_Order_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_App_Theme_Random_Order_ManyArgs = {
+  updates: Array<App_Theme_Random_Order_Updates>;
 };
 
 
@@ -29195,6 +30549,26 @@ export type Query_Root = {
   app_notification_aggregate: App_Notification_Aggregate;
   /** fetch data from the table: "app.notification" using primary key columns */
   app_notification_by_pk?: Maybe<App_Notification>;
+  /** fetch data from the table: "app.theme" */
+  app_theme: Array<App_Theme>;
+  /** fetch aggregated fields from the table: "app.theme" */
+  app_theme_aggregate: App_Theme_Aggregate;
+  /** fetch data from the table: "app.theme" using primary key columns */
+  app_theme_by_pk?: Maybe<App_Theme>;
+  /** fetch data from the table: "app.theme_intellectual_entity" */
+  app_theme_intellectual_entity: Array<App_Theme_Intellectual_Entity>;
+  /** fetch aggregated fields from the table: "app.theme_intellectual_entity" */
+  app_theme_intellectual_entity_aggregate: App_Theme_Intellectual_Entity_Aggregate;
+  /** fetch data from the table: "app.theme_intellectual_entity" using primary key columns */
+  app_theme_intellectual_entity_by_pk?: Maybe<App_Theme_Intellectual_Entity>;
+  /** fetch data from the table: "app.theme_intellectual_entity_random_order" */
+  app_theme_intellectual_entity_random_order: Array<App_Theme_Intellectual_Entity_Random_Order>;
+  /** fetch aggregated fields from the table: "app.theme_intellectual_entity_random_order" */
+  app_theme_intellectual_entity_random_order_aggregate: App_Theme_Intellectual_Entity_Random_Order_Aggregate;
+  /** fetch data from the table: "app.theme_random_order" */
+  app_theme_random_order: Array<App_Theme_Random_Order>;
+  /** fetch aggregated fields from the table: "app.theme_random_order" */
+  app_theme_random_order_aggregate: App_Theme_Random_Order_Aggregate;
   /** fetch data from the table: "app.translations" */
   app_translations: Array<App_Translations>;
   /** fetch aggregated fields from the table: "app.translations" */
@@ -30085,6 +31459,88 @@ export type Query_RootApp_Notification_AggregateArgs = {
 
 export type Query_RootApp_Notification_By_PkArgs = {
   id: Scalars['uuid']['input'];
+};
+
+
+export type Query_RootApp_ThemeArgs = {
+  distinct_on?: InputMaybe<Array<App_Theme_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<App_Theme_Order_By>>;
+  where?: InputMaybe<App_Theme_Bool_Exp>;
+};
+
+
+export type Query_RootApp_Theme_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<App_Theme_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<App_Theme_Order_By>>;
+  where?: InputMaybe<App_Theme_Bool_Exp>;
+};
+
+
+export type Query_RootApp_Theme_By_PkArgs = {
+  id: Scalars['uuid']['input'];
+};
+
+
+export type Query_RootApp_Theme_Intellectual_EntityArgs = {
+  distinct_on?: InputMaybe<Array<App_Theme_Intellectual_Entity_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<App_Theme_Intellectual_Entity_Order_By>>;
+  where?: InputMaybe<App_Theme_Intellectual_Entity_Bool_Exp>;
+};
+
+
+export type Query_RootApp_Theme_Intellectual_Entity_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<App_Theme_Intellectual_Entity_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<App_Theme_Intellectual_Entity_Order_By>>;
+  where?: InputMaybe<App_Theme_Intellectual_Entity_Bool_Exp>;
+};
+
+
+export type Query_RootApp_Theme_Intellectual_Entity_By_PkArgs = {
+  id: Scalars['uuid']['input'];
+};
+
+
+export type Query_RootApp_Theme_Intellectual_Entity_Random_OrderArgs = {
+  distinct_on?: InputMaybe<Array<App_Theme_Intellectual_Entity_Random_Order_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<App_Theme_Intellectual_Entity_Random_Order_Order_By>>;
+  where?: InputMaybe<App_Theme_Intellectual_Entity_Random_Order_Bool_Exp>;
+};
+
+
+export type Query_RootApp_Theme_Intellectual_Entity_Random_Order_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<App_Theme_Intellectual_Entity_Random_Order_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<App_Theme_Intellectual_Entity_Random_Order_Order_By>>;
+  where?: InputMaybe<App_Theme_Intellectual_Entity_Random_Order_Bool_Exp>;
+};
+
+
+export type Query_RootApp_Theme_Random_OrderArgs = {
+  distinct_on?: InputMaybe<Array<App_Theme_Random_Order_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<App_Theme_Random_Order_Order_By>>;
+  where?: InputMaybe<App_Theme_Random_Order_Bool_Exp>;
+};
+
+
+export type Query_RootApp_Theme_Random_Order_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<App_Theme_Random_Order_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<App_Theme_Random_Order_Order_By>>;
+  where?: InputMaybe<App_Theme_Random_Order_Bool_Exp>;
 };
 
 
@@ -32640,6 +34096,34 @@ export type Subscription_Root = {
   app_notification_by_pk?: Maybe<App_Notification>;
   /** fetch data from the table in a streaming manner: "app.notification" */
   app_notification_stream: Array<App_Notification>;
+  /** fetch data from the table: "app.theme" */
+  app_theme: Array<App_Theme>;
+  /** fetch aggregated fields from the table: "app.theme" */
+  app_theme_aggregate: App_Theme_Aggregate;
+  /** fetch data from the table: "app.theme" using primary key columns */
+  app_theme_by_pk?: Maybe<App_Theme>;
+  /** fetch data from the table: "app.theme_intellectual_entity" */
+  app_theme_intellectual_entity: Array<App_Theme_Intellectual_Entity>;
+  /** fetch aggregated fields from the table: "app.theme_intellectual_entity" */
+  app_theme_intellectual_entity_aggregate: App_Theme_Intellectual_Entity_Aggregate;
+  /** fetch data from the table: "app.theme_intellectual_entity" using primary key columns */
+  app_theme_intellectual_entity_by_pk?: Maybe<App_Theme_Intellectual_Entity>;
+  /** fetch data from the table: "app.theme_intellectual_entity_random_order" */
+  app_theme_intellectual_entity_random_order: Array<App_Theme_Intellectual_Entity_Random_Order>;
+  /** fetch aggregated fields from the table: "app.theme_intellectual_entity_random_order" */
+  app_theme_intellectual_entity_random_order_aggregate: App_Theme_Intellectual_Entity_Random_Order_Aggregate;
+  /** fetch data from the table in a streaming manner: "app.theme_intellectual_entity_random_order" */
+  app_theme_intellectual_entity_random_order_stream: Array<App_Theme_Intellectual_Entity_Random_Order>;
+  /** fetch data from the table in a streaming manner: "app.theme_intellectual_entity" */
+  app_theme_intellectual_entity_stream: Array<App_Theme_Intellectual_Entity>;
+  /** fetch data from the table: "app.theme_random_order" */
+  app_theme_random_order: Array<App_Theme_Random_Order>;
+  /** fetch aggregated fields from the table: "app.theme_random_order" */
+  app_theme_random_order_aggregate: App_Theme_Random_Order_Aggregate;
+  /** fetch data from the table in a streaming manner: "app.theme_random_order" */
+  app_theme_random_order_stream: Array<App_Theme_Random_Order>;
+  /** fetch data from the table in a streaming manner: "app.theme" */
+  app_theme_stream: Array<App_Theme>;
   /** fetch data from the table: "app.translations" */
   app_translations: Array<App_Translations>;
   /** fetch aggregated fields from the table: "app.translations" */
@@ -33843,6 +35327,116 @@ export type Subscription_RootApp_Notification_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<App_Notification_Stream_Cursor_Input>>;
   where?: InputMaybe<App_Notification_Bool_Exp>;
+};
+
+
+export type Subscription_RootApp_ThemeArgs = {
+  distinct_on?: InputMaybe<Array<App_Theme_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<App_Theme_Order_By>>;
+  where?: InputMaybe<App_Theme_Bool_Exp>;
+};
+
+
+export type Subscription_RootApp_Theme_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<App_Theme_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<App_Theme_Order_By>>;
+  where?: InputMaybe<App_Theme_Bool_Exp>;
+};
+
+
+export type Subscription_RootApp_Theme_By_PkArgs = {
+  id: Scalars['uuid']['input'];
+};
+
+
+export type Subscription_RootApp_Theme_Intellectual_EntityArgs = {
+  distinct_on?: InputMaybe<Array<App_Theme_Intellectual_Entity_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<App_Theme_Intellectual_Entity_Order_By>>;
+  where?: InputMaybe<App_Theme_Intellectual_Entity_Bool_Exp>;
+};
+
+
+export type Subscription_RootApp_Theme_Intellectual_Entity_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<App_Theme_Intellectual_Entity_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<App_Theme_Intellectual_Entity_Order_By>>;
+  where?: InputMaybe<App_Theme_Intellectual_Entity_Bool_Exp>;
+};
+
+
+export type Subscription_RootApp_Theme_Intellectual_Entity_By_PkArgs = {
+  id: Scalars['uuid']['input'];
+};
+
+
+export type Subscription_RootApp_Theme_Intellectual_Entity_Random_OrderArgs = {
+  distinct_on?: InputMaybe<Array<App_Theme_Intellectual_Entity_Random_Order_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<App_Theme_Intellectual_Entity_Random_Order_Order_By>>;
+  where?: InputMaybe<App_Theme_Intellectual_Entity_Random_Order_Bool_Exp>;
+};
+
+
+export type Subscription_RootApp_Theme_Intellectual_Entity_Random_Order_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<App_Theme_Intellectual_Entity_Random_Order_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<App_Theme_Intellectual_Entity_Random_Order_Order_By>>;
+  where?: InputMaybe<App_Theme_Intellectual_Entity_Random_Order_Bool_Exp>;
+};
+
+
+export type Subscription_RootApp_Theme_Intellectual_Entity_Random_Order_StreamArgs = {
+  batch_size: Scalars['Int']['input'];
+  cursor: Array<InputMaybe<App_Theme_Intellectual_Entity_Random_Order_Stream_Cursor_Input>>;
+  where?: InputMaybe<App_Theme_Intellectual_Entity_Random_Order_Bool_Exp>;
+};
+
+
+export type Subscription_RootApp_Theme_Intellectual_Entity_StreamArgs = {
+  batch_size: Scalars['Int']['input'];
+  cursor: Array<InputMaybe<App_Theme_Intellectual_Entity_Stream_Cursor_Input>>;
+  where?: InputMaybe<App_Theme_Intellectual_Entity_Bool_Exp>;
+};
+
+
+export type Subscription_RootApp_Theme_Random_OrderArgs = {
+  distinct_on?: InputMaybe<Array<App_Theme_Random_Order_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<App_Theme_Random_Order_Order_By>>;
+  where?: InputMaybe<App_Theme_Random_Order_Bool_Exp>;
+};
+
+
+export type Subscription_RootApp_Theme_Random_Order_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<App_Theme_Random_Order_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<App_Theme_Random_Order_Order_By>>;
+  where?: InputMaybe<App_Theme_Random_Order_Bool_Exp>;
+};
+
+
+export type Subscription_RootApp_Theme_Random_Order_StreamArgs = {
+  batch_size: Scalars['Int']['input'];
+  cursor: Array<InputMaybe<App_Theme_Random_Order_Stream_Cursor_Input>>;
+  where?: InputMaybe<App_Theme_Random_Order_Bool_Exp>;
+};
+
+
+export type Subscription_RootApp_Theme_StreamArgs = {
+  batch_size: Scalars['Int']['input'];
+  cursor: Array<InputMaybe<App_Theme_Stream_Cursor_Input>>;
+  where?: InputMaybe<App_Theme_Bool_Exp>;
 };
 
 
@@ -39714,7 +41308,7 @@ export const FindMaterialRequestsStatusByIdDocument = {"kind":"Document","defini
 export const FindMaterialRequestsWithAlmostExpiredDownloadDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findMaterialRequestsWithAlmostExpiredDownload"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"warningDate"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"timestamp"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"app_material_requests"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"status"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"EnumValue","value":"APPROVED"}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"download_status"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"EnumValue","value":"SUCCEEDED"}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"download_available_at"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_lte"},"value":{"kind":"Variable","name":{"kind":"Name","value":"warningDate"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"download_expiry_warning_email_sent"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"BooleanValue","value":false}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"ie_object_id"}},{"kind":"Field","name":{"kind":"Name","value":"profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"reason"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"requested_at"}},{"kind":"Field","name":{"kind":"Name","value":"is_pending"}},{"kind":"Field","name":{"kind":"Name","value":"is_archived"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"group_id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"download_status"}},{"kind":"Field","name":{"kind":"Name","value":"download_available_at"}},{"kind":"Field","name":{"kind":"Name","value":"requester_capacity"}},{"kind":"Field","name":{"kind":"Name","value":"organisation_name"}},{"kind":"Field","name":{"kind":"Name","value":"organisation"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"org_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"skos_pref_label"}},{"kind":"Field","name":{"kind":"Name","value":"ha_org_sector"}},{"kind":"Field","name":{"kind":"Name","value":"schema_vat_id"}},{"kind":"Field","name":{"kind":"Name","value":"hasSite"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"postalAddress"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_street_address"}},{"kind":"Field","name":{"kind":"Name","value":"schema_address_locality"}},{"kind":"Field","name":{"kind":"Name","value":"schema_postal_code"}},{"kind":"Field","name":{"kind":"Name","value":"schema_contact_type"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"requested_by"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}},{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"mail"}},{"kind":"Field","name":{"kind":"Name","value":"language"}},{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"intellectualEntity"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_published"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"premisIdentifier"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"IntValue","value":"1"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"dctermsFormat"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"IntValue","value":"1"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"dcterms_format"}}]}},{"kind":"Field","name":{"kind":"Name","value":"schemaThumbnail"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_thumbnail_url"}}]}},{"kind":"Field","name":{"kind":"Name","value":"schemaMaintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"org_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"skos_pref_label"}},{"kind":"Field","name":{"kind":"Name","value":"ha_org_has_logo"}},{"kind":"Field","name":{"kind":"Name","value":"ha_org_sector"}},{"kind":"Field","name":{"kind":"Name","value":"organizationSlug"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"slug"}}]}},{"kind":"Field","name":{"kind":"Name","value":"schemaContactPoint"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_contact_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_email"}},{"kind":"Field","name":{"kind":"Name","value":"schema_telephone"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"schemaLicenses"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_license"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"ie_object_representation_id"}},{"kind":"Field","name":{"kind":"Name","value":"objectRepresentation"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"is_media_fragment_of"}},{"kind":"Field","name":{"kind":"Name","value":"schema_in_language"}},{"kind":"Field","name":{"kind":"Name","value":"schema_start_time"}},{"kind":"Field","name":{"kind":"Name","value":"schema_end_time"}},{"kind":"Field","name":{"kind":"Name","value":"schema_transcript"}},{"kind":"Field","name":{"kind":"Name","value":"schemaTranscriptUrls"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_transcript"}},{"kind":"Field","name":{"kind":"Name","value":"schema_transcript_url"}}]}},{"kind":"Field","name":{"kind":"Name","value":"edm_is_next_in_sequence"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"includes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"file"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"ebucore_has_mime_type"}},{"kind":"Field","name":{"kind":"Name","value":"premis_stored_at"}},{"kind":"Field","name":{"kind":"Name","value":"schema_thumbnail_url"}},{"kind":"Field","name":{"kind":"Name","value":"schema_duration"}},{"kind":"Field","name":{"kind":"Name","value":"edm_is_next_in_sequence"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"hasMediaFragment"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_start_time"}},{"kind":"Field","name":{"kind":"Name","value":"schema_end_time"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}}]}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"material_request_reuse_form_values"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}}]}}]} as unknown as DocumentNode<FindMaterialRequestsWithAlmostExpiredDownloadQuery, FindMaterialRequestsWithAlmostExpiredDownloadQueryVariables>;
 export const FindMaterialRequestsWithExpiredDownloadDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findMaterialRequestsWithExpiredDownload"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"expirationDate"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"timestamp"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"app_material_requests"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"status"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"EnumValue","value":"APPROVED"}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"download_status"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"EnumValue","value":"SUCCEEDED"}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"download_available_at"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_lte"},"value":{"kind":"Variable","name":{"kind":"Name","value":"expirationDate"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"ie_object_id"}},{"kind":"Field","name":{"kind":"Name","value":"profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"reason"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"requested_at"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"is_pending"}},{"kind":"Field","name":{"kind":"Name","value":"is_archived"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"group_id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"download_status"}},{"kind":"Field","name":{"kind":"Name","value":"download_available_at"}},{"kind":"Field","name":{"kind":"Name","value":"requester_capacity"}},{"kind":"Field","name":{"kind":"Name","value":"organisation_name"}},{"kind":"Field","name":{"kind":"Name","value":"organisation"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"org_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"skos_pref_label"}},{"kind":"Field","name":{"kind":"Name","value":"ha_org_sector"}},{"kind":"Field","name":{"kind":"Name","value":"schema_vat_id"}},{"kind":"Field","name":{"kind":"Name","value":"hasSite"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"postalAddress"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_street_address"}},{"kind":"Field","name":{"kind":"Name","value":"schema_address_locality"}},{"kind":"Field","name":{"kind":"Name","value":"schema_postal_code"}},{"kind":"Field","name":{"kind":"Name","value":"schema_contact_type"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"requested_by"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}},{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"mail"}},{"kind":"Field","name":{"kind":"Name","value":"language"}},{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"intellectualEntity"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_published"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"premisIdentifier"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"IntValue","value":"1"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"dctermsFormat"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"IntValue","value":"1"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"dcterms_format"}}]}},{"kind":"Field","name":{"kind":"Name","value":"schemaThumbnail"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_thumbnail_url"}}]}},{"kind":"Field","name":{"kind":"Name","value":"schemaMaintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"org_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"skos_pref_label"}},{"kind":"Field","name":{"kind":"Name","value":"ha_org_has_logo"}},{"kind":"Field","name":{"kind":"Name","value":"organizationSlug"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"slug"}}]}},{"kind":"Field","name":{"kind":"Name","value":"schemaContactPoint"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_contact_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_email"}},{"kind":"Field","name":{"kind":"Name","value":"schema_telephone"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"ie_object_representation_id"}},{"kind":"Field","name":{"kind":"Name","value":"objectRepresentation"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"is_media_fragment_of"}},{"kind":"Field","name":{"kind":"Name","value":"schema_in_language"}},{"kind":"Field","name":{"kind":"Name","value":"schema_start_time"}},{"kind":"Field","name":{"kind":"Name","value":"schema_end_time"}},{"kind":"Field","name":{"kind":"Name","value":"schema_transcript"}},{"kind":"Field","name":{"kind":"Name","value":"schemaTranscriptUrls"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_transcript"}},{"kind":"Field","name":{"kind":"Name","value":"schema_transcript_url"}}]}},{"kind":"Field","name":{"kind":"Name","value":"edm_is_next_in_sequence"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"includes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"file"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"ebucore_has_mime_type"}},{"kind":"Field","name":{"kind":"Name","value":"premis_stored_at"}},{"kind":"Field","name":{"kind":"Name","value":"schema_thumbnail_url"}},{"kind":"Field","name":{"kind":"Name","value":"schema_duration"}},{"kind":"Field","name":{"kind":"Name","value":"edm_is_next_in_sequence"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"hasMediaFragment"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_start_time"}},{"kind":"Field","name":{"kind":"Name","value":"schema_end_time"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}}]}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"material_request_reuse_form_values"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}}]}}]} as unknown as DocumentNode<FindMaterialRequestsWithExpiredDownloadQuery, FindMaterialRequestsWithExpiredDownloadQueryVariables>;
 export const FindMaterialRequestsWithUnresolvedAdditionalConditionsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findMaterialRequestsWithUnresolvedAdditionalConditions"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"reminderDate"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"timestamp"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"app_material_requests_with_pending_additional_conditions"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"messages_and_events"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"message_type"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"EnumValue","value":"ADDITIONAL_CONDITIONS"}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"created_at"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_lt"},"value":{"kind":"Variable","name":{"kind":"Name","value":"reminderDate"}}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"ie_object_id"}},{"kind":"Field","name":{"kind":"Name","value":"profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"reason"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"requested_at"}},{"kind":"Field","name":{"kind":"Name","value":"is_pending"}},{"kind":"Field","name":{"kind":"Name","value":"is_archived"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"group_id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"download_status"}},{"kind":"Field","name":{"kind":"Name","value":"download_available_at"}},{"kind":"Field","name":{"kind":"Name","value":"requester_capacity"}},{"kind":"Field","name":{"kind":"Name","value":"organisation_name"}},{"kind":"Field","name":{"kind":"Name","value":"organisation"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"org_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"skos_pref_label"}},{"kind":"Field","name":{"kind":"Name","value":"ha_org_sector"}},{"kind":"Field","name":{"kind":"Name","value":"schema_vat_id"}},{"kind":"Field","name":{"kind":"Name","value":"hasSite"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"postalAddress"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_street_address"}},{"kind":"Field","name":{"kind":"Name","value":"schema_address_locality"}},{"kind":"Field","name":{"kind":"Name","value":"schema_postal_code"}},{"kind":"Field","name":{"kind":"Name","value":"schema_contact_type"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"requested_by"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}},{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"mail"}},{"kind":"Field","name":{"kind":"Name","value":"language"}},{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"intellectualEntity"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_published"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"premisIdentifier"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"IntValue","value":"1"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"dctermsFormat"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"IntValue","value":"1"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"dcterms_format"}}]}},{"kind":"Field","name":{"kind":"Name","value":"schemaThumbnail"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_thumbnail_url"}}]}},{"kind":"Field","name":{"kind":"Name","value":"schemaMaintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"org_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"skos_pref_label"}},{"kind":"Field","name":{"kind":"Name","value":"ha_org_has_logo"}},{"kind":"Field","name":{"kind":"Name","value":"ha_org_sector"}},{"kind":"Field","name":{"kind":"Name","value":"organizationSlug"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"slug"}}]}},{"kind":"Field","name":{"kind":"Name","value":"schemaContactPoint"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_contact_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_email"}},{"kind":"Field","name":{"kind":"Name","value":"schema_telephone"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"schemaLicenses"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_license"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"ie_object_representation_id"}},{"kind":"Field","name":{"kind":"Name","value":"objectRepresentation"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"is_media_fragment_of"}},{"kind":"Field","name":{"kind":"Name","value":"schema_in_language"}},{"kind":"Field","name":{"kind":"Name","value":"schema_start_time"}},{"kind":"Field","name":{"kind":"Name","value":"schema_end_time"}},{"kind":"Field","name":{"kind":"Name","value":"schema_transcript"}},{"kind":"Field","name":{"kind":"Name","value":"schemaTranscriptUrls"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_transcript"}},{"kind":"Field","name":{"kind":"Name","value":"schema_transcript_url"}}]}},{"kind":"Field","name":{"kind":"Name","value":"edm_is_next_in_sequence"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"includes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"file"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"ebucore_has_mime_type"}},{"kind":"Field","name":{"kind":"Name","value":"premis_stored_at"}},{"kind":"Field","name":{"kind":"Name","value":"schema_thumbnail_url"}},{"kind":"Field","name":{"kind":"Name","value":"schema_duration"}},{"kind":"Field","name":{"kind":"Name","value":"edm_is_next_in_sequence"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"hasMediaFragment"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_start_time"}},{"kind":"Field","name":{"kind":"Name","value":"schema_end_time"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}}]}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"material_request_reuse_form_values"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}}]}}]} as unknown as DocumentNode<FindMaterialRequestsWithUnresolvedAdditionalConditionsQuery, FindMaterialRequestsWithUnresolvedAdditionalConditionsQueryVariables>;
-export const FindMaterialRequestsWithUnresolvedDownloadStatusDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findMaterialRequestsWithUnresolvedDownloadStatus"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"app_material_requests"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"status"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"EnumValue","value":"APPROVED"}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"_or"},"value":{"kind":"ListValue","values":[{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"download_status"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_in"},"value":{"kind":"ListValue","values":[{"kind":"EnumValue","value":"NEW"},{"kind":"EnumValue","value":"PENDING"}]}}]}}]},{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"download_status"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"EnumValue","value":"FAILED"}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"download_retries"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_lt"},"value":{"kind":"IntValue","value":"3"}}]}}]},{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"download_status"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_is_null"},"value":{"kind":"BooleanValue","value":true}}]}}]}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"download_url"}},{"kind":"Field","name":{"kind":"Name","value":"download_job_id"}},{"kind":"Field","name":{"kind":"Name","value":"download_retries"}},{"kind":"Field","name":{"kind":"Name","value":"download_status"}},{"kind":"Field","name":{"kind":"Name","value":"download_expiry_warning_email_sent"}},{"kind":"Field","name":{"kind":"Name","value":"ie_object_id"}},{"kind":"Field","name":{"kind":"Name","value":"ie_object_representation_id"}},{"kind":"Field","name":{"kind":"Name","value":"profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"intellectualEntity"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schemaMaintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"org_identifier"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"material_request_reuse_form_values"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"key"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_in"},"value":{"kind":"ListValue","values":[{"kind":"StringValue","value":"downloadQuality","block":false},{"kind":"StringValue","value":"startTime","block":false},{"kind":"StringValue","value":"endTime","block":false},{"kind":"StringValue","value":"durationType","block":false}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}}]}}]} as unknown as DocumentNode<FindMaterialRequestsWithUnresolvedDownloadStatusQuery, FindMaterialRequestsWithUnresolvedDownloadStatusQueryVariables>;
+export const FindMaterialRequestsWithUnresolvedDownloadStatusDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findMaterialRequestsWithUnresolvedDownloadStatus"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"app_material_requests"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"status"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"EnumValue","value":"APPROVED"}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"_or"},"value":{"kind":"ListValue","values":[{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"download_status"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_in"},"value":{"kind":"ListValue","values":[{"kind":"EnumValue","value":"NEW"},{"kind":"EnumValue","value":"PENDING"}]}}]}}]},{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"download_status"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_is_null"},"value":{"kind":"BooleanValue","value":true}}]}}]}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"download_url"}},{"kind":"Field","name":{"kind":"Name","value":"download_job_id"}},{"kind":"Field","name":{"kind":"Name","value":"download_retries"}},{"kind":"Field","name":{"kind":"Name","value":"download_status"}},{"kind":"Field","name":{"kind":"Name","value":"download_expiry_warning_email_sent"}},{"kind":"Field","name":{"kind":"Name","value":"ie_object_id"}},{"kind":"Field","name":{"kind":"Name","value":"ie_object_representation_id"}},{"kind":"Field","name":{"kind":"Name","value":"profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"intellectualEntity"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schemaMaintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"org_identifier"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"material_request_reuse_form_values"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"key"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_in"},"value":{"kind":"ListValue","values":[{"kind":"StringValue","value":"downloadQuality","block":false},{"kind":"StringValue","value":"startTime","block":false},{"kind":"StringValue","value":"endTime","block":false},{"kind":"StringValue","value":"durationType","block":false}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}}]}}]} as unknown as DocumentNode<FindMaterialRequestsWithUnresolvedDownloadStatusQuery, FindMaterialRequestsWithUnresolvedDownloadStatusQueryVariables>;
 export const GetMaterialRequestByJobIdForDownloadJobDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getMaterialRequestByJobIdForDownloadJob"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"jobIds"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"app_material_requests"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"download_job_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_in"},"value":{"kind":"Variable","name":{"kind":"Name","value":"jobIds"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"download_job_id"}},{"kind":"Field","name":{"kind":"Name","value":"download_retries"}},{"kind":"Field","name":{"kind":"Name","value":"download_status"}},{"kind":"Field","name":{"kind":"Name","value":"download_url"}},{"kind":"Field","name":{"kind":"Name","value":"download_expiry_warning_email_sent"}},{"kind":"Field","name":{"kind":"Name","value":"ie_object_id"}},{"kind":"Field","name":{"kind":"Name","value":"ie_object_representation_id"}},{"kind":"Field","name":{"kind":"Name","value":"profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"intellectualEntity"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schemaMaintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"org_identifier"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"material_request_reuse_form_values"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"key"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_in"},"value":{"kind":"ListValue","values":[{"kind":"StringValue","value":"downloadQuality","block":false},{"kind":"StringValue","value":"startTime","block":false},{"kind":"StringValue","value":"endTime","block":false},{"kind":"StringValue","value":"durationType","block":false}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}}]}}]} as unknown as DocumentNode<GetMaterialRequestByJobIdForDownloadJobQuery, GetMaterialRequestByJobIdForDownloadJobQueryVariables>;
 export const GetMaterialRequestForDownloadJobDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getMaterialRequestForDownloadJob"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"materialRequestId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"app_material_requests"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"materialRequestId"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"download_job_id"}},{"kind":"Field","name":{"kind":"Name","value":"download_retries"}},{"kind":"Field","name":{"kind":"Name","value":"download_status"}},{"kind":"Field","name":{"kind":"Name","value":"download_url"}},{"kind":"Field","name":{"kind":"Name","value":"download_expiry_warning_email_sent"}},{"kind":"Field","name":{"kind":"Name","value":"ie_object_id"}},{"kind":"Field","name":{"kind":"Name","value":"ie_object_representation_id"}},{"kind":"Field","name":{"kind":"Name","value":"profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"intellectualEntity"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schemaMaintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"org_identifier"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"material_request_reuse_form_values"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"key"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_in"},"value":{"kind":"ListValue","values":[{"kind":"StringValue","value":"downloadQuality","block":false},{"kind":"StringValue","value":"startTime","block":false},{"kind":"StringValue","value":"endTime","block":false},{"kind":"StringValue","value":"durationType","block":false}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}}]}}]} as unknown as DocumentNode<GetMaterialRequestForDownloadJobQuery, GetMaterialRequestForDownloadJobQueryVariables>;
 export const InsertMaterialRequestDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"insertMaterialRequest"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"newMaterialRequest"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"app_material_requests_insert_input"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"insert_app_material_requests_one"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"object"},"value":{"kind":"Variable","name":{"kind":"Name","value":"newMaterialRequest"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"ie_object_id"}},{"kind":"Field","name":{"kind":"Name","value":"profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"reason"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"requested_at"}},{"kind":"Field","name":{"kind":"Name","value":"messages_and_events"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"message_type"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_nin"},"value":{"kind":"ListValue","values":[{"kind":"EnumValue","value":"MESSAGE"}]}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"created_at"},"value":{"kind":"EnumValue","value":"asc"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"message_type"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"body"}},{"kind":"Field","name":{"kind":"Name","value":"sender_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"sender"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"mail"}},{"kind":"Field","name":{"kind":"Name","value":"organisation"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"org_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"skos_pref_label"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"is_pending"}},{"kind":"Field","name":{"kind":"Name","value":"is_archived"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"group_id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"requester_capacity"}},{"kind":"Field","name":{"kind":"Name","value":"organisation_name"}},{"kind":"Field","name":{"kind":"Name","value":"organisation"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"org_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"skos_pref_label"}},{"kind":"Field","name":{"kind":"Name","value":"ha_org_sector"}},{"kind":"Field","name":{"kind":"Name","value":"schema_vat_id"}},{"kind":"Field","name":{"kind":"Name","value":"hasSite"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"postalAddress"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_street_address"}},{"kind":"Field","name":{"kind":"Name","value":"schema_address_locality"}},{"kind":"Field","name":{"kind":"Name","value":"schema_postal_code"}},{"kind":"Field","name":{"kind":"Name","value":"schema_contact_type"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"download_status"}},{"kind":"Field","name":{"kind":"Name","value":"download_available_at"}},{"kind":"Field","name":{"kind":"Name","value":"requested_by"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}},{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"mail"}},{"kind":"Field","name":{"kind":"Name","value":"language"}},{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"intellectualEntity"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_published"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"premisIdentifier"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"IntValue","value":"1"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"dctermsFormat"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"IntValue","value":"1"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"dcterms_format"}}]}},{"kind":"Field","name":{"kind":"Name","value":"schemaThumbnail"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_thumbnail_url"}}]}},{"kind":"Field","name":{"kind":"Name","value":"schemaMaintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"org_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"skos_pref_label"}},{"kind":"Field","name":{"kind":"Name","value":"ha_org_has_logo"}},{"kind":"Field","name":{"kind":"Name","value":"ha_org_sector"}},{"kind":"Field","name":{"kind":"Name","value":"organizationSlug"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"slug"}}]}},{"kind":"Field","name":{"kind":"Name","value":"schemaContactPoint"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_contact_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_email"}},{"kind":"Field","name":{"kind":"Name","value":"schema_telephone"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"schemaLicenses"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_license"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"ie_object_representation_id"}},{"kind":"Field","name":{"kind":"Name","value":"objectRepresentation"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"is_media_fragment_of"}},{"kind":"Field","name":{"kind":"Name","value":"schema_in_language"}},{"kind":"Field","name":{"kind":"Name","value":"schema_start_time"}},{"kind":"Field","name":{"kind":"Name","value":"schema_end_time"}},{"kind":"Field","name":{"kind":"Name","value":"schema_transcript"}},{"kind":"Field","name":{"kind":"Name","value":"schemaTranscriptUrls"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_transcript"}},{"kind":"Field","name":{"kind":"Name","value":"schema_transcript_url"}}]}},{"kind":"Field","name":{"kind":"Name","value":"edm_is_next_in_sequence"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"includes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"file"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"ebucore_has_mime_type"}},{"kind":"Field","name":{"kind":"Name","value":"premis_stored_at"}},{"kind":"Field","name":{"kind":"Name","value":"schema_thumbnail_url"}},{"kind":"Field","name":{"kind":"Name","value":"schema_duration"}},{"kind":"Field","name":{"kind":"Name","value":"edm_is_next_in_sequence"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"hasMediaFragment"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_start_time"}},{"kind":"Field","name":{"kind":"Name","value":"schema_end_time"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}}]}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"material_request_reuse_form_values"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}}]}}]} as unknown as DocumentNode<InsertMaterialRequestMutation, InsertMaterialRequestMutationVariables>;
@@ -39723,7 +41317,7 @@ export const UpdateMaterialRequestDocument = {"kind":"Document","definitions":[{
 export const UpdateMaterialRequestForUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"updateMaterialRequestForUser"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"materialRequestId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"updateMaterialRequest"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"app_material_requests_set_input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"delete_app_material_request_reuse_form_values"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"material_request_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"materialRequestId"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"affected_rows"}}]}},{"kind":"Field","name":{"kind":"Name","value":"update_app_material_requests"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"materialRequestId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"profile_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"Variable","name":{"kind":"Name","value":"updateMaterialRequest"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"returning"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"ie_object_id"}},{"kind":"Field","name":{"kind":"Name","value":"profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"reason"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"requested_at"}},{"kind":"Field","name":{"kind":"Name","value":"messages_and_events"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"message_type"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_nin"},"value":{"kind":"ListValue","values":[{"kind":"EnumValue","value":"MESSAGE"}]}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"created_at"},"value":{"kind":"EnumValue","value":"asc"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"message_type"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"body"}},{"kind":"Field","name":{"kind":"Name","value":"sender_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"sender"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"mail"}},{"kind":"Field","name":{"kind":"Name","value":"organisation"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"org_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"skos_pref_label"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"is_pending"}},{"kind":"Field","name":{"kind":"Name","value":"is_archived"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"group_id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"download_status"}},{"kind":"Field","name":{"kind":"Name","value":"download_available_at"}},{"kind":"Field","name":{"kind":"Name","value":"requester_capacity"}},{"kind":"Field","name":{"kind":"Name","value":"organisation_name"}},{"kind":"Field","name":{"kind":"Name","value":"organisation"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"org_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"skos_pref_label"}},{"kind":"Field","name":{"kind":"Name","value":"ha_org_sector"}},{"kind":"Field","name":{"kind":"Name","value":"schema_vat_id"}},{"kind":"Field","name":{"kind":"Name","value":"hasSite"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"postalAddress"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_street_address"}},{"kind":"Field","name":{"kind":"Name","value":"schema_address_locality"}},{"kind":"Field","name":{"kind":"Name","value":"schema_postal_code"}},{"kind":"Field","name":{"kind":"Name","value":"schema_contact_type"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"requested_by"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}},{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"mail"}},{"kind":"Field","name":{"kind":"Name","value":"language"}},{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"intellectualEntity"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_published"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"premisIdentifier"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"IntValue","value":"1"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"dctermsFormat"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"IntValue","value":"1"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"dcterms_format"}}]}},{"kind":"Field","name":{"kind":"Name","value":"schemaThumbnail"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_thumbnail_url"}}]}},{"kind":"Field","name":{"kind":"Name","value":"schemaMaintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"org_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"skos_pref_label"}},{"kind":"Field","name":{"kind":"Name","value":"ha_org_has_logo"}},{"kind":"Field","name":{"kind":"Name","value":"ha_org_sector"}},{"kind":"Field","name":{"kind":"Name","value":"organizationSlug"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"slug"}}]}},{"kind":"Field","name":{"kind":"Name","value":"schemaContactPoint"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_contact_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_email"}},{"kind":"Field","name":{"kind":"Name","value":"schema_telephone"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"schemaLicenses"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_license"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"ie_object_representation_id"}},{"kind":"Field","name":{"kind":"Name","value":"objectRepresentation"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"is_media_fragment_of"}},{"kind":"Field","name":{"kind":"Name","value":"schema_in_language"}},{"kind":"Field","name":{"kind":"Name","value":"schema_start_time"}},{"kind":"Field","name":{"kind":"Name","value":"schema_end_time"}},{"kind":"Field","name":{"kind":"Name","value":"schema_transcript"}},{"kind":"Field","name":{"kind":"Name","value":"schemaTranscriptUrls"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_transcript"}},{"kind":"Field","name":{"kind":"Name","value":"schema_transcript_url"}}]}},{"kind":"Field","name":{"kind":"Name","value":"edm_is_next_in_sequence"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"includes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"file"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"ebucore_has_mime_type"}},{"kind":"Field","name":{"kind":"Name","value":"premis_stored_at"}},{"kind":"Field","name":{"kind":"Name","value":"schema_thumbnail_url"}},{"kind":"Field","name":{"kind":"Name","value":"schema_duration"}},{"kind":"Field","name":{"kind":"Name","value":"edm_is_next_in_sequence"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"hasMediaFragment"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_start_time"}},{"kind":"Field","name":{"kind":"Name","value":"schema_end_time"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}}]}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"material_request_reuse_form_values"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}}]}}]}}]} as unknown as DocumentNode<UpdateMaterialRequestForUserMutation, UpdateMaterialRequestForUserMutationVariables>;
 export const UpdateMaterialRequestStatusDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"updateMaterialRequestStatus"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"materialRequestId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"updateMaterialRequest"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"app_material_requests_set_input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"update_app_material_requests_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pk_columns"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"materialRequestId"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"Variable","name":{"kind":"Name","value":"updateMaterialRequest"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"ie_object_id"}},{"kind":"Field","name":{"kind":"Name","value":"profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"reason"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"requested_at"}},{"kind":"Field","name":{"kind":"Name","value":"messages_and_events"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"message_type"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_nin"},"value":{"kind":"ListValue","values":[{"kind":"EnumValue","value":"MESSAGE"}]}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"created_at"},"value":{"kind":"EnumValue","value":"asc"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"message_type"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"body"}},{"kind":"Field","name":{"kind":"Name","value":"sender_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"sender"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"mail"}},{"kind":"Field","name":{"kind":"Name","value":"organisation"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"org_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"skos_pref_label"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"is_pending"}},{"kind":"Field","name":{"kind":"Name","value":"is_archived"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"group_id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"download_status"}},{"kind":"Field","name":{"kind":"Name","value":"download_available_at"}},{"kind":"Field","name":{"kind":"Name","value":"requester_capacity"}},{"kind":"Field","name":{"kind":"Name","value":"organisation_name"}},{"kind":"Field","name":{"kind":"Name","value":"organisation"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"org_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"skos_pref_label"}},{"kind":"Field","name":{"kind":"Name","value":"ha_org_sector"}},{"kind":"Field","name":{"kind":"Name","value":"schema_vat_id"}},{"kind":"Field","name":{"kind":"Name","value":"hasSite"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"postalAddress"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_street_address"}},{"kind":"Field","name":{"kind":"Name","value":"schema_address_locality"}},{"kind":"Field","name":{"kind":"Name","value":"schema_postal_code"}},{"kind":"Field","name":{"kind":"Name","value":"schema_contact_type"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"requested_by"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}},{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"mail"}},{"kind":"Field","name":{"kind":"Name","value":"language"}},{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"intellectualEntity"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_published"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"premisIdentifier"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"IntValue","value":"1"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"dctermsFormat"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"IntValue","value":"1"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"dcterms_format"}}]}},{"kind":"Field","name":{"kind":"Name","value":"schemaThumbnail"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_thumbnail_url"}}]}},{"kind":"Field","name":{"kind":"Name","value":"schemaMaintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"org_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"skos_pref_label"}},{"kind":"Field","name":{"kind":"Name","value":"ha_org_has_logo"}},{"kind":"Field","name":{"kind":"Name","value":"ha_org_sector"}},{"kind":"Field","name":{"kind":"Name","value":"organizationSlug"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"slug"}}]}},{"kind":"Field","name":{"kind":"Name","value":"schemaContactPoint"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_contact_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_email"}},{"kind":"Field","name":{"kind":"Name","value":"schema_telephone"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"schemaLicenses"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_license"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"ie_object_representation_id"}},{"kind":"Field","name":{"kind":"Name","value":"objectRepresentation"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"is_media_fragment_of"}},{"kind":"Field","name":{"kind":"Name","value":"schema_in_language"}},{"kind":"Field","name":{"kind":"Name","value":"schema_start_time"}},{"kind":"Field","name":{"kind":"Name","value":"schema_end_time"}},{"kind":"Field","name":{"kind":"Name","value":"schema_transcript"}},{"kind":"Field","name":{"kind":"Name","value":"schemaTranscriptUrls"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_transcript"}},{"kind":"Field","name":{"kind":"Name","value":"schema_transcript_url"}}]}},{"kind":"Field","name":{"kind":"Name","value":"edm_is_next_in_sequence"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"includes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"file"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"ebucore_has_mime_type"}},{"kind":"Field","name":{"kind":"Name","value":"premis_stored_at"}},{"kind":"Field","name":{"kind":"Name","value":"schema_thumbnail_url"}},{"kind":"Field","name":{"kind":"Name","value":"schema_duration"}},{"kind":"Field","name":{"kind":"Name","value":"edm_is_next_in_sequence"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"hasMediaFragment"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_start_time"}},{"kind":"Field","name":{"kind":"Name","value":"schema_end_time"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}}]}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"material_request_reuse_form_values"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}}]}}]} as unknown as DocumentNode<UpdateMaterialRequestStatusMutation, UpdateMaterialRequestStatusMutationVariables>;
 export const GetFileStoredAtByIeObjectIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getFileStoredAtByIeObjectId"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"ieObjectId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"graph_representation"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"premis_represents"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"ieObjectId"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"includes"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"file"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"ebucore_has_mime_type"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"StringValue","value":"video/mp4","block":false}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"file"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"premis_stored_at"}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetFileStoredAtByIeObjectIdQuery, GetFileStoredAtByIeObjectIdQueryVariables>;
-export const GetFileStoredAtByRepresentationIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getFileStoredAtByRepresentationId"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"representationId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"graph_includes"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"representation_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"representationId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"file"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"ebucore_has_mime_type"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_in"},"value":{"kind":"ListValue","values":[{"kind":"StringValue","value":"video/mp4","block":false},{"kind":"StringValue","value":"audio/mp4","block":false}]}}]}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"IntValue","value":"1"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"file"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"premis_stored_at"}}]}}]}}]}}]} as unknown as DocumentNode<GetFileStoredAtByRepresentationIdQuery, GetFileStoredAtByRepresentationIdQueryVariables>;
+export const GetFileStoredAtByRepresentationIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getFileStoredAtByRepresentationId"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"representationId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"graph_includes"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"representation_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"representationId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"file"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"ebucore_has_mime_type"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_in"},"value":{"kind":"ListValue","values":[{"kind":"StringValue","value":"video/mp4","block":false},{"kind":"StringValue","value":"audio/mp4","block":false},{"kind":"StringValue","value":"audio/mpeg","block":false},{"kind":"StringValue","value":"audio/m4a","block":false}]}}]}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"IntValue","value":"1"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"file"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"premis_stored_at"}}]}}]}}]}}]} as unknown as DocumentNode<GetFileStoredAtByRepresentationIdQuery, GetFileStoredAtByRepresentationIdQueryVariables>;
 export const GetMhIdentifiersFromPartialMhIdentifierDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getMhIdentifiersFromPartialMhIdentifier"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"partialMhIdentifierStartsWith"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"graph_mh_fragment_identifier"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"mh_fragment_identifier"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_ilike"},"value":{"kind":"Variable","name":{"kind":"Name","value":"partialMhIdentifierStartsWith"}}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"IntValue","value":"1"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"mh_fragment_identifier"}}]}}]}}]} as unknown as DocumentNode<GetMhIdentifiersFromPartialMhIdentifierQuery, GetMhIdentifiersFromPartialMhIdentifierQueryVariables>;
 export const GetNewspaperTitlesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getNewspaperTitles"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"graph__newspaper_public_content"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"distinct_on"},"value":{"kind":"EnumValue","value":"schema_name"}},{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"schema_name"},"value":{"kind":"EnumValue","value":"asc"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}}]}}]}}]} as unknown as DocumentNode<GetNewspaperTitlesQuery, GetNewspaperTitlesQueryVariables>;
 export const DeleteNotificationsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"deleteNotifications"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"where"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"app_notification_bool_exp"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"delete_app_notification"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"Variable","name":{"kind":"Name","value":"where"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"affected_rows"}}]}}]}}]} as unknown as DocumentNode<DeleteNotificationsMutation, DeleteNotificationsMutationVariables>;
