@@ -818,13 +818,27 @@ export class MaterialRequestsService {
 		if (updatedRequest.status === Lookup_App_Material_Request_Status_Enum.Approved) {
 			// If the request is approved, we need to start prepping the download
 			this.getMaterialRequestForDownloadJob(updatedRequest.id)
-				.then((materialRequestForDownload) =>
-					this.mediahavenJobWatcherService.createExportJob(materialRequestForDownload)
-				)
+				.then(async (materialRequestForDownload) => {
+					try {
+						await this.mediahavenJobWatcherService.createExportJob(materialRequestForDownload);
+					} catch (err) {
+						console.error(
+							new CustomError(
+								'Failed to create export job for material request',
+								err,
+								updatedRequest
+							)
+						);
+						// When the create-export job fails also mark the download status of the material request as failed and send email to meemoo
+						await this.mediahavenJobWatcherService.handleFailedExportJob(updatedRequest.id);
+					}
+				})
 				.catch((err) => {
 					console.error(
-						new CustomError('Failed to create downloadJob for request', err, updatedRequest)
+						new CustomError('Failed to get material request from database', err, updatedRequest)
 					);
+					// When the getMaterialRequestForDownloadJob fails also mark the download status of the material request as failed and send email to meemoo
+					this.mediahavenJobWatcherService.handleFailedExportJob(updatedRequest.id);
 				});
 		}
 
