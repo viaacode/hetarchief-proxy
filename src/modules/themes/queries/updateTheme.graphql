@@ -4,6 +4,10 @@ mutation updateTheme($themeId: uuid!, $theme: app_theme_set_input!) {
 		slug
 		name_nl
 		name_en
+		description_nl
+		description_en
 		image_url
+		content_page_path_nl
+		content_page_path_en
 	}
 }

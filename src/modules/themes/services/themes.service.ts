@@ -127,7 +127,11 @@ export class ThemesService {
 				slug: dto.slug,
 				name_nl: dto.nameNl,
 				name_en: dto.nameEn,
+				description_nl: dto.descriptionNl ?? null,
+				description_en: dto.descriptionEn ?? null,
 				image_url: dto.imageUrl ?? null,
+				content_page_path_nl: dto.contentPagePathNl ?? null,
+				content_page_path_en: dto.contentPagePathEn ?? null,
 			},
 		});
 
@@ -144,7 +148,15 @@ export class ThemesService {
 				...(dto.slug !== undefined && { slug: dto.slug }),
 				...(dto.nameNl !== undefined && { name_nl: dto.nameNl }),
 				...(dto.nameEn !== undefined && { name_en: dto.nameEn }),
+				...(dto.descriptionNl !== undefined && { description_nl: dto.descriptionNl }),
+				...(dto.descriptionEn !== undefined && { description_en: dto.descriptionEn }),
 				...(dto.imageUrl !== undefined && { image_url: dto.imageUrl }),
+				...(dto.contentPagePathNl !== undefined && {
+					content_page_path_nl: dto.contentPagePathNl,
+				}),
+				...(dto.contentPagePathEn !== undefined && {
+					content_page_path_en: dto.contentPagePathEn,
+				}),
 			},
 		});
 
@@ -272,14 +284,22 @@ export class ThemesService {
 		slug?: string | null;
 		name_nl?: string | null;
 		name_en?: string | null;
+		description_nl?: string | null;
+		description_en?: string | null;
 		image_url?: string | null;
+		content_page_path_nl?: string | null;
+		content_page_path_en?: string | null;
 	}): ThemeResponseDto {
 		return {
 			id: theme.id,
 			slug: theme.slug ?? '',
 			nameNl: theme.name_nl ?? '',
 			nameEn: theme.name_en ?? '',
+			descriptionNl: theme.description_nl ?? null,
+			descriptionEn: theme.description_en ?? null,
 			imageUrl: theme.image_url ?? null,
+			contentPagePathNl: theme.content_page_path_nl ?? null,
+			contentPagePathEn: theme.content_page_path_en ?? null,
 		};
 	}
 
