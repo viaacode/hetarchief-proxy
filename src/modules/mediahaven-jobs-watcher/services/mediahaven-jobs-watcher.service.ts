@@ -156,6 +156,24 @@ export class MediahavenJobsWatcherService {
 		}
 	}
 
+	public async handleFailedExportJob(materialRequestId: string): Promise<void> {
+		const updatedRequest = await this.materialRequestsService.updateMaterialRequest(
+			materialRequestId,
+			{
+				download_status: Lookup_App_Material_Request_Download_Status_Enum.Failed,
+				updated_at: new Date().toISOString(),
+			},
+			true
+		);
+		// TODO: check this if we start retrying that this only gets created when it fails completely
+		await this.materialRequestMessagesService.createFinalSummaryMessage(updatedRequest, null);
+
+		const requester = await this.usersService.getById(updatedRequest.requesterId);
+		this.materialRequestsService
+			.sendEmailsForFailedDownloadExport(updatedRequest, requester)
+			.catch(noop);
+	}
+
 	public async checkUnresolvedJobs() {
 		try {
 			const jobs: MediahavenJobInfo[] = await this.getJobsFromMediahaven();
@@ -239,24 +257,7 @@ export class MediahavenJobsWatcherService {
 								) {
 									break; // material request is already marked as failed, no need to update it and no need to notify meemoo again
 								}
-								const updatedRequest = await this.materialRequestsService.updateMaterialRequest(
-									materialRequest.id,
-									{
-										download_status: Lookup_App_Material_Request_Download_Status_Enum.Failed,
-										updated_at: new Date().toISOString(),
-									},
-									true
-								);
-								// TODO: check this if we start retrying that this only gets created when it fails completely
-								await this.materialRequestMessagesService.createFinalSummaryMessage(
-									updatedRequest,
-									null
-								);
-
-								const requester = await this.usersService.getById(updatedRequest.requesterId);
-								this.materialRequestsService
-									.sendEmailsForFailedDownloadExport(updatedRequest, requester)
-									.catch(noop);
+								await this.handleFailedExportJob(materialRequest.id);
 
 								// Restart logic is disabled, since it would spam the MAM api with constant retries
 								// https://meemoo.atlassian.net/browse/ARC-3573
