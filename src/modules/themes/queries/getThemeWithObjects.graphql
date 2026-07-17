@@ -9,7 +9,11 @@ query getThemeWithObjects(
 		slug
 		name_nl
 		name_en
+		description_nl
+		description_en
 		image_url
+		content_page_path_nl
+		content_page_path_en
 		ieObjectLinks(offset: $offset, limit: $limit, order_by: $orderBy) {
 			ieObject {
 				id

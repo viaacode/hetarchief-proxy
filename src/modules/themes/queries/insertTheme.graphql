@@ -4,6 +4,10 @@ mutation insertTheme($object: app_theme_insert_input!) {
 		slug
 		name_nl
 		name_en
+		description_nl
+		description_en
 		image_url
+		content_page_path_nl
+		content_page_path_en
 	}
 }

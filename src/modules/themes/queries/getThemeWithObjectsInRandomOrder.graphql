@@ -4,7 +4,11 @@ query getThemeWithObjectsInRandomOrder($themeId: uuid!, $objectsLimit: Int!) {
 		slug
 		name_nl
 		name_en
+		description_nl
+		description_en
 		image_url
+		content_page_path_nl
+		content_page_path_en
 		ieObjectLinksRandomOrder(limit: $objectsLimit) {
 			ieObject {
 				id

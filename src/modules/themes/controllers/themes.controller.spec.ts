@@ -15,7 +15,11 @@ const mockIeObjectsInThemeResponse: IeObjectsInThemeResponseDto = {
 	slug: mockThemeSlug,
 	nameNl: 'Cultuur en samenleving',
 	nameEn: 'Culture & Society',
+	descriptionNl: null,
+	descriptionEn: null,
 	imageUrl: 'https://example.com/culture-society.jpg',
+	contentPagePathNl: null,
+	contentPagePathEn: null,
 	ieObjects: [
 		{
 			id: 'ie-uuid-1',
