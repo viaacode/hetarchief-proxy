@@ -53,6 +53,7 @@ import {
 	VALUE_OPERATORS,
 } from './elasticsearch.consts';
 
+import { randomInt } from 'node:crypto';
 import { AND, OR, applyFilter } from '~modules/ie-objects/elasticsearch/queryBuilder.helpers';
 import { GroupId, GroupName } from '~modules/users/types';
 import { PaginationHelper } from '~shared/helpers/pagination';
@@ -223,7 +224,7 @@ export class QueryBuilder {
 						function_score: {
 							query: boolQuery,
 							random_score: {
-								seed: 42,
+								seed: randomInt(0, 20), // balance between new items and being able to cache these responses
 								field: '_seq_no',
 							},
 						},
