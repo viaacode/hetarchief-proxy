@@ -32,17 +32,17 @@ import {
 	IeObjectsSearchFilterField,
 	MAX_COUNT_SEARCH_RESULTS,
 	MAX_NUMBER_SEARCH_RESULTS,
-	MetadataAccessType,
 	MULTI_MATCH_FIELDS,
 	MULTI_MATCH_QUERY_MAPPING,
+	MetadataAccessType,
 	NEEDS_AGG_SUFFIX,
 	NEEDS_FILTER_SUFFIX,
 	NUMBER_OF_FILTER_OPTIONS_DEFAULT,
 	NUMBER_OF_OPTIONS_PER_AGGREGATE,
-	OccurenceType,
 	OCCURRENCE_TYPE,
-	Operator,
 	ORDER_MAPPINGS,
+	OccurenceType,
+	Operator,
 	OrderProperty,
 	type QueryBuilderInputInfo,
 	QueryType,
@@ -53,7 +53,7 @@ import {
 	VALUE_OPERATORS,
 } from './elasticsearch.consts';
 
-import { AND, applyFilter, OR } from '~modules/ie-objects/elasticsearch/queryBuilder.helpers';
+import { AND, OR, applyFilter } from '~modules/ie-objects/elasticsearch/queryBuilder.helpers';
 import { GroupId, GroupName } from '~modules/users/types';
 import { PaginationHelper } from '~shared/helpers/pagination';
 import type { SortDirection } from '~shared/types';
@@ -74,6 +74,7 @@ export class QueryBuilder {
 	 * @return elastic search query
 	 */
 	public static build(searchRequest: IeObjectsQueryDto, inputInfo: QueryBuilderInputInfo): any {
+		const isRandomOrder = searchRequest.orderProp === OrderProperty.RANDOM;
 		// Check if all filter fields are known
 		(searchRequest?.filters || []).find((searchFilter) => {
 			if (!Object.values(IeObjectsSearchFilterField).includes(searchFilter.field)) {
@@ -166,11 +167,10 @@ export class QueryBuilder {
 			// Specify the aggs objects with optional search terms
 			const aggs = QueryBuilder.buildAggsObject(searchRequest);
 
-			// Add sorting
-			const sort = QueryBuilder.buildSortArray(
-				searchRequest.orderProp,
-				searchRequest.orderDirection
-			);
+			// Add sorting if orderProp is not random
+			const sort = isRandomOrder
+				? {}
+				: QueryBuilder.buildSortArray(searchRequest.orderProp, searchRequest.orderDirection);
 
 			/**
 			 * Assemble the complete query object:
@@ -201,22 +201,37 @@ export class QueryBuilder {
 			 * 				* AND
 			 * 				* organisation with correct sector
 			 */
-			return {
-				query: OR([
-					// metadata limited
-					AND([queryFromMetadataLimitedFilters, ...licensesFilterPublicLimited]),
-					// metadata all
-					AND([
-						queryFromMetadataAllFilters,
-						OR([
-							...licensesFilterPublicAll,
-							...licensesFilterVisitorSpaceFullAccess,
-							...licensesFilterVisitorSpaceFolderAccess,
-							...licensesFilterIntraCpFullAccess,
-							...licensesFilterKeyUsers,
-						]),
+			const boolQuery = OR([
+				// metadata limited
+				AND([queryFromMetadataLimitedFilters, ...licensesFilterPublicLimited]),
+				// metadata all
+				AND([
+					queryFromMetadataAllFilters,
+					OR([
+						...licensesFilterPublicAll,
+						...licensesFilterVisitorSpaceFullAccess,
+						...licensesFilterVisitorSpaceFolderAccess,
+						...licensesFilterIntraCpFullAccess,
+						...licensesFilterKeyUsers,
 					]),
 				]),
+			]);
+
+			// Wrap in random order, if orderProp is random
+			const query = isRandomOrder
+				? {
+						function_score: {
+							query: boolQuery,
+							random_score: {
+								seed: 42,
+								field: '_seq_no',
+							},
+						},
+					}
+				: boolQuery;
+
+			return {
+				query,
 				size,
 				from,
 				aggs,
@@ -245,6 +260,12 @@ export class QueryBuilder {
 	 * @param orderDirection
 	 */
 	private static buildSortArray(orderProperty: OrderProperty, orderDirection: SortDirection) {
+		if (orderProperty === OrderProperty.RANDOM) {
+			// The random ordering is handled by wrapping the query in a function_score with a random_score,
+			// so we only need to sort by the (randomized) relevance score here.
+			return [ORDER_MAPPINGS[OrderProperty.RELEVANCE]];
+		}
+
 		const mappedOrderProperty = ORDER_MAPPINGS[orderProperty];
 		const sortArray: any[] = [];
 		if (orderProperty !== OrderProperty.RELEVANCE) {

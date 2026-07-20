@@ -107,6 +107,7 @@ export enum OrderProperty {
 	CREATED = 'created',
 	ARCHIVED = 'archived',
 	NAME = 'name',
+	RANDOM = 'random',
 }
 
 export enum QueryType {
@@ -339,6 +340,7 @@ export const ORDER_MAPPINGS: { [prop in OrderProperty]: string } = {
 	[OrderProperty.CREATED]: 'schema_date_created',
 	[OrderProperty.ARCHIVED]: 'dcterms_available',
 	[OrderProperty.NAME]: 'schema_name.keyword',
+	[OrderProperty.RANDOM]: '_score',
 };
 
 export const MULTI_MATCH_FIELDS: Array<IeObjectsSearchFilterField> = [
