@@ -41,10 +41,50 @@ export class CreateThemeDto {
 	@ApiPropertyOptional({
 		type: String,
 		nullable: true,
+		description: 'The Dutch description of the theme',
+		example: 'Een collectie over cultuur en samenleving',
+	})
+	descriptionNl?: string | null;
+
+	@IsString()
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		nullable: true,
+		description: 'The English description of the theme',
+		example: 'A collection about culture and society',
+	})
+	descriptionEn?: string | null;
+
+	@IsString()
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		nullable: true,
 		description: 'The header image URL of the theme (set automatically when a file is uploaded)',
 		example: 'https://example.com/image.jpg',
 	})
 	imageUrl?: string | null;
+
+	@IsString()
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		nullable: true,
+		description: 'The Dutch content page path of the theme',
+		example: '/themas/cultuur-samenleving',
+	})
+	contentPagePathNl?: string | null;
+
+	@IsString()
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		nullable: true,
+		description: 'The English content page path of the theme',
+		example: '/themes/culture-society',
+	})
+	contentPagePathEn?: string | null;
 }
 
 export class UpdateThemeDto {
@@ -76,6 +116,26 @@ export class UpdateThemeDto {
 	nameEn?: string;
 
 	@IsString()
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		nullable: true,
+		description: 'The Dutch description of the theme',
+		example: 'Een collectie over cultuur en samenleving',
+	})
+	descriptionNl?: string | null;
+
+	@IsString()
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		nullable: true,
+		description: 'The English description of the theme',
+		example: 'A collection about culture and society',
+	})
+	descriptionEn?: string | null;
+
+	@IsString()
 	@IsUrl()
 	@IsOptional()
 	@ApiPropertyOptional({
@@ -85,6 +145,26 @@ export class UpdateThemeDto {
 		example: 'https://example.com/image.jpg',
 	})
 	imageUrl?: string | null;
+
+	@IsString()
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		nullable: true,
+		description: 'The Dutch content page path of the theme',
+		example: '/themas/cultuur-samenleving',
+	})
+	contentPagePathNl?: string | null;
+
+	@IsString()
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		nullable: true,
+		description: 'The English content page path of the theme',
+		example: '/themes/culture-society',
+	})
+	contentPagePathEn?: string | null;
 }
 
 export class AddIeObjectsToThemeDto {
@@ -111,12 +191,36 @@ export class ThemeResponseDto {
 	@ApiProperty({ type: String, description: 'The English name of the theme' })
 	nameEn: string;
 
+	@ApiProperty({ type: String, nullable: true, description: 'The Dutch description of the theme' })
+	descriptionNl: string | null;
+
+	@ApiProperty({
+		type: String,
+		nullable: true,
+		description: 'The English description of the theme',
+	})
+	descriptionEn: string | null;
+
 	@ApiProperty({
 		type: String,
 		nullable: true,
 		description: 'The header image URL of the theme',
 	})
 	imageUrl: string | null;
+
+	@ApiProperty({
+		type: String,
+		nullable: true,
+		description: 'The Dutch content page path of the theme',
+	})
+	contentPagePathNl: string | null;
+
+	@ApiProperty({
+		type: String,
+		nullable: true,
+		description: 'The English content page path of the theme',
+	})
+	contentPagePathEn: string | null;
 }
 
 export class ThemeIeObjectLinkResponseDto {
@@ -272,12 +376,36 @@ export class IeObjectsInThemeResponseDto {
 	@ApiProperty({ type: String, description: 'The English name of the theme' })
 	nameEn: string;
 
+	@ApiProperty({ type: String, nullable: true, description: 'The Dutch description of the theme' })
+	descriptionNl: string | null;
+
+	@ApiProperty({
+		type: String,
+		nullable: true,
+		description: 'The English description of the theme',
+	})
+	descriptionEn: string | null;
+
 	@ApiProperty({
 		type: String,
 		nullable: true,
 		description: 'The header image URL of the theme',
 	})
 	imageUrl: string | null;
+
+	@ApiProperty({
+		type: String,
+		nullable: true,
+		description: 'The Dutch content page path of the theme',
+	})
+	contentPagePathNl: string | null;
+
+	@ApiProperty({
+		type: String,
+		nullable: true,
+		description: 'The English content page path of the theme',
+	})
+	contentPagePathEn: string | null;
 
 	@ApiProperty({
 		type: IeObjectInThemeResponseDto,

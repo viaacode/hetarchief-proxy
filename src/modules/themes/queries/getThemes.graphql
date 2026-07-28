@@ -4,7 +4,11 @@ query getThemes($offset: Int, $limit: Int, $orderBy: [app_theme_order_by!]) {
 		slug
 		name_nl
 		name_en
+		description_nl
+		description_en
 		image_url
+		content_page_path_nl
+		content_page_path_en
 	}
 	app_theme_aggregate {
 		aggregate {
