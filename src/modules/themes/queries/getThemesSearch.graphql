@@ -25,6 +25,7 @@ query getThemesSearch(
 		image_url
 		content_page_path_nl
 		content_page_path_en
+		updated_at
 	}
 	app_theme_aggregate(
 		where: {

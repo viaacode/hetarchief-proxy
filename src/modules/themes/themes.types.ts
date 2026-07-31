@@ -25,17 +25,28 @@ export enum ThemeOrderProp {
 	NAME_NL = 'nameNl',
 	NAME_EN = 'nameEn',
 	SLUG = 'slug',
+	UPDATED_AT = 'updatedAt',
 }
 
 export const THEME_ORDER_PROP_TO_DB_PROP: Record<ThemeOrderProp, string> = {
 	[ThemeOrderProp.NAME_NL]: 'name_nl',
 	[ThemeOrderProp.NAME_EN]: 'name_en',
 	[ThemeOrderProp.SLUG]: 'slug',
+	[ThemeOrderProp.UPDATED_AT]: 'updated_at',
 };
 
 export enum ThemeIeObjectOrderProp {
 	NAME = 'name',
 	MAINTAINER_NAME = 'maintainerName',
+}
+
+export enum AddIeObjectToThemeResult {
+	/** The ie-object was newly linked to the theme */
+	ADDED = 'added',
+	/** The ie-object exists, but was already linked to this theme */
+	ALREADY_LINKED = 'alreadyLinked',
+	/** No ie-object exists with the given schema identifier */
+	NOT_FOUND = 'notFound',
 }
 
 export type RawThemeIeObject =

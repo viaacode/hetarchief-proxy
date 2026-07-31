@@ -9,9 +9,11 @@ query getThemeWithObjectsInRandomOrder($themeId: uuid!, $objectsLimit: Int!) {
 		image_url
 		content_page_path_nl
 		content_page_path_en
+		updated_at
 		ieObjectLinksRandomOrder(limit: $objectsLimit) {
 			ieObject {
 				id
+				schema_identifier
 				schema_name
 				dctermsFormat {
 					dcterms_format

@@ -9,6 +9,7 @@ query getThemes($offset: Int, $limit: Int, $orderBy: [app_theme_order_by!]) {
 		image_url
 		content_page_path_nl
 		content_page_path_en
+		updated_at
 	}
 	app_theme_aggregate {
 		aggregate {
