@@ -1,16 +1,18 @@
-import { AdminTranslationsModule, AssetsModule, DataModule } from '@meemoo/admin-core-api';
+import { AssetsModule, DataModule } from '@meemoo/admin-core-api';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MulterModule } from '@nestjs/platform-express';
 
 import type { Configuration } from '~config';
 
+import { IeObjectsModule } from '~modules/ie-objects';
 import { ThemesController } from './controllers/themes.controller';
 import { ThemesService } from './services/themes.service';
 
 @Module({
 	imports: [
 		DataModule,
+		IeObjectsModule,
 		MulterModule.registerAsync({
 			imports: [ConfigModule],
 			useFactory: async (configService: ConfigService<Configuration>) =>

@@ -14,9 +14,6 @@ import {
 	GetIeObjectIdBySchemaIdentifierDocument,
 	GetIeObjectIdBySchemaIdentifierQuery,
 	GetIeObjectIdBySchemaIdentifierQueryVariables,
-	GetIeObjectsInThemeDocument,
-	GetIeObjectsInThemeQuery,
-	GetIeObjectsInThemeQueryVariables,
 	GetThemeWithObjectsDocument,
 	GetThemeWithObjectsInRandomOrderDocument,
 	GetThemeWithObjectsInRandomOrderQuery,
@@ -43,6 +40,18 @@ import {
 	UpdateThemeMutation,
 	UpdateThemeMutationVariables,
 } from '~generated/graphql-db-types-hetarchief';
+import { limitAccessToObjectDetails } from '~modules/ie-objects/helpers/limit-access-to-object-details';
+import { mapDcTermsFormatToSimpleType } from '~modules/ie-objects/helpers/map-dc-terms-format-to-simple-type';
+import {
+	type IeObject,
+	IeObjectLicense,
+	type IeObjectSector,
+	IeObjectType,
+	IeObjectsVisitorSpaceInfo,
+} from '~modules/ie-objects/ie-objects.types';
+import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
+import { SessionUserEntity } from '~modules/users/classes/session-user';
+import { AUDIO_WAVE_FORM_URL } from '~shared/consts/audio-wave-form-url';
 import { SortDirectionWithRandom } from '~shared/types';
 import {
 	AddIeObjectToThemeResultDto,
@@ -64,7 +73,10 @@ import {
 
 @Injectable()
 export class ThemesService {
-	constructor(private dataService: DataService) {}
+	constructor(
+		private dataService: DataService,
+		private ieObjectsService: IeObjectsService
+	) {}
 
 	public async getThemes(queryDto: ThemesQueryDto): Promise<IPagination<ThemeResponseDto>> {
 		const { page, size, orderProp, orderDirection, searchTerm } = queryDto;
@@ -282,7 +294,10 @@ export class ThemesService {
 
 	public async getIeObjectsByThemeUuid(
 		themeUuid: string,
-		queryDto: ThemeIeObjectsQueryDto
+		queryDto: ThemeIeObjectsQueryDto,
+		user: SessionUserEntity,
+		referer: string,
+		ip: string
 	): Promise<IeObjectsInThemeResponseDto> {
 		const { page, size, orderProp, orderDirection } = queryDto;
 		const offset = page * size;
@@ -336,13 +351,26 @@ export class ThemesService {
 					?.count ?? 0;
 		}
 
+		const visitorSpaceAccessInfo =
+			queryDto.resolveThumbnailUrl &&
+			(await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user));
+
 		const ieObjects: IeObjectInThemeResponseDto[] = compact(
-			rawIeObjects.map((rawIeObject) => {
-				if (isNil(rawIeObject)) {
-					return null;
-				}
-				return this.adaptIeObject(rawIeObject);
-			})
+			await Promise.all(
+				rawIeObjects.map((rawIeObject) => {
+					if (isNil(rawIeObject)) {
+						return null;
+					}
+					return this.adaptIeObject(
+						rawIeObject,
+						queryDto.resolveThumbnailUrl,
+						visitorSpaceAccessInfo,
+						user,
+						referer,
+						ip
+					);
+				})
+			)
 		);
 
 		const theme = this.adaptTheme(rawTheme);
@@ -379,19 +407,97 @@ export class ThemesService {
 		};
 	}
 
-	private adaptIeObject(
-		// schema_identifier is selected by both theme-with-objects queries. The intersection keeps
-		// this compiling until `npm run generate-database-types` picks the new selection up.
-		rawIeObject: RawThemeIeObject & { schema_identifier?: string | null }
-	): IeObjectInThemeResponseDto {
+	private async adaptIeObject(
+		rawIeObject: RawThemeIeObject,
+		resolveThumbnailUrl: boolean,
+		visitorSpaceAccessInfo?: IeObjectsVisitorSpaceInfo,
+		user?: SessionUserEntity,
+		referer?: string,
+		ip?: string
+	): Promise<IeObjectInThemeResponseDto> {
+		let thumbnailUrl: string | undefined = undefined;
+
+		if (resolveThumbnailUrl) {
+			thumbnailUrl = await this.determineThumbnailUrl(
+				rawIeObject,
+				visitorSpaceAccessInfo,
+				user,
+				referer,
+				ip
+			);
+		}
+
 		return {
 			id: rawIeObject.id,
 			schemaIdentifier: rawIeObject.schema_identifier ?? null,
 			name: rawIeObject.schema_name ?? null,
 			format: rawIeObject.dctermsFormat?.[0]?.dcterms_format ?? null,
-			thumbnailUrl: rawIeObject.schemaThumbnail?.schema_thumbnail_url ?? null,
+			thumbnailUrl,
 			maintainerId: rawIeObject.schemaMaintainer?.id ?? null,
 			maintainerName: rawIeObject.schemaMaintainer?.skos_pref_label ?? null,
 		};
+	}
+
+	private async determineThumbnailUrl(
+		rawIeObject: RawThemeIeObject,
+		visitorSpaceAccessInfo?: IeObjectsVisitorSpaceInfo,
+		user?: SessionUserEntity,
+		referer?: string,
+		ip?: string
+	): Promise<string | undefined> {
+		const dctermsFormat = rawIeObject.dctermsFormat?.[0]?.dcterms_format ?? null;
+		let objectLicences: IeObjectLicense[] = [];
+		let hasAccessToEssence = false;
+
+		if (user) {
+			const objectForAccessChecks: Pick<
+				IeObject,
+				'licenses' | 'schemaIdentifier' | 'maintainerId' | 'sector'
+			> = {
+				maintainerId: rawIeObject.schemaMaintainer.org_identifier,
+				schemaIdentifier: rawIeObject.schema_identifier,
+				licenses: rawIeObject.schemaLicense.schema_license as IeObjectLicense[],
+				sector: rawIeObject.schemaMaintainer.ha_org_sector as IeObjectSector,
+			};
+			// Set a fake thumbnailUrl to see if our existing censor logic will censor the thumbnail
+			// We don't need the actual thumbnail in this function, we just need to see if it is accessible to the current user
+			(objectForAccessChecks as any).thumbnailUrl = 'fake-thumbnail-for-access-check';
+			const censoredObjectMetadata = limitAccessToObjectDetails(objectForAccessChecks, {
+				userId: user.getId(),
+				isKeyUser: user.getIsKeyUser(),
+				sector: user.getSector(),
+				groupId: user.getGroupId(),
+				maintainerId: user.getOrganisationId(),
+				accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
+				accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
+			});
+
+			objectLicences = censoredObjectMetadata?.licenses ?? [];
+			hasAccessToEssence =
+				!!censoredObjectMetadata?.thumbnailUrl || !!censoredObjectMetadata?.pages?.length;
+		}
+
+		const isPublicDomain: boolean =
+			objectLicences?.includes(IeObjectLicense.PUBLIEK_CONTENT) &&
+			objectLicences?.includes(IeObjectLicense.PUBLIC_DOMAIN);
+
+		const ieObjectThumbnailUrl = rawIeObject?.schemaThumbnail?.schema_thumbnail_url?.[0];
+
+		if (!hasAccessToEssence) {
+			return undefined;
+		}
+
+		if (mapDcTermsFormatToSimpleType(dctermsFormat as IeObjectType) === IeObjectType.AUDIO) {
+			return AUDIO_WAVE_FORM_URL; // avoid the ugly speaker
+		}
+
+		return this.ieObjectsService.getThumbnailUrlWithToken(
+			ieObjectThumbnailUrl,
+			referer,
+			ip,
+			// If the object is public domain, we generate a thumbnailUrl with a token that stays valid for 15 years
+			// https://meemoo.atlassian.net/browse/ARC-2891
+			isPublicDomain
+		);
 	}
 }

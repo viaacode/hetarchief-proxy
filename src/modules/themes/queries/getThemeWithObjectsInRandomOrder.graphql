@@ -24,6 +24,11 @@ query getThemeWithObjectsInRandomOrder($themeId: uuid!, $objectsLimit: Int!) {
 				schemaMaintainer {
 					id
 					skos_pref_label
+					ha_org_sector
+					org_identifier
+				}
+				schemaLicense {
+					schema_license
 				}
 			}
 		}

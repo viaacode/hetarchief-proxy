@@ -8,6 +8,7 @@ query getIeObjectsInTheme($slug: String!, $objectsLimit: Int!) {
 		ieObjectLinksRandomOrder(limit: $objectsLimit) {
 			ieObject {
 				id
+				schema_identifier
 				schema_name
 				dctermsFormat {
 					dcterms_format
@@ -18,6 +19,11 @@ query getIeObjectsInTheme($slug: String!, $objectsLimit: Int!) {
 				schemaMaintainer {
 					id
 					skos_pref_label
+					ha_org_sector
+					org_identifier
+				}
+				schemaLicense {
+					schema_license
 				}
 			}
 		}
