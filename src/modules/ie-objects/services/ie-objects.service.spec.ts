@@ -257,6 +257,55 @@ describe('ieObjectsService', () => {
 			expect(ieObject.bibframeEdition).toEqual(mockParentIeObject.getIeObject[0].bibframe_edition);
 		});
 
+		it('maps the themes the object belongs to, keeping the query order', async () => {
+			mockDataService.execute.mockResolvedValueOnce(cloneDeep(mockIeObject2));
+			mockDataService.execute.mockResolvedValueOnce(cloneDeep(mockIeObject2));
+
+			const ieObject = await ieObjectsService.findByIeObjectId(
+				mockObjectId,
+				true,
+				'referer',
+				'127.0.0.1'
+			);
+
+			expect(ieObject.themes).toEqual([
+				{
+					id: '7c4f8d1a-9b2e-4c3d-8a1f-2e5b6c7d8e9f',
+					slug: 'pukkelpop',
+					nameNl: 'Pukkelpop',
+					nameEn: 'Pukkelpop',
+					contentPagePathNl: '/themas/pukkelpop',
+					contentPagePathEn: '/themes/pukkelpop',
+					ieObjectCount: 150,
+				},
+				{
+					id: '3a1b2c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d',
+					slug: 'memorial-van-damme',
+					nameNl: 'Memorial Van Damme',
+					nameEn: 'Memorial Van Damme',
+					contentPagePathNl: null,
+					contentPagePathEn: null,
+					ieObjectCount: 42,
+				},
+			]);
+		});
+
+		it('returns an empty theme list when the object belongs to no themes', async () => {
+			const objectIeMock = cloneDeep(mockIeObject2);
+			objectIeMock.getThemes = [];
+			mockDataService.execute.mockResolvedValueOnce(objectIeMock);
+			mockDataService.execute.mockResolvedValueOnce(cloneDeep(mockIeObject2));
+
+			const ieObject = await ieObjectsService.findByIeObjectId(
+				mockObjectId,
+				true,
+				'referer',
+				'127.0.0.1'
+			);
+
+			expect(ieObject.themes).toEqual([]);
+		});
+
 		it('maps rights info from graph.rights when available', async () => {
 			const objectIeMock = cloneDeep(mockIeObject2);
 			(objectIeMock.getIeObject[0] as any).rights = {

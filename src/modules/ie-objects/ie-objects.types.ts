@@ -125,6 +125,23 @@ export interface IsPartOfCollection {
 	publisher?: any;
 }
 
+/**
+ * A theme this object belongs to, as shown in the metadata panel of the detail page.
+ * See ARC-3826. The name and content page path are exposed in both languages, the
+ * client picks the one matching the UI language.
+ */
+export interface IeObjectTheme {
+	id: string;
+	slug: string;
+	nameNl: string;
+	nameEn: string;
+	/** Internal path on hetarchief.be to the theme detail page, null when not configured */
+	contentPagePathNl: string | null;
+	contentPagePathEn: string | null;
+	/** Total number of objects linked to this theme, not just the current one */
+	ieObjectCount: number;
+}
+
 export interface IeObjectRightsInfo {
 	reuseLabel: string;
 	reuseCategoryUrl?: string | null;
@@ -226,6 +243,7 @@ export interface IeObject {
 	digitizationDate?: string;
 	children?: number;
 	rightsInfo?: IeObjectRightsInfo;
+	themes?: IeObjectTheme[];
 
 	// ESSENCE
 	thumbnailUrl: string;

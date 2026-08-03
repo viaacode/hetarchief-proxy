@@ -43,6 +43,7 @@ import {
 	type IeObjectPages,
 	type IeObjectRepresentation,
 	type IeObjectSector,
+	type IeObjectTheme,
 	IeObjectType,
 	type IeObjectsSitemap,
 	type IeObjectsVisitorSpaceInfo,
@@ -659,6 +660,7 @@ export class IeObjectsService {
 		const schemaThumbnailUrlResponse = ieObjectResponse.getSchemaThumbnailUrl?.[0];
 		const hasPartResponse = ieObjectResponse.getHasPart;
 		const isRepresentedByResponse = ieObjectResponse.getIsRepresentedBy;
+		const themesResponse = ieObjectResponse.getThemes;
 
 		if (!ie) {
 			return null;
@@ -757,6 +759,17 @@ export class IeObjectsService {
 			genre: compact(schemaGenreResponse?.map((item) => item.schema_genre)),
 			inLanguage: compact(schemaInLanguageResponse?.map((item) => item?.schema_in_language)),
 			keywords: compact(schemaKeywordsResponse?.map((item) => item?.schema_keywords)),
+			themes: (themesResponse ?? []).map(
+				(theme): IeObjectTheme => ({
+					id: theme.id,
+					slug: theme.slug,
+					nameNl: theme.name_nl,
+					nameEn: theme.name_en,
+					contentPagePathNl: theme.content_page_path_nl ?? null,
+					contentPagePathEn: theme.content_page_path_en ?? null,
+					ieObjectCount: theme.ieObjectLinks_aggregate?.aggregate?.count ?? 0,
+				})
+			),
 			publisher: compact(schemaPublisherResponse?.map((item) => item.schema_publisher_array)),
 			spatial: compact(schemaSpatialResponse?.map((item) => item.schema_spatial)), // Location of the content
 			temporal: compact(schemaTemporalResponse?.map((item) => item.schema_temporal)),

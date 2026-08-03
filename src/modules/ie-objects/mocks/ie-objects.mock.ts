@@ -461,6 +461,28 @@ export const mockUserInfo: Readonly<{
 };
 
 export const mockIeObject2: GetIeObjectDetailQuery = {
+	// Ordered by linked object count descending, as the query does. The second theme has no
+	// content page paths, which is the case where the client renders the name as plain text.
+	getThemes: [
+		{
+			id: '7c4f8d1a-9b2e-4c3d-8a1f-2e5b6c7d8e9f',
+			slug: 'pukkelpop',
+			name_nl: 'Pukkelpop',
+			name_en: 'Pukkelpop',
+			content_page_path_nl: '/themas/pukkelpop',
+			content_page_path_en: '/themes/pukkelpop',
+			ieObjectLinks_aggregate: { aggregate: { count: 150 } },
+		},
+		{
+			id: '3a1b2c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d',
+			slug: 'memorial-van-damme',
+			name_nl: 'Memorial Van Damme',
+			name_en: 'Memorial Van Damme',
+			content_page_path_nl: null,
+			content_page_path_en: null,
+			ieObjectLinks_aggregate: { aggregate: { count: 42 } },
+		},
+	],
 	getIeObject: [
 		{
 			schema_identifier: '086350m40w',
@@ -742,6 +764,7 @@ export const mockIeObject2: GetIeObjectDetailQuery = {
 };
 
 export const mockIeObjectEmpty: Readonly<GetIeObjectDetailQuery> = {
+	getThemes: [],
 	getIeObject: [],
 	getDctermsFormat: [],
 	getIsPartOf: [],
