@@ -257,9 +257,22 @@ describe('ieObjectsService', () => {
 			expect(ieObject.bibframeEdition).toEqual(mockParentIeObject.getIeObject[0].bibframe_edition);
 		});
 
+		/**
+		 * mockIeObject2 is a visitor space object, so it carries no public content licence and
+		 * therefore exposes no themes. Themes are only returned for publicly disclosed objects.
+		 */
+		const mockPublicIeObject = () => {
+			const mock = cloneDeep(mockIeObject2);
+			mock.getSchemaLicense = [
+				...mock.getSchemaLicense,
+				{ schema_license: 'VIAA-PUBLIEK-CONTENT' },
+			];
+			return mock;
+		};
+
 		it('maps the themes the object belongs to, keeping the query order', async () => {
-			mockDataService.execute.mockResolvedValueOnce(cloneDeep(mockIeObject2));
-			mockDataService.execute.mockResolvedValueOnce(cloneDeep(mockIeObject2));
+			mockDataService.execute.mockResolvedValueOnce(mockPublicIeObject());
+			mockDataService.execute.mockResolvedValueOnce(mockPublicIeObject());
 
 			const ieObject = await ieObjectsService.findByIeObjectId(
 				mockObjectId,
@@ -291,9 +304,24 @@ describe('ieObjectsService', () => {
 		});
 
 		it('returns an empty theme list when the object belongs to no themes', async () => {
-			const objectIeMock = cloneDeep(mockIeObject2);
+			const objectIeMock = mockPublicIeObject();
 			objectIeMock.getThemes = [];
 			mockDataService.execute.mockResolvedValueOnce(objectIeMock);
+			mockDataService.execute.mockResolvedValueOnce(mockPublicIeObject());
+
+			const ieObject = await ieObjectsService.findByIeObjectId(
+				mockObjectId,
+				true,
+				'referer',
+				'127.0.0.1'
+			);
+
+			expect(ieObject.themes).toEqual([]);
+		});
+
+		it('withholds the themes of an object without a public content licence', async () => {
+			// The client hides them too, but the data must not travel in the response at all
+			mockDataService.execute.mockResolvedValueOnce(cloneDeep(mockIeObject2));
 			mockDataService.execute.mockResolvedValueOnce(cloneDeep(mockIeObject2));
 
 			const ieObject = await ieObjectsService.findByIeObjectId(
@@ -303,6 +331,7 @@ describe('ieObjectsService', () => {
 				'127.0.0.1'
 			);
 
+			expect(mockIeObject2.getThemes.length).toBeGreaterThan(0);
 			expect(ieObject.themes).toEqual([]);
 		});
 

@@ -685,6 +685,13 @@ export class IeObjectsService {
 				licenses.includes(IeObjectLicense.INTRA_CP_CONTENT) ||
 				licenses.includes(IeObjectLicense.BEZOEKERTOOL_CONTENT));
 		const rights = shouldExposeRightsInfo ? ie?.rights : undefined;
+
+		// Themes are editorial labels on publicly disclosed objects, so they must not travel in the
+		// response for anything else, the same way rights info is withheld above. Without this the
+		// client is the only thing hiding them and the data is still visible in the response.
+		// See ARC-3826.
+		const shouldExposeThemes = licenses.includes(IeObjectLicense.PUBLIEK_CONTENT);
+
 		let thumbnailUrl = schemaThumbnailUrlResponse?.schema_thumbnail_url?.[0];
 
 		if (mapDcTermsFormatToSimpleType(dctermsFormat) === IeObjectType.AUDIO) {
@@ -759,17 +766,19 @@ export class IeObjectsService {
 			genre: compact(schemaGenreResponse?.map((item) => item.schema_genre)),
 			inLanguage: compact(schemaInLanguageResponse?.map((item) => item?.schema_in_language)),
 			keywords: compact(schemaKeywordsResponse?.map((item) => item?.schema_keywords)),
-			themes: (themesResponse ?? []).map(
-				(theme): IeObjectTheme => ({
-					id: theme.id,
-					slug: theme.slug,
-					nameNl: theme.name_nl,
-					nameEn: theme.name_en,
-					contentPagePathNl: theme.content_page_path_nl ?? null,
-					contentPagePathEn: theme.content_page_path_en ?? null,
-					ieObjectCount: theme.ieObjectLinks_aggregate?.aggregate?.count ?? 0,
-				})
-			),
+			themes: shouldExposeThemes
+				? (themesResponse ?? []).map(
+						(theme): IeObjectTheme => ({
+							id: theme.id,
+							slug: theme.slug,
+							nameNl: theme.name_nl,
+							nameEn: theme.name_en,
+							contentPagePathNl: theme.content_page_path_nl ?? null,
+							contentPagePathEn: theme.content_page_path_en ?? null,
+							ieObjectCount: theme.ieObjectLinks_aggregate?.aggregate?.count ?? 0,
+						})
+					)
+				: [],
 			publisher: compact(schemaPublisherResponse?.map((item) => item.schema_publisher_array)),
 			spatial: compact(schemaSpatialResponse?.map((item) => item.schema_spatial)), // Location of the content
 			temporal: compact(schemaTemporalResponse?.map((item) => item.schema_temporal)),
