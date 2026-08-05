@@ -169,6 +169,9 @@ const IE_OBJECT_PROPS_METADATA_SET_ALL: Readonly<(keyof IeObject)[]> = [
 	'bibframeProductionMethod',
 	'bibframeEdition',
 	'synopsis',
+	// Themes are only ever linked to publicly disclosed objects. The client additionally hides the
+	// section for kiosk users and for objects without a VIAA-PUBLIEK-CONTENT license. See ARC-3826.
+	'themes',
 ];
 const IE_OBJECT_PROPS_METADATA_SET_ESSENCE: Readonly<(keyof IeObject)[]> = [
 	'thumbnailUrl',

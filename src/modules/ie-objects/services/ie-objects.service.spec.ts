@@ -257,6 +257,84 @@ describe('ieObjectsService', () => {
 			expect(ieObject.bibframeEdition).toEqual(mockParentIeObject.getIeObject[0].bibframe_edition);
 		});
 
+		/**
+		 * mockIeObject2 is a visitor space object, so it carries no public content licence and
+		 * therefore exposes no themes. Themes are only returned for publicly disclosed objects.
+		 */
+		const mockPublicIeObject = () => {
+			const mock = cloneDeep(mockIeObject2);
+			mock.getSchemaLicense = [
+				...mock.getSchemaLicense,
+				{ schema_license: 'VIAA-PUBLIEK-CONTENT' },
+			];
+			return mock;
+		};
+
+		it('maps the themes the object belongs to, keeping the query order', async () => {
+			mockDataService.execute.mockResolvedValueOnce(mockPublicIeObject());
+			mockDataService.execute.mockResolvedValueOnce(mockPublicIeObject());
+
+			const ieObject = await ieObjectsService.findByIeObjectId(
+				mockObjectId,
+				true,
+				'referer',
+				'127.0.0.1'
+			);
+
+			expect(ieObject.themes).toEqual([
+				{
+					id: '7c4f8d1a-9b2e-4c3d-8a1f-2e5b6c7d8e9f',
+					slug: 'pukkelpop',
+					nameNl: 'Pukkelpop',
+					nameEn: 'Pukkelpop',
+					contentPagePathNl: '/themas/pukkelpop',
+					contentPagePathEn: '/themes/pukkelpop',
+					ieObjectCount: 150,
+				},
+				{
+					id: '3a1b2c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d',
+					slug: 'memorial-van-damme',
+					nameNl: 'Memorial Van Damme',
+					nameEn: 'Memorial Van Damme',
+					contentPagePathNl: null,
+					contentPagePathEn: null,
+					ieObjectCount: 42,
+				},
+			]);
+		});
+
+		it('returns an empty theme list when the object belongs to no themes', async () => {
+			const objectIeMock = mockPublicIeObject();
+			objectIeMock.getThemes = [];
+			mockDataService.execute.mockResolvedValueOnce(objectIeMock);
+			mockDataService.execute.mockResolvedValueOnce(mockPublicIeObject());
+
+			const ieObject = await ieObjectsService.findByIeObjectId(
+				mockObjectId,
+				true,
+				'referer',
+				'127.0.0.1'
+			);
+
+			expect(ieObject.themes).toEqual([]);
+		});
+
+		it('withholds the themes of an object without a public content licence', async () => {
+			// The client hides them too, but the data must not travel in the response at all
+			mockDataService.execute.mockResolvedValueOnce(cloneDeep(mockIeObject2));
+			mockDataService.execute.mockResolvedValueOnce(cloneDeep(mockIeObject2));
+
+			const ieObject = await ieObjectsService.findByIeObjectId(
+				mockObjectId,
+				true,
+				'referer',
+				'127.0.0.1'
+			);
+
+			expect(mockIeObject2.getThemes.length).toBeGreaterThan(0);
+			expect(ieObject.themes).toEqual([]);
+		});
+
 		it('maps rights info from graph.rights when available', async () => {
 			const objectIeMock = cloneDeep(mockIeObject2);
 			(objectIeMock.getIeObject[0] as any).rights = {

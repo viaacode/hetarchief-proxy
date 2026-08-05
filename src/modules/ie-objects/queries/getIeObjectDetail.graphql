@@ -337,4 +337,22 @@ query getIeObjectDetail($ieObjectId: String!) {
 	) {
 		schema_thumbnail_url
 	}
+
+	# The themes this object belongs to, most populated theme first. See ARC-3826.
+	getThemes: app_theme(
+		where: { ieObjectLinks: { intellectual_entity_id: { _eq: $ieObjectId } } }
+		order_by: { ieObjectLinks_aggregate: { count: desc } }
+	) {
+		id
+		slug
+		name_nl
+		name_en
+		content_page_path_nl
+		content_page_path_en
+		ieObjectLinks_aggregate {
+			aggregate {
+				count
+			}
+		}
+	}
 }
