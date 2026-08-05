@@ -20,9 +20,11 @@ const mockIeObjectsInThemeResponse: IeObjectsInThemeResponseDto = {
 	imageUrl: 'https://example.com/culture-society.jpg',
 	contentPagePathNl: null,
 	contentPagePathEn: null,
+	updatedAt: '2026-07-20T14:33:30.571112+00:00',
 	ieObjects: [
 		{
-			id: 'ie-uuid-1',
+			id: 'https://data-qas.hetarchief.be/id/entity/qsnk362q84',
+			schemaIdentifier: 'qsnk362q84',
 			name: 'Natuur documentaire',
 			format: 'video',
 			thumbnailUrl: 'https://example.com/thumb1.jpg',

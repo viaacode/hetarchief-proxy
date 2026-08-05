@@ -44,6 +44,17 @@ const mockGetIeObjectsInThemeResponse: GetThemeWithObjectsInRandomOrderQuery = {
 	},
 };
 
+const mockIeObjectSchemaIdentifier = 'qsnk362q84';
+const mockIeObjectEntityId = `https://data-qas.hetarchief.be/id/entity/${mockIeObjectSchemaIdentifier}`;
+
+// Responses of getIeObjectIdBySchemaIdentifier, used to turn a schema identifier into an entity uri
+const mockLookupHit = {
+	graph_intellectual_entity: [
+		{ id: mockIeObjectEntityId, schema_identifier: mockIeObjectSchemaIdentifier },
+	],
+};
+const mockLookupMiss = { graph_intellectual_entity: [] };
+
 const mockDataService: Partial<Record<keyof DataService, MockInstance>> = {
 	execute: vi.fn(),
 };
@@ -144,6 +155,108 @@ describe('ThemesService', () => {
 				expect.anything(),
 				expect.objectContaining({ objectsLimit: 5 })
 			);
+		});
+	});
+
+	describe('addIeObjectsToTheme', () => {
+		it('resolves schema identifiers and reports one result per submitted identifier', async () => {
+			// One lookup per unique identifier, in submission order, then the insert
+			mockDataService.execute
+				.mockResolvedValueOnce(mockLookupHit)
+				.mockResolvedValueOnce(mockLookupMiss)
+				.mockResolvedValueOnce({
+					insert_app_theme_intellectual_entity: {
+						returning: [
+							{
+								id: 'link-1',
+								theme_id: mockThemeUuid,
+								intellectual_entity_id: mockIeObjectEntityId,
+							},
+						],
+					},
+				});
+
+			const result = await themesService.addIeObjectsToTheme(mockThemeUuid, [
+				mockIeObjectSchemaIdentifier,
+				mockIeObjectSchemaIdentifier,
+				'does-not-exist',
+			]);
+
+			expect(result).toEqual([
+				{ schemaIdentifier: mockIeObjectSchemaIdentifier, result: 'added' },
+				{ schemaIdentifier: mockIeObjectSchemaIdentifier, result: 'alreadyLinked' },
+				{ schemaIdentifier: 'does-not-exist', result: 'notFound' },
+			]);
+		});
+
+		it('links the resolved entity uri, not the schema identifier', async () => {
+			mockDataService.execute.mockResolvedValueOnce(mockLookupHit).mockResolvedValueOnce({
+				insert_app_theme_intellectual_entity: { returning: [] },
+			});
+
+			await themesService.addIeObjectsToTheme(mockThemeUuid, [mockIeObjectSchemaIdentifier]);
+
+			expect(mockDataService.execute).toHaveBeenLastCalledWith(
+				expect.anything(),
+				expect.objectContaining({
+					objects: [{ theme_id: mockThemeUuid, intellectual_entity_id: mockIeObjectEntityId }],
+				})
+			);
+		});
+
+		it('reports alreadyLinked when the insert returns no new rows', async () => {
+			mockDataService.execute.mockResolvedValueOnce(mockLookupHit).mockResolvedValueOnce({
+				insert_app_theme_intellectual_entity: { returning: [] },
+			});
+
+			const result = await themesService.addIeObjectsToTheme(mockThemeUuid, [
+				mockIeObjectSchemaIdentifier,
+			]);
+
+			expect(result).toEqual([
+				{ schemaIdentifier: mockIeObjectSchemaIdentifier, result: 'alreadyLinked' },
+			]);
+		});
+
+		it('skips the insert entirely when nothing resolves', async () => {
+			mockDataService.execute.mockResolvedValueOnce(mockLookupMiss);
+
+			const result = await themesService.addIeObjectsToTheme(mockThemeUuid, ['does-not-exist']);
+
+			expect(result).toEqual([{ schemaIdentifier: 'does-not-exist', result: 'notFound' }]);
+			// Only the lookup ran, no insert
+			expect(mockDataService.execute).toHaveBeenCalledTimes(1);
+		});
+	});
+
+	describe('deleteIeObjectFromTheme', () => {
+		it('resolves the schema identifier and deletes by entity uri', async () => {
+			mockDataService.execute.mockResolvedValueOnce(mockLookupHit).mockResolvedValueOnce({
+				delete_app_theme_intellectual_entity: { affected_rows: 1 },
+			});
+
+			const affectedRows = await themesService.deleteIeObjectFromTheme(
+				mockThemeUuid,
+				mockIeObjectSchemaIdentifier
+			);
+
+			expect(affectedRows).toEqual(1);
+			expect(mockDataService.execute).toHaveBeenLastCalledWith(
+				expect.anything(),
+				expect.objectContaining({ themeId: mockThemeUuid, ieObjectId: mockIeObjectEntityId })
+			);
+		});
+
+		it('returns 0 without deleting when the schema identifier does not resolve', async () => {
+			mockDataService.execute.mockResolvedValueOnce(mockLookupMiss);
+
+			const affectedRows = await themesService.deleteIeObjectFromTheme(
+				mockThemeUuid,
+				'does-not-exist'
+			);
+
+			expect(affectedRows).toEqual(0);
+			expect(mockDataService.execute).toHaveBeenCalledTimes(1);
 		});
 	});
 });

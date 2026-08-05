@@ -13,7 +13,7 @@ import {
 	Min,
 } from 'class-validator';
 import { SortDirectionWithRandom } from '~shared/types';
-import { ThemeIeObjectOrderProp, ThemeOrderProp } from '../themes.types';
+import { AddIeObjectToThemeResult, ThemeIeObjectOrderProp, ThemeOrderProp } from '../themes.types';
 
 export class CreateThemeDto {
 	@IsString()
@@ -221,6 +221,14 @@ export class ThemeResponseDto {
 		description: 'The English content page path of the theme',
 	})
 	contentPagePathEn: string | null;
+
+	@ApiProperty({
+		type: String,
+		nullable: true,
+		description:
+			'When the theme was last updated. Is null when the theme comes from the random order view, which does not expose it',
+	})
+	updatedAt: string | null;
 }
 
 export class ThemeIeObjectLinkResponseDto {
@@ -232,6 +240,23 @@ export class ThemeIeObjectLinkResponseDto {
 
 	@ApiProperty({ type: String, description: 'The intellectual entity id' })
 	intellectualEntityId: string;
+}
+
+export class AddIeObjectToThemeResultDto {
+	@ApiProperty({
+		type: String,
+		description: 'The schema identifier that was submitted',
+		example: 'qsnk362q84',
+	})
+	schemaIdentifier: string;
+
+	@ApiProperty({
+		enum: AddIeObjectToThemeResult,
+		description:
+			'What happened to this schema identifier. Reported per submitted identifier, in the order they were submitted',
+		example: AddIeObjectToThemeResult.ADDED,
+	})
+	result: AddIeObjectToThemeResult;
 }
 
 export class ThemesQueryDto {
@@ -332,8 +357,20 @@ export class ThemeIeObjectsQueryDto {
 }
 
 export class IeObjectInThemeResponseDto {
-	@ApiProperty({ type: String, description: 'The id of the ie-object' })
+	@ApiProperty({
+		type: String,
+		description: 'The intellectual entity id (uri) of the ie-object',
+	})
 	id: string;
+
+	@ApiProperty({
+		type: String,
+		nullable: true,
+		description:
+			'The schema identifier of the ie-object. This is the identifier used to link and unlink objects',
+		example: 'qsnk362q84',
+	})
+	schemaIdentifier: string | null;
 
 	@ApiProperty({ type: String, nullable: true, description: 'The name of the ie-object' })
 	name: string | null;
@@ -406,6 +443,13 @@ export class IeObjectsInThemeResponseDto {
 		description: 'The English content page path of the theme',
 	})
 	contentPagePathEn: string | null;
+
+	@ApiProperty({
+		type: String,
+		nullable: true,
+		description: 'When the theme was last updated',
+	})
+	updatedAt: string | null;
 
 	@ApiProperty({
 		type: IeObjectInThemeResponseDto,

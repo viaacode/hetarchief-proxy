@@ -11,6 +11,9 @@ import {
 	DeleteThemeDocument,
 	DeleteThemeMutation,
 	DeleteThemeMutationVariables,
+	GetIeObjectIdBySchemaIdentifierDocument,
+	GetIeObjectIdBySchemaIdentifierQuery,
+	GetIeObjectIdBySchemaIdentifierQueryVariables,
 	GetIeObjectsInThemeDocument,
 	GetIeObjectsInThemeQuery,
 	GetIeObjectsInThemeQueryVariables,
@@ -42,16 +45,17 @@ import {
 } from '~generated/graphql-db-types-hetarchief';
 import { SortDirectionWithRandom } from '~shared/types';
 import {
+	AddIeObjectToThemeResultDto,
 	CreateThemeDto,
 	IeObjectInThemeResponseDto,
 	IeObjectsInThemeResponseDto,
-	ThemeIeObjectLinkResponseDto,
 	ThemeIeObjectsQueryDto,
 	ThemeResponseDto,
 	ThemesQueryDto,
 	UpdateThemeDto,
 } from '../dto/themes.dto';
 import {
+	AddIeObjectToThemeResult,
 	RawThemeIeObject,
 	THEME_ORDER_PROP_TO_DB_PROP,
 	ThemeIeObjectOrderProp,
@@ -176,28 +180,98 @@ export class ThemesService {
 		return response.delete_app_theme_by_pk ? 1 : 0;
 	}
 
+	/**
+	 * app_theme_intellectual_entity.intellectual_entity_id holds the full intellectual entity uri
+	 * (e.g. https://data-qas.hetarchief.be/id/entity/qsnk362q84), which is environment specific.
+	 * Callers therefore work with schema identifiers, and we resolve them here.
+	 *
+	 * Returns a map of schema identifier -> intellectual entity uri. Identifiers that do not
+	 * resolve to an existing ie-object are absent from the map.
+	 */
+	private async resolveSchemaIdentifiersToEntityIds(
+		schemaIdentifiers: string[]
+	): Promise<Map<string, string>> {
+		const uniqueSchemaIdentifiers = [...new Set(schemaIdentifiers)];
+
+		const responses = await Promise.all(
+			uniqueSchemaIdentifiers.map((schemaIdentifier) =>
+				this.dataService.execute<
+					GetIeObjectIdBySchemaIdentifierQuery,
+					GetIeObjectIdBySchemaIdentifierQueryVariables
+				>(GetIeObjectIdBySchemaIdentifierDocument, { schemaIdentifier })
+			)
+		);
+
+		const resolved = new Map<string, string>();
+		uniqueSchemaIdentifiers.forEach((schemaIdentifier, index) => {
+			const entityId = responses[index]?.graph_intellectual_entity?.[0]?.id;
+			if (entityId) {
+				resolved.set(schemaIdentifier, entityId);
+			}
+		});
+
+		return resolved;
+	}
+
 	public async addIeObjectsToTheme(
 		themeId: string,
 		ieObjectSchemaIdentifiers: string[]
-	): Promise<ThemeIeObjectLinkResponseDto[]> {
-		const response = await this.dataService.execute<
-			InsertIeObjectsIntoThemeMutation,
-			InsertIeObjectsIntoThemeMutationVariables
-		>(InsertIeObjectsIntoThemeDocument, {
-			objects: ieObjectSchemaIdentifiers.map((intellectualEntityId) => ({
-				theme_id: themeId,
-				intellectual_entity_id: intellectualEntityId,
-			})),
-		});
+	): Promise<AddIeObjectToThemeResultDto[]> {
+		const resolved = await this.resolveSchemaIdentifiersToEntityIds(ieObjectSchemaIdentifiers);
 
-		return response.insert_app_theme_intellectual_entity.returning.map((link) => ({
-			id: link.id,
-			themeId: link.theme_id,
-			intellectualEntityId: link.intellectual_entity_id,
-		}));
+		const insertedEntityIds = new Set<string>();
+		const entityIdsToLink = [...new Set(resolved.values())];
+
+		if (entityIdsToLink.length) {
+			const response = await this.dataService.execute<
+				InsertIeObjectsIntoThemeMutation,
+				InsertIeObjectsIntoThemeMutationVariables
+			>(InsertIeObjectsIntoThemeDocument, {
+				objects: entityIdsToLink.map((intellectualEntityId) => ({
+					theme_id: themeId,
+					intellectual_entity_id: intellectualEntityId,
+				})),
+			});
+
+			// The insert ignores conflicts (update_columns: []), so `returning` only contains rows
+			// that were newly inserted. Anything resolved but absent was already linked.
+			for (const link of response.insert_app_theme_intellectual_entity.returning) {
+				insertedEntityIds.add(link.intellectual_entity_id);
+			}
+		}
+
+		// Report one result per submitted identifier, in submission order. If the same identifier is
+		// submitted twice, only its first occurrence counts as added.
+		const reportedAsAdded = new Set<string>();
+
+		return ieObjectSchemaIdentifiers.map((schemaIdentifier) => {
+			const entityId = resolved.get(schemaIdentifier);
+
+			if (!entityId) {
+				return { schemaIdentifier, result: AddIeObjectToThemeResult.NOT_FOUND };
+			}
+
+			if (insertedEntityIds.has(entityId) && !reportedAsAdded.has(schemaIdentifier)) {
+				reportedAsAdded.add(schemaIdentifier);
+				return { schemaIdentifier, result: AddIeObjectToThemeResult.ADDED };
+			}
+
+			return { schemaIdentifier, result: AddIeObjectToThemeResult.ALREADY_LINKED };
+		});
 	}
 
-	public async deleteIeObjectFromTheme(themeId: string, ieObjectId: string): Promise<number> {
+	public async deleteIeObjectFromTheme(
+		themeId: string,
+		ieObjectSchemaIdentifier: string
+	): Promise<number> {
+		const resolved = await this.resolveSchemaIdentifiersToEntityIds([ieObjectSchemaIdentifier]);
+		const ieObjectId = resolved.get(ieObjectSchemaIdentifier);
+
+		if (!ieObjectId) {
+			// No such ie-object, so there is no link to remove either
+			return 0;
+		}
+
 		const response = await this.dataService.execute<
 			DeleteIeObjectFromThemeMutation,
 			DeleteIeObjectFromThemeMutationVariables
@@ -289,6 +363,7 @@ export class ThemesService {
 		image_url?: string | null;
 		content_page_path_nl?: string | null;
 		content_page_path_en?: string | null;
+		updated_at?: string | null;
 	}): ThemeResponseDto {
 		return {
 			id: theme.id,
@@ -300,12 +375,18 @@ export class ThemesService {
 			imageUrl: theme.image_url ?? null,
 			contentPagePathNl: theme.content_page_path_nl ?? null,
 			contentPagePathEn: theme.content_page_path_en ?? null,
+			updatedAt: theme.updated_at ?? null,
 		};
 	}
 
-	private adaptIeObject(rawIeObject: RawThemeIeObject): IeObjectInThemeResponseDto {
+	private adaptIeObject(
+		// schema_identifier is selected by both theme-with-objects queries. The intersection keeps
+		// this compiling until `npm run generate-database-types` picks the new selection up.
+		rawIeObject: RawThemeIeObject & { schema_identifier?: string | null }
+	): IeObjectInThemeResponseDto {
 		return {
 			id: rawIeObject.id,
+			schemaIdentifier: rawIeObject.schema_identifier ?? null,
 			name: rawIeObject.schema_name ?? null,
 			format: rawIeObject.dctermsFormat?.[0]?.dcterms_format ?? null,
 			thumbnailUrl: rawIeObject.schemaThumbnail?.schema_thumbnail_url ?? null,

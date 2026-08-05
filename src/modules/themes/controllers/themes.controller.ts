@@ -31,11 +31,11 @@ import { RequireAllPermissions } from '~shared/decorators/require-permissions.de
 
 import { type IPagination } from '@studiohyperdrive/pagination';
 import {
+	AddIeObjectToThemeResultDto,
 	AddIeObjectsToThemeDto,
 	CreateThemeDto,
 	IeObjectInThemeResponseDto,
 	IeObjectsInThemeResponseDto,
-	ThemeIeObjectLinkResponseDto,
 	ThemeIeObjectsQueryDto,
 	ThemeResponseDto,
 	ThemesQueryDto,
@@ -112,9 +112,11 @@ export class ThemesController {
 
 	@Patch(':themeId')
 	@RequireAllPermissions(PermissionName.MANAGE_IE_OBJECT_THEMES)
+	@UseInterceptors(FileInterceptor('file'))
 	@ApiOperation({
 		summary: 'Update a theme',
-		description: 'Partially updates a theme by its UUID.',
+		description:
+			'Partially updates a theme by its UUID. Optionally upload a file to replace the image.',
 	})
 	@ApiParam({
 		name: 'themeId',
@@ -122,7 +124,23 @@ export class ThemesController {
 		type: String,
 		example: '00000000-0000-0000-0000-000000000001',
 	})
-	@ApiBody({ type: UpdateThemeDto })
+	@ApiConsumes('multipart/form-data', 'application/json')
+	@ApiBody({
+		schema: {
+			type: 'object',
+			properties: {
+				slug: { type: 'string', example: 'culture-society' },
+				nameNl: { type: 'string', example: 'Cultuur & samenleving' },
+				nameEn: { type: 'string', example: 'Culture & society' },
+				descriptionNl: { type: 'string', example: 'Een collectie over cultuur en samenleving' },
+				descriptionEn: { type: 'string', example: 'A collection about culture and society' },
+				imageUrl: { type: 'string', example: 'https://example.com/image.jpg' },
+				contentPagePathNl: { type: 'string', example: '/themas/cultuur-samenleving' },
+				contentPagePathEn: { type: 'string', example: '/themes/culture-society' },
+				file: { type: 'string', format: 'binary' },
+			},
+		},
+	})
 	@ApiOkResponse({
 		description: 'Returns the updated theme',
 		type: ThemeResponseDto,
@@ -130,8 +148,16 @@ export class ThemesController {
 	@ApiNotFoundResponse({ description: 'Theme with the given UUID was not found' })
 	public async updateTheme(
 		@Param('themeId', ParseUUIDPipe) themeId: string,
-		@Body() updateThemeDto: UpdateThemeDto
+		@Body() updateThemeDto: UpdateThemeDto,
+		@UploadedFile() file: Express.Multer.File
 	): Promise<ThemeResponseDto> {
+		if (file) {
+			updateThemeDto.imageUrl = await this.assetsService.uploadAndTrack(
+				AvoFileUploadAssetType.IE_OBJECT_THEME as any,
+				file,
+				updateThemeDto.slug ?? themeId
+			);
+		}
 		return this.themesService.updateTheme(themeId, updateThemeDto);
 	}
 
@@ -197,18 +223,19 @@ export class ThemesController {
 	})
 	@ApiBody({ type: AddIeObjectsToThemeDto })
 	@ApiCreatedResponse({
-		description: 'Returns the created theme–ie-object link entries',
-		type: ThemeIeObjectLinkResponseDto,
+		description:
+			'Returns one result per submitted schema identifier, in submission order: added, alreadyLinked or notFound',
+		type: AddIeObjectToThemeResultDto,
 		isArray: true,
 	})
 	public async addIeObjectsToTheme(
 		@Param('themeId', ParseUUIDPipe) themeId: string,
 		@Body() dto: AddIeObjectsToThemeDto
-	): Promise<ThemeIeObjectLinkResponseDto[]> {
+	): Promise<AddIeObjectToThemeResultDto[]> {
 		return this.themesService.addIeObjectsToTheme(themeId, dto.ieObjectSchemaIdentifiers);
 	}
 
-	@Delete(':themeId/ie-objects/:ieObjectId')
+	@Delete(':themeId/ie-objects/:ieObjectSchemaIdentifier')
 	@RequireAllPermissions(PermissionName.MANAGE_IE_OBJECT_THEMES)
 	@ApiOperation({
 		summary: 'Remove an ie-object from a theme',
@@ -221,23 +248,26 @@ export class ThemesController {
 		example: '00000000-0000-0000-0000-000000000001',
 	})
 	@ApiParam({
-		name: 'ieObjectId',
-		description: 'The intellectual entity id of the ie-object',
+		name: 'ieObjectSchemaIdentifier',
+		description: 'The schema identifier of the ie-object',
 		type: String,
-		example: 'ie-object-schema-identifier',
+		example: 'qsnk362q84',
 	})
 	@ApiOkResponse({ description: 'Returns the deletion status', type: Object })
 	@ApiNotFoundResponse({ description: 'Link not found for the given theme and ie-object' })
 	public async deleteIeObjectFromTheme(
 		@Param('themeId', ParseUUIDPipe) themeId: string,
-		@Param('ieObjectId') ieObjectId: string
+		@Param('ieObjectSchemaIdentifier') ieObjectSchemaIdentifier: string
 	): Promise<{ status: string }> {
-		const affectedRows = await this.themesService.deleteIeObjectFromTheme(themeId, ieObjectId);
+		const affectedRows = await this.themesService.deleteIeObjectFromTheme(
+			themeId,
+			ieObjectSchemaIdentifier
+		);
 		if (affectedRows > 0) {
 			return { status: 'the ie-object has been removed from the theme' };
 		}
 		throw new NotFoundException(
-			`No link found between theme '${themeId}' and ie-object '${ieObjectId}'`
+			`No link found between theme '${themeId}' and ie-object '${ieObjectSchemaIdentifier}'`
 		);
 	}
 }
