@@ -468,8 +468,8 @@ export class ThemesService {
 				sector: user.getSector(),
 				groupId: user.getGroupId(),
 				maintainerId: user.getOrganisationId(),
-				accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
-				accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
+				accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo?.objectIds,
+				accessibleVisitorSpaceIds: visitorSpaceAccessInfo?.visitorSpaceIds,
 			});
 
 			objectLicences = censoredObjectMetadata?.licenses ?? [];
