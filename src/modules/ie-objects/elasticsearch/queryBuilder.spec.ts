@@ -883,6 +883,30 @@ describe('QueryBuilder', () => {
 			expect(queryString).toContain('https://rightsstatements.org/page/InC/1.0/');
 		});
 
+		it('should wrap the query in a function_score with a random_score when orderProp is random', () => {
+			const esQuery = QueryBuilder.build(
+				{
+					size: 10,
+					page: 1,
+					filters: [],
+					orderProp: OrderProperty.RANDOM,
+					orderDirection: SortDirection.asc,
+				},
+				mockInputInfo as any
+			);
+
+			// No explicit sort array is needed, the random_score already determines the order
+			expect(esQuery.sort).toEqual({});
+			expect(esQuery.query.function_score).toBeDefined();
+			expect(esQuery.query.function_score.random_score.field).toEqual('_seq_no');
+			// The seed is randomized, so we only assert it falls within the expected range
+			// rather than asserting an exact value, to avoid flaky test failures
+			expect(esQuery.query.function_score.random_score.seed).toBeGreaterThanOrEqual(0);
+			expect(esQuery.query.function_score.random_score.seed).toBeLessThan(20);
+			// The underlying bool query should still be present, wrapped inside the function_score
+			expect(esQuery.query.function_score.query.bool).toBeDefined();
+		});
+
 		it('Should set two filter when consultableOnlyOnLocation and isConsultableMedia are set to true', () => {
 			const queryObject = QueryBuilder.build(
 				{

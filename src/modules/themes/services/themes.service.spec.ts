@@ -201,7 +201,7 @@ describe('ThemesService', () => {
 			);
 			const second = result.ieObjects[1];
 
-			expect(second.thumbnailUrl).toBeUndefined();
+			expect(second.thumbnailUrl).toBeNull();
 		});
 
 		it('throws CustomError with 404 when the theme does not exist', async () => {
@@ -289,7 +289,7 @@ describe('ThemesService', () => {
 				mockIp
 			);
 
-			expect(result.ieObjects[0].thumbnailUrl).toBeUndefined();
+			expect(result.ieObjects[0].thumbnailUrl).toBeNull();
 			expect(mockIeObjectsService.getVisitorSpaceAccessInfoFromUser).not.toHaveBeenCalled();
 			expect(mockIeObjectsService.getThumbnailUrlWithToken).not.toHaveBeenCalled();
 		});
@@ -328,7 +328,7 @@ describe('ThemesService', () => {
 				mockIp
 			);
 
-			expect(result.ieObjects[0].thumbnailUrl).toBeUndefined();
+			expect(result.ieObjects[0].thumbnailUrl).toBeNull();
 			expect(mockIeObjectsService.getThumbnailUrlWithToken).not.toHaveBeenCalled();
 		});
 

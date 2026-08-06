@@ -75,7 +75,6 @@ export class QueryBuilder {
 	 * @return elastic search query
 	 */
 	public static build(searchRequest: IeObjectsQueryDto, inputInfo: QueryBuilderInputInfo): any {
-		const isRandomOrder = searchRequest.orderProp === OrderProperty.RANDOM;
 		// Check if all filter fields are known
 		(searchRequest?.filters || []).find((searchFilter) => {
 			if (!Object.values(IeObjectsSearchFilterField).includes(searchFilter.field)) {
@@ -86,6 +85,7 @@ export class QueryBuilder {
 			return false;
 		});
 		try {
+			const isRandomOrder = searchRequest.orderProp === OrderProperty.RANDOM;
 			// Build the elasticsearch query object in 2 parts
 			// * search terms and filters in metadata limited fields
 			// * search terms and filters in metadata all fields
