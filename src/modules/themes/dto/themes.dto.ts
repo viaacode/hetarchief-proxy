@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import {
 	IsArray,
 	IsBoolean,
@@ -354,12 +354,12 @@ export class ThemeIeObjectsQueryDto {
 	orderDirection? = SortDirectionWithRandom.asc;
 
 	@IsBoolean()
-	@Type(() => Boolean)
+	@Transform(({ value }) => value === 'true')
 	@IsOptional()
 	@ApiPropertyOptional({
-		type: Number,
+		type: Boolean,
 		description: 'Whether or not the thumbnail url should be resolved',
-		default: false,
+		default: undefined,
 	})
 	resolveThumbnailUrl? = false;
 }

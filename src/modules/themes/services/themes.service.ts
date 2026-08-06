@@ -351,9 +351,9 @@ export class ThemesService {
 					?.count ?? 0;
 		}
 
-		const visitorSpaceAccessInfo =
-			queryDto.resolveThumbnailUrl &&
-			(await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user));
+		const visitorSpaceAccessInfo = queryDto.resolveThumbnailUrl
+			? await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user)
+			: undefined;
 
 		const ieObjects: IeObjectInThemeResponseDto[] = compact(
 			await Promise.all(
@@ -432,7 +432,7 @@ export class ThemesService {
 			schemaIdentifier: rawIeObject.schema_identifier ?? null,
 			name: rawIeObject.schema_name ?? null,
 			format: rawIeObject.dctermsFormat?.[0]?.dcterms_format ?? null,
-			thumbnailUrl,
+			thumbnailUrl: thumbnailUrl ?? null,
 			maintainerId: rawIeObject.schemaMaintainer?.id ?? null,
 			maintainerName: rawIeObject.schemaMaintainer?.skos_pref_label ?? null,
 		};
@@ -454,10 +454,10 @@ export class ThemesService {
 				IeObject,
 				'licenses' | 'schemaIdentifier' | 'maintainerId' | 'sector'
 			> = {
-				maintainerId: rawIeObject.schemaMaintainer.org_identifier,
+				maintainerId: rawIeObject.schemaMaintainer?.org_identifier,
 				schemaIdentifier: rawIeObject.schema_identifier,
-				licenses: rawIeObject.schemaLicense.schema_license as IeObjectLicense[],
-				sector: rawIeObject.schemaMaintainer.ha_org_sector as IeObjectSector,
+				licenses: rawIeObject.schemaLicense?.schema_license as IeObjectLicense[],
+				sector: rawIeObject.schemaMaintainer?.ha_org_sector as IeObjectSector,
 			};
 			// Set a fake thumbnailUrl to see if our existing censor logic will censor the thumbnail
 			// We don't need the actual thumbnail in this function, we just need to see if it is accessible to the current user
@@ -473,8 +473,7 @@ export class ThemesService {
 			});
 
 			objectLicences = censoredObjectMetadata?.licenses ?? [];
-			hasAccessToEssence =
-				!!censoredObjectMetadata?.thumbnailUrl || !!censoredObjectMetadata?.pages?.length;
+			hasAccessToEssence = !!censoredObjectMetadata?.thumbnailUrl;
 		}
 
 		const isPublicDomain: boolean =
