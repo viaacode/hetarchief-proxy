@@ -1,14 +1,18 @@
 import { AssetsService } from '@meemoo/admin-core-api';
-import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
 import { Test, type TestingModule } from '@nestjs/testing';
 import { type MockInstance, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { mockUser } from '~modules/ie-objects/mocks/ie-objects.mock';
+import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { TestingLogger } from '~shared/logging/test-logger';
 import type { IeObjectsInThemeResponseDto } from '../dto/themes.dto';
 import { ThemesService } from '../services/themes.service';
 import { ThemesController } from './themes.controller';
 
 const mockThemeSlug = 'culture-society';
+const mockReferer = 'https://client.example.com';
+const mockIp = '127.0.0.1';
+const mockSessionUser = new SessionUserEntity(mockUser);
 
 const mockIeObjectsInThemeResponse: IeObjectsInThemeResponseDto = {
 	id: 'theme-uuid-1',
@@ -76,12 +80,22 @@ describe('ThemesController', () => {
 		it('delegates to getIeObjectsByThemeUuid when a UUID is provided', async () => {
 			mockThemesService.getIeObjectsByThemeUuid.mockResolvedValueOnce(mockIeObjectsInThemeResponse);
 
-			const result = await themesController.getIeObjects(mockThemeId, { size: 20 });
+			const result = await themesController.getIeObjects(
+				mockThemeId,
+				{ size: 20 },
+				mockSessionUser,
+				mockReferer,
+				mockIp
+			);
 
 			expect(result).toEqual(mockIeObjectsInThemeResponse);
-			expect(mockThemesService.getIeObjectsByThemeUuid).toHaveBeenCalledWith(mockThemeId, {
-				size: 20,
-			});
+			expect(mockThemesService.getIeObjectsByThemeUuid).toHaveBeenCalledWith(
+				mockThemeId,
+				{ size: 20 },
+				mockSessionUser,
+				mockReferer,
+				mockIp
+			);
 		});
 	});
 });

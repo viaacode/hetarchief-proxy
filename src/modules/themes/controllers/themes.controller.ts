@@ -30,6 +30,10 @@ import { PermissionName } from '@viaa/avo2-types';
 import { RequireAllPermissions } from '~shared/decorators/require-permissions.decorator';
 
 import { type IPagination } from '@studiohyperdrive/pagination';
+import { SessionUserEntity } from '~modules/users/classes/session-user';
+import { Ip } from '~shared/decorators/ip.decorator';
+import { Referer } from '~shared/decorators/referer.decorator';
+import { SessionUser } from '~shared/decorators/user.decorator';
 import {
 	AddIeObjectToThemeResultDto,
 	AddIeObjectsToThemeDto,
@@ -204,9 +208,12 @@ export class ThemesController {
 	@ApiNotFoundResponse({ description: 'Theme with the given identifier was not found' })
 	public async getIeObjects(
 		@Param('themeUuid') themeUuid: string,
-		@Query() queryDto: ThemeIeObjectsQueryDto
+		@Query() queryDto: ThemeIeObjectsQueryDto,
+		@SessionUser() user: SessionUserEntity,
+		@Referer() referer: string,
+		@Ip() ip: string
 	): Promise<IeObjectsInThemeResponseDto | IPagination<IeObjectInThemeResponseDto>> {
-		return this.themesService.getIeObjectsByThemeUuid(themeUuid, queryDto);
+		return this.themesService.getIeObjectsByThemeUuid(themeUuid, queryDto, user, referer, ip);
 	}
 
 	@Post(':themeId/ie-objects')

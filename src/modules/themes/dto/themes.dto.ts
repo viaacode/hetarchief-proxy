@@ -1,15 +1,13 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import {
 	IsArray,
 	IsBoolean,
 	IsEnum,
-	IsInt,
 	IsNumber,
 	IsOptional,
 	IsString,
 	IsUrl,
-	Max,
 	Min,
 } from 'class-validator';
 import { SortDirectionWithRandom } from '~shared/types';
@@ -354,6 +352,16 @@ export class ThemeIeObjectsQueryDto {
 		enum: SortDirectionWithRandom,
 	})
 	orderDirection? = SortDirectionWithRandom.asc;
+
+	@IsBoolean()
+	@Transform(({ value }) => value === 'true')
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: Boolean,
+		description: 'Whether or not the thumbnail url should be resolved',
+		default: undefined,
+	})
+	resolveThumbnailUrl? = false;
 }
 
 export class IeObjectInThemeResponseDto {
