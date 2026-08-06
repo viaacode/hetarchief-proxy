@@ -38,7 +38,7 @@
   },
   "dependencies": {
     "@aws-sdk/s3-request-presigner": "^3.717.0",
-    "@meemoo/admin-core-api": "6.0.1",
+    "@meemoo/admin-core-api": "6.0.9",
     "@nestjs/common": "9.4.3",
     "@nestjs/config": "3.2.3",
     "@nestjs/core": "9.4.3",
@@ -146,13 +146,13 @@
     "@viaa/avo2-types": "5.0.18"
   },
   "allowScripts": {
-    "@biomejs/biome@1.9.4":  true,
+    "@biomejs/biome@1.9.4": true,
     "@nestjs/core@9.4.3": true,
-    "@swc/core@1.11.7":  true,
+    "@swc/core@1.11.7": true,
     "core-js@3.36.0": true,
-    "esbuild@0.27.2":  true,
+    "esbuild@0.27.2": true,
     "fsevents@2.3.3": true,
-    "lefthook@1.11.13":  true,
+    "lefthook@1.11.13": true,
     "sharp@0.33.5": true
   }
 }
