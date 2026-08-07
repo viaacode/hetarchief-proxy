@@ -628,6 +628,112 @@ export class IeObjectsService {
 	// Adapt
 	// ------------------------------------------------------------------------
 
+	/**
+	 * Gets the thumbnail url specific for cut fragments, main fragment or audio elements
+	 *
+	 * See: https://meemoo.atlassian.net/browse/ARC-3742?focusedCommentId=93186
+	 * getIsRepresentedBy: [
+	 *   {
+	 *     isRepresentedBy: [
+	 *       {
+	 *         id: REPRESENTATIE_VAN_VOLLEDIG_OBJECT,
+	 *         schema_start_time: null,
+	 *         schema_end_time: null,
+	 *         # Deze voor volledige video is altijd null
+	 *         schema_thumbnail_url: null,
+	 *         includes: [
+	 *           {
+	 *             file: {
+	 *               id: VOLLEDIGE_FILE_VAN_VIDEO
+	 *               premis_stored_at: https://link.naar.volledige.video
+	 *               # Dus deze gebruiken zoals nu ook al
+	 *               schema_thumbnail_url: https://link.naar.thumbnail.volledige.video
+	 *             }
+	 *           }
+	 *         ]
+	 *       }
+	 *     ]
+	 *   }
+	 * ]
+	 * getHasPart: [
+	 *   {
+	 *     isRepresentedBy: [
+	 *       {
+	 *         id: FRAGMENT_REPRESENTATIE_1,
+	 *         schema_start_time: 00:00:00,
+	 *         schema_end_time: 00:00:30,
+	 *         # Voor een fragment deze gebruiken
+	 *         schema_thumbnail_url: https://link.naar.thumbnail.fragment.1
+	 *         includes: [
+	 *           {
+	 *             file: {
+	 *               id: VOLLEDIGE_FILE_VAN_VIDEO
+	 *               premis_stored_at: https://link.naar.volledige.video
+	 *               # Voor een fragment deze NIET gebruiken!
+	 *               schema_thumbnail_url: https://link.naar.thumbnail.volledige.video
+	 *             }
+	 *           }
+	 *         ]
+	 *       }
+	 *     ]
+	 *   },
+	 *   {
+	 *     id: FRAGMENT_REPRESENTATIE_2,
+	 *     schema_start_time: 00:00:30,
+	 *     schema_end_time: 00:01:00,
+	 *     # Voor een fragment deze gebruiken
+	 *     schema_thumbnail_url: https://link.naar.thumbnail.fragment.2
+	 *     includes: [
+	 *       {
+	 *         file: {
+	 *           id: VOLLEDIGE_FILE_VAN_VIDEO
+	 *           premis_stored_at: https://link.naar.volledige.video
+	 *           # Voor een fragment deze NIET gebruiken!
+	 *           schema_thumbnail_url: https://link.naar.thumbnail.volledige.video
+	 *         }
+	 *       }
+	 *     ]
+	 *   }
+	 * ]
+	 * @param schemaThumbnailUrlResponse
+	 * @param dctermsFormat
+	 * @param resolveThumbnailUrl
+	 * @param isPublicDomain
+	 * @param referer
+	 * @param ip
+	 * @private
+	 */
+	private async resolveMainThumbnailUrl(
+		schemaThumbnailUrlResponse: GetIeObjectDetailQuery['getSchemaThumbnailUrl'][0],
+		dctermsFormat: IeObjectType,
+		resolveThumbnailUrl: boolean,
+		isPublicDomain: boolean,
+		referer: string,
+		ip: string
+	): Promise<string> {
+		// The thumbnail can be in 2 locations depending on if this object is a cut fragment or a full video
+		// See https://meemoo.atlassian.net/browse/ARC-3742 and https://meemoo.atlassian.net/browse/ARC-3690
+		let thumbnailUrl = schemaThumbnailUrlResponse?.schema_thumbnail_url?.[0];
+
+		if (mapDcTermsFormatToSimpleType(dctermsFormat) === IeObjectType.AUDIO) {
+			thumbnailUrl = AUDIO_WAVE_FORM_URL; // avoid the ugly speaker
+		} else {
+			if (resolveThumbnailUrl) {
+				thumbnailUrl = await this.getThumbnailUrlWithToken(
+					thumbnailUrl,
+					referer,
+					ip,
+					// If the object is public domain, we generate a thumbnailUrl with a token that stays valid for 15 years
+					// https://meemoo.atlassian.net/browse/ARC-2891
+					isPublicDomain
+				);
+			} else {
+				// Return unresolved thumbnail url, since the user might want to know if there is a thumbnail or not, without needing the resolved thumbnail
+			}
+		}
+		return thumbnailUrl;
+	}
+
 	public async adaptFromDB(
 		ieObjectResponse: GetIeObjectDetailQuery,
 		parentIeObject: Partial<IeObject> | null,
@@ -692,25 +798,6 @@ export class IeObjectsService {
 		// See ARC-3826.
 		const shouldExposeThemes = licenses.includes(IeObjectLicense.PUBLIEK_CONTENT);
 
-		let thumbnailUrl = schemaThumbnailUrlResponse?.schema_thumbnail_url?.[0];
-
-		if (mapDcTermsFormatToSimpleType(dctermsFormat) === IeObjectType.AUDIO) {
-			thumbnailUrl = AUDIO_WAVE_FORM_URL; // avoid the ugly speaker
-		} else {
-			if (resolveThumbnailUrl) {
-				thumbnailUrl = await this.getThumbnailUrlWithToken(
-					thumbnailUrl,
-					referer,
-					ip,
-					// If the object is public domain, we generate a thumbnailUrl with a token that stays valid for 15 years
-					// https://meemoo.atlassian.net/browse/ARC-2891
-					isPublicDomain
-				);
-			} else {
-				// Return unresolved thumbnail url, since the user might want to know if there is a thumbnail or not, without needing the resolved thumbnail
-			}
-		}
-
 		const schemaMaintainer = ie?.schemaMaintainer;
 		const premisIdentifiers = isPartOfResponse?.isPartOf?.[0]?.isPartOf?.premisIdentifier
 			?.premis_identifier as (
@@ -740,6 +827,22 @@ export class IeObjectsService {
 				publisher: part.collection?.schema_publisher,
 			};
 		});
+
+		let mainThumbnailUrl: string | null = null;
+		if (ieObjectByPages.isCutFragment) {
+			// Use first representation thumbnail
+			mainThumbnailUrl = ieObjectByPages.pages[0]?.representations?.[0]?.thumbnailUrl;
+		} else {
+			// Use main object thumbnail
+			mainThumbnailUrl = await this.resolveMainThumbnailUrl(
+				schemaThumbnailUrlResponse,
+				dctermsFormat,
+				resolveThumbnailUrl,
+				isPublicDomain,
+				referer,
+				ip
+			);
+		}
 
 		const ieObject: IeObject = {
 			schemaIdentifier: ie?.schema_identifier,
@@ -804,7 +907,7 @@ export class IeObjectsService {
 			),
 			sector: schemaMaintainer?.ha_org_sector as IeObjectSector,
 			name: ie?.schema_name,
-			thumbnailUrl,
+			thumbnailUrl: mainThumbnailUrl,
 			premisIsPartOf: ie?.premis_is_part_of,
 			isPartOf: isPartOfParentCollections,
 			collectionSeasonNumber: parentCollectionResponse?.[0]?.collection?.schema_season_number,
@@ -963,7 +1066,7 @@ export class IeObjectsService {
 			esObject.dcterms_format === IeObjectType.AUDIO ||
 			esObject.dcterms_format === IeObjectType.AUDIO_FRAGMENT
 		) {
-			thumbnailUrl = '/images/waveform.svg';
+			thumbnailUrl = AUDIO_WAVE_FORM_URL;
 		} else {
 			// TODO remove this replace when https://meemoo.atlassian.net/browse/ARC-2816 is fixed
 			const thumb = esObject?.schema_thumbnail_url?.[0]?.replace(
@@ -1057,6 +1160,71 @@ export class IeObjectsService {
 		return ieObject;
 	}
 
+	/**
+	 * Checks if video is a main video or a cut fragment of a main video
+	 * https://meemoo.atlassian.net/browse/ARC-3690?focusedCommentId=87432
+	 *
+	 * Fragment:
+	 *     getHasPart.*.isRepresentedBy.*.is_media_fragment_of != null
+	 *     → Do not show on main object page, but only in the black bar: "This object has x fragments"
+	 *
+	 *     On the fragment page:
+	 *     getIsRepresentedBy.*.isRepresentedBy.*.includes.*.premis_stored_at
+	 *     getIsRepresentedBy.*.isRepresentedBy.*.schema_start_time
+	 *     getIsRepresentedBy.*.isRepresentedBy.*.schema_end_time
+	 *
+	 * DVD:
+	 *     getHasPart.*.isRepresentedBy.*.is_media_fragment_of == null
+	 *     → Show on main object page in the gray bottom bar
+	 *     getHasPart.*.isRepresentedBy.*.includes.*.premis_stored_at
+	 *
+	 * Main object
+	 *     → Show on main object page without gray bar
+	 *     getIsRepresentedBy.*.isRepresentedBy.*.includes.*.premis_stored_at
+	 *
+	 * @param ieObjects
+	 */
+	public isCutFragment(ieObjects: DbIeObjectWithRepresentations[]): boolean {
+		const hasMainFragment = ieObjects.find((ieObject) =>
+			ieObject.isRepresentedBy?.find(
+				(representation) => representation.is_media_fragment_of === null
+			)
+		);
+		return !hasMainFragment;
+	}
+
+	/**
+	 * The knowledge graph returns too much information, making it hard to distinguish main objects, from cut objects that are cut from another video
+	 * This function removes cut fragment info when the current object is not a cut fragment, making it easier to distinguish the two
+	 * https://meemoo.atlassian.net/browse/ARC-3690?focusedCommentId=87432
+	 * @param ieObjects
+	 * @param isCutFragment
+	 * @private
+	 */
+	private cleanupRepresentationsForCutFragments(
+		ieObjects: DbIeObjectWithRepresentations[],
+		isCutFragment: boolean
+	) {
+		if (isCutFragment) {
+			// This is a cut fragment => no need to remove any cut fragments
+		} else {
+			// Show the main fragment and the DVD chapters
+			// Delete the cut fragments
+			for (const ieObject of ieObjects) {
+				ieObject.isRepresentedBy = compact(
+					(ieObject.isRepresentedBy || [])?.map(
+						(representation: DbIeObjectWithRepresentations['isRepresentedBy'][0]) => {
+							if (representation.is_media_fragment_of) {
+								return null;
+							}
+							return representation;
+						}
+					)
+				) as DbIeObjectWithRepresentations['isRepresentedBy'];
+			}
+		}
+	}
+
 	public async adaptRepresentationsPaged(
 		ieObjectSelf: GetIeObjectDetailQuery['getIsRepresentedBy'],
 		hasPartResponse: GetIeObjectDetailQuery['getHasPart'],
@@ -1079,31 +1247,8 @@ export class IeObjectsService {
 
 		const allMentions: Mention[] = [];
 
-		// Check if video is a main video or a cut fragment of a main video
-		// https://meemoo.atlassian.net/browse/ARC-3690?focusedCommentId=87432
-		const hasMainFragment = ieObjects.find((ieObject) =>
-			ieObject.isRepresentedBy?.find(
-				(representation) => representation.is_media_fragment_of === null
-			)
-		);
-		if (hasMainFragment) {
-			// Show the main fragment and the DVD chapters
-			// Delete the cut fragments
-			for (const ieObject of ieObjects) {
-				ieObject.isRepresentedBy = compact(
-					(ieObject.isRepresentedBy || [])?.map(
-						(representation: DbIeObjectWithRepresentations['isRepresentedBy'][0]) => {
-							if (representation.is_media_fragment_of) {
-								return null;
-							}
-							return representation;
-						}
-					)
-				) as DbIeObjectWithRepresentations['isRepresentedBy'];
-			}
-		} else {
-			// This is probably a cut fragment => no need to remove any cut fragments
-		}
+		const isCutFragment = this.isCutFragment(ieObjects);
+		this.cleanupRepresentationsForCutFragments(ieObjects, isCutFragment);
 
 		/* istanbul ignore next */
 		// Standardize the isRepresentedBy and the hasPart.isRepresentedBy parts of the query to a list of pages with each their file representations
@@ -1144,6 +1289,7 @@ export class IeObjectsService {
 		return {
 			pages,
 			mentions: allMentions,
+			isCutFragment,
 		};
 	}
 
@@ -1166,6 +1312,16 @@ export class IeObjectsService {
 					const transcriptInfo = representation.schemaTranscriptUrls?.[0];
 					const schemaTranscript = transcriptInfo?.schema_transcript;
 					const schemaTranscriptUrl = transcriptInfo?.schema_transcript_url || null;
+					const representationThumbnailUrl =
+						(
+							representation as unknown as GetIeObjectDetailQuery['getHasPart'][0]['isRepresentedBy'][0]
+						)?.schema_thumbnail_url || null;
+					const representationThumbnailUrlResolved = await this.getThumbnailUrlWithToken(
+						representationThumbnailUrl,
+						referer,
+						ip,
+						isPublicDomain
+					);
 
 					return {
 						id: representation.id,
@@ -1178,6 +1334,7 @@ export class IeObjectsService {
 						edmIsNextInSequence: representation.edm_is_next_in_sequence,
 						updatedAt: representation.updated_at,
 						isMediaFragmentOf: representation.is_media_fragment_of,
+						thumbnailUrl: representationThumbnailUrlResolved,
 						files: await this.adaptFiles(
 							representation.includes,
 							resolveThumbnailUrl,

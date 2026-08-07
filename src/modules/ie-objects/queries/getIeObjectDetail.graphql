@@ -92,6 +92,7 @@ query getIeObjectDetail($ieObjectId: String!) {
 			}
 			edm_is_next_in_sequence
 			updated_at
+			schema_thumbnail_url
 			includes {
 				file {
 					id
