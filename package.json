@@ -1,6 +1,6 @@
 {
   "name": "hetarchief-proxy",
-  "version": "4.3.1",
+  "version": "4.3.2",
   "description": "",
   "author": "",
   "private": true,
@@ -38,7 +38,7 @@
   },
   "dependencies": {
     "@aws-sdk/s3-request-presigner": "^3.717.0",
-    "@meemoo/admin-core-api": "6.0.9",
+    "@meemoo/admin-core-api": "6.0.10",
     "@nestjs/common": "9.4.3",
     "@nestjs/config": "3.2.3",
     "@nestjs/core": "9.4.3",
