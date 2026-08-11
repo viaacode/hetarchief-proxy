@@ -52,11 +52,8 @@ export class SessionService {
 		const environment = this.configService.get('ENVIRONMENT');
 		const cookieSecret = this.configService.get('COOKIE_SECRET');
 		const cookieMaxAge = this.configService.get('COOKIE_MAX_AGE');
-		const redisConnectionString = this.configService.get('REDIS_CONNECTION_STRING');
 
 		const isProduction = environment !== 'local' && environment !== 'test';
-
-		this.logger.log('Session config: ', { environment, redisConnectionString, isProduction });
 
 		const sessionConfig: session.SessionOptions = {
 			resave: false, // Postgres session provider doesn't need to resave the session every time
