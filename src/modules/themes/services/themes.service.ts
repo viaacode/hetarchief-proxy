@@ -20,6 +20,9 @@ import {
 	GetThemeWithObjectsInRandomOrderQueryVariables,
 	GetThemeWithObjectsQuery,
 	GetThemeWithObjectsQueryVariables,
+	GetThemesByIdsDocument,
+	GetThemesByIdsQuery,
+	GetThemesByIdsQueryVariables,
 	GetThemesDocument,
 	GetThemesInRandomOrderDocument,
 	GetThemesInRandomOrderQuery,
@@ -132,6 +135,15 @@ export class ThemesService {
 			size,
 			total,
 		});
+	}
+
+	public async getThemesByIds(ids: string[]): Promise<ThemeResponseDto[]> {
+		const response = await this.dataService.execute<
+			GetThemesByIdsQuery,
+			GetThemesByIdsQueryVariables
+		>(GetThemesByIdsDocument, { ids });
+
+		return response.app_theme.map((theme) => this.adaptTheme(theme));
 	}
 
 	public async createTheme(dto: CreateThemeDto): Promise<ThemeResponseDto> {
