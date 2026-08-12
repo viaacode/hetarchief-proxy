@@ -5,7 +5,7 @@ import { type MockInstance, afterEach, beforeEach, describe, expect, it, vi } fr
 import { mockUser } from '~modules/ie-objects/mocks/ie-objects.mock';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { TestingLogger } from '~shared/logging/test-logger';
-import type { IeObjectsInThemeResponseDto } from '../dto/themes.dto';
+import type { IeObjectsInThemeResponseDto, ThemeResponseDto } from '../dto/themes.dto';
 import { ThemesService } from '../services/themes.service';
 import { ThemesController } from './themes.controller';
 
@@ -41,6 +41,7 @@ const mockIeObjectsInThemeResponse: IeObjectsInThemeResponseDto = {
 
 const mockThemesService: Partial<Record<keyof ThemesService, MockInstance>> = {
 	getIeObjectsByThemeUuid: vi.fn(),
+	getThemesByIds: vi.fn(),
 };
 
 describe('ThemesController', () => {
@@ -96,6 +97,35 @@ describe('ThemesController', () => {
 				mockReferer,
 				mockIp
 			);
+		});
+	});
+
+	describe('getThemesByIds', () => {
+		it('delegates to themesService.getThemesByIds', async () => {
+			const mockThemeIds = [
+				'00000000-0000-0000-0000-000000000001',
+				'00000000-0000-0000-0000-000000000002',
+			];
+			const mockThemesResponse: ThemeResponseDto[] = [
+				{
+					id: mockThemeIds[0],
+					slug: mockThemeSlug,
+					nameNl: 'Cultuur en samenleving',
+					nameEn: 'Culture & Society',
+					descriptionNl: null,
+					descriptionEn: null,
+					imageUrl: null,
+					contentPagePathNl: null,
+					contentPagePathEn: null,
+					updatedAt: '2026-07-20T14:33:30.571112+00:00',
+				},
+			];
+			mockThemesService.getThemesByIds.mockResolvedValueOnce(mockThemesResponse);
+
+			const result = await themesController.getThemesByIds({ ids: mockThemeIds });
+
+			expect(result).toEqual(mockThemesResponse);
+			expect(mockThemesService.getThemesByIds).toHaveBeenCalledWith(mockThemeIds);
 		});
 	});
 });

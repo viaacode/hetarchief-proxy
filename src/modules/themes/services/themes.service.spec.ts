@@ -418,6 +418,48 @@ describe('ThemesService', () => {
 		});
 	});
 
+	describe('getThemesByIds', () => {
+		it('returns the themes matching the given ids', async () => {
+			mockDataService.execute.mockResolvedValueOnce({
+				app_theme: [
+					{
+						id: 'theme-uuid-1',
+						slug: mockThemeSlug,
+						name_nl: 'Cultuur en samenleving',
+						name_en: 'Culture & Society',
+						description_nl: null,
+						description_en: null,
+						image_url: 'https://example.com/nature.jpg',
+						content_page_path_nl: null,
+						content_page_path_en: null,
+						updated_at: '2024-01-01T00:00:00.000Z',
+					},
+				],
+			});
+
+			const result = await themesService.getThemesByIds(['theme-uuid-1', 'theme-uuid-2']);
+
+			expect(result).toEqual([
+				{
+					id: 'theme-uuid-1',
+					slug: mockThemeSlug,
+					nameNl: 'Cultuur en samenleving',
+					nameEn: 'Culture & Society',
+					descriptionNl: null,
+					descriptionEn: null,
+					imageUrl: 'https://example.com/nature.jpg',
+					contentPagePathNl: null,
+					contentPagePathEn: null,
+					updatedAt: '2024-01-01T00:00:00.000Z',
+				},
+			]);
+			expect(mockDataService.execute).toHaveBeenCalledWith(
+				expect.anything(),
+				expect.objectContaining({ ids: ['theme-uuid-1', 'theme-uuid-2'] })
+			);
+		});
+	});
+
 	describe('addIeObjectsToTheme', () => {
 		it('resolves schema identifiers and reports one result per submitted identifier', async () => {
 			// One lookup per unique identifier, in submission order, then the insert

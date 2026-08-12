@@ -7,9 +7,11 @@ import {
 	IsNumber,
 	IsOptional,
 	IsString,
+	IsUUID,
 	IsUrl,
 	Min,
 } from 'class-validator';
+import { commaSeparatedStringToArray } from '~shared/helpers/comma-separated-string-to-array';
 import { SortDirectionWithRandom } from '~shared/types';
 import { AddIeObjectToThemeResult, ThemeIeObjectOrderProp, ThemeOrderProp } from '../themes.types';
 
@@ -308,6 +310,18 @@ export class ThemesQueryDto {
 		enum: SortDirectionWithRandom,
 	})
 	orderDirection? = SortDirectionWithRandom.asc;
+}
+
+export class ThemesByIdsQueryDto {
+	@IsArray()
+	@IsUUID('4', { each: true })
+	@Transform(commaSeparatedStringToArray)
+	@ApiProperty({
+		type: String,
+		description: 'Comma separated list of theme UUIDs to fetch',
+		example: '00000000-0000-0000-0000-000000000001,00000000-0000-0000-0000-000000000002',
+	})
+	ids: string[];
 }
 
 export class ThemeIeObjectsQueryDto {

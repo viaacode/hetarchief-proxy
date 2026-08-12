@@ -42,6 +42,7 @@ import {
 	IeObjectsInThemeResponseDto,
 	ThemeIeObjectsQueryDto,
 	ThemeResponseDto,
+	ThemesByIdsQueryDto,
 	ThemesQueryDto,
 	UpdateThemeDto,
 } from '../dto/themes.dto';
@@ -69,6 +70,20 @@ export class ThemesController {
 		@Query() queryDto: ThemesQueryDto
 	): Promise<IPagination<ThemeResponseDto>> {
 		return this.themesService.getThemes(queryDto);
+	}
+
+	@Get('by-id')
+	@ApiOperation({
+		summary: 'Get themes by id',
+		description: 'Returns the themes matching the given comma separated list of UUIDs.',
+	})
+	@ApiOkResponse({
+		description: 'Returns the themes matching the given ids',
+		type: ThemeResponseDto,
+		isArray: true,
+	})
+	public async getThemesByIds(@Query() queryDto: ThemesByIdsQueryDto): Promise<ThemeResponseDto[]> {
+		return this.themesService.getThemesByIds(queryDto.ids);
 	}
 
 	@Post()
