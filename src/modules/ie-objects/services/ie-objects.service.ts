@@ -631,7 +631,10 @@ export class IeObjectsService {
 	/**
 	 * Gets the thumbnail url specific for cut fragments, main fragment or audio elements
 	 *
+	 * The thumbnail can be in 2 locations depending on if this object is a cut fragment or a full video
 	 * See: https://meemoo.atlassian.net/browse/ARC-3742?focusedCommentId=93186
+	 * See: https://meemoo.atlassian.net/browse/ARC-3690
+	 *
 	 * getIsRepresentedBy: [
 	 *   {
 	 *     isRepresentedBy: [
@@ -695,6 +698,7 @@ export class IeObjectsService {
 	 *     ]
 	 *   }
 	 * ]
+	 * @param ieObjectPages
 	 * @param schemaThumbnailUrlResponse
 	 * @param dctermsFormat
 	 * @param resolveThumbnailUrl
@@ -704,6 +708,7 @@ export class IeObjectsService {
 	 * @private
 	 */
 	private async resolveMainThumbnailUrl(
+		ieObjectPages: IeObjectPages,
 		schemaThumbnailUrlResponse: GetIeObjectDetailQuery['getSchemaThumbnailUrl'][0],
 		dctermsFormat: IeObjectType,
 		resolveThumbnailUrl: boolean,
@@ -711,27 +716,32 @@ export class IeObjectsService {
 		referer: string,
 		ip: string
 	): Promise<string> {
-		// The thumbnail can be in 2 locations depending on if this object is a cut fragment or a full video
-		// See https://meemoo.atlassian.net/browse/ARC-3742 and https://meemoo.atlassian.net/browse/ARC-3690
-		let thumbnailUrl = schemaThumbnailUrlResponse?.schema_thumbnail_url?.[0];
-
-		if (mapDcTermsFormatToSimpleType(dctermsFormat) === IeObjectType.AUDIO) {
-			thumbnailUrl = AUDIO_WAVE_FORM_URL; // avoid the ugly speaker
+		let mainThumbnailUrl: string | null = null;
+		if (ieObjectPages.isCutFragment) {
+			// Use first representation thumbnail
+			mainThumbnailUrl = ieObjectPages.pages[0]?.representations?.[0]?.thumbnailUrl;
+		} else if (mapDcTermsFormatToSimpleType(dctermsFormat) === IeObjectType.AUDIO) {
+			// Audio waveform
+			mainThumbnailUrl = AUDIO_WAVE_FORM_URL; // avoid the ugly speaker
 		} else {
-			if (resolveThumbnailUrl) {
-				thumbnailUrl = await this.getThumbnailUrlWithToken(
-					thumbnailUrl,
-					referer,
-					ip,
-					// If the object is public domain, we generate a thumbnailUrl with a token that stays valid for 15 years
-					// https://meemoo.atlassian.net/browse/ARC-2891
-					isPublicDomain
-				);
-			} else {
-				// Return unresolved thumbnail url, since the user might want to know if there is a thumbnail or not, without needing the resolved thumbnail
-			}
+			// Main video or newspaper
+			mainThumbnailUrl = schemaThumbnailUrlResponse?.schema_thumbnail_url?.[0];
 		}
-		return thumbnailUrl;
+
+		// Add a token to thumbnail if requested
+		if (resolveThumbnailUrl) {
+			mainThumbnailUrl = await this.getThumbnailUrlWithToken(
+				mainThumbnailUrl,
+				referer,
+				ip,
+				// If the object is public domain, we generate a thumbnailUrl with a token that stays valid for 15 years
+				// https://meemoo.atlassian.net/browse/ARC-2891
+				isPublicDomain
+			);
+		} else {
+			// Return unresolved thumbnail url, since the user might want to know if there is a thumbnail or not, without needing the resolved thumbnail
+		}
+		return mainThumbnailUrl;
 	}
 
 	public async adaptFromDB(
@@ -828,21 +838,15 @@ export class IeObjectsService {
 			};
 		});
 
-		let mainThumbnailUrl: string | null = null;
-		if (ieObjectByPages.isCutFragment) {
-			// Use first representation thumbnail
-			mainThumbnailUrl = ieObjectByPages.pages[0]?.representations?.[0]?.thumbnailUrl;
-		} else {
-			// Use main object thumbnail
-			mainThumbnailUrl = await this.resolveMainThumbnailUrl(
-				schemaThumbnailUrlResponse,
-				dctermsFormat,
-				resolveThumbnailUrl,
-				isPublicDomain,
-				referer,
-				ip
-			);
-		}
+		const mainThumbnailUrl = await this.resolveMainThumbnailUrl(
+			ieObjectByPages,
+			schemaThumbnailUrlResponse,
+			dctermsFormat,
+			resolveThumbnailUrl,
+			isPublicDomain,
+			referer,
+			ip
+		);
 
 		const ieObject: IeObject = {
 			schemaIdentifier: ie?.schema_identifier,
