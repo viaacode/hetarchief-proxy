@@ -281,8 +281,8 @@ export interface IeObjectPlayableDisplayData {
 	mimeType?: string | null;
 	/** Audio/video objects only: signed URL to the json peak/waveform file, for audio and audio fragments only. Additive data for the waveform overlay, not a substitute for playableUrl */
 	peakFileUrl?: string | null;
-	/** Non audio/video objects only (e.g. newspapers): ready-to-use, ticketed IIIF image url for the detail page viewer, or null if none is accessible */
-	detailUrl?: string | null;
+	/** Non audio/video objects only (e.g. newspapers): self-contained base64 data uri of the IIIF detail image, or null if none is accessible/couldn't be resolved. Use this directly as an <img src> */
+	newspaperImage?: string | null;
 	cuepoints?: IeObjectPlayableDisplayDataCuepoints;
 }
 

@@ -123,6 +123,7 @@ import {
 import {
 	CACHE_KEY_PREFIX_IE_OBJECTS_SEARCH,
 	CACHE_KEY_PREFIX_IE_OBJECT_DETAIL,
+	CACHE_KEY_PREFIX_IE_OBJECT_NEWSPAPER_IMAGE,
 	CACHE_KEY_PREFIX_IE_OBJECT_PID_TO_ID,
 	CACHE_KEY_PREFIX_IE_OBJECT_PLAYABLE_DISPLAY_DATA,
 	CACHE_KEY_PREFIX_IE_OBJECT_THUMBNAIL,
@@ -1892,73 +1893,17 @@ export class IeObjectsService {
 				end?: number;
 			}): Promise<IeObjectPlayableDisplayData | null> => {
 				try {
-					const ieObjectId = await this.getIeObjectIdFromObjectSchemaIdentifier(
+					const access = await this.resolvePlayableDisplayAccess(
 						item.schemaIdentifier,
+						user,
+						visitorSpaceAccessInfo,
 						request
 					);
-
-					const dbResponse = await this.cacheManager.wrap(
-						CACHE_KEY_PREFIX_IE_OBJECT_PLAYABLE_DISPLAY_DATA + ieObjectId,
-						() =>
-							this.dataService.execute<
-								GetIeObjectPlayableDisplayDataQuery,
-								GetIeObjectPlayableDisplayDataQueryVariables
-							>(GetIeObjectPlayableDisplayDataDocument, { ieObjectId }),
-						// cache for 1 hour
-						hoursToSeconds(1)
-					);
-
-					const ie = dbResponse?.ieObject?.[0];
-					if (!ie) {
+					if (!access) {
 						return null;
 					}
-
-					const licenses = compact(
-						dbResponse.schemaLicense?.map((license) => license.schema_license)
-					) as IeObjectLicense[];
-					const dctermsFormat = ie.dctermsFormat?.[0]?.dcterms_format as IeObjectType;
-					const schemaMaintainer = ie.schemaMaintainer;
-					const isPublicDomain: boolean =
-						licenses.includes(IeObjectLicense.PUBLIEK_CONTENT) &&
-						licenses.includes(IeObjectLicense.PUBLIC_DOMAIN);
-
-					// `pages` is only ever picked when the license grants the essence metadata set,
-					// regardless of whether it holds real data - its mere presence on limitedObject
-					// tells us if essence access was granted, without looking up representations first
-					const limitedObject = limitAccessToObjectDetails(
-						{
-							schemaIdentifier: ie.schema_identifier,
-							licenses,
-							maintainerId: schemaMaintainer?.org_identifier,
-							sector: schemaMaintainer?.ha_org_sector as IeObjectSector,
-							name: ie.schema_name,
-							dctermsFormat,
-							maintainerName: schemaMaintainer?.skos_pref_label,
-							maintainerLogo: schemaMaintainer?.ha_org_has_logo
-								// TODO remove this workaround once the INT organisations assets are available
-								?.replace('https://assets-int.viaa.be/images/', 'https://assets.viaa.be/images/')
-								?.replace('https://assets-tst.viaa.be/images/', 'https://assets.viaa.be/images/'),
-							maintainerOverlay: !!schemaMaintainer?.hasPreference?.find(
-								(pref) => pref.ha_pref === OrganisationPreference.logoEmbedding
-							),
-							thumbnailUrl: dbResponse.schemaThumbnailUrl?.[0]?.schema_thumbnail_url?.[0],
-							pages: [],
-						} as IeObjectForAccessCheck,
-						{
-							userId: user?.getId(),
-							isKeyUser: user.getIsKeyUser(),
-							sector: user.getSector(),
-							groupId: user.getGroupId(),
-							maintainerId: user.getOrganisationId(),
-							accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
-							accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
-						}
-					);
-
-					if (!limitedObject) {
-						// User has no access to this object at all
-						return null;
-					}
+					const { dbResponse, limitedObject, dctermsFormat, isPublicDomain, hasEssenceAccess } =
+						access;
 
 					const isAvObject = IE_OBJECT_AV_TYPES.includes(dctermsFormat);
 					const isAudio = mapDcTermsFormatToSimpleType(dctermsFormat) === IeObjectType.AUDIO;
@@ -1966,9 +1911,9 @@ export class IeObjectsService {
 					let playableUrl: string | null = null;
 					let mimeType: string | null = null;
 					let peakFileUrl: string | null = null;
-					let detailUrl: string | null = null;
+					let newspaperImage: string | null = null;
 
-					if ('pages' in limitedObject) {
+					if (hasEssenceAccess) {
 						// Essence access was granted: look up the first playable file, same
 						// selection as the object detail page
 						const representation = this.findFirstPlayableRepresentation(dbResponse);
@@ -2012,9 +1957,20 @@ export class IeObjectsService {
 								}
 							}
 						} else {
-							// Non audio/video objects (mainly newspapers): expose the IIIF image url
-							// used by the detail page viewer instead of a playable url
-							detailUrl = await this.getIiifDetailUrl(files, referer, ip, isPublicDomain);
+							// Non audio/video objects (mainly newspapers): resolve the IIIF detail
+							// image right away and inline it as a data uri, instead of a plain
+							// playable url - the IIIF image server requires an Authorization header,
+							// so it can't be exposed as a plain, ready-to-use url like
+							// playableUrl/peakFileUrl without a separate proxy endpoint
+							const imageFile = this.findIiifImageFile(files);
+							if (imageFile) {
+								newspaperImage = await this.fetchIiifNewspaperImageDataUri(
+									imageFile,
+									referer,
+									ip,
+									isPublicDomain
+								);
+							}
 						}
 
 						if (!isAudio && !thumbnailUrl) {
@@ -2042,7 +1998,7 @@ export class IeObjectsService {
 						maintainerLogo: limitedObject.maintainerLogo,
 						maintainerOverlay: limitedObject.maintainerOverlay,
 						cuepoints,
-						...(isAvObject ? { playableUrl, mimeType, peakFileUrl } : { detailUrl }),
+						...(isAvObject ? { playableUrl, mimeType, peakFileUrl } : { newspaperImage }),
 					};
 				} catch (err) {
 					this.logger.error(
@@ -2054,6 +2010,180 @@ export class IeObjectsService {
 				}
 			}
 		);
+	}
+
+	/**
+	 * Fetches a representation's IIIF image-api file and inlines it as a self-contained base64 data
+	 * uri, ready to use directly as an <img src> with zero further requests - rendered down to a
+	 * reasonably-sized (~1000px wide) jpeg, since these source images are ~8k and a full-size render
+	 * is neither needed nor wanted for a preview tile.
+	 *
+	 * The IIIF image server sits behind Authorization-header auth, not the query-param ticket
+	 * getPlayableUrl/resolveThumbnailUrl use for their media-service proxy (which doesn't understand
+	 * IIIF image requests) - so rather than handing the client a url it can't directly load (or
+	 * adding a whole separate proxy endpoint just to attach that header), the image is fetched here
+	 * and inlined directly into the response. The rendered image is cached per file for 1 hour
+	 * (same as the playable-display-data db response) since it's independent of who's asking for
+	 * it, saving both the ticket-service and IIIF round trips on repeat carousel views. Failures
+	 * are swallowed to null (and not cached) so one broken image doesn't take down the rest of the
+	 * object's metadata in the batch response.
+	 */
+	private async fetchIiifNewspaperImageDataUri(
+		imageFile: PlayableDisplayDataFile,
+		referer: string,
+		ip: string,
+		isPublicDomain: boolean
+	): Promise<string | null> {
+		if (!imageFile.premis_stored_at) {
+			return null;
+		}
+		try {
+			return await this.cacheManager.wrap(
+				CACHE_KEY_PREFIX_IE_OBJECT_NEWSPAPER_IMAGE + imageFile.premis_stored_at,
+				() => this.fetchAndEncodeIiifImage(imageFile.premis_stored_at, referer, ip, isPublicDomain),
+				// cache for 1 hour
+				hoursToSeconds(1)
+			);
+		} catch (err) {
+			this.logger.error(
+				new CustomError('Failed to fetch IIIF detail image for playable display data', err, {
+					storedAt: imageFile.premis_stored_at,
+				})
+			);
+			return null;
+		}
+	}
+
+	/**
+	 * Requests a ticket for and fetches a IIIF image-api identifier, rendered down to a
+	 * reasonably-sized (~1000px wide) jpeg, and returns it as a base64 data uri.
+	 */
+	private async fetchAndEncodeIiifImage(
+		storedAt: string,
+		referer: string,
+		ip: string,
+		isPublicDomain: boolean
+	): Promise<string> {
+		const imageUrl = storedAt.replace(
+			'https://iiif-qas.meemoo.be/image/3/public',
+			'https://iiif-qas.meemoo.be/image/3/hetarchief'
+		);
+		// The ticket must be requested for the base url, without the /full/.../default.jpg
+		// suffix, since the ticket service requires it to be a substring of the final requested url
+		const token = await this.playerTicketService.getPlayerToken(imageUrl, {
+			referer,
+			ip,
+			isPublicDomain,
+		});
+
+		// The ticket is bound to the referer it was requested with - unlike a browser, Node's
+		// fetch doesn't send a Referer header automatically, so it has to be set explicitly or
+		// the IIIF server rejects the token with a 403
+		const response = await fetch(`${imageUrl}/full/1000,/0/default.jpg`, {
+			headers: { Authorization: `Bearer ${token}`, Referer: referer },
+		});
+		if (!response.ok) {
+			throw new CustomError('Failed to fetch IIIF detail image', null, {
+				imageUrl,
+				status: response.status,
+			});
+		}
+
+		const contentType = response.headers.get('content-type') || 'image/jpeg';
+		const base64 = Buffer.from(await response.arrayBuffer()).toString('base64');
+		return `data:${contentType};base64,${base64}`;
+	}
+
+	/**
+	 * Resolves an ie-object's playable-display-data db response and applies the license-based
+	 * access check. `pages` is only ever picked when the license grants the essence metadata set,
+	 * regardless of whether it holds real data - its mere presence on the limited object tells us
+	 * if essence access was granted, without needing to look up representations first.
+	 */
+	private async resolvePlayableDisplayAccess(
+		schemaIdentifier: string,
+		user: SessionUserEntity,
+		visitorSpaceAccessInfo: IeObjectsVisitorSpaceInfo,
+		request: Request
+	): Promise<{
+		dbResponse: GetIeObjectPlayableDisplayDataQuery;
+		limitedObject: Partial<IeObject>;
+		dctermsFormat: IeObjectType;
+		isPublicDomain: boolean;
+		hasEssenceAccess: boolean;
+	} | null> {
+		const ieObjectId = await this.getIeObjectIdFromObjectSchemaIdentifier(
+			schemaIdentifier,
+			request
+		);
+
+		const dbResponse = await this.cacheManager.wrap(
+			CACHE_KEY_PREFIX_IE_OBJECT_PLAYABLE_DISPLAY_DATA + ieObjectId,
+			() =>
+				this.dataService.execute<
+					GetIeObjectPlayableDisplayDataQuery,
+					GetIeObjectPlayableDisplayDataQueryVariables
+				>(GetIeObjectPlayableDisplayDataDocument, { ieObjectId }),
+			// cache for 1 hour
+			hoursToSeconds(1)
+		);
+
+		const ie = dbResponse?.ieObject?.[0];
+		if (!ie) {
+			return null;
+		}
+
+		const licenses = compact(
+			dbResponse.schemaLicense?.map((license) => license.schema_license)
+		) as IeObjectLicense[];
+		const dctermsFormat = ie.dctermsFormat?.[0]?.dcterms_format as IeObjectType;
+		const schemaMaintainer = ie.schemaMaintainer;
+		const isPublicDomain: boolean =
+			licenses.includes(IeObjectLicense.PUBLIEK_CONTENT) &&
+			licenses.includes(IeObjectLicense.PUBLIC_DOMAIN);
+
+		const limitedObject = limitAccessToObjectDetails(
+			{
+				schemaIdentifier: ie.schema_identifier,
+				licenses,
+				maintainerId: schemaMaintainer?.org_identifier,
+				sector: schemaMaintainer?.ha_org_sector as IeObjectSector,
+				name: ie.schema_name,
+				dctermsFormat,
+				maintainerName: schemaMaintainer?.skos_pref_label,
+				maintainerLogo: schemaMaintainer?.ha_org_has_logo
+					// TODO remove this workaround once the INT organisations assets are available
+					?.replace('https://assets-int.viaa.be/images/', 'https://assets.viaa.be/images/')
+					?.replace('https://assets-tst.viaa.be/images/', 'https://assets.viaa.be/images/'),
+				maintainerOverlay: !!schemaMaintainer?.hasPreference?.find(
+					(pref) => pref.ha_pref === OrganisationPreference.logoEmbedding
+				),
+				thumbnailUrl: dbResponse.schemaThumbnailUrl?.[0]?.schema_thumbnail_url?.[0],
+				pages: [],
+			} as IeObjectForAccessCheck,
+			{
+				userId: user?.getId(),
+				isKeyUser: user.getIsKeyUser(),
+				sector: user.getSector(),
+				groupId: user.getGroupId(),
+				maintainerId: user.getOrganisationId(),
+				accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
+				accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
+			}
+		);
+
+		if (!limitedObject) {
+			// User has no access to this object at all
+			return null;
+		}
+
+		return {
+			dbResponse,
+			limitedObject,
+			dctermsFormat,
+			isPublicDomain,
+			hasEssenceAccess: 'pages' in limitedObject,
+		};
 	}
 
 	/**
@@ -2109,33 +2239,16 @@ export class IeObjectsService {
 	}
 
 	/**
-	 * Builds the ready-to-use, signed IIIF image url for a representation's image-api file
-	 * (same url as ObjectDetailPage.tsx in hetarchief-client, ticketed the same way the newspaper
-	 * export zip does it in NewspapersController - the ticket is embedded as a query param, so no
-	 * separate Authorization header is needed to load it). Used for non audio/video objects
-	 * (mainly newspapers), which have no playable essence file.
+	 * Finds the first image-api file in a representation's files, same selection as
+	 * ObjectDetailPage.tsx's iiifViewerImageInfos in hetarchief-client.
 	 */
-	private async getIiifDetailUrl(
-		files: PlayableDisplayDataFile[],
-		referer: string,
-		ip: string,
-		isPublicDomain: boolean
-	): Promise<string | null> {
-		const imageApiFile =
+	private findIiifImageFile(files: PlayableDisplayDataFile[]): PlayableDisplayDataFile | null {
+		return (
 			files.find((file) => IMAGE_API_FORMATS.includes(file.ebucore_has_mime_type)) ||
 			// Delete when https://meemoo.atlassian.net/browse/ARC-3156 is fixed
-			files.find((file) => file.premis_stored_at?.endsWith('jp2'));
-
-		if (!imageApiFile?.premis_stored_at) {
-			return null;
-		}
-
-		const imageUrl = imageApiFile.premis_stored_at.replace(
-			'https://iiif-qas.meemoo.be/image/3/public',
-			'https://iiif-qas.meemoo.be/image/3/hetarchief'
+			files.find((file) => file.premis_stored_at?.endsWith('jp2')) ||
+			null
 		);
-
-		return this.playerTicketService.getPlayableUrl(imageUrl, { referer, ip, isPublicDomain });
 	}
 
 	/**

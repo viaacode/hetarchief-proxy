@@ -3,6 +3,7 @@ import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { ConfigService } from '@nestjs/config';
 import { Test, type TestingModule } from '@nestjs/testing';
 import type { Cache } from 'cache-manager';
+import { hoursToSeconds } from 'date-fns';
 import { cloneDeep } from 'lodash';
 import {
 	type MockInstance,
@@ -100,6 +101,10 @@ const mockVideoStillsService: Partial<Record<keyof VideoStillsService, MockInsta
 const mockCacheService: Partial<Record<keyof Cache, MockInstance>> = {
 	wrap: vi.fn().mockImplementation((key, cb) => cb()),
 };
+
+// Mock fetch globally, used to fetch and inline the IIIF newspaper image
+const mockFetch = vi.fn();
+global.fetch = mockFetch;
 
 const mockIeObject2Metadata = mockIeObject2.getIeObject[0];
 const mockObjectSchemaIdentifier = mockIeObject2Metadata.schema_identifier;
@@ -926,6 +931,7 @@ describe('ieObjectsService', () => {
 			// mockResolvedValueOnce queued by earlier tests in this file is not cleared by
 			// vi.clearAllMocks() (only mockClear semantics) - reset fully to avoid bleed-through
 			mockDataService.execute.mockReset();
+			mockFetch.mockReset();
 			vi.spyOn(ieObjectsService, 'getIeObjectIdFromObjectSchemaIdentifier').mockResolvedValue(
 				mockObjectId
 			);
@@ -965,19 +971,22 @@ describe('ieObjectsService', () => {
 				endTime: undefined,
 			});
 			expect(result.cuepoints).toBeUndefined();
-			expect(result).not.toHaveProperty('detailUrl');
+			expect(result).not.toHaveProperty('newspaperImage');
 		});
 
-		it('returns a ticketed detailUrl instead of playableUrl/mimeType/peakFileUrl for non audio/video objects', async () => {
+		it('returns a self-contained data uri instead of playableUrl/mimeType/peakFileUrl for non audio/video objects', async () => {
 			const mockImageFile = {
 				id: 'image-file-1',
 				ebucore_has_mime_type: 'image/jp2',
 				premis_stored_at: 'https://iiif-qas.meemoo.be/image/3/public/newspaper-page-1.jp2',
 				hasMediaFragment: [],
 			};
-			mockPlayerTicketService.getPlayableUrl.mockImplementation((url: string) =>
-				Promise.resolve(`${url}?ticket=abc`)
-			);
+			mockPlayerTicketService.getPlayerToken.mockResolvedValue('mock-bearer-token');
+			mockFetch.mockResolvedValueOnce({
+				ok: true,
+				headers: { get: () => 'image/jpeg' },
+				arrayBuffer: () => Promise.resolve(new TextEncoder().encode('fake-jpeg-bytes').buffer),
+			});
 
 			mockDataService.execute.mockResolvedValueOnce(
 				buildMockDbResponse({
@@ -1001,16 +1010,29 @@ describe('ieObjectsService', () => {
 				{} as any
 			);
 
-			expect(mockPlayerTicketService.getPlayableUrl).toHaveBeenCalledWith(
+			// The token is requested for the base url, without the /full/.../default.jpg suffix,
+			// since the ticket must be a substring of the final requested url
+			expect(mockPlayerTicketService.getPlayerToken).toHaveBeenCalledWith(
 				'https://iiif-qas.meemoo.be/image/3/hetarchief/newspaper-page-1.jp2',
 				{ referer: 'referer', ip: '127.0.0.1', isPublicDomain: false }
 			);
-			expect(result.detailUrl).toEqual(
-				'https://iiif-qas.meemoo.be/image/3/hetarchief/newspaper-page-1.jp2?ticket=abc'
+			expect(mockFetch).toHaveBeenCalledWith(
+				'https://iiif-qas.meemoo.be/image/3/hetarchief/newspaper-page-1.jp2/full/1000,/0/default.jpg',
+				{ headers: { Authorization: 'Bearer mock-bearer-token', Referer: 'referer' } }
 			);
+			expect(mockPlayerTicketService.getPlayableUrl).not.toHaveBeenCalled();
+			const expectedBase64 = Buffer.from('fake-jpeg-bytes').toString('base64');
+			expect(result.newspaperImage).toEqual(`data:image/jpeg;base64,${expectedBase64}`);
 			expect(result).not.toHaveProperty('playableUrl');
 			expect(result).not.toHaveProperty('mimeType');
 			expect(result).not.toHaveProperty('peakFileUrl');
+			// The rendered image is cached per file (independent of referer/ip) for 1 hour, so
+			// repeat carousel views don't re-hit the ticket service and IIIF server
+			expect(mockCacheService.wrap).toHaveBeenCalledWith(
+				`ie-objects-newspaper-image__${mockImageFile.premis_stored_at}`,
+				expect.any(Function),
+				hoursToSeconds(1)
+			);
 		});
 
 		it('falls back to a storedAt ending in jp2 when no image/jp2 mime type is present (ARC-3156)', async () => {
@@ -1020,9 +1042,12 @@ describe('ieObjectsService', () => {
 				premis_stored_at: 'https://iiif-qas.meemoo.be/image/3/public/newspaper-page-1.jp2',
 				hasMediaFragment: [],
 			};
-			mockPlayerTicketService.getPlayableUrl.mockImplementation((url: string) =>
-				Promise.resolve(url)
-			);
+			mockPlayerTicketService.getPlayerToken.mockResolvedValue('mock-bearer-token');
+			mockFetch.mockResolvedValueOnce({
+				ok: true,
+				headers: { get: () => 'image/jpeg' },
+				arrayBuffer: () => Promise.resolve(new TextEncoder().encode('fake-jpeg-bytes').buffer),
+			});
 
 			mockDataService.execute.mockResolvedValueOnce(
 				buildMockDbResponse({
@@ -1050,9 +1075,45 @@ describe('ieObjectsService', () => {
 				{} as any
 			);
 
-			expect(result.detailUrl).toEqual(
-				'https://iiif-qas.meemoo.be/image/3/hetarchief/newspaper-page-1.jp2'
+			const expectedBase64 = Buffer.from('fake-jpeg-bytes').toString('base64');
+			expect(result.newspaperImage).toEqual(`data:image/jpeg;base64,${expectedBase64}`);
+		});
+
+		it('returns null newspaperImage (but keeps the rest of the object) when the IIIF fetch fails', async () => {
+			const mockImageFile = {
+				id: 'image-file-1',
+				ebucore_has_mime_type: 'image/jp2',
+				premis_stored_at: 'https://iiif-qas.meemoo.be/image/3/public/newspaper-page-1.jp2',
+				hasMediaFragment: [],
+			};
+			mockPlayerTicketService.getPlayerToken.mockResolvedValue('mock-bearer-token');
+			mockFetch.mockResolvedValueOnce({ ok: false, status: 404 });
+
+			mockDataService.execute.mockResolvedValueOnce(
+				buildMockDbResponse({
+					ieObject: [
+						{
+							...buildMockDbResponse().ieObject[0],
+							dctermsFormat: [{ dcterms_format: IeObjectType.NEWSPAPER }],
+						},
+					],
+					getIsRepresentedBy: [
+						{ isRepresentedBy: [{ ...mockRepresentation, includes: [{ file: mockImageFile }] }] },
+					],
+				}) as GetIeObjectPlayableDisplayDataQuery
 			);
+
+			const [result] = await ieObjectsService.getIeObjectsPlayableDisplayData(
+				[{ schemaIdentifier: 'mock-schema-identifier' }],
+				mockCpAdminUser,
+				'referer',
+				'127.0.0.1',
+				{} as any
+			);
+
+			expect(result).toBeDefined();
+			expect(result.name).toEqual('Mock playable object');
+			expect(result.newspaperImage).toBeNull();
 		});
 
 		it('omits thumbnailUrl and playableUrl when the user only has metadata access', async () => {
