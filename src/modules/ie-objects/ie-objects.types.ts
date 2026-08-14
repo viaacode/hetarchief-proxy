@@ -75,6 +75,7 @@ export interface IeObjectFile {
 export interface IeObjectPages {
 	pages: IeObjectPage[];
 	mentions: Mention[];
+	isCutFragment: boolean; // https://meemoo.atlassian.net/browse/ARC-3690
 }
 
 export interface IeObjectPage {
@@ -93,6 +94,7 @@ export interface IeObjectRepresentation {
 	edmIsNextInSequence: string;
 	updatedAt: string;
 	isMediaFragmentOf: string;
+	thumbnailUrl: string | null;
 	files: IeObjectFile[];
 }
 

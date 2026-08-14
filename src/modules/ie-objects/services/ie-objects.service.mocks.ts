@@ -1,4 +1,5 @@
 import { IeObjectRepresentation } from '~modules/ie-objects/ie-objects.types';
+import { AUDIO_WAVE_FORM_URL } from '~shared/consts/audio-wave-form-url';
 
 export const mockAutocompleteQueryResponseNewspaperSeries = {
 	took: 20,
@@ -127,6 +128,7 @@ export const representationMp3: IeObjectRepresentation = {
 	edmIsNextInSequence: null,
 	updatedAt: '2025-06-23T07:10:44.031597+00:00',
 	isMediaFragmentOf: null,
+	thumbnailUrl: AUDIO_WAVE_FORM_URL,
 	files: [
 		{
 			id: 'https://data.hetarchief.be/id/entity/4236d6a49512a8787d8ff1425dace297',
@@ -163,6 +165,8 @@ const representationMp4: IeObjectRepresentation = {
 	edmIsNextInSequence: null,
 	updatedAt: '2025-06-23T07:28:33.301476+00:00',
 	isMediaFragmentOf: null,
+	thumbnailUrl:
+		'https://media.viaa.be/play/v2/DEPARTEMENTCULTUURJEUGDENMEDIA/b0058557856c4b10b3bebfa7340d59e7034e2993588f4a11a79cb3861c3d7868/keyframes-thumb/keyframes_1_1/keyframe1.jpg?token=eyJraWQiOiIwMDAyIiwiYWxnIjoiSFMyNTYifQ.eyJhdWQiOiJoZXRhcmNoaWVmLmJlIiwiZXhwIjoxNzUzODA5MzQ1LCJzdWIiOiJERVBBUlRFTUVOVENVTFRVVVJKRVVHREVOTUVESUEvYjAwNTg1NTc4NTZjNGIxMGIzYmViZmE3MzQwZDU5ZTcwMzRlMjk5MzU4OGY0YTExYTc5Y2IzODYxYzNkNzg2OC9rZXlmcmFtZXMtdGh1bWIva2V5ZnJhbWVzXzFfMS9rZXlmcmFtZTEuanBnIiwiaXAiOiI6OmZmZmY6MTcyLjE3LjE0LjE2IiwicmVmZXJlciI6Imh0dHBzOi8vdjMuaGV0YXJjaGllZi5iZSIsImZyYWdtZW50IjpbXX0.GRkCMThsDU-Wv4SF2AWmEHIHMT9fN5xWwH5rjwJW9Io',
 	files: [
 		{
 			id: 'https://data.hetarchief.be/id/entity/e5cad209c5bcddff3e884804825b6e7b',
@@ -201,6 +205,7 @@ const representationMa4: IeObjectRepresentation = {
 	edmIsNextInSequence: null,
 	updatedAt: '2025-06-23T07:34:47.956169+00:00',
 	isMediaFragmentOf: null,
+	thumbnailUrl: AUDIO_WAVE_FORM_URL,
 	files: [
 		{
 			id: 'https://data.hetarchief.be/id/entity/53db6fbda94c45b7dd0af42fa91e19d6',
@@ -237,6 +242,7 @@ export const representationsNewspaper: IeObjectRepresentation[] = [
 		edmIsNextInSequence: null,
 		updatedAt: '2025-06-23T07:06:11.271076+00:00',
 		isMediaFragmentOf: null,
+		thumbnailUrl: null,
 		files: [
 			{
 				id: 'https://data.hetarchief.be/id/entity/26420d7bcb57fa9bad812876bb2fa44c/2f1201c076bcede9f55f79b572a3bc03',
@@ -261,6 +267,8 @@ export const representationsNewspaper: IeObjectRepresentation[] = [
 		edmIsNextInSequence: null,
 		updatedAt: '2025-06-23T07:30:24.376609+00:00',
 		isMediaFragmentOf: null,
+		thumbnailUrl:
+			'https://media.viaa.be/play/v2/LETTERENHUIS/0f55807d1f27470daedf39861ee3c409e641b10d559e408c8c53b18b0461aaef/browse-thumb.jpg?token=eyJraWQiOiIwMDAyIiwiYWxnIjoiSFMyNTYifQ.eyJhdWQiOiJoZXRhcmNoaWVmLmJlIiwiZXhwIjoxNzUzODEwNTQ1LCJzdWIiOiJMRVRURVJFTkhVSVMvMGY1NTgwN2QxZjI3NDcwZGFlZGYzOTg2MWVlM2M0MDllNjQxYjEwZDU1OWU0MDhjOGM1M2IxOGIwNDYxYWFlZi9icm93c2UtdGh1bWIuanBnIiwiaXAiOiI6OmZmZmY6MTcyLjE3LjUzLjU5IiwicmVmZXJlciI6Imh0dHBzOi8vdjMuaGV0YXJjaGllZi5iZSIsImZyYWdtZW50IjpbXX0.-EdDjLvOdZDa18-4NS3WUXS2iD-YZef20oJuzVDjQt0',
 		files: [
 			{
 				id: 'https://data.hetarchief.be/id/entity/5787a7741ad5743244a79f5a3e4f876d',
@@ -291,6 +299,7 @@ export const representationsNewspaper: IeObjectRepresentation[] = [
 		edmIsNextInSequence: null,
 		updatedAt: '2025-06-23T07:39:13.913201+00:00',
 		isMediaFragmentOf: null,
+		thumbnailUrl: null,
 		files: [
 			{
 				id: 'https://data.hetarchief.be/id/entity/88a85bbb95b56ed0f5ee026d180bb15c',
