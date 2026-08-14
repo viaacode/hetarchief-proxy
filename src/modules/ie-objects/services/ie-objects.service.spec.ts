@@ -1,4 +1,4 @@
-import { DataService, PlayerTicketService } from '@meemoo/admin-core-api';
+import { DataService, PlayerTicketService, VideoStillsService } from '@meemoo/admin-core-api';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { ConfigService } from '@nestjs/config';
 import { Test, type TestingModule } from '@nestjs/testing';
@@ -9,6 +9,7 @@ import {
 	afterAll,
 	afterEach,
 	beforeAll,
+	beforeEach,
 	describe,
 	expect,
 	it,
@@ -48,6 +49,7 @@ import { IeObjectsService } from './ie-objects.service';
 import type {
 	FindIeObjectsForSitemapQuery,
 	GetIeObjectDetailQuery,
+	GetIeObjectPlayableDisplayDataQuery,
 } from '~generated/graphql-db-types-hetarchief';
 import {
 	cleanupRepresentations1,
@@ -65,6 +67,7 @@ import { GroupId, GroupName } from '~modules/users/types';
 import { mockVisitApproved } from '~modules/visits/services/__mocks__/cp_visit';
 import { VisitsService } from '~modules/visits/services/visits.service';
 import { VisitAccessType } from '~modules/visits/types';
+import { AUDIO_WAVE_FORM_URL } from '~shared/consts/audio-wave-form-url';
 import { TestingLogger } from '~shared/logging/test-logger';
 import { mockConfigService } from '~shared/test/mock-config-service';
 
@@ -88,6 +91,10 @@ const mockVisitsService: Partial<Record<keyof VisitsService, MockInstance>> = {
 
 const mockSpacesService: Partial<Record<keyof SpacesService, MockInstance>> = {
 	findAll: vi.fn(),
+};
+
+const mockVideoStillsService: Partial<Record<keyof VideoStillsService, MockInstance>> = {
+	getFirstVideoStills: vi.fn(),
 };
 
 const mockCacheService: Partial<Record<keyof Cache, MockInstance>> = {
@@ -125,6 +132,10 @@ describe('ieObjectsService', () => {
 				{
 					provide: SpacesService,
 					useValue: mockSpacesService,
+				},
+				{
+					provide: VideoStillsService,
+					useValue: mockVideoStillsService,
 				},
 				{
 					provide: CACHE_MANAGER,
@@ -867,6 +878,519 @@ describe('ieObjectsService', () => {
 				'referer',
 				'127.0.0.1'
 			);
+		});
+	});
+
+	describe('getIeObjectsPlayableDisplayData', () => {
+		const mockVideoFile = {
+			id: 'file-1',
+			ebucore_has_mime_type: 'video/mp4',
+			premis_stored_at: 'OR-rf5kf25/file-1.mp4',
+			hasMediaFragment: [],
+		};
+
+		const mockRepresentation = {
+			id: 'representation-1',
+			is_media_fragment_of: null,
+			includes: [{ file: mockVideoFile }],
+		};
+
+		const buildMockDbResponse = (
+			overrides: Partial<GetIeObjectPlayableDisplayDataQuery> = {}
+		): GetIeObjectPlayableDisplayDataQuery =>
+			({
+				ieObject: [
+					{
+						schema_identifier: 'mock-schema-identifier',
+						schema_name: 'Mock playable object',
+						dctermsFormat: [{ dcterms_format: IeObjectType.VIDEO }],
+						schemaMaintainer: {
+							org_identifier: 'OR-rf5kf25',
+							skos_pref_label: 'VRT',
+							ha_org_has_logo: 'https://assets.viaa.be/images/OR-rf5kf25',
+							ha_org_sector: null,
+							hasPreference: [],
+						},
+					},
+				],
+				schemaThumbnailUrl: [{ schema_thumbnail_url: ['https://example.com/thumb.jpg'] }],
+				schemaLicense: [{ schema_license: IeObjectLicense.PUBLIEK_CONTENT }],
+				getHasPart: [],
+				getIsRepresentedBy: [{ isRepresentedBy: [mockRepresentation] }],
+				...overrides,
+			}) as unknown as GetIeObjectPlayableDisplayDataQuery;
+
+		const mockCpAdminUser = new SessionUserEntity(mockUser);
+
+		beforeEach(() => {
+			// mockResolvedValueOnce queued by earlier tests in this file is not cleared by
+			// vi.clearAllMocks() (only mockClear semantics) - reset fully to avoid bleed-through
+			mockDataService.execute.mockReset();
+			vi.spyOn(ieObjectsService, 'getIeObjectIdFromObjectSchemaIdentifier').mockResolvedValue(
+				mockObjectId
+			);
+			vi.spyOn(ieObjectsService, 'getVisitorSpaceAccessInfoFromUser').mockResolvedValue({
+				objectIds: [],
+				visitorSpaceIds: [],
+			});
+			mockPlayerTicketService.resolveThumbnailUrl.mockResolvedValue(
+				'https://example.com/thumb-with-token.jpg'
+			);
+			mockPlayerTicketService.getPlayableUrl.mockResolvedValue('https://example.com/playable.mp4');
+		});
+
+		it('returns full playable display data for an object with essence access', async () => {
+			mockDataService.execute.mockResolvedValueOnce(buildMockDbResponse());
+
+			const [result] = await ieObjectsService.getIeObjectsPlayableDisplayData(
+				[{ schemaIdentifier: 'mock-schema-identifier' }],
+				mockCpAdminUser,
+				'referer',
+				'127.0.0.1',
+				{} as any
+			);
+
+			expect(result.schemaIdentifier).toEqual('mock-schema-identifier');
+			expect(result.name).toEqual('Mock playable object');
+			expect(result.dctermsFormat).toEqual(IeObjectType.VIDEO);
+			expect(result.maintainerName).toEqual('VRT');
+			expect(result.thumbnailUrl).toEqual('https://example.com/thumb-with-token.jpg');
+			expect(result.playableUrl).toEqual('https://example.com/playable.mp4');
+			expect(result.mimeType).toEqual('video/mp4');
+			expect(mockPlayerTicketService.getPlayableUrl).toHaveBeenCalledWith('OR-rf5kf25/file-1.mp4', {
+				referer: 'referer',
+				ip: '127.0.0.1',
+				isPublicDomain: false,
+				startTime: undefined,
+				endTime: undefined,
+			});
+			expect(result.cuepoints).toBeUndefined();
+			expect(result).not.toHaveProperty('detailUrl');
+		});
+
+		it('returns a ticketed detailUrl instead of playableUrl/mimeType/peakFileUrl for non audio/video objects', async () => {
+			const mockImageFile = {
+				id: 'image-file-1',
+				ebucore_has_mime_type: 'image/jp2',
+				premis_stored_at: 'https://iiif-qas.meemoo.be/image/3/public/newspaper-page-1.jp2',
+				hasMediaFragment: [],
+			};
+			mockPlayerTicketService.getPlayableUrl.mockImplementation((url: string) =>
+				Promise.resolve(`${url}?ticket=abc`)
+			);
+
+			mockDataService.execute.mockResolvedValueOnce(
+				buildMockDbResponse({
+					ieObject: [
+						{
+							...buildMockDbResponse().ieObject[0],
+							dctermsFormat: [{ dcterms_format: IeObjectType.NEWSPAPER }],
+						},
+					],
+					getIsRepresentedBy: [
+						{ isRepresentedBy: [{ ...mockRepresentation, includes: [{ file: mockImageFile }] }] },
+					],
+				}) as GetIeObjectPlayableDisplayDataQuery
+			);
+
+			const [result] = await ieObjectsService.getIeObjectsPlayableDisplayData(
+				[{ schemaIdentifier: 'mock-schema-identifier' }],
+				mockCpAdminUser,
+				'referer',
+				'127.0.0.1',
+				{} as any
+			);
+
+			expect(mockPlayerTicketService.getPlayableUrl).toHaveBeenCalledWith(
+				'https://iiif-qas.meemoo.be/image/3/hetarchief/newspaper-page-1.jp2',
+				{ referer: 'referer', ip: '127.0.0.1', isPublicDomain: false }
+			);
+			expect(result.detailUrl).toEqual(
+				'https://iiif-qas.meemoo.be/image/3/hetarchief/newspaper-page-1.jp2?ticket=abc'
+			);
+			expect(result).not.toHaveProperty('playableUrl');
+			expect(result).not.toHaveProperty('mimeType');
+			expect(result).not.toHaveProperty('peakFileUrl');
+		});
+
+		it('falls back to a storedAt ending in jp2 when no image/jp2 mime type is present (ARC-3156)', async () => {
+			const mockLegacyImageFile = {
+				id: 'image-file-1',
+				ebucore_has_mime_type: null,
+				premis_stored_at: 'https://iiif-qas.meemoo.be/image/3/public/newspaper-page-1.jp2',
+				hasMediaFragment: [],
+			};
+			mockPlayerTicketService.getPlayableUrl.mockImplementation((url: string) =>
+				Promise.resolve(url)
+			);
+
+			mockDataService.execute.mockResolvedValueOnce(
+				buildMockDbResponse({
+					ieObject: [
+						{
+							...buildMockDbResponse().ieObject[0],
+							dctermsFormat: [{ dcterms_format: IeObjectType.NEWSPAPER }],
+						},
+					],
+					getIsRepresentedBy: [
+						{
+							isRepresentedBy: [
+								{ ...mockRepresentation, includes: [{ file: mockLegacyImageFile }] },
+							],
+						},
+					],
+				}) as GetIeObjectPlayableDisplayDataQuery
+			);
+
+			const [result] = await ieObjectsService.getIeObjectsPlayableDisplayData(
+				[{ schemaIdentifier: 'mock-schema-identifier' }],
+				mockCpAdminUser,
+				'referer',
+				'127.0.0.1',
+				{} as any
+			);
+
+			expect(result.detailUrl).toEqual(
+				'https://iiif-qas.meemoo.be/image/3/hetarchief/newspaper-page-1.jp2'
+			);
+		});
+
+		it('omits thumbnailUrl and playableUrl when the user only has metadata access', async () => {
+			mockDataService.execute.mockResolvedValueOnce(
+				buildMockDbResponse({
+					schemaLicense: [{ schema_license: IeObjectLicense.PUBLIEK_METADATA_LTD }],
+				}) as GetIeObjectPlayableDisplayDataQuery
+			);
+
+			const [result] = await ieObjectsService.getIeObjectsPlayableDisplayData(
+				[{ schemaIdentifier: 'mock-schema-identifier' }],
+				mockCpAdminUser,
+				'referer',
+				'127.0.0.1',
+				{} as any
+			);
+
+			expect(result).toBeDefined();
+			expect(result.name).toEqual('Mock playable object');
+			expect(result.thumbnailUrl).toBeNull();
+			expect(result.playableUrl).toBeNull();
+			expect(result.mimeType).toBeNull();
+			expect(mockPlayerTicketService.getPlayableUrl).not.toHaveBeenCalled();
+		});
+
+		it('cuts the playable url when the representation is a media fragment', async () => {
+			mockDataService.execute.mockResolvedValueOnce(
+				buildMockDbResponse({
+					getIsRepresentedBy: [
+						{
+							isRepresentedBy: [
+								{
+									...mockRepresentation,
+									is_media_fragment_of: 'parent-representation-id',
+									includes: [
+										{
+											file: {
+												...mockVideoFile,
+												hasMediaFragment: [
+													{ schema_start_time: '00:00:10', schema_end_time: '00:00:20' },
+												],
+											},
+										},
+									],
+								},
+							],
+						},
+					],
+				}) as GetIeObjectPlayableDisplayDataQuery
+			);
+
+			await ieObjectsService.getIeObjectsPlayableDisplayData(
+				[{ schemaIdentifier: 'mock-schema-identifier' }],
+				mockCpAdminUser,
+				'referer',
+				'127.0.0.1',
+				{} as any
+			);
+
+			expect(mockPlayerTicketService.getPlayableUrl).toHaveBeenCalledWith('OR-rf5kf25/file-1.mp4', {
+				referer: 'referer',
+				ip: '127.0.0.1',
+				isPublicDomain: false,
+				startTime: 10,
+				endTime: 20,
+			});
+		});
+
+		it('hides cut-fragment representations when a main representation also exists', async () => {
+			const fragmentRepresentation = {
+				...mockRepresentation,
+				id: 'fragment-representation',
+				is_media_fragment_of: 'main-representation',
+				includes: [
+					{
+						file: {
+							...mockVideoFile,
+							id: 'fragment-file',
+							premis_stored_at: 'OR-rf5kf25/fragment-file.mp4',
+						},
+					},
+				],
+			};
+			const mainRepresentation = {
+				...mockRepresentation,
+				id: 'main-representation',
+				is_media_fragment_of: null,
+				includes: [
+					{
+						file: {
+							...mockVideoFile,
+							id: 'main-file',
+							premis_stored_at: 'OR-rf5kf25/main-file.mp4',
+						},
+					},
+				],
+			};
+
+			mockDataService.execute.mockResolvedValueOnce(
+				buildMockDbResponse({
+					getIsRepresentedBy: [{ isRepresentedBy: [fragmentRepresentation, mainRepresentation] }],
+				}) as GetIeObjectPlayableDisplayDataQuery
+			);
+
+			await ieObjectsService.getIeObjectsPlayableDisplayData(
+				[{ schemaIdentifier: 'mock-schema-identifier' }],
+				mockCpAdminUser,
+				'referer',
+				'127.0.0.1',
+				{} as any
+			);
+
+			expect(mockPlayerTicketService.getPlayableUrl).toHaveBeenCalledWith(
+				'OR-rf5kf25/main-file.mp4',
+				expect.anything()
+			);
+		});
+
+		it('skips m4a representations and prefers mp4 over mpeg audio representations on the same page', async () => {
+			const m4aRepresentation = {
+				...mockRepresentation,
+				id: 'm4a-representation',
+				includes: [
+					{
+						file: {
+							...mockVideoFile,
+							ebucore_has_mime_type: 'audio/m4a',
+							premis_stored_at: 'OR-rf5kf25/audio.m4a',
+						},
+					},
+				],
+			};
+			const mpegRepresentation = {
+				...mockRepresentation,
+				id: 'mpeg-representation',
+				includes: [
+					{
+						file: {
+							...mockVideoFile,
+							ebucore_has_mime_type: 'audio/mpeg',
+							premis_stored_at: 'OR-rf5kf25/audio.mp3',
+						},
+					},
+				],
+			};
+			const mp4Representation = {
+				...mockRepresentation,
+				id: 'mp4-representation',
+				includes: [
+					{
+						file: {
+							...mockVideoFile,
+							ebucore_has_mime_type: 'audio/mp4',
+							premis_stored_at: 'OR-rf5kf25/audio.mp4',
+						},
+					},
+				],
+			};
+
+			mockDataService.execute.mockResolvedValueOnce(
+				buildMockDbResponse({
+					getIsRepresentedBy: [
+						{
+							isRepresentedBy: [m4aRepresentation, mpegRepresentation, mp4Representation],
+						},
+					],
+				}) as GetIeObjectPlayableDisplayDataQuery
+			);
+
+			const [result] = await ieObjectsService.getIeObjectsPlayableDisplayData(
+				[{ schemaIdentifier: 'mock-schema-identifier' }],
+				mockCpAdminUser,
+				'referer',
+				'127.0.0.1',
+				{} as any
+			);
+
+			expect(mockPlayerTicketService.getPlayableUrl).toHaveBeenCalledWith(
+				'OR-rf5kf25/audio.mp4',
+				expect.anything()
+			);
+			expect(result.mimeType).toEqual('audio/mp4');
+		});
+
+		it('resolves both playableUrl (the audio file) and peakFileUrl (the waveform json) for audio fragments', async () => {
+			const mockPeakFile = {
+				id: 'peak-file-1',
+				ebucore_has_mime_type: 'application/json',
+				premis_stored_at: 'OR-rf5kf25/peak-file-1.json',
+				hasMediaFragment: [],
+			};
+			const mockAudioFile = {
+				id: 'audio-file-1',
+				ebucore_has_mime_type: 'audio/mpeg',
+				premis_stored_at: 'OR-rf5kf25/audio-file-1.mp3',
+				hasMediaFragment: [],
+			};
+
+			mockDataService.execute.mockResolvedValueOnce(
+				buildMockDbResponse({
+					ieObject: [
+						{
+							...buildMockDbResponse().ieObject[0],
+							dctermsFormat: [{ dcterms_format: IeObjectType.AUDIO_FRAGMENT }],
+						},
+					],
+					getIsRepresentedBy: [
+						{
+							isRepresentedBy: [
+								{
+									...mockRepresentation,
+									includes: [{ file: mockAudioFile }, { file: mockPeakFile }],
+								},
+							],
+						},
+					],
+				}) as GetIeObjectPlayableDisplayDataQuery
+			);
+			mockPlayerTicketService.getPlayableUrl.mockImplementation((storedAt: string) =>
+				Promise.resolve(`https://example.com/ticket/${storedAt}`)
+			);
+
+			const [result] = await ieObjectsService.getIeObjectsPlayableDisplayData(
+				[{ schemaIdentifier: 'mock-schema-identifier' }],
+				mockCpAdminUser,
+				'referer',
+				'127.0.0.1',
+				{} as any
+			);
+
+			expect(mockPlayerTicketService.getPlayableUrl).toHaveBeenCalledWith(
+				'OR-rf5kf25/audio-file-1.mp3',
+				expect.anything()
+			);
+			expect(mockPlayerTicketService.getPlayableUrl).toHaveBeenCalledWith(
+				'OR-rf5kf25/peak-file-1.json',
+				expect.anything()
+			);
+			expect(result.playableUrl).toEqual('https://example.com/ticket/OR-rf5kf25/audio-file-1.mp3');
+			expect(result.mimeType).toEqual('audio/mpeg');
+			expect(result.peakFileUrl).toEqual('https://example.com/ticket/OR-rf5kf25/peak-file-1.json');
+		});
+
+		it('does not resolve a peakFileUrl for video objects', async () => {
+			mockDataService.execute.mockResolvedValueOnce(buildMockDbResponse());
+
+			const [result] = await ieObjectsService.getIeObjectsPlayableDisplayData(
+				[{ schemaIdentifier: 'mock-schema-identifier' }],
+				mockCpAdminUser,
+				'referer',
+				'127.0.0.1',
+				{} as any
+			);
+
+			expect(result.peakFileUrl).toBeNull();
+		});
+
+		it('returns null when the user has no access at all', async () => {
+			mockDataService.execute.mockResolvedValueOnce(
+				buildMockDbResponse({ schemaLicense: [] }) as GetIeObjectPlayableDisplayDataQuery
+			);
+
+			const [result] = await ieObjectsService.getIeObjectsPlayableDisplayData(
+				[{ schemaIdentifier: 'mock-schema-identifier' }],
+				mockCpAdminUser,
+				'referer',
+				'127.0.0.1',
+				{} as any
+			);
+
+			expect(result).toBeNull();
+		});
+
+		it('returns null when the ie-object cannot be found', async () => {
+			mockDataService.execute.mockResolvedValueOnce(
+				buildMockDbResponse({ ieObject: [] }) as GetIeObjectPlayableDisplayDataQuery
+			);
+
+			const [result] = await ieObjectsService.getIeObjectsPlayableDisplayData(
+				[{ schemaIdentifier: 'mock-schema-identifier' }],
+				mockCpAdminUser,
+				'referer',
+				'127.0.0.1',
+				{} as any
+			);
+
+			expect(result).toBeNull();
+		});
+
+		it('returns the waveform thumbnail for audio objects, ignoring cuepoints', async () => {
+			mockDataService.execute.mockResolvedValueOnce(
+				buildMockDbResponse({
+					ieObject: [
+						{
+							...buildMockDbResponse().ieObject[0],
+							dctermsFormat: [{ dcterms_format: IeObjectType.AUDIO }],
+						},
+					],
+				}) as GetIeObjectPlayableDisplayDataQuery
+			);
+
+			const [result] = await ieObjectsService.getIeObjectsPlayableDisplayData(
+				[{ schemaIdentifier: 'mock-schema-identifier', start: 10 }],
+				mockCpAdminUser,
+				'referer',
+				'127.0.0.1',
+				{} as any
+			);
+
+			expect(result.thumbnailUrl).toEqual(AUDIO_WAVE_FORM_URL);
+			expect(mockVideoStillsService.getFirstVideoStills).not.toHaveBeenCalled();
+			expect(result.cuepoints).toEqual({ start: 10, end: undefined });
+		});
+
+		it('uses a video still as the thumbnail when a start cuepoint is provided', async () => {
+			mockDataService.execute.mockResolvedValueOnce(buildMockDbResponse());
+			mockVideoStillsService.getFirstVideoStills.mockResolvedValueOnce([
+				{ thumbnailImagePath: 'https://example.com/still-at-10s.jpg' },
+			]);
+
+			const [result] = await ieObjectsService.getIeObjectsPlayableDisplayData(
+				[{ schemaIdentifier: 'mock-schema-identifier', start: 10, end: 20 }],
+				mockCpAdminUser,
+				'referer',
+				'127.0.0.1',
+				{} as any
+			);
+
+			expect(mockVideoStillsService.getFirstVideoStills).toHaveBeenCalledWith([
+				{
+					id: 'file-1',
+					storedAt: 'OR-rf5kf25/file-1.mp4',
+					type: 'video',
+					startTime: 10000,
+				},
+			]);
+			expect(result.thumbnailUrl).toEqual('https://example.com/still-at-10s.jpg');
+			expect(result.cuepoints).toEqual({ start: 10, end: 20 });
 		});
 	});
 });

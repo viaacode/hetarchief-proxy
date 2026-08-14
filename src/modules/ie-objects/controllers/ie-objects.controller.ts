@@ -10,6 +10,7 @@ import {
 	ForbiddenException,
 	Get,
 	Header,
+	HttpCode,
 	NotFoundException,
 	Param,
 	Post,
@@ -38,6 +39,7 @@ import type { Configuration } from '~config';
 
 import {
 	IeObjectsAutocompleteQueryDto,
+	IeObjectsPlayableDisplayDataQueryDto,
 	IeObjectsQueryDto,
 	IeObjectsSimilarQueryDto,
 	PlayerTicketsQueryDto,
@@ -53,6 +55,7 @@ import {
 	IeObjectAccessThrough,
 	IeObjectForAccessCheck,
 	IeObjectLicense,
+	type IeObjectPlayableDisplayData,
 	type IeObjectSeo,
 	IeObjectType,
 	type IeObjectsWithAggregations,
@@ -1210,5 +1213,62 @@ export class IeObjectsController {
 			console.error(error);
 			throw error;
 		}
+	}
+
+	/**
+	 * Lightweight, batch-capable alternative to GET /ie-objects for rendering playable preview
+	 * tiles (e.g. a carousel). Accepts a mix of plain schema identifier strings and objects with
+	 * an optional start/end cuepoint (in seconds) to get a video still at that timestamp.
+	 * @param queryDto
+	 * @param user
+	 * @param referer
+	 * @param ip
+	 * @param request
+	 */
+	@Post('playable-display-data')
+	@HttpCode(200)
+	@ApiOperation({
+		summary: 'Get lightweight playable display data for a list of ie-objects',
+		description:
+			'Smaller/faster alternative to GET /ie-objects for rendering playable preview tiles ' +
+			'(e.g. carousels): schemaIdentifier, name, thumbnailUrl, dctermsFormat, maintainer info, ' +
+			'and, for audio/video objects, a ready-to-play playableUrl (+ mimeType), with peakFileUrl ' +
+			'additionally pointing to the waveform json file for audio and audio fragments. Non ' +
+			'audio/video objects (mainly newspapers) get a ready-to-use, ticketed detailUrl to the ' +
+			'IIIF image instead. ' +
+			'Optionally pass a start/end cuepoint (in seconds) per object to get a video still at ' +
+			'that timestamp instead of the poster image.',
+	})
+	@ApiBody({ type: IeObjectsPlayableDisplayDataQueryDto, required: true })
+	@ApiOkResponse({
+		description: 'Returns one (possibly null) entry per input object, in the same order',
+	})
+	@ApiBadRequestResponse({
+		description: 'objects is missing/empty, or an entry has no schemaIdentifier',
+	})
+	public async getIeObjectsPlayableDisplayData(
+		@Body() queryDto: IeObjectsPlayableDisplayDataQueryDto,
+		@SessionUser() user: SessionUserEntity,
+		@Referer() referer: string | null,
+		@Ip() ip: string,
+		@Req() request: Request
+	): Promise<(IeObjectPlayableDisplayData | null)[]> {
+		if (!queryDto?.objects?.length) {
+			throw new BadRequestException('Body param objects is required and must be a non-empty array');
+		}
+
+		const items = queryDto.objects.map((entry) => {
+			const normalized = typeof entry === 'string' ? { schemaIdentifier: entry } : entry;
+			if (!normalized?.schemaIdentifier) {
+				throw new BadRequestException('Every entry in objects requires a schemaIdentifier');
+			}
+			return {
+				schemaIdentifier: normalized.schemaIdentifier,
+				start: normalized.start,
+				end: normalized.end,
+			};
+		});
+
+		return this.ieObjectsService.getIeObjectsPlayableDisplayData(items, user, referer, ip, request);
 	}
 }

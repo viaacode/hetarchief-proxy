@@ -262,6 +262,30 @@ export type IeObjectForThumbnailOnly = Pick<
 	'thumbnailUrl' | 'schemaIdentifier' | 'licenses' | 'maintainerId' | 'sector' | 'dctermsFormat'
 >;
 
+export interface IeObjectPlayableDisplayDataCuepoints {
+	start?: number;
+	end?: number;
+}
+
+export interface IeObjectPlayableDisplayData {
+	schemaIdentifier: string;
+	name: string;
+	thumbnailUrl: string | null;
+	dctermsFormat: IeObjectType;
+	maintainerName: string;
+	maintainerLogo: string | null;
+	maintainerOverlay: boolean;
+	/** Audio/video objects only: ready-to-play, signed URL for the file to feed directly into a player, or null if none is playable/accessible */
+	playableUrl?: string | null;
+	/** Audio/video objects only: mime type of the file playableUrl points to, so the client knows how to handle it */
+	mimeType?: string | null;
+	/** Audio/video objects only: signed URL to the json peak/waveform file, for audio and audio fragments only. Additive data for the waveform overlay, not a substitute for playableUrl */
+	peakFileUrl?: string | null;
+	/** Non audio/video objects only (e.g. newspapers): ready-to-use, ticketed IIIF image url for the detail page viewer, or null if none is accessible */
+	detailUrl?: string | null;
+	cuepoints?: IeObjectPlayableDisplayDataCuepoints;
+}
+
 export interface MediaSearchAggregation<T> {
 	buckets: {
 		key: T;

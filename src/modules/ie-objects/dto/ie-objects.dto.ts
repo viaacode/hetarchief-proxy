@@ -198,3 +198,46 @@ export class IeObjectsSimilarQueryDto {
 	})
 	maintainerId?: string;
 }
+
+export class IeObjectPlayableDisplayDataItemDto {
+	@IsString()
+	@ApiProperty({
+		type: String,
+		description: 'Schema identifier (PID) of the ie-object',
+		example: '086348mc8s',
+	})
+	schemaIdentifier: string;
+
+	@IsNumber()
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: Number,
+		description: 'Cuepoint start in seconds',
+	})
+	start?: number;
+
+	@IsNumber()
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: Number,
+		description: 'Cuepoint end in seconds',
+	})
+	end?: number;
+}
+
+export class IeObjectsPlayableDisplayDataQueryDto {
+	@IsArray()
+	@ApiProperty({
+		description:
+			'List of schema identifiers as plain strings, or objects with a schemaIdentifier ' +
+			'and optional start/end cuepoints in seconds. Both forms may be mixed in the same list.',
+		type: 'array',
+		items: {
+			oneOf: [
+				{ type: 'string' },
+				{ $ref: '#/components/schemas/IeObjectPlayableDisplayDataItemDto' },
+			],
+		},
+	})
+	objects: (string | IeObjectPlayableDisplayDataItemDto)[];
+}
