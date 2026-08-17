@@ -1232,8 +1232,8 @@ export class IeObjectsController {
 		description:
 			'Smaller/faster alternative to GET /ie-objects for rendering playable preview tiles ' +
 			'(e.g. carousels): schemaIdentifier, name, thumbnailUrl, dctermsFormat, maintainer info, ' +
-			'and, for audio/video objects, a ready-to-play playableUrl (+ mimeType), with peakFileUrl ' +
-			'additionally pointing to the waveform json file for audio and audio fragments. Non ' +
+			'and, for audio/video objects, a ready-to-play playableUrl (+ mimeType), with peakfileData ' +
+			'additionally containing the parsed waveform json data for audio and audio fragments. Non ' +
 			'audio/video objects (mainly newspapers) get a newspaperImage instead: a self-contained ' +
 			'base64 data uri of the IIIF detail image, usable directly as an <img src> with no ' +
 			'further requests. Optionally pass a start/end cuepoint (in seconds) per object to get ' +

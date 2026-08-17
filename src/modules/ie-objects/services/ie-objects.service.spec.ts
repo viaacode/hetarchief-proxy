@@ -974,7 +974,7 @@ describe('ieObjectsService', () => {
 			expect(result).not.toHaveProperty('newspaperImage');
 		});
 
-		it('returns a self-contained data uri instead of playableUrl/mimeType/peakFileUrl for non audio/video objects', async () => {
+		it('returns a self-contained data uri instead of playableUrl/mimeType/peakfileData for non audio/video objects', async () => {
 			const mockImageFile = {
 				id: 'image-file-1',
 				ebucore_has_mime_type: 'image/jp2',
@@ -1025,7 +1025,7 @@ describe('ieObjectsService', () => {
 			expect(result.newspaperImage).toEqual(`data:image/jpeg;base64,${expectedBase64}`);
 			expect(result).not.toHaveProperty('playableUrl');
 			expect(result).not.toHaveProperty('mimeType');
-			expect(result).not.toHaveProperty('peakFileUrl');
+			expect(result).not.toHaveProperty('peakfileData');
 			// The rendered image is cached per file (independent of referer/ip) for 1 hour, so
 			// repeat carousel views don't re-hit the ticket service and IIIF server
 			expect(mockCacheService.wrap).toHaveBeenCalledWith(
@@ -1298,7 +1298,7 @@ describe('ieObjectsService', () => {
 			expect(result.mimeType).toEqual('audio/mp4');
 		});
 
-		it('resolves both playableUrl (the audio file) and peakFileUrl (the waveform json) for audio fragments', async () => {
+		it('resolves both playableUrl (the audio file) and peakfileData (the parsed waveform json) for audio fragments', async () => {
 			const mockPeakFile = {
 				id: 'peak-file-1',
 				ebucore_has_mime_type: 'application/json',
@@ -1310,6 +1310,15 @@ describe('ieObjectsService', () => {
 				ebucore_has_mime_type: 'audio/mpeg',
 				premis_stored_at: 'OR-rf5kf25/audio-file-1.mp3',
 				hasMediaFragment: [],
+			};
+			const mockWaveformData = {
+				version: 2,
+				channels: 1,
+				sample_rate: 48000,
+				samples_per_pixel: 512,
+				bits: 8,
+				length: 3,
+				data: [0, 1, 0],
 			};
 
 			mockDataService.execute.mockResolvedValueOnce(
@@ -1335,6 +1344,10 @@ describe('ieObjectsService', () => {
 			mockPlayerTicketService.getPlayableUrl.mockImplementation((storedAt: string) =>
 				Promise.resolve(`https://example.com/ticket/${storedAt}`)
 			);
+			mockFetch.mockResolvedValueOnce({
+				ok: true,
+				json: () => Promise.resolve(mockWaveformData),
+			});
 
 			const [result] = await ieObjectsService.getIeObjectsPlayableDisplayData(
 				[{ schemaIdentifier: 'mock-schema-identifier' }],
@@ -1352,12 +1365,22 @@ describe('ieObjectsService', () => {
 				'OR-rf5kf25/peak-file-1.json',
 				expect.anything()
 			);
+			expect(mockFetch).toHaveBeenCalledWith(
+				'https://example.com/ticket/OR-rf5kf25/peak-file-1.json'
+			);
 			expect(result.playableUrl).toEqual('https://example.com/ticket/OR-rf5kf25/audio-file-1.mp3');
 			expect(result.mimeType).toEqual('audio/mpeg');
-			expect(result.peakFileUrl).toEqual('https://example.com/ticket/OR-rf5kf25/peak-file-1.json');
+			expect(result.peakfileData).toEqual(mockWaveformData);
+			// The parsed waveform data is cached per file (independent of referer/ip) for 1 hour, so
+			// repeat carousel views don't re-hit the ticket service and media service
+			expect(mockCacheService.wrap).toHaveBeenCalledWith(
+				`ie-objects-peakfile-data__${mockPeakFile.premis_stored_at}`,
+				expect.any(Function),
+				hoursToSeconds(1)
+			);
 		});
 
-		it('does not resolve a peakFileUrl for video objects', async () => {
+		it('does not resolve peakfileData for video objects', async () => {
 			mockDataService.execute.mockResolvedValueOnce(buildMockDbResponse());
 
 			const [result] = await ieObjectsService.getIeObjectsPlayableDisplayData(
@@ -1368,7 +1391,7 @@ describe('ieObjectsService', () => {
 				{} as any
 			);
 
-			expect(result.peakFileUrl).toBeNull();
+			expect(result.peakfileData).toBeNull();
 		});
 
 		it('returns null when the user has no access at all', async () => {

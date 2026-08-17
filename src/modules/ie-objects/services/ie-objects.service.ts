@@ -56,6 +56,7 @@ import {
 	type IeObjectsVisitorSpaceInfo,
 	type IeObjectsWithAggregations,
 	type IsPartOfKey,
+	type JsonWaveformData,
 	type Mention,
 	type RelatedIeObject,
 } from '../ie-objects.types';
@@ -124,6 +125,7 @@ import {
 	CACHE_KEY_PREFIX_IE_OBJECTS_SEARCH,
 	CACHE_KEY_PREFIX_IE_OBJECT_DETAIL,
 	CACHE_KEY_PREFIX_IE_OBJECT_NEWSPAPER_IMAGE,
+	CACHE_KEY_PREFIX_IE_OBJECT_PEAKFILE_DATA,
 	CACHE_KEY_PREFIX_IE_OBJECT_PID_TO_ID,
 	CACHE_KEY_PREFIX_IE_OBJECT_PLAYABLE_DISPLAY_DATA,
 	CACHE_KEY_PREFIX_IE_OBJECT_THUMBNAIL,
@@ -1910,7 +1912,7 @@ export class IeObjectsService {
 					let thumbnailUrl: string | null = isAudio ? AUDIO_WAVE_FORM_URL : null; // avoid the ugly speaker
 					let playableUrl: string | null = null;
 					let mimeType: string | null = null;
-					let peakFileUrl: string | null = null;
+					let peakfileData: JsonWaveformData | null = null;
 					let newspaperImage: string | null = null;
 
 					if (hasEssenceAccess) {
@@ -1947,7 +1949,7 @@ export class IeObjectsService {
 									JSON_FORMATS.includes(file.ebucore_has_mime_type)
 								);
 								if (peakFile) {
-									peakFileUrl = await this.resolveFileTicketUrl(
+									peakfileData = await this.fetchPeakFileData(
 										peakFile,
 										isMediaFragmentOf,
 										referer,
@@ -1961,7 +1963,7 @@ export class IeObjectsService {
 							// image right away and inline it as a data uri, instead of a plain
 							// playable url - the IIIF image server requires an Authorization header,
 							// so it can't be exposed as a plain, ready-to-use url like
-							// playableUrl/peakFileUrl without a separate proxy endpoint
+							// playableUrl/peakfileData without a separate proxy endpoint
 							const imageFile = this.findIiifImageFile(files);
 							if (imageFile) {
 								newspaperImage = await this.fetchIiifNewspaperImageDataUri(
@@ -1998,7 +2000,7 @@ export class IeObjectsService {
 						maintainerLogo: limitedObject.maintainerLogo,
 						maintainerOverlay: limitedObject.maintainerOverlay,
 						cuepoints,
-						...(isAvObject ? { playableUrl, mimeType, peakFileUrl } : { newspaperImage }),
+						...(isAvObject ? { playableUrl, mimeType, peakfileData } : { newspaperImage }),
 					};
 				} catch (err) {
 					this.logger.error(
@@ -2076,6 +2078,7 @@ export class IeObjectsService {
 			isPublicDomain,
 		});
 
+		//return `${imageUrl}/full/1000,/0/default.jpg?token=${token}`;
 		// The ticket is bound to the referer it was requested with - unlike a browser, Node's
 		// fetch doesn't send a Referer header automatically, so it has to be set explicitly or
 		// the IIIF server rejects the token with a 403
@@ -2092,6 +2095,54 @@ export class IeObjectsService {
 		const contentType = response.headers.get('content-type') || 'image/jpeg';
 		const base64 = Buffer.from(await response.arrayBuffer()).toString('base64');
 		return `data:${contentType};base64,${base64}`;
+	}
+
+	/**
+	 * Resolves a ticket for and fetches an audio/audio-fragment's json peak/waveform file, parsed
+	 * into JsonWaveformData - the client renders this directly into a waveform overlay, rather than
+	 * fetching the (ticketed, single-use) url itself. Cached per file for 1 hour (same as the
+	 * newspaper image and the playable-display-data db response), since the waveform data is
+	 * independent of who's asking for it. Failures are swallowed to null (and not cached) so one
+	 * broken peak file doesn't take down the rest of the object's metadata in the batch response.
+	 */
+	private async fetchPeakFileData(
+		peakFile: PlayableDisplayDataFile,
+		isMediaFragmentOf: boolean,
+		referer: string,
+		ip: string,
+		isPublicDomain: boolean
+	): Promise<JsonWaveformData | null> {
+		try {
+			return await this.cacheManager.wrap(
+				CACHE_KEY_PREFIX_IE_OBJECT_PEAKFILE_DATA + peakFile.premis_stored_at,
+				async () => {
+					const peakFileUrl = await this.resolveFileTicketUrl(
+						peakFile,
+						isMediaFragmentOf,
+						referer,
+						ip,
+						isPublicDomain
+					);
+					const response = await fetch(peakFileUrl);
+					if (!response.ok) {
+						throw new CustomError('Failed to fetch peak file', null, {
+							peakFileUrl,
+							status: response.status,
+						});
+					}
+					return (await response.json()) as JsonWaveformData;
+				},
+				// cache for 1 hour
+				hoursToSeconds(1)
+			);
+		} catch (err) {
+			this.logger.error(
+				new CustomError('Failed to fetch peak file data for playable display data', err, {
+					storedAt: peakFile.premis_stored_at,
+				})
+			);
+			return null;
+		}
 	}
 
 	/**
