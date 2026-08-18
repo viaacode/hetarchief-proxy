@@ -107,14 +107,30 @@ export class IeObjectsController {
 		required: true,
 		description: 'The schema identifier of the ie-object that contains the media file',
 	})
+	@ApiQuery({
+		name: 'startTime',
+		required: false,
+		description:
+			'Start time in seconds of the snippet to play. Must be passed together with endTime.',
+	})
+	@ApiQuery({
+		name: 'endTime',
+		required: false,
+		description:
+			'End time in seconds of the snippet to play. Must be passed together with startTime.',
+	})
 	@ApiOkResponse({ description: 'Returns the playable URL as a string' })
-	@ApiBadRequestResponse({ description: 'Browse path is missing or invalid' })
+	@ApiBadRequestResponse({
+		description: 'Browse path is missing or invalid, or start/end time are inconsistent',
+	})
 	public async getPlayableUrl(
 		@Referer() referer: string,
 		@Ip() ip: string,
 		@Query() playerTicketsQuery: PlayerTicketsQueryDto,
 		@SessionUser() user: SessionUserEntity
 	): Promise<string> {
+		this.assertValidStartAndEndTime(playerTicketsQuery);
+
 		const accessibleObject = await this.assertCanGetPlayableTicket(
 			playerTicketsQuery,
 			user,
@@ -140,11 +156,17 @@ export class IeObjectsController {
 		}
 
 		// Check if we need to cut the video / audio file
-		// https://meemoo.atlassian.net/browse/ARC-3690?focusedCommentId=87432
 		let startTime: number | undefined;
 		let endTime: number | undefined;
-		if (requestedRepresentation?.isMediaFragmentOf) {
+		if (this.hasRequestedSnippet(playerTicketsQuery)) {
+			// An editorial snippet was requested by the caller (e.g. the "Videoblok" content block).
+			// The snippet is not an object in the MAM, so the times cannot come from the graph.
+			// https://meemoo.atlassian.net/browse/ARC-3832
+			startTime = playerTicketsQuery.startTime;
+			endTime = playerTicketsQuery.endTime;
+		} else if (requestedRepresentation?.isMediaFragmentOf) {
 			// Cut fragment => cut
+			// https://meemoo.atlassian.net/browse/ARC-3690?focusedCommentId=87432
 			startTime = requestedFile?.mediaFragment?.startTime ?? undefined;
 			endTime = requestedFile?.mediaFragment?.endTime ?? undefined;
 		} else {
@@ -159,6 +181,37 @@ export class IeObjectsController {
 			startTime,
 			endTime,
 		});
+	}
+
+	/**
+	 * Whether the caller asked for a specific snippet, as opposed to the whole file or the
+	 * graph-defined media fragment. Safe to call only after assertValidStartAndEndTime, which
+	 * guarantees the two times are either both set or both absent.
+	 */
+	private hasRequestedSnippet(playerTicketsQuery: PlayerTicketsQueryDto): boolean {
+		return !isNil(playerTicketsQuery.startTime) && !isNil(playerTicketsQuery.endTime);
+	}
+
+	/**
+	 * The ticket service only cuts the media when it receives an end time: both the `fragment`
+	 * claim in the ticket JWT and the `t=start,end` media fragment on the url are gated on it.
+	 * A start time without an end time would therefore silently hand out an *uncut* url, so
+	 * reject that combination outright instead of quietly ignoring it.
+	 */
+	private assertValidStartAndEndTime(playerTicketsQuery: PlayerTicketsQueryDto): void {
+		const { startTime, endTime } = playerTicketsQuery;
+
+		if (isNil(startTime) && isNil(endTime)) {
+			return;
+		}
+		if (isNil(startTime) || isNil(endTime)) {
+			throw new BadRequestException(
+				'Query params startTime and endTime must be passed together, or not at all'
+			);
+		}
+		if (endTime <= startTime) {
+			throw new BadRequestException('Query param endTime must be greater than startTime');
+		}
 	}
 
 	/**

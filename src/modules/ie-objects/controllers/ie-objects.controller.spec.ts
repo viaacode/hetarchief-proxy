@@ -266,6 +266,121 @@ describe('IeObjectsController', () => {
 				)
 			).rejects.toThrow(BadRequestException);
 		});
+
+		/**
+		 * Snippet playback for the "Videoblok" content block.
+		 * https://meemoo.atlassian.net/browse/ARC-3832
+		 */
+		describe('snippet start and end time', () => {
+			// The file-level afterEach does not restore the player ticket service, so clear the
+			// call history here: the rejection tests below assert it is never reached.
+			beforeEach(() => {
+				mockPlayerTicketService.getPlayableUrl.mockClear();
+			});
+
+			// Mocks an accessible video object containing a single file, optionally as a graph-defined
+			// media fragment (the ARC-3690 path) so we can check which times win.
+			const mockAccessibleVideo = (mediaFragment?: { startTime: number; endTime: number }) => {
+				const file = {
+					id: 'website/id/entity/file-id',
+					storedAt: '/path/to/file',
+					mimeType: 'video/mp4',
+					mediaFragment: mediaFragment ?? null,
+				};
+				vi.spyOn(ieObjectsController, 'getIeObjectsByIds').mockResolvedValueOnce([
+					{
+						dctermsFormat: IeObjectType.VIDEO,
+						pages: [{ pageNumber: 1, representations: [{ files: [file] }] }],
+					},
+				] as Partial<IeObject>[]);
+				mockPlayerTicketService.getPlayableUrl.mockResolvedValueOnce('http://playme');
+				mockIeObjectsService.getRepresentationAndFileInIeObject.mockReturnValueOnce([
+					file,
+					{
+						id: 'representation-id',
+						isMediaFragmentOf: mediaFragment ? 'website/id/entity/parent-file-id' : undefined,
+					},
+				]);
+			};
+
+			const getPlayableUrl = (times: { startTime?: number; endTime?: number }) =>
+				ieObjectsController.getPlayableUrl(
+					'referer',
+					'127.0.0.1',
+					{
+						schemaIdentifier: 'schema-id',
+						fileId: 'website/id/entity/file-id',
+						...times,
+					},
+					mockSessionUser
+				);
+
+			it('should forward an explicitly requested snippet to the ticket service', async () => {
+				mockAccessibleVideo();
+
+				await getPlayableUrl({ startTime: 10, endTime: 25 });
+
+				expect(mockPlayerTicketService.getPlayableUrl).toHaveBeenCalledWith(
+					'/path/to/file',
+					expect.objectContaining({ startTime: 10, endTime: 25 })
+				);
+			});
+
+			it('should not cut a main object when no times are requested', async () => {
+				mockAccessibleVideo();
+
+				await getPlayableUrl({});
+
+				expect(mockPlayerTicketService.getPlayableUrl).toHaveBeenCalledWith(
+					'/path/to/file',
+					expect.objectContaining({ startTime: undefined, endTime: undefined })
+				);
+			});
+
+			it('should still use the graph media fragment when no times are requested', async () => {
+				mockAccessibleVideo({ startTime: 60, endTime: 90 });
+
+				await getPlayableUrl({});
+
+				expect(mockPlayerTicketService.getPlayableUrl).toHaveBeenCalledWith(
+					'/path/to/file',
+					expect.objectContaining({ startTime: 60, endTime: 90 })
+				);
+			});
+
+			it('should let a requested snippet win over the graph media fragment', async () => {
+				mockAccessibleVideo({ startTime: 60, endTime: 90 });
+
+				await getPlayableUrl({ startTime: 10, endTime: 25 });
+
+				expect(mockPlayerTicketService.getPlayableUrl).toHaveBeenCalledWith(
+					'/path/to/file',
+					expect.objectContaining({ startTime: 10, endTime: 25 })
+				);
+			});
+
+			// The ticket service only cuts when it gets an end time, so half a snippet would
+			// silently hand out an uncut url. These must be rejected before any object is fetched.
+			it('should reject a start time without an end time', async () => {
+				await expect(getPlayableUrl({ startTime: 10 })).rejects.toThrow(BadRequestException);
+				expect(mockPlayerTicketService.getPlayableUrl).not.toHaveBeenCalled();
+			});
+
+			it('should reject an end time without a start time', async () => {
+				await expect(getPlayableUrl({ endTime: 25 })).rejects.toThrow(BadRequestException);
+				expect(mockPlayerTicketService.getPlayableUrl).not.toHaveBeenCalled();
+			});
+
+			it('should reject an end time that is not after the start time', async () => {
+				await expect(getPlayableUrl({ startTime: 25, endTime: 10 })).rejects.toThrow(
+					BadRequestException
+				);
+				await expect(getPlayableUrl({ startTime: 25, endTime: 25 })).rejects.toThrow(
+					BadRequestException
+				);
+				expect(mockPlayerTicketService.getPlayableUrl).not.toHaveBeenCalled();
+			});
+		});
 	});
 
 	describe('getTicketServiceTokens', () => {

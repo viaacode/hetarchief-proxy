@@ -1,6 +1,15 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Transform, Type } from 'class-transformer';
-import { IsArray, IsEnum, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator';
+import {
+	IsArray,
+	IsEnum,
+	IsInt,
+	IsNumber,
+	IsOptional,
+	IsString,
+	Min,
+	ValidateNested,
+} from 'class-validator';
 import { isArray } from 'lodash';
 
 import {
@@ -166,6 +175,38 @@ export class PlayerTicketsQueryDto {
 		required: true,
 	})
 	fileId: string;
+
+	/**
+	 * Start and end time of the snippet that should be played, in whole seconds.
+	 * Used by the "Videoblok" content block to play an editorial snippet of an AV object,
+	 * without that snippet existing as a separate object in the MAM.
+	 * https://meemoo.atlassian.net/browse/ARC-3832
+	 *
+	 * Either both are given or neither is (see assertValidStartAndEndTime in the controller):
+	 * the ticket service only cuts when it receives an end time, so a start without an end
+	 * would silently return an uncut url.
+	 */
+	@IsInt()
+	@Min(0)
+	@Type(() => Number)
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: Number,
+		description: 'Start time of the snippet to play, in seconds. Requires endTime.',
+		example: 10,
+	})
+	startTime?: number;
+
+	@IsInt()
+	@Min(0)
+	@Type(() => Number)
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: Number,
+		description: 'End time of the snippet to play, in seconds. Requires startTime.',
+		example: 25,
+	})
+	endTime?: number;
 }
 
 export class ThumbnailQueryDto {
