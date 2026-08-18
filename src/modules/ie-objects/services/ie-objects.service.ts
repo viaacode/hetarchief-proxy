@@ -1912,7 +1912,7 @@ export class IeObjectsService {
 					let thumbnailUrl: string | null = isAudio ? AUDIO_WAVE_FORM_URL : null; // avoid the ugly speaker
 					let playableUrl: string | null = null;
 					let mimeType: string | null = null;
-					let peakfileData: JsonWaveformData | null = null;
+					let peakfileData: number[] | null = null;
 					let newspaperImage: string | null = null;
 
 					if (hasEssenceAccess) {
@@ -1949,13 +1949,7 @@ export class IeObjectsService {
 									JSON_FORMATS.includes(file.ebucore_has_mime_type)
 								);
 								if (peakFile) {
-									peakfileData = await this.fetchPeakFileData(
-										peakFile,
-										isMediaFragmentOf,
-										referer,
-										ip,
-										isPublicDomain
-									);
+									peakfileData = await this.fetchPeakFileData(peakFile);
 								}
 							}
 						} else {
@@ -2098,30 +2092,46 @@ export class IeObjectsService {
 	}
 
 	/**
-	 * Resolves a ticket for and fetches an audio/audio-fragment's json peak/waveform file, parsed
-	 * into JsonWaveformData - the client renders this directly into a waveform overlay, rather than
-	 * fetching the (ticketed, single-use) url itself. Cached per file for 1 hour (same as the
-	 * newspaper image and the playable-display-data db response), since the waveform data is
-	 * independent of who's asking for it. Failures are swallowed to null (and not cached) so one
-	 * broken peak file doesn't take down the rest of the object's metadata in the batch response.
+	 * Fetches an audio/audio-fragment's json peak/waveform file, returning only the peak sample
+	 * array (the client renders this directly into a waveform overlay) - the rest of the peak
+	 * file's metadata (version, channels, sample_rate, ...) is discarded since nothing consumes it,
+	 * keeping the batch response payload small. Peak files are served directly from the
+	 * archief-media host, not through the ticket service - that returned a 403 for this file type.
+	 * Cached per file for 1 hour (same as the newspaper image and the playable-display-data db
+	 * response), since the waveform data is independent of who's asking for it. Failures are
+	 * swallowed to null (and not cached) so one broken peak file doesn't take down the rest of the
+	 * object's metadata in the batch response.
+	 *
+	 * WARNING: this deliberately bypasses the ticket service, i.e. no access-control check is
+	 * done on the file it fetches. It must NEVER be used to fetch/expose an actual essence file
+	 * (audio/video) - only ever call it for small, non-sensitive json peak/waveform files, and
+	 * only ever return the parsed data array from it, never the resolved url or raw response.
 	 */
-	private async fetchPeakFileData(
-		peakFile: PlayableDisplayDataFile,
-		isMediaFragmentOf: boolean,
-		referer: string,
-		ip: string,
-		isPublicDomain: boolean
-	): Promise<JsonWaveformData | null> {
+	private async fetchPeakFileData(peakFile: PlayableDisplayDataFile): Promise<number[] | null> {
+		if (!JSON_FORMATS.includes(peakFile.ebucore_has_mime_type)) {
+			// Refuse to fetch anything that isn't a json peak file - this method skips the ticket
+			// service, so blindly fetching whatever file it's given would let it be repurposed to
+			// expose essence files (audio/video) without an access check.
+			this.logger.warn(
+				`fetchPeakFileData refused to fetch a non-json file to avoid bypassing the ticket service: ${peakFile.premis_stored_at} (${peakFile.ebucore_has_mime_type})`
+			);
+			return null;
+		}
+
 		try {
 			return await this.cacheManager.wrap(
 				CACHE_KEY_PREFIX_IE_OBJECT_PEAKFILE_DATA + peakFile.premis_stored_at,
 				async () => {
-					const peakFileUrl = await this.resolveFileTicketUrl(
-						peakFile,
-						isMediaFragmentOf,
-						referer,
-						ip,
-						isPublicDomain
+					const mediaServiceUrl = this.configService.get('MEDIA_SERVICE_URL');
+					// The archief-media host that serves peak files directly (unticketed) only ever
+					// differs from MEDIA_SERVICE_URL's host by an "archief-" prefix, keeping whatever
+					// environment suffix (-int/-tst/-qas/-prd, or none) follows "media" - deriving it
+					// this way avoids a second, hand-kept env var per environment.
+					const archiefMediaUrl = new URL(mediaServiceUrl);
+					archiefMediaUrl.hostname = archiefMediaUrl.hostname.replace(/^media/, 'archief-media');
+					const peakFileUrl = peakFile.premis_stored_at.replace(
+						mediaServiceUrl,
+						`${archiefMediaUrl.origin}/viaa`
 					);
 					const response = await fetch(peakFileUrl);
 					if (!response.ok) {
@@ -2130,7 +2140,8 @@ export class IeObjectsService {
 							status: response.status,
 						});
 					}
-					return (await response.json()) as JsonWaveformData;
+					const json = (await response.json()) as JsonWaveformData;
+					return json.data;
 				},
 				// cache for 1 hour
 				hoursToSeconds(1)

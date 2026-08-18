@@ -1365,11 +1365,11 @@ describe('ieObjectsService', () => {
 			expect(result.mimeType).toEqual('audio/mp4');
 		});
 
-		it('resolves both playableUrl (the audio file) and peakfileData (the parsed waveform json) for audio fragments', async () => {
+		it('resolves both playableUrl (the audio file) and peakfileData (just the peak sample array) for audio fragments', async () => {
 			const mockPeakFile = {
 				id: 'peak-file-1',
 				ebucore_has_mime_type: 'application/json',
-				premis_stored_at: 'OR-rf5kf25/peak-file-1.json',
+				premis_stored_at: 'http://mediaservice/OR-rf5kf25/peak-file-1.json',
 				hasMediaFragment: [],
 			};
 			const mockAudioFile = {
@@ -1428,22 +1428,45 @@ describe('ieObjectsService', () => {
 				'OR-rf5kf25/audio-file-1.mp3',
 				expect.anything()
 			);
-			expect(mockPlayerTicketService.getPlayableUrl).toHaveBeenCalledWith(
-				'OR-rf5kf25/peak-file-1.json',
+			// Peak files 403 through the ticket service, so they're fetched directly from the
+			// archief-media host instead (mapMediaServiceUrlToArchiefMediaUrl)
+			expect(mockPlayerTicketService.getPlayableUrl).not.toHaveBeenCalledWith(
+				mockPeakFile.premis_stored_at,
 				expect.anything()
 			);
 			expect(mockFetch).toHaveBeenCalledWith(
-				'https://example.com/ticket/OR-rf5kf25/peak-file-1.json'
+				'http://archief-mediaservice/viaa/OR-rf5kf25/peak-file-1.json'
 			);
 			expect(result.playableUrl).toEqual('https://example.com/ticket/OR-rf5kf25/audio-file-1.mp3');
 			expect(result.mimeType).toEqual('audio/mpeg');
-			expect(result.peakfileData).toEqual(mockWaveformData);
+			expect(result.peakfileData).toEqual(mockWaveformData.data);
 			// The parsed waveform data is cached per file (independent of referer/ip) for 1 hour, so
 			// repeat carousel views don't re-hit the ticket service and media service
 			expect(mockCacheService.wrap).toHaveBeenCalledWith(
 				`ie-objects-peakfile-data__${mockPeakFile.premis_stored_at}`,
 				expect.any(Function),
 				hoursToSeconds(1)
+			);
+		});
+
+		it('refuses to fetch a peak file that is not a json file, to avoid bypassing the ticket service', async () => {
+			// fetchPeakFileData is private and bypasses the ticket service by design, so it must
+			// never be usable to fetch/expose a non-json (e.g. essence) file - called directly here
+			// since the public getIeObjectsPlayableDisplayData path only ever selects a json file
+			const warnSpy = vi.spyOn((ieObjectsService as any).logger, 'warn');
+			const mockNonJsonFile = {
+				id: 'audio-file-1',
+				ebucore_has_mime_type: 'audio/mpeg',
+				premis_stored_at: 'http://mediaservice/OR-rf5kf25/audio-file-1.mp3',
+				hasMediaFragment: [],
+			};
+
+			const result = await (ieObjectsService as any).fetchPeakFileData(mockNonJsonFile);
+
+			expect(result).toBeNull();
+			expect(mockFetch).not.toHaveBeenCalled();
+			expect(warnSpy).toHaveBeenCalledWith(
+				expect.stringContaining(mockNonJsonFile.premis_stored_at)
 			);
 		});
 
