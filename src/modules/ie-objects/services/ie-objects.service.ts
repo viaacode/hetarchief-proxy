@@ -1918,7 +1918,7 @@ export class IeObjectsService {
 					if (hasEssenceAccess) {
 						// Essence access was granted: look up the first playable file, same
 						// selection as the object detail page
-						const representation = this.findFirstPlayableRepresentation(dbResponse);
+						const representation = this.findFirstPlayableRepresentation(dbResponse, isAvObject);
 						const files = compact((representation?.includes || []).map((include) => include.file));
 						const isMediaFragmentOf = !!representation?.is_media_fragment_of;
 
@@ -2238,13 +2238,21 @@ export class IeObjectsService {
 	}
 
 	/**
-	 * Finds the first representation (own + child parts) that has at least one file, matching the
-	 * object detail page's selection: cut fragments are hidden whenever a main (non-fragment)
-	 * representation also exists (ARC-3690), and m4a/duplicate-mpeg representations are skipped
-	 * the same way cleanupRepresentations does for the full object detail query (ARC-3121).
+	 * Finds the first representation (own + child parts, own representations checked before child
+	 * pages) that contains a file relevant to the caller's needs - a flowplayer-compatible file for
+	 * AV objects, or an IIIF image file for non-AV objects (mainly newspapers), reusing
+	 * findIiifImageFile as the source of truth for "is this an image file". A representation without
+	 * such a file is skipped so the search falls through to the next one, e.g. a newspaper's own
+	 * representation holding only a non-image export falls through to the child page holding the
+	 * real page image. Matches the object detail page's selection. Cut fragments are hidden
+	 * whenever a main (non-fragment) representation also exists (ARC-3690), and m4a/duplicate-mpeg
+	 * representations are skipped the same way cleanupRepresentations does for the full object
+	 * detail query (ARC-3121) - both no-ops for non-AV objects since their files never carry audio
+	 * mimetypes.
 	 */
 	private findFirstPlayableRepresentation(
-		dbResponse: GetIeObjectPlayableDisplayDataQuery
+		dbResponse: GetIeObjectPlayableDisplayDataQuery,
+		isAvObject: boolean
 	): PlayableDisplayDataRepresentation | null {
 		const pages: PlayableDisplayDataPage[] = [
 			...(dbResponse.getIsRepresentedBy || []),
@@ -2281,9 +2289,16 @@ export class IeObjectsService {
 					continue;
 				}
 
-				if (representation.includes?.length) {
-					return representation;
+				const files = compact((representation.includes || []).map((include) => include.file));
+				const hasRelevantFile = isAvObject
+					? files.some((file) => FLOWPLAYER_FORMATS.includes(file.ebucore_has_mime_type))
+					: !!this.findIiifImageFile(files);
+
+				if (!hasRelevantFile) {
+					continue;
 				}
+
+				return representation;
 			}
 		}
 		return null;

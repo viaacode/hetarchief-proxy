@@ -970,7 +970,7 @@ describe('ieObjectsService', () => {
 				startTime: undefined,
 				endTime: undefined,
 			});
-			expect(result.cuepoints).toBeUndefined();
+			expect(result.snipPoint).toBeUndefined();
 			expect(result).not.toHaveProperty('newspaperImage');
 		});
 
@@ -1075,6 +1075,73 @@ describe('ieObjectsService', () => {
 				{} as any
 			);
 
+			const expectedBase64 = Buffer.from('fake-jpeg-bytes').toString('base64');
+			expect(result.newspaperImage).toEqual(`data:image/jpeg;base64,${expectedBase64}`);
+		});
+
+		it("falls through to a child page's representation for newspaperImage when the object's own representation has no image file", async () => {
+			const mockOwnAltoFile = {
+				id: 'own-file-1',
+				ebucore_has_mime_type: 'application/xml',
+				premis_stored_at: 'OR-rf5kf25/newspaper-alto.xml',
+				hasMediaFragment: [],
+			};
+			const mockPageImageFile = {
+				id: 'page-image-file-1',
+				ebucore_has_mime_type: 'image/jp2',
+				premis_stored_at: 'https://iiif-qas.meemoo.be/image/3/public/newspaper-page-1.jp2',
+				hasMediaFragment: [],
+			};
+			mockPlayerTicketService.getPlayerToken.mockResolvedValue('mock-bearer-token');
+			mockFetch.mockResolvedValueOnce({
+				ok: true,
+				headers: { get: () => 'image/jpeg' },
+				arrayBuffer: () => Promise.resolve(new TextEncoder().encode('fake-jpeg-bytes').buffer),
+			});
+
+			mockDataService.execute.mockResolvedValueOnce(
+				buildMockDbResponse({
+					ieObject: [
+						{
+							...buildMockDbResponse().ieObject[0],
+							dctermsFormat: [{ dcterms_format: IeObjectType.NEWSPAPER }],
+						},
+					],
+					// The newspaper's own representation only has a non-image (ALTO) file
+					getIsRepresentedBy: [
+						{
+							isRepresentedBy: [{ ...mockRepresentation, includes: [{ file: mockOwnAltoFile }] }],
+						},
+					],
+					// The real page-1 image lives on a child part
+					getHasPart: [
+						{
+							isRepresentedBy: [
+								{
+									...mockRepresentation,
+									id: 'page-1-representation',
+									includes: [{ file: mockPageImageFile }],
+								},
+							],
+						},
+					],
+				}) as GetIeObjectPlayableDisplayDataQuery
+			);
+
+			const [result] = await ieObjectsService.getIeObjectsPlayableDisplayData(
+				[{ schemaIdentifier: 'mock-schema-identifier' }],
+				mockCpAdminUser,
+				'referer',
+				'127.0.0.1',
+				{} as any
+			);
+
+			// Must resolve the image from the child page's file, not fail because the own
+			// representation's (non-image) file didn't match
+			expect(mockPlayerTicketService.getPlayerToken).toHaveBeenCalledWith(
+				'https://iiif-qas.meemoo.be/image/3/hetarchief/newspaper-page-1.jp2',
+				{ referer: 'referer', ip: '127.0.0.1', isPublicDomain: false }
+			);
 			const expectedBase64 = Buffer.from('fake-jpeg-bytes').toString('base64');
 			expect(result.newspaperImage).toEqual(`data:image/jpeg;base64,${expectedBase64}`);
 		});
@@ -1448,7 +1515,7 @@ describe('ieObjectsService', () => {
 
 			expect(result.thumbnailUrl).toEqual(AUDIO_WAVE_FORM_URL);
 			expect(mockVideoStillsService.getFirstVideoStills).not.toHaveBeenCalled();
-			expect(result.cuepoints).toEqual({ start: 10, end: undefined });
+			expect(result.snipPoint).toEqual({ start: 10, end: undefined });
 		});
 
 		it('uses a video still as the thumbnail when a start cuepoint is provided', async () => {
@@ -1474,7 +1541,7 @@ describe('ieObjectsService', () => {
 				},
 			]);
 			expect(result.thumbnailUrl).toEqual('https://example.com/still-at-10s.jpg');
-			expect(result.cuepoints).toEqual({ start: 10, end: 20 });
+			expect(result.snipPoint).toEqual({ start: 10, end: 20 });
 		});
 	});
 });
