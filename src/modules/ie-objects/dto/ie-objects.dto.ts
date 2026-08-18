@@ -212,7 +212,7 @@ export class IeObjectPlayableDisplayDataItemDto {
 	@IsOptional()
 	@ApiPropertyOptional({
 		type: Number,
-		description: 'Cuepoint start in seconds',
+		description: 'Snippet start in seconds',
 	})
 	start?: number;
 
@@ -220,7 +220,7 @@ export class IeObjectPlayableDisplayDataItemDto {
 	@IsOptional()
 	@ApiPropertyOptional({
 		type: Number,
-		description: 'Cuepoint end in seconds',
+		description: 'Snippet end in seconds',
 	})
 	end?: number;
 }

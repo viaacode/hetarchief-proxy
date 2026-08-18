@@ -262,11 +262,6 @@ export type IeObjectForThumbnailOnly = Pick<
 	'thumbnailUrl' | 'schemaIdentifier' | 'licenses' | 'maintainerId' | 'sector' | 'dctermsFormat'
 >;
 
-export interface IeObjectPlayableDisplayDataCuepoints {
-	start?: number;
-	end?: number;
-}
-
 export interface JsonWaveformData {
 	version: number;
 	channels: number;
@@ -293,7 +288,10 @@ export interface IeObjectPlayableDisplayData {
 	peakfileData?: JsonWaveformData | null;
 	/** Non audio/video objects only (e.g. newspapers): self-contained base64 data uri of the IIIF detail image, or null if none is accessible/couldn't be resolved. Use this directly as an <img src> */
 	newspaperImage?: string | null;
-	cuepoints?: IeObjectPlayableDisplayDataCuepoints;
+	snipPoint?: {
+		start?: number;
+		end?: number;
+	};
 }
 
 export interface MediaSearchAggregation<T> {

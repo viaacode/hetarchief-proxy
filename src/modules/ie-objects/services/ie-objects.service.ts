@@ -1986,7 +1986,7 @@ export class IeObjectsService {
 						}
 					}
 
-					const cuepoints =
+					const snipPoint =
 						item.start !== undefined || item.end !== undefined
 							? { start: item.start, end: item.end }
 							: undefined;
@@ -1999,7 +1999,7 @@ export class IeObjectsService {
 						maintainerName: limitedObject.maintainerName,
 						maintainerLogo: limitedObject.maintainerLogo,
 						maintainerOverlay: limitedObject.maintainerOverlay,
-						cuepoints,
+						snipPoint,
 						...(isAvObject ? { playableUrl, mimeType, peakfileData } : { newspaperImage }),
 					};
 				} catch (err) {
