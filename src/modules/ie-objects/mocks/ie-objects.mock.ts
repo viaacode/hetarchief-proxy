@@ -5,8 +5,8 @@ import {
 	IeObjectAccessThrough,
 	IeObjectLicense,
 	type IeObjectSector,
-	type IeObjectsSitemap,
 	IeObjectType,
+	type IeObjectsSitemap,
 	IsPartOfKey,
 } from '../ie-objects.types';
 

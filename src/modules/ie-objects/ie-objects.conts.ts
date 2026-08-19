@@ -1,3 +1,4 @@
+import { PermissionName } from '@viaa/avo2-types';
 import { isEmpty, uniq } from 'lodash';
 
 import {
@@ -635,3 +636,17 @@ export const AUTOCOMPLETE_FIELD_TO_ES_FIELD_NAME: Record<AutocompleteField, stri
 export enum ERROR_CODE {
 	USER_NO_ACCESS_TO_IE_OBJECT = 'USER_NO_ACCESS_TO_IE_OBJECT',
 }
+
+/**
+ * Who may have the playable-display-data endpoint resolve objects that were passed in the request
+ * body instead of read from a saved content block.
+ *
+ * Those objects carry their own snippet cuepoints, so honouring them means trusting the caller
+ * with a cut of an object - acceptable only for someone who could save exactly that block in the
+ * content page editor a second later.
+ */
+export const PLAYABLE_DISPLAY_DATA_UNSAVED_OBJECTS_PERMISSIONS: PermissionName[] = [
+	PermissionName.CREATE_CONTENT_PAGES,
+	PermissionName.EDIT_ANY_CONTENT_PAGES,
+	PermissionName.EDIT_OWN_CONTENT_PAGES,
+];

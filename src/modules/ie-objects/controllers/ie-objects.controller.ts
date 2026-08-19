@@ -52,6 +52,7 @@ import {
 import { checkAndFixFormatFilter } from '../helpers/check-and-fix-format-filter';
 import {
 	PLAYABLE_DISPLAY_DATA_BLOCK_TYPES,
+	type PlayableDisplayDataItem,
 	contentBlockToPlayableDisplayDataItems,
 } from '../helpers/content-block-to-playable-items';
 import { convertObjectToCsv } from '../helpers/convert-objects-to-csv';
@@ -85,7 +86,11 @@ import {
 	OrderProperty,
 } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
 import { mapDcTermsFormatToSimpleType } from '~modules/ie-objects/helpers/map-dc-terms-format-to-simple-type';
-import { ERROR_CODE, IE_OBJECT_AV_TYPES } from '~modules/ie-objects/ie-objects.conts';
+import {
+	ERROR_CODE,
+	IE_OBJECT_AV_TYPES,
+	PLAYABLE_DISPLAY_DATA_UNSAVED_OBJECTS_PERMISSIONS,
+} from '~modules/ie-objects/ie-objects.conts';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupName } from '~modules/users/types';
 import { AUDIO_WAVE_FORM_URL } from '~shared/consts/audio-wave-form-url';
@@ -1284,6 +1289,22 @@ export class IeObjectsController {
 	 * tiles of a content block (e.g. a carousel). The objects to resolve -- and the snippet
 	 * start/end cuepoints to cut them at -- are read from the block's own stored config, so a
 	 * client can't ask for a cut that no editor configured.
+	 *
+	 * Editor work around: inside the content page editor a block's config is being changed as we
+	 * speak, and a block that is still being put together has not been saved at all, so it has no
+	 * id and there is nothing for us to look up -- reading the saved config would show a stale
+	 * preview, or none at all until the page is saved. The editor therefore sends the block's
+	 * objects directly, as `objects`, with their cuepoints in seconds. Those are only honoured for
+	 * users who may edit content pages (see PLAYABLE_DISPLAY_DATA_UNSAVED_OBJECTS_PERMISSIONS);
+	 * for anyone else they are stripped from the request, so a visitor still can't ask for an
+	 * arbitrary cut of an object.
+	 *
+	 * Which of the two a caller uses follows from where it renders, not from whether the block
+	 * happens to be saved: the content page editor always sends `objects`, one entry per element
+	 * of the block, and every other caller always sends `blockId`. The two are mutually exclusive
+	 * -- a body carrying both is rejected -- so the response is always the elements of one block,
+	 * in that block's own order. Both are normalized to the same list of objects + cuepoints, so
+	 * everything after that point is shared.
 	 * @param queryDto
 	 * @param user
 	 * @param referer
@@ -1304,7 +1325,11 @@ export class IeObjectsController {
 			'further requests. The objects are taken from the config of the content block with the ' +
 			'given blockId, together with the snippet start/end cuepoints (in seconds) its editor ' +
 			'configured, which yield a video still at that timestamp instead of the poster image. ' +
-			'Supported block types: HETARCHIEF_VIDEO, HERO_CAROUSEL, TIMELINE.',
+			'Supported block types: HETARCHIEF_VIDEO, HERO_CAROUSEL, TIMELINE. Exactly one of blockId ' +
+			'and objects is required. The content page editor renders block configs that are being ' +
+			'changed (or not saved at all), so it sends objects instead: one entry per block element, ' +
+			'with their cuepoints. Those are honoured for users who may edit content pages and ' +
+			'ignored for everyone else.',
 	})
 	@ApiBody({ type: IeObjectsPlayableDisplayDataQueryDto, required: true })
 	@ApiOkResponse({
@@ -1313,7 +1338,9 @@ export class IeObjectsController {
 			'order the block lists them',
 	})
 	@ApiBadRequestResponse({
-		description: 'blockId is missing, or the block it points to is not of a supported type',
+		description:
+			'Neither blockId nor objects was given, both were given, or the block blockId points to ' +
+			'is not of a supported type',
 	})
 	@ApiNotFoundResponse({ description: 'No content block exists with the given blockId' })
 	public async getIeObjectsPlayableDisplayData(
@@ -1323,26 +1350,22 @@ export class IeObjectsController {
 		@Ip() ip: string,
 		@Req() request: Request
 	): Promise<(IeObjectPlayableDisplayData | null)[]> {
-		if (!queryDto?.blockId) {
-			throw new BadRequestException('Body param blockId is required and must be a string');
+		if (!queryDto?.blockId && !queryDto?.objects?.length) {
+			throw new BadRequestException('Body param blockId or objects is required');
 		}
-
-		const contentBlock = await this.contentPagesService.getContentPageBlockById(queryDto.blockId);
-
-		if (!contentBlock) {
-			throw new NotFoundException(`No content block found with id '${queryDto.blockId}'`);
-		}
-
-		// Taking the objects and their snippet start/end times from the stored block config -
-		// instead of from the request body - is the point of this endpoint: a client can only get
-		// a cut of an object for which an editor actually configured that cut in a content block.
-		const items = contentBlockToPlayableDisplayDataItems(contentBlock);
-
-		if (!items) {
+		if (queryDto.blockId && queryDto.objects?.length) {
 			throw new BadRequestException(
-				`Content block '${queryDto.blockId}' is of type '${contentBlock.type}', which does not reference playable objects. Supported types: ${PLAYABLE_DISPLAY_DATA_BLOCK_TYPES.join(', ')}`
+				'Body params blockId and objects are mutually exclusive: pass the block id for a saved block, or its objects while it is being edited'
 			);
 		}
+
+		// Both ways in normalize to the same list of objects + cuepoints, so from here on it no
+		// longer matters which one the request used. Exactly one of them is filled in, so the
+		// other contributes nothing.
+		const items: PlayableDisplayDataItem[] = [
+			...(await this.getPlayableDisplayDataItemsForBlock(queryDto.blockId)),
+			...this.getPlayableDisplayDataItemsForUnsavedBlock(queryDto.objects, user),
+		];
 
 		// Slots without an object (e.g. a timeline node showing an image) are not sent to the
 		// service, but keep their place in the response so the client can keep matching the
@@ -1359,5 +1382,60 @@ export class IeObjectsController {
 		let responseIndex = 0;
 
 		return items.map((item) => (item ? (playableDisplayData[responseIndex++] ?? null) : null));
+	}
+
+	/**
+	 * Normalizes a saved content block to the objects + cuepoints to fetch playable display data
+	 * for, in the block's own element order.
+	 *
+	 * Taking the objects and their snippet start/end times from the stored block config - instead
+	 * of from the request body - is the point of this endpoint: a client can only get a cut of an
+	 * object for which an editor actually configured that cut in a content block.
+	 */
+	private async getPlayableDisplayDataItemsForBlock(
+		blockId: string | undefined
+	): Promise<PlayableDisplayDataItem[]> {
+		if (!blockId) {
+			return [];
+		}
+
+		const contentBlock = await this.contentPagesService.getContentPageBlockById(blockId);
+
+		if (!contentBlock) {
+			throw new NotFoundException(`No content block found with id '${blockId}'`);
+		}
+
+		const items = contentBlockToPlayableDisplayDataItems(contentBlock);
+
+		if (!items) {
+			throw new BadRequestException(
+				`Content block '${blockId}' is of type '${contentBlock.type}', which does not reference playable objects. Supported types: ${PLAYABLE_DISPLAY_DATA_BLOCK_TYPES.join(', ')}`
+			);
+		}
+
+		return items;
+	}
+
+	/**
+	 * Normalizes the objects a content page editor passed for a block that hasn't been saved yet
+	 * to the same list of objects + cuepoints a saved block yields.
+	 *
+	 * These have not been through an editor's hands in the database, so their cuepoints are taken
+	 * on trust - which is only acceptable for someone who could save exactly the same block a
+	 * second later. For anyone else the objects are stripped and nothing is resolved.
+	 */
+	private getPlayableDisplayDataItemsForUnsavedBlock(
+		objects: IeObjectsPlayableDisplayDataQueryDto['objects'],
+		user: SessionUserEntity
+	): PlayableDisplayDataItem[] {
+		if (!user?.hasAny(PLAYABLE_DISPLAY_DATA_UNSAVED_OBJECTS_PERMISSIONS)) {
+			return [];
+		}
+
+		return (objects || []).map((object) =>
+			object?.schemaIdentifier
+				? { schemaIdentifier: object.schemaIdentifier, start: object.start, end: object.end }
+				: null
+		);
 	}
 }

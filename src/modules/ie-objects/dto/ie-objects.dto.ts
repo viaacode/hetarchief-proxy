@@ -230,13 +230,56 @@ export class IeObjectsSimilarQueryDto {
 	maintainerId?: string;
 }
 
-export class IeObjectsPlayableDisplayDataQueryDto {
+export class IeObjectPlayableDisplayDataItemDto {
 	@IsString()
 	@ApiProperty({
+		type: String,
+		description:
+			'Schema identifier (PID) of the ie-object. Empty for a block element that has no object ' +
+			'selected yet: it resolves to null, but keeps its position in the response',
+		example: '086348mc8s',
+	})
+	schemaIdentifier: string;
+
+	@IsNumber()
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: Number,
+		description: 'Snippet start in seconds',
+	})
+	start?: number;
+
+	@IsNumber()
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: Number,
+		description: 'Snippet end in seconds',
+	})
+	end?: number;
+}
+
+export const PLAYABLE_DISPLAY_DATA_MAX_OBJECTS = 100;
+
+export class IeObjectsPlayableDisplayDataQueryDto {
+	@IsString()
+	@IsOptional()
+	@ApiPropertyOptional({
 		type: String,
 		description:
 			'Id of the content block whose config lists the ie-objects to fetch playable display data for',
 		example: 'c9c9f4b1-1a6f-4f0e-9d2e-9e5f1a2b3c4d',
 	})
-	blockId: string;
+	blockId?: string;
+
+	@IsArray()
+	@ArrayNotEmpty()
+	@ArrayMaxSize(PLAYABLE_DISPLAY_DATA_MAX_OBJECTS)
+	@ValidateNested({ each: true })
+	@Type(() => IeObjectPlayableDisplayDataItemDto)
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: [IeObjectPlayableDisplayDataItemDto],
+		description: `Content page editor only: the ie-objects of a content block that has not been saved yet, so it has no blockId to look up. Ignored for users without content page edit permissions. Max ${PLAYABLE_DISPLAY_DATA_MAX_OBJECTS} items.`,
+	})
+	objects?: IeObjectPlayableDisplayDataItemDto[];
 }
