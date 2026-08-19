@@ -813,5 +813,88 @@ describe('PlayableDisplayDataService', () => {
 			expect(result.thumbnailUrl).toEqual('https://example.com/still-at-10s.jpg');
 			expect(result.snipPoint).toEqual({ start: 10, end: 20 });
 		});
+
+		it('cuts the playable url ticket to the requested snippet', async () => {
+			mockDataService.execute.mockResolvedValueOnce(buildMockDbResponse());
+
+			await playableDisplayDataService.getIeObjectsPlayableDisplayData(
+				[{ schemaIdentifier: 'mock-schema-identifier', start: 10, end: 20 }],
+				mockCpAdminUser,
+				'referer',
+				'127.0.0.1',
+				{} as any
+			);
+
+			expect(mockPlayerTicketService.getPlayableUrl).toHaveBeenCalledWith('OR-rf5kf25/file-1.mp4', {
+				referer: 'referer',
+				ip: '127.0.0.1',
+				isPublicDomain: false,
+				startTime: 10,
+				endTime: 20,
+			});
+		});
+
+		it('ignores a snippet without an end time, since the ticket service would hand out an uncut url anyway', async () => {
+			mockDataService.execute.mockResolvedValueOnce(buildMockDbResponse());
+
+			await playableDisplayDataService.getIeObjectsPlayableDisplayData(
+				[{ schemaIdentifier: 'mock-schema-identifier', start: 10 }],
+				mockCpAdminUser,
+				'referer',
+				'127.0.0.1',
+				{} as any
+			);
+
+			expect(mockPlayerTicketService.getPlayableUrl).toHaveBeenCalledWith('OR-rf5kf25/file-1.mp4', {
+				referer: 'referer',
+				ip: '127.0.0.1',
+				isPublicDomain: false,
+				startTime: undefined,
+				endTime: undefined,
+			});
+		});
+
+		it('shifts the snippet into the parent file timeline and clamps it to the media fragment window', async () => {
+			const fragmentRepresentation = {
+				...mockRepresentation,
+				id: 'fragment-representation',
+				is_media_fragment_of: 'main-representation',
+				includes: [
+					{
+						file: {
+							...mockVideoFile,
+							id: 'fragment-file',
+							premis_stored_at: 'OR-rf5kf25/fragment-file.mp4',
+							hasMediaFragment: [{ schema_start_time: '00:01:40', schema_end_time: '00:02:00' }],
+						},
+					},
+				],
+			};
+
+			mockDataService.execute.mockResolvedValueOnce(
+				buildMockDbResponse({
+					getIsRepresentedBy: [{ isRepresentedBy: [fragmentRepresentation] }],
+				}) as GetIeObjectPlayableDisplayDataQuery
+			);
+
+			await playableDisplayDataService.getIeObjectsPlayableDisplayData(
+				[{ schemaIdentifier: 'mock-schema-identifier', start: 5, end: 60 }],
+				mockCpAdminUser,
+				'referer',
+				'127.0.0.1',
+				{} as any
+			);
+
+			expect(mockPlayerTicketService.getPlayableUrl).toHaveBeenCalledWith(
+				'OR-rf5kf25/fragment-file.mp4',
+				{
+					referer: 'referer',
+					ip: '127.0.0.1',
+					isPublicDomain: false,
+					startTime: 105,
+					endTime: 120,
+				}
+			);
+		});
 	});
 });

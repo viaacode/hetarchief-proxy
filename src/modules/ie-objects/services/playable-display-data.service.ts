@@ -62,10 +62,10 @@ interface PlayableDisplayAccess {
 	hasEssenceAccess: boolean;
 }
 
-interface AvFileData {
+interface AudioVideoFileData {
 	playableUrl: string | null;
 	mimeType: string | null;
-	peakfileData: number[] | null;
+	peakFileData: number[] | null;
 	thumbnailUrl: string | null;
 }
 
@@ -141,23 +141,23 @@ export class PlayableDisplayDataService {
 					const { dbResponse, limitedObject, dctermsFormat, isPublicDomain, hasEssenceAccess } =
 						access;
 
-					const isAvObject = IE_OBJECT_AV_TYPES.includes(dctermsFormat);
+					const isAudioVideoObject = IE_OBJECT_AV_TYPES.includes(dctermsFormat);
 					const isAudio = mapDcTermsFormatToSimpleType(dctermsFormat) === IeObjectType.AUDIO;
 					let thumbnailUrl: string | null = isAudio ? AUDIO_WAVE_FORM_URL : null; // avoid the ugly speaker
 					let playableUrl: string | null = null;
 					let mimeType: string | null = null;
-					let peakfileData: number[] | null = null;
+					let peakFileData: number[] | null = null;
 					let newspaperImage: string | null = null;
 
 					if (hasEssenceAccess) {
 						// Essence access was granted: look up the first playable file, same
 						// selection as the object detail page
-						const representation = findFirstPlayableRepresentation(dbResponse, isAvObject);
+						const representation = findFirstPlayableRepresentation(dbResponse, isAudioVideoObject);
 						const files = compact((representation?.includes || []).map((include) => include.file));
 						const isMediaFragmentOf = !!representation?.is_media_fragment_of;
 
-						if (isAvObject) {
-							const avData = await this.resolveAvFileData(
+						if (isAudioVideoObject) {
+							const audioVideoData = await this.resolveAudioVideoFileData(
 								files,
 								item,
 								isAudio,
@@ -166,11 +166,11 @@ export class PlayableDisplayDataService {
 								ip,
 								isPublicDomain
 							);
-							playableUrl = avData.playableUrl;
-							mimeType = avData.mimeType;
-							peakfileData = avData.peakfileData;
-							if (avData.thumbnailUrl) {
-								thumbnailUrl = avData.thumbnailUrl;
+							playableUrl = audioVideoData.playableUrl;
+							mimeType = audioVideoData.mimeType;
+							peakFileData = audioVideoData.peakFileData;
+							if (audioVideoData.thumbnailUrl) {
+								thumbnailUrl = audioVideoData.thumbnailUrl;
 							}
 						} else {
 							// Non audio/video objects (mainly newspapers): resolve the IIIF detail
@@ -214,7 +214,9 @@ export class PlayableDisplayDataService {
 						maintainerLogo: limitedObject.maintainerLogo,
 						maintainerOverlay: limitedObject.maintainerOverlay,
 						snipPoint,
-						...(isAvObject ? { playableUrl, mimeType, peakfileData } : { newspaperImage }),
+						...(isAudioVideoObject
+							? { playableUrl, mimeType, peakfileData: peakFileData }
+							: { newspaperImage }),
 					};
 				} catch (err) {
 					// Logged individually at debug (kept for troubleshooting) and summarized below at
@@ -247,10 +249,11 @@ export class PlayableDisplayDataService {
 
 	/**
 	 * Resolves the audio/video branch of a playable representation's files: the ready-to-play
-	 * url (+ mime type) for the first flowplayer-compatible file, the waveform peak sample array
-	 * for audio/audio fragments, and a video-still thumbnail when a start cuepoint was requested.
+	 * url (+ mime type) for the first flowplayer-compatible file - cut to the requested snippet,
+	 * see resolveFileFragmentWindow - the waveform peak sample array for audio/audio fragments,
+	 * and a video-still thumbnail when a start snipPoint was requested.
 	 */
-	private async resolveAvFileData(
+	private async resolveAudioVideoFileData(
 		files: PlayableDisplayDataFile[],
 		item: { start?: number; end?: number },
 		isAudio: boolean,
@@ -258,10 +261,10 @@ export class PlayableDisplayDataService {
 		referer: string,
 		ip: string,
 		isPublicDomain: boolean
-	): Promise<AvFileData> {
+	): Promise<AudioVideoFileData> {
 		let playableUrl: string | null = null;
 		let mimeType: string | null = null;
-		let peakfileData: number[] | null = null;
+		let peakFileData: number[] | null = null;
 		let thumbnailUrl: string | null = null;
 
 		const playableFile = files.find((file) =>
@@ -269,30 +272,38 @@ export class PlayableDisplayDataService {
 		);
 		if (playableFile) {
 			mimeType = playableFile.ebucore_has_mime_type;
-			playableUrl = await this.resolveFileTicketUrl(
+			// The requested snip point is baked into the ticket (and the url's media fragment) here,
+			// rather than only being echoed back as snipPoint: the player would otherwise receive a
+			// url for the full object and could seek outside the snippet the editor selected.
+			const { startTime, endTime } = this.resolveMediaSnippetPlayableUrl(
 				playableFile,
 				isMediaFragmentOf,
+				item
+			);
+			playableUrl = await this.resolveFileTicketUrl(
+				playableFile,
+				{ startTime, endTime },
 				referer,
 				ip,
 				isPublicDomain
 			);
 
 			if (!isAudio && item.start) {
-				thumbnailUrl = await this.getVideoStillThumbnail(playableFile, item.start);
+				thumbnailUrl = await this.getVideoStillThumbnail(playableFile, startTime ?? item.start);
 			}
 		}
 
 		if (isAudio) {
 			// Audio and audio fragments render a waveform on top of the player,
-			// sourced from a separate json peak file - additive data, never a
-			// substitute for playableUrl
+			// sourced from a separate json-peak file
+			// This is only used for visualization, not for playing the audio
 			const peakFile = files.find((file) => JSON_FORMATS.includes(file.ebucore_has_mime_type));
 			if (peakFile) {
-				peakfileData = await this.fetchPeakFileDataCached(peakFile);
+				peakFileData = await this.fetchPeakFileDataCached(peakFile);
 			}
 		}
 
-		return { playableUrl, mimeType, peakfileData, thumbnailUrl };
+		return { playableUrl, mimeType, peakFileData, thumbnailUrl };
 	}
 
 	/**
@@ -551,26 +562,64 @@ export class PlayableDisplayDataService {
 	}
 
 	/**
-	 * Resolves a file to a ready-to-play, signed url, cutting it to the file's own mediaFragment
-	 * start/end when it belongs to a cut-fragment representation
-	 * (same logic as IeObjectsController.getPlayableUrl).
-	 * https://meemoo.atlassian.net/browse/ARC-3690?focusedCommentId=87432
+	 * Determines which part of the file the playable url should be cut to, in the file's own
+	 * timeline: the file's mediaFragment start/end when it belongs to a cut-fragment representation
+	 * (same logic as IeObjectsController.getPlayableUrl,
+	 * https://meemoo.atlassian.net/browse/ARC-3690?focusedCommentId=87432), narrowed further to the
+	 * editorial snippet the caller asked for (https://meemoo.atlassian.net/browse/ARC-3832).
+	 *
+	 * Snip times are relative to the object as the editor sees it - which, for a media fragment,
+	 * starts at 0 inside a longer parent file - so they're shifted into the parent file's timeline
+	 * and kept inside the fragment's own window.
+	 *
+	 * A snippet without an end time (or with an end at/before its start) is ignored rather than
+	 * partially applied: PlayerTicketService only cuts when it receives a valid end time, so a
+	 * lone start would hand out an uncut url whose ticket claims a fragment it doesn't have.
+	 */
+	private resolveMediaSnippetPlayableUrl(
+		file: PlayableDisplayDataFile,
+		isMediaFragmentOf: boolean,
+		item: { start?: number; end?: number }
+	): { startTime: number | undefined; endTime: number | undefined } {
+		let fragmentStart: number | undefined;
+		let fragmentEnd: number | undefined;
+		const fragment = file.hasMediaFragment?.[0];
+		if (isMediaFragmentOf && fragment?.schema_start_time && fragment?.schema_end_time) {
+			fragmentStart = formattedDurationToSeconds(fragment.schema_start_time);
+			fragmentEnd = formattedDurationToSeconds(fragment.schema_end_time);
+		}
+
+		if (isNil(item.start) || isNil(item.end) || item.end <= item.start) {
+			return { startTime: fragmentStart, endTime: fragmentEnd };
+		}
+
+		const offset = fragmentStart ?? 0;
+		const startTime = offset + item.start;
+		const endTime = isNil(fragmentEnd)
+			? offset + item.end
+			: Math.min(offset + item.end, fragmentEnd);
+
+		// The snippet falls entirely outside the fragment it belongs to: play the fragment uncut
+		// instead of handing out an empty (and by the ticket service's rules, uncut anyway) window
+		if (endTime <= startTime) {
+			return { startTime: fragmentStart, endTime: fragmentEnd };
+		}
+
+		return { startTime, endTime };
+	}
+
+	/**
+	 * Resolves a file to a ready-to-play, signed url, cut to the given window - both in the ticket's
+	 * fragment claim and in the url's `t=start,end` media fragment, since both are produced by the
+	 * shared PlayerTicketService.getPlayableUrl the player-ticket endpoint uses.
 	 */
 	private async resolveFileTicketUrl(
 		file: PlayableDisplayDataFile,
-		isMediaFragmentOf: boolean,
+		{ startTime, endTime }: { startTime?: number; endTime?: number },
 		referer: string,
 		ip: string,
 		isPublicDomain: boolean
 	): Promise<string> {
-		let startTime: number | undefined;
-		let endTime: number | undefined;
-		const fragment = file.hasMediaFragment?.[0];
-		if (isMediaFragmentOf && fragment?.schema_start_time && fragment?.schema_end_time) {
-			startTime = formattedDurationToSeconds(fragment.schema_start_time);
-			endTime = formattedDurationToSeconds(fragment.schema_end_time);
-		}
-
 		return this.playerTicketService.getPlayableUrl(file.premis_stored_at, {
 			referer,
 			ip,
