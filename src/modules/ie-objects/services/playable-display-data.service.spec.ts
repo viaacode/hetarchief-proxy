@@ -691,9 +691,9 @@ describe('PlayableDisplayDataService', () => {
 		});
 
 		it('refuses to fetch a peak file that is not a json file, to avoid bypassing the ticket service', async () => {
-			// fetchPeakFileData is private and bypasses the ticket service by design, so it must
-			// never be usable to fetch/expose a non-json (e.g. essence) file - called directly here
-			// since the public getIeObjectsPlayableDisplayData path only ever selects a json file
+			// fetchPeakFileDataCached is private and bypasses the ticket service by design, so it
+			// must never be usable to fetch/expose a non-json (e.g. essence) file - called directly
+			// here since the public getIeObjectsPlayableDisplayData path only ever selects a json file
 			const warnSpy = vi.spyOn((playableDisplayDataService as any).logger, 'warn');
 			const mockNonJsonFile = {
 				id: 'audio-file-1',
@@ -702,7 +702,9 @@ describe('PlayableDisplayDataService', () => {
 				hasMediaFragment: [],
 			};
 
-			const result = await (playableDisplayDataService as any).fetchPeakFileData(mockNonJsonFile);
+			const result = await (playableDisplayDataService as any).fetchPeakFileDataCached(
+				mockNonJsonFile
+			);
 
 			expect(result).toBeNull();
 			expect(mockFetch).not.toHaveBeenCalled();
