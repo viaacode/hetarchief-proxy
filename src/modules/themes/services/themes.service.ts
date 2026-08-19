@@ -356,12 +356,8 @@ export class ThemesService {
 			throw new CustomError('Theme was not found', null, { themeUuid, queryDto });
 		}
 
-		let total: number | null = null;
-		if (orderDirection !== SortDirectionWithRandom.random) {
-			total =
-				(rawTheme as GetThemeWithObjectsQuery['app_theme_by_pk']).ieObjectLinks_aggregate.aggregate
-					?.count ?? 0;
-		}
+		// Both queries select the same aggregate, so the total is available for the random order too
+		const total = rawTheme.ieObjectLinks_aggregate.aggregate?.count ?? 0;
 
 		const visitorSpaceAccessInfo = queryDto.resolveThumbnailUrl
 			? await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user)

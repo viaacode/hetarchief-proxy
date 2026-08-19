@@ -10,6 +10,11 @@ query getThemeWithObjectsInRandomOrder($themeId: uuid!, $objectsLimit: Int!) {
 		content_page_path_nl
 		content_page_path_en
 		updated_at
+		ieObjectLinks_aggregate {
+			aggregate {
+				count
+			}
+		}
 		ieObjectLinksRandomOrder(limit: $objectsLimit, order_by: { random_sort: asc }) {
 			ieObject {
 				id
