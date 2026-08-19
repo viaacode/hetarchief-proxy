@@ -27,6 +27,7 @@ import {
 	mockUser,
 } from '../mocks/ie-objects.mock';
 import { IeObjectsService } from '../services/ie-objects.service';
+import { PlayableDisplayDataService } from '../services/playable-display-data.service';
 
 import { IeObjectsController } from './ie-objects.controller';
 
@@ -65,6 +66,11 @@ const mockIeObjectsService: Partial<Record<keyof IeObjectsService, MockInstance>
 	})),
 	getIeObjectIdFromObjectSchemaIdentifier: vi.fn().mockResolvedValue('mock-ie-object-id'),
 	getRepresentationAndFileInIeObject: vi.fn(),
+};
+
+const mockPlayableDisplayDataService: Partial<
+	Record<keyof PlayableDisplayDataService, MockInstance>
+> = {
 	getIeObjectsPlayableDisplayData: vi.fn(),
 };
 
@@ -109,6 +115,10 @@ describe('IeObjectsController', () => {
 				{
 					provide: IeObjectsService,
 					useValue: mockIeObjectsService,
+				},
+				{
+					provide: PlayableDisplayDataService,
+					useValue: mockPlayableDisplayDataService,
 				},
 				{
 					provide: PlayerTicketService,
@@ -711,7 +721,7 @@ describe('IeObjectsController', () => {
 
 	describe('getIeObjectsPlayableDisplayData', () => {
 		it('normalizes plain string entries into objects before calling the service', async () => {
-			mockIeObjectsService.getIeObjectsPlayableDisplayData.mockResolvedValueOnce([null]);
+			mockPlayableDisplayDataService.getIeObjectsPlayableDisplayData.mockResolvedValueOnce([null]);
 
 			await ieObjectsController.getIeObjectsPlayableDisplayData(
 				{ objects: ['086348mc8s'] },
@@ -721,7 +731,7 @@ describe('IeObjectsController', () => {
 				mockRequest
 			);
 
-			expect(mockIeObjectsService.getIeObjectsPlayableDisplayData).toHaveBeenCalledWith(
+			expect(mockPlayableDisplayDataService.getIeObjectsPlayableDisplayData).toHaveBeenCalledWith(
 				[{ schemaIdentifier: '086348mc8s', start: undefined, end: undefined }],
 				mockSessionUser,
 				'referer',
@@ -731,7 +741,10 @@ describe('IeObjectsController', () => {
 		});
 
 		it('passes through object entries with cuepoints, mixed with plain strings', async () => {
-			mockIeObjectsService.getIeObjectsPlayableDisplayData.mockResolvedValueOnce([null, null]);
+			mockPlayableDisplayDataService.getIeObjectsPlayableDisplayData.mockResolvedValueOnce([
+				null,
+				null,
+			]);
 
 			await ieObjectsController.getIeObjectsPlayableDisplayData(
 				{
@@ -743,7 +756,7 @@ describe('IeObjectsController', () => {
 				mockRequest
 			);
 
-			expect(mockIeObjectsService.getIeObjectsPlayableDisplayData).toHaveBeenCalledWith(
+			expect(mockPlayableDisplayDataService.getIeObjectsPlayableDisplayData).toHaveBeenCalledWith(
 				[
 					{ schemaIdentifier: '086348mc8s', start: undefined, end: undefined },
 					{ schemaIdentifier: 'qstt4fps28', start: 10, end: 20 },

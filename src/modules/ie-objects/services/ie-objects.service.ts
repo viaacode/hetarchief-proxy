@@ -3,12 +3,7 @@ import fs from 'node:fs/promises';
 import { retry } from 'async';
 import { Request } from 'express';
 
-import {
-	DataService,
-	PlayerTicketService,
-	StillsObjectType,
-	VideoStillsService,
-} from '@meemoo/admin-core-api';
+import { DataService, PlayerTicketService } from '@meemoo/admin-core-api';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import {
 	Inject,
@@ -42,12 +37,10 @@ import {
 	type GqlLimitedIeObject,
 	type IeObject,
 	type IeObjectFile,
-	type IeObjectForAccessCheck,
 	IeObjectForThumbnailOnly,
 	IeObjectLicense,
 	type IeObjectPage,
 	type IeObjectPages,
-	type IeObjectPlayableDisplayData,
 	type IeObjectRepresentation,
 	type IeObjectSector,
 	type IeObjectTheme,
@@ -56,7 +49,6 @@ import {
 	type IeObjectsVisitorSpaceInfo,
 	type IeObjectsWithAggregations,
 	type IsPartOfKey,
-	type JsonWaveformData,
 	type Mention,
 	type RelatedIeObject,
 } from '../ie-objects.types';
@@ -83,9 +75,6 @@ import {
 	GetIeObjectIdBySchemaIdentifierDocument,
 	GetIeObjectIdBySchemaIdentifierQuery,
 	GetIeObjectIdBySchemaIdentifierQueryVariables,
-	GetIeObjectPlayableDisplayDataDocument,
-	GetIeObjectPlayableDisplayDataQuery,
-	GetIeObjectPlayableDisplayDataQueryVariables,
 	GetIeObjectV3InfoFromMediaMosaIdDocument,
 	GetIeObjectV3InfoFromMediaMosaIdQuery,
 	GetIeObjectV3InfoFromMediaMosaIdQueryVariables,
@@ -116,18 +105,12 @@ import {
 } from '~modules/ie-objects/helpers/convert-string-to-search-terms';
 import {
 	AUTOCOMPLETE_FIELD_TO_ES_FIELD_NAME,
-	FLOWPLAYER_FORMATS,
 	IE_OBJECT_AV_TYPES,
-	IMAGE_API_FORMATS,
-	JSON_FORMATS,
 } from '~modules/ie-objects/ie-objects.conts';
 import {
 	CACHE_KEY_PREFIX_IE_OBJECTS_SEARCH,
 	CACHE_KEY_PREFIX_IE_OBJECT_DETAIL,
-	CACHE_KEY_PREFIX_IE_OBJECT_NEWSPAPER_IMAGE,
-	CACHE_KEY_PREFIX_IE_OBJECT_PEAKFILE_DATA,
 	CACHE_KEY_PREFIX_IE_OBJECT_PID_TO_ID,
-	CACHE_KEY_PREFIX_IE_OBJECT_PLAYABLE_DISPLAY_DATA,
 	CACHE_KEY_PREFIX_IE_OBJECT_THUMBNAIL,
 } from '~modules/ie-objects/services/ie-objects.service.consts';
 import {
@@ -145,7 +128,6 @@ import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupName } from '~modules/users/types';
 
 import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
-import { AvoStillsStillInfo } from '@viaa/avo2-types';
 import { hoursToSeconds } from 'date-fns';
 import { mapDcTermsFormatToSimpleType } from '~modules/ie-objects/helpers/map-dc-terms-format-to-simple-type';
 import { VisitsService } from '~modules/visits/services/visits.service';
@@ -156,12 +138,6 @@ import { checkRequiredEnvs } from '~shared/helpers/env-check';
 import { formattedDurationToSeconds } from '~shared/helpers/formatted-duration-to-seconds';
 
 checkRequiredEnvs(['ELASTICSEARCH_URL', 'IE_OBJECT_ID_PREFIX']);
-
-type PlayableDisplayDataPage =
-	| GetIeObjectPlayableDisplayDataQuery['getHasPart'][0]
-	| GetIeObjectPlayableDisplayDataQuery['getIsRepresentedBy'][0];
-type PlayableDisplayDataRepresentation = PlayableDisplayDataPage['isRepresentedBy'][0];
-type PlayableDisplayDataFile = PlayableDisplayDataRepresentation['includes'][0]['file'];
 
 @Injectable()
 export class IeObjectsService {
@@ -174,7 +150,6 @@ export class IeObjectsService {
 		protected playerTicketService: PlayerTicketService,
 		protected visitsService: VisitsService,
 		protected spacesService: SpacesService,
-		protected videoStillsService: VideoStillsService,
 		@Inject(CACHE_MANAGER) private cacheManager: Cache
 	) {
 		this.gotInstance = got.extend({
@@ -1868,522 +1843,5 @@ export class IeObjectsService {
 		}
 
 		return ieObjectId;
-	}
-
-	/**
-	 * Lightweight, batch-capable alternative to findByIeObjectId for rendering playable preview
-	 * tiles (e.g. a carousel): schemaIdentifier, name, thumbnailUrl, dctermsFormat, maintainer info,
-	 * and a ready-to-play url for the first playable file (same selection as the object detail
-	 * page). An object the current user has no access to at all resolves to null in the returned
-	 * array instead of failing the whole batch.
-	 */
-	public async getIeObjectsPlayableDisplayData(
-		items: { schemaIdentifier: string; start?: number; end?: number }[],
-		user: SessionUserEntity,
-		referer: string,
-		ip: string,
-		request: Request
-	): Promise<(IeObjectPlayableDisplayData | null)[]> {
-		const visitorSpaceAccessInfo = await this.getVisitorSpaceAccessInfoFromUser(user);
-
-		return mapLimit(
-			items,
-			12,
-			async (item: {
-				schemaIdentifier: string;
-				start?: number;
-				end?: number;
-			}): Promise<IeObjectPlayableDisplayData | null> => {
-				try {
-					const access = await this.resolvePlayableDisplayAccess(
-						item.schemaIdentifier,
-						user,
-						visitorSpaceAccessInfo,
-						request
-					);
-					if (!access) {
-						return null;
-					}
-					const { dbResponse, limitedObject, dctermsFormat, isPublicDomain, hasEssenceAccess } =
-						access;
-
-					const isAvObject = IE_OBJECT_AV_TYPES.includes(dctermsFormat);
-					const isAudio = mapDcTermsFormatToSimpleType(dctermsFormat) === IeObjectType.AUDIO;
-					let thumbnailUrl: string | null = isAudio ? AUDIO_WAVE_FORM_URL : null; // avoid the ugly speaker
-					let playableUrl: string | null = null;
-					let mimeType: string | null = null;
-					let peakfileData: number[] | null = null;
-					let newspaperImage: string | null = null;
-
-					if (hasEssenceAccess) {
-						// Essence access was granted: look up the first playable file, same
-						// selection as the object detail page
-						const representation = this.findFirstPlayableRepresentation(dbResponse, isAvObject);
-						const files = compact((representation?.includes || []).map((include) => include.file));
-						const isMediaFragmentOf = !!representation?.is_media_fragment_of;
-
-						if (isAvObject) {
-							const playableFile = files.find((file) =>
-								FLOWPLAYER_FORMATS.includes(file.ebucore_has_mime_type)
-							);
-							if (playableFile) {
-								mimeType = playableFile.ebucore_has_mime_type;
-								playableUrl = await this.resolveFileTicketUrl(
-									playableFile,
-									isMediaFragmentOf,
-									referer,
-									ip,
-									isPublicDomain
-								);
-
-								if (!isAudio && item.start) {
-									thumbnailUrl = await this.getVideoStillThumbnail(playableFile, item.start);
-								}
-							}
-
-							if (isAudio) {
-								// Audio and audio fragments render a waveform on top of the player,
-								// sourced from a separate json peak file - additive data, never a
-								// substitute for playableUrl
-								const peakFile = files.find((file) =>
-									JSON_FORMATS.includes(file.ebucore_has_mime_type)
-								);
-								if (peakFile) {
-									peakfileData = await this.fetchPeakFileData(peakFile);
-								}
-							}
-						} else {
-							// Non audio/video objects (mainly newspapers): resolve the IIIF detail
-							// image right away and inline it as a data uri, instead of a plain
-							// playable url - the IIIF image server requires an Authorization header,
-							// so it can't be exposed as a plain, ready-to-use url like
-							// playableUrl/peakfileData without a separate proxy endpoint
-							const imageFile = this.findIiifImageFile(files);
-							if (imageFile) {
-								newspaperImage = await this.fetchIiifNewspaperImageDataUri(
-									imageFile,
-									referer,
-									ip,
-									isPublicDomain
-								);
-							}
-						}
-
-						if (!isAudio && !thumbnailUrl) {
-							thumbnailUrl =
-								(await this.getThumbnailUrlWithToken(
-									limitedObject.thumbnailUrl,
-									referer,
-									ip,
-									isPublicDomain
-								)) || null;
-						}
-					}
-
-					const snipPoint =
-						item.start !== undefined || item.end !== undefined
-							? { start: item.start, end: item.end }
-							: undefined;
-
-					return {
-						schemaIdentifier: limitedObject.schemaIdentifier,
-						name: limitedObject.name,
-						thumbnailUrl,
-						dctermsFormat: limitedObject.dctermsFormat,
-						maintainerName: limitedObject.maintainerName,
-						maintainerLogo: limitedObject.maintainerLogo,
-						maintainerOverlay: limitedObject.maintainerOverlay,
-						snipPoint,
-						...(isAvObject ? { playableUrl, mimeType, peakfileData } : { newspaperImage }),
-					};
-				} catch (err) {
-					this.logger.error(
-						new CustomError('Failed to get playable display data for ie-object', err, {
-							schemaIdentifier: item.schemaIdentifier,
-						})
-					);
-					return null;
-				}
-			}
-		);
-	}
-
-	/**
-	 * Fetches a representation's IIIF image-api file and inlines it as a self-contained base64 data
-	 * uri, ready to use directly as an <img src> with zero further requests - rendered down to a
-	 * reasonably-sized (~1000px wide) jpeg, since these source images are ~8k and a full-size render
-	 * is neither needed nor wanted for a preview tile.
-	 *
-	 * The IIIF image server sits behind Authorization-header auth, not the query-param ticket
-	 * getPlayableUrl/resolveThumbnailUrl use for their media-service proxy (which doesn't understand
-	 * IIIF image requests) - so rather than handing the client a url it can't directly load (or
-	 * adding a whole separate proxy endpoint just to attach that header), the image is fetched here
-	 * and inlined directly into the response. The rendered image is cached per file for 1 hour
-	 * (same as the playable-display-data db response) since it's independent of who's asking for
-	 * it, saving both the ticket-service and IIIF round trips on repeat carousel views. Failures
-	 * are swallowed to null (and not cached) so one broken image doesn't take down the rest of the
-	 * object's metadata in the batch response.
-	 */
-	private async fetchIiifNewspaperImageDataUri(
-		imageFile: PlayableDisplayDataFile,
-		referer: string,
-		ip: string,
-		isPublicDomain: boolean
-	): Promise<string | null> {
-		if (!imageFile.premis_stored_at) {
-			return null;
-		}
-		try {
-			return await this.cacheManager.wrap(
-				CACHE_KEY_PREFIX_IE_OBJECT_NEWSPAPER_IMAGE + imageFile.premis_stored_at,
-				() => this.fetchAndEncodeIiifImage(imageFile.premis_stored_at, referer, ip, isPublicDomain),
-				// cache for 1 hour
-				hoursToSeconds(1)
-			);
-		} catch (err) {
-			this.logger.error(
-				new CustomError('Failed to fetch IIIF detail image for playable display data', err, {
-					storedAt: imageFile.premis_stored_at,
-				})
-			);
-			return null;
-		}
-	}
-
-	/**
-	 * Requests a ticket for and fetches a IIIF image-api identifier, rendered down to a
-	 * reasonably-sized (~1000px wide) jpeg, and returns it as a base64 data uri.
-	 */
-	private async fetchAndEncodeIiifImage(
-		storedAt: string,
-		referer: string,
-		ip: string,
-		isPublicDomain: boolean
-	): Promise<string> {
-		const imageUrl = storedAt.replace(
-			'https://iiif-qas.meemoo.be/image/3/public',
-			'https://iiif-qas.meemoo.be/image/3/hetarchief'
-		);
-		// The ticket must be requested for the base url, without the /full/.../default.jpg
-		// suffix, since the ticket service requires it to be a substring of the final requested url
-		const token = await this.playerTicketService.getPlayerToken(imageUrl, {
-			referer,
-			ip,
-			isPublicDomain,
-		});
-
-		//return `${imageUrl}/full/1000,/0/default.jpg?token=${token}`;
-		// The ticket is bound to the referer it was requested with - unlike a browser, Node's
-		// fetch doesn't send a Referer header automatically, so it has to be set explicitly or
-		// the IIIF server rejects the token with a 403
-		const response = await fetch(`${imageUrl}/full/1000,/0/default.jpg`, {
-			headers: { Authorization: `Bearer ${token}`, Referer: referer },
-		});
-		if (!response.ok) {
-			throw new CustomError('Failed to fetch IIIF detail image', null, {
-				imageUrl,
-				status: response.status,
-			});
-		}
-
-		const contentType = response.headers.get('content-type') || 'image/jpeg';
-		const base64 = Buffer.from(await response.arrayBuffer()).toString('base64');
-		return `data:${contentType};base64,${base64}`;
-	}
-
-	/**
-	 * Fetches an audio/audio-fragment's json peak/waveform file, returning only the peak sample
-	 * array (the client renders this directly into a waveform overlay) - the rest of the peak
-	 * file's metadata (version, channels, sample_rate, ...) is discarded since nothing consumes it,
-	 * keeping the batch response payload small. Peak files are served directly from the
-	 * archief-media host, not through the ticket service - that returned a 403 for this file type.
-	 * Cached per file for 1 hour (same as the newspaper image and the playable-display-data db
-	 * response), since the waveform data is independent of who's asking for it. Failures are
-	 * swallowed to null (and not cached) so one broken peak file doesn't take down the rest of the
-	 * object's metadata in the batch response.
-	 *
-	 * WARNING: this deliberately bypasses the ticket service, i.e. no access-control check is
-	 * done on the file it fetches. It must NEVER be used to fetch/expose an actual essence file
-	 * (audio/video) - only ever call it for small, non-sensitive json peak/waveform files, and
-	 * only ever return the parsed data array from it, never the resolved url or raw response.
-	 */
-	private async fetchPeakFileData(peakFile: PlayableDisplayDataFile): Promise<number[] | null> {
-		if (!JSON_FORMATS.includes(peakFile.ebucore_has_mime_type)) {
-			// Refuse to fetch anything that isn't a json peak file - this method skips the ticket
-			// service, so blindly fetching whatever file it's given would let it be repurposed to
-			// expose essence files (audio/video) without an access check.
-			this.logger.warn(
-				`fetchPeakFileData refused to fetch a non-json file to avoid bypassing the ticket service: ${peakFile.premis_stored_at} (${peakFile.ebucore_has_mime_type})`
-			);
-			return null;
-		}
-
-		try {
-			return await this.cacheManager.wrap(
-				CACHE_KEY_PREFIX_IE_OBJECT_PEAKFILE_DATA + peakFile.premis_stored_at,
-				async () => {
-					const mediaServiceUrl = this.configService.get('MEDIA_SERVICE_URL');
-					// The archief-media host that serves peak files directly (unticketed) only ever
-					// differs from MEDIA_SERVICE_URL's host by an "archief-" prefix, keeping whatever
-					// environment suffix (-int/-tst/-qas/-prd, or none) follows "media" - deriving it
-					// this way avoids a second, hand-kept env var per environment.
-					const archiefMediaUrl = new URL(mediaServiceUrl);
-					archiefMediaUrl.hostname = archiefMediaUrl.hostname.replace(/^media/, 'archief-media');
-					const peakFileUrl = peakFile.premis_stored_at.replace(
-						mediaServiceUrl,
-						`${archiefMediaUrl.origin}/viaa`
-					);
-					const response = await fetch(peakFileUrl);
-					if (!response.ok) {
-						throw new CustomError('Failed to fetch peak file', null, {
-							peakFileUrl,
-							status: response.status,
-						});
-					}
-					const json = (await response.json()) as JsonWaveformData;
-					return json.data;
-				},
-				// cache for 1 hour
-				hoursToSeconds(1)
-			);
-		} catch (err) {
-			this.logger.error(
-				new CustomError('Failed to fetch peak file data for playable display data', err, {
-					storedAt: peakFile.premis_stored_at,
-				})
-			);
-			return null;
-		}
-	}
-
-	/**
-	 * Resolves an ie-object's playable-display-data db response and applies the license-based
-	 * access check. `pages` is only ever picked when the license grants the essence metadata set,
-	 * regardless of whether it holds real data - its mere presence on the limited object tells us
-	 * if essence access was granted, without needing to look up representations first.
-	 */
-	private async resolvePlayableDisplayAccess(
-		schemaIdentifier: string,
-		user: SessionUserEntity,
-		visitorSpaceAccessInfo: IeObjectsVisitorSpaceInfo,
-		request: Request
-	): Promise<{
-		dbResponse: GetIeObjectPlayableDisplayDataQuery;
-		limitedObject: Partial<IeObject>;
-		dctermsFormat: IeObjectType;
-		isPublicDomain: boolean;
-		hasEssenceAccess: boolean;
-	} | null> {
-		const ieObjectId = await this.getIeObjectIdFromObjectSchemaIdentifier(
-			schemaIdentifier,
-			request
-		);
-
-		const dbResponse = await this.cacheManager.wrap(
-			CACHE_KEY_PREFIX_IE_OBJECT_PLAYABLE_DISPLAY_DATA + ieObjectId,
-			() =>
-				this.dataService.execute<
-					GetIeObjectPlayableDisplayDataQuery,
-					GetIeObjectPlayableDisplayDataQueryVariables
-				>(GetIeObjectPlayableDisplayDataDocument, { ieObjectId }),
-			// cache for 1 hour
-			hoursToSeconds(1)
-		);
-
-		const ie = dbResponse?.ieObject?.[0];
-		if (!ie) {
-			return null;
-		}
-
-		const licenses = compact(
-			dbResponse.schemaLicense?.map((license) => license.schema_license)
-		) as IeObjectLicense[];
-		const dctermsFormat = ie.dctermsFormat?.[0]?.dcterms_format as IeObjectType;
-		const schemaMaintainer = ie.schemaMaintainer;
-		const isPublicDomain: boolean =
-			licenses.includes(IeObjectLicense.PUBLIEK_CONTENT) &&
-			licenses.includes(IeObjectLicense.PUBLIC_DOMAIN);
-
-		const limitedObject = limitAccessToObjectDetails(
-			{
-				schemaIdentifier: ie.schema_identifier,
-				licenses,
-				maintainerId: schemaMaintainer?.org_identifier,
-				sector: schemaMaintainer?.ha_org_sector as IeObjectSector,
-				name: ie.schema_name,
-				dctermsFormat,
-				maintainerName: schemaMaintainer?.skos_pref_label,
-				maintainerLogo: schemaMaintainer?.ha_org_has_logo
-					// TODO remove this workaround once the INT organisations assets are available
-					?.replace('https://assets-int.viaa.be/images/', 'https://assets.viaa.be/images/')
-					?.replace('https://assets-tst.viaa.be/images/', 'https://assets.viaa.be/images/'),
-				maintainerOverlay: !!schemaMaintainer?.hasPreference?.find(
-					(pref) => pref.ha_pref === OrganisationPreference.logoEmbedding
-				),
-				thumbnailUrl: dbResponse.schemaThumbnailUrl?.[0]?.schema_thumbnail_url?.[0],
-				pages: [],
-			} as IeObjectForAccessCheck,
-			{
-				userId: user?.getId(),
-				isKeyUser: user.getIsKeyUser(),
-				sector: user.getSector(),
-				groupId: user.getGroupId(),
-				maintainerId: user.getOrganisationId(),
-				accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
-				accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
-			}
-		);
-
-		if (!limitedObject) {
-			// User has no access to this object at all
-			return null;
-		}
-
-		return {
-			dbResponse,
-			limitedObject,
-			dctermsFormat,
-			isPublicDomain,
-			hasEssenceAccess: 'pages' in limitedObject,
-		};
-	}
-
-	/**
-	 * Finds the first representation (own + child parts, own representations checked before child
-	 * pages) that contains a file relevant to the caller's needs - a flowplayer-compatible file for
-	 * AV objects, or an IIIF image file for non-AV objects (mainly newspapers), reusing
-	 * findIiifImageFile as the source of truth for "is this an image file". A representation without
-	 * such a file is skipped so the search falls through to the next one, e.g. a newspaper's own
-	 * representation holding only a non-image export falls through to the child page holding the
-	 * real page image. Matches the object detail page's selection. Cut fragments are hidden
-	 * whenever a main (non-fragment) representation also exists (ARC-3690), and m4a/duplicate-mpeg
-	 * representations are skipped the same way cleanupRepresentations does for the full object
-	 * detail query (ARC-3121) - both no-ops for non-AV objects since their files never carry audio
-	 * mimetypes.
-	 */
-	private findFirstPlayableRepresentation(
-		dbResponse: GetIeObjectPlayableDisplayDataQuery,
-		isAvObject: boolean
-	): PlayableDisplayDataRepresentation | null {
-		const pages: PlayableDisplayDataPage[] = [
-			...(dbResponse.getIsRepresentedBy || []),
-			...(dbResponse.getHasPart || []),
-		].filter((page) => (page.isRepresentedBy?.length || 0) > 0);
-
-		const hasMainRepresentation = pages.some((page) =>
-			page.isRepresentedBy.some(
-				(representation: PlayableDisplayDataRepresentation) =>
-					representation.is_media_fragment_of === null
-			)
-		);
-
-		for (const page of pages) {
-			for (const representation of page.isRepresentedBy as PlayableDisplayDataRepresentation[]) {
-				if (hasMainRepresentation && representation.is_media_fragment_of) {
-					continue;
-				}
-
-				const mimeTypes = (representation.includes || []).map(
-					(include) => include.file?.ebucore_has_mime_type
-				);
-				if (mimeTypes.includes('audio/m4a')) {
-					continue;
-				}
-				if (
-					mimeTypes.includes('audio/mpeg') &&
-					page.isRepresentedBy.some((sibling: PlayableDisplayDataRepresentation) =>
-						(sibling.includes || []).some(
-							(include) => include.file?.ebucore_has_mime_type === 'audio/mp4'
-						)
-					)
-				) {
-					continue;
-				}
-
-				const files = compact((representation.includes || []).map((include) => include.file));
-				const hasRelevantFile = isAvObject
-					? files.some((file) => FLOWPLAYER_FORMATS.includes(file.ebucore_has_mime_type))
-					: !!this.findIiifImageFile(files);
-
-				if (!hasRelevantFile) {
-					continue;
-				}
-
-				return representation;
-			}
-		}
-		return null;
-	}
-
-	/**
-	 * Finds the first image-api file in a representation's files, same selection as
-	 * ObjectDetailPage.tsx's iiifViewerImageInfos in hetarchief-client.
-	 */
-	private findIiifImageFile(files: PlayableDisplayDataFile[]): PlayableDisplayDataFile | null {
-		return (
-			files.find((file) => IMAGE_API_FORMATS.includes(file.ebucore_has_mime_type)) ||
-			// Delete when https://meemoo.atlassian.net/browse/ARC-3156 is fixed
-			files.find((file) => file.premis_stored_at?.endsWith('jp2')) ||
-			null
-		);
-	}
-
-	/**
-	 * Resolves a file to a ready-to-play, signed url, cutting it to the file's own mediaFragment
-	 * start/end when it belongs to a cut-fragment representation
-	 * (same logic as IeObjectsController.getPlayableUrl).
-	 * https://meemoo.atlassian.net/browse/ARC-3690?focusedCommentId=87432
-	 */
-	private async resolveFileTicketUrl(
-		file: PlayableDisplayDataFile,
-		isMediaFragmentOf: boolean,
-		referer: string,
-		ip: string,
-		isPublicDomain: boolean
-	): Promise<string> {
-		let startTime: number | undefined;
-		let endTime: number | undefined;
-		const fragment = file.hasMediaFragment?.[0];
-		if (isMediaFragmentOf && fragment?.schema_start_time && fragment?.schema_end_time) {
-			startTime = formattedDurationToSeconds(fragment.schema_start_time);
-			endTime = formattedDurationToSeconds(fragment.schema_end_time);
-		}
-
-		return this.playerTicketService.getPlayableUrl(file.premis_stored_at, {
-			referer,
-			ip,
-			isPublicDomain,
-			startTime,
-			endTime,
-		});
-	}
-
-	/**
-	 * Gets the video still closest to the given cut point
-	 * Should only be used for video files, audio uses the default wave form and newspapers don't need stills
-	 */
-	private async getVideoStillThumbnail(
-		file: PlayableDisplayDataFile,
-		startTimeSeconds: number
-	): Promise<string | null> {
-		if (
-			!startTimeSeconds ||
-			startTimeSeconds <= 0 ||
-			!file.ebucore_has_mime_type?.startsWith('video/')
-		) {
-			return null;
-		}
-		const stillInfos = await this.videoStillsService.getFirstVideoStills([
-			{
-				id: file.id,
-				storedAt: file.premis_stored_at,
-				type: StillsObjectType.video,
-				startTime: startTimeSeconds * 1000,
-			},
-		]);
-		const filteredInfos = (stillInfos?.filter((info) => !isNil(info)) ||
-			[]) as AvoStillsStillInfo[];
-
-		return filteredInfos[0]?.thumbnailImagePath || null;
 	}
 }

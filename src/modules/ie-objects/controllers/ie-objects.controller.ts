@@ -64,6 +64,7 @@ import {
 } from '../ie-objects.types';
 
 import { IeObjectsService } from '../services/ie-objects.service';
+import { PlayableDisplayDataService } from '../services/playable-display-data.service';
 
 import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
 import { mapLimit } from 'blend-promise-utils';
@@ -92,6 +93,7 @@ import { SortDirection } from '~shared/types';
 export class IeObjectsController {
 	constructor(
 		private ieObjectsService: IeObjectsService,
+		private playableDisplayDataService: PlayableDisplayDataService,
 		private eventsService: EventsService,
 		private playerTicketService: PlayerTicketService,
 		private playerTicketController: PlayerTicketController,
@@ -1269,6 +1271,12 @@ export class IeObjectsController {
 			};
 		});
 
-		return this.ieObjectsService.getIeObjectsPlayableDisplayData(items, user, referer, ip, request);
+		return this.playableDisplayDataService.getIeObjectsPlayableDisplayData(
+			items,
+			user,
+			referer,
+			ip,
+			request
+		);
 	}
 }
