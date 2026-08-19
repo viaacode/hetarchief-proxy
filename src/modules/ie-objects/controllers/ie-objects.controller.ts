@@ -1246,7 +1246,9 @@ export class IeObjectsController {
 		description: 'Returns one (possibly null) entry per input object, in the same order',
 	})
 	@ApiBadRequestResponse({
-		description: 'objects is missing/empty, or an entry has no schemaIdentifier',
+		description:
+			'objects is missing/empty, exceeds the max allowed size, or an entry has no (or a ' +
+			'malformed) schemaIdentifier/start/end',
 	})
 	public async getIeObjectsPlayableDisplayData(
 		@Body() queryDto: IeObjectsPlayableDisplayDataQueryDto,
@@ -1261,8 +1263,20 @@ export class IeObjectsController {
 
 		const items = queryDto.objects.map((entry) => {
 			const normalized = typeof entry === 'string' ? { schemaIdentifier: entry } : entry;
-			if (!normalized?.schemaIdentifier) {
-				throw new BadRequestException('Every entry in objects requires a schemaIdentifier');
+			if (
+				!normalized ||
+				typeof normalized.schemaIdentifier !== 'string' ||
+				!normalized.schemaIdentifier
+			) {
+				throw new BadRequestException(
+					'Every entry in objects requires a schemaIdentifier of type string'
+				);
+			}
+			if (normalized.start !== undefined && typeof normalized.start !== 'number') {
+				throw new BadRequestException('start must be a number when provided');
+			}
+			if (normalized.end !== undefined && typeof normalized.end !== 'number') {
+				throw new BadRequestException('end must be a number when provided');
 			}
 			return {
 				schemaIdentifier: normalized.schemaIdentifier,

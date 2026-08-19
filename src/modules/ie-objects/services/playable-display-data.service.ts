@@ -75,6 +75,10 @@ interface AvFileData {
  * generic pieces it shares with the rest of the module (schema identifier resolution, visitor
  * space access, thumbnail token resolution) - everything specific to this endpoint lives here.
  */
+// Bounds how long a single IIIF image / peak file fetch may hang - without it, a slow or dead
+// upstream would stall its mapLimit worker (and the batch item waiting on it) indefinitely.
+const EXTERNAL_FETCH_TIMEOUT_MS = 10_000;
+
 @Injectable()
 export class PlayableDisplayDataService {
 	private logger: Logger = new Logger(PlayableDisplayDataService.name, { timestamp: true });
@@ -105,7 +109,23 @@ export class PlayableDisplayDataService {
 		const visitorSpaceAccessInfo =
 			await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
 
-		return mapLimit(
+		// Duplicate schemaIdentifiers in the same batch (e.g. the same object shown twice in a
+		// carousel with different cuepoints) share one in-flight access resolution instead of each
+		// racing the cache and triggering their own duplicate DB lookup.
+		const accessPerSchemaIdentifier = new Map<string, Promise<PlayableDisplayAccess | null>>();
+		const resolveAccessOnce = (schemaIdentifier: string): Promise<PlayableDisplayAccess | null> => {
+			if (!accessPerSchemaIdentifier.has(schemaIdentifier)) {
+				accessPerSchemaIdentifier.set(
+					schemaIdentifier,
+					this.resolvePlayableDisplayAccess(schemaIdentifier, user, visitorSpaceAccessInfo, request)
+				);
+			}
+			return accessPerSchemaIdentifier.get(schemaIdentifier);
+		};
+
+		const failedSchemaIdentifiers: string[] = [];
+
+		const results = await mapLimit(
 			items,
 			12,
 			async (item: {
@@ -114,12 +134,7 @@ export class PlayableDisplayDataService {
 				end?: number;
 			}): Promise<IeObjectPlayableDisplayData | null> => {
 				try {
-					const access = await this.resolvePlayableDisplayAccess(
-						item.schemaIdentifier,
-						user,
-						visitorSpaceAccessInfo,
-						request
-					);
+					const access = await resolveAccessOnce(item.schemaIdentifier);
 					if (!access) {
 						return null;
 					}
@@ -202,15 +217,32 @@ export class PlayableDisplayDataService {
 						...(isAvObject ? { playableUrl, mimeType, peakfileData } : { newspaperImage }),
 					};
 				} catch (err) {
-					this.logger.error(
+					// Logged individually at debug (kept for troubleshooting) and summarized below at
+					// warn, rather than one error-level log per item - a single batch can contain up to
+					// PLAYABLE_DISPLAY_DATA_MAX_OBJECTS items, and a client sending mostly bad/unknown
+					// identifiers shouldn't flood error-level logs/alerts.
+					this.logger.debug(
 						new CustomError('Failed to get playable display data for ie-object', err, {
 							schemaIdentifier: item.schemaIdentifier,
 						})
 					);
+					failedSchemaIdentifiers.push(item.schemaIdentifier);
 					return null;
 				}
 			}
 		);
+
+		if (failedSchemaIdentifiers.length) {
+			this.logger.error(
+				`Failed to get playable display data for ${failedSchemaIdentifiers.length}/${
+					items.length
+				} ie-object(s): ${failedSchemaIdentifiers.slice(0, 10).join(', ')}${
+					failedSchemaIdentifiers.length > 10 ? ', ...' : ''
+				}`
+			);
+		}
+
+		return results;
 	}
 
 	/**
@@ -332,6 +364,7 @@ export class PlayableDisplayDataService {
 		// the IIIF server rejects the token with a 403
 		const response = await fetch(`${imageUrl}/full/1000,/0/default.jpg`, {
 			headers: { Authorization: `Bearer ${token}`, Referer: referer },
+			signal: AbortSignal.timeout(EXTERNAL_FETCH_TIMEOUT_MS),
 		});
 		if (!response.ok) {
 			throw new CustomError('Failed to fetch IIIF detail image', null, {
@@ -369,7 +402,9 @@ export class PlayableDisplayDataService {
 			mediaServiceUrl,
 			`${archiefMediaUrl.origin}/viaa`
 		);
-		const response = await fetch(peakFileUrl);
+		const response = await fetch(peakFileUrl, {
+			signal: AbortSignal.timeout(EXTERNAL_FETCH_TIMEOUT_MS),
+		});
 		if (!response.ok) {
 			throw new CustomError('Failed to fetch peak file', null, {
 				peakFileUrl,

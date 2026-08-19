@@ -791,5 +791,41 @@ describe('IeObjectsController', () => {
 				)
 			).rejects.toBeInstanceOf(BadRequestException);
 		});
+
+		it('throws a BadRequestException when schemaIdentifier is not a string', async () => {
+			await expect(
+				ieObjectsController.getIeObjectsPlayableDisplayData(
+					{ objects: [{ schemaIdentifier: 12345 }] } as any,
+					mockSessionUser,
+					'referer',
+					'127.0.0.1',
+					mockRequest
+				)
+			).rejects.toBeInstanceOf(BadRequestException);
+		});
+
+		it('throws a BadRequestException when start is not a number', async () => {
+			await expect(
+				ieObjectsController.getIeObjectsPlayableDisplayData(
+					{ objects: [{ schemaIdentifier: '086348mc8s', start: '10' }] } as any,
+					mockSessionUser,
+					'referer',
+					'127.0.0.1',
+					mockRequest
+				)
+			).rejects.toBeInstanceOf(BadRequestException);
+		});
+
+		it('throws a BadRequestException when end is not a number', async () => {
+			await expect(
+				ieObjectsController.getIeObjectsPlayableDisplayData(
+					{ objects: [{ schemaIdentifier: '086348mc8s', end: '20' }] } as any,
+					mockSessionUser,
+					'referer',
+					'127.0.0.1',
+					mockRequest
+				)
+			).rejects.toBeInstanceOf(BadRequestException);
+		});
 	});
 });

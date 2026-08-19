@@ -259,7 +259,10 @@ describe('PlayableDisplayDataService', () => {
 			);
 			expect(mockFetch).toHaveBeenCalledWith(
 				'https://iiif-qas.meemoo.be/image/3/hetarchief/newspaper-page-1.jp2/full/1000,/0/default.jpg',
-				{ headers: { Authorization: 'Bearer mock-bearer-token', Referer: 'referer' } }
+				{
+					headers: { Authorization: 'Bearer mock-bearer-token', Referer: 'referer' },
+					signal: expect.any(AbortSignal),
+				}
 			);
 			expect(mockPlayerTicketService.getPlayableUrl).not.toHaveBeenCalled();
 			const expectedBase64 = Buffer.from('fake-jpeg-bytes').toString('base64');
@@ -676,7 +679,8 @@ describe('PlayableDisplayDataService', () => {
 				expect.anything()
 			);
 			expect(mockFetch).toHaveBeenCalledWith(
-				'http://archief-mediaservice/viaa/OR-rf5kf25/peak-file-1.json'
+				'http://archief-mediaservice/viaa/OR-rf5kf25/peak-file-1.json',
+				{ signal: expect.any(AbortSignal) }
 			);
 			expect(result.playableUrl).toEqual('https://example.com/ticket/OR-rf5kf25/audio-file-1.mp3');
 			expect(result.mimeType).toEqual('audio/mpeg');
