@@ -1,6 +1,15 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Transform, Type } from 'class-transformer';
-import { IsArray, IsEnum, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator';
+import {
+	ArrayMaxSize,
+	ArrayNotEmpty,
+	IsArray,
+	IsEnum,
+	IsNumber,
+	IsOptional,
+	IsString,
+	ValidateNested,
+} from 'class-validator';
 import { isArray } from 'lodash';
 
 import {
@@ -197,4 +206,49 @@ export class IeObjectsSimilarQueryDto {
 		description: 'Fetch similar object with the same maintainerId',
 	})
 	maintainerId?: string;
+}
+
+export class IeObjectPlayableDisplayDataItemDto {
+	@IsString()
+	@ApiProperty({
+		type: String,
+		description: 'Schema identifier (PID) of the ie-object',
+		example: '086348mc8s',
+	})
+	schemaIdentifier: string;
+
+	@IsNumber()
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: Number,
+		description: 'Snippet start in seconds',
+	})
+	start?: number;
+
+	@IsNumber()
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: Number,
+		description: 'Snippet end in seconds',
+	})
+	end?: number;
+}
+
+export const PLAYABLE_DISPLAY_DATA_MAX_OBJECTS = 100;
+
+export class IeObjectsPlayableDisplayDataQueryDto {
+	@IsArray()
+	@ArrayNotEmpty()
+	@ArrayMaxSize(PLAYABLE_DISPLAY_DATA_MAX_OBJECTS)
+	@ApiProperty({
+		description: `List of schema identifiers as plain strings, or objects with a schemaIdentifier and optional start/end points in seconds. Both forms may be mixed in the same list. Max ${PLAYABLE_DISPLAY_DATA_MAX_OBJECTS} items.`,
+		type: 'array',
+		items: {
+			oneOf: [
+				{ type: 'string' },
+				{ $ref: '#/components/schemas/IeObjectPlayableDisplayDataItemDto' },
+			],
+		},
+	})
+	objects: (string | IeObjectPlayableDisplayDataItemDto)[];
 }

@@ -27,6 +27,7 @@ import {
 	mockUser,
 } from '../mocks/ie-objects.mock';
 import { IeObjectsService } from '../services/ie-objects.service';
+import { PlayableDisplayDataService } from '../services/playable-display-data.service';
 
 import { IeObjectsController } from './ie-objects.controller';
 
@@ -65,6 +66,12 @@ const mockIeObjectsService: Partial<Record<keyof IeObjectsService, MockInstance>
 	})),
 	getIeObjectIdFromObjectSchemaIdentifier: vi.fn().mockResolvedValue('mock-ie-object-id'),
 	getRepresentationAndFileInIeObject: vi.fn(),
+};
+
+const mockPlayableDisplayDataService: Partial<
+	Record<keyof PlayableDisplayDataService, MockInstance>
+> = {
+	getIeObjectsPlayableDisplayData: vi.fn(),
 };
 
 const mockPlayerTicketService: Partial<Record<keyof PlayerTicketService, MockInstance>> = {
@@ -108,6 +115,10 @@ describe('IeObjectsController', () => {
 				{
 					provide: IeObjectsService,
 					useValue: mockIeObjectsService,
+				},
+				{
+					provide: PlayableDisplayDataService,
+					useValue: mockPlayableDisplayDataService,
 				},
 				{
 					provide: PlayerTicketService,
@@ -705,6 +716,116 @@ describe('IeObjectsController', () => {
 				mockSessionUser
 			);
 			expect(ieObject.items.length).toEqual(3);
+		});
+	});
+
+	describe('getIeObjectsPlayableDisplayData', () => {
+		it('normalizes plain string entries into objects before calling the service', async () => {
+			mockPlayableDisplayDataService.getIeObjectsPlayableDisplayData.mockResolvedValueOnce([null]);
+
+			await ieObjectsController.getIeObjectsPlayableDisplayData(
+				{ objects: ['086348mc8s'] },
+				mockSessionUser,
+				'referer',
+				'127.0.0.1',
+				mockRequest
+			);
+
+			expect(mockPlayableDisplayDataService.getIeObjectsPlayableDisplayData).toHaveBeenCalledWith(
+				[{ schemaIdentifier: '086348mc8s', start: undefined, end: undefined }],
+				mockSessionUser,
+				'referer',
+				'127.0.0.1',
+				mockRequest
+			);
+		});
+
+		it('passes through object entries with cuepoints, mixed with plain strings', async () => {
+			mockPlayableDisplayDataService.getIeObjectsPlayableDisplayData.mockResolvedValueOnce([
+				null,
+				null,
+			]);
+
+			await ieObjectsController.getIeObjectsPlayableDisplayData(
+				{
+					objects: ['086348mc8s', { schemaIdentifier: 'qstt4fps28', start: 10, end: 20 }],
+				},
+				mockSessionUser,
+				'referer',
+				'127.0.0.1',
+				mockRequest
+			);
+
+			expect(mockPlayableDisplayDataService.getIeObjectsPlayableDisplayData).toHaveBeenCalledWith(
+				[
+					{ schemaIdentifier: '086348mc8s', start: undefined, end: undefined },
+					{ schemaIdentifier: 'qstt4fps28', start: 10, end: 20 },
+				],
+				mockSessionUser,
+				'referer',
+				'127.0.0.1',
+				mockRequest
+			);
+		});
+
+		it('throws a BadRequestException when objects is missing or empty', async () => {
+			await expect(
+				ieObjectsController.getIeObjectsPlayableDisplayData(
+					{ objects: [] },
+					mockSessionUser,
+					'referer',
+					'127.0.0.1',
+					mockRequest
+				)
+			).rejects.toBeInstanceOf(BadRequestException);
+		});
+
+		it('throws a BadRequestException when an entry has no schemaIdentifier', async () => {
+			await expect(
+				ieObjectsController.getIeObjectsPlayableDisplayData(
+					{ objects: [{ schemaIdentifier: '' }] } as any,
+					mockSessionUser,
+					'referer',
+					'127.0.0.1',
+					mockRequest
+				)
+			).rejects.toBeInstanceOf(BadRequestException);
+		});
+
+		it('throws a BadRequestException when schemaIdentifier is not a string', async () => {
+			await expect(
+				ieObjectsController.getIeObjectsPlayableDisplayData(
+					{ objects: [{ schemaIdentifier: 12345 }] } as any,
+					mockSessionUser,
+					'referer',
+					'127.0.0.1',
+					mockRequest
+				)
+			).rejects.toBeInstanceOf(BadRequestException);
+		});
+
+		it('throws a BadRequestException when start is not a number', async () => {
+			await expect(
+				ieObjectsController.getIeObjectsPlayableDisplayData(
+					{ objects: [{ schemaIdentifier: '086348mc8s', start: '10' }] } as any,
+					mockSessionUser,
+					'referer',
+					'127.0.0.1',
+					mockRequest
+				)
+			).rejects.toBeInstanceOf(BadRequestException);
+		});
+
+		it('throws a BadRequestException when end is not a number', async () => {
+			await expect(
+				ieObjectsController.getIeObjectsPlayableDisplayData(
+					{ objects: [{ schemaIdentifier: '086348mc8s', end: '20' }] } as any,
+					mockSessionUser,
+					'referer',
+					'127.0.0.1',
+					mockRequest
+				)
+			).rejects.toBeInstanceOf(BadRequestException);
 		});
 	});
 });
