@@ -230,47 +230,13 @@ export class IeObjectsSimilarQueryDto {
 	maintainerId?: string;
 }
 
-export class IeObjectPlayableDisplayDataItemDto {
+export class IeObjectsPlayableDisplayDataQueryDto {
 	@IsString()
 	@ApiProperty({
 		type: String,
-		description: 'Schema identifier (PID) of the ie-object',
-		example: '086348mc8s',
+		description:
+			'Id of the content block whose config lists the ie-objects to fetch playable display data for',
+		example: 'c9c9f4b1-1a6f-4f0e-9d2e-9e5f1a2b3c4d',
 	})
-	schemaIdentifier: string;
-
-	@IsNumber()
-	@IsOptional()
-	@ApiPropertyOptional({
-		type: Number,
-		description: 'Snippet start in seconds',
-	})
-	start?: number;
-
-	@IsNumber()
-	@IsOptional()
-	@ApiPropertyOptional({
-		type: Number,
-		description: 'Snippet end in seconds',
-	})
-	end?: number;
-}
-
-export const PLAYABLE_DISPLAY_DATA_MAX_OBJECTS = 100;
-
-export class IeObjectsPlayableDisplayDataQueryDto {
-	@IsArray()
-	@ArrayNotEmpty()
-	@ArrayMaxSize(PLAYABLE_DISPLAY_DATA_MAX_OBJECTS)
-	@ApiProperty({
-		description: `List of schema identifiers as plain strings, or objects with a schemaIdentifier and optional start/end points in seconds. Both forms may be mixed in the same list. Max ${PLAYABLE_DISPLAY_DATA_MAX_OBJECTS} items.`,
-		type: 'array',
-		items: {
-			oneOf: [
-				{ type: 'string' },
-				{ $ref: '#/components/schemas/IeObjectPlayableDisplayDataItemDto' },
-			],
-		},
-	})
-	objects: (string | IeObjectPlayableDisplayDataItemDto)[];
+	blockId: string;
 }

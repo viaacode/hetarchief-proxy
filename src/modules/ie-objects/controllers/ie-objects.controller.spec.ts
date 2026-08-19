@@ -1,4 +1,5 @@
 import {
+	ContentPagesService,
 	PlayerTicketController,
 	PlayerTicketService,
 	TranslationsService,
@@ -74,6 +75,10 @@ const mockPlayableDisplayDataService: Partial<
 	getIeObjectsPlayableDisplayData: vi.fn(),
 };
 
+const mockContentPagesService: Partial<Record<keyof ContentPagesService, MockInstance>> = {
+	getContentPageBlockById: vi.fn(),
+};
+
 const mockPlayerTicketService: Partial<Record<keyof PlayerTicketService, MockInstance>> = {
 	getPlayableUrl: vi.fn(),
 	getBrowseUrl: vi.fn(),
@@ -119,6 +124,10 @@ describe('IeObjectsController', () => {
 				{
 					provide: PlayableDisplayDataService,
 					useValue: mockPlayableDisplayDataService,
+				},
+				{
+					provide: ContentPagesService,
+					useValue: mockContentPagesService,
 				},
 				{
 					provide: PlayerTicketService,
@@ -835,11 +844,22 @@ describe('IeObjectsController', () => {
 	});
 
 	describe('getIeObjectsPlayableDisplayData', () => {
-		it('normalizes plain string entries into objects before calling the service', async () => {
+		const blockId = 'c9c9f4b1-1a6f-4f0e-9d2e-9e5f1a2b3c4d';
+
+		it('resolves the objects and cuepoints of a HETARCHIEF_VIDEO block', async () => {
+			mockContentPagesService.getContentPageBlockById.mockResolvedValueOnce({
+				id: blockId,
+				type: 'HETARCHIEF_VIDEO',
+				components: {
+					mediaItem: { type: 'IE_OBJECT', value: '086348mc8s' },
+					startTime: '00:01:30',
+					endTime: '00:02:00',
+				},
+			});
 			mockPlayableDisplayDataService.getIeObjectsPlayableDisplayData.mockResolvedValueOnce([null]);
 
 			await ieObjectsController.getIeObjectsPlayableDisplayData(
-				{ objects: ['086348mc8s'] },
+				{ blockId },
 				mockSessionUser,
 				'referer',
 				'127.0.0.1',
@@ -847,7 +867,7 @@ describe('IeObjectsController', () => {
 			);
 
 			expect(mockPlayableDisplayDataService.getIeObjectsPlayableDisplayData).toHaveBeenCalledWith(
-				[{ schemaIdentifier: '086348mc8s', start: undefined, end: undefined }],
+				[{ schemaIdentifier: '086348mc8s', start: 90, end: 120 }],
 				mockSessionUser,
 				'referer',
 				'127.0.0.1',
@@ -855,16 +875,21 @@ describe('IeObjectsController', () => {
 			);
 		});
 
-		it('passes through object entries with cuepoints, mixed with plain strings', async () => {
+		it('keeps the position of elements without an object in the response', async () => {
+			mockContentPagesService.getContentPageBlockById.mockResolvedValueOnce({
+				id: blockId,
+				type: 'TIMELINE',
+				components: [
+					{ visualType: 'IMAGE', image: 'https://example.com/image.jpg' },
+					{ visualType: 'OBJECT', mediaItem: { type: 'IE_OBJECT', value: 'qstt4fps28' } },
+				],
+			});
 			mockPlayableDisplayDataService.getIeObjectsPlayableDisplayData.mockResolvedValueOnce([
-				null,
-				null,
+				{ schemaIdentifier: 'qstt4fps28' },
 			]);
 
-			await ieObjectsController.getIeObjectsPlayableDisplayData(
-				{
-					objects: ['086348mc8s', { schemaIdentifier: 'qstt4fps28', start: 10, end: 20 }],
-				},
+			const response = await ieObjectsController.getIeObjectsPlayableDisplayData(
+				{ blockId },
 				mockSessionUser,
 				'referer',
 				'127.0.0.1',
@@ -872,21 +897,19 @@ describe('IeObjectsController', () => {
 			);
 
 			expect(mockPlayableDisplayDataService.getIeObjectsPlayableDisplayData).toHaveBeenCalledWith(
-				[
-					{ schemaIdentifier: '086348mc8s', start: undefined, end: undefined },
-					{ schemaIdentifier: 'qstt4fps28', start: 10, end: 20 },
-				],
+				[{ schemaIdentifier: 'qstt4fps28' }],
 				mockSessionUser,
 				'referer',
 				'127.0.0.1',
 				mockRequest
 			);
+			expect(response).toEqual([null, { schemaIdentifier: 'qstt4fps28' }]);
 		});
 
-		it('throws a BadRequestException when objects is missing or empty', async () => {
+		it('throws a BadRequestException when blockId is missing', async () => {
 			await expect(
 				ieObjectsController.getIeObjectsPlayableDisplayData(
-					{ objects: [] },
+					{} as any,
 					mockSessionUser,
 					'referer',
 					'127.0.0.1',
@@ -895,46 +918,30 @@ describe('IeObjectsController', () => {
 			).rejects.toBeInstanceOf(BadRequestException);
 		});
 
-		it('throws a BadRequestException when an entry has no schemaIdentifier', async () => {
+		it('throws a NotFoundException when no block exists with the given id', async () => {
+			mockContentPagesService.getContentPageBlockById.mockResolvedValueOnce(null);
+
 			await expect(
 				ieObjectsController.getIeObjectsPlayableDisplayData(
-					{ objects: [{ schemaIdentifier: '' }] } as any,
+					{ blockId },
 					mockSessionUser,
 					'referer',
 					'127.0.0.1',
 					mockRequest
 				)
-			).rejects.toBeInstanceOf(BadRequestException);
+			).rejects.toBeInstanceOf(NotFoundException);
 		});
 
-		it('throws a BadRequestException when schemaIdentifier is not a string', async () => {
-			await expect(
-				ieObjectsController.getIeObjectsPlayableDisplayData(
-					{ objects: [{ schemaIdentifier: 12345 }] } as any,
-					mockSessionUser,
-					'referer',
-					'127.0.0.1',
-					mockRequest
-				)
-			).rejects.toBeInstanceOf(BadRequestException);
-		});
+		it('throws a BadRequestException when the block type is not supported', async () => {
+			mockContentPagesService.getContentPageBlockById.mockResolvedValueOnce({
+				id: blockId,
+				type: 'RICH_TEXT',
+				components: {},
+			});
 
-		it('throws a BadRequestException when start is not a number', async () => {
 			await expect(
 				ieObjectsController.getIeObjectsPlayableDisplayData(
-					{ objects: [{ schemaIdentifier: '086348mc8s', start: '10' }] } as any,
-					mockSessionUser,
-					'referer',
-					'127.0.0.1',
-					mockRequest
-				)
-			).rejects.toBeInstanceOf(BadRequestException);
-		});
-
-		it('throws a BadRequestException when end is not a number', async () => {
-			await expect(
-				ieObjectsController.getIeObjectsPlayableDisplayData(
-					{ objects: [{ schemaIdentifier: '086348mc8s', end: '20' }] } as any,
+					{ blockId },
 					mockSessionUser,
 					'referer',
 					'127.0.0.1',

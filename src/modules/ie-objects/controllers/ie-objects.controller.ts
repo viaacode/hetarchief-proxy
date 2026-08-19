@@ -2,7 +2,11 @@
 // Disable consistent imports since they try to import IeObjectsQueryDto as a type
 // But that breaks the endpoint body validation
 
-import { PlayerTicketController, PlayerTicketService } from '@meemoo/admin-core-api';
+import {
+	ContentPagesService,
+	PlayerTicketController,
+	PlayerTicketService,
+} from '@meemoo/admin-core-api';
 import {
 	BadRequestException,
 	Body,
@@ -46,6 +50,10 @@ import {
 	ThumbnailQueryDto,
 } from '../dto/ie-objects.dto';
 import { checkAndFixFormatFilter } from '../helpers/check-and-fix-format-filter';
+import {
+	PLAYABLE_DISPLAY_DATA_BLOCK_TYPES,
+	contentBlockToPlayableDisplayDataItems,
+} from '../helpers/content-block-to-playable-items';
 import { convertObjectToCsv } from '../helpers/convert-objects-to-csv';
 import { convertObjectToXml } from '../helpers/convert-objects-to-xml';
 import { limitAccessToObjectDetails } from '../helpers/limit-access-to-object-details';
@@ -97,6 +105,7 @@ export class IeObjectsController {
 		private eventsService: EventsService,
 		private playerTicketService: PlayerTicketService,
 		private playerTicketController: PlayerTicketController,
+		private contentPagesService: ContentPagesService,
 		private configService: ConfigService<Configuration>
 	) {}
 
@@ -1271,9 +1280,10 @@ export class IeObjectsController {
 	}
 
 	/**
-	 * Lightweight, batch-capable alternative to GET /ie-objects for rendering playable preview
-	 * tiles (e.g. a carousel). Accepts a mix of plain schema identifier strings and objects with
-	 * an optional start/end cuepoint (in seconds) to get a video still at that timestamp.
+	 * Lightweight, batch-capable alternative to GET /ie-objects for rendering the playable preview
+	 * tiles of a content block (e.g. a carousel). The objects to resolve -- and the snippet
+	 * start/end cuepoints to cut them at -- are read from the block's own stored config, so a
+	 * client can't ask for a cut that no editor configured.
 	 * @param queryDto
 	 * @param user
 	 * @param referer
@@ -1283,7 +1293,7 @@ export class IeObjectsController {
 	@Post('playable-display-data')
 	@HttpCode(200)
 	@ApiOperation({
-		summary: 'Get lightweight playable display data for a list of ie-objects',
+		summary: 'Get lightweight playable display data for the ie-objects of a content block',
 		description:
 			'Smaller/faster alternative to GET /ie-objects for rendering playable preview tiles ' +
 			'(e.g. carousels): schemaIdentifier, name, thumbnailUrl, dctermsFormat, maintainer info, ' +
@@ -1291,18 +1301,21 @@ export class IeObjectsController {
 			'additionally containing the waveform peak sample array for audio and audio fragments. Non ' +
 			'audio/video objects (mainly newspapers) get a newspaperImage instead: a self-contained ' +
 			'base64 data uri of the IIIF detail image, usable directly as an <img src> with no ' +
-			'further requests. Optionally pass a start/end cuepoint (in seconds) per object to get ' +
-			'a video still at that timestamp instead of the poster image.',
+			'further requests. The objects are taken from the config of the content block with the ' +
+			'given blockId, together with the snippet start/end cuepoints (in seconds) its editor ' +
+			'configured, which yield a video still at that timestamp instead of the poster image. ' +
+			'Supported block types: HETARCHIEF_VIDEO, HERO_CAROUSEL, TIMELINE.',
 	})
 	@ApiBody({ type: IeObjectsPlayableDisplayDataQueryDto, required: true })
 	@ApiOkResponse({
-		description: 'Returns one (possibly null) entry per input object, in the same order',
+		description:
+			'Returns one (possibly null) entry per ie-object referenced by the content block, in the ' +
+			'order the block lists them',
 	})
 	@ApiBadRequestResponse({
-		description:
-			'objects is missing/empty, exceeds the max allowed size, or an entry has no (or a ' +
-			'malformed) schemaIdentifier/start/end',
+		description: 'blockId is missing, or the block it points to is not of a supported type',
 	})
+	@ApiNotFoundResponse({ description: 'No content block exists with the given blockId' })
 	public async getIeObjectsPlayableDisplayData(
 		@Body() queryDto: IeObjectsPlayableDisplayDataQueryDto,
 		@SessionUser() user: SessionUserEntity,
@@ -1310,40 +1323,41 @@ export class IeObjectsController {
 		@Ip() ip: string,
 		@Req() request: Request
 	): Promise<(IeObjectPlayableDisplayData | null)[]> {
-		if (!queryDto?.objects?.length) {
-			throw new BadRequestException('Body param objects is required and must be a non-empty array');
+		if (!queryDto?.blockId) {
+			throw new BadRequestException('Body param blockId is required and must be a string');
 		}
 
-		const items = queryDto.objects.map((entry) => {
-			const normalized = typeof entry === 'string' ? { schemaIdentifier: entry } : entry;
-			if (
-				!normalized ||
-				typeof normalized.schemaIdentifier !== 'string' ||
-				!normalized.schemaIdentifier
-			) {
-				throw new BadRequestException(
-					'Every entry in objects requires a schemaIdentifier of type string'
-				);
-			}
-			if (normalized.start !== undefined && typeof normalized.start !== 'number') {
-				throw new BadRequestException('start must be a number when provided');
-			}
-			if (normalized.end !== undefined && typeof normalized.end !== 'number') {
-				throw new BadRequestException('end must be a number when provided');
-			}
-			return {
-				schemaIdentifier: normalized.schemaIdentifier,
-				start: normalized.start,
-				end: normalized.end,
-			};
-		});
+		const contentBlock = await this.contentPagesService.getContentPageBlockById(queryDto.blockId);
 
-		return this.playableDisplayDataService.getIeObjectsPlayableDisplayData(
-			items,
-			user,
-			referer,
-			ip,
-			request
-		);
+		if (!contentBlock) {
+			throw new NotFoundException(`No content block found with id '${queryDto.blockId}'`);
+		}
+
+		// Taking the objects and their snippet start/end times from the stored block config -
+		// instead of from the request body - is the point of this endpoint: a client can only get
+		// a cut of an object for which an editor actually configured that cut in a content block.
+		const items = contentBlockToPlayableDisplayDataItems(contentBlock);
+
+		if (!items) {
+			throw new BadRequestException(
+				`Content block '${queryDto.blockId}' is of type '${contentBlock.type}', which does not reference playable objects. Supported types: ${PLAYABLE_DISPLAY_DATA_BLOCK_TYPES.join(', ')}`
+			);
+		}
+
+		// Slots without an object (e.g. a timeline node showing an image) are not sent to the
+		// service, but keep their place in the response so the client can keep matching the
+		// entries to the block's elements by position.
+		const requestableItems = compact(items);
+		const playableDisplayData =
+			await this.playableDisplayDataService.getIeObjectsPlayableDisplayData(
+				requestableItems,
+				user,
+				referer,
+				ip,
+				request
+			);
+		let responseIndex = 0;
+
+		return items.map((item) => (item ? (playableDisplayData[responseIndex++] ?? null) : null));
 	}
 }

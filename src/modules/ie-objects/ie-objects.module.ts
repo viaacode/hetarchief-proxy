@@ -1,4 +1,9 @@
-import { DataModule, PlayerTicketModule, VideoStillsModule } from '@meemoo/admin-core-api';
+import {
+	ContentPagesModule,
+	DataModule,
+	PlayerTicketModule,
+	VideoStillsModule,
+} from '@meemoo/admin-core-api';
 import { CacheModule } from '@nestjs/cache-manager';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
@@ -16,6 +21,7 @@ import { VisitsModule } from '~modules/visits';
 	controllers: [IeObjectsController],
 	imports: [
 		ConfigModule,
+		ContentPagesModule,
 		DataModule,
 		EventsModule,
 		PlayerTicketModule,

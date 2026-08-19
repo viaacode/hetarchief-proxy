@@ -4,7 +4,6 @@ import { describe, expect, it } from 'vitest';
 import {
 	IeObjectsPlayableDisplayDataQueryDto,
 	IeObjectsQueryDto,
-	PLAYABLE_DISPLAY_DATA_MAX_OBJECTS,
 	PlayerTicketsQueryDto,
 	SearchFilter,
 } from './ie-objects.dto';
@@ -34,24 +33,22 @@ describe('IeObjectsDto', () => {
 		});
 	});
 	describe('IeObjectsPlayableDisplayDataQueryDto', () => {
-		it('accepts a non-empty objects array up to the max size', async () => {
+		it('accepts a blockId', async () => {
 			const dto = plainToInstance(IeObjectsPlayableDisplayDataQueryDto, {
-				objects: Array.from({ length: PLAYABLE_DISPLAY_DATA_MAX_OBJECTS }, (_, i) => `id-${i}`),
+				blockId: 'c9c9f4b1-1a6f-4f0e-9d2e-9e5f1a2b3c4d',
 			});
 			const errors = await validate(dto);
 			expect(errors).toEqual([]);
 		});
 
-		it('rejects an empty objects array', async () => {
-			const dto = plainToInstance(IeObjectsPlayableDisplayDataQueryDto, { objects: [] });
+		it('rejects a missing blockId', async () => {
+			const dto = plainToInstance(IeObjectsPlayableDisplayDataQueryDto, {});
 			const errors = await validate(dto);
 			expect(errors).not.toEqual([]);
 		});
 
-		it('rejects an objects array larger than the max size', async () => {
-			const dto = plainToInstance(IeObjectsPlayableDisplayDataQueryDto, {
-				objects: Array.from({ length: PLAYABLE_DISPLAY_DATA_MAX_OBJECTS + 1 }, (_, i) => `id-${i}`),
-			});
+		it('rejects a non-string blockId', async () => {
+			const dto = plainToInstance(IeObjectsPlayableDisplayDataQueryDto, { blockId: 42 });
 			const errors = await validate(dto);
 			expect(errors).not.toEqual([]);
 		});
