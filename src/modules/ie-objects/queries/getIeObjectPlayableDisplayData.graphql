@@ -1,0 +1,67 @@
+query getIeObjectPlayableDisplayData($ieObjectId: String!) {
+	ieObject: graph_intellectual_entity(where: { id: { _eq: $ieObjectId } }) {
+		schema_identifier
+		schema_name
+		dctermsFormat {
+			dcterms_format
+		}
+		schemaMaintainer {
+			org_identifier
+			skos_pref_label
+			ha_org_has_logo
+			ha_org_sector
+			hasPreference {
+				ha_pref
+			}
+		}
+	}
+
+	schemaThumbnailUrl: graph__schema_thumbnail_url(
+		where: { intellectual_entity_id: { _eq: $ieObjectId } }
+	) {
+		schema_thumbnail_url
+	}
+
+	schemaLicense: graph_schema_license(where: { intellectual_entity_id: { _eq: $ieObjectId } }) {
+		schema_license
+	}
+
+	getHasPart: graph_intellectual_entity(
+		where: { relation_is_part_of: { _eq: $ieObjectId } }
+		order_by: { schema_position: asc }
+	) {
+		isRepresentedBy {
+			id
+			is_media_fragment_of
+			includes {
+				file {
+					id
+					ebucore_has_mime_type
+					premis_stored_at
+					hasMediaFragment {
+						schema_start_time
+						schema_end_time
+					}
+				}
+			}
+		}
+	}
+
+	getIsRepresentedBy: graph__intellectual_entity(where: { id: { _eq: $ieObjectId } }) {
+		isRepresentedBy {
+			id
+			is_media_fragment_of
+			includes {
+				file {
+					id
+					ebucore_has_mime_type
+					premis_stored_at
+					hasMediaFragment {
+						schema_start_time
+						schema_end_time
+					}
+				}
+			}
+		}
+	}
+}

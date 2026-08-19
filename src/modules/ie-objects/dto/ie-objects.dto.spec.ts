@@ -1,5 +1,13 @@
+import { plainToInstance } from 'class-transformer';
+import { validate } from 'class-validator';
 import { describe, expect, it } from 'vitest';
-import { IeObjectsQueryDto, PlayerTicketsQueryDto, SearchFilter } from './ie-objects.dto';
+import {
+	IeObjectsPlayableDisplayDataQueryDto,
+	IeObjectsQueryDto,
+	PLAYABLE_DISPLAY_DATA_MAX_OBJECTS,
+	PlayerTicketsQueryDto,
+	SearchFilter,
+} from './ie-objects.dto';
 
 describe('IeObjectsDto', () => {
 	describe('SearchFilters', () => {
@@ -23,6 +31,29 @@ describe('IeObjectsDto', () => {
 		it('should be able to construct a PlayerTicketsQueryDto object', async () => {
 			const playerTicketsQueryDto = new PlayerTicketsQueryDto();
 			expect(playerTicketsQueryDto).toEqual({});
+		});
+	});
+	describe('IeObjectsPlayableDisplayDataQueryDto', () => {
+		it('accepts a non-empty objects array up to the max size', async () => {
+			const dto = plainToInstance(IeObjectsPlayableDisplayDataQueryDto, {
+				objects: Array.from({ length: PLAYABLE_DISPLAY_DATA_MAX_OBJECTS }, (_, i) => `id-${i}`),
+			});
+			const errors = await validate(dto);
+			expect(errors).toEqual([]);
+		});
+
+		it('rejects an empty objects array', async () => {
+			const dto = plainToInstance(IeObjectsPlayableDisplayDataQueryDto, { objects: [] });
+			const errors = await validate(dto);
+			expect(errors).not.toEqual([]);
+		});
+
+		it('rejects an objects array larger than the max size', async () => {
+			const dto = plainToInstance(IeObjectsPlayableDisplayDataQueryDto, {
+				objects: Array.from({ length: PLAYABLE_DISPLAY_DATA_MAX_OBJECTS + 1 }, (_, i) => `id-${i}`),
+			});
+			const errors = await validate(dto);
+			expect(errors).not.toEqual([]);
 		});
 	});
 });

@@ -10,6 +10,7 @@ import {
 	ForbiddenException,
 	Get,
 	Header,
+	HttpCode,
 	NotFoundException,
 	Param,
 	Post,
@@ -38,6 +39,7 @@ import type { Configuration } from '~config';
 
 import {
 	IeObjectsAutocompleteQueryDto,
+	IeObjectsPlayableDisplayDataQueryDto,
 	IeObjectsQueryDto,
 	IeObjectsSimilarQueryDto,
 	PlayerTicketsQueryDto,
@@ -53,6 +55,7 @@ import {
 	IeObjectAccessThrough,
 	IeObjectForAccessCheck,
 	IeObjectLicense,
+	type IeObjectPlayableDisplayData,
 	type IeObjectSeo,
 	IeObjectType,
 	type IeObjectsWithAggregations,
@@ -61,6 +64,7 @@ import {
 } from '../ie-objects.types';
 
 import { IeObjectsService } from '../services/ie-objects.service';
+import { PlayableDisplayDataService } from '../services/playable-display-data.service';
 
 import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
 import { mapLimit } from 'blend-promise-utils';
@@ -89,6 +93,7 @@ import { SortDirection } from '~shared/types';
 export class IeObjectsController {
 	constructor(
 		private ieObjectsService: IeObjectsService,
+		private playableDisplayDataService: PlayableDisplayDataService,
 		private eventsService: EventsService,
 		private playerTicketService: PlayerTicketService,
 		private playerTicketController: PlayerTicketController,
@@ -1263,5 +1268,82 @@ export class IeObjectsController {
 			console.error(error);
 			throw error;
 		}
+	}
+
+	/**
+	 * Lightweight, batch-capable alternative to GET /ie-objects for rendering playable preview
+	 * tiles (e.g. a carousel). Accepts a mix of plain schema identifier strings and objects with
+	 * an optional start/end cuepoint (in seconds) to get a video still at that timestamp.
+	 * @param queryDto
+	 * @param user
+	 * @param referer
+	 * @param ip
+	 * @param request
+	 */
+	@Post('playable-display-data')
+	@HttpCode(200)
+	@ApiOperation({
+		summary: 'Get lightweight playable display data for a list of ie-objects',
+		description:
+			'Smaller/faster alternative to GET /ie-objects for rendering playable preview tiles ' +
+			'(e.g. carousels): schemaIdentifier, name, thumbnailUrl, dctermsFormat, maintainer info, ' +
+			'and, for audio/video objects, a ready-to-play playableUrl (+ mimeType), with peakfileData ' +
+			'additionally containing the waveform peak sample array for audio and audio fragments. Non ' +
+			'audio/video objects (mainly newspapers) get a newspaperImage instead: a self-contained ' +
+			'base64 data uri of the IIIF detail image, usable directly as an <img src> with no ' +
+			'further requests. Optionally pass a start/end cuepoint (in seconds) per object to get ' +
+			'a video still at that timestamp instead of the poster image.',
+	})
+	@ApiBody({ type: IeObjectsPlayableDisplayDataQueryDto, required: true })
+	@ApiOkResponse({
+		description: 'Returns one (possibly null) entry per input object, in the same order',
+	})
+	@ApiBadRequestResponse({
+		description:
+			'objects is missing/empty, exceeds the max allowed size, or an entry has no (or a ' +
+			'malformed) schemaIdentifier/start/end',
+	})
+	public async getIeObjectsPlayableDisplayData(
+		@Body() queryDto: IeObjectsPlayableDisplayDataQueryDto,
+		@SessionUser() user: SessionUserEntity,
+		@Referer() referer: string | null,
+		@Ip() ip: string,
+		@Req() request: Request
+	): Promise<(IeObjectPlayableDisplayData | null)[]> {
+		if (!queryDto?.objects?.length) {
+			throw new BadRequestException('Body param objects is required and must be a non-empty array');
+		}
+
+		const items = queryDto.objects.map((entry) => {
+			const normalized = typeof entry === 'string' ? { schemaIdentifier: entry } : entry;
+			if (
+				!normalized ||
+				typeof normalized.schemaIdentifier !== 'string' ||
+				!normalized.schemaIdentifier
+			) {
+				throw new BadRequestException(
+					'Every entry in objects requires a schemaIdentifier of type string'
+				);
+			}
+			if (normalized.start !== undefined && typeof normalized.start !== 'number') {
+				throw new BadRequestException('start must be a number when provided');
+			}
+			if (normalized.end !== undefined && typeof normalized.end !== 'number') {
+				throw new BadRequestException('end must be a number when provided');
+			}
+			return {
+				schemaIdentifier: normalized.schemaIdentifier,
+				start: normalized.start,
+				end: normalized.end,
+			};
+		});
+
+		return this.playableDisplayDataService.getIeObjectsPlayableDisplayData(
+			items,
+			user,
+			referer,
+			ip,
+			request
+		);
 	}
 }

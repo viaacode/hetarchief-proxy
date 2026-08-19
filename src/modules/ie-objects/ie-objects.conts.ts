@@ -22,6 +22,25 @@ export const IE_OBJECT_AV_TYPES: Readonly<IeObjectType[]> = [
 	IeObjectType.VIDEO_FRAGMENT,
 ];
 
+// Mirrors FLOWPLAYER_VIDEO_FORMATS/FLOWPLAYER_AUDIO_FORMATS/JSON_FORMATS in the hetarchief-client
+// repo (src/modules/ie-objects/ie-objects.consts.tsx), which picks the first file in a
+// representation matching these mime types as the file to play/visualize.
+export const FLOWPLAYER_VIDEO_FORMATS: Readonly<string[]> = [
+	'video/mp4',
+	'video/ogv',
+	'video/webm',
+	'video/m3u8',
+	'application/vnd.apple.mpegurl',
+];
+export const FLOWPLAYER_AUDIO_FORMATS: Readonly<string[]> = ['audio/mp4', 'audio/mpeg'];
+export const FLOWPLAYER_FORMATS: Readonly<string[]> = [
+	...FLOWPLAYER_VIDEO_FORMATS,
+	...FLOWPLAYER_AUDIO_FORMATS,
+];
+export const JSON_FORMATS: Readonly<string[]> = ['application/json'];
+// Mirrors IMAGE_API_FORMATS in the hetarchief-client repo (src/modules/ie-objects/ie-objects.consts.tsx)
+export const IMAGE_API_FORMATS: Readonly<string[]> = ['image/jph', 'image/jp2'];
+
 export const IE_OBJECT_INTRA_CP_LICENSES: Readonly<IeObjectLicense[]> = [
 	IeObjectLicense.INTRA_CP_CONTENT,
 	IeObjectLicense.INTRA_CP_METADATA_ALL,

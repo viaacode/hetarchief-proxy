@@ -1,10 +1,11 @@
-import { DataModule, PlayerTicketModule } from '@meemoo/admin-core-api';
+import { DataModule, PlayerTicketModule, VideoStillsModule } from '@meemoo/admin-core-api';
 import { CacheModule } from '@nestjs/cache-manager';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 
 import { IeObjectsController } from './controllers/ie-objects.controller';
 import { IeObjectsService } from './services/ie-objects.service';
+import { PlayableDisplayDataService } from './services/playable-display-data.service';
 
 import { EventsModule } from '~modules/events';
 import { OrganisationsModule } from '~modules/organisations/organisations.module';
@@ -19,13 +20,14 @@ import { VisitsModule } from '~modules/visits';
 		EventsModule,
 		PlayerTicketModule,
 		VisitsModule,
+		VideoStillsModule,
 		OrganisationsModule,
 		SpacesModule,
 		CacheModule.register({
 			max: 1000,
 		}),
 	],
-	providers: [IeObjectsService, IeObjectsController],
-	exports: [IeObjectsService, IeObjectsController],
+	providers: [IeObjectsService, PlayableDisplayDataService, IeObjectsController],
+	exports: [IeObjectsService, PlayableDisplayDataService, IeObjectsController],
 })
 export class IeObjectsModule {}
