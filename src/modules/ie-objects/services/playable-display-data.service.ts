@@ -288,8 +288,8 @@ export class PlayableDisplayDataService {
 				isPublicDomain
 			);
 
-			if (!isAudio && item.start) {
-				thumbnailUrl = await this.getVideoStillThumbnail(playableFile, startTime ?? item.start);
+			if (!isAudio && startTime) {
+				thumbnailUrl = await this.getVideoStillThumbnail(playableFile, startTime);
 			}
 		}
 

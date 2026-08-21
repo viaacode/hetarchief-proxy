@@ -107,7 +107,7 @@ function adaptHetArchiefVideoBlock(components: {
  * `startPoint` / `endPoint`.
  */
 function adaptHeroCarouselBlock(components: {
-	elements?: { mediaItem?: { value?: string }; startPoint?: string; endPoint?: string }[];
+	elements?: { mediaItem?: { value?: string }; startTime?: string; endTime?: string }[];
 }): PlayableDisplayDataItem[] {
 	return (components?.elements || []).map((element) => {
 		const schemaIdentifier = getSchemaIdentifier(element?.mediaItem);
@@ -116,7 +116,7 @@ function adaptHeroCarouselBlock(components: {
 			return null;
 		}
 
-		return { schemaIdentifier, ...getSnipPoint(element?.startPoint, element?.endPoint) };
+		return { schemaIdentifier, ...getSnipPoint(element?.startTime, element?.endTime) };
 	});
 }
 
