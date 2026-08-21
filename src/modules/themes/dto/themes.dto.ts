@@ -480,9 +480,9 @@ export class IeObjectsInThemeResponseDto {
 	})
 	ieObjects: IeObjectInThemeResponseDto[];
 
-	@ApiPropertyOptional({
+	@ApiProperty({
 		type: Number,
-		description: 'The total ie-objects linked to this theme. Is null if random order is specified',
+		description: 'The total ie-objects linked to this theme',
 	})
-	total: number | null;
+	total: number;
 }

@@ -32,5 +32,10 @@ query getThemeWithObjectsInRandomOrder($themeId: uuid!, $objectsLimit: Int!) {
 				}
 			}
 		}
+		ieObjectLinks_aggregate {
+			aggregate {
+				count
+			}
+		}
 	}
 }

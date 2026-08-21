@@ -37,6 +37,7 @@ const mockGetIeObjectsInThemeResponse: GetThemeWithObjectsInRandomOrderQuery = {
 		name_en: 'Culture & Society',
 		image_url: 'https://example.com/nature.jpg',
 		updated_at: '2024-01-01T00:00:00.000Z',
+		ieObjectLinks_aggregate: { aggregate: { count: 2 } },
 		ieObjectLinksRandomOrder: [
 			{
 				ieObject: {
@@ -159,6 +160,8 @@ describe('ThemesService', () => {
 			expect(result.imageUrl).toEqual('https://example.com/nature.jpg');
 			// null ieObjects entries are filtered out
 			expect(result.ieObjects).toHaveLength(2);
+			// The total is the number of linked ie-objects, also for the random order
+			expect(result.total).toEqual(2);
 		});
 
 		it('correctly maps ie-object fields', async () => {
