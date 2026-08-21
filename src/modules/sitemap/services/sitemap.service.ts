@@ -369,7 +369,7 @@ export class SitemapService {
 					hreflang: Locale.Nl,
 				},
 			],
-			changefreq: 'weekly',
+			changefreq: 'monthly',
 			lastmod: format(new Date(object.updatedAt), 'yyyy-MM-dd'),
 		};
 	}
