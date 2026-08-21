@@ -5,9 +5,11 @@ import {
 	ArrayNotEmpty,
 	IsArray,
 	IsEnum,
+	IsInt,
 	IsNumber,
 	IsOptional,
 	IsString,
+	Min,
 	ValidateNested,
 } from 'class-validator';
 import { isArray } from 'lodash';
@@ -175,6 +177,38 @@ export class PlayerTicketsQueryDto {
 		required: true,
 	})
 	fileId: string;
+
+	/**
+	 * Start and end time of the snippet that should be played, in whole seconds.
+	 * Used by the "Videoblok" content block to play an editorial snippet of an AV object,
+	 * without that snippet existing as a separate object in the MAM.
+	 * https://meemoo.atlassian.net/browse/ARC-3832
+	 *
+	 * Either both are given or neither is (see assertValidStartAndEndTime in the controller):
+	 * the ticket service only cuts when it receives an end time, so a start without an end
+	 * would silently return an uncut url.
+	 */
+	@IsInt()
+	@Min(0)
+	@Type(() => Number)
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: Number,
+		description: 'Start time of the snippet to play, in seconds. Requires endTime.',
+		example: 10,
+	})
+	startTime?: number;
+
+	@IsInt()
+	@Min(0)
+	@Type(() => Number)
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: Number,
+		description: 'End time of the snippet to play, in seconds. Requires startTime.',
+		example: 25,
+	})
+	endTime?: number;
 }
 
 export class ThumbnailQueryDto {
@@ -184,18 +218,6 @@ export class ThumbnailQueryDto {
 		description: 'Get the playable url for the object with this id',
 	})
 	id: string;
-}
-
-export class IeObjectsMeemooIdentifiersQueryDto {
-	@IsArray()
-	@IsOptional()
-	@Transform(commaSeparatedStringToArray)
-	@ApiPropertyOptional({
-		type: Array,
-		description: 'The identifiers to fetch corresponding schema_identifiers for',
-		default: [],
-	})
-	meemooIdentifiers: string[];
 }
 
 export class IeObjectsSimilarQueryDto {
@@ -212,7 +234,9 @@ export class IeObjectPlayableDisplayDataItemDto {
 	@IsString()
 	@ApiProperty({
 		type: String,
-		description: 'Schema identifier (PID) of the ie-object',
+		description:
+			'Schema identifier (PID) of the ie-object. Empty for a block element that has no object ' +
+			'selected yet: it resolves to null, but keeps its position in the response',
 		example: '086348mc8s',
 	})
 	schemaIdentifier: string;
@@ -237,18 +261,25 @@ export class IeObjectPlayableDisplayDataItemDto {
 export const PLAYABLE_DISPLAY_DATA_MAX_OBJECTS = 100;
 
 export class IeObjectsPlayableDisplayDataQueryDto {
+	@IsString()
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		description:
+			'Id of the content block whose config lists the ie-objects to fetch playable display data for',
+		example: 'c9c9f4b1-1a6f-4f0e-9d2e-9e5f1a2b3c4d',
+	})
+	blockId?: string;
+
 	@IsArray()
 	@ArrayNotEmpty()
 	@ArrayMaxSize(PLAYABLE_DISPLAY_DATA_MAX_OBJECTS)
-	@ApiProperty({
-		description: `List of schema identifiers as plain strings, or objects with a schemaIdentifier and optional start/end points in seconds. Both forms may be mixed in the same list. Max ${PLAYABLE_DISPLAY_DATA_MAX_OBJECTS} items.`,
-		type: 'array',
-		items: {
-			oneOf: [
-				{ type: 'string' },
-				{ $ref: '#/components/schemas/IeObjectPlayableDisplayDataItemDto' },
-			],
-		},
+	@ValidateNested({ each: true })
+	@Type(() => IeObjectPlayableDisplayDataItemDto)
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: [IeObjectPlayableDisplayDataItemDto],
+		description: `Content page editor only: the ie-objects of a content block that has not been saved yet, so it has no blockId to look up. Ignored for users without content page edit permissions. Max ${PLAYABLE_DISPLAY_DATA_MAX_OBJECTS} items.`,
 	})
-	objects: (string | IeObjectPlayableDisplayDataItemDto)[];
+	objects?: IeObjectPlayableDisplayDataItemDto[];
 }
