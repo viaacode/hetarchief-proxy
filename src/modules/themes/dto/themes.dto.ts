@@ -482,7 +482,7 @@ export class IeObjectsInThemeResponseDto {
 
 	@ApiProperty({
 		type: Number,
-		description: 'The total ie-objects linked to this theme, regardless of the requested page size',
+		description: 'The total ie-objects linked to this theme',
 	})
 	total: number;
 }
