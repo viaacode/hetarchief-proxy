@@ -104,7 +104,7 @@ function adaptHetArchiefVideoBlock(components: {
 
 /**
  * HERO_CAROUSEL: one slide per element, each with an optional snippet entered as
- * `startPoint` / `endPoint`.
+ * `startTime` / `endTime`.
  */
 function adaptHeroCarouselBlock(components: {
 	elements?: { mediaItem?: { value?: string }; startTime?: string; endTime?: string }[];

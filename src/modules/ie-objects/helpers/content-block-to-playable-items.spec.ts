@@ -82,8 +82,8 @@ describe('contentBlockToPlayableDisplayDataItems', () => {
 					mockBlock('HERO_CAROUSEL', {
 						title: 'Hero',
 						elements: [
-							{ mediaItem: { value: '086348mc8s' }, startPoint: '00:00:10', endPoint: '00:00:20' },
-							{ mediaItem: { value: 'qstt4fps28' }, startPoint: '', endPoint: '' },
+							{ mediaItem: { value: '086348mc8s' }, startTime: '00:00:10', endTime: '00:00:20' },
+							{ mediaItem: { value: 'qstt4fps28' }, startTime: '', endTime: '' },
 							{ mediaItem: { value: '' } },
 						],
 					})
