@@ -106,7 +106,7 @@ export class SessionHelper {
 	 */
 	public static getExpiresAt(now: Date): string {
 		const expiresAt = flow(
-			getHours(now) > 5 ? addDays(1) : addDays(0), // after 5am session expires at 5am the next day
+			getHours(now) >= 5 ? addDays(1) : addDays(0), // from 5am onwards the session expires at 5am the next day
 			setHours(5),
 			setMinutes(0),
 			setSeconds(0),
