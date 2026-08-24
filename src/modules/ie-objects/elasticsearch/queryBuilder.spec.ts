@@ -340,6 +340,31 @@ describe('QueryBuilder', () => {
 			});
 		});
 
+		it('should turn multiple selected themes into a single OR-ed terms query', () => {
+			const esQuery = QueryBuilder.build(
+				{
+					filters: [
+						{
+							field: IeObjectsSearchFilterField.THEME,
+							multiValue: ['education-learning', 'culture-society'],
+							operator: Operator.IS,
+						},
+					],
+					size: 10,
+					page: 1,
+				},
+				mockInputInfo as any
+			);
+
+			const queryString = JSON.stringify(esQuery.query, null, 2);
+			// A single terms query means the values are OR-ed: https://meemoo.atlassian.net/browse/ARC-3797
+			expect(queryString).toContain('"theme": [');
+			expect(queryString).toContain('"education-learning"');
+			expect(queryString).toContain('"culture-society"');
+			// Themes are in the limited metadata set, so anonymous users can filter on them too
+			expect(queryString).toContain('METADATA-LTD-FILTERS');
+		});
+
 		it('should create two separate aggregations for the RIGHTS field', () => {
 			const esQuery = QueryBuilder.build(
 				{
