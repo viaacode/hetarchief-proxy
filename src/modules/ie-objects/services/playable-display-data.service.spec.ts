@@ -200,6 +200,7 @@ describe('PlayableDisplayDataService', () => {
 			expect(result.schemaIdentifier).toEqual('mock-schema-identifier');
 			expect(result.name).toEqual('Mock playable object');
 			expect(result.dctermsFormat).toEqual(IeObjectType.VIDEO);
+			expect(result.maintainerId).toEqual('OR-rf5kf25');
 			expect(result.maintainerName).toEqual('VRT');
 			expect(result.thumbnailUrl).toEqual('https://example.com/thumb-with-token.jpg');
 			expect(result.playableUrl).toEqual('https://example.com/playable.mp4');

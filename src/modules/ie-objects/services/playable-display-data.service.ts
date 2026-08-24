@@ -210,6 +210,7 @@ export class PlayableDisplayDataService {
 						name: limitedObject.name,
 						thumbnailUrl,
 						dctermsFormat: limitedObject.dctermsFormat,
+						maintainerId: limitedObject.maintainerId,
 						maintainerName: limitedObject.maintainerName,
 						maintainerLogo: limitedObject.maintainerLogo,
 						maintainerOverlay: limitedObject.maintainerOverlay,
