@@ -121,11 +121,16 @@ function adaptHeroCarouselBlock(components: {
 }
 
 /**
- * TIMELINE: one node per element, but only the nodes that show an ie-object. Timeline nodes have
- * no snippet: they always show the whole object.
+ * TIMELINE: one node per element, but only the nodes that show an ie-object, each with an optional
+ * snippet entered as `startTime` / `endTime`.
  */
 function adaptTimelineBlock(
-	components: { visualType?: string; mediaItem?: { value?: string } }[]
+	components: {
+		visualType?: string;
+		mediaItem?: { value?: string };
+		startTime?: string;
+		endTime?: string;
+	}[]
 ): PlayableDisplayDataItem[] {
 	return (components || []).map((node) => {
 		const schemaIdentifier =
@@ -135,7 +140,7 @@ function adaptTimelineBlock(
 			return null;
 		}
 
-		return { schemaIdentifier };
+		return { schemaIdentifier, ...getSnipPoint(node?.startTime, node?.endTime) };
 	});
 }
 
