@@ -1,3 +1,4 @@
+import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
 import { InternalServerErrorException, Logger } from '@nestjs/common';
 import { addSeconds } from 'date-fns';
 import zendesk from 'node-zendesk';
@@ -45,50 +46,57 @@ export class ZendeskService {
 	 * @param forceRefresh ignore the cached token, eg: after the zendesk api rejected it with a 401
 	 */
 	private static async getAccessToken(forceRefresh = false): Promise<string> {
-		const existingToken = ZendeskService.accessToken;
-		const isTokenStillValid =
-			!forceRefresh &&
-			existingToken &&
-			addSeconds(existingToken.createdAt, existingToken.expiresIn - TOKEN_EXPIRE_MARGIN_SECONDS) >
-				new Date();
-		if (isTokenStillValid) {
-			return existingToken.accessToken;
-		}
+		try {
+			const existingToken = ZendeskService.accessToken;
+			const isTokenStillValid =
+				!forceRefresh &&
+				existingToken &&
+				addSeconds(existingToken.createdAt, existingToken.expiresIn - TOKEN_EXPIRE_MARGIN_SECONDS) >
+					new Date();
+			if (isTokenStillValid) {
+				return existingToken.accessToken;
+			}
 
-		const response = await fetch(process.env.ZENDESK_TOKEN_ENDPOINT as string, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-				Accept: 'application/json',
-			},
-			body: JSON.stringify({
-				grant_type: 'client_credentials',
-				client_id: process.env.ZENDESK_CLIENT_ID as string,
-				client_secret: process.env.ZENDESK_CLIENT_SECRET as string,
-				scope: TOKEN_SCOPE,
-			}),
-		});
-		if (response.status < 200 || response.status >= 400) {
-			const error = new InternalServerErrorException({
-				message: 'Failed to get an access token for the zendesk api',
-				additionalInfo: {
-					status: response.status,
-					statusText: response.statusText,
-					responseBody: await response.text().catch(() => null),
+			const response = await fetch(process.env.ZENDESK_TOKEN_ENDPOINT as string, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					Accept: 'application/json',
 				},
+				body: JSON.stringify({
+					grant_type: 'client_credentials',
+					client_id: process.env.ZENDESK_CLIENT_ID as string,
+					client_secret: process.env.ZENDESK_CLIENT_SECRET as string,
+					scope: TOKEN_SCOPE,
+				}),
+			});
+			if (response.status < 200 || response.status >= 400) {
+				throw new CustomError(
+					'The zendesk oauth token endpoint returned an unexpected status code',
+					null,
+					{
+						status: response.status,
+						statusText: response.statusText,
+						responseBody: await response.text().catch(() => null),
+					}
+				);
+			}
+
+			// The client credentials grant does not return a refresh token, we simply request a new one
+			const token = (await response.json()) as ZendeskOauthTokenResponse;
+			ZendeskService.accessToken = {
+				accessToken: token.access_token,
+				expiresIn: token.expires_in || TOKEN_DEFAULT_EXPIRES_IN_SECONDS,
+				createdAt: new Date(),
+			};
+			return token.access_token;
+		} catch (err) {
+			const error = new CustomError('Failed to get an access token for the zendesk api', err, {
+				tokenEndpoint: process.env.ZENDESK_TOKEN_ENDPOINT,
 			});
 			ZendeskService.logger.error(error);
 			throw error;
 		}
-
-		// The client credentials grant does not return a refresh token, we simply request a new one
-		const token = (await response.json()) as ZendeskOauthTokenResponse;
-		ZendeskService.accessToken = {
-			accessToken: token.access_token,
-			expiresIn: token.expires_in || TOKEN_DEFAULT_EXPIRES_IN_SECONDS,
-			createdAt: new Date(),
-		};
-		return token.access_token;
 	}
 
 	/**
