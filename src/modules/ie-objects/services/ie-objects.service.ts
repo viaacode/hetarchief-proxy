@@ -1120,6 +1120,7 @@ export class IeObjectsService {
 			// Extra
 			sector: esObject?.schema_maintainer?.organization_sector,
 			// Other
+			premisIsPartOf: esObject?.premis_is_part_of,
 			isPartOf: esObject?.schema_is_part_of,
 			transcript: esObject?.schema_transcript,
 			synopsis: null,
