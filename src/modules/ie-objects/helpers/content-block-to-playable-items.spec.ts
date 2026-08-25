@@ -104,12 +104,15 @@ describe('contentBlockToPlayableDisplayDataItems', () => {
 		it('returns an entry per node, but only resolves the nodes showing an object', () => {
 			expect(
 				contentBlockToPlayableDisplayDataItems(
-					mockBlock('TIMELINE', [
-						{ visualType: 'OBJECT', mediaItem: { value: '086348mc8s' } },
-						{ visualType: 'IMAGE', image: 'https://example.com/image.jpg' },
-						{ visualType: 'NONE' },
-						{ visualType: 'OBJECT', mediaItem: { value: 'qstt4fps28' } },
-					])
+					mockBlock('TIMELINE', {
+						sortOrder: 'desc',
+						elements: [
+							{ visualType: 'OBJECT', mediaItem: { value: '086348mc8s' } },
+							{ visualType: 'IMAGE', image: 'https://example.com/image.jpg' },
+							{ visualType: 'NONE' },
+							{ visualType: 'OBJECT', mediaItem: { value: 'qstt4fps28' } },
+						],
+					})
 				)
 			).toEqual([
 				{ schemaIdentifier: '086348mc8s' },

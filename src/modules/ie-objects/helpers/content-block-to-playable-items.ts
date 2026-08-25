@@ -124,15 +124,15 @@ function adaptHeroCarouselBlock(components: {
  * TIMELINE: one node per element, but only the nodes that show an ie-object, each with an optional
  * snippet entered as `startTime` / `endTime`.
  */
-function adaptTimelineBlock(
-	components: {
+function adaptTimelineBlock(components: {
+	elements?: {
 		visualType?: string;
 		mediaItem?: { value?: string };
 		startTime?: string;
 		endTime?: string;
-	}[]
-): PlayableDisplayDataItem[] {
-	return (components || []).map((node) => {
+	}[];
+}): PlayableDisplayDataItem[] {
+	return (components?.elements || []).map((node) => {
 		const schemaIdentifier =
 			node?.visualType === 'OBJECT' ? getSchemaIdentifier(node?.mediaItem) : null;
 
