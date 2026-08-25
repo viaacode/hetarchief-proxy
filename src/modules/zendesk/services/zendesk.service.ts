@@ -1,6 +1,6 @@
 import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
 import { InternalServerErrorException, Logger } from '@nestjs/common';
-import { addSeconds } from 'date-fns';
+import { addSeconds, isFuture } from 'date-fns';
 import zendesk from 'node-zendesk';
 
 import { CreateTicketRequestDto } from '../dto/zendesk.dto';
@@ -51,8 +51,9 @@ export class ZendeskService {
 			const isTokenStillValid =
 				!forceRefresh &&
 				existingToken &&
-				addSeconds(existingToken.createdAt, existingToken.expiresIn - TOKEN_EXPIRE_MARGIN_SECONDS) >
-					new Date();
+				isFuture(
+					addSeconds(existingToken.createdAt, existingToken.expiresIn - TOKEN_EXPIRE_MARGIN_SECONDS)
+				);
 			if (isTokenStillValid) {
 				return existingToken.accessToken;
 			}
