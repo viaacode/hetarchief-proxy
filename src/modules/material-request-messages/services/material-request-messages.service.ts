@@ -201,7 +201,11 @@ export class MaterialRequestMessagesService {
 			receiverIds.push(materialRequest.requesterId);
 		}
 
-		await mapLimit(receiverIds, 5, async (receiverId) => {
+		// A sender should never end up as their own unread-receiver, eg: a requester who is
+		// also an evaluator of their own organisation sending a message on their own request
+		const filteredReceiverIds = receiverIds.filter((receiverId) => receiverId !== profileId);
+
+		await mapLimit(filteredReceiverIds, 5, async (receiverId) => {
 			await this.dataService.execute<
 				InsertMaterialRequestMessageUnreadStatusMutation,
 				InsertMaterialRequestMessageUnreadStatusMutationVariables
