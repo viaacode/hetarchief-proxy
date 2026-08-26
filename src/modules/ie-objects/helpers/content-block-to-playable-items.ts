@@ -23,6 +23,7 @@ export const PLAYABLE_DISPLAY_DATA_BLOCK_TYPES = [
 	Lookup_App_Content_Block_Type_Enum.HetarchiefVideo,
 	Lookup_App_Content_Block_Type_Enum.HeroCarousel,
 	Lookup_App_Content_Block_Type_Enum.Timeline,
+	Lookup_App_Content_Block_Type_Enum.ThreeChoicesPlayer,
 ] as const;
 
 /**
@@ -140,6 +141,25 @@ function adaptTimelineBlock(
 }
 
 /**
+ * THREE_CHOICES_PLAYER (the "driekeuzespeler"): one interest per element, each pointing at the
+ * ie-object that plays in its modal, stored under `mediaItem` by the shared object picker like every
+ * other block. Interests have no snippet: the modal plays the whole object.
+ *
+ * Only three of these are on screen at a time, and a block may hold up to 200, so a caller normally
+ * asks for a single object with `schemaIdentifier` rather than resolving the whole list.
+ * https://meemoo.atlassian.net/wiki/spaces/HA2/pages/6218383419
+ */
+function adaptDriekeuzespelerBlock(components: {
+	interests?: { mediaItem?: { value?: string } }[];
+}): PlayableDisplayDataItem[] {
+	return (components?.interests || []).map((interest) => {
+		const schemaIdentifier = getSchemaIdentifier(interest?.mediaItem);
+
+		return schemaIdentifier ? { schemaIdentifier } : null;
+	});
+}
+
+/**
  * Converts the config of a content block into the list of objects to fetch playable display data
  * for, in the block's own element order.
  *
@@ -164,6 +184,9 @@ export function contentBlockToPlayableDisplayDataItems(
 
 		case Lookup_App_Content_Block_Type_Enum.Timeline:
 			return adaptTimelineBlock(components);
+
+		case Lookup_App_Content_Block_Type_Enum.ThreeChoicesPlayer:
+			return adaptDriekeuzespelerBlock(components);
 
 		default:
 			return null;

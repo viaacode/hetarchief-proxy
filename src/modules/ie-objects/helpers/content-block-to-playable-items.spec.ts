@@ -120,6 +120,58 @@ describe('contentBlockToPlayableDisplayDataItems', () => {
 		});
 	});
 
+	describe('THREE_CHOICES_PLAYER', () => {
+		it('returns an entry per interest, in the block order', () => {
+			expect(
+				contentBlockToPlayableDisplayDataItems(
+					mockBlock('THREE_CHOICES_PLAYER', {
+						interests: [
+							{ name: 'Wielrennen', mediaItem: { value: '086348mc8s' }, themeId: 'theme-1' },
+							{ name: 'Kermis', mediaItem: { value: 'qstt4fps28' }, themeId: 'theme-2' },
+						],
+					})
+				)
+			).toEqual([{ schemaIdentifier: '086348mc8s' }, { schemaIdentifier: 'qstt4fps28' }]);
+		});
+
+		it('keeps the place of an interest with no object selected yet', () => {
+			expect(
+				contentBlockToPlayableDisplayDataItems(
+					mockBlock('THREE_CHOICES_PLAYER', {
+						interests: [
+							{ name: 'Wielrennen', mediaItem: { value: '086348mc8s' } },
+							{ name: 'Leeg' },
+							{ name: 'Ook leeg', mediaItem: { value: '' } },
+							{ name: 'Kermis', mediaItem: { value: 'qstt4fps28' } },
+						],
+					})
+				)
+			).toEqual([
+				{ schemaIdentifier: '086348mc8s' },
+				null,
+				null,
+				{ schemaIdentifier: 'qstt4fps28' },
+			]);
+		});
+
+		it('never carries a snippet, because an interest cannot configure one', () => {
+			const items = contentBlockToPlayableDisplayDataItems(
+				mockBlock('THREE_CHOICES_PLAYER', {
+					// A stray start/end on the interest must be ignored, not trusted.
+					interests: [{ mediaItem: { value: '086348mc8s' }, startTime: '00:10', endTime: '00:20' }],
+				})
+			);
+
+			expect(items).toEqual([{ schemaIdentifier: '086348mc8s' }]);
+		});
+
+		it('returns an empty list when the block has no interests', () => {
+			expect(contentBlockToPlayableDisplayDataItems(mockBlock('THREE_CHOICES_PLAYER', {}))).toEqual(
+				[]
+			);
+		});
+	});
+
 	it('returns null for a block type that has no playable objects', () => {
 		expect(contentBlockToPlayableDisplayDataItems(mockBlock('RICH_TEXT', {}))).toBeNull();
 	});

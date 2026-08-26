@@ -282,4 +282,18 @@ export class IeObjectsPlayableDisplayDataQueryDto {
 		description: `Content page editor only: the ie-objects of a content block that has not been saved yet, so it has no blockId to look up. Ignored for users without content page edit permissions. Max ${PLAYABLE_DISPLAY_DATA_MAX_OBJECTS} items.`,
 	})
 	objects?: IeObjectPlayableDisplayDataItemDto[];
+
+	@IsString()
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		description:
+			'Resolve only this one ie-object out of the block, instead of every object the block ' +
+			'references. The object still has to be referenced by the block, so this narrows the ' +
+			'response without widening what a client can reach. Use it for a block that shows a few ' +
+			'of many configured objects, such as the driekeuzespeler opening one object in a modal. ' +
+			'The response then holds a single (possibly null) entry instead of one per element.',
+		example: '086348mc8s',
+	})
+	schemaIdentifier?: string;
 }

@@ -1362,10 +1362,17 @@ export class IeObjectsController {
 		// Both ways in normalize to the same list of objects + cuepoints, so from here on it no
 		// longer matters which one the request used. Exactly one of them is filled in, so the
 		// other contributes nothing.
-		const items: PlayableDisplayDataItem[] = [
+		const allItems: PlayableDisplayDataItem[] = [
 			...(await this.getPlayableDisplayDataItemsForBlock(queryDto.blockId)),
 			...this.getPlayableDisplayDataItemsForUnsavedBlock(queryDto.objects, user),
 		];
+
+		// A block that shows only a few of many configured objects (the driekeuzespeler holds up to
+		// 200 interests and opens one at a time) asks for a single object instead of the whole list.
+		// The object still has to be one the block references, so this only narrows the response.
+		const items = queryDto.schemaIdentifier
+			? allItems.filter((item) => item?.schemaIdentifier === queryDto.schemaIdentifier)
+			: allItems;
 
 		// Slots without an object (e.g. a timeline node showing an image) are not sent to the
 		// service, but keep their place in the response so the client can keep matching the
