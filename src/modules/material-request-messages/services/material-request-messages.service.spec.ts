@@ -160,33 +160,6 @@ describe('MaterialRequestMessagesService', () => {
 		});
 	});
 
-	describe('deleteAllUnreadEntriesForMaterialRequest', () => {
-		it('deletes every unread-status row for the material request and returns the affected row count', async () => {
-			mockDataService.execute.mockResolvedValueOnce({
-				delete_app_material_request_message_unread_status: { affected_rows: 3 },
-			});
-
-			const result =
-				await materialRequestMessagesService.deleteAllUnreadEntriesForMaterialRequest('mr-1');
-
-			expect(result).toBe(3);
-			expect(mockDataService.execute).toHaveBeenCalledWith(expect.anything(), {
-				materialRequestId: 'mr-1',
-			});
-		});
-
-		it('returns 0 when there was nothing to delete', async () => {
-			mockDataService.execute.mockResolvedValueOnce({
-				delete_app_material_request_message_unread_status: { affected_rows: 0 },
-			});
-
-			const result =
-				await materialRequestMessagesService.deleteAllUnreadEntriesForMaterialRequest('mr-1');
-
-			expect(result).toBe(0);
-		});
-	});
-
 	describe('createMessage', () => {
 		it('never inserts an unread-status row for the sender, even when they are also an evaluator of their own organisation', async () => {
 			// Sender is the requester, and also shows up in the evaluators list for their own org

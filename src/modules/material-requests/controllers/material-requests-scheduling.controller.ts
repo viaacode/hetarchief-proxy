@@ -14,6 +14,10 @@ export class MaterialRequestsSchedulingController {
 	/**
 	 * Will check if there are any material requests ready for archivation
 	 * Should be triggered once every day
+	 *
+	 * Note: unread conversation-message entries for an archived request are cleared by a
+	 * Postgres trigger (app.material_requests_delete_unread_status_on_archive) in
+	 * hetarchief-hasura, not by this endpoint.
 	 */
 	@Post('archivation')
 	@ApiOperation({

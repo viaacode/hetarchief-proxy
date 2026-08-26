@@ -129,7 +129,6 @@ const mockMaterialRequestMessageService: Partial<
 	countUnreadMessages: vi.fn(),
 	adaptEvent: vi.fn((message) => message),
 	getAllUnreadMessageOverview: vi.fn(),
-	deleteAllUnreadEntriesForMaterialRequest: vi.fn(),
 };
 
 const getDefaultMaterialRequestByIdResponse = (): {
@@ -677,7 +676,7 @@ describe('MaterialRequestsService', () => {
 	});
 
 	describe('checkAllReadyForArchivation', () => {
-		it('clears every unread-status row for a material request once it gets archived', async () => {
+		it('archives the material request and cleans up its attachments', async () => {
 			const originalConfigGet = mockConfigService.get.getMockImplementation();
 			const configSpy = vi.spyOn(mockConfigService, 'get').mockImplementation((key: string) => {
 				if (key === 'MATERIAL_REQUEST_TIME_BEFORE_ARCHIVATION') return '30';
@@ -687,9 +686,6 @@ describe('MaterialRequestsService', () => {
 			const updateMaterialRequestSpy = vi
 				.spyOn(materialRequestsService, 'updateMaterialRequest')
 				.mockResolvedValue(mockGqlMaterialRequest1 as any);
-			mockMaterialRequestMessageService.deleteAllUnreadEntriesForMaterialRequest.mockResolvedValueOnce(
-				2
-			);
 
 			const mockData: FindMaterialRequestsReadyToArchiveQuery = {
 				app_material_requests: [
@@ -719,60 +715,6 @@ describe('MaterialRequestsService', () => {
 			expect(updateMaterialRequestSpy).toHaveBeenCalledWith(mockGqlMaterialRequest1.id, {
 				is_archived: true,
 			});
-			expect(
-				mockMaterialRequestMessageService.deleteAllUnreadEntriesForMaterialRequest
-			).toHaveBeenCalledWith(mockGqlMaterialRequest1.id);
-			expect(mockAssetsService.delete).toHaveBeenCalledWith(
-				'https://example.com/final-summary.pdf'
-			);
-
-			configSpy.mockRestore();
-			updateMaterialRequestSpy.mockRestore();
-		});
-
-		it('still archives the request and cleans up its attachments even if clearing its unread entries fails', async () => {
-			const originalConfigGet = mockConfigService.get.getMockImplementation();
-			const configSpy = vi.spyOn(mockConfigService, 'get').mockImplementation((key: string) => {
-				if (key === 'MATERIAL_REQUEST_TIME_BEFORE_ARCHIVATION') return '30';
-				if (key === 'MATERIAL_REQUEST_USE_DAYS_INSTEAD_MONTHS_BEFORE_ARCHIVATION') return 'true';
-				return originalConfigGet?.(key as any);
-			});
-			const updateMaterialRequestSpy = vi
-				.spyOn(materialRequestsService, 'updateMaterialRequest')
-				.mockResolvedValue(mockGqlMaterialRequest1 as any);
-			mockMaterialRequestMessageService.deleteAllUnreadEntriesForMaterialRequest.mockRejectedValueOnce(
-				new Error('boom')
-			);
-
-			const mockData: FindMaterialRequestsReadyToArchiveQuery = {
-				app_material_requests: [
-					{
-						...mockGqlMaterialRequest1,
-						messages_and_events: [
-							{
-								message_type: 'FINAL_SUMMARY' as any,
-								created_at: '2026-06-01T00:00:00.000Z',
-								attachments: [
-									{
-										id: 'attachment-1',
-										attachment_url: 'https://example.com/final-summary.pdf',
-										attachment_filename: 'final-summary.pdf',
-										created_at: '2026-06-01T00:00:00.000Z',
-									},
-								],
-							},
-						],
-					} as any,
-				],
-			};
-			mockDataService.execute.mockResolvedValueOnce(mockData);
-
-			await materialRequestsService.checkAllReadyForArchivation();
-
-			expect(updateMaterialRequestSpy).toHaveBeenCalledWith(mockGqlMaterialRequest1.id, {
-				is_archived: true,
-			});
-			// attachment cleanup still ran even though clearing unread entries threw
 			expect(mockAssetsService.delete).toHaveBeenCalledWith(
 				'https://example.com/final-summary.pdf'
 			);

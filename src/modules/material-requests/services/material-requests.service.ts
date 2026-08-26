@@ -1568,19 +1568,12 @@ export class MaterialRequestsService {
 
 			await mapLimit(response.app_material_requests, 5, async (materialRequest) => {
 				try {
+					// A Postgres trigger (app.material_requests_delete_unread_status_on_archive) clears
+					// this request's unread-status rows as soon as is_archived flips to true below —
+					// no proxy-side cleanup call needed here.
 					await this.updateMaterialRequest(materialRequest.id, {
 						is_archived: true,
 					});
-					try {
-						await this.materialRequestMessageService.deleteAllUnreadEntriesForMaterialRequest(
-							materialRequest.id
-						);
-					} catch (err) {
-						// Log the error but don't throw, since the main flow of updating the material request is successful
-						console.error('Failed to delete unread message entries for material request', err, {
-							materialRequestId: materialRequest.id,
-						});
-					}
 					const attachmentUrls = materialRequest.messages_and_events.flatMap((item) =>
 						item.attachments.map((attachment) => attachment.attachment_url)
 					);
