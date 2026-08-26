@@ -106,6 +106,34 @@ export class MaterialRequestsController {
 		return await this.materialRequestsService.findMaintainers();
 	}
 
+	@Get('unread-summary')
+	@ApiOperation({
+		description:
+			'Get whether the logged in user has unread conversation messages on their outgoing and/or incoming material requests, and a per-request unread count for every material request they are involved in.',
+	})
+	@RequireAnyPermissions(
+		PermissionName.VIEW_OWN_MATERIAL_REQUESTS,
+		PermissionName.VIEW_ANY_MATERIAL_REQUESTS
+	)
+	public async getUnreadMessagesSummary(@SessionUser() user: SessionUserEntity): Promise<{
+		hasUnreadOutgoingMessages: boolean;
+		hasUnreadIncomingMessages: boolean;
+		unreadCountsByMaterialRequestId: Record<string, number>;
+	}> {
+		try {
+			return await this.materialRequestMessagesService.getUnreadMessageOverviewForProfile(
+				user.getId()
+			);
+		} catch (err) {
+			const error = new CustomError('Failed to get unread material request messages summary', err, {
+				userId: user?.getId(),
+			});
+			console.error(error);
+			error.innerException = null;
+			throw error;
+		}
+	}
+
 	@Get(':id')
 	@RequireAnyPermissions(
 		PermissionName.VIEW_ANY_MATERIAL_REQUESTS,

@@ -1,0 +1,6 @@
+query getAllUnreadMessageOverview {
+	app_material_request_unread_message_overview {
+		receiver_profile_id
+		is_outgoing
+	}
+}

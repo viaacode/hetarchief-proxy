@@ -30,6 +30,7 @@ import {
 	InsertNotificationsDocument,
 	type InsertNotificationsMutation,
 	type InsertNotificationsMutationVariables,
+	Lookup_Languages_Enum,
 	UpdateAllNotificationsForUserDocument,
 	type UpdateAllNotificationsForUserMutation,
 	type UpdateAllNotificationsForUserMutationVariables,
@@ -638,6 +639,77 @@ export class NotificationsService {
 					}
 				)
 			);
+		}
+	}
+
+	/**
+	 * Builds and bulk-inserts the daily unread-messages digest notifications: one per user per
+	 * direction (outgoing/incoming) that has an unread count &gt; 0 - the user's total outstanding
+	 * unread backlog for that direction, not just messages from a recent window - with the count
+	 * baked into the translated title/description at creation time (unlike createForMaterialRequest,
+	 * which leaves title/description blank for the client to render by type, since this text needs
+	 * a dynamic count and can't be rendered generically from the type alone).
+	 */
+	public async sendDailyUnreadMessagesDigest(
+		countsByProfileId: Map<string, { outgoing: number; incoming: number }>,
+		languageByProfileId: Record<string, Lookup_Languages_Enum>
+	): Promise<Notification[]> {
+		try {
+			const notifications: Partial<App_Notification_Insert_Input>[] = [];
+
+			for (const [profileId, counts] of countsByProfileId.entries()) {
+				// Fall back to Dutch when the language lookup failed or didn't resolve this profile,
+				// so the notification still gets sent rather than skipped for lack of a confirmed locale.
+				const language = languageByProfileId[profileId] || Lookup_Languages_Enum.Nl;
+
+				if (counts.outgoing > 0) {
+					notifications.push({
+						title: this.translationsService.tText(
+							'modules/notifications/services/notifications___je-hebt-nieuwe-berichten-op-je-materiaalaanvragen',
+							null,
+							language
+						),
+						description: this.translationsService.tText(
+							'modules/notifications/services/notifications___je-hebt-count-ongelezen-berichten-op-jouw-materiaalaanvragen',
+							{ count: counts.outgoing },
+							language
+						),
+						type: NotificationType.MATERIAL_REQUEST_UNREAD_MESSAGES_OUTGOING,
+						status: NotificationStatus.UNREAD,
+						recipient: profileId,
+						linked_entity_id: null,
+					});
+				}
+
+				if (counts.incoming > 0) {
+					notifications.push({
+						title: this.translationsService.tText(
+							'modules/notifications/services/notifications___je-hebt-nieuwe-berichten-op-materiaalaanvragen-die-je-beheert',
+							null,
+							language
+						),
+						description: this.translationsService.tText(
+							'modules/notifications/services/notifications___je-hebt-count-ongelezen-berichten-op-materiaalaanvragen-die-je-beheert',
+							{ count: counts.incoming },
+							language
+						),
+						type: NotificationType.MATERIAL_REQUEST_UNREAD_MESSAGES_INCOMING,
+						status: NotificationStatus.UNREAD,
+						recipient: profileId,
+						linked_entity_id: null,
+					});
+				}
+			}
+
+			if (notifications.length === 0) {
+				return [];
+			}
+
+			return await this.create(notifications);
+		} catch (err) {
+			throw new CustomError('Failed to send daily unread messages digest notifications', err, {
+				profileCount: countsByProfileId.size,
+			});
 		}
 	}
 

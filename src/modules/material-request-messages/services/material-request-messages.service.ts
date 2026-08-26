@@ -1,7 +1,7 @@
 import { DataService } from '@meemoo/admin-core-api';
 import { Injectable } from '@nestjs/common';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
-import { set } from 'lodash';
+import { countBy, set } from 'lodash';
 import {
 	MaterialRequestAttachment,
 	MaterialRequestAttachmentOrderProp,
@@ -20,6 +20,9 @@ import {
 	DeleteMessageUnreadEntriesDocument,
 	DeleteMessageUnreadEntriesMutation,
 	DeleteMessageUnreadEntriesMutationVariables,
+	GetAllUnreadMessageOverviewDocument,
+	type GetAllUnreadMessageOverviewQuery,
+	type GetAllUnreadMessageOverviewQueryVariables,
 	GetEvaluatorsForOrganisationDocument,
 	GetEvaluatorsForOrganisationQuery,
 	GetEvaluatorsForOrganisationQueryVariables,
@@ -32,6 +35,9 @@ import {
 	GetMaterialRequestMessagesDocument,
 	GetMaterialRequestMessagesQuery,
 	GetMaterialRequestMessagesQueryVariables,
+	GetUnreadMessageOverviewForProfileDocument,
+	type GetUnreadMessageOverviewForProfileQuery,
+	type GetUnreadMessageOverviewForProfileQueryVariables,
 	InsertMaterialRequestMessageDocument,
 	InsertMaterialRequestMessageMutation,
 	InsertMaterialRequestMessageMutationVariables,
@@ -105,6 +111,47 @@ export class MaterialRequestMessagesService {
 			profileId,
 		});
 		return response.app_material_request_message_unread_status_aggregate?.aggregate?.count || 0;
+	}
+
+	/**
+	 * Everything the client polls for the avatar/dropdown unread indicators and the overview
+	 * per-row unread counters, in a single round trip against the
+	 * app_material_request_unread_message_overview view, which pre-joins each unread row to its
+	 * material request's owner (exposed as `is_outgoing`) so no second query is needed here to
+	 * classify direction. Scoped to this one user's entire backlog.
+	 */
+	public async getUnreadMessageOverviewForProfile(profileId: string): Promise<{
+		hasUnreadOutgoingMessages: boolean;
+		hasUnreadIncomingMessages: boolean;
+		unreadCountsByMaterialRequestId: Record<string, number>;
+	}> {
+		const response = await this.dataService.execute<
+			GetUnreadMessageOverviewForProfileQuery,
+			GetUnreadMessageOverviewForProfileQueryVariables
+		>(GetUnreadMessageOverviewForProfileDocument, { profileId });
+		const rows = response.app_material_request_unread_message_overview;
+
+		return {
+			hasUnreadOutgoingMessages: rows.some((row) => row.is_outgoing),
+			hasUnreadIncomingMessages: rows.some((row) => !row.is_outgoing),
+			unreadCountsByMaterialRequestId: countBy(rows, (row) => row.material_request_id),
+		};
+	}
+
+	/**
+	 * Get every outstanding unread message across all users, pre-classified as outgoing/incoming —
+	 * used by the daily unread messages digest job, which reports each user's total unread backlog
+	 * per direction, not just what changed since the last run.
+	 */
+	public async getAllUnreadMessageOverview(): Promise<
+		GetAllUnreadMessageOverviewQuery['app_material_request_unread_message_overview']
+	> {
+		const response = await this.dataService.execute<
+			GetAllUnreadMessageOverviewQuery,
+			GetAllUnreadMessageOverviewQueryVariables
+		>(GetAllUnreadMessageOverviewDocument, {});
+
+		return response.app_material_request_unread_message_overview;
 	}
 
 	public adaptEvent(

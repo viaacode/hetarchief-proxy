@@ -62,4 +62,25 @@ export class MaterialRequestsSchedulingController {
 			message: 'Checking reminders for pending additional conditions for material requests',
 		};
 	}
+
+	/**
+	 * Sends a once-daily in-app notification digest to users with unread conversation messages
+	 * on their material requests. Should be triggered once every day, ideally shortly after the
+	 * nightly forced logout window.
+	 */
+	@UseGuards(ApiKeyGuard)
+	@ApiOperation({
+		description:
+			'Send a daily in-app notification digest to users with unread material request conversation messages.',
+	})
+	@Post('send-daily-unread-messages-digest')
+	public async sendDailyUnreadMessagesDigest(): Promise<{ message: string }> {
+		this.materialRequestsService
+			.sendDailyUnreadMessagesDigest()
+			.then(noop)
+			.catch((err) => {
+				console.error(new CustomError('Failed to send daily unread messages digest', err, {}));
+			});
+		return { message: 'Sending daily unread messages digest' };
+	}
 }

@@ -11,6 +11,7 @@ import {
 	type DeleteNotificationsMutation,
 	type FindNotificationsByUserQuery,
 	type InsertNotificationsMutation,
+	Lookup_Languages_Enum,
 	Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum,
 	type UpdateAllNotificationsForUserMutation,
 	type UpdateNotificationMutation,
@@ -286,6 +287,94 @@ describe('NotificationsService', () => {
 				mockNotification as Partial<App_Notification_Insert_Input>,
 			]);
 			expect(response[0].id).toBe(mockGqlNotification1.id);
+		});
+	});
+
+	describe('sendDailyUnreadMessagesDigest', () => {
+		it('returns an empty array and does not create anything when nobody has unread counts', async () => {
+			const createSpy = vi.spyOn(notificationsService, 'create');
+
+			const response = await notificationsService.sendDailyUnreadMessagesDigest(new Map(), {});
+
+			expect(response).toEqual([]);
+			expect(createSpy).not.toHaveBeenCalled();
+			createSpy.mockRestore();
+		});
+
+		it('creates one notification per direction with an unread count > 0, in the recipient language', async () => {
+			const createSpy = vi.spyOn(notificationsService, 'create').mockResolvedValueOnce([]);
+
+			const countsByProfileId = new Map([
+				['profile-1', { outgoing: 3, incoming: 0 }],
+				['profile-2', { outgoing: 0, incoming: 2 }],
+			]);
+			const languageByProfileId = {
+				'profile-1': Lookup_Languages_Enum.Nl,
+				'profile-2': Lookup_Languages_Enum.En,
+			};
+
+			await notificationsService.sendDailyUnreadMessagesDigest(
+				countsByProfileId,
+				languageByProfileId
+			);
+
+			expect(createSpy).toHaveBeenCalledTimes(1);
+			const createdNotifications = createSpy.mock.calls[0][0];
+			expect(createdNotifications).toHaveLength(2);
+
+			const outgoing = createdNotifications.find((n) => n.recipient === 'profile-1');
+			expect(outgoing).toEqual(
+				expect.objectContaining({
+					type: NotificationType.MATERIAL_REQUEST_UNREAD_MESSAGES_OUTGOING,
+					status: NotificationStatus.UNREAD,
+					recipient: 'profile-1',
+				})
+			);
+
+			const incoming = createdNotifications.find((n) => n.recipient === 'profile-2');
+			expect(incoming).toEqual(
+				expect.objectContaining({
+					type: NotificationType.MATERIAL_REQUEST_UNREAD_MESSAGES_INCOMING,
+					status: NotificationStatus.UNREAD,
+					recipient: 'profile-2',
+				})
+			);
+
+			// title/description rendered per-recipient in their own language
+			expect(mockTranslationsService.tText).toHaveBeenCalledWith(
+				expect.stringContaining('nieuwe-berichten-op-je-materiaalaanvragen'),
+				null,
+				Lookup_Languages_Enum.Nl
+			);
+			expect(mockTranslationsService.tText).toHaveBeenCalledWith(
+				expect.stringContaining('ongelezen-berichten-op-materiaalaanvragen-die-je-beheert'),
+				{ count: 2 },
+				Lookup_Languages_Enum.En
+			);
+
+			createSpy.mockRestore();
+		});
+
+		it('creates both an outgoing and an incoming notification for the same profile when both counts are positive', async () => {
+			const createSpy = vi.spyOn(notificationsService, 'create').mockResolvedValueOnce([]);
+
+			const countsByProfileId = new Map([['profile-1', { outgoing: 1, incoming: 1 }]]);
+
+			await notificationsService.sendDailyUnreadMessagesDigest(countsByProfileId, {
+				'profile-1': Lookup_Languages_Enum.Nl,
+			});
+
+			const createdNotifications = createSpy.mock.calls[0][0];
+			expect(createdNotifications).toHaveLength(2);
+			expect(createdNotifications.every((n) => n.recipient === 'profile-1')).toBe(true);
+			expect(createdNotifications.map((n) => n.type).sort()).toEqual(
+				[
+					NotificationType.MATERIAL_REQUEST_UNREAD_MESSAGES_INCOMING,
+					NotificationType.MATERIAL_REQUEST_UNREAD_MESSAGES_OUTGOING,
+				].sort()
+			);
+
+			createSpy.mockRestore();
 		});
 	});
 

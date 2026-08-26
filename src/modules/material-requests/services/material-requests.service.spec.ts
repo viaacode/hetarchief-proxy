@@ -27,6 +27,7 @@ import type {
 	FindMaintainersWithMaterialRequestsQuery,
 	FindMaterialRequestsByIdQuery,
 	FindMaterialRequestsQuery,
+	FindMaterialRequestsReadyToArchiveQuery,
 	InsertMaterialRequestMutation,
 	UpdateMaterialRequestMutation,
 } from '~generated/graphql-db-types-hetarchief';
@@ -51,6 +52,7 @@ const mockNotificationsService: Partial<Record<keyof NotificationsService, MockI
 	onStatusUpdateMaterialRequest: vi.fn(),
 	onCreateMaterialRequestMaintainer: vi.fn(),
 	onSendAdditionalConditionsReminderForMaterialRequest: vi.fn(),
+	sendDailyUnreadMessagesDigest: vi.fn(),
 };
 
 const mockOrganisationsService: Partial<Record<keyof OrganisationsService, MockInstance>> = {
@@ -113,6 +115,7 @@ const mockUsersService: Partial<Record<keyof UsersService, MockInstance>> = {
 	getUserByIdentityId: vi.fn(),
 	createUserWithIdp: vi.fn(),
 	updateUser: vi.fn(),
+	findLanguagesByProfileIds: vi.fn(),
 };
 
 const mockEventsService: Partial<Record<keyof EventsService, MockInstance>> = {
@@ -125,6 +128,8 @@ const mockMaterialRequestMessageService: Partial<
 	findAll: vi.fn(),
 	countUnreadMessages: vi.fn(),
 	adaptEvent: vi.fn((message) => message),
+	getAllUnreadMessageOverview: vi.fn(),
+	deleteAllUnreadEntriesForMaterialRequest: vi.fn(),
 };
 
 const getDefaultMaterialRequestByIdResponse = (): {
@@ -626,6 +631,154 @@ describe('MaterialRequestsService', () => {
 				profile_id
 			);
 			expect(affectedRows).toBe(0);
+		});
+	});
+
+	describe('sendDailyUnreadMessagesDigest', () => {
+		beforeEach(() => {
+			mockMaterialRequestMessageService.getAllUnreadMessageOverview.mockReset();
+			mockUsersService.findLanguagesByProfileIds.mockReset();
+			mockNotificationsService.sendDailyUnreadMessagesDigest.mockReset();
+		});
+
+		it('does nothing when nobody has any outstanding unread messages', async () => {
+			mockMaterialRequestMessageService.getAllUnreadMessageOverview.mockResolvedValueOnce([]);
+
+			await materialRequestsService.sendDailyUnreadMessagesDigest();
+
+			expect(mockUsersService.findLanguagesByProfileIds).not.toHaveBeenCalled();
+			expect(mockNotificationsService.sendDailyUnreadMessagesDigest).not.toHaveBeenCalled();
+		});
+
+		it('tallies outgoing/incoming unread counts per profile and resolves their language before delegating to the notifications service', async () => {
+			mockMaterialRequestMessageService.getAllUnreadMessageOverview.mockResolvedValueOnce([
+				{ receiver_profile_id: 'profile-1', is_outgoing: true },
+				{ receiver_profile_id: 'profile-1', is_outgoing: true },
+				{ receiver_profile_id: 'profile-1', is_outgoing: false },
+				{ receiver_profile_id: 'profile-2', is_outgoing: false },
+			]);
+			mockUsersService.findLanguagesByProfileIds.mockResolvedValueOnce({
+				'profile-1': 'nl',
+				'profile-2': 'en',
+			});
+
+			await materialRequestsService.sendDailyUnreadMessagesDigest();
+
+			expect(mockUsersService.findLanguagesByProfileIds).toHaveBeenCalledWith(
+				expect.arrayContaining(['profile-1', 'profile-2'])
+			);
+			expect(mockNotificationsService.sendDailyUnreadMessagesDigest).toHaveBeenCalledTimes(1);
+			const [countsByProfileId, languageByProfileId] =
+				mockNotificationsService.sendDailyUnreadMessagesDigest.mock.calls[0];
+			expect(countsByProfileId.get('profile-1')).toEqual({ outgoing: 2, incoming: 1 });
+			expect(countsByProfileId.get('profile-2')).toEqual({ outgoing: 0, incoming: 1 });
+			expect(languageByProfileId).toEqual({ 'profile-1': 'nl', 'profile-2': 'en' });
+		});
+	});
+
+	describe('checkAllReadyForArchivation', () => {
+		it('clears every unread-status row for a material request once it gets archived', async () => {
+			const originalConfigGet = mockConfigService.get.getMockImplementation();
+			const configSpy = vi.spyOn(mockConfigService, 'get').mockImplementation((key: string) => {
+				if (key === 'MATERIAL_REQUEST_TIME_BEFORE_ARCHIVATION') return '30';
+				if (key === 'MATERIAL_REQUEST_USE_DAYS_INSTEAD_MONTHS_BEFORE_ARCHIVATION') return 'true';
+				return originalConfigGet?.(key as any);
+			});
+			const updateMaterialRequestSpy = vi
+				.spyOn(materialRequestsService, 'updateMaterialRequest')
+				.mockResolvedValue(mockGqlMaterialRequest1 as any);
+			mockMaterialRequestMessageService.deleteAllUnreadEntriesForMaterialRequest.mockResolvedValueOnce(
+				2
+			);
+
+			const mockData: FindMaterialRequestsReadyToArchiveQuery = {
+				app_material_requests: [
+					{
+						...mockGqlMaterialRequest1,
+						messages_and_events: [
+							{
+								message_type: 'FINAL_SUMMARY' as any,
+								created_at: '2026-06-01T00:00:00.000Z',
+								attachments: [
+									{
+										id: 'attachment-1',
+										attachment_url: 'https://example.com/final-summary.pdf',
+										attachment_filename: 'final-summary.pdf',
+										created_at: '2026-06-01T00:00:00.000Z',
+									},
+								],
+							},
+						],
+					} as any,
+				],
+			};
+			mockDataService.execute.mockResolvedValueOnce(mockData);
+
+			await materialRequestsService.checkAllReadyForArchivation();
+
+			expect(updateMaterialRequestSpy).toHaveBeenCalledWith(mockGqlMaterialRequest1.id, {
+				is_archived: true,
+			});
+			expect(
+				mockMaterialRequestMessageService.deleteAllUnreadEntriesForMaterialRequest
+			).toHaveBeenCalledWith(mockGqlMaterialRequest1.id);
+			expect(mockAssetsService.delete).toHaveBeenCalledWith(
+				'https://example.com/final-summary.pdf'
+			);
+
+			configSpy.mockRestore();
+			updateMaterialRequestSpy.mockRestore();
+		});
+
+		it('still archives the request and cleans up its attachments even if clearing its unread entries fails', async () => {
+			const originalConfigGet = mockConfigService.get.getMockImplementation();
+			const configSpy = vi.spyOn(mockConfigService, 'get').mockImplementation((key: string) => {
+				if (key === 'MATERIAL_REQUEST_TIME_BEFORE_ARCHIVATION') return '30';
+				if (key === 'MATERIAL_REQUEST_USE_DAYS_INSTEAD_MONTHS_BEFORE_ARCHIVATION') return 'true';
+				return originalConfigGet?.(key as any);
+			});
+			const updateMaterialRequestSpy = vi
+				.spyOn(materialRequestsService, 'updateMaterialRequest')
+				.mockResolvedValue(mockGqlMaterialRequest1 as any);
+			mockMaterialRequestMessageService.deleteAllUnreadEntriesForMaterialRequest.mockRejectedValueOnce(
+				new Error('boom')
+			);
+
+			const mockData: FindMaterialRequestsReadyToArchiveQuery = {
+				app_material_requests: [
+					{
+						...mockGqlMaterialRequest1,
+						messages_and_events: [
+							{
+								message_type: 'FINAL_SUMMARY' as any,
+								created_at: '2026-06-01T00:00:00.000Z',
+								attachments: [
+									{
+										id: 'attachment-1',
+										attachment_url: 'https://example.com/final-summary.pdf',
+										attachment_filename: 'final-summary.pdf',
+										created_at: '2026-06-01T00:00:00.000Z',
+									},
+								],
+							},
+						],
+					} as any,
+				],
+			};
+			mockDataService.execute.mockResolvedValueOnce(mockData);
+
+			await materialRequestsService.checkAllReadyForArchivation();
+
+			expect(updateMaterialRequestSpy).toHaveBeenCalledWith(mockGqlMaterialRequest1.id, {
+				is_archived: true,
+			});
+			// attachment cleanup still ran even though clearing unread entries threw
+			expect(mockAssetsService.delete).toHaveBeenCalledWith(
+				'https://example.com/final-summary.pdf'
+			);
+
+			configSpy.mockRestore();
+			updateMaterialRequestSpy.mockRestore();
 		});
 	});
 });
