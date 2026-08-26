@@ -1,0 +1,6 @@
+query findProfileLanguagesByIds($ids: [uuid!]!) {
+	users_profile(where: { id: { _in: $ids } }) {
+		id
+		language
+	}
+}

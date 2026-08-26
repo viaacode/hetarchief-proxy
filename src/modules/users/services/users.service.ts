@@ -1,4 +1,4 @@
-import { convertUserInfoToCommonUser, DataService, UserInfoType } from '@meemoo/admin-core-api';
+import { DataService, UserInfoType, convertUserInfoToCommonUser } from '@meemoo/admin-core-api';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import {
 	AvoAuthIdpType,
@@ -8,15 +8,18 @@ import {
 } from '@viaa/avo2-types';
 
 import {
+	FindProfileLanguagesByIdsDocument,
+	type FindProfileLanguagesByIdsQuery,
+	type FindProfileLanguagesByIdsQueryVariables,
 	GetUserByEmailDocument,
 	type GetUserByEmailQuery,
 	type GetUserByEmailQueryVariables,
 	GetUserByIdDocument,
+	type GetUserByIdQuery,
+	type GetUserByIdQueryVariables,
 	GetUserByIdentityIdDocument,
 	type GetUserByIdentityIdQuery,
 	type GetUserByIdentityIdQueryVariables,
-	type GetUserByIdQuery,
-	type GetUserByIdQueryVariables,
 	InsertUserDocument,
 	InsertUserIdentityDocument,
 	type InsertUserIdentityMutation,
@@ -264,6 +267,36 @@ export class UsersService {
 		}
 
 		return this.adapt(updatedUser?.returning[0]);
+	}
+
+	/**
+	 * Resolve the language for a batch of profile ids in one query, eg: used by the material
+	 * request unread messages digest to render notification text in each recipient's own language.
+	 * Falls back to an empty map on failure rather than throwing: the digest job is fire-and-forget
+	 * for all recipients at once, so a failure here should not stop every user's notification from
+	 * being sent just because their language couldn't be resolved.
+	 */
+	public async findLanguagesByProfileIds(
+		profileIds: string[]
+	): Promise<Record<string, Lookup_Languages_Enum>> {
+		if (profileIds.length === 0) {
+			return {};
+		}
+
+		try {
+			const response = await this.dataService.execute<
+				FindProfileLanguagesByIdsQuery,
+				FindProfileLanguagesByIdsQueryVariables
+			>(FindProfileLanguagesByIdsDocument, { ids: profileIds });
+
+			return Object.fromEntries(
+				response.users_profile.map((profile) => [profile.id, profile.language])
+			);
+		} catch (err) {
+			const error = customError('Failed to find languages by profile ids', err, { profileIds });
+			console.error(error);
+			return {};
+		}
 	}
 
 	public async updateLastAccessDate(id: string): Promise<UpdateResponse> {
