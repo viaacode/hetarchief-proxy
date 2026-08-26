@@ -1571,6 +1571,16 @@ export class MaterialRequestsService {
 					await this.updateMaterialRequest(materialRequest.id, {
 						is_archived: true,
 					});
+					try {
+						await this.materialRequestMessageService.deleteAllUnreadEntriesForMaterialRequest(
+							materialRequest.id
+						);
+					} catch (err) {
+						// Log the error but don't throw, since the main flow of updating the material request is successful
+						console.error('Failed to delete unread message entries for material request', err, {
+							materialRequestId: materialRequest.id,
+						});
+					}
 					const attachmentUrls = materialRequest.messages_and_events.flatMap((item) =>
 						item.attachments.map((attachment) => attachment.attachment_url)
 					);

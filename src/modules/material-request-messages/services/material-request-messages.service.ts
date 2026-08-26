@@ -14,6 +14,9 @@ import {
 	CountUnreadMaterialRequestMessagesDocument,
 	CountUnreadMaterialRequestMessagesQuery,
 	CountUnreadMaterialRequestMessagesQueryVariables,
+	DeleteAllUnreadEntriesForMaterialRequestDocument,
+	type DeleteAllUnreadEntriesForMaterialRequestMutation,
+	type DeleteAllUnreadEntriesForMaterialRequestMutationVariables,
 	DeleteMessageUnreadEntriesDocument,
 	DeleteMessageUnreadEntriesMutation,
 	DeleteMessageUnreadEntriesMutationVariables,
@@ -156,6 +159,23 @@ export class MaterialRequestMessagesService {
 			DeleteMessageUnreadEntriesMutation,
 			DeleteMessageUnreadEntriesMutationVariables
 		>(DeleteMessageUnreadEntriesDocument, { materialRequestId, profileId });
+	}
+
+	/**
+	 * Deletes every unread-status row for a material request, for every receiver - used when a
+	 * request gets archived, since it's done (approved/denied/cancelled/download-expired) and any
+	 * unread rows left on it from that point on are stale rather than a live backlog, unlike
+	 * deleteMessageUnreadEntries above, which only clears one receiver's rows on their own request.
+	 */
+	public async deleteAllUnreadEntriesForMaterialRequest(
+		materialRequestId: string
+	): Promise<number> {
+		const response = await this.dataService.execute<
+			DeleteAllUnreadEntriesForMaterialRequestMutation,
+			DeleteAllUnreadEntriesForMaterialRequestMutationVariables
+		>(DeleteAllUnreadEntriesForMaterialRequestDocument, { materialRequestId });
+
+		return response.delete_app_material_request_message_unread_status?.affected_rows || 0;
 	}
 
 	async createMessage(

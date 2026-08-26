@@ -1,0 +1,7 @@
+mutation deleteAllUnreadEntriesForMaterialRequest($materialRequestId: uuid!) {
+	delete_app_material_request_message_unread_status(
+		where: { material_request_id: { _eq: $materialRequestId } }
+	) {
+		affected_rows
+	}
+}
