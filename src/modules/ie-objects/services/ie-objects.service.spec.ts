@@ -448,7 +448,9 @@ describe('ieObjectsService', () => {
 			objectIeMock.getIsRepresentedBy[0] = {
 				isRepresentedBy: [
 					{
-						...(objectIeMock.getIsRepresentedBy[0]?.isRepresentedBy || {}),
+						...objectIeMock.getIsRepresentedBy[0]?.isRepresentedBy?.[0],
+						id: 'https://data-int.hetarchief.be/id/entity/mock-representation',
+						schemaTranscriptUrls: [],
 						includes: [],
 					},
 				],

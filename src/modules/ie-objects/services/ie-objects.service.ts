@@ -1317,10 +1317,7 @@ export class IeObjectsService {
 					const transcriptInfo = representation.schemaTranscriptUrls?.[0];
 					const schemaTranscript = transcriptInfo?.schema_transcript;
 					const schemaTranscriptUrl = transcriptInfo?.schema_transcript_url || null;
-					const representationThumbnailUrl =
-						(
-							representation as unknown as GetIeObjectDetailQuery['getHasPart'][0]['isRepresentedBy'][0]
-						)?.schema_thumbnail_url || null;
+					const representationThumbnailUrl = representation?.schema_thumbnail_url || null;
 					const representationThumbnailUrlResolved = await this.getThumbnailUrlWithToken(
 						representationThumbnailUrl,
 						referer,
