@@ -658,9 +658,7 @@ export class NotificationsService {
 			const notifications: Partial<App_Notification_Insert_Input>[] = [];
 
 			for (const [profileId, counts] of countsByProfileId.entries()) {
-				// Fall back to Dutch when the language lookup failed or didn't resolve this profile,
-				// so the notification still gets sent rather than skipped for lack of a confirmed locale.
-				const language = languageByProfileId[profileId] || Lookup_Languages_Enum.Nl;
+				const language = languageByProfileId[profileId];
 
 				if (counts.outgoing > 0) {
 					notifications.push({

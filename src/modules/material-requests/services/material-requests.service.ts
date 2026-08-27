@@ -1859,26 +1859,18 @@ export class MaterialRequestsService {
 	 * Triggered externally once a day, see MaterialRequestsSchedulingController.
 	 */
 	public async sendDailyUnreadMessagesDigest(): Promise<void> {
-		const allUnreadMessages =
-			await this.materialRequestMessageService.getAllUnreadMessageOverview();
+		const unreadCounts = await this.materialRequestMessageService.getUnreadMessageCountsPerUser();
 
-		if (allUnreadMessages.length === 0) {
+		if (unreadCounts.length === 0) {
 			return;
 		}
 
-		const countsByProfileId = new Map<string, { outgoing: number; incoming: number }>();
-		for (const unreadMessage of allUnreadMessages) {
-			const counts = countsByProfileId.get(unreadMessage.receiver_profile_id) || {
-				outgoing: 0,
-				incoming: 0,
-			};
-			if (unreadMessage.is_outgoing) {
-				counts.outgoing += 1;
-			} else {
-				counts.incoming += 1;
-			}
-			countsByProfileId.set(unreadMessage.receiver_profile_id, counts);
-		}
+		const countsByProfileId = new Map<string, { outgoing: number; incoming: number }>(
+			unreadCounts.map((row) => [
+				row.receiver_profile_id,
+				{ outgoing: Number(row.outgoing_count) || 0, incoming: Number(row.incoming_count) || 0 },
+			])
+		);
 
 		const languageByProfileId = await this.usersService.findLanguagesByProfileIds(
 			Array.from(countsByProfileId.keys())

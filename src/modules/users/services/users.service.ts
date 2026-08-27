@@ -272,9 +272,10 @@ export class UsersService {
 	/**
 	 * Resolve the language for a batch of profile ids in one query, eg: used by the material
 	 * request unread messages digest to render notification text in each recipient's own language.
-	 * Falls back to an empty map on failure rather than throwing: the digest job is fire-and-forget
-	 * for all recipients at once, so a failure here should not stop every user's notification from
-	 * being sent just because their language couldn't be resolved.
+	 * Every requested id is guaranteed an entry, defaulted to Dutch when the profile has no language
+	 * set or the query fails entirely - the digest job is fire-and-forget for all recipients at once,
+	 * so a failure here should not stop every user's notification from being sent for lack of a
+	 * confirmed locale.
 	 */
 	public async findLanguagesByProfileIds(
 		profileIds: string[]
@@ -289,13 +290,22 @@ export class UsersService {
 				FindProfileLanguagesByIdsQueryVariables
 			>(FindProfileLanguagesByIdsDocument, { ids: profileIds });
 
-			return Object.fromEntries(
+			const languageByProfileId = new Map(
 				response.users_profile.map((profile) => [profile.id, profile.language])
+			);
+
+			return Object.fromEntries(
+				profileIds.map((profileId) => [
+					profileId,
+					languageByProfileId.get(profileId) || Lookup_Languages_Enum.Nl,
+				])
 			);
 		} catch (err) {
 			const error = customError('Failed to find languages by profile ids', err, { profileIds });
-			console.error(error);
-			return {};
+			this.logger.error(error);
+			return Object.fromEntries(
+				profileIds.map((profileId) => [profileId, Lookup_Languages_Enum.Nl])
+			);
 		}
 	}
 

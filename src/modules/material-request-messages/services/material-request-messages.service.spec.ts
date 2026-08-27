@@ -6,8 +6,8 @@ import { MaterialRequestMessagesService } from './material-request-messages.serv
 import { MaterialRequestPdfGeneratorService } from './material-request-pdf-generator';
 
 import {
-	type GetAllUnreadMessageOverviewQuery,
 	type GetEvaluatorsForOrganisationQuery,
+	type GetUnreadMessageCountsPerUserQuery,
 	type GetUnreadMessageOverviewForProfileQuery,
 	type InsertMaterialRequestMessageMutation,
 	Lookup_App_Material_Request_Message_Type_Enum,
@@ -80,7 +80,7 @@ describe('MaterialRequestMessagesService', () => {
 	describe('getUnreadMessageOverviewForProfile', () => {
 		it('derives both direction booleans and per-request counts from the view rows', async () => {
 			const mockData: GetUnreadMessageOverviewForProfileQuery = {
-				app_material_request_unread_message_overview: [
+				app_material_request_message_unread_overview: [
 					{ material_request_id: 'mr-1', is_outgoing: true },
 					{ material_request_id: 'mr-1', is_outgoing: true },
 					{ material_request_id: 'mr-2', is_outgoing: false },
@@ -103,7 +103,7 @@ describe('MaterialRequestMessagesService', () => {
 
 		it('only sets the outgoing boolean when every unread row is outgoing', async () => {
 			const mockData: GetUnreadMessageOverviewForProfileQuery = {
-				app_material_request_unread_message_overview: [
+				app_material_request_message_unread_overview: [
 					{ material_request_id: 'mr-1', is_outgoing: true },
 				],
 			};
@@ -118,7 +118,7 @@ describe('MaterialRequestMessagesService', () => {
 
 		it('returns both booleans false and an empty map when there are no unread messages', async () => {
 			const mockData: GetUnreadMessageOverviewForProfileQuery = {
-				app_material_request_unread_message_overview: [],
+				app_material_request_message_unread_overview: [],
 			};
 			mockDataService.execute.mockResolvedValueOnce(mockData);
 
@@ -133,28 +133,28 @@ describe('MaterialRequestMessagesService', () => {
 		});
 	});
 
-	describe('getAllUnreadMessageOverview', () => {
-		it('returns the full outstanding unread backlog across all users', async () => {
-			const mockData: GetAllUnreadMessageOverviewQuery = {
-				app_material_request_unread_message_overview: [
-					{ receiver_profile_id: 'profile-1', is_outgoing: true },
-					{ receiver_profile_id: 'profile-2', is_outgoing: false },
+	describe('getUnreadMessageCountsPerUser', () => {
+		it('returns the outgoing/incoming unread counts per user', async () => {
+			const mockData: GetUnreadMessageCountsPerUserQuery = {
+				app_material_request_message_unread_counts_per_user: [
+					{ receiver_profile_id: 'profile-1', outgoing_count: 2, incoming_count: 0 },
+					{ receiver_profile_id: 'profile-2', outgoing_count: 0, incoming_count: 3 },
 				],
 			};
 			mockDataService.execute.mockResolvedValueOnce(mockData);
 
-			const result = await materialRequestMessagesService.getAllUnreadMessageOverview();
+			const result = await materialRequestMessagesService.getUnreadMessageCountsPerUser();
 
-			expect(result).toEqual(mockData.app_material_request_unread_message_overview);
+			expect(result).toEqual(mockData.app_material_request_message_unread_counts_per_user);
 		});
 
 		it('returns an empty array when nobody has unread messages', async () => {
-			const mockData: GetAllUnreadMessageOverviewQuery = {
-				app_material_request_unread_message_overview: [],
+			const mockData: GetUnreadMessageCountsPerUserQuery = {
+				app_material_request_message_unread_counts_per_user: [],
 			};
 			mockDataService.execute.mockResolvedValueOnce(mockData);
 
-			const result = await materialRequestMessagesService.getAllUnreadMessageOverview();
+			const result = await materialRequestMessagesService.getUnreadMessageCountsPerUser();
 
 			expect(result).toEqual([]);
 		});

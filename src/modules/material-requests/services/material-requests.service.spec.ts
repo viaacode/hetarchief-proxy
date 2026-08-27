@@ -128,7 +128,7 @@ const mockMaterialRequestMessageService: Partial<
 	findAll: vi.fn(),
 	countUnreadMessages: vi.fn(),
 	adaptEvent: vi.fn((message) => message),
-	getAllUnreadMessageOverview: vi.fn(),
+	getUnreadMessageCountsPerUser: vi.fn(),
 };
 
 const getDefaultMaterialRequestByIdResponse = (): {
@@ -635,13 +635,13 @@ describe('MaterialRequestsService', () => {
 
 	describe('sendDailyUnreadMessagesDigest', () => {
 		beforeEach(() => {
-			mockMaterialRequestMessageService.getAllUnreadMessageOverview.mockReset();
+			mockMaterialRequestMessageService.getUnreadMessageCountsPerUser.mockReset();
 			mockUsersService.findLanguagesByProfileIds.mockReset();
 			mockNotificationsService.sendDailyUnreadMessagesDigest.mockReset();
 		});
 
 		it('does nothing when nobody has any outstanding unread messages', async () => {
-			mockMaterialRequestMessageService.getAllUnreadMessageOverview.mockResolvedValueOnce([]);
+			mockMaterialRequestMessageService.getUnreadMessageCountsPerUser.mockResolvedValueOnce([]);
 
 			await materialRequestsService.sendDailyUnreadMessagesDigest();
 
@@ -649,12 +649,10 @@ describe('MaterialRequestsService', () => {
 			expect(mockNotificationsService.sendDailyUnreadMessagesDigest).not.toHaveBeenCalled();
 		});
 
-		it('tallies outgoing/incoming unread counts per profile and resolves their language before delegating to the notifications service', async () => {
-			mockMaterialRequestMessageService.getAllUnreadMessageOverview.mockResolvedValueOnce([
-				{ receiver_profile_id: 'profile-1', is_outgoing: true },
-				{ receiver_profile_id: 'profile-1', is_outgoing: true },
-				{ receiver_profile_id: 'profile-1', is_outgoing: false },
-				{ receiver_profile_id: 'profile-2', is_outgoing: false },
+		it('maps outgoing/incoming unread counts per profile - coercing Hasura bigint counts, which may arrive as strings, to numbers - and resolves their language before delegating to the notifications service', async () => {
+			mockMaterialRequestMessageService.getUnreadMessageCountsPerUser.mockResolvedValueOnce([
+				{ receiver_profile_id: 'profile-1', outgoing_count: '2', incoming_count: '1' },
+				{ receiver_profile_id: 'profile-2', outgoing_count: 0, incoming_count: 1 },
 			]);
 			mockUsersService.findLanguagesByProfileIds.mockResolvedValueOnce({
 				'profile-1': 'nl',

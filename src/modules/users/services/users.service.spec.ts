@@ -209,12 +209,28 @@ describe('UsersService', () => {
 			});
 		});
 
-		it('returns an empty map when the query fails', async () => {
+		it('defaults every requested profile id to Dutch when the query fails', async () => {
 			mockDataService.execute.mockRejectedValueOnce(new Error('boom'));
 
-			const result = await usersService.findLanguagesByProfileIds(['profile-1']);
+			const result = await usersService.findLanguagesByProfileIds(['profile-1', 'profile-2']);
 
-			expect(result).toEqual({});
+			expect(result).toEqual({
+				'profile-1': Lookup_Languages_Enum.Nl,
+				'profile-2': Lookup_Languages_Enum.Nl,
+			});
+		});
+
+		it('defaults to Dutch for a profile with no language set or missing from the response', async () => {
+			mockDataService.execute.mockResolvedValueOnce({
+				users_profile: [{ id: 'profile-1', language: null }],
+			} as FindProfileLanguagesByIdsQuery);
+
+			const result = await usersService.findLanguagesByProfileIds(['profile-1', 'profile-2']);
+
+			expect(result).toEqual({
+				'profile-1': Lookup_Languages_Enum.Nl,
+				'profile-2': Lookup_Languages_Enum.Nl,
+			});
 		});
 	});
 
