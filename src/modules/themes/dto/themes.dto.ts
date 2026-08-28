@@ -417,6 +417,13 @@ export class IeObjectInThemeResponseDto {
 	@ApiProperty({
 		type: String,
 		nullable: true,
+		description: 'The slug of the maintaining organisation',
+	})
+	maintainerSlug: string | null;
+
+	@ApiProperty({
+		type: String,
+		nullable: true,
 		description: 'The display name of the maintaining organisation',
 	})
 	maintainerName: string | null;

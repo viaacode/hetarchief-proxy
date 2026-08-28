@@ -211,6 +211,7 @@ export class PlayableDisplayDataService {
 						thumbnailUrl,
 						dctermsFormat: limitedObject.dctermsFormat,
 						maintainerId: limitedObject.maintainerId,
+						maintainerSlug: limitedObject.maintainerSlug,
 						maintainerName: limitedObject.maintainerName,
 						maintainerLogo: limitedObject.maintainerLogo,
 						maintainerOverlay: limitedObject.maintainerOverlay,
@@ -526,6 +527,7 @@ export class PlayableDisplayDataService {
 				sector: schemaMaintainer?.ha_org_sector as IeObjectSector,
 				name: ie.schema_name,
 				dctermsFormat,
+				maintainerSlug: schemaMaintainer?.organizationSlug?.slug,
 				maintainerName: schemaMaintainer?.skos_pref_label,
 				maintainerLogo: schemaMaintainer?.ha_org_has_logo
 					// TODO remove this workaround once the INT organisations assets are available
