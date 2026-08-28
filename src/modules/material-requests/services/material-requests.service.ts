@@ -1568,6 +1568,9 @@ export class MaterialRequestsService {
 
 			await mapLimit(response.app_material_requests, 5, async (materialRequest) => {
 				try {
+					// A Postgres trigger (app.material_requests_delete_unread_status_on_archive) clears
+					// this request's unread-status rows as soon as is_archived flips to true below —
+					// no proxy-side cleanup call needed here.
 					await this.updateMaterialRequest(materialRequest.id, {
 						is_archived: true,
 					});
@@ -1845,6 +1848,37 @@ export class MaterialRequestsService {
 
 		console.info(
 			`Send additional conditions reminder for ${rawMaterialRequests.length} material requests`
+		);
+	}
+
+	/**
+	 * Sends a once-daily in-app notification digest to every user with an outstanding unread
+	 * conversation message: one notification for their outgoing requests (as requester) and/or
+	 * one for their incoming requests (as evaluator), each with that direction's total unread
+	 * count (the user's full outstanding backlog, not just what changed since the last run).
+	 * Triggered externally once a day, see MaterialRequestsSchedulingController.
+	 */
+	public async sendDailyUnreadMessagesDigest(): Promise<void> {
+		const unreadCounts = await this.materialRequestMessageService.getUnreadMessageCountsPerUser();
+
+		if (unreadCounts.length === 0) {
+			return;
+		}
+
+		const countsByProfileId = new Map<string, { outgoing: number; incoming: number }>(
+			unreadCounts.map((row) => [
+				row.receiver_profile_id,
+				{ outgoing: Number(row.outgoing_count) || 0, incoming: Number(row.incoming_count) || 0 },
+			])
+		);
+
+		const languageByProfileId = await this.usersService.findLanguagesByProfileIds(
+			Array.from(countsByProfileId.keys())
+		);
+
+		await this.notificationsService.sendDailyUnreadMessagesDigest(
+			countsByProfileId,
+			languageByProfileId
 		);
 	}
 }

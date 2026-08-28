@@ -2357,6 +2357,252 @@ export type App_Maintenance_Alerts_Updates = {
   where: App_Maintenance_Alerts_Bool_Exp;
 };
 
+/** columns and relationships of "app.material_request_message_unread_counts_per_user" */
+export type App_Material_Request_Message_Unread_Counts_Per_User = {
+  __typename?: 'app_material_request_message_unread_counts_per_user';
+  incoming_count?: Maybe<Scalars['bigint']['output']>;
+  outgoing_count?: Maybe<Scalars['bigint']['output']>;
+  receiver_profile_id?: Maybe<Scalars['uuid']['output']>;
+};
+
+/** aggregated selection of "app.material_request_message_unread_counts_per_user" */
+export type App_Material_Request_Message_Unread_Counts_Per_User_Aggregate = {
+  __typename?: 'app_material_request_message_unread_counts_per_user_aggregate';
+  aggregate?: Maybe<App_Material_Request_Message_Unread_Counts_Per_User_Aggregate_Fields>;
+  nodes: Array<App_Material_Request_Message_Unread_Counts_Per_User>;
+};
+
+/** aggregate fields of "app.material_request_message_unread_counts_per_user" */
+export type App_Material_Request_Message_Unread_Counts_Per_User_Aggregate_Fields = {
+  __typename?: 'app_material_request_message_unread_counts_per_user_aggregate_fields';
+  avg?: Maybe<App_Material_Request_Message_Unread_Counts_Per_User_Avg_Fields>;
+  count: Scalars['Int']['output'];
+  max?: Maybe<App_Material_Request_Message_Unread_Counts_Per_User_Max_Fields>;
+  min?: Maybe<App_Material_Request_Message_Unread_Counts_Per_User_Min_Fields>;
+  stddev?: Maybe<App_Material_Request_Message_Unread_Counts_Per_User_Stddev_Fields>;
+  stddev_pop?: Maybe<App_Material_Request_Message_Unread_Counts_Per_User_Stddev_Pop_Fields>;
+  stddev_samp?: Maybe<App_Material_Request_Message_Unread_Counts_Per_User_Stddev_Samp_Fields>;
+  sum?: Maybe<App_Material_Request_Message_Unread_Counts_Per_User_Sum_Fields>;
+  var_pop?: Maybe<App_Material_Request_Message_Unread_Counts_Per_User_Var_Pop_Fields>;
+  var_samp?: Maybe<App_Material_Request_Message_Unread_Counts_Per_User_Var_Samp_Fields>;
+  variance?: Maybe<App_Material_Request_Message_Unread_Counts_Per_User_Variance_Fields>;
+};
+
+
+/** aggregate fields of "app.material_request_message_unread_counts_per_user" */
+export type App_Material_Request_Message_Unread_Counts_Per_User_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<App_Material_Request_Message_Unread_Counts_Per_User_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+/** aggregate avg on columns */
+export type App_Material_Request_Message_Unread_Counts_Per_User_Avg_Fields = {
+  __typename?: 'app_material_request_message_unread_counts_per_user_avg_fields';
+  incoming_count?: Maybe<Scalars['Float']['output']>;
+  outgoing_count?: Maybe<Scalars['Float']['output']>;
+};
+
+/** Boolean expression to filter rows from the table "app.material_request_message_unread_counts_per_user". All fields are combined with a logical 'AND'. */
+export type App_Material_Request_Message_Unread_Counts_Per_User_Bool_Exp = {
+  _and?: InputMaybe<Array<App_Material_Request_Message_Unread_Counts_Per_User_Bool_Exp>>;
+  _not?: InputMaybe<App_Material_Request_Message_Unread_Counts_Per_User_Bool_Exp>;
+  _or?: InputMaybe<Array<App_Material_Request_Message_Unread_Counts_Per_User_Bool_Exp>>;
+  incoming_count?: InputMaybe<Bigint_Comparison_Exp>;
+  outgoing_count?: InputMaybe<Bigint_Comparison_Exp>;
+  receiver_profile_id?: InputMaybe<Uuid_Comparison_Exp>;
+};
+
+/** aggregate max on columns */
+export type App_Material_Request_Message_Unread_Counts_Per_User_Max_Fields = {
+  __typename?: 'app_material_request_message_unread_counts_per_user_max_fields';
+  incoming_count?: Maybe<Scalars['bigint']['output']>;
+  outgoing_count?: Maybe<Scalars['bigint']['output']>;
+  receiver_profile_id?: Maybe<Scalars['uuid']['output']>;
+};
+
+/** aggregate min on columns */
+export type App_Material_Request_Message_Unread_Counts_Per_User_Min_Fields = {
+  __typename?: 'app_material_request_message_unread_counts_per_user_min_fields';
+  incoming_count?: Maybe<Scalars['bigint']['output']>;
+  outgoing_count?: Maybe<Scalars['bigint']['output']>;
+  receiver_profile_id?: Maybe<Scalars['uuid']['output']>;
+};
+
+/** Ordering options when selecting data from "app.material_request_message_unread_counts_per_user". */
+export type App_Material_Request_Message_Unread_Counts_Per_User_Order_By = {
+  incoming_count?: InputMaybe<Order_By>;
+  outgoing_count?: InputMaybe<Order_By>;
+  receiver_profile_id?: InputMaybe<Order_By>;
+};
+
+/** select columns of table "app.material_request_message_unread_counts_per_user" */
+export enum App_Material_Request_Message_Unread_Counts_Per_User_Select_Column {
+  /** column name */
+  IncomingCount = 'incoming_count',
+  /** column name */
+  OutgoingCount = 'outgoing_count',
+  /** column name */
+  ReceiverProfileId = 'receiver_profile_id'
+}
+
+/** aggregate stddev on columns */
+export type App_Material_Request_Message_Unread_Counts_Per_User_Stddev_Fields = {
+  __typename?: 'app_material_request_message_unread_counts_per_user_stddev_fields';
+  incoming_count?: Maybe<Scalars['Float']['output']>;
+  outgoing_count?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate stddev_pop on columns */
+export type App_Material_Request_Message_Unread_Counts_Per_User_Stddev_Pop_Fields = {
+  __typename?: 'app_material_request_message_unread_counts_per_user_stddev_pop_fields';
+  incoming_count?: Maybe<Scalars['Float']['output']>;
+  outgoing_count?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate stddev_samp on columns */
+export type App_Material_Request_Message_Unread_Counts_Per_User_Stddev_Samp_Fields = {
+  __typename?: 'app_material_request_message_unread_counts_per_user_stddev_samp_fields';
+  incoming_count?: Maybe<Scalars['Float']['output']>;
+  outgoing_count?: Maybe<Scalars['Float']['output']>;
+};
+
+/** Streaming cursor of the table "app_material_request_message_unread_counts_per_user" */
+export type App_Material_Request_Message_Unread_Counts_Per_User_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: App_Material_Request_Message_Unread_Counts_Per_User_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type App_Material_Request_Message_Unread_Counts_Per_User_Stream_Cursor_Value_Input = {
+  incoming_count?: InputMaybe<Scalars['bigint']['input']>;
+  outgoing_count?: InputMaybe<Scalars['bigint']['input']>;
+  receiver_profile_id?: InputMaybe<Scalars['uuid']['input']>;
+};
+
+/** aggregate sum on columns */
+export type App_Material_Request_Message_Unread_Counts_Per_User_Sum_Fields = {
+  __typename?: 'app_material_request_message_unread_counts_per_user_sum_fields';
+  incoming_count?: Maybe<Scalars['bigint']['output']>;
+  outgoing_count?: Maybe<Scalars['bigint']['output']>;
+};
+
+/** aggregate var_pop on columns */
+export type App_Material_Request_Message_Unread_Counts_Per_User_Var_Pop_Fields = {
+  __typename?: 'app_material_request_message_unread_counts_per_user_var_pop_fields';
+  incoming_count?: Maybe<Scalars['Float']['output']>;
+  outgoing_count?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate var_samp on columns */
+export type App_Material_Request_Message_Unread_Counts_Per_User_Var_Samp_Fields = {
+  __typename?: 'app_material_request_message_unread_counts_per_user_var_samp_fields';
+  incoming_count?: Maybe<Scalars['Float']['output']>;
+  outgoing_count?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate variance on columns */
+export type App_Material_Request_Message_Unread_Counts_Per_User_Variance_Fields = {
+  __typename?: 'app_material_request_message_unread_counts_per_user_variance_fields';
+  incoming_count?: Maybe<Scalars['Float']['output']>;
+  outgoing_count?: Maybe<Scalars['Float']['output']>;
+};
+
+/** columns and relationships of "app.material_request_message_unread_overview" */
+export type App_Material_Request_Message_Unread_Overview = {
+  __typename?: 'app_material_request_message_unread_overview';
+  is_outgoing?: Maybe<Scalars['Boolean']['output']>;
+  material_request_id?: Maybe<Scalars['uuid']['output']>;
+  message_created_at?: Maybe<Scalars['timestamp']['output']>;
+  receiver_profile_id?: Maybe<Scalars['uuid']['output']>;
+};
+
+/** aggregated selection of "app.material_request_message_unread_overview" */
+export type App_Material_Request_Message_Unread_Overview_Aggregate = {
+  __typename?: 'app_material_request_message_unread_overview_aggregate';
+  aggregate?: Maybe<App_Material_Request_Message_Unread_Overview_Aggregate_Fields>;
+  nodes: Array<App_Material_Request_Message_Unread_Overview>;
+};
+
+/** aggregate fields of "app.material_request_message_unread_overview" */
+export type App_Material_Request_Message_Unread_Overview_Aggregate_Fields = {
+  __typename?: 'app_material_request_message_unread_overview_aggregate_fields';
+  count: Scalars['Int']['output'];
+  max?: Maybe<App_Material_Request_Message_Unread_Overview_Max_Fields>;
+  min?: Maybe<App_Material_Request_Message_Unread_Overview_Min_Fields>;
+};
+
+
+/** aggregate fields of "app.material_request_message_unread_overview" */
+export type App_Material_Request_Message_Unread_Overview_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<App_Material_Request_Message_Unread_Overview_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+/** Boolean expression to filter rows from the table "app.material_request_message_unread_overview". All fields are combined with a logical 'AND'. */
+export type App_Material_Request_Message_Unread_Overview_Bool_Exp = {
+  _and?: InputMaybe<Array<App_Material_Request_Message_Unread_Overview_Bool_Exp>>;
+  _not?: InputMaybe<App_Material_Request_Message_Unread_Overview_Bool_Exp>;
+  _or?: InputMaybe<Array<App_Material_Request_Message_Unread_Overview_Bool_Exp>>;
+  is_outgoing?: InputMaybe<Boolean_Comparison_Exp>;
+  material_request_id?: InputMaybe<Uuid_Comparison_Exp>;
+  message_created_at?: InputMaybe<Timestamp_Comparison_Exp>;
+  receiver_profile_id?: InputMaybe<Uuid_Comparison_Exp>;
+};
+
+/** aggregate max on columns */
+export type App_Material_Request_Message_Unread_Overview_Max_Fields = {
+  __typename?: 'app_material_request_message_unread_overview_max_fields';
+  material_request_id?: Maybe<Scalars['uuid']['output']>;
+  message_created_at?: Maybe<Scalars['timestamp']['output']>;
+  receiver_profile_id?: Maybe<Scalars['uuid']['output']>;
+};
+
+/** aggregate min on columns */
+export type App_Material_Request_Message_Unread_Overview_Min_Fields = {
+  __typename?: 'app_material_request_message_unread_overview_min_fields';
+  material_request_id?: Maybe<Scalars['uuid']['output']>;
+  message_created_at?: Maybe<Scalars['timestamp']['output']>;
+  receiver_profile_id?: Maybe<Scalars['uuid']['output']>;
+};
+
+/** Ordering options when selecting data from "app.material_request_message_unread_overview". */
+export type App_Material_Request_Message_Unread_Overview_Order_By = {
+  is_outgoing?: InputMaybe<Order_By>;
+  material_request_id?: InputMaybe<Order_By>;
+  message_created_at?: InputMaybe<Order_By>;
+  receiver_profile_id?: InputMaybe<Order_By>;
+};
+
+/** select columns of table "app.material_request_message_unread_overview" */
+export enum App_Material_Request_Message_Unread_Overview_Select_Column {
+  /** column name */
+  IsOutgoing = 'is_outgoing',
+  /** column name */
+  MaterialRequestId = 'material_request_id',
+  /** column name */
+  MessageCreatedAt = 'message_created_at',
+  /** column name */
+  ReceiverProfileId = 'receiver_profile_id'
+}
+
+/** Streaming cursor of the table "app_material_request_message_unread_overview" */
+export type App_Material_Request_Message_Unread_Overview_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: App_Material_Request_Message_Unread_Overview_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type App_Material_Request_Message_Unread_Overview_Stream_Cursor_Value_Input = {
+  is_outgoing?: InputMaybe<Scalars['Boolean']['input']>;
+  material_request_id?: InputMaybe<Scalars['uuid']['input']>;
+  message_created_at?: InputMaybe<Scalars['timestamp']['input']>;
+  receiver_profile_id?: InputMaybe<Scalars['uuid']['input']>;
+};
+
 /** keep track of the unread status of messages for material requests */
 export type App_Material_Request_Message_Unread_Status = {
   __typename?: 'app_material_request_message_unread_status';
@@ -21443,7 +21689,7 @@ export enum Lookup_App_Material_Request_Download_Status_Enum {
   New = 'NEW',
   /** download was triggered, and mam export job is in progress */
   Pending = 'PENDING',
-  /** download job succeeded, download_url filled in */
+  /** download job failed */
   Succeeded = 'SUCCEEDED'
 }
 
@@ -30655,6 +30901,14 @@ export type Query_Root = {
   app_maintenance_alerts_aggregate: App_Maintenance_Alerts_Aggregate;
   /** fetch data from the table: "app.maintenance_alerts" using primary key columns */
   app_maintenance_alerts_by_pk?: Maybe<App_Maintenance_Alerts>;
+  /** fetch data from the table: "app.material_request_message_unread_counts_per_user" */
+  app_material_request_message_unread_counts_per_user: Array<App_Material_Request_Message_Unread_Counts_Per_User>;
+  /** fetch aggregated fields from the table: "app.material_request_message_unread_counts_per_user" */
+  app_material_request_message_unread_counts_per_user_aggregate: App_Material_Request_Message_Unread_Counts_Per_User_Aggregate;
+  /** fetch data from the table: "app.material_request_message_unread_overview" */
+  app_material_request_message_unread_overview: Array<App_Material_Request_Message_Unread_Overview>;
+  /** fetch aggregated fields from the table: "app.material_request_message_unread_overview" */
+  app_material_request_message_unread_overview_aggregate: App_Material_Request_Message_Unread_Overview_Aggregate;
   /** fetch data from the table: "app.material_request_message_unread_status" */
   app_material_request_message_unread_status: Array<App_Material_Request_Message_Unread_Status>;
   /** fetch aggregated fields from the table: "app.material_request_message_unread_status" */
@@ -31432,6 +31686,42 @@ export type Query_RootApp_Maintenance_Alerts_AggregateArgs = {
 
 export type Query_RootApp_Maintenance_Alerts_By_PkArgs = {
   id: Scalars['uuid']['input'];
+};
+
+
+export type Query_RootApp_Material_Request_Message_Unread_Counts_Per_UserArgs = {
+  distinct_on?: InputMaybe<Array<App_Material_Request_Message_Unread_Counts_Per_User_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<App_Material_Request_Message_Unread_Counts_Per_User_Order_By>>;
+  where?: InputMaybe<App_Material_Request_Message_Unread_Counts_Per_User_Bool_Exp>;
+};
+
+
+export type Query_RootApp_Material_Request_Message_Unread_Counts_Per_User_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<App_Material_Request_Message_Unread_Counts_Per_User_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<App_Material_Request_Message_Unread_Counts_Per_User_Order_By>>;
+  where?: InputMaybe<App_Material_Request_Message_Unread_Counts_Per_User_Bool_Exp>;
+};
+
+
+export type Query_RootApp_Material_Request_Message_Unread_OverviewArgs = {
+  distinct_on?: InputMaybe<Array<App_Material_Request_Message_Unread_Overview_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<App_Material_Request_Message_Unread_Overview_Order_By>>;
+  where?: InputMaybe<App_Material_Request_Message_Unread_Overview_Bool_Exp>;
+};
+
+
+export type Query_RootApp_Material_Request_Message_Unread_Overview_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<App_Material_Request_Message_Unread_Overview_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<App_Material_Request_Message_Unread_Overview_Order_By>>;
+  where?: InputMaybe<App_Material_Request_Message_Unread_Overview_Bool_Exp>;
 };
 
 
@@ -34186,6 +34476,18 @@ export type Subscription_Root = {
   app_maintenance_alerts_by_pk?: Maybe<App_Maintenance_Alerts>;
   /** fetch data from the table in a streaming manner: "app.maintenance_alerts" */
   app_maintenance_alerts_stream: Array<App_Maintenance_Alerts>;
+  /** fetch data from the table: "app.material_request_message_unread_counts_per_user" */
+  app_material_request_message_unread_counts_per_user: Array<App_Material_Request_Message_Unread_Counts_Per_User>;
+  /** fetch aggregated fields from the table: "app.material_request_message_unread_counts_per_user" */
+  app_material_request_message_unread_counts_per_user_aggregate: App_Material_Request_Message_Unread_Counts_Per_User_Aggregate;
+  /** fetch data from the table in a streaming manner: "app.material_request_message_unread_counts_per_user" */
+  app_material_request_message_unread_counts_per_user_stream: Array<App_Material_Request_Message_Unread_Counts_Per_User>;
+  /** fetch data from the table: "app.material_request_message_unread_overview" */
+  app_material_request_message_unread_overview: Array<App_Material_Request_Message_Unread_Overview>;
+  /** fetch aggregated fields from the table: "app.material_request_message_unread_overview" */
+  app_material_request_message_unread_overview_aggregate: App_Material_Request_Message_Unread_Overview_Aggregate;
+  /** fetch data from the table in a streaming manner: "app.material_request_message_unread_overview" */
+  app_material_request_message_unread_overview_stream: Array<App_Material_Request_Message_Unread_Overview>;
   /** fetch data from the table: "app.material_request_message_unread_status" */
   app_material_request_message_unread_status: Array<App_Material_Request_Message_Unread_Status>;
   /** fetch aggregated fields from the table: "app.material_request_message_unread_status" */
@@ -35244,6 +35546,56 @@ export type Subscription_RootApp_Maintenance_Alerts_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<App_Maintenance_Alerts_Stream_Cursor_Input>>;
   where?: InputMaybe<App_Maintenance_Alerts_Bool_Exp>;
+};
+
+
+export type Subscription_RootApp_Material_Request_Message_Unread_Counts_Per_UserArgs = {
+  distinct_on?: InputMaybe<Array<App_Material_Request_Message_Unread_Counts_Per_User_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<App_Material_Request_Message_Unread_Counts_Per_User_Order_By>>;
+  where?: InputMaybe<App_Material_Request_Message_Unread_Counts_Per_User_Bool_Exp>;
+};
+
+
+export type Subscription_RootApp_Material_Request_Message_Unread_Counts_Per_User_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<App_Material_Request_Message_Unread_Counts_Per_User_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<App_Material_Request_Message_Unread_Counts_Per_User_Order_By>>;
+  where?: InputMaybe<App_Material_Request_Message_Unread_Counts_Per_User_Bool_Exp>;
+};
+
+
+export type Subscription_RootApp_Material_Request_Message_Unread_Counts_Per_User_StreamArgs = {
+  batch_size: Scalars['Int']['input'];
+  cursor: Array<InputMaybe<App_Material_Request_Message_Unread_Counts_Per_User_Stream_Cursor_Input>>;
+  where?: InputMaybe<App_Material_Request_Message_Unread_Counts_Per_User_Bool_Exp>;
+};
+
+
+export type Subscription_RootApp_Material_Request_Message_Unread_OverviewArgs = {
+  distinct_on?: InputMaybe<Array<App_Material_Request_Message_Unread_Overview_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<App_Material_Request_Message_Unread_Overview_Order_By>>;
+  where?: InputMaybe<App_Material_Request_Message_Unread_Overview_Bool_Exp>;
+};
+
+
+export type Subscription_RootApp_Material_Request_Message_Unread_Overview_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<App_Material_Request_Message_Unread_Overview_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<App_Material_Request_Message_Unread_Overview_Order_By>>;
+  where?: InputMaybe<App_Material_Request_Message_Unread_Overview_Bool_Exp>;
+};
+
+
+export type Subscription_RootApp_Material_Request_Message_Unread_Overview_StreamArgs = {
+  batch_size: Scalars['Int']['input'];
+  cursor: Array<InputMaybe<App_Material_Request_Message_Unread_Overview_Stream_Cursor_Input>>;
+  where?: InputMaybe<App_Material_Request_Message_Unread_Overview_Bool_Exp>;
 };
 
 
@@ -40936,6 +41288,18 @@ export type GetMaterialRequestMessagesQueryVariables = Exact<{
 
 export type GetMaterialRequestMessagesQuery = { __typename?: 'query_root', app_material_request_messages_and_events: Array<{ __typename?: 'app_material_request_messages_and_events', id: any, message_type: Lookup_App_Material_Request_Message_Type_Enum, body?: any | null, sender_profile_id?: any | null, created_at: any, material_request_id: any, sender?: { __typename?: 'users_profile', first_name?: string | null, last_name?: string | null, mail?: string | null, organisation?: { __typename?: 'graph_organization', org_identifier: string, skos_pref_label?: string | null, schema_vat_id?: string | null, hasSite: Array<{ __typename?: 'graph_organization_has_postal_address', postalAddress: { __typename?: 'graph_schema_postal_address', schema_street_address?: string | null, schema_address_locality?: string | null, schema_postal_code?: string | null, schema_contact_type?: string | null } }> } | null } | null, attachments: Array<{ __typename?: 'app_material_request_messages_attachments', id: any, attachment_url: string, attachment_filename: string, created_at: any }> }>, app_material_request_messages_and_events_aggregate: { __typename?: 'app_material_request_messages_and_events_aggregate', aggregate?: { __typename?: 'app_material_request_messages_and_events_aggregate_fields', count: number } | null } };
 
+export type GetUnreadMessageCountsPerUserQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetUnreadMessageCountsPerUserQuery = { __typename?: 'query_root', app_material_request_message_unread_counts_per_user: Array<{ __typename?: 'app_material_request_message_unread_counts_per_user', receiver_profile_id?: any | null, outgoing_count?: any | null, incoming_count?: any | null }> };
+
+export type GetUnreadMessageOverviewForProfileQueryVariables = Exact<{
+  profileId: Scalars['uuid']['input'];
+}>;
+
+
+export type GetUnreadMessageOverviewForProfileQuery = { __typename?: 'query_root', app_material_request_message_unread_overview: Array<{ __typename?: 'app_material_request_message_unread_overview', material_request_id?: any | null, is_outgoing?: boolean | null }> };
+
 export type InsertMaterialRequestMessageMutationVariables = Exact<{
   materialRequestId: Scalars['uuid']['input'];
   senderProfileId?: InputMaybe<Scalars['uuid']['input']>;
@@ -41348,6 +41712,13 @@ export type GetTosLastUpdatedAtQueryVariables = Exact<{ [key: string]: never; }>
 
 export type GetTosLastUpdatedAtQuery = { __typename?: 'query_root', app_config_by_pk?: { __typename?: 'app_config', value: any } | null };
 
+export type FindProfileLanguagesByIdsQueryVariables = Exact<{
+  ids: Array<Scalars['uuid']['input']> | Scalars['uuid']['input'];
+}>;
+
+
+export type FindProfileLanguagesByIdsQuery = { __typename?: 'query_root', users_profile: Array<{ __typename?: 'users_profile', id: any, language: Lookup_Languages_Enum }> };
+
 export type GetUserByEmailQueryVariables = Exact<{
   email: Scalars['String']['input'];
 }>;
@@ -41553,6 +41924,8 @@ export const GetEvaluatorsForOrganisationDocument = {"kind":"Document","definiti
 export const GetMaterialRequestAttachmentByIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getMaterialRequestAttachmentById"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"materialRequestId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"attachmentId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"app_material_request_messages_attachments"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"attachmentId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"messages_and_event"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"material_request_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"materialRequestId"}}}]}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"IntValue","value":"1"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"attachment_url"}},{"kind":"Field","name":{"kind":"Name","value":"attachment_filename"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}}]}}]}}]} as unknown as DocumentNode<GetMaterialRequestAttachmentByIdQuery, GetMaterialRequestAttachmentByIdQueryVariables>;
 export const GetMaterialRequestAttachmentsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getMaterialRequestAttachments"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"materialRequestId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"offset"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"app_material_request_messages_attachments_order_by"}}}},"defaultValue":{"kind":"ListValue","values":[{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"created_at"},"value":{"kind":"EnumValue","value":"asc"}}]}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"app_material_request_messages_attachments"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"messages_and_event"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"material_request_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"materialRequestId"}}}]}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"offset"},"value":{"kind":"Variable","name":{"kind":"Name","value":"offset"}}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}},{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"attachment_url"}},{"kind":"Field","name":{"kind":"Name","value":"attachment_filename"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}}]}},{"kind":"Field","name":{"kind":"Name","value":"app_material_request_messages_attachments_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"messages_and_event"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"material_request_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"materialRequestId"}}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}}]}}]} as unknown as DocumentNode<GetMaterialRequestAttachmentsQuery, GetMaterialRequestAttachmentsQueryVariables>;
 export const GetMaterialRequestMessagesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getMaterialRequestMessages"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"materialRequestId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"offset"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"app_material_request_messages_and_events"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"material_request_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"materialRequestId"}}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"offset"},"value":{"kind":"Variable","name":{"kind":"Name","value":"offset"}}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}},{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"created_at"},"value":{"kind":"EnumValue","value":"desc"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"message_type"}},{"kind":"Field","name":{"kind":"Name","value":"body"}},{"kind":"Field","name":{"kind":"Name","value":"sender_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"sender"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"mail"}},{"kind":"Field","name":{"kind":"Name","value":"organisation"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"org_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"skos_pref_label"}},{"kind":"Field","name":{"kind":"Name","value":"schema_vat_id"}},{"kind":"Field","name":{"kind":"Name","value":"hasSite"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"postalAddress"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_street_address"}},{"kind":"Field","name":{"kind":"Name","value":"schema_address_locality"}},{"kind":"Field","name":{"kind":"Name","value":"schema_postal_code"}},{"kind":"Field","name":{"kind":"Name","value":"schema_contact_type"}}]}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"attachments"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"created_at"},"value":{"kind":"EnumValue","value":"asc"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"attachment_url"}},{"kind":"Field","name":{"kind":"Name","value":"attachment_filename"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}}]}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"material_request_id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"app_material_request_messages_and_events_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"material_request_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"materialRequestId"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}}]}}]} as unknown as DocumentNode<GetMaterialRequestMessagesQuery, GetMaterialRequestMessagesQueryVariables>;
+export const GetUnreadMessageCountsPerUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getUnreadMessageCountsPerUser"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"app_material_request_message_unread_counts_per_user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"receiver_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"outgoing_count"}},{"kind":"Field","name":{"kind":"Name","value":"incoming_count"}}]}}]}}]} as unknown as DocumentNode<GetUnreadMessageCountsPerUserQuery, GetUnreadMessageCountsPerUserQueryVariables>;
+export const GetUnreadMessageOverviewForProfileDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getUnreadMessageOverviewForProfile"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"profileId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"app_material_request_message_unread_overview"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"receiver_profile_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"profileId"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"material_request_id"}},{"kind":"Field","name":{"kind":"Name","value":"is_outgoing"}}]}}]}}]} as unknown as DocumentNode<GetUnreadMessageOverviewForProfileQuery, GetUnreadMessageOverviewForProfileQueryVariables>;
 export const InsertMaterialRequestMessageDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"insertMaterialRequestMessage"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"materialRequestId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"senderProfileId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"messageType"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"lookup_app_material_request_message_type_enum"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"body"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"jsonb"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"attachments"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"app_material_request_messages_attachments_insert_input"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"createdAt"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"timestamp"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"insert_app_material_request_messages_and_events_one"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"object"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"material_request_id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"materialRequestId"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"sender_profile_id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"senderProfileId"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"message_type"},"value":{"kind":"Variable","name":{"kind":"Name","value":"messageType"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"body"},"value":{"kind":"Variable","name":{"kind":"Name","value":"body"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"attachments"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"data"},"value":{"kind":"Variable","name":{"kind":"Name","value":"attachments"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"created_at"},"value":{"kind":"Variable","name":{"kind":"Name","value":"createdAt"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"message_type"}},{"kind":"Field","name":{"kind":"Name","value":"sender_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"sender"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"full_name"}},{"kind":"Field","name":{"kind":"Name","value":"organisation"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"org_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"skos_pref_label"}},{"kind":"Field","name":{"kind":"Name","value":"schema_vat_id"}},{"kind":"Field","name":{"kind":"Name","value":"hasSite"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"postalAddress"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_street_address"}},{"kind":"Field","name":{"kind":"Name","value":"schema_address_locality"}},{"kind":"Field","name":{"kind":"Name","value":"schema_postal_code"}},{"kind":"Field","name":{"kind":"Name","value":"schema_contact_type"}}]}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"body"}},{"kind":"Field","name":{"kind":"Name","value":"attachments"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"created_at"},"value":{"kind":"EnumValue","value":"asc"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"attachment_url"}},{"kind":"Field","name":{"kind":"Name","value":"attachment_filename"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}}]}},{"kind":"Field","name":{"kind":"Name","value":"material_request_id"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}}]}}]}}]} as unknown as DocumentNode<InsertMaterialRequestMessageMutation, InsertMaterialRequestMessageMutationVariables>;
 export const InsertMaterialRequestMessageUnreadStatusDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"InsertMaterialRequestMessageUnreadStatus"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"material_request_message_id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"receiver_profile_id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"material_request_id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"insert_app_material_request_message_unread_status"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"objects"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"material_request_message_id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"material_request_message_id"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"receiver_profile_id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"receiver_profile_id"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"material_request_id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"material_request_id"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"affected_rows"}},{"kind":"Field","name":{"kind":"Name","value":"returning"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"material_request_message_id"}},{"kind":"Field","name":{"kind":"Name","value":"receiver_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"is_unread"}},{"kind":"Field","name":{"kind":"Name","value":"material_request_id"}}]}}]}}]}}]} as unknown as DocumentNode<InsertMaterialRequestMessageUnreadStatusMutation, InsertMaterialRequestMessageUnreadStatusMutationVariables>;
 export const DeleteMaterialRequestDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"deleteMaterialRequest"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"materialRequestId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"delete_app_material_requests"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"materialRequestId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"profile_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"is_pending"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"BooleanValue","value":true}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"affected_rows"}}]}}]}}]} as unknown as DocumentNode<DeleteMaterialRequestMutation, DeleteMaterialRequestMutationVariables>;
@@ -41608,6 +41981,7 @@ export const InsertIeObjectsIntoThemeDocument = {"kind":"Document","definitions"
 export const InsertThemeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"insertTheme"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"object"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"app_theme_insert_input"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"insert_app_theme_one"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"object"},"value":{"kind":"Variable","name":{"kind":"Name","value":"object"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"name_nl"}},{"kind":"Field","name":{"kind":"Name","value":"name_en"}},{"kind":"Field","name":{"kind":"Name","value":"description_nl"}},{"kind":"Field","name":{"kind":"Name","value":"description_en"}},{"kind":"Field","name":{"kind":"Name","value":"image_url"}},{"kind":"Field","name":{"kind":"Name","value":"content_page_path_nl"}},{"kind":"Field","name":{"kind":"Name","value":"content_page_path_en"}}]}}]}}]} as unknown as DocumentNode<InsertThemeMutation, InsertThemeMutationVariables>;
 export const UpdateThemeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"updateTheme"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"themeId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"theme"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"app_theme_set_input"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"update_app_theme_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pk_columns"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"themeId"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"Variable","name":{"kind":"Name","value":"theme"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"name_nl"}},{"kind":"Field","name":{"kind":"Name","value":"name_en"}},{"kind":"Field","name":{"kind":"Name","value":"description_nl"}},{"kind":"Field","name":{"kind":"Name","value":"description_en"}},{"kind":"Field","name":{"kind":"Name","value":"image_url"}},{"kind":"Field","name":{"kind":"Name","value":"content_page_path_nl"}},{"kind":"Field","name":{"kind":"Name","value":"content_page_path_en"}}]}}]}}]} as unknown as DocumentNode<UpdateThemeMutation, UpdateThemeMutationVariables>;
 export const GetTosLastUpdatedAtDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getTosLastUpdatedAt"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"app_config_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"name"},"value":{"kind":"StringValue","value":"TOS_LAST_UPDATED_AT","block":false}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}}]} as unknown as DocumentNode<GetTosLastUpdatedAtQuery, GetTosLastUpdatedAtQueryVariables>;
+export const FindProfileLanguagesByIdsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findProfileLanguagesByIds"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"ids"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"users_profile"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_in"},"value":{"kind":"Variable","name":{"kind":"Name","value":"ids"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"language"}}]}}]}}]} as unknown as DocumentNode<FindProfileLanguagesByIdsQuery, FindProfileLanguagesByIdsQueryVariables>;
 export const GetUserByEmailDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getUserByEmail"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"email"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"users_profile"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"mail"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"email"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}},{"kind":"Field","name":{"kind":"Name","value":"mail"}},{"kind":"Field","name":{"kind":"Name","value":"is_key_user"}},{"kind":"Field","name":{"kind":"Name","value":"is_evaluator"}},{"kind":"Field","name":{"kind":"Name","value":"accepted_tos_at"}},{"kind":"Field","name":{"kind":"Name","value":"last_access_at"}},{"kind":"Field","name":{"kind":"Name","value":"language"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"group_id"}},{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"permissions"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"permission"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"name"},"value":{"kind":"EnumValue","value":"asc"}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"permission"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"identities"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"identity_provider_name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"organisation"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"org_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"skos_pref_label"}},{"kind":"Field","name":{"kind":"Name","value":"ha_org_sector"}},{"kind":"Field","name":{"kind":"Name","value":"schema_vat_id"}},{"kind":"Field","name":{"kind":"Name","value":"organizationSlug"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"slug"}}]}},{"kind":"Field","name":{"kind":"Name","value":"hasSite"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"postalAddress"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_street_address"}},{"kind":"Field","name":{"kind":"Name","value":"schema_address_locality"}},{"kind":"Field","name":{"kind":"Name","value":"schema_postal_code"}},{"kind":"Field","name":{"kind":"Name","value":"schema_contact_type"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetUserByEmailQuery, GetUserByEmailQueryVariables>;
 export const GetUserByIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getUserById"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"users_profile"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}},{"kind":"Field","name":{"kind":"Name","value":"mail"}},{"kind":"Field","name":{"kind":"Name","value":"is_key_user"}},{"kind":"Field","name":{"kind":"Name","value":"is_evaluator"}},{"kind":"Field","name":{"kind":"Name","value":"accepted_tos_at"}},{"kind":"Field","name":{"kind":"Name","value":"last_access_at"}},{"kind":"Field","name":{"kind":"Name","value":"language"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"group_id"}},{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"permissions"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"permission"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"name"},"value":{"kind":"EnumValue","value":"asc"}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"permission"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"identities"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"identity_provider_name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"organisation"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"org_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"skos_pref_label"}},{"kind":"Field","name":{"kind":"Name","value":"ha_org_sector"}},{"kind":"Field","name":{"kind":"Name","value":"schema_vat_id"}},{"kind":"Field","name":{"kind":"Name","value":"organizationSlug"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"slug"}}]}},{"kind":"Field","name":{"kind":"Name","value":"hasSite"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"postalAddress"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_street_address"}},{"kind":"Field","name":{"kind":"Name","value":"schema_address_locality"}},{"kind":"Field","name":{"kind":"Name","value":"schema_postal_code"}},{"kind":"Field","name":{"kind":"Name","value":"schema_contact_type"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetUserByIdQuery, GetUserByIdQueryVariables>;
 export const GetUserByIdentityIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getUserByIdentityId"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"identityId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"users_profile"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"identities"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"identity_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"identityId"}}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}},{"kind":"Field","name":{"kind":"Name","value":"mail"}},{"kind":"Field","name":{"kind":"Name","value":"is_key_user"}},{"kind":"Field","name":{"kind":"Name","value":"is_evaluator"}},{"kind":"Field","name":{"kind":"Name","value":"accepted_tos_at"}},{"kind":"Field","name":{"kind":"Name","value":"last_access_at"}},{"kind":"Field","name":{"kind":"Name","value":"language"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"group_id"}},{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"permissions"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"permission"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"name"},"value":{"kind":"EnumValue","value":"asc"}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"permission"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"identities"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"identity_provider_name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"organisation"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"org_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"skos_pref_label"}},{"kind":"Field","name":{"kind":"Name","value":"ha_org_sector"}},{"kind":"Field","name":{"kind":"Name","value":"schema_vat_id"}},{"kind":"Field","name":{"kind":"Name","value":"organizationSlug"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"slug"}}]}},{"kind":"Field","name":{"kind":"Name","value":"hasSite"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"postalAddress"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_street_address"}},{"kind":"Field","name":{"kind":"Name","value":"schema_address_locality"}},{"kind":"Field","name":{"kind":"Name","value":"schema_postal_code"}},{"kind":"Field","name":{"kind":"Name","value":"schema_contact_type"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetUserByIdentityIdQuery, GetUserByIdentityIdQueryVariables>;
