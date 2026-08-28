@@ -8,6 +8,7 @@ import {
 	MaterialRequestEvent,
 	MaterialRequestMessage,
 	MaterialRequestMessageBody,
+	MaterialRequestUnreadStatusOverview,
 } from '../material-request-messages.types';
 
 import {
@@ -117,11 +118,9 @@ export class MaterialRequestMessagesService {
 	 * material request's owner (exposed as `is_outgoing`) so no second query is needed here to
 	 * classify direction. Scoped to this one user's entire backlog.
 	 */
-	public async getUnreadMessageOverviewForProfile(profileId: string): Promise<{
-		hasUnreadOutgoingMessages: boolean;
-		hasUnreadIncomingMessages: boolean;
-		unreadCountsByMaterialRequestId: Record<string, number>;
-	}> {
+	public async getUnreadMessageOverviewForProfile(
+		profileId: string
+	): Promise<MaterialRequestUnreadStatusOverview> {
 		const response = await this.dataService.execute<
 			GetUnreadMessageOverviewForProfileQuery,
 			GetUnreadMessageOverviewForProfileQueryVariables

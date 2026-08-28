@@ -125,3 +125,9 @@ export enum AdditionalRequirementErrors {
 	ALREADY_DECLINED_ADDITIONAL_CONDITIONS = 'ALREADY_DECLINED_ADDITIONAL_CONDITIONS',
 	ONLY_REQUESTER_CAN_ACCEPT_OR_DECLINE = 'ONLY_REQUESTER_CAN_ACCEPT_OR_DECLINE',
 }
+
+export interface MaterialRequestUnreadStatusOverview {
+	hasUnreadOutgoingMessages: boolean;
+	hasUnreadIncomingMessages: boolean;
+	unreadCountsByMaterialRequestId: Record<string, number>;
+}

@@ -27,7 +27,7 @@ import {
 	UpdateMaterialRequestDto,
 	UpdateMaterialRequestStatusDto,
 } from '../dto/material-requests.dto';
-import type {
+import {
 	MaterialRequest,
 	MaterialRequestMaintainer,
 	MaterialRequestStatus,
@@ -38,6 +38,7 @@ import { Lookup_App_Material_Request_Status_Enum } from '~generated/graphql-db-t
 import { EventsService } from '~modules/events/services/events.service';
 import { type LogEvent, LogEventType } from '~modules/events/types';
 import { mapDcTermsFormatToSimpleType } from '~modules/ie-objects/helpers/map-dc-terms-format-to-simple-type';
+import { MaterialRequestUnreadStatusOverview } from '~modules/material-request-messages/material-request-messages.types';
 import { MaterialRequestMessagesService } from '~modules/material-request-messages/services/material-request-messages.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupId, GroupName } from '~modules/users/types';
@@ -115,11 +116,9 @@ export class MaterialRequestsController {
 		PermissionName.VIEW_OWN_MATERIAL_REQUESTS,
 		PermissionName.VIEW_ANY_MATERIAL_REQUESTS
 	)
-	public async getUnreadMessagesSummary(@SessionUser() user: SessionUserEntity): Promise<{
-		hasUnreadOutgoingMessages: boolean;
-		hasUnreadIncomingMessages: boolean;
-		unreadCountsByMaterialRequestId: Record<string, number>;
-	}> {
+	public async getUnreadMessagesSummary(
+		@SessionUser() user: SessionUserEntity
+	): Promise<MaterialRequestUnreadStatusOverview> {
 		try {
 			return await this.materialRequestMessagesService.getUnreadMessageOverviewForProfile(
 				user.getId()
