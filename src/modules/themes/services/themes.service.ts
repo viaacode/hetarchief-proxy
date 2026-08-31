@@ -442,6 +442,7 @@ export class ThemesService {
 			format: rawIeObject.dctermsFormat?.[0]?.dcterms_format ?? null,
 			thumbnailUrl: thumbnailUrl ?? null,
 			maintainerId: rawIeObject.schemaMaintainer?.id ?? null,
+			maintainerSlug: rawIeObject.schemaMaintainer?.organizationSlug?.slug ?? null,
 			maintainerName: rawIeObject.schemaMaintainer?.skos_pref_label ?? null,
 		};
 	}
