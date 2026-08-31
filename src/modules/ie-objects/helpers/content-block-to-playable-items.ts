@@ -140,7 +140,7 @@ function adaptTimelineBlock(components: {
 			return null;
 		}
 
-		return { schemaIdentifier, ...getSnipPoint(node?.startTime, node?.endTime) };
+		return { schemaIdentifier };
 	});
 }
 
