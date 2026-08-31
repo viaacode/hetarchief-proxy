@@ -143,7 +143,7 @@ export class PlayableDisplayDataService {
 
 					const isAudioVideoObject = IE_OBJECT_AV_TYPES.includes(dctermsFormat);
 					const isAudio = mapDcTermsFormatToSimpleType(dctermsFormat) === IeObjectType.AUDIO;
-					let thumbnailUrl: string | null = null; // avoid the ugly speaker
+					let thumbnailUrl: string | null = null;
 					let playableUrl: string | null = null;
 					let mimeType: string | null = null;
 					let peakFileData: number[] | null = null;
