@@ -32,6 +32,7 @@ export enum IeObjectsSearchFilterField {
 	NAME = 'name',
 	PUBLISHED = 'published',
 	NEWSPAPER_SERIES_NAME = 'newspaperSeriesName',
+	THEME = 'theme', // Editorially managed themes, see ARC-3797
 	// TODO future: rename maintainer to maintainerId and maintainers to maintainerName and also change this in the client
 	MAINTAINER_ID = 'maintainer', // Contains the OR-id of the maintainer
 	CONSULTABLE_ONLY_ON_LOCATION = 'isConsultableOnlyOnLocation',
@@ -71,6 +72,8 @@ export const IE_OBJECTS_SEARCH_FILTER_FIELD_IN_METADATA_LIMITED: IeObjectsSearch
 	IeObjectsSearchFilterField.MEDIUM,
 	IeObjectsSearchFilterField.NAME,
 	IeObjectsSearchFilterField.PUBLISHED,
+	// Themes are visible to every user, including anonymous ones: https://meemoo.atlassian.net/browse/ARC-3797
+	IeObjectsSearchFilterField.THEME,
 	IeObjectsSearchFilterField.RELEASE_DATE,
 	IeObjectsSearchFilterField.MAINTAINER_ID,
 	IeObjectsSearchFilterField.CONSULTABLE_ONLY_ON_LOCATION,
@@ -190,6 +193,7 @@ export const DEFAULT_QUERY_TYPE: { [prop in IeObjectsSearchFilterField]: QueryTy
 	[IeObjectsSearchFilterField.DURATION]: QueryType.RANGE,
 	[IeObjectsSearchFilterField.LANGUAGE]: QueryType.TERMS,
 	[IeObjectsSearchFilterField.MEDIUM]: QueryType.TERMS,
+	[IeObjectsSearchFilterField.THEME]: QueryType.TERMS,
 	[IeObjectsSearchFilterField.LICENSES]: QueryType.TERMS,
 
 	// Should never be used since these are marked as multi match fields
@@ -276,6 +280,7 @@ export enum ElasticsearchField {
 	schema_duration = 'schema_duration',
 	schema_in_language = 'schema_in_language',
 	dcterms_medium = 'dcterms_medium',
+	theme = 'theme',
 	ebucore_object_type = 'ebucore_object_type',
 	iri = 'iri',
 	schema_identifier = 'schema_identifier',
@@ -323,6 +328,7 @@ export const READABLE_TO_ELASTIC_FILTER_NAMES: {
 	[IeObjectsSearchFilterField.DURATION]: ElasticsearchField.schema_duration,
 	[IeObjectsSearchFilterField.LANGUAGE]: ElasticsearchField.schema_in_language,
 	[IeObjectsSearchFilterField.MEDIUM]: ElasticsearchField.dcterms_medium,
+	[IeObjectsSearchFilterField.THEME]: ElasticsearchField.theme,
 	[IeObjectsSearchFilterField.OBJECT_TYPE]: ElasticsearchField.ebucore_object_type,
 	[IeObjectsSearchFilterField.IDENTIFIER]: ElasticsearchField.schema_identifier,
 	[IeObjectsSearchFilterField.LICENSES]: ElasticsearchField.schema_license,
@@ -334,6 +340,7 @@ export const NUMBER_OF_OPTIONS_PER_AGGREGATE = {
 	// A filter modal must show every possible value: https://meemoo.atlassian.net/browse/ARC-3806
 	[IeObjectsSearchFilterField.GENRE]: 500,
 	[IeObjectsSearchFilterField.MEDIUM]: 500, // Fetch all options at once
+	[IeObjectsSearchFilterField.THEME]: 500, // Fetch all options at once
 	[IeObjectsSearchFilterField.LANGUAGE]: 500, // Fetch all options at once
 	[IeObjectsSearchFilterField.MAINTAINER_ID]: 500, // Fetch all options at once
 	[IeObjectsSearchFilterField.LOCATION_CREATED]: 500,
@@ -393,6 +400,7 @@ export const NEEDS_FILTER_SUFFIX: { [prop in IeObjectsSearchFilterField]?: strin
 	// [IeObjectsSearchFilterField.MAINTAINER_ID]: 'keyword',
 	// [IeObjectsSearchFilterField.LANGUAGE]: 'keyword',
 	// [IeObjectsSearchFilterField.MEDIUM]: 'keyword',
+	// [IeObjectsSearchFilterField.THEME]: 'keyword',
 	// [IeObjectsSearchFilterField.IDENTIFIER]: 'keyword',
 	// [IeObjectsSearchFilterField.LICENSES]: 'keyword',
 };

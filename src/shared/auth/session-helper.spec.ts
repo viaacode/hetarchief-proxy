@@ -1,6 +1,4 @@
 import { AvoAuthIdpType, PermissionName } from '@viaa/avo2-types';
-import { addDays, setHours, setMilliseconds, setMinutes, setSeconds } from 'date-fns/fp';
-import flow from 'lodash/fp/flow';
 
 import { LdapApp } from './auth.types';
 
@@ -217,29 +215,42 @@ describe('SessionHelper', () => {
 	});
 
 	describe('getExpiresAt', () => {
+		// Expectations are built from literal instants instead of being derived with the
+		// same date-fns pipeline as the implementation, so a wrong branch is actually caught.
+		// A date in mid-January avoids DST transitions in any timezone.
 		it('should return tomorrow at 5am when now is already passed 5am', () => {
-			const inputDate = setHours(11)(new Date());
-			const expectedDate = flow(
-				addDays(1),
-				setHours(5),
-				setMinutes(0),
-				setSeconds(0),
-				setMilliseconds(0)
-			)(new Date());
-			const result = SessionHelper.getExpiresAt(inputDate);
-			expect(result).toEqual(expectedDate.toISOString());
+			const result = SessionHelper.getExpiresAt(new Date(2026, 0, 15, 11, 0, 0, 0));
+			expect(result).toEqual(new Date(2026, 0, 16, 5, 0, 0, 0).toISOString());
 		});
 
 		it('should return 5am if its passed midnight but still before 5am', () => {
-			const inputDate = setHours(4)(new Date());
-			const expectedDate = flow(
-				setHours(5),
-				setMinutes(0),
-				setSeconds(0),
-				setMilliseconds(0)
-			)(new Date());
-			const result = SessionHelper.getExpiresAt(inputDate);
-			expect(result).toEqual(expectedDate.toISOString());
+			const result = SessionHelper.getExpiresAt(new Date(2026, 0, 15, 4, 0, 0, 0));
+			expect(result).toEqual(new Date(2026, 0, 15, 5, 0, 0, 0).toISOString());
+		});
+
+		it('should return tomorrow at 5am during the 5am hour itself', () => {
+			const result = SessionHelper.getExpiresAt(new Date(2026, 0, 15, 5, 30, 0, 0));
+			expect(result).toEqual(new Date(2026, 0, 16, 5, 0, 0, 0).toISOString());
+		});
+
+		it('should return tomorrow at 5am at exactly 5am', () => {
+			const result = SessionHelper.getExpiresAt(new Date(2026, 0, 15, 5, 0, 0, 0));
+			expect(result).toEqual(new Date(2026, 0, 16, 5, 0, 0, 0).toISOString());
+		});
+
+		it('should return today at 5am one millisecond before 5am', () => {
+			const result = SessionHelper.getExpiresAt(new Date(2026, 0, 15, 4, 59, 59, 999));
+			expect(result).toEqual(new Date(2026, 0, 15, 5, 0, 0, 0).toISOString());
+		});
+
+		it('should never return an expiry date in the past, whatever the time of day', () => {
+			for (let hours = 0; hours < 24; ++hours) {
+				for (const minutes of [0, 30, 59]) {
+					const now = new Date(2026, 0, 15, hours, minutes, 0, 0);
+					const result = SessionHelper.getExpiresAt(now);
+					expect(new Date(result).getTime()).toBeGreaterThan(now.getTime());
+				}
+			}
 		});
 	});
 

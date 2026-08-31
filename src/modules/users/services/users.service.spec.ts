@@ -5,11 +5,13 @@ import { type MockInstance, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { UsersService } from './users.service';
 
-import type {
-	GetUserByIdentityIdQuery,
-	InsertUserMutation,
-	UpdateUserLastAccessDateMutation,
-	UpdateUserProfileMutation,
+import {
+	type FindProfileLanguagesByIdsQuery,
+	type GetUserByIdentityIdQuery,
+	type InsertUserMutation,
+	Lookup_Languages_Enum,
+	type UpdateUserLastAccessDateMutation,
+	type UpdateUserProfileMutation,
 } from '~generated/graphql-db-types-hetarchief';
 import { mockUserResponse } from '~modules/users/services/__mock__/user.mock';
 import { GroupId, GroupName, type User } from '~modules/users/types';
@@ -178,6 +180,57 @@ describe('UsersService', () => {
 				expect(err.message).toEqual('User with id "invalidId" was not found');
 				expect(err.name).toEqual('NotFoundException');
 			}
+		});
+	});
+
+	describe('findLanguagesByProfileIds', () => {
+		it('returns an empty map without querying when no profile ids are given', async () => {
+			const callsBefore = mockDataService.execute.mock.calls.length;
+
+			const result = await usersService.findLanguagesByProfileIds([]);
+
+			expect(result).toEqual({});
+			expect(mockDataService.execute.mock.calls.length).toEqual(callsBefore);
+		});
+
+		it('returns a map of profile id to language', async () => {
+			mockDataService.execute.mockResolvedValueOnce({
+				users_profile: [
+					{ id: 'profile-1', language: Lookup_Languages_Enum.Nl },
+					{ id: 'profile-2', language: Lookup_Languages_Enum.En },
+				],
+			} as FindProfileLanguagesByIdsQuery);
+
+			const result = await usersService.findLanguagesByProfileIds(['profile-1', 'profile-2']);
+
+			expect(result).toEqual({
+				'profile-1': Lookup_Languages_Enum.Nl,
+				'profile-2': Lookup_Languages_Enum.En,
+			});
+		});
+
+		it('defaults every requested profile id to Dutch when the query fails', async () => {
+			mockDataService.execute.mockRejectedValueOnce(new Error('boom'));
+
+			const result = await usersService.findLanguagesByProfileIds(['profile-1', 'profile-2']);
+
+			expect(result).toEqual({
+				'profile-1': Lookup_Languages_Enum.Nl,
+				'profile-2': Lookup_Languages_Enum.Nl,
+			});
+		});
+
+		it('defaults to Dutch for a profile with no language set or missing from the response', async () => {
+			mockDataService.execute.mockResolvedValueOnce({
+				users_profile: [{ id: 'profile-1', language: null }],
+			} as FindProfileLanguagesByIdsQuery);
+
+			const result = await usersService.findLanguagesByProfileIds(['profile-1', 'profile-2']);
+
+			expect(result).toEqual({
+				'profile-1': Lookup_Languages_Enum.Nl,
+				'profile-2': Lookup_Languages_Enum.Nl,
+			});
 		});
 	});
 

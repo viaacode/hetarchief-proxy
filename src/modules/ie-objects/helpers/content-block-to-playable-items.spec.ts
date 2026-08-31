@@ -82,8 +82,8 @@ describe('contentBlockToPlayableDisplayDataItems', () => {
 					mockBlock('HERO_CAROUSEL', {
 						title: 'Hero',
 						elements: [
-							{ mediaItem: { value: '086348mc8s' }, startPoint: '00:00:10', endPoint: '00:00:20' },
-							{ mediaItem: { value: 'qstt4fps28' }, startPoint: '', endPoint: '' },
+							{ mediaItem: { value: '086348mc8s' }, startTime: '00:00:10', endTime: '00:00:20' },
+							{ mediaItem: { value: 'qstt4fps28' }, startTime: '', endTime: '' },
 							{ mediaItem: { value: '' } },
 						],
 					})
@@ -104,12 +104,15 @@ describe('contentBlockToPlayableDisplayDataItems', () => {
 		it('returns an entry per node, but only resolves the nodes showing an object', () => {
 			expect(
 				contentBlockToPlayableDisplayDataItems(
-					mockBlock('TIMELINE', [
-						{ visualType: 'OBJECT', mediaItem: { value: '086348mc8s' } },
-						{ visualType: 'IMAGE', image: 'https://example.com/image.jpg' },
-						{ visualType: 'NONE' },
-						{ visualType: 'OBJECT', mediaItem: { value: 'qstt4fps28' } },
-					])
+					mockBlock('TIMELINE', {
+						sortOrder: 'desc',
+						elements: [
+							{ visualType: 'OBJECT', mediaItem: { value: '086348mc8s' } },
+							{ visualType: 'IMAGE', image: 'https://example.com/image.jpg' },
+							{ visualType: 'NONE' },
+							{ visualType: 'OBJECT', mediaItem: { value: 'qstt4fps28' } },
+						],
+					})
 				)
 			).toEqual([
 				{ schemaIdentifier: '086348mc8s' },
@@ -117,6 +120,73 @@ describe('contentBlockToPlayableDisplayDataItems', () => {
 				null,
 				{ schemaIdentifier: 'qstt4fps28' },
 			]);
+		});
+
+		it('cuts a node to the snippet its editor configured', () => {
+			expect(
+				contentBlockToPlayableDisplayDataItems(
+					mockBlock('TIMELINE', {
+						elements: [
+							{
+								visualType: 'OBJECT',
+								mediaItem: { value: '086348mc8s' },
+								startTime: '00:00:10',
+								endTime: '00:00:20',
+							},
+						],
+					})
+				)
+			).toEqual([{ schemaIdentifier: '086348mc8s', start: 10, end: 20 }]);
+		});
+
+		it('ignores an incomplete or empty snippet', () => {
+			expect(
+				contentBlockToPlayableDisplayDataItems(
+					mockBlock('TIMELINE', {
+						elements: [
+							{ visualType: 'OBJECT', mediaItem: { value: '086348mc8s' }, startTime: '00:00:10' },
+							{ visualType: 'OBJECT', mediaItem: { value: 'qstt4fps28' }, endTime: '00:00:20' },
+							{
+								visualType: 'OBJECT',
+								mediaItem: { value: 'zp3vt5jn1x' },
+								startTime: '',
+								endTime: '',
+							},
+						],
+					})
+				)
+			).toEqual([
+				{ schemaIdentifier: '086348mc8s' },
+				{ schemaIdentifier: 'qstt4fps28' },
+				{ schemaIdentifier: 'zp3vt5jn1x' },
+			]);
+		});
+
+		it('ignores a snippet that does not end after it starts', () => {
+			expect(
+				contentBlockToPlayableDisplayDataItems(
+					mockBlock('TIMELINE', {
+						elements: [
+							{
+								visualType: 'OBJECT',
+								mediaItem: { value: '086348mc8s' },
+								startTime: '00:02:00',
+								endTime: '00:01:00',
+							},
+						],
+					})
+				)
+			).toEqual([{ schemaIdentifier: '086348mc8s' }]);
+		});
+
+		it('ignores snippet times on a node that does not show an object', () => {
+			expect(
+				contentBlockToPlayableDisplayDataItems(
+					mockBlock('TIMELINE', {
+						elements: [{ visualType: 'IMAGE', startTime: '00:00:10', endTime: '00:00:20' }],
+					})
+				)
+			).toEqual([null]);
 		});
 	});
 

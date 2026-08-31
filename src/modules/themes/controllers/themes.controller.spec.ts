@@ -33,6 +33,7 @@ const mockIeObjectsInThemeResponse: IeObjectsInThemeResponseDto = {
 			format: 'video',
 			thumbnailUrl: 'https://example.com/thumb1.jpg',
 			maintainerId: 'or-abc123',
+			maintainerSlug: 'vrt',
 			maintainerName: 'VRT',
 		},
 	],

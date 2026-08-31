@@ -884,10 +884,12 @@ describe('IeObjectsController', () => {
 			mockContentPagesService.getContentPageBlockById.mockResolvedValueOnce({
 				id: blockId,
 				type: 'TIMELINE',
-				components: [
-					{ visualType: 'IMAGE', image: 'https://example.com/image.jpg' },
-					{ visualType: 'OBJECT', mediaItem: { type: 'IE_OBJECT', value: 'qstt4fps28' } },
-				],
+				components: {
+					elements: [
+						{ visualType: 'IMAGE', image: 'https://example.com/image.jpg' },
+						{ visualType: 'OBJECT', mediaItem: { type: 'IE_OBJECT', value: 'qstt4fps28' } },
+					],
+				},
 			});
 			mockPlayableDisplayDataService.getIeObjectsPlayableDisplayData.mockResolvedValueOnce([
 				{ schemaIdentifier: 'qstt4fps28' },

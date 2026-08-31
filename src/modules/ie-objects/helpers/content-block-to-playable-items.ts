@@ -104,7 +104,7 @@ function adaptHetArchiefVideoBlock(components: {
 
 /**
  * HERO_CAROUSEL: one slide per element, each with an optional snippet entered as
- * `startPoint` / `endPoint`.
+ * `startTime` / `endTime`.
  */
 function adaptHeroCarouselBlock(components: {
 	elements?: { mediaItem?: { value?: string }; startTime?: string; endTime?: string }[];
@@ -121,13 +121,18 @@ function adaptHeroCarouselBlock(components: {
 }
 
 /**
- * TIMELINE: one node per element, but only the nodes that show an ie-object. Timeline nodes have
- * no snippet: they always show the whole object.
+ * TIMELINE: one node per element, but only the nodes that show an ie-object, each with an optional
+ * snippet entered as `startTime` / `endTime`.
  */
-function adaptTimelineBlock(
-	components: { visualType?: string; mediaItem?: { value?: string } }[]
-): PlayableDisplayDataItem[] {
-	return (components || []).map((node) => {
+function adaptTimelineBlock(components: {
+	elements?: {
+		visualType?: string;
+		mediaItem?: { value?: string };
+		startTime?: string;
+		endTime?: string;
+	}[];
+}): PlayableDisplayDataItem[] {
+	return (components?.elements || []).map((node) => {
 		const schemaIdentifier =
 			node?.visualType === 'OBJECT' ? getSchemaIdentifier(node?.mediaItem) : null;
 
@@ -135,7 +140,7 @@ function adaptTimelineBlock(
 			return null;
 		}
 
-		return { schemaIdentifier };
+		return { schemaIdentifier, ...getSnipPoint(node?.startTime, node?.endTime) };
 	});
 }
 

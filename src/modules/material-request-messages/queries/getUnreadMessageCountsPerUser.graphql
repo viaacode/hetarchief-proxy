@@ -1,0 +1,7 @@
+query getUnreadMessageCountsPerUser {
+	app_material_request_message_unread_counts_per_user {
+		receiver_profile_id
+		outgoing_count
+		incoming_count
+	}
+}

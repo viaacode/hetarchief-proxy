@@ -1120,6 +1120,7 @@ export class IeObjectsService {
 			// Extra
 			sector: esObject?.schema_maintainer?.organization_sector,
 			// Other
+			premisIsPartOf: esObject?.premis_is_part_of,
 			isPartOf: esObject?.schema_is_part_of,
 			transcript: esObject?.schema_transcript,
 			synopsis: null,
@@ -1316,10 +1317,7 @@ export class IeObjectsService {
 					const transcriptInfo = representation.schemaTranscriptUrls?.[0];
 					const schemaTranscript = transcriptInfo?.schema_transcript;
 					const schemaTranscriptUrl = transcriptInfo?.schema_transcript_url || null;
-					const representationThumbnailUrl =
-						(
-							representation as unknown as GetIeObjectDetailQuery['getHasPart'][0]['isRepresentedBy'][0]
-						)?.schema_thumbnail_url || null;
+					const representationThumbnailUrl = representation?.schema_thumbnail_url || null;
 					const representationThumbnailUrlResolved = await this.getThumbnailUrlWithToken(
 						representationThumbnailUrl,
 						referer,

@@ -279,6 +279,8 @@ export interface IeObjectPlayableDisplayData {
 	name: string;
 	thumbnailUrl: string | null;
 	dctermsFormat: IeObjectType;
+	maintainerId: string;
+	maintainerSlug: string;
 	maintainerName: string;
 	maintainerLogo: string | null;
 	maintainerOverlay: boolean;

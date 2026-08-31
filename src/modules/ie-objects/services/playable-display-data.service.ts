@@ -210,6 +210,8 @@ export class PlayableDisplayDataService {
 						name: limitedObject.name,
 						thumbnailUrl,
 						dctermsFormat: limitedObject.dctermsFormat,
+						maintainerId: limitedObject.maintainerId,
+						maintainerSlug: limitedObject.maintainerSlug,
 						maintainerName: limitedObject.maintainerName,
 						maintainerLogo: limitedObject.maintainerLogo,
 						maintainerOverlay: limitedObject.maintainerOverlay,
@@ -525,6 +527,7 @@ export class PlayableDisplayDataService {
 				sector: schemaMaintainer?.ha_org_sector as IeObjectSector,
 				name: ie.schema_name,
 				dctermsFormat,
+				maintainerSlug: schemaMaintainer?.organizationSlug?.slug,
 				maintainerName: schemaMaintainer?.skos_pref_label,
 				maintainerLogo: schemaMaintainer?.ha_org_has_logo
 					// TODO remove this workaround once the INT organisations assets are available
@@ -644,17 +647,29 @@ export class PlayableDisplayDataService {
 		) {
 			return null;
 		}
-		const stillInfos = await this.videoStillsService.getFirstVideoStills([
-			{
-				id: file.id,
-				storedAt: file.premis_stored_at,
-				type: StillsObjectType.video,
-				startTime: startTimeSeconds * 1000,
-			},
-		]);
-		const filteredInfos = (stillInfos?.filter((info) => !isNil(info)) ||
-			[]) as AvoStillsStillInfo[];
+		try {
+			const stillInfos = await this.videoStillsService.getFirstVideoStills([
+				{
+					id: file.id,
+					storedAt: file.premis_stored_at,
+					type: StillsObjectType.video,
+					startTime: startTimeSeconds * 1000,
+				},
+			]);
+			const filteredInfos = (stillInfos?.filter((info) => !isNil(info)) ||
+				[]) as AvoStillsStillInfo[];
 
-		return filteredInfos[0]?.thumbnailImagePath || null;
+			return filteredInfos[0]?.thumbnailImagePath || null;
+		} catch (err) {
+			// Swallowed to null so one unavailable still doesn't take down the rest of the object's
+			// display data, same as the other optional lookups here - but logged, since a failing
+			// stills service is otherwise indistinguishable from a video without keyframes
+			this.logger.error({
+				message: 'Failed to get the video still thumbnail for a media fragment',
+				innerException: err,
+				additionalInfo: { fileId: file.id, startTimeSeconds },
+			});
+			return null;
+		}
 	}
 }

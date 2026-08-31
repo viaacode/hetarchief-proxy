@@ -10,6 +10,7 @@ import {
 	BadRequestException,
 	Injectable,
 	InternalServerErrorException,
+	Logger,
 	NotFoundException,
 } from '@nestjs/common';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
@@ -157,6 +158,8 @@ import { SortDirection } from '~shared/types';
 
 @Injectable()
 export class MaterialRequestsService {
+	private logger: Logger = new Logger(MaterialRequestsService.name, { timestamp: true });
+
 	constructor(
 		private dataService: DataService,
 		private notificationsService: NotificationsService,
@@ -1051,7 +1054,17 @@ export class MaterialRequestsService {
 			? Number.parseInt(reuseForm?.startTime.toString())
 			: undefined;
 
-		if (startTime && startTime > 0 && representationId) {
+		if (!(startTime && startTime > 0 && representationId)) {
+			// Not an error: full-material requests have no cut point to grab a still at. Logged all
+			// the same, since a missing representation id or an unparsable start time silently
+			// costs the request its thumbnail
+			this.logger.debug(
+				`Not looking up a video still: startTime=${JSON.stringify(reuseForm?.startTime)}, representationId=${representationId}`
+			);
+			return null;
+		}
+
+		try {
 			const mediaFile =
 				await this.ieObjectsService.getVideoFileByRepresentationId(representationId);
 			const stillInfos = await this.videoStillsService.getFirstVideoStills([
@@ -1068,9 +1081,22 @@ export class MaterialRequestsService {
 			if (filteredInfos.length) {
 				return filteredInfos[0].thumbnailImagePath;
 			}
-		}
 
-		return null;
+			this.logger.warn(
+				`The video stills service returned no still for representation ${representationId} at ${startTime}s`
+			);
+			return null;
+		} catch (err) {
+			// The thumbnail is a nicety, so a failing stills service shouldn't cost the user their
+			// material request - but it does need to show up in the logs rather than passing for a
+			// video without keyframes
+			this.logger.error({
+				message: 'Failed to get the video still for a material request reuse form',
+				innerException: err,
+				additionalInfo: { representationId, startTime },
+			});
+			return null;
+		}
 	}
 
 	public isComplexReuseFlow(
@@ -1542,6 +1568,9 @@ export class MaterialRequestsService {
 
 			await mapLimit(response.app_material_requests, 5, async (materialRequest) => {
 				try {
+					// A Postgres trigger (app.material_requests_delete_unread_status_on_archive) clears
+					// this request's unread-status rows as soon as is_archived flips to true below —
+					// no proxy-side cleanup call needed here.
 					await this.updateMaterialRequest(materialRequest.id, {
 						is_archived: true,
 					});
@@ -1819,6 +1848,37 @@ export class MaterialRequestsService {
 
 		console.info(
 			`Send additional conditions reminder for ${rawMaterialRequests.length} material requests`
+		);
+	}
+
+	/**
+	 * Sends a once-daily in-app notification digest to every user with an outstanding unread
+	 * conversation message: one notification for their outgoing requests (as requester) and/or
+	 * one for their incoming requests (as evaluator), each with that direction's total unread
+	 * count (the user's full outstanding backlog, not just what changed since the last run).
+	 * Triggered externally once a day, see MaterialRequestsSchedulingController.
+	 */
+	public async sendDailyUnreadMessagesDigest(): Promise<void> {
+		const unreadCounts = await this.materialRequestMessageService.getUnreadMessageCountsPerUser();
+
+		if (unreadCounts.length === 0) {
+			return;
+		}
+
+		const countsByProfileId = new Map<string, { outgoing: number; incoming: number }>(
+			unreadCounts.map((row) => [
+				row.receiver_profile_id,
+				{ outgoing: Number(row.outgoing_count) || 0, incoming: Number(row.incoming_count) || 0 },
+			])
+		);
+
+		const languageByProfileId = await this.usersService.findLanguagesByProfileIds(
+			Array.from(countsByProfileId.keys())
+		);
+
+		await this.notificationsService.sendDailyUnreadMessagesDigest(
+			countsByProfileId,
+			languageByProfileId
 		);
 	}
 }
