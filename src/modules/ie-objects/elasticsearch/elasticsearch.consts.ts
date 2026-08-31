@@ -171,9 +171,11 @@ export const DEFAULT_QUERY_TYPE: { [prop in IeObjectsSearchFilterField]: QueryTy
 	[IeObjectsSearchFilterField.OBJECT_TYPE]: QueryType.TERMS,
 	[IeObjectsSearchFilterField.PUBLISHER]: QueryType.TERMS,
 	[IeObjectsSearchFilterField.CREATOR]: QueryType.TERMS,
-	[IeObjectsSearchFilterField.NEWSPAPER_SERIES_NAME]: QueryType.TERM,
-	[IeObjectsSearchFilterField.LOCATION_CREATED]: QueryType.MATCH,
-	[IeObjectsSearchFilterField.MENTIONS]: QueryType.MATCH,
+	// These three take several values since ARC-3806, so they need a terms query.
+	// getQueryType downgrades TERMS to TERM for a single value, so one value behaves as before.
+	[IeObjectsSearchFilterField.NEWSPAPER_SERIES_NAME]: QueryType.TERMS,
+	[IeObjectsSearchFilterField.LOCATION_CREATED]: QueryType.TERMS,
+	[IeObjectsSearchFilterField.MENTIONS]: QueryType.TERMS,
 	[IeObjectsSearchFilterField.CREATED]: QueryType.RANGE,
 	[IeObjectsSearchFilterField.PUBLISHED]: QueryType.RANGE,
 	[IeObjectsSearchFilterField.RELEASE_DATE]: QueryType.RANGE,
@@ -329,10 +331,12 @@ export const READABLE_TO_ELASTIC_FILTER_NAMES: {
 export const NUMBER_OF_FILTER_OPTIONS_DEFAULT = 40;
 export const NUMBER_OF_OPTIONS_PER_AGGREGATE = {
 	[IeObjectsSearchFilterField.FORMAT]: NUMBER_OF_FILTER_OPTIONS_DEFAULT, // Only contains a few options: video, audio and in the future maybe newspaper and images
-	[IeObjectsSearchFilterField.GENRE]: NUMBER_OF_FILTER_OPTIONS_DEFAULT,
+	// A filter modal must show every possible value: https://meemoo.atlassian.net/browse/ARC-3806
+	[IeObjectsSearchFilterField.GENRE]: 500,
 	[IeObjectsSearchFilterField.MEDIUM]: 500, // Fetch all options at once
 	[IeObjectsSearchFilterField.LANGUAGE]: 500, // Fetch all options at once
 	[IeObjectsSearchFilterField.MAINTAINER_ID]: 500, // Fetch all options at once
+	[IeObjectsSearchFilterField.LOCATION_CREATED]: 500,
 };
 
 export const ORDER_MAPPINGS: { [prop in OrderProperty]: string } = {
@@ -379,6 +383,7 @@ export const NEEDS_FILTER_SUFFIX: { [prop in IeObjectsSearchFilterField]?: strin
 	[IeObjectsSearchFilterField.OBJECT_TYPE]: 'keyword',
 	[IeObjectsSearchFilterField.NEWSPAPER_SERIES_NAME]: 'keyword',
 	[IeObjectsSearchFilterField.MENTIONS]: 'keyword',
+	[IeObjectsSearchFilterField.LOCATION_CREATED]: 'keyword',
 	[IeObjectsSearchFilterField.PUBLISHER]: 'keyword',
 	[IeObjectsSearchFilterField.CREATOR]: 'keyword',
 
@@ -395,6 +400,7 @@ export const NEEDS_FILTER_SUFFIX: { [prop in IeObjectsSearchFilterField]?: strin
 export const NEEDS_AGG_SUFFIX: { [prop in IeObjectsSearchFilterField]?: 'keyword' } = {
 	[IeObjectsSearchFilterField.GENRE]: 'keyword',
 	[IeObjectsSearchFilterField.OBJECT_TYPE]: 'keyword',
+	[IeObjectsSearchFilterField.LOCATION_CREATED]: 'keyword',
 };
 
 export const FLATTENED_FIELDS: IeObjectsSearchFilterField[] = [
