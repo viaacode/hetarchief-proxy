@@ -143,13 +143,15 @@ export class PlayableDisplayDataService {
 
 					const isAudioVideoObject = IE_OBJECT_AV_TYPES.includes(dctermsFormat);
 					const isAudio = mapDcTermsFormatToSimpleType(dctermsFormat) === IeObjectType.AUDIO;
-					let thumbnailUrl: string | null = isAudio ? AUDIO_WAVE_FORM_URL : null; // avoid the ugly speaker
+					let thumbnailUrl: string | null = null;
 					let playableUrl: string | null = null;
 					let mimeType: string | null = null;
 					let peakFileData: number[] | null = null;
 					let newspaperImage: string | null = null;
 
 					if (hasEssenceAccess) {
+						thumbnailUrl = isAudio ? AUDIO_WAVE_FORM_URL : null; // avoid the ugly speaker
+
 						// Essence access was granted: look up the first playable file, same
 						// selection as the object detail page
 						const representation = findFirstPlayableRepresentation(dbResponse, isAudioVideoObject);
