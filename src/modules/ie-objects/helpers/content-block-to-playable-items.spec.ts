@@ -136,7 +136,7 @@ describe('contentBlockToPlayableDisplayDataItems', () => {
 						],
 					})
 				)
-			).toEqual([{ schemaIdentifier: '086348mc8s', start: 10, end: 20 }]);
+			).toEqual([{ schemaIdentifier: '086348mc8s' }]);
 		});
 
 		it('ignores an incomplete or empty snippet', () => {
