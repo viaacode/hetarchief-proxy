@@ -717,10 +717,7 @@ export class IeObjectsService {
 		ip: string
 	): Promise<string> {
 		let mainThumbnailUrl: string | null = null;
-		if (ieObjectPages?.isCutFragment) {
-			// Use first representation thumbnail
-			mainThumbnailUrl = ieObjectPages.pages[0]?.representations?.[0]?.thumbnailUrl;
-		} else if (mapDcTermsFormatToSimpleType(dctermsFormat) === IeObjectType.AUDIO) {
+		if (mapDcTermsFormatToSimpleType(dctermsFormat) === IeObjectType.AUDIO) {
 			// Audio waveform
 			mainThumbnailUrl = AUDIO_WAVE_FORM_URL; // avoid the ugly speaker
 		} else {
