@@ -312,6 +312,9 @@ describe('QueryBuilder', () => {
 
 			const queryString = JSON.stringify(esQuery.query, null, 2);
 			expect(queryString).toContain('"query": "intervi*"');
+			// Every word of a "bevat" condition has to be in the object, not just one of them.
+			// https://meemoo.atlassian.net/browse/ARC-3806
+			expect(queryString).toContain('"default_operator": "AND"');
 			expect(queryString).toContain('METADATA-LTD-FILTERS');
 			expect(queryString).toContain('PUBLIC-METDATA_LTD');
 			expect(queryString).toContain('VIAA-PUBLIEK-METADATA-ALL');

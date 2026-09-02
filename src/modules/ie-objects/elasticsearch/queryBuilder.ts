@@ -375,6 +375,10 @@ export class QueryBuilder {
 					query_string: {
 						query: `${searchFilter.value.toLowerCase()}*`,
 						default_field: elasticKey,
+						// Every word the user typed has to be in the object, rather than any one of
+						// them, which is what elasticsearch would do on its own.
+						// https://meemoo.atlassian.net/browse/ARC-3806
+						default_operator: 'AND',
 					},
 				},
 			};
