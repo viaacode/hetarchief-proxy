@@ -735,6 +735,46 @@ describe('ieObjectsService', () => {
 				'Kabinet Dirk Van Mechelen, Vlaams minister van Financiën en Begroting en Ruimtelijk Ordening (2001-2009)',
 			]);
 		});
+
+		// The FA of ARC-3806 asks for every value that holds the typed characters in order, not
+		// only the values that start with them
+		it('looks for the typed characters anywhere in the value', async () => {
+			const executeQuery = vi
+				.spyOn(ieObjectsService, 'executeQuery')
+				.mockResolvedValueOnce(mockAutocompleteQueryResponseCreators);
+
+			await ieObjectsService.getMetadataAutocomplete(AutocompleteField.creator, 'Dirk', {
+				filters: [],
+				page: 1,
+				size: 4,
+			});
+
+			// biome-ignore lint/suspicious/noExplicitAny: the elasticsearch query object is untyped
+			const esQuery = executeQuery.mock.calls[0][1] as any;
+			expect(esQuery.query.bool.must).toContainEqual({
+				wildcard: {
+					'schema_creator_text.keyword': { value: '*dirk*', case_insensitive: true },
+				},
+			});
+		});
+
+		it('escapes a wildcard the user types, so it cannot widen the search on its own', async () => {
+			const executeQuery = vi
+				.spyOn(ieObjectsService, 'executeQuery')
+				.mockResolvedValueOnce(mockAutocompleteQueryResponseCreators);
+
+			await ieObjectsService.getMetadataAutocomplete(AutocompleteField.creator, 'a*b', {
+				filters: [],
+				page: 1,
+				size: 4,
+			});
+
+			// biome-ignore lint/suspicious/noExplicitAny: the elasticsearch query object is untyped
+			const esQuery = executeQuery.mock.calls[0][1] as any;
+			expect(esQuery.query.bool.must[0].wildcard['schema_creator_text.keyword'].value).toEqual(
+				'*a\\*b*'
+			);
+		});
 	});
 
 	describe('cleanupRepresentations', () => {

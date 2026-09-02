@@ -1633,13 +1633,20 @@ export class IeObjectsService {
 		esQuery.size = 2000; // Load more results, so we can remove the non unique entries
 		const mustClauses = [];
 
-		// Only add multi_match if query exists
 		if (query && query.trim() !== '') {
+			// Every value that holds the typed characters in order, not only the values that start
+			// with them, so this is a wildcard rather than a prefix match on the .sayt field.
+			// https://meemoo.atlassian.net/browse/ARC-3806
+			const escapedQuery = query
+				.trim()
+				.toLowerCase()
+				.replace(/([*?\\])/g, '\\$1');
 			mustClauses.push({
-				multi_match: {
-					query: query,
-					type: 'bool_prefix',
-					fields: [`${esField}.sayt`, `${esField}.sayt._2gram`, `${esField}.sayt._3gram`],
+				wildcard: {
+					[`${esField}.keyword`]: {
+						value: `*${escapedQuery}*`,
+						case_insensitive: true,
+					},
 				},
 			});
 		} else {
