@@ -698,7 +698,6 @@ export class IeObjectsService {
 	 *     ]
 	 *   }
 	 * ]
-	 * @param ieObjectPages
 	 * @param schemaThumbnailUrlResponse
 	 * @param dctermsFormat
 	 * @param resolveThumbnailUrl
@@ -708,7 +707,6 @@ export class IeObjectsService {
 	 * @private
 	 */
 	private async resolveMainThumbnailUrl(
-		ieObjectPages: IeObjectPages | null,
 		schemaThumbnailUrlResponse: GetIeObjectDetailQuery['getSchemaThumbnailUrl'][0],
 		dctermsFormat: IeObjectType,
 		resolveThumbnailUrl: boolean,
@@ -836,7 +834,6 @@ export class IeObjectsService {
 		});
 
 		const mainThumbnailUrl = await this.resolveMainThumbnailUrl(
-			ieObjectByPages,
 			schemaThumbnailUrlResponse,
 			dctermsFormat,
 			resolveThumbnailUrl,
