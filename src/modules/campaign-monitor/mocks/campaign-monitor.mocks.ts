@@ -64,6 +64,7 @@ export const mockNewsletterUpdatePreferencesQueryDto: CampaignMonitorNewsletterU
 	};
 
 export const mockSendMailQueryDto: CampaignMonitorConfirmMailQueryDto = {
+	// Encrypted "test@example.com" string as identification verification
 	token: 'MjMyMjAwMGJkNmNiYjhiNTc0NmUwZDhmYjBhYWQxNmZmZTAwMWZkNWNhZWNjOWMyNmJhYzc1ODhkYWE2Mzk2Yw==',
 	firstName: 'mockFirstName',
 	lastName: 'mockLastName',
