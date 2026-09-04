@@ -1,3 +1,4 @@
+import type { HetArchiefRelatedIeObject, HetArchiefRelatedIeObjects } from '@viaa/avo2-types';
 /* eslint-disable @typescript-eslint/consistent-type-imports */
 // Disable consistent imports since they try to import IeObjectsQueryDto as a type
 // But that breaks the endpoint body validation
@@ -42,6 +43,11 @@ import { compact, intersection, isNil, kebabCase } from 'lodash';
 import type { Configuration } from '~config';
 
 import {
+	HetArchiefIeObjectAccessThrough,
+	HetArchiefIeObjectLicense,
+	HetArchiefIeObjectType,
+} from '@viaa/avo2-types';
+import {
 	IeObjectsAutocompleteQueryDto,
 	IeObjectsPlayableDisplayDataQueryDto,
 	IeObjectsQueryDto,
@@ -61,15 +67,10 @@ import { limitAccessToObjectDetails } from '../helpers/limit-access-to-object-de
 import {
 	AutocompleteField,
 	type IeObject,
-	IeObjectAccessThrough,
 	IeObjectForAccessCheck,
-	IeObjectLicense,
 	type IeObjectPlayableDisplayData,
 	type IeObjectSeo,
-	IeObjectType,
 	type IeObjectsWithAggregations,
-	type RelatedIeObject,
-	type RelatedIeObjects,
 } from '../ie-objects.types';
 
 import { IeObjectsService } from '../services/ie-objects.service';
@@ -336,7 +337,7 @@ export class IeObjectsController {
 			ip
 		);
 
-		if (!IE_OBJECT_AV_TYPES.includes(accessibleObject.dctermsFormat as IeObjectType)) {
+		if (!IE_OBJECT_AV_TYPES.includes(accessibleObject.dctermsFormat as HetArchiefIeObjectType)) {
 			throw new ForbiddenException(
 				'You do not have permission to play this file (non AV material)'
 			);
@@ -373,7 +374,7 @@ export class IeObjectsController {
 			ip
 		);
 
-		if (accessibleObject.dctermsFormat !== IeObjectType.NEWSPAPER) {
+		if (accessibleObject.dctermsFormat !== HetArchiefIeObjectType.NEWSPAPER) {
 			throw new ForbiddenException('Only newspaper files can use the ticket service endpoint');
 		}
 		return accessibleObject;
@@ -417,17 +418,17 @@ export class IeObjectsController {
 
 		const ieObject = await this.ieObjectsService.findByIeObjectId(ieObjectId, true, referer, ip);
 
-		const hasPublicAccess = ieObject?.licenses.some((license: IeObjectLicense) =>
+		const hasPublicAccess = ieObject?.licenses.some((license: HetArchiefIeObjectLicense) =>
 			[
-				IeObjectLicense.PUBLIEK_METADATA_LTD,
-				IeObjectLicense.PUBLIEK_METADATA_ALL,
-				IeObjectLicense.PUBLIEK_CONTENT,
+				HetArchiefIeObjectLicense.PUBLIEK_METADATA_LTD,
+				HetArchiefIeObjectLicense.PUBLIEK_METADATA_ALL,
+				HetArchiefIeObjectLicense.PUBLIEK_CONTENT,
 			].includes(license)
 		);
 
 		const isPublicDomain: boolean =
-			ieObject?.licenses.includes(IeObjectLicense.PUBLIEK_CONTENT) &&
-			ieObject?.licenses.includes(IeObjectLicense.PUBLIC_DOMAIN);
+			ieObject?.licenses.includes(HetArchiefIeObjectLicense.PUBLIEK_CONTENT) &&
+			ieObject?.licenses.includes(HetArchiefIeObjectLicense.PUBLIC_DOMAIN);
 		return {
 			name: hasPublicAccess ? ieObject?.name : null,
 			description: hasPublicAccess ? ieObject?.description : null,
@@ -670,7 +671,7 @@ export class IeObjectsController {
 		@Referer() referer: string,
 		@Ip() ip: string,
 		@SessionUser() user: SessionUserEntity
-	): Promise<RelatedIeObjects> {
+	): Promise<HetArchiefRelatedIeObjects> {
 		const visitorSpaceAccessInfo =
 			await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
 
@@ -680,7 +681,7 @@ export class IeObjectsController {
 		]);
 
 		// Limit the amount of props returned for an ie object based on licenses and sector
-		const censoredParentIeObject: Partial<RelatedIeObject> | null = parentIeObject
+		const censoredParentIeObject: Partial<HetArchiefRelatedIeObject> | null = parentIeObject
 			? limitAccessToObjectDetails(parentIeObject, {
 					userId: user?.getId(),
 					isKeyUser: user.getIsKeyUser(),
@@ -691,7 +692,7 @@ export class IeObjectsController {
 					accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
 				})
 			: null;
-		const censoredChildIeObjects: Partial<RelatedIeObject>[] = (childIeObjects || []).map(
+		const censoredChildIeObjects: Partial<HetArchiefRelatedIeObject>[] = (childIeObjects || []).map(
 			(childIeObject) =>
 				limitAccessToObjectDetails(childIeObject, {
 					userId: user?.getId(),
@@ -1055,14 +1056,16 @@ export class IeObjectsController {
 					throw new ForbiddenException('You do not have access to this object');
 				}
 
-				if (!Object.keys(limitedObject).includes('thumbnailUrl')) {
+				if (!limitedObject.hasAccessToEssence) {
 					return {
 						schemaIdentifier: limitedObject.schemaIdentifier || null,
 						thumbnailUrl: null,
 					}; // If you're not allowed to see the thumbnail, return null
 				}
 
-				if (mapDcTermsFormatToSimpleType(ieObject?.dctermsFormat) === IeObjectType.AUDIO) {
+				if (
+					mapDcTermsFormatToSimpleType(ieObject?.dctermsFormat) === HetArchiefIeObjectType.AUDIO
+				) {
 					return {
 						schemaIdentifier: ieObject.schemaIdentifier || null,
 						thumbnailUrl: AUDIO_WAVE_FORM_URL,
@@ -1074,11 +1077,11 @@ export class IeObjectsController {
 					user.getGroupName() === GroupName.MEEMOO_ADMIN &&
 					visitorSpaceAccessInfo.visitorSpaceIds.includes(limitedObject.maintainerId) &&
 					intersection(limitedObject?.licenses, [
-						IeObjectLicense.BEZOEKERTOOL_CONTENT,
-						IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
+						HetArchiefIeObjectLicense.BEZOEKERTOOL_CONTENT,
+						HetArchiefIeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
 					]).length > 0
 				) {
-					limitedObject?.accessThrough.push(IeObjectAccessThrough.VISITOR_SPACE_FULL);
+					limitedObject?.accessThrough.push(HetArchiefIeObjectAccessThrough.VISITOR_SPACE_FULL);
 				}
 
 				// Add token to the thumbnail URL
@@ -1232,11 +1235,11 @@ export class IeObjectsController {
 							user.getGroupName() === GroupName.MEEMOO_ADMIN &&
 							visitorSpaceAccessInfo.visitorSpaceIds.includes(limitedObject.maintainerId) &&
 							intersection(limitedObject?.licenses, [
-								IeObjectLicense.BEZOEKERTOOL_CONTENT,
-								IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
+								HetArchiefIeObjectLicense.BEZOEKERTOOL_CONTENT,
+								HetArchiefIeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
 							]).length > 0
 						) {
-							limitedObject?.accessThrough.push(IeObjectAccessThrough.VISITOR_SPACE_FULL);
+							limitedObject?.accessThrough.push(HetArchiefIeObjectAccessThrough.VISITOR_SPACE_FULL);
 						}
 
 						return limitedObject;
@@ -1325,7 +1328,8 @@ export class IeObjectsController {
 			'further requests. The objects are taken from the config of the content block with the ' +
 			'given blockId, together with the snippet start/end cuepoints (in seconds) its editor ' +
 			'configured, which yield a video still at that timestamp instead of the poster image. ' +
-			'Supported block types: HETARCHIEF_VIDEO, HERO_CAROUSEL, TIMELINE. Exactly one of blockId ' +
+			'Supported block types: HETARCHIEF_VIDEO, HERO_CAROUSEL, TIMELINE, OVERVIEW_WITH_CAROUSEL. ' +
+			'Exactly one of blockId ' +
 			'and objects is required. The content page editor renders block configs that are being ' +
 			'changed (or not saved at all), so it sends objects instead: one entry per block element, ' +
 			'with their cuepoints. Those are honoured for users who may edit content pages and ' +

@@ -1,4 +1,5 @@
 import type { DbContentBlock } from '@meemoo/admin-core-api';
+import { AvoCoreContentPickerType } from '@viaa/avo2-types';
 
 import { Lookup_App_Content_Block_Type_Enum } from '~generated/graphql-db-types-hetarchief';
 
@@ -23,6 +24,7 @@ export const PLAYABLE_DISPLAY_DATA_BLOCK_TYPES = [
 	Lookup_App_Content_Block_Type_Enum.HetarchiefVideo,
 	Lookup_App_Content_Block_Type_Enum.HeroCarousel,
 	Lookup_App_Content_Block_Type_Enum.Timeline,
+	Lookup_App_Content_Block_Type_Enum.OverviewWithCarousel,
 ] as const;
 
 /**
@@ -140,6 +142,30 @@ function adaptTimelineBlock(components: {
 }
 
 /**
+ * OVERVIEW_WITH_CAROUSEL: one slide per element. Its content picker also accepts content pages and
+ * external links, so only the elements that actually point at an ie-object resolve to one. The
+ * slide shows an editor-uploaded image rather than the object's thumbnail; the objects are fetched
+ * purely so the block can hide slides whose object the visitor has no essence access to. No
+ * snippet: these slides never play.
+ */
+function adaptOverviewWithCarouselBlock(components: {
+	elements?: { mediaItem?: { type?: string; value?: string } }[];
+}): PlayableDisplayDataItem[] {
+	return (components?.elements || []).map((element) => {
+		const schemaIdentifier =
+			element?.mediaItem?.type === AvoCoreContentPickerType.IE_OBJECT
+				? getSchemaIdentifier(element?.mediaItem)
+				: null;
+
+		if (!schemaIdentifier) {
+			return null;
+		}
+
+		return { schemaIdentifier };
+	});
+}
+
+/**
  * Converts the config of a content block into the list of objects to fetch playable display data
  * for, in the block's own element order.
  *
@@ -164,6 +190,9 @@ export function contentBlockToPlayableDisplayDataItems(
 
 		case Lookup_App_Content_Block_Type_Enum.Timeline:
 			return adaptTimelineBlock(components);
+
+		case Lookup_App_Content_Block_Type_Enum.OverviewWithCarousel:
+			return adaptOverviewWithCarouselBlock(components);
 
 		default:
 			return null;

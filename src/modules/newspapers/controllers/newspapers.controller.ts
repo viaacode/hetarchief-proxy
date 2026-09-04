@@ -22,14 +22,12 @@ import type { Configuration } from '~config';
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
 
+import { HetArchiefIeObjectPage } from '@viaa/avo2-types';
+import { HetArchiefSimpleIeObjectType } from '@viaa/avo2-types';
 import { IeObjectsController } from '~modules/ie-objects/controllers/ie-objects.controller';
 import { convertObjectToCsv } from '~modules/ie-objects/helpers/convert-objects-to-csv';
 import { convertObjectToXml } from '~modules/ie-objects/helpers/convert-objects-to-xml';
-import {
-	IeObjectPage,
-	NewspaperTitle,
-	SimpleIeObjectType,
-} from '~modules/ie-objects/ie-objects.types';
+import { NewspaperTitle } from '~modules/ie-objects/ie-objects.types';
 import {
 	NEWSPAPER_MIME_TYPE_ALTO,
 	NEWSPAPER_MIME_TYPE_BROWSE_COPY,
@@ -97,7 +95,7 @@ export class NewspapersController {
 
 		// Extract images and alto xml urls from the object
 		const exportSinglePage = !isNil(pageIndex) && !Number.isNaN(pageIndex);
-		const pagesToExport: IeObjectPage[] = exportSinglePage
+		const pagesToExport: HetArchiefIeObjectPage[] = exportSinglePage
 			? limitedObjectMetadata.pages.slice(pageIndex, pageIndex + 1)
 			: limitedObjectMetadata.pages;
 
@@ -214,7 +212,7 @@ export class NewspapersController {
 				time: new Date().toISOString(),
 				data: {
 					download_type: 'zip',
-					type: SimpleIeObjectType.NEWSPAPER,
+					type: HetArchiefSimpleIeObjectType.NEWSPAPER,
 					pid: limitedObjectMetadata.schemaIdentifier,
 					fragment_id: limitedObjectMetadata.fragmentId,
 					or_id: limitedObjectMetadata.maintainerId,
@@ -261,7 +259,7 @@ export class NewspapersController {
 			);
 		}
 
-		const page: IeObjectPage = limitedObjectMetadata.pages[pageIndex];
+		const page: HetArchiefIeObjectPage = limitedObjectMetadata.pages[pageIndex];
 		let pageImageApi: string | null = null;
 		page.representations.find((representation) => {
 			return representation.files.find((file) => {
@@ -314,7 +312,7 @@ export class NewspapersController {
 				subject: user?.getId(),
 				time: new Date().toISOString(),
 				data: {
-					type: SimpleIeObjectType.NEWSPAPER,
+					type: HetArchiefSimpleIeObjectType.NEWSPAPER,
 					pid: limitedObjectMetadata.schemaIdentifier,
 					fragment_id: limitedObjectMetadata.fragmentId,
 					or_id: limitedObjectMetadata.maintainerId,

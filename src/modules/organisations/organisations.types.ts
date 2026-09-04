@@ -1,10 +1,10 @@
+import { type HetArchiefIeObjectSector } from '@viaa/avo2-types';
 import {
-	FindOrganisationsBySchemaIdsQuery,
 	FindOrganisationSlugsQuery,
+	FindOrganisationsBySchemaIdsQuery,
 	GetOrganisationBySlugQuery,
 	UpdateOrganisationSlugMutation,
 } from '~generated/graphql-db-types-hetarchief';
-import type { IeObjectSector } from '~modules/ie-objects/ie-objects.types';
 
 export enum OrganisationPreference {
 	logoEmbedding = 'logo-embedding',
@@ -34,7 +34,7 @@ export interface OrganisationInfoV2 {
 	id: string;
 	label?: string | null;
 	description: string | null;
-	sector: IeObjectSector | null;
+	sector: HetArchiefIeObjectSector | null;
 	slug: string | null;
 	form_url: string | null;
 	homepage: string | null;
@@ -72,7 +72,7 @@ export interface Organisation {
 	schemaName: string;
 	createdAt: string;
 	updatedAt: string;
-	sector: IeObjectSector | null;
+	sector: HetArchiefIeObjectSector | null;
 	formUrl: string | null;
 	/**
 	 * VAT number eg: 'BE 0244.142.664'

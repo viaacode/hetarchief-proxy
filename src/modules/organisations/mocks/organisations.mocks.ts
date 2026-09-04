@@ -5,7 +5,7 @@ import {
 	PostalAddressType,
 } from '../organisations.types';
 
-import { IeObjectSector } from '~modules/ie-objects/ie-objects.types';
+import { HetArchiefIeObjectSector } from '@viaa/avo2-types';
 
 export const mockGqlOrganisation: GqlOrganisation = {
 	id: 'https://data-int.hetarchief.be/id/organization/OR-rf5kf25',
@@ -23,7 +23,7 @@ export const mockGqlOrganisation: GqlOrganisation = {
 	dcterms_description:
 		'De Vlaamse Radio- en Televisieomroeporganisatie, afgekort VRT, is de Nederlandstalige openbare omroep voor radio en televisie in België.',
 	// Remark here organization is with Z
-	ha_org_sector: IeObjectSector.PUBLIC,
+	ha_org_sector: HetArchiefIeObjectSector.PUBLIC,
 	ha_org_request_form:
 		'https://www.vrt.be/heb-je-een-vraag/s/contactsupport-vrtarchief?name_user={first_name}&mail_user={email}&local_id={local_cp_id}&viaa_id={pid}&surname_user={last_name}&title={title}&serie={title_serie}',
 	schema_vat_id: 'BE 0244.142.664',
@@ -65,7 +65,7 @@ export const mockOrganisation1: Organisation = {
 	schemaName: 'VRT',
 	createdAt: '2023-04-03T13:28:01.434203+02:00',
 	updatedAt: '2023-04-03T13:28:01.434203+02:00',
-	sector: IeObjectSector.PUBLIC,
+	sector: HetArchiefIeObjectSector.PUBLIC,
 	formUrl:
 		'https://www.vrt.be/heb-je-een-vraag/s/contactsupport-vrtarchief?name_user={first_name}&mail_user={email}&local_id={local_cp_id}&viaa_id={pid}&surname_user={last_name}&title={title}&serie={title_serie}',
 	vatNumber: 'BE 0244.142.664',
@@ -88,7 +88,7 @@ export const mockOrganisation2: Organisation = {
 	schemaName: 'meemoo',
 	createdAt: '2023-04-03T13:28:01.434203+02:00',
 	updatedAt: '2023-04-03T13:28:01.434203+02:00',
-	sector: IeObjectSector.CULTURE,
+	sector: HetArchiefIeObjectSector.CULTURE,
 	formUrl: null,
 	vatNumber: 'BE 0885.957.616',
 	streetAddress: 'Fernand Scribedreef 1',

@@ -12,8 +12,8 @@ import {
 	vi,
 } from 'vitest';
 
+import { HetArchiefIeObjectLicense } from '@viaa/avo2-types';
 import { GetThemeWithObjectsInRandomOrderQuery } from '~generated/graphql-db-types-hetarchief';
-import { IeObjectLicense } from '~modules/ie-objects/ie-objects.types';
 import { mockUser } from '~modules/ie-objects/mocks/ie-objects.mock';
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
@@ -50,7 +50,7 @@ const mockGetIeObjectsInThemeResponse: GetThemeWithObjectsInRandomOrderQuery = {
 						skos_pref_label: 'VRT',
 						org_identifier: 'OR-abc123',
 					},
-					schemaLicense: { schema_license: [IeObjectLicense.PUBLIEK_CONTENT] },
+					schemaLicense: { schema_license: [HetArchiefIeObjectLicense.PUBLIEK_CONTENT] },
 				},
 			},
 			{
@@ -64,7 +64,7 @@ const mockGetIeObjectsInThemeResponse: GetThemeWithObjectsInRandomOrderQuery = {
 						skos_pref_label: 'RTBF',
 						org_identifier: 'OR-def456',
 					},
-					schemaLicense: { schema_license: [IeObjectLicense.PUBLIEK_CONTENT] },
+					schemaLicense: { schema_license: [HetArchiefIeObjectLicense.PUBLIEK_CONTENT] },
 				},
 			},
 			{
@@ -262,7 +262,7 @@ describe('ThemesService', () => {
 									skos_pref_label: 'VRT',
 									org_identifier: 'OR-abc123',
 								},
-								schemaLicense: { schema_license: [IeObjectLicense.PUBLIEK_CONTENT] },
+								schemaLicense: { schema_license: [HetArchiefIeObjectLicense.PUBLIEK_CONTENT] },
 							},
 						},
 					],
@@ -293,8 +293,11 @@ describe('ThemesService', () => {
 			);
 
 			expect(result.ieObjects[0].thumbnailUrl).toBeNull();
-			expect(mockIeObjectsService.getVisitorSpaceAccessInfoFromUser).not.toHaveBeenCalled();
 			expect(mockIeObjectsService.getThumbnailUrlWithToken).not.toHaveBeenCalled();
+			// The essence access check still runs: hasAccessToEssence is reported for every object,
+			// whether or not the caller also asked for the thumbnail url to be resolved
+			expect(mockIeObjectsService.getVisitorSpaceAccessInfoFromUser).toHaveBeenCalled();
+			expect(result.ieObjects[0].hasAccessToEssence).toEqual(true);
 		});
 
 		it('does not resolve the thumbnail url when the user has no license granting access to it', async () => {
@@ -377,7 +380,10 @@ describe('ThemesService', () => {
 									org_identifier: 'OR-abc123',
 								},
 								schemaLicense: {
-									schema_license: [IeObjectLicense.PUBLIEK_CONTENT, IeObjectLicense.PUBLIC_DOMAIN],
+									schema_license: [
+										HetArchiefIeObjectLicense.PUBLIEK_CONTENT,
+										HetArchiefIeObjectLicense.PUBLIC_DOMAIN,
+									],
 								},
 							},
 						},

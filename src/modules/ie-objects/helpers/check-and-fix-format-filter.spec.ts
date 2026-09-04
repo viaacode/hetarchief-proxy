@@ -1,5 +1,5 @@
+import { HetArchiefIeObjectType } from '@viaa/avo2-types';
 import { IeObjectsSearchFilterField, Operator } from '../elasticsearch/elasticsearch.consts';
-import { IeObjectType } from '../ie-objects.types';
 
 import { describe, expect, it } from 'vitest';
 import { checkAndFixFormatFilter } from './check-and-fix-format-filter';
@@ -10,15 +10,15 @@ describe('checkAndFixFormatFilter', () => {
 			filters: [
 				{
 					field: IeObjectsSearchFilterField.FORMAT,
-					value: IeObjectType.VIDEO,
+					value: HetArchiefIeObjectType.VIDEO,
 					operator: Operator.IS,
 				},
 			],
 		});
 		expect(fixedQuery.filters[0].multiValue).toEqual([
-			IeObjectType.VIDEO,
-			IeObjectType.FILM,
-			IeObjectType.VIDEO_FRAGMENT,
+			HetArchiefIeObjectType.VIDEO,
+			HetArchiefIeObjectType.FILM,
+			HetArchiefIeObjectType.VIDEO_FRAGMENT,
 		]);
 	});
 
@@ -27,15 +27,15 @@ describe('checkAndFixFormatFilter', () => {
 			filters: [
 				{
 					field: IeObjectsSearchFilterField.FORMAT,
-					multiValue: [IeObjectType.VIDEO],
+					multiValue: [HetArchiefIeObjectType.VIDEO],
 					operator: Operator.IS,
 				},
 			],
 		});
 		expect(fixedQuery.filters[0].multiValue).toEqual([
-			IeObjectType.VIDEO,
-			IeObjectType.FILM,
-			IeObjectType.VIDEO_FRAGMENT,
+			HetArchiefIeObjectType.VIDEO,
+			HetArchiefIeObjectType.FILM,
+			HetArchiefIeObjectType.VIDEO_FRAGMENT,
 		]);
 	});
 });

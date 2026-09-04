@@ -1,5 +1,6 @@
 import { intersection, isEmpty, pick, uniq } from 'lodash';
 
+import { HetArchiefIeObjectLicense } from '@viaa/avo2-types';
 import {
 	IE_OBJECT_INTRA_CP_LICENSES,
 	IE_OBJECT_LICENSES_BY_USER_GROUP,
@@ -8,7 +9,11 @@ import {
 	IE_OBJECT_PROPS_BY_METADATA_SET,
 	IE_OBJECT_PUBLIC_LICENSES,
 } from '../ie-objects.conts';
-import { type IeObject, IeObjectExtraUserGroupType, IeObjectLicense } from '../ie-objects.types';
+import {
+	type IeObject,
+	IeObjectExtraUserGroupType,
+	IeObjectMetadataSet,
+} from '../ie-objects.types';
 
 import { getAccessThrough } from './get-access-through';
 
@@ -33,9 +38,9 @@ export const limitAccessToObjectDetails = (
 			userInfo.groupId ?? IeObjectExtraUserGroupType.ANONYMOUS
 		] ?? []),
 	];
-	const ieObjectLicenses: IeObjectLicense[] = [...(ieObject.licenses || [])];
+	const ieObjectLicenses: HetArchiefIeObjectLicense[] = [...(ieObject.licenses || [])];
 
-	const userAccessibleLicenses: IeObjectLicense[] = [];
+	const userAccessibleLicenses: HetArchiefIeObjectLicense[] = [];
 
 	const objectIntraCpLicenses = intersection(ieObjectLicenses, IE_OBJECT_INTRA_CP_LICENSES);
 	const hasFolderAccess = userInfo.accessibleObjectIdsThroughFolders.includes(
@@ -49,17 +54,17 @@ export const limitAccessToObjectDetails = (
 	// ---------------------------------------------------
 
 	// If the ie object exposes a wider license, then we also add the stricter licences to make the checks below easier
-	if (ieObjectLicenses.includes(IeObjectLicense.INTRA_CP_CONTENT)) {
-		ieObjectLicenses.push(IeObjectLicense.INTRA_CP_METADATA_ALL);
+	if (ieObjectLicenses.includes(HetArchiefIeObjectLicense.INTRA_CP_CONTENT)) {
+		ieObjectLicenses.push(HetArchiefIeObjectLicense.INTRA_CP_METADATA_ALL);
 	}
-	if (ieObjectLicenses.includes(IeObjectLicense.INTRA_CP_METADATA_ALL)) {
-		ieObjectLicenses.push(IeObjectLicense.INTRA_CP_METADATA_LTD);
+	if (ieObjectLicenses.includes(HetArchiefIeObjectLicense.INTRA_CP_METADATA_ALL)) {
+		ieObjectLicenses.push(HetArchiefIeObjectLicense.INTRA_CP_METADATA_LTD);
 	}
-	if (ieObjectLicenses.includes(IeObjectLicense.BEZOEKERTOOL_CONTENT)) {
-		ieObjectLicenses.push(IeObjectLicense.BEZOEKERTOOL_METADATA_ALL);
+	if (ieObjectLicenses.includes(HetArchiefIeObjectLicense.BEZOEKERTOOL_CONTENT)) {
+		ieObjectLicenses.push(HetArchiefIeObjectLicense.BEZOEKERTOOL_METADATA_ALL);
 	}
-	if (ieObjectLicenses.includes(IeObjectLicense.PUBLIEK_METADATA_ALL)) {
-		ieObjectLicenses.push(IeObjectLicense.PUBLIEK_METADATA_LTD);
+	if (ieObjectLicenses.includes(HetArchiefIeObjectLicense.PUBLIEK_METADATA_ALL)) {
+		ieObjectLicenses.push(HetArchiefIeObjectLicense.PUBLIEK_METADATA_LTD);
 	}
 
 	// public licenses can be accessed if the object has public licenses
@@ -106,8 +111,8 @@ export const limitAccessToObjectDetails = (
 	// If user is part of VISITOR && has full access -> add visitor content license to licenses
 	if (hasFolderAccess || hasFullVisitorSpaceAccess) {
 		userGroupLicenses.push(
-			IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
-			IeObjectLicense.BEZOEKERTOOL_CONTENT
+			HetArchiefIeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
+			HetArchiefIeObjectLicense.BEZOEKERTOOL_CONTENT
 		);
 
 		// Determine common ground between ie object licenses and user group licenses
@@ -129,9 +134,20 @@ export const limitAccessToObjectDetails = (
 	}
 
 	const ieObjectLimitedProps: string[] = uniq(
-		accessibleLicenses.flatMap((accessibleLicense: IeObjectLicense) => {
+		accessibleLicenses.flatMap((accessibleLicense: HetArchiefIeObjectLicense) => {
 			return IE_OBJECT_PROPS_BY_METADATA_SET[IE_OBJECT_METADATA_SET_BY_LICENSE[accessibleLicense]];
 		})
+	);
+
+	// Whether the user may see the essence of this object: the thumbnail, pages, mentions,
+	// transcript and rights info. Exactly the licenses that unlock the METADATA_ALL_WITH_ESSENCE
+	// prop set, so this is a pure function of the accessible licenses -- it does not depend on
+	// whether the object actually has a thumbnail file. Clients use this instead of checking
+	// thumbnailUrl for truthiness.
+	const hasAccessToEssence = accessibleLicenses.some(
+		(accessibleLicense: HetArchiefIeObjectLicense) =>
+			IE_OBJECT_METADATA_SET_BY_LICENSE[accessibleLicense] ===
+			IeObjectMetadataSet.METADATA_ALL_WITH_ESSENCE
 	);
 
 	// Step 3 - Return ie object with limited access props
@@ -149,5 +165,6 @@ export const limitAccessToObjectDetails = (
 	return {
 		...limitedIeObject,
 		accessThrough,
+		hasAccessToEssence,
 	};
 };

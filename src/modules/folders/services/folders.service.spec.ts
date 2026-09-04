@@ -5,6 +5,7 @@ import { type MockInstance, afterEach, beforeEach, describe, expect, it, vi } fr
 
 import { FoldersService } from './folders.service';
 
+import { HetArchiefIeObjectType, HetArchiefIsPartOfKey } from '@viaa/avo2-types';
 import type {
 	FindFolderIeObjectsByFolderIdQuery,
 	FindFoldersByUserQuery,
@@ -17,7 +18,7 @@ import type {
 } from '~generated/graphql-db-types-hetarchief';
 import { mockGqlFolder } from '~modules/folders/services/__mocks__/users_folder';
 import type { FolderObjectLink, GqlObject } from '~modules/folders/types';
-import { type IeObject, IeObjectType, IsPartOfKey } from '~modules/ie-objects/ie-objects.types';
+import { type IeObject } from '~modules/ie-objects/ie-objects.types';
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { VisitsService } from '~modules/visits/services/visits.service';
 import { TestingLogger } from '~shared/logging/test-logger';
@@ -187,7 +188,7 @@ const mockFolderObject: Partial<IeObject> & { folderEntryCreatedAt: string } = {
 	name: 'CGSO. De mannenbeweging - mannenemancipatie - 1982',
 	dctermsAvailable: '2015-09-19T12:08:24',
 	creator: null,
-	dctermsFormat: IeObjectType.VIDEO,
+	dctermsFormat: HetArchiefIeObjectType.VIDEO,
 	numberOfPages: null,
 	thumbnailUrl:
 		'/viaa/AMSAB/5dc89b7e75e649e191cd86196c255147cd1a0796146d4255acfde239296fa534/keyframes-thumb/keyframes_1_1/keyframe1.jpg',
@@ -201,13 +202,13 @@ const mockFolderObject: Partial<IeObject> & { folderEntryCreatedAt: string } = {
 		{
 			iri: 'http://data.viaa.be/terms/1.0#serie',
 			schemaIdentifier: '8s4jm2514q',
-			collectionType: IsPartOfKey.series,
+			collectionType: HetArchiefIsPartOfKey.series,
 			name: 'Serie1',
 		},
 		{
 			iri: 'http://data.viaa.be/terms/1.0#programma',
 			schemaIdentifier: '8s4jm2514q',
-			collectionType: IsPartOfKey.program,
+			collectionType: HetArchiefIsPartOfKey.program,
 			name: 'Programma1',
 		},
 	],

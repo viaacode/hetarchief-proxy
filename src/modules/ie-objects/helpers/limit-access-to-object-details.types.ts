@@ -1,9 +1,9 @@
-import type { IeObjectSector } from '~modules/ie-objects/ie-objects.types';
+import { type HetArchiefIeObjectSector } from '@viaa/avo2-types';
 
 export interface LimitAccessUserInfo {
 	userId: string | null;
 	isKeyUser: boolean;
-	sector: IeObjectSector | null;
+	sector: HetArchiefIeObjectSector | null;
 	groupId: string;
 	maintainerId: string;
 	// folders -> if ie object id is in here then the user has folder access to this visitor space

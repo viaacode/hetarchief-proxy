@@ -58,6 +58,13 @@ import {
 } from '../material-requests.types';
 
 import {
+	HetArchiefIeObjectAccessThrough,
+	HetArchiefIeObjectLicense,
+	type HetArchiefIeObjectSector,
+	HetArchiefIeObjectType,
+	HetArchiefSimpleIeObjectType,
+} from '@viaa/avo2-types';
+import {
 	type App_Material_Requests_Bool_Exp,
 	type App_Material_Requests_Set_Input,
 	DeleteMaterialRequestDocument,
@@ -117,15 +124,7 @@ import {
 	UpdateMaterialRequestStatusMutationVariables,
 } from '~generated/graphql-db-types-hetarchief';
 import { type MaterialRequestEmailInfo } from '~modules/campaign-monitor/campaign-monitor.types';
-import {
-	type IeObject,
-	IeObjectAccessThrough,
-	IeObjectLicense,
-	type IeObjectSector,
-	IeObjectType,
-	IeObjectsVisitorSpaceInfo,
-	SimpleIeObjectType,
-} from '~modules/ie-objects/ie-objects.types';
+import { type IeObject, IeObjectsVisitorSpaceInfo } from '~modules/ie-objects/ie-objects.types';
 import type { Organisation } from '~modules/organisations/organisations.types';
 
 import { OrganisationsService } from '~modules/organisations/services/organisations.service';
@@ -502,7 +501,7 @@ export class MaterialRequestsService {
 				createdMaterialRequest.ie_object_representation_id,
 				createMaterialRequestDto.reuseForm,
 				createdMaterialRequest?.intellectualEntity?.dctermsFormat?.[0]
-					.dcterms_format as IeObjectType
+					.dcterms_format as HetArchiefIeObjectType
 			);
 
 		const organisations = await this.organisationsService.findOrganisationsBySchemaIdentifiers(
@@ -573,7 +572,8 @@ export class MaterialRequestsService {
 				materialRequestInfo.type === Lookup_App_Material_Request_Type_Enum.Reuse
 					? reuseForm
 					: undefined,
-				updatedRequest?.intellectualEntity?.dctermsFormat?.[0]?.dcterms_format as IeObjectType
+				updatedRequest?.intellectualEntity?.dctermsFormat?.[0]
+					?.dcterms_format as HetArchiefIeObjectType
 			);
 
 		const organisations = await this.organisationsService.findOrganisationsBySchemaIdentifiers(
@@ -998,7 +998,7 @@ export class MaterialRequestsService {
 		materialRequestId: string,
 		representationId: string,
 		reuseForm: Record<string, string> | MaterialRequestReuseForm,
-		ieObjectType: IeObjectType
+		ieObjectType: HetArchiefIeObjectType
 	) => {
 		if (reuseForm) {
 			// Avoid duplicate thumbnails so filtering the original in favor of a more accurate one
@@ -1008,7 +1008,7 @@ export class MaterialRequestsService {
 
 			// For audio objects we don't need to do a request to the video stills service, since we just want to show a waveform
 			let thumbnailUrl: string;
-			if (mapDcTermsFormatToSimpleType(ieObjectType) === IeObjectType.AUDIO) {
+			if (mapDcTermsFormatToSimpleType(ieObjectType) === HetArchiefIeObjectType.AUDIO) {
 				thumbnailUrl = AUDIO_WAVE_FORM_URL;
 			} else {
 				thumbnailUrl = await this.findVideoStillForMaterialRequest(representationId, reuseForm);
@@ -1100,13 +1100,14 @@ export class MaterialRequestsService {
 	}
 
 	public isComplexReuseFlow(
-		ieObjectType: IeObjectType,
-		ieObjectLicenses: IeObjectLicense[],
+		ieObjectType: HetArchiefIeObjectType,
+		ieObjectLicenses: HetArchiefIeObjectLicense[],
 		isKeyUser: boolean
 	): boolean {
 		const simpleType = mapDcTermsFormatToSimpleType(ieObjectType);
 		return (
-			(simpleType === SimpleIeObjectType.AUDIO || simpleType === SimpleIeObjectType.VIDEO) &&
+			(simpleType === HetArchiefSimpleIeObjectType.AUDIO ||
+				simpleType === HetArchiefSimpleIeObjectType.VIDEO) &&
 			isKeyUser &&
 			intersection(ieObjectLicenses, IE_OBJECT_INTRA_CP_LICENSES).length > 0
 		);
@@ -1156,8 +1157,8 @@ export class MaterialRequestsService {
 			graphQlMaterialRequest.intellectualEntity;
 		const objectId = rawObject?.id;
 		const objectSchemaIdentifier = rawObject?.schema_identifier;
-		let objectAccessThrough: IeObjectAccessThrough[] = [];
-		let objectLicences: IeObjectLicense[] = [];
+		let objectAccessThrough: HetArchiefIeObjectAccessThrough[] = [];
+		let objectLicences: HetArchiefIeObjectLicense[] = [];
 		let hasAccessToEssence = false;
 		if (user && objectId) {
 			const objectForAccessChecks: Pick<
@@ -1168,8 +1169,8 @@ export class MaterialRequestsService {
 				schemaIdentifier: rawObject.schema_identifier,
 				licenses: rawObject.schemaLicenses.map(
 					(license) => license.schema_license
-				) as IeObjectLicense[],
-				sector: rawObject.schemaMaintainer.ha_org_sector as IeObjectSector,
+				) as HetArchiefIeObjectLicense[],
+				sector: rawObject.schemaMaintainer.ha_org_sector as HetArchiefIeObjectSector,
 			};
 			const access = this.getAccessThroughAndLicences(
 				objectForAccessChecks,
@@ -1182,13 +1183,13 @@ export class MaterialRequestsService {
 		}
 
 		const isPublicDomain: boolean =
-			objectLicences?.includes(IeObjectLicense.PUBLIEK_CONTENT) &&
-			objectLicences?.includes(IeObjectLicense.PUBLIC_DOMAIN);
+			objectLicences?.includes(HetArchiefIeObjectLicense.PUBLIEK_CONTENT) &&
+			objectLicences?.includes(HetArchiefIeObjectLicense.PUBLIC_DOMAIN);
 
 		let objectThumbnailUrl: string | undefined;
 		const ieObjectThumbnailUrl = rawObject?.schemaThumbnail?.schema_thumbnail_url?.[0];
 		const isComplexFlow = this.isComplexReuseFlow(
-			rawObject?.dctermsFormat?.[0]?.dcterms_format as IeObjectType,
+			rawObject?.dctermsFormat?.[0]?.dcterms_format as HetArchiefIeObjectType,
 			objectLicences,
 			user?.getIsKeyUser()
 		);
@@ -1237,8 +1238,9 @@ export class MaterialRequestsService {
 			objectId,
 			objectSchemaIdentifier,
 			objectSchemaName: rawObject?.schema_name,
-			objectDctermsFormat: rawObject?.dctermsFormat?.[0]?.dcterms_format as IeObjectType,
+			objectDctermsFormat: rawObject?.dctermsFormat?.[0]?.dcterms_format as HetArchiefIeObjectType,
 			objectThumbnailUrl,
+			objectHasAccessToEssence: hasAccessToEssence,
 			objectPublishedOrCreatedDate: rawObject?.schema_date_published || rawObject?.created_at,
 			objectAccessThrough,
 			objectLicences,
@@ -1432,13 +1434,10 @@ export class MaterialRequestsService {
 		visitorSpaceAccessInfo: IeObjectsVisitorSpaceInfo,
 		user: SessionUserEntity
 	): {
-		objectAccessThrough: IeObjectAccessThrough[];
-		objectLicences: IeObjectLicense[];
+		objectAccessThrough: HetArchiefIeObjectAccessThrough[];
+		objectLicences: HetArchiefIeObjectLicense[];
 		hasAccessToEssence: boolean;
 	} {
-		// Set a fake thumbnailUrl to see if our existing censor logic will censor the thumbnail
-		// We don't need the actual thumbnail in this function, we just need to see if it is accessible to the current user
-		(objectMetadata as any).thumbnailUrl = 'fake-thumbnail-for-access-check';
 		const censoredObjectMetadata = limitAccessToObjectDetails(objectMetadata, {
 			userId: user.getId(),
 			isKeyUser: user.getIsKeyUser(),
@@ -1452,8 +1451,7 @@ export class MaterialRequestsService {
 		return {
 			objectAccessThrough: censoredObjectMetadata?.accessThrough ?? [],
 			objectLicences: censoredObjectMetadata?.licenses ?? [],
-			hasAccessToEssence:
-				!!censoredObjectMetadata?.thumbnailUrl || !!censoredObjectMetadata?.pages?.length,
+			hasAccessToEssence: !!censoredObjectMetadata?.hasAccessToEssence,
 		};
 	}
 

@@ -3,6 +3,11 @@ import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/help
 import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
+import {
+	HetArchiefIeObjectLicense,
+	type HetArchiefIeObjectSector,
+	HetArchiefIeObjectType,
+} from '@viaa/avo2-types';
 import { compact, isNil, set } from 'lodash';
 import {
 	DeleteIeObjectFromThemeDocument,
@@ -45,13 +50,7 @@ import {
 } from '~generated/graphql-db-types-hetarchief';
 import { limitAccessToObjectDetails } from '~modules/ie-objects/helpers/limit-access-to-object-details';
 import { mapDcTermsFormatToSimpleType } from '~modules/ie-objects/helpers/map-dc-terms-format-to-simple-type';
-import {
-	type IeObject,
-	IeObjectLicense,
-	type IeObjectSector,
-	IeObjectType,
-	IeObjectsVisitorSpaceInfo,
-} from '~modules/ie-objects/ie-objects.types';
+import { type IeObject, IeObjectsVisitorSpaceInfo } from '~modules/ie-objects/ie-objects.types';
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { AUDIO_WAVE_FORM_URL } from '~shared/consts/audio-wave-form-url';
@@ -359,9 +358,10 @@ export class ThemesService {
 		// Both queries select the same aggregate, so the total is available for the random order too
 		const total = rawTheme.ieObjectLinks_aggregate.aggregate?.count ?? 0;
 
-		const visitorSpaceAccessInfo = queryDto.resolveThumbnailUrl
-			? await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user)
-			: undefined;
+		// Needed for the essence access check, which runs for every object regardless of whether the
+		// caller also wants the thumbnail url resolved
+		const visitorSpaceAccessInfo =
+			await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
 
 		const ieObjects: IeObjectInThemeResponseDto[] = compact(
 			await Promise.all(
@@ -423,16 +423,16 @@ export class ThemesService {
 		referer?: string,
 		ip?: string
 	): Promise<IeObjectInThemeResponseDto> {
+		const { hasAccessToEssence, objectLicences } = this.determineEssenceAccess(
+			rawIeObject,
+			visitorSpaceAccessInfo,
+			user
+		);
+
 		let thumbnailUrl: string | undefined = undefined;
 
-		if (resolveThumbnailUrl) {
-			thumbnailUrl = await this.determineThumbnailUrl(
-				rawIeObject,
-				visitorSpaceAccessInfo,
-				user,
-				referer,
-				ip
-			);
+		if (resolveThumbnailUrl && hasAccessToEssence) {
+			thumbnailUrl = await this.determineThumbnailUrl(rawIeObject, objectLicences, referer, ip);
 		}
 
 		return {
@@ -441,65 +441,75 @@ export class ThemesService {
 			name: rawIeObject.schema_name ?? null,
 			format: rawIeObject.dctermsFormat?.[0]?.dcterms_format ?? null,
 			thumbnailUrl: thumbnailUrl ?? null,
+			hasAccessToEssence,
 			maintainerId: rawIeObject.schemaMaintainer?.id ?? null,
 			maintainerName: rawIeObject.schemaMaintainer?.skos_pref_label ?? null,
 		};
 	}
 
-	private async determineThumbnailUrl(
+	/**
+	 * Runs the license censor to find out whether the current user may see this object's essence,
+	 * and which of its licenses they can actually reach. Both are needed for every object, whether
+	 * or not the caller asked for the thumbnail url to be resolved.
+	 */
+	private determineEssenceAccess(
 		rawIeObject: RawThemeIeObject,
 		visitorSpaceAccessInfo?: IeObjectsVisitorSpaceInfo,
-		user?: SessionUserEntity,
+		user?: SessionUserEntity
+	): { hasAccessToEssence: boolean; objectLicences: HetArchiefIeObjectLicense[] } {
+		if (!user) {
+			return { hasAccessToEssence: false, objectLicences: [] };
+		}
+
+		const objectForAccessChecks: Pick<
+			IeObject,
+			'licenses' | 'schemaIdentifier' | 'maintainerId' | 'sector'
+		> = {
+			maintainerId: rawIeObject.schemaMaintainer?.org_identifier,
+			schemaIdentifier: rawIeObject.schema_identifier,
+			licenses: rawIeObject.schemaLicense?.schema_license as HetArchiefIeObjectLicense[],
+			sector: rawIeObject.schemaMaintainer?.ha_org_sector as HetArchiefIeObjectSector,
+		};
+		const censoredObjectMetadata = limitAccessToObjectDetails(objectForAccessChecks, {
+			userId: user.getId(),
+			isKeyUser: user.getIsKeyUser(),
+			sector: user.getSector(),
+			groupId: user.getGroupId(),
+			maintainerId: user.getOrganisationId(),
+			accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo?.objectIds,
+			accessibleVisitorSpaceIds: visitorSpaceAccessInfo?.visitorSpaceIds,
+		});
+
+		return {
+			hasAccessToEssence: !!censoredObjectMetadata?.hasAccessToEssence,
+			objectLicences: censoredObjectMetadata?.licenses ?? [],
+		};
+	}
+
+	/**
+	 * Resolves the thumbnail url of an object the user is already known to have essence access to.
+	 */
+	private async determineThumbnailUrl(
+		rawIeObject: RawThemeIeObject,
+		objectLicences: HetArchiefIeObjectLicense[],
 		referer?: string,
 		ip?: string
 	): Promise<string | undefined> {
 		const dctermsFormat = rawIeObject.dctermsFormat?.[0]?.dcterms_format ?? null;
-		let objectLicences: IeObjectLicense[] = [];
-		let hasAccessToEssence = false;
 
-		if (user) {
-			const objectForAccessChecks: Pick<
-				IeObject,
-				'licenses' | 'schemaIdentifier' | 'maintainerId' | 'sector'
-			> = {
-				maintainerId: rawIeObject.schemaMaintainer?.org_identifier,
-				schemaIdentifier: rawIeObject.schema_identifier,
-				licenses: rawIeObject.schemaLicense?.schema_license as IeObjectLicense[],
-				sector: rawIeObject.schemaMaintainer?.ha_org_sector as IeObjectSector,
-			};
-			// Set a fake thumbnailUrl to see if our existing censor logic will censor the thumbnail
-			// We don't need the actual thumbnail in this function, we just need to see if it is accessible to the current user
-			(objectForAccessChecks as any).thumbnailUrl = 'fake-thumbnail-for-access-check';
-			const censoredObjectMetadata = limitAccessToObjectDetails(objectForAccessChecks, {
-				userId: user.getId(),
-				isKeyUser: user.getIsKeyUser(),
-				sector: user.getSector(),
-				groupId: user.getGroupId(),
-				maintainerId: user.getOrganisationId(),
-				accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo?.objectIds,
-				accessibleVisitorSpaceIds: visitorSpaceAccessInfo?.visitorSpaceIds,
-			});
-
-			objectLicences = censoredObjectMetadata?.licenses ?? [];
-			hasAccessToEssence = !!censoredObjectMetadata?.thumbnailUrl;
-		}
-
-		const isPublicDomain: boolean =
-			objectLicences?.includes(IeObjectLicense.PUBLIEK_CONTENT) &&
-			objectLicences?.includes(IeObjectLicense.PUBLIC_DOMAIN);
-
-		const ieObjectThumbnailUrl = rawIeObject?.schemaThumbnail?.schema_thumbnail_url?.[0];
-
-		if (!hasAccessToEssence) {
-			return undefined;
-		}
-
-		if (mapDcTermsFormatToSimpleType(dctermsFormat as IeObjectType) === IeObjectType.AUDIO) {
+		if (
+			mapDcTermsFormatToSimpleType(dctermsFormat as HetArchiefIeObjectType) ===
+			HetArchiefIeObjectType.AUDIO
+		) {
 			return AUDIO_WAVE_FORM_URL; // avoid the ugly speaker
 		}
 
+		const isPublicDomain: boolean =
+			objectLicences?.includes(HetArchiefIeObjectLicense.PUBLIEK_CONTENT) &&
+			objectLicences?.includes(HetArchiefIeObjectLicense.PUBLIC_DOMAIN);
+
 		return this.ieObjectsService.getThumbnailUrlWithToken(
-			ieObjectThumbnailUrl,
+			rawIeObject?.schemaThumbnail?.schema_thumbnail_url?.[0],
 			referer,
 			ip,
 			// If the object is public domain, we generate a thumbnailUrl with a token that stays valid for 15 years

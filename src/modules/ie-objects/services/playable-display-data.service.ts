@@ -15,6 +15,11 @@ import { hoursToSeconds } from 'date-fns';
 import { Request } from 'express';
 import { compact, isNil } from 'lodash';
 
+import {
+	HetArchiefIeObjectLicense,
+	type HetArchiefIeObjectSector,
+	HetArchiefIeObjectType,
+} from '@viaa/avo2-types';
 import type { Configuration } from '~config';
 import {
 	GetIeObjectPlayableDisplayDataDocument,
@@ -35,10 +40,7 @@ import {
 import {
 	type IeObject,
 	type IeObjectForAccessCheck,
-	IeObjectLicense,
 	type IeObjectPlayableDisplayData,
-	type IeObjectSector,
-	IeObjectType,
 	type IeObjectsVisitorSpaceInfo,
 	type JsonWaveformData,
 } from '~modules/ie-objects/ie-objects.types';
@@ -57,9 +59,9 @@ import { formattedDurationToSeconds } from '~shared/helpers/formatted-duration-t
 interface PlayableDisplayAccess {
 	dbResponse: GetIeObjectPlayableDisplayDataQuery;
 	limitedObject: Partial<IeObject>;
-	dctermsFormat: IeObjectType;
+	dctermsFormat: HetArchiefIeObjectType;
 	isPublicDomain: boolean;
-	hasEssenceAccess: boolean;
+	hasAccessToEssence: boolean;
 }
 
 interface AudioVideoFileData {
@@ -138,18 +140,23 @@ export class PlayableDisplayDataService {
 					if (!access) {
 						return null;
 					}
-					const { dbResponse, limitedObject, dctermsFormat, isPublicDomain, hasEssenceAccess } =
+					const { dbResponse, limitedObject, dctermsFormat, isPublicDomain, hasAccessToEssence } =
 						access;
 
 					const isAudioVideoObject = IE_OBJECT_AV_TYPES.includes(dctermsFormat);
-					const isAudio = mapDcTermsFormatToSimpleType(dctermsFormat) === IeObjectType.AUDIO;
-					let thumbnailUrl: string | null = isAudio ? AUDIO_WAVE_FORM_URL : null; // avoid the ugly speaker
+					const isAudio =
+						mapDcTermsFormatToSimpleType(dctermsFormat) === HetArchiefIeObjectType.AUDIO;
+					// Only stand in the waveform for an audio object the user may actually hear: it is a
+					// display substitute for the ugly speaker thumbnail, not something to show for an object
+					// whose essence is out of reach.
+					let thumbnailUrl: string | null =
+						isAudio && hasAccessToEssence ? AUDIO_WAVE_FORM_URL : null;
 					let playableUrl: string | null = null;
 					let mimeType: string | null = null;
 					let peakFileData: number[] | null = null;
 					let newspaperImage: string | null = null;
 
-					if (hasEssenceAccess) {
+					if (hasAccessToEssence) {
 						// Essence access was granted: look up the first playable file, same
 						// selection as the object detail page
 						const representation = findFirstPlayableRepresentation(dbResponse, isAudioVideoObject);
@@ -209,7 +216,9 @@ export class PlayableDisplayDataService {
 						schemaIdentifier: limitedObject.schemaIdentifier,
 						name: limitedObject.name,
 						thumbnailUrl,
+						hasAccessToEssence,
 						dctermsFormat: limitedObject.dctermsFormat,
+						maintainerId: limitedObject.maintainerId,
 						maintainerName: limitedObject.maintainerName,
 						maintainerLogo: limitedObject.maintainerLogo,
 						maintainerOverlay: limitedObject.maintainerOverlay,
@@ -486,9 +495,8 @@ export class PlayableDisplayDataService {
 
 	/**
 	 * Resolves an ie-object's playable-display-data db response and applies the license-based
-	 * access check. `pages` is only ever picked when the license grants the essence metadata set,
-	 * regardless of whether it holds real data - its mere presence on the limited object tells us
-	 * if essence access was granted, without needing to look up representations first.
+	 * access check. The censor reports essence access directly as `hasAccessToEssence`, so no
+	 * representations need to be looked up first.
 	 */
 	private async resolvePlayableDisplayAccess(
 		schemaIdentifier: string,
@@ -510,19 +518,19 @@ export class PlayableDisplayDataService {
 
 		const licenses = compact(
 			dbResponse.schemaLicense?.map((license) => license.schema_license)
-		) as IeObjectLicense[];
-		const dctermsFormat = ie.dctermsFormat?.[0]?.dcterms_format as IeObjectType;
+		) as HetArchiefIeObjectLicense[];
+		const dctermsFormat = ie.dctermsFormat?.[0]?.dcterms_format as HetArchiefIeObjectType;
 		const schemaMaintainer = ie.schemaMaintainer;
 		const isPublicDomain: boolean =
-			licenses.includes(IeObjectLicense.PUBLIEK_CONTENT) &&
-			licenses.includes(IeObjectLicense.PUBLIC_DOMAIN);
+			licenses.includes(HetArchiefIeObjectLicense.PUBLIEK_CONTENT) &&
+			licenses.includes(HetArchiefIeObjectLicense.PUBLIC_DOMAIN);
 
 		const limitedObject = limitAccessToObjectDetails(
 			{
 				schemaIdentifier: ie.schema_identifier,
 				licenses,
 				maintainerId: schemaMaintainer?.org_identifier,
-				sector: schemaMaintainer?.ha_org_sector as IeObjectSector,
+				sector: schemaMaintainer?.ha_org_sector as HetArchiefIeObjectSector,
 				name: ie.schema_name,
 				dctermsFormat,
 				maintainerName: schemaMaintainer?.skos_pref_label,
@@ -534,7 +542,6 @@ export class PlayableDisplayDataService {
 					(pref) => pref.ha_pref === OrganisationPreference.logoEmbedding
 				),
 				thumbnailUrl: dbResponse.schemaThumbnailUrl?.[0]?.schema_thumbnail_url?.[0],
-				pages: [],
 			} as IeObjectForAccessCheck,
 			{
 				userId: user?.getId(),
@@ -557,7 +564,7 @@ export class PlayableDisplayDataService {
 			limitedObject,
 			dctermsFormat,
 			isPublicDomain,
-			hasEssenceAccess: 'pages' in limitedObject,
+			hasAccessToEssence: !!limitedObject.hasAccessToEssence,
 		};
 	}
 

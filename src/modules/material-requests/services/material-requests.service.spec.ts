@@ -22,6 +22,7 @@ import {
 import { MaterialRequestsService } from './material-requests.service';
 
 import { ConfigService } from '@nestjs/config';
+import { HetArchiefIeObjectLicense } from '@viaa/avo2-types';
 import type {
 	DeleteMaterialRequestMutation,
 	FindMaintainersWithMaterialRequestsQuery,
@@ -31,7 +32,7 @@ import type {
 	UpdateMaterialRequestMutation,
 } from '~generated/graphql-db-types-hetarchief';
 import { EventsService } from '~modules/events/services/events.service';
-import { IeObjectLicense, IeObjectsVisitorSpaceInfo } from '~modules/ie-objects/ie-objects.types';
+import { IeObjectsVisitorSpaceInfo } from '~modules/ie-objects/ie-objects.types';
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { MaterialRequestMessagesService } from '~modules/material-request-messages/services/material-request-messages.service';
 import { MediahavenJobsWatcherService } from '~modules/mediahaven-jobs-watcher/services/mediahaven-jobs-watcher.service';
@@ -77,12 +78,12 @@ const getDefaultMaterialRequestsResponse = (): {
 const mockIeObjectsService: Partial<Record<keyof IeObjectsService, MockInstance>> = {
 	getThumbnailUrlWithToken: vi.fn((thumbnail) => thumbnail),
 	findMetadataByIeObjectId: vi.fn(() => ({
-		licenses: [IeObjectLicense.PUBLIC_DOMAIN, IeObjectLicense.PUBLIEK_CONTENT],
+		licenses: [HetArchiefIeObjectLicense.PUBLIC_DOMAIN, HetArchiefIeObjectLicense.PUBLIEK_CONTENT],
 	})),
 	getVisitorSpaceAccessInfoFromUser: vi.fn(() => ({ objectIds: [], visitorSpaceIds: [] })),
 	adaptRepresentations: vi.fn(() => []),
 	findByIeObjectId: vi.fn(() => ({
-		licenses: [IeObjectLicense.PUBLIC_DOMAIN, IeObjectLicense.PUBLIEK_CONTENT],
+		licenses: [HetArchiefIeObjectLicense.PUBLIC_DOMAIN, HetArchiefIeObjectLicense.PUBLIEK_CONTENT],
 		thumbnailUrl: 'http://example.com/thumbnail.jpg',
 		pages: [],
 	})),
