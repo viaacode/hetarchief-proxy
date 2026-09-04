@@ -1,5 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import fs from 'node:fs/promises';
+import type { HetArchiefRelatedIeObject } from '@viaa/avo2-types';
 import { retry } from 'async';
 import { Request } from 'express';
 
@@ -23,6 +24,18 @@ import { compact, find, isArray, isEmpty, isNil, isNumber, kebabCase, omitBy, un
 
 import type { Configuration } from '~config';
 
+import {
+	type HetArchiefIeObjectFile,
+	type HetArchiefIeObjectPage,
+	type HetArchiefIeObjectRepresentation,
+	type HetArchiefIeObjectTheme,
+} from '@viaa/avo2-types';
+import {
+	HetArchiefIeObjectLicense,
+	type HetArchiefIeObjectSector,
+	HetArchiefIeObjectType,
+	type HetArchiefIsPartOfKey,
+} from '@viaa/avo2-types';
 import { IeObjectsQueryDto, IeObjectsSimilarQueryDto } from '../dto/ie-objects.dto';
 import { QueryBuilder } from '../elasticsearch/queryBuilder';
 import { convertQueryToLiteralString } from '../helpers/convert-query-to-literal-string';
@@ -36,21 +49,12 @@ import {
 	type EsQueryAutocompleteMatchPhraseResponse,
 	type GqlLimitedIeObject,
 	type IeObject,
-	type IeObjectFile,
 	IeObjectForThumbnailOnly,
-	IeObjectLicense,
-	type IeObjectPage,
 	type IeObjectPages,
-	type IeObjectRepresentation,
-	type IeObjectSector,
-	type IeObjectTheme,
-	IeObjectType,
 	type IeObjectsSitemap,
 	type IeObjectsVisitorSpaceInfo,
 	type IeObjectsWithAggregations,
-	type IsPartOfKey,
 	type Mention,
-	type RelatedIeObject,
 } from '../ie-objects.types';
 
 import {
@@ -357,7 +361,7 @@ export class IeObjectsService {
 		ieObjectIri: string,
 		referer: string,
 		ip: string
-	): Promise<RelatedIeObject> {
+	): Promise<HetArchiefRelatedIeObject> {
 		const mediaObjects = await this.dataService.execute<
 			GetParentIeObjectQuery,
 			GetParentIeObjectQueryVariables
@@ -365,13 +369,13 @@ export class IeObjectsService {
 			currentObjectIri: ieObjectIri,
 		});
 
-		const adapted: RelatedIeObject | null = await this.adaptRelatedFromDB(
+		const adapted: HetArchiefRelatedIeObject | null = await this.adaptRelatedFromDB(
 			mediaObjects.graph_intellectual_entity?.[0]?.isPartOf || null,
 			referer,
 			ip
 		);
 		// Newspaper thumbnails can be viewed without requiring a player ticket
-		if (adapted && adapted.dctermsFormat !== IeObjectType.NEWSPAPER && referer) {
+		if (adapted && adapted.dctermsFormat !== HetArchiefIeObjectType.NEWSPAPER && referer) {
 			adapted.thumbnailUrl = await this.getThumbnailUrlWithToken(adapted.thumbnailUrl, referer, ip);
 		}
 		return adapted;
@@ -381,7 +385,7 @@ export class IeObjectsService {
 		ieObjectIri: string,
 		referer: string,
 		ip: string
-	): Promise<RelatedIeObject[]> {
+	): Promise<HetArchiefRelatedIeObject[]> {
 		const mediaObjects = await this.dataService.execute<
 			GetChildIeObjectsQuery,
 			GetChildIeObjectsQueryVariables
@@ -393,7 +397,7 @@ export class IeObjectsService {
 			(mediaObjects.graph_intellectual_entity[0]?.hasPart || []).map(
 				async (
 					object: GetChildIeObjectsQuery['graph_intellectual_entity'][0]['hasPart'][0]
-				): Promise<RelatedIeObject> => {
+				): Promise<HetArchiefRelatedIeObject> => {
 					return await this.adaptRelatedFromDB(object, referer, ip);
 				}
 			)
@@ -470,8 +474,8 @@ export class IeObjectsService {
 								// if esIndex is passed, we only want to return objects that are inside a visitor space
 								terms: {
 									[ElasticsearchField.schema_license]: [
-										IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
-										IeObjectLicense.BEZOEKERTOOL_CONTENT,
+										HetArchiefIeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
+										HetArchiefIeObjectLicense.BEZOEKERTOOL_CONTENT,
 									],
 								},
 							},
@@ -534,12 +538,12 @@ export class IeObjectsService {
 			schemaIdentifier: objectId,
 			thumbnailUrl: response?.schemaThumbnailUrl?.[0]?.schema_thumbnail_url?.[0] || null,
 			dctermsFormat: (response?.ieObject?.[0]?.dctermsFormat?.[0]?.dcterms_format ||
-				null) as IeObjectType | null,
+				null) as HetArchiefIeObjectType | null,
 			maintainerId: response?.ieObject?.[0]?.schemaMaintainer?.org_identifier || null,
 			sector: (response?.ieObject?.[0]?.schemaMaintainer?.ha_org_sector ||
-				null) as IeObjectSector | null,
+				null) as HetArchiefIeObjectSector | null,
 			licenses: (response?.schemaLicense?.map((license) => license.schema_license) ||
-				[]) as IeObjectLicense[],
+				[]) as HetArchiefIeObjectLicense[],
 		};
 	}
 
@@ -593,7 +597,7 @@ export class IeObjectsService {
 	}
 
 	public async findIeObjectsForSitemap(
-		licenses: IeObjectLicense[],
+		licenses: HetArchiefIeObjectLicense[],
 		offset: number,
 		limit: number
 	): Promise<IPagination<IeObjectsSitemap>> {
@@ -708,14 +712,14 @@ export class IeObjectsService {
 	 */
 	private async resolveMainThumbnailUrl(
 		schemaThumbnailUrlResponse: GetIeObjectDetailQuery['getSchemaThumbnailUrl'][0],
-		dctermsFormat: IeObjectType,
+		dctermsFormat: HetArchiefIeObjectType,
 		resolveThumbnailUrl: boolean,
 		isPublicDomain: boolean,
 		referer: string,
 		ip: string
 	): Promise<string> {
 		let mainThumbnailUrl: string | null = null;
-		if (mapDcTermsFormatToSimpleType(dctermsFormat) === IeObjectType.AUDIO) {
+		if (mapDcTermsFormatToSimpleType(dctermsFormat) === HetArchiefIeObjectType.AUDIO) {
 			// Audio waveform
 			mainThumbnailUrl = AUDIO_WAVE_FORM_URL; // avoid the ugly speaker
 		} else {
@@ -784,24 +788,24 @@ export class IeObjectsService {
 
 		const licenses = compact(
 			schemaLicenseResponse?.map((item) => item?.schema_license)
-		) as IeObjectLicense[];
+		) as HetArchiefIeObjectLicense[];
 		const isPublicDomain: boolean =
-			licenses.includes(IeObjectLicense.PUBLIEK_CONTENT) &&
-			licenses.includes(IeObjectLicense.PUBLIC_DOMAIN);
+			licenses.includes(HetArchiefIeObjectLicense.PUBLIEK_CONTENT) &&
+			licenses.includes(HetArchiefIeObjectLicense.PUBLIC_DOMAIN);
 
-		const dctermsFormat = dctermsFormatResponse?.dcterms_format as IeObjectType;
+		const dctermsFormat = dctermsFormatResponse?.dcterms_format as HetArchiefIeObjectType;
 		const shouldExposeRightsInfo =
 			IE_OBJECT_AV_TYPES.includes(dctermsFormat) &&
-			(licenses.includes(IeObjectLicense.PUBLIEK_CONTENT) ||
-				licenses.includes(IeObjectLicense.INTRA_CP_CONTENT) ||
-				licenses.includes(IeObjectLicense.BEZOEKERTOOL_CONTENT));
+			(licenses.includes(HetArchiefIeObjectLicense.PUBLIEK_CONTENT) ||
+				licenses.includes(HetArchiefIeObjectLicense.INTRA_CP_CONTENT) ||
+				licenses.includes(HetArchiefIeObjectLicense.BEZOEKERTOOL_CONTENT));
 		const rights = shouldExposeRightsInfo ? ie?.rights : undefined;
 
 		// Themes are editorial labels on publicly disclosed objects, so they must not travel in the
 		// response for anything else, the same way rights info is withheld above. Without this the
 		// client is the only thing hiding them and the data is still visible in the response.
 		// See ARC-3826.
-		const shouldExposeThemes = licenses.includes(IeObjectLicense.PUBLIEK_CONTENT);
+		const shouldExposeThemes = licenses.includes(HetArchiefIeObjectLicense.PUBLIEK_CONTENT);
 
 		const schemaMaintainer = ie?.schemaMaintainer;
 		const premisIdentifiers = isPartOfResponse?.isPartOf?.[0]?.isPartOf?.premisIdentifier
@@ -823,7 +827,7 @@ export class IeObjectsService {
 				iri: part.collection?.id,
 				schemaIdentifier: part.collection?.schema_identifier,
 				name: part.collection?.schema_name,
-				collectionType: part.collection?.collection_type as IsPartOfKey,
+				collectionType: part.collection?.collection_type as HetArchiefIsPartOfKey,
 				isPreceededBy: part.collection?.isPreceededBy,
 				isSucceededBy: part.collection?.isSucceededBy,
 				locationCreated: part.collection?.schema_location_created,
@@ -857,7 +861,7 @@ export class IeObjectsService {
 			licenses,
 			premisIdentifier: premisIdentifiers,
 			abrahamInfo:
-				dctermsFormat === IeObjectType.NEWSPAPER
+				dctermsFormat === HetArchiefIeObjectType.NEWSPAPER
 					? {
 							id: isPartOfParentCollections[0]?.schemaIdentifier,
 							uri: isPartOfParentCollections[0]?.iri,
@@ -869,7 +873,7 @@ export class IeObjectsService {
 			keywords: compact(schemaKeywordsResponse?.map((item) => item?.schema_keywords)),
 			themes: shouldExposeThemes
 				? (themesResponse ?? []).map(
-						(theme): IeObjectTheme => ({
+						(theme): HetArchiefIeObjectTheme => ({
 							id: theme.id,
 							slug: theme.slug,
 							nameNl: theme.name_nl,
@@ -903,7 +907,7 @@ export class IeObjectsService {
 			maintainerIiifAgreement: !!schemaMaintainer?.hasPreference.find(
 				(pref) => pref.ha_pref === OrganisationPreference.iiifDissemination
 			),
-			sector: schemaMaintainer?.ha_org_sector as IeObjectSector,
+			sector: schemaMaintainer?.ha_org_sector as HetArchiefIeObjectSector,
 			name: ie?.schema_name,
 			thumbnailUrl: mainThumbnailUrl,
 			premisIsPartOf: ie?.premis_is_part_of,
@@ -974,7 +978,7 @@ export class IeObjectsService {
 			| null,
 		referer: string,
 		ip: string
-	): Promise<RelatedIeObject> {
+	): Promise<HetArchiefRelatedIeObject> {
 		if (!gqlIeObject) {
 			return null;
 		}
@@ -987,7 +991,7 @@ export class IeObjectsService {
 			schemaIdentifier: gqlIeObject?.schema_identifier,
 			iri: gqlIeObject?.id,
 			dctermsAvailable: gqlIeObject?.dcterms_available,
-			dctermsFormat: gqlIeObject?.dctermsFormat[0]?.dcterms_format as IeObjectType,
+			dctermsFormat: gqlIeObject?.dctermsFormat[0]?.dcterms_format as HetArchiefIeObjectType,
 			dateCreated: gqlIeObject?.schema_date_created,
 			datePublished: gqlIeObject?.schema_date_published,
 			description: gqlIeObject?.schema_description,
@@ -996,7 +1000,7 @@ export class IeObjectsService {
 			maintainerId: gqlIeObject?.schemaMaintainer?.org_identifier,
 			maintainerName: gqlIeObject?.schemaMaintainer?.skos_pref_label,
 			maintainerSlug: gqlIeObject?.schemaMaintainer?.organizationSlug?.slug,
-			sector: gqlIeObject?.schemaMaintainer?.ha_org_sector as IeObjectSector,
+			sector: gqlIeObject?.schemaMaintainer?.ha_org_sector as HetArchiefIeObjectSector,
 			name: gqlIeObject?.schema_name,
 			thumbnailUrl,
 		};
@@ -1015,9 +1019,12 @@ export class IeObjectsService {
 		if (esResponse?.aggregations?.dcterms_format?.buckets) {
 			esResponse.aggregations.dcterms_format.buckets =
 				esResponse.aggregations.dcterms_format.buckets.filter((bucket) => {
-					if (bucket.key === IeObjectType.FILM || bucket.key === IeObjectType.VIDEO_FRAGMENT) {
+					if (
+						bucket.key === HetArchiefIeObjectType.FILM ||
+						bucket.key === HetArchiefIeObjectType.VIDEO_FRAGMENT
+					) {
 						const videoBucket = find(esResponse.aggregations.dcterms_format.buckets, {
-							key: IeObjectType.VIDEO,
+							key: HetArchiefIeObjectType.VIDEO,
 						});
 						if (videoBucket) {
 							// there is also a video bucket: add film counts to this bucket
@@ -1025,12 +1032,12 @@ export class IeObjectsService {
 							return false; // filter out current film bucket
 						}
 						// there is no video bucket: rename the film bucket to video bucket
-						bucket.key = IeObjectType.VIDEO;
+						bucket.key = HetArchiefIeObjectType.VIDEO;
 						return true; // include newly renamed video bucket in response
 					}
-					if (bucket.key === IeObjectType.AUDIO_FRAGMENT) {
+					if (bucket.key === HetArchiefIeObjectType.AUDIO_FRAGMENT) {
 						const audioBucket = find(esResponse.aggregations.dcterms_format.buckets, {
-							key: IeObjectType.AUDIO,
+							key: HetArchiefIeObjectType.AUDIO,
 						});
 						if (audioBucket) {
 							// there is also an audio bucket: add audio fragment counts to this bucket
@@ -1038,7 +1045,7 @@ export class IeObjectsService {
 							return false; // filter out current audio fragment bucket
 						}
 						// there is no video bucket: rename the audio fragment bucket to video bucket
-						bucket.key = IeObjectType.AUDIO;
+						bucket.key = HetArchiefIeObjectType.AUDIO;
 						return true; // include newly renamed audio bucket in response
 					}
 					return true; // not an audio fragment bucket -> include in response
@@ -1061,8 +1068,8 @@ export class IeObjectsService {
 	): Promise<IeObject> {
 		let thumbnailUrl: string | null;
 		if (
-			esObject.dcterms_format === IeObjectType.AUDIO ||
-			esObject.dcterms_format === IeObjectType.AUDIO_FRAGMENT
+			esObject.dcterms_format === HetArchiefIeObjectType.AUDIO ||
+			esObject.dcterms_format === HetArchiefIeObjectType.AUDIO_FRAGMENT
 		) {
 			thumbnailUrl = AUDIO_WAVE_FORM_URL;
 		} else {
@@ -1076,7 +1083,7 @@ export class IeObjectsService {
 
 		return {
 			dctermsAvailable: esObject?.dcterms_available,
-			dctermsFormat: esObject?.dcterms_format as IeObjectType,
+			dctermsFormat: esObject?.dcterms_format as HetArchiefIeObjectType,
 			dctermsMedium: esObject?.dcterms_medium,
 			ebucoreObjectType: esObject?.ebucore_object_type,
 			premisIdentifier: esObject?.premis_identifier,
@@ -1093,7 +1100,7 @@ export class IeObjectsService {
 			schemaIdentifier: esObject?.schema_identifier,
 			inLanguage: esObject?.schema_in_language,
 			keywords: esObject?.schema_keywords,
-			licenses: esObject?.schema_license as IeObjectLicense[],
+			licenses: esObject?.schema_license as HetArchiefIeObjectLicense[],
 			maintainerId: esObject?.schema_maintainer?.schema_identifier,
 			maintainerName: esObject?.schema_maintainer?.schema_name,
 			maintainerSlug:
@@ -1129,7 +1136,7 @@ export class IeObjectsService {
 			maintainerName: graphQlObject.intellectualEntity?.schemaMaintainer?.skos_pref_label,
 			name: graphQlObject.intellectualEntity?.schema_name,
 			dctermsFormat: graphQlObject.intellectualEntity?.dctermsFormat?.[0]
-				?.dcterms_format as IeObjectType,
+				?.dcterms_format as HetArchiefIeObjectType,
 			dateCreated: graphQlObject.intellectualEntity?.schema_date_created || null,
 			datePublished: graphQlObject.intellectualEntity?.schema_date_published || null,
 			meemooLocalId: graphQlObject.intellectualEntity?.premisIdentifier?.[0]?.meemoo_local_id,
@@ -1137,11 +1144,11 @@ export class IeObjectsService {
 				(
 					parent
 				): {
-					collectionType: IsPartOfKey;
+					collectionType: HetArchiefIsPartOfKey;
 					name: string;
 				} => {
 					return {
-						collectionType: parent.type as IsPartOfKey,
+						collectionType: parent.type as HetArchiefIsPartOfKey,
 						name: parent.collection?.schema_name,
 					};
 				}
@@ -1250,14 +1257,14 @@ export class IeObjectsService {
 
 		/* istanbul ignore next */
 		// Standardize the isRepresentedBy and the hasPart.isRepresentedBy parts of the query to a list of pages with each their file representations
-		const pages: IeObjectPage[] = compact(
+		const pages: HetArchiefIeObjectPage[] = compact(
 			await mapLimit(
 				ieObjects || [],
 				20,
 				async (
 					page: DbIeObjectWithRepresentations,
 					pageIndex: number
-				): Promise<IeObjectPage | null> => {
+				): Promise<HetArchiefIeObjectPage | null> => {
 					const representations = await this.adaptRepresentations(
 						page?.isRepresentedBy,
 						resolveThumbnailUrl,
@@ -1297,12 +1304,12 @@ export class IeObjectsService {
 		isPublicDomain: boolean,
 		referer?: string,
 		ip?: string
-	): Promise<IeObjectRepresentation[]> {
+	): Promise<HetArchiefIeObjectRepresentation[]> {
 		const representations = compact(
 			await mapLimit(
 				isRepresentedBy || [],
 				5,
-				async (representation: DbRepresentation): Promise<IeObjectRepresentation> => {
+				async (representation: DbRepresentation): Promise<HetArchiefIeObjectRepresentation> => {
 					if (!representation) {
 						return null;
 					}
@@ -1354,7 +1361,7 @@ export class IeObjectsService {
 		isPublicDomain: boolean,
 		referer: string,
 		ip: string
-	): Promise<IeObjectFile[]> {
+	): Promise<HetArchiefIeObjectFile[]> {
 		if (!dbIncludeFiles || isEmpty(dbIncludeFiles)) {
 			return [];
 		}
@@ -1364,7 +1371,7 @@ export class IeObjectsService {
 			await mapLimit(
 				dbIncludeFiles,
 				20,
-				async (includeFile: DbIncludeFile): Promise<IeObjectFile> => {
+				async (includeFile: DbIncludeFile): Promise<HetArchiefIeObjectFile> => {
 					const file: DbFile = includeFile.file;
 					if (!file) {
 						return null;
@@ -1569,6 +1576,7 @@ export class IeObjectsService {
 
 		return {
 			accessThrough: [],
+			hasAccessToEssence: false,
 			...(limitedObjectDetails ?? {}),
 			...this.defaultLimitedMetadata(folderObjectItem),
 		};
@@ -1806,9 +1814,9 @@ export class IeObjectsService {
 	 * @param representations
 	 */
 	public cleanupRepresentations(
-		representations: IeObjectRepresentation[]
-	): IeObjectRepresentation[] {
-		let filteredRepresentations: IeObjectRepresentation[] = representations;
+		representations: HetArchiefIeObjectRepresentation[]
+	): HetArchiefIeObjectRepresentation[] {
+		let filteredRepresentations: HetArchiefIeObjectRepresentation[] = representations;
 
 		// Avoid returning certain representations that are not playable media files
 		// https://meemoo.atlassian.net/browse/ARC-3121
@@ -1939,11 +1947,11 @@ export class IeObjectsService {
 	public getRepresentationAndFileInIeObject(
 		ieObject: Partial<IeObject>,
 		fileId: string
-	): [IeObjectFile | null, IeObjectRepresentation | null] {
+	): [HetArchiefIeObjectFile | null, HetArchiefIeObjectRepresentation | null] {
 		// Check if requested file has time codes to cut the fragment out of a video
 		// https://meemoo.atlassian.net/browse/ARC-3690
-		let requestedFile: IeObjectFile | null = null;
-		let requestedRepresentation: IeObjectRepresentation | null = null;
+		let requestedFile: HetArchiefIeObjectFile | null = null;
+		let requestedRepresentation: HetArchiefIeObjectRepresentation | null = null;
 		ieObject.pages?.find((page) => {
 			return page.representations?.find((representation) => {
 				return representation?.files?.find((file) => {

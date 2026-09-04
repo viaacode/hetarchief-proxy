@@ -8,6 +8,7 @@ export interface IeObjectInTheme {
 	name: string | null;
 	format: string | null;
 	thumbnailUrl: string | null;
+	hasAccessToEssence: boolean;
 	maintainerId: string | null;
 	maintainerName: string | null;
 }

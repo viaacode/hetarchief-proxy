@@ -15,18 +15,14 @@ import {
 	vi,
 } from 'vitest';
 
+import { HetArchiefIeObjectRepresentation } from '@viaa/avo2-types';
+import { HetArchiefIeObjectLicense, HetArchiefIeObjectType } from '@viaa/avo2-types';
 import {
 	IeObjectsSearchFilterField,
 	Operator,
 	RightsLabel,
 } from '../elasticsearch/elasticsearch.consts';
-import {
-	AutocompleteField,
-	type ElasticsearchResponse,
-	IeObjectLicense,
-	IeObjectRepresentation,
-	IeObjectType,
-} from '../ie-objects.types';
+import { AutocompleteField, type ElasticsearchResponse } from '../ie-objects.types';
 import {
 	mockChildrenIeObjects,
 	mockGqlIeObjectFindByFolderId,
@@ -167,9 +163,9 @@ describe('ieObjectsService', () => {
 				aggregations: {
 					dcterms_format: {
 						buckets: [
-							{ key: IeObjectType.VIDEO, doc_count: 1 },
-							{ key: IeObjectType.FILM, doc_count: 1 },
-							{ key: IeObjectType.VIDEO_FRAGMENT, doc_count: 1 },
+							{ key: HetArchiefIeObjectType.VIDEO, doc_count: 1 },
+							{ key: HetArchiefIeObjectType.FILM, doc_count: 1 },
+							{ key: HetArchiefIeObjectType.VIDEO_FRAGMENT, doc_count: 1 },
 						],
 					},
 				},
@@ -183,13 +179,15 @@ describe('ieObjectsService', () => {
 			const esResponse = {
 				aggregations: {
 					dcterms_format: {
-						buckets: [{ key: IeObjectType.FILM, doc_count: 1 }],
+						buckets: [{ key: HetArchiefIeObjectType.FILM, doc_count: 1 }],
 					},
 				},
 			} as ElasticsearchResponse;
 			const result = await ieObjectsService.adaptESResponse(esResponse);
 			expect(result.aggregations.dcterms_format.buckets.length).toEqual(1);
-			expect(result.aggregations.dcterms_format.buckets[0].key).toEqual(IeObjectType.VIDEO);
+			expect(result.aggregations.dcterms_format.buckets[0].key).toEqual(
+				HetArchiefIeObjectType.VIDEO
+			);
 			expect(result.aggregations.dcterms_format.buckets[0].doc_count).toEqual(1);
 		});
 	});
@@ -372,7 +370,7 @@ describe('ieObjectsService', () => {
 			const objectIeMock = cloneDeep(mockIeObject2);
 			objectIeMock.getSchemaLicense = [
 				{
-					schema_license: IeObjectLicense.INTRA_CP_CONTENT,
+					schema_license: HetArchiefIeObjectLicense.INTRA_CP_CONTENT,
 				},
 			];
 			(objectIeMock.getIeObject[0] as any).rights = {
@@ -509,7 +507,10 @@ describe('ieObjectsService', () => {
 			mockDataService.execute.mockResolvedValueOnce('');
 			try {
 				await ieObjectsService.findIeObjectsForSitemap(
-					[IeObjectLicense.PUBLIEK_METADATA_LTD, IeObjectLicense.PUBLIEK_METADATA_ALL],
+					[
+						HetArchiefIeObjectLicense.PUBLIEK_METADATA_LTD,
+						HetArchiefIeObjectLicense.PUBLIEK_METADATA_ALL,
+					],
 					0,
 					50
 				);
@@ -526,7 +527,10 @@ describe('ieObjectsService', () => {
 
 			mockDataService.execute.mockResolvedValueOnce(mockData);
 			const result = await ieObjectsService.findIeObjectsForSitemap(
-				[IeObjectLicense.PUBLIEK_METADATA_LTD, IeObjectLicense.PUBLIEK_METADATA_ALL],
+				[
+					HetArchiefIeObjectLicense.PUBLIEK_METADATA_LTD,
+					HetArchiefIeObjectLicense.PUBLIEK_METADATA_ALL,
+				],
 				0,
 				50
 			);
@@ -737,42 +741,42 @@ describe('ieObjectsService', () => {
 
 	describe('cleanupRepresentations', () => {
 		it('should return a list of representations that can be played by the flowplayer with mp4 and without m4a and without mp3', () => {
-			const result: IeObjectRepresentation[] =
+			const result: HetArchiefIeObjectRepresentation[] =
 				ieObjectsService.cleanupRepresentations(cleanupRepresentations1);
 			expect(result).toHaveLength(1);
 			expect(result[0].files[0].mimeType).toEqual('audio/mp4');
 		});
 
 		it('should return a list of representations that can be played by the flowplayer with mp4 and without m4a', () => {
-			const result: IeObjectRepresentation[] =
+			const result: HetArchiefIeObjectRepresentation[] =
 				ieObjectsService.cleanupRepresentations(cleanupRepresentations2);
 			expect(result).toHaveLength(1);
 			expect(result[0].files[0].mimeType).toEqual('audio/mp4');
 		});
 
 		it('should return a list of representations that can be played by the flowplayer with mp3 and without m4a', () => {
-			const result: IeObjectRepresentation[] =
+			const result: HetArchiefIeObjectRepresentation[] =
 				ieObjectsService.cleanupRepresentations(cleanupRepresentations3);
 			expect(result).toHaveLength(1);
 			expect(result[0].files[0].mimeType).toEqual('audio/mpeg');
 		});
 
 		it('should return a list of representations that can be played by the flowplayer with mp4 and without mp3', () => {
-			const result: IeObjectRepresentation[] =
+			const result: HetArchiefIeObjectRepresentation[] =
 				ieObjectsService.cleanupRepresentations(cleanupRepresentations4);
 			expect(result).toHaveLength(1);
 			expect(result[0].files[0].mimeType).toEqual('audio/mp4');
 		});
 
 		it('should return a list of representations that can be played by the flowplayer with mp4', () => {
-			const result: IeObjectRepresentation[] =
+			const result: HetArchiefIeObjectRepresentation[] =
 				ieObjectsService.cleanupRepresentations(cleanupRepresentations5);
 			expect(result).toHaveLength(1);
 			expect(result[0].files[0].mimeType).toEqual('audio/mp4');
 		});
 
 		it('should return a list of representations that can be played by the iiif viewer with jp2 and alto.xml and jpeg', () => {
-			const result: IeObjectRepresentation[] =
+			const result: HetArchiefIeObjectRepresentation[] =
 				ieObjectsService.cleanupRepresentations(representationsNewspaper);
 			expect(result).toHaveLength(3);
 		});

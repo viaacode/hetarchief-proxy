@@ -2,8 +2,21 @@ import type { IPagination } from '@studiohyperdrive/pagination';
 
 import type { FindAllIeObjectsByFolderIdQuery } from '~generated/graphql-db-types-hetarchief';
 
+import type {
+	HetArchiefIeObjectAccessThrough,
+	HetArchiefIeObjectFile,
+	HetArchiefIeObjectLicense,
+	HetArchiefIeObjectPage,
+	HetArchiefIeObjectRepresentation,
+	HetArchiefIeObjectRightsInfo,
+	HetArchiefIeObjectSector,
+	HetArchiefIeObjectTheme,
+	HetArchiefIeObjectType,
+	HetArchiefIsPartOfCollection,
+} from '@viaa/avo2-types';
+
 export type IeObjectSectorLicenseMatrix = Readonly<
-	Record<IeObjectSector, Readonly<IeObjectLicense[]>>
+	Record<HetArchiefIeObjectSector, Readonly<HetArchiefIeObjectLicense[]>>
 >;
 
 export type IeObjectSeo = Pick<
@@ -13,42 +26,11 @@ export type IeObjectSeo = Pick<
 
 export type GqlLimitedIeObject = FindAllIeObjectsByFolderIdQuery['users_folder_ie'][0];
 
-export enum IeObjectLicense {
-	// Object Licenses
-	PUBLIEK_METADATA_LTD = 'VIAA-PUBLIEK-METADATA-LTD',
-	PUBLIEK_METADATA_ALL = 'VIAA-PUBLIEK-METADATA-ALL',
-	PUBLIEK_CONTENT = 'VIAA-PUBLIEK-CONTENT',
-	BEZOEKERTOOL_METADATA_ALL = 'BEZOEKERTOOL-METADATA-ALL',
-	BEZOEKERTOOL_CONTENT = 'BEZOEKERTOOL-CONTENT',
-	INTRA_CP_METADATA_ALL = 'VIAA-INTRA_CP-METADATA-ALL',
-	INTRA_CP_METADATA_LTD = 'VIAA-INTRA_CP-METADATA-LTD',
-	INTRA_CP_CONTENT = 'VIAA-INTRA_CP-CONTENT',
-
-	// Rights statuses
-	PUBLIC_DOMAIN = 'Publiek-Domein',
-	COPYRIGHT_UNDETERMINED = 'COPYRIGHT-UNDETERMINED',
-}
-
 export enum IeObjectMetadataSet {
 	METADATA_LTD = 'METADATA_LTD',
 	METADATA_ALL = 'METADATA_ALL',
 	METADATA_ALL_WITH_ESSENCE = 'METADATA_ALL_WITH_ESSENCE',
 	EMPTY = 'EMPTY',
-}
-
-export enum IeObjectSector {
-	CULTURE = 'Cultuur',
-	GOVERNMENT = 'Overheid',
-	PUBLIC = 'Publieke Omroep',
-	REGIONAL = 'Regionale Omroep',
-	RURAL = 'Landelijke Private Omroep',
-}
-
-export enum IeObjectAccessThrough {
-	PUBLIC_INFO = 'PUBLIC_INFO',
-	VISITOR_SPACE_FULL = 'VISITOR_SPACE_FULL',
-	VISITOR_SPACE_FOLDERS = 'VISITOR_SPACE_FOLDERS',
-	SECTOR = 'SECTOR',
 }
 
 export enum IeObjectExtraUserGroupType {
@@ -57,45 +39,10 @@ export enum IeObjectExtraUserGroupType {
 
 export type EbucoreObjectType = 'footage' | 'program';
 
-export interface IeObjectFile {
-	id: string;
-	name: string;
-	mimeType: string;
-	storedAt: string;
-	thumbnailUrl?: string;
-	duration: string | number | null;
-	edmIsNextInSequence: string;
-	createdAt: string;
-	mediaFragment: {
-		startTime: number;
-		endTime: number;
-	} | null;
-}
-
 export interface IeObjectPages {
-	pages: IeObjectPage[];
+	pages: HetArchiefIeObjectPage[];
 	mentions: Mention[];
 	isCutFragment: boolean; // https://meemoo.atlassian.net/browse/ARC-3690
-}
-
-export interface IeObjectPage {
-	pageNumber: number;
-	representations: IeObjectRepresentation[];
-}
-
-export interface IeObjectRepresentation {
-	id: string;
-	schemaName: string;
-	schemaInLanguage: string;
-	schemaStartTime: string;
-	schemaEndTime: string;
-	schemaTranscript?: string;
-	schemaTranscriptUrl?: string | null;
-	edmIsNextInSequence: string;
-	updatedAt: string;
-	isMediaFragmentOf: string;
-	thumbnailUrl: string | null;
-	files: IeObjectFile[];
 }
 
 /**
@@ -106,75 +53,16 @@ export interface IeObjectRepresentation {
  * registratie → not available for now
  * stuk → not available for now
  */
-export enum IsPartOfKey {
-	archive = 'archive',
-	program = 'program',
-	season = 'season',
-	series = 'series',
-	newspaper = 'newspaper',
-}
-
-export interface IsPartOfCollection {
-	iri?: string;
-	schemaIdentifier?: string;
-	name: string;
-	collectionType: IsPartOfKey;
-	isPreceededBy?: any[];
-	isSucceededBy?: any[];
-	locationCreated?: any;
-	startDate?: any;
-	endDate?: any;
-	publisher?: any;
-}
 
 /**
  * A theme this object belongs to, as shown in the metadata panel of the detail page.
  * See ARC-3826. The name and content page path are exposed in both languages, the
  * client picks the one matching the UI language.
  */
-export interface IeObjectTheme {
-	id: string;
-	slug: string;
-	nameNl: string;
-	nameEn: string;
-	/** Internal path on hetarchief.be to the theme detail page, null when not configured */
-	contentPagePathNl: string | null;
-	contentPagePathEn: string | null;
-	/** Total number of objects linked to this theme, not just the current one */
-	ieObjectCount: number;
-}
-
-export interface IeObjectRightsInfo {
-	reuseLabel: string;
-	reuseCategoryUrl?: string | null;
-	reuseCategoryId?: string | null;
-	reuseCategoryLabel?: string | null;
-	reuseCategoryGroup?: string | null;
-	licenseDistributor?: string | null;
-	broadcastingOrganization?: string | null;
-}
-
-export enum IeObjectType {
-	VIDEO = 'video',
-	VIDEO_FRAGMENT = 'videofragment',
-	AUDIO = 'audio',
-	AUDIO_FRAGMENT = 'audiofragment',
-	FILM = 'film',
-	NEWSPAPER = 'newspaper',
-	NEWSPAPER_PAGE = 'newspaperpage', // Should never be used, but does seem to pop up some times
-	IMAGE = 'image', // Should never be used, but does seem to pop up some times
-}
-
-export enum SimpleIeObjectType {
-	VIDEO = 'video',
-	AUDIO = 'audio',
-	NEWSPAPER = 'newspaper',
-	IMAGE = 'image',
-}
 
 export interface IeObject {
 	dctermsAvailable: string;
-	dctermsFormat: IeObjectType;
+	dctermsFormat: HetArchiefIeObjectType;
 	dctermsMedium: string[];
 	premisIdentifier: Record<string, string>[];
 	abstract: string;
@@ -188,7 +76,7 @@ export interface IeObject {
 	schemaIdentifier: string; // Unique id per object
 	inLanguage: string[];
 	keywords: string[];
-	licenses: IeObjectLicense[];
+	licenses: HetArchiefIeObjectLicense[];
 	maintainerId: string;
 	maintainerName: string;
 	maintainerSlug: string;
@@ -199,14 +87,20 @@ export interface IeObject {
 	publisher: any;
 	spatial: string[];
 	temporal: string[];
-	sector?: IeObjectSector;
-	accessThrough?: IeObjectAccessThrough[];
+	sector?: HetArchiefIeObjectSector;
+	accessThrough?: HetArchiefIeObjectAccessThrough[];
+	/**
+	 * Whether the current user may see/play this object's essence. Computed in
+	 * limitAccessToObjectDetails from the licenses the user can access, so it is independent of
+	 * whether a thumbnail file exists. Clients use this instead of checking thumbnailUrl.
+	 */
+	hasAccessToEssence?: boolean;
 	ebucoreObjectType?: string | null;
 	meemoofilmContainsEmbeddedCaption?: boolean;
 	contributor?: any;
 	copyrightHolder?: string;
 	premisIsPartOf?: string | null;
-	isPartOf?: IsPartOfCollection[];
+	isPartOf?: HetArchiefIsPartOfCollection[];
 	numberOfPages?: number;
 	pageNumber?: number;
 	meemooDescriptionCast?: string;
@@ -244,13 +138,13 @@ export interface IeObject {
 	alternativeTitle?: string[];
 	digitizationDate?: string;
 	children?: number;
-	rightsInfo?: IeObjectRightsInfo;
-	themes?: IeObjectTheme[];
+	rightsInfo?: HetArchiefIeObjectRightsInfo;
+	themes?: HetArchiefIeObjectTheme[];
 
 	// ESSENCE
 	thumbnailUrl: string;
 	transcript?: string;
-	pages?: IeObjectPage[];
+	pages?: HetArchiefIeObjectPage[];
 	mentions?: Mention[];
 }
 
@@ -278,7 +172,10 @@ export interface IeObjectPlayableDisplayData {
 	schemaIdentifier: string;
 	name: string;
 	thumbnailUrl: string | null;
-	dctermsFormat: IeObjectType;
+	/** Whether the current user may see/play this object's essence. See IeObject.hasAccessToEssence */
+	hasAccessToEssence: boolean;
+	dctermsFormat: HetArchiefIeObjectType;
+	maintainerId: string;
 	maintainerName: string;
 	maintainerLogo: string | null;
 	maintainerOverlay: boolean;
@@ -375,14 +272,14 @@ export interface ElasticsearchObject {
 	iri: string;
 	schema_identifier: string;
 	schema_in_language: string[];
-	schema_is_part_of: IsPartOfCollection[] | null;
+	schema_is_part_of: HetArchiefIsPartOfCollection[] | null;
 	schema_keywords: string[];
 	schema_license: string[] | null;
 	schema_maintainer: {
 		schema_identifier?: string;
 		schema_name?: string;
 		alt_label?: string | null; // not always available
-		organization_sector?: IeObjectSector | null; // not always available
+		organization_sector?: HetArchiefIeObjectSector | null; // not always available
 		// organization_type?: string | null; // should not be used, use organization_sector instead
 	};
 	schema_name: string;
@@ -431,32 +328,6 @@ export interface IeObjectsSitemap {
 
 export interface NewspaperTitle {
 	title: string;
-}
-
-export type RelatedIeObject = Pick<
-	IeObject,
-	| 'dctermsAvailable'
-	| 'dctermsFormat'
-	| 'dateCreated'
-	| 'datePublished'
-	| 'description'
-	| 'duration'
-	| 'schemaIdentifier'
-	| 'licenses'
-	| 'maintainerId'
-	| 'maintainerName'
-	| 'maintainerSlug'
-	| 'name'
-	| 'thumbnailUrl'
-	| 'sector'
-	| 'accessThrough'
-	| 'transcript'
-	| 'iri'
->;
-
-export interface RelatedIeObjects {
-	parent: Partial<RelatedIeObject> | null;
-	children: Partial<RelatedIeObject>[];
 }
 
 export enum AutocompleteField {

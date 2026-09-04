@@ -1,3 +1,9 @@
+import { HetArchiefIeObjectRepresentation } from '@viaa/avo2-types';
+import {
+	HetArchiefIeObjectAccessThrough,
+	HetArchiefIeObjectLicense,
+	HetArchiefIeObjectType,
+} from '@viaa/avo2-types';
 import {
 	FindMaintainersWithMaterialRequestsQuery,
 	FindMaterialRequestsByIdQuery,
@@ -14,12 +20,6 @@ import {
 	type UpdateMaterialRequestMutation,
 	UpdateMaterialRequestStatusMutation,
 } from '~generated/graphql-db-types-hetarchief';
-import {
-	IeObjectAccessThrough,
-	IeObjectLicense,
-	IeObjectRepresentation,
-	IeObjectType,
-} from '~modules/ie-objects/ie-objects.types';
 import { MaterialRequestEvent } from '~modules/material-request-messages/material-request-messages.types';
 import type { Locale } from '~shared/types/types';
 
@@ -29,13 +29,19 @@ export interface MaterialRequest {
 	objectSchemaIdentifier: string;
 	objectSchemaName: string;
 	objectMeemooLocalId?: string;
-	objectDctermsFormat: IeObjectType;
+	objectDctermsFormat: HetArchiefIeObjectType;
 	objectThumbnailUrl: string;
+	/**
+	 * Whether the current user may see/play the essence of the requested object. Computed by the
+	 * proxy from the licenses the user can access, so it is independent of whether a thumbnail was
+	 * resolved -- objectThumbnailUrl is also left empty when the caller did not ask for it.
+	 */
+	objectHasAccessToEssence: boolean;
 	objectPublishedOrCreatedDate?: string;
-	objectAccessThrough: IeObjectAccessThrough[];
-	objectLicences: IeObjectLicense[];
+	objectAccessThrough: HetArchiefIeObjectAccessThrough[];
+	objectLicences: HetArchiefIeObjectLicense[];
 	objectRepresentationId?: string;
-	objectRepresentation?: IeObjectRepresentation;
+	objectRepresentation?: HetArchiefIeObjectRepresentation;
 	reuseForm?: MaterialRequestReuseForm | null;
 	requestGroupName: string; // The name of all the requests send at the same time
 	requestGroupId?: string; // The uuid of all the requests send at the same time

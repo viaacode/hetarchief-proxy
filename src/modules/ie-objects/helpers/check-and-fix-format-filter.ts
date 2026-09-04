@@ -2,24 +2,28 @@ import { find } from 'lodash';
 
 import { IeObjectsQueryDto, SearchFilter } from '../dto/ie-objects.dto';
 
-import { IeObjectType } from '~modules/ie-objects/ie-objects.types';
+import { HetArchiefIeObjectType } from '@viaa/avo2-types';
 
 export const checkAndFixFormatFilter = (queryDto: IeObjectsQueryDto | null): IeObjectsQueryDto => {
 	const formatFilter = find(queryDto?.filters || [], { field: 'format' }) as SearchFilter;
-	if (formatFilter?.value === IeObjectType.VIDEO) {
+	if (formatFilter?.value === HetArchiefIeObjectType.VIDEO) {
 		// change to multivalue with video, film and video fragment
-		formatFilter.multiValue = [IeObjectType.VIDEO, IeObjectType.FILM, IeObjectType.VIDEO_FRAGMENT];
+		formatFilter.multiValue = [
+			HetArchiefIeObjectType.VIDEO,
+			HetArchiefIeObjectType.FILM,
+			HetArchiefIeObjectType.VIDEO_FRAGMENT,
+		];
 		formatFilter.value = undefined;
-	} else if (formatFilter?.multiValue?.includes(IeObjectType.VIDEO)) {
-		formatFilter.multiValue.push(IeObjectType.FILM);
-		formatFilter.multiValue.push(IeObjectType.VIDEO_FRAGMENT);
+	} else if (formatFilter?.multiValue?.includes(HetArchiefIeObjectType.VIDEO)) {
+		formatFilter.multiValue.push(HetArchiefIeObjectType.FILM);
+		formatFilter.multiValue.push(HetArchiefIeObjectType.VIDEO_FRAGMENT);
 	}
-	if (formatFilter?.value === IeObjectType.AUDIO) {
+	if (formatFilter?.value === HetArchiefIeObjectType.AUDIO) {
 		// change to multivalue with audio and audio fragment
-		formatFilter.multiValue = [IeObjectType.AUDIO, IeObjectType.AUDIO_FRAGMENT];
+		formatFilter.multiValue = [HetArchiefIeObjectType.AUDIO, HetArchiefIeObjectType.AUDIO_FRAGMENT];
 		formatFilter.value = undefined;
-	} else if (formatFilter?.multiValue?.includes(IeObjectType.AUDIO)) {
-		formatFilter.multiValue.push(IeObjectType.AUDIO_FRAGMENT);
+	} else if (formatFilter?.multiValue?.includes(HetArchiefIeObjectType.AUDIO)) {
+		formatFilter.multiValue.push(HetArchiefIeObjectType.AUDIO_FRAGMENT);
 	}
 	return queryDto;
 };

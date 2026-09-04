@@ -16,7 +16,7 @@ import {
 	vi,
 } from 'vitest';
 
-import { IeObjectLicense, IeObjectType } from '../ie-objects.types';
+import { HetArchiefIeObjectLicense, HetArchiefIeObjectType } from '@viaa/avo2-types';
 import { mockIeObject2, mockUser } from '../mocks/ie-objects.mock';
 
 import { IeObjectsService } from './ie-objects.service';
@@ -149,7 +149,7 @@ describe('PlayableDisplayDataService', () => {
 					{
 						schema_identifier: 'mock-schema-identifier',
 						schema_name: 'Mock playable object',
-						dctermsFormat: [{ dcterms_format: IeObjectType.VIDEO }],
+						dctermsFormat: [{ dcterms_format: HetArchiefIeObjectType.VIDEO }],
 						schemaMaintainer: {
 							org_identifier: 'OR-rf5kf25',
 							skos_pref_label: 'VRT',
@@ -160,7 +160,7 @@ describe('PlayableDisplayDataService', () => {
 					},
 				],
 				schemaThumbnailUrl: [{ schema_thumbnail_url: ['https://example.com/thumb.jpg'] }],
-				schemaLicense: [{ schema_license: IeObjectLicense.PUBLIEK_CONTENT }],
+				schemaLicense: [{ schema_license: HetArchiefIeObjectLicense.PUBLIEK_CONTENT }],
 				getHasPart: [],
 				getIsRepresentedBy: [{ isRepresentedBy: [mockRepresentation] }],
 				...overrides,
@@ -199,7 +199,7 @@ describe('PlayableDisplayDataService', () => {
 
 			expect(result.schemaIdentifier).toEqual('mock-schema-identifier');
 			expect(result.name).toEqual('Mock playable object');
-			expect(result.dctermsFormat).toEqual(IeObjectType.VIDEO);
+			expect(result.dctermsFormat).toEqual(HetArchiefIeObjectType.VIDEO);
 			expect(result.maintainerName).toEqual('VRT');
 			expect(result.thumbnailUrl).toEqual('https://example.com/thumb-with-token.jpg');
 			expect(result.playableUrl).toEqual('https://example.com/playable.mp4');
@@ -234,7 +234,7 @@ describe('PlayableDisplayDataService', () => {
 					ieObject: [
 						{
 							...buildMockDbResponse().ieObject[0],
-							dctermsFormat: [{ dcterms_format: IeObjectType.NEWSPAPER }],
+							dctermsFormat: [{ dcterms_format: HetArchiefIeObjectType.NEWSPAPER }],
 						},
 					],
 					getIsRepresentedBy: [
@@ -298,7 +298,7 @@ describe('PlayableDisplayDataService', () => {
 					ieObject: [
 						{
 							...buildMockDbResponse().ieObject[0],
-							dctermsFormat: [{ dcterms_format: IeObjectType.NEWSPAPER }],
+							dctermsFormat: [{ dcterms_format: HetArchiefIeObjectType.NEWSPAPER }],
 						},
 					],
 					getIsRepresentedBy: [
@@ -348,7 +348,7 @@ describe('PlayableDisplayDataService', () => {
 					ieObject: [
 						{
 							...buildMockDbResponse().ieObject[0],
-							dctermsFormat: [{ dcterms_format: IeObjectType.NEWSPAPER }],
+							dctermsFormat: [{ dcterms_format: HetArchiefIeObjectType.NEWSPAPER }],
 						},
 					],
 					// The newspaper's own representation only has a non-image (ALTO) file
@@ -405,7 +405,7 @@ describe('PlayableDisplayDataService', () => {
 					ieObject: [
 						{
 							...buildMockDbResponse().ieObject[0],
-							dctermsFormat: [{ dcterms_format: IeObjectType.NEWSPAPER }],
+							dctermsFormat: [{ dcterms_format: HetArchiefIeObjectType.NEWSPAPER }],
 						},
 					],
 					getIsRepresentedBy: [
@@ -430,7 +430,7 @@ describe('PlayableDisplayDataService', () => {
 		it('omits thumbnailUrl and playableUrl when the user only has metadata access', async () => {
 			mockDataService.execute.mockResolvedValueOnce(
 				buildMockDbResponse({
-					schemaLicense: [{ schema_license: IeObjectLicense.PUBLIEK_METADATA_LTD }],
+					schemaLicense: [{ schema_license: HetArchiefIeObjectLicense.PUBLIEK_METADATA_LTD }],
 				}) as GetIeObjectPlayableDisplayDataQuery
 			);
 
@@ -637,7 +637,7 @@ describe('PlayableDisplayDataService', () => {
 					ieObject: [
 						{
 							...buildMockDbResponse().ieObject[0],
-							dctermsFormat: [{ dcterms_format: IeObjectType.AUDIO_FRAGMENT }],
+							dctermsFormat: [{ dcterms_format: HetArchiefIeObjectType.AUDIO_FRAGMENT }],
 						},
 					],
 					getIsRepresentedBy: [
@@ -769,7 +769,7 @@ describe('PlayableDisplayDataService', () => {
 					ieObject: [
 						{
 							...buildMockDbResponse().ieObject[0],
-							dctermsFormat: [{ dcterms_format: IeObjectType.AUDIO }],
+							dctermsFormat: [{ dcterms_format: HetArchiefIeObjectType.AUDIO }],
 						},
 					],
 				}) as GetIeObjectPlayableDisplayDataQuery

@@ -32,6 +32,7 @@ const mockIeObjectsInThemeResponse: IeObjectsInThemeResponseDto = {
 			name: 'Natuur documentaire',
 			format: 'video',
 			thumbnailUrl: 'https://example.com/thumb1.jpg',
+			hasAccessToEssence: true,
 			maintainerId: 'or-abc123',
 			maintainerName: 'VRT',
 		},

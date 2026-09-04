@@ -32,8 +32,9 @@ import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
 import { CreateOrUpdateFolderDto, FolderObjectsQueryDto } from '~modules/folders/dto/folders.dto';
 
+import { HetArchiefIeObjectLicense } from '@viaa/avo2-types';
 import { FoldersService } from '~modules/folders/services/folders.service';
-import { type IeObject, IeObjectLicense } from '~modules/ie-objects/ie-objects.types';
+import { type IeObject } from '~modules/ie-objects/ie-objects.types';
 
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
@@ -145,13 +146,14 @@ export class FoldersController {
 				const hasOnlyIntraCpLicenses =
 					(object.licenses || [])
 						// Filter the licenses to only the ones we care about inside hetarchief.be. eg we don't care about VIAA-ONDERZOEK or VIAA-ONDERWIJS
-						.filter((license) => Object.values(IeObjectLicense).includes(license))
+						.filter((license) => Object.values(HetArchiefIeObjectLicense).includes(license))
 						// Check if all relevant licenses are intra cp licenses
 						.filter(
 							(license) =>
-								![IeObjectLicense.INTRA_CP_CONTENT, IeObjectLicense.INTRA_CP_METADATA_ALL].includes(
-									license
-								)
+								![
+									HetArchiefIeObjectLicense.INTRA_CP_CONTENT,
+									HetArchiefIeObjectLicense.INTRA_CP_METADATA_ALL,
+								].includes(license)
 						).length === 0;
 				if (!isKeyUser && hasOnlyIntraCpLicenses) {
 					return false;
