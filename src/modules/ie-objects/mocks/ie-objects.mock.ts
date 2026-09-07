@@ -1,13 +1,14 @@
 import { AvoAuthIdpType, PermissionName } from '@viaa/avo2-types';
 
 import {
+	type HetArchiefIeObject,
 	HetArchiefIeObjectAccessThrough,
 	HetArchiefIeObjectLicense,
 	type HetArchiefIeObjectSector,
 	HetArchiefIeObjectType,
 	HetArchiefIsPartOfKey,
 } from '@viaa/avo2-types';
-import { type IeObject, type IeObjectsSitemap } from '../ie-objects.types';
+import { type IeObjectsSitemap } from '../ie-objects.types';
 
 import type {
 	FindAllIeObjectsByFolderIdQuery,
@@ -29,7 +30,7 @@ export const mockIeObjectRightsInfo = {
 	licenseDistributor: 'VRT',
 } as const;
 
-export const mockIeObject1: Readonly<IeObject> = {
+export const mockIeObject1: Readonly<HetArchiefIeObject> = {
 	schemaIdentifier: '8911p09j1g',
 	iri: 'https://data-int.hetarchief.be/id/entity/8911p09j1g',
 	premisIdentifier: [{ premisid: 'WP00178829' }],
@@ -109,7 +110,7 @@ export const mockIeObject1: Readonly<IeObject> = {
 	alternativeTitle: null,
 };
 
-export const mockIeObjectWithMetadataSetLTD: Readonly<Partial<IeObject>> = {
+export const mockIeObjectWithMetadataSetLTD: Readonly<Partial<HetArchiefIeObject>> = {
 	hasAccessToEssence: false,
 	meemooOriginalCp: null,
 	schemaIdentifier: '8911p09j1g',
@@ -170,7 +171,7 @@ export const mockIeObjectWithMetadataSetLTD: Readonly<Partial<IeObject>> = {
 	temporal: null,
 };
 
-export const mockIeObjectWithMetadataSetALL: Readonly<Partial<IeObject>> = {
+export const mockIeObjectWithMetadataSetALL: Readonly<Partial<HetArchiefIeObject>> = {
 	hasAccessToEssence: false,
 	name: 'Durf te vragen R002 A0001',
 	meemooOriginalCp: null,
@@ -256,7 +257,7 @@ export const mockIeObjectWithMetadataSetALL: Readonly<Partial<IeObject>> = {
 	synopsis: null,
 };
 
-export const mockIeObjectWithMetadataSetALLWithEssence: Readonly<Partial<IeObject>> = {
+export const mockIeObjectWithMetadataSetALLWithEssence: Readonly<Partial<HetArchiefIeObject>> = {
 	hasAccessToEssence: true,
 	thumbnailUrl:
 		'https://media.viaa.be/play/v2/VLAAMSPARLEMENT/49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c/keyframes-thumb/keyframes_1_1/keyframe1.jpg',
@@ -332,7 +333,7 @@ export const mockIeObjectWithMetadataSetALLWithEssence: Readonly<Partial<IeObjec
 	width: null,
 };
 
-export const mockIeObjectLimitedInFolder: Readonly<Partial<IeObject>> = {
+export const mockIeObjectLimitedInFolder: Readonly<Partial<HetArchiefIeObject>> = {
 	hasAccessToEssence: false,
 	accessThrough: [HetArchiefIeObjectAccessThrough.PUBLIC_INFO],
 	name: 'Durf te vragen R002 A0001',
@@ -399,7 +400,7 @@ export const mockIeObjectLimitedInFolder: Readonly<Partial<IeObject>> = {
 	],
 };
 
-export const mockIeObjectDefaultLimitedMetadata: Readonly<Partial<IeObject>> = {
+export const mockIeObjectDefaultLimitedMetadata: Readonly<Partial<HetArchiefIeObject>> = {
 	name: 'Durf te vragen R002 A0001',
 	maintainerName: 'vrt',
 	maintainerId: 'OR-rf5kf25',
@@ -911,7 +912,7 @@ export const mockGqlIeObjectFindByFolderId: FindAllIeObjectsByFolderIdQuery['use
 		},
 	});
 
-export const mockGqlIeObjectFindByFolderIdResult: Readonly<Partial<IeObject>> = {
+export const mockGqlIeObjectFindByFolderIdResult: Readonly<Partial<HetArchiefIeObject>> = {
 	dateCreated: null,
 	datePublished: null,
 	dctermsFormat: HetArchiefIeObjectType.VIDEO,

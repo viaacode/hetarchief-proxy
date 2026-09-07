@@ -7,6 +7,7 @@ import {
 	HetArchiefIeObjectLicense,
 	type HetArchiefIeObjectSector,
 	HetArchiefIeObjectType,
+	HetArchiefSimpleIeObjectType,
 } from '@viaa/avo2-types';
 import { compact, isNil, set } from 'lodash';
 import {
@@ -499,7 +500,7 @@ export class ThemesService {
 
 		if (
 			mapDcTermsFormatToSimpleType(dctermsFormat as HetArchiefIeObjectType) ===
-			HetArchiefIeObjectType.AUDIO
+			HetArchiefSimpleIeObjectType.AUDIO
 		) {
 			return AUDIO_WAVE_FORM_URL; // avoid the ugly speaker
 		}

@@ -1008,7 +1008,7 @@ export class MaterialRequestsService {
 
 			// For audio objects we don't need to do a request to the video stills service, since we just want to show a waveform
 			let thumbnailUrl: string;
-			if (mapDcTermsFormatToSimpleType(ieObjectType) === HetArchiefIeObjectType.AUDIO) {
+			if (mapDcTermsFormatToSimpleType(ieObjectType) === HetArchiefSimpleIeObjectType.AUDIO) {
 				thumbnailUrl = AUDIO_WAVE_FORM_URL;
 			} else {
 				thumbnailUrl = await this.findVideoStillForMaterialRequest(representationId, reuseForm);

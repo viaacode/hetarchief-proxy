@@ -8,7 +8,6 @@ import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/help
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { AvoStillsStillInfo } from '@viaa/avo2-types';
 import { mapLimit } from 'blend-promise-utils';
 import type { Cache } from 'cache-manager';
 import { hoursToSeconds } from 'date-fns';
@@ -16,9 +15,13 @@ import { Request } from 'express';
 import { compact, isNil } from 'lodash';
 
 import {
+	AvoStillsStillInfo,
+	type HetArchiefIeObject,
 	HetArchiefIeObjectLicense,
 	type HetArchiefIeObjectSector,
 	HetArchiefIeObjectType,
+	type HetArchiefPlayableDisplayIeObject,
+	HetArchiefSimpleIeObjectType,
 } from '@viaa/avo2-types';
 import type { Configuration } from '~config';
 import {
@@ -38,9 +41,7 @@ import {
 	JSON_FORMATS,
 } from '~modules/ie-objects/ie-objects.conts';
 import {
-	type IeObject,
 	type IeObjectForAccessCheck,
-	type IeObjectPlayableDisplayData,
 	type IeObjectsVisitorSpaceInfo,
 	type JsonWaveformData,
 } from '~modules/ie-objects/ie-objects.types';
@@ -58,7 +59,7 @@ import { formattedDurationToSeconds } from '~shared/helpers/formatted-duration-t
 
 interface PlayableDisplayAccess {
 	dbResponse: GetIeObjectPlayableDisplayDataQuery;
-	limitedObject: Partial<IeObject>;
+	limitedObject: Partial<HetArchiefIeObject>;
 	dctermsFormat: HetArchiefIeObjectType;
 	isPublicDomain: boolean;
 	hasAccessToEssence: boolean;
@@ -107,7 +108,7 @@ export class PlayableDisplayDataService {
 		referer: string,
 		ip: string,
 		request: Request
-	): Promise<(IeObjectPlayableDisplayData | null)[]> {
+	): Promise<(HetArchiefPlayableDisplayIeObject | null)[]> {
 		const visitorSpaceAccessInfo =
 			await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
 
@@ -134,7 +135,7 @@ export class PlayableDisplayDataService {
 				schemaIdentifier: string;
 				start?: number;
 				end?: number;
-			}): Promise<IeObjectPlayableDisplayData | null> => {
+			}): Promise<HetArchiefPlayableDisplayIeObject | null> => {
 				try {
 					const access = await resolveAccessOnce(item.schemaIdentifier);
 					if (!access) {
@@ -145,7 +146,7 @@ export class PlayableDisplayDataService {
 
 					const isAudioVideoObject = IE_OBJECT_AV_TYPES.includes(dctermsFormat);
 					const isAudio =
-						mapDcTermsFormatToSimpleType(dctermsFormat) === HetArchiefIeObjectType.AUDIO;
+						mapDcTermsFormatToSimpleType(dctermsFormat) === HetArchiefSimpleIeObjectType.AUDIO;
 					// Only stand in the waveform for an audio object the user may actually hear: it is a
 					// display substitute for the ugly speaker thumbnail, not something to show for an object
 					// whose essence is out of reach.

@@ -1,4 +1,10 @@
-import type { HetArchiefRelatedIeObject, HetArchiefRelatedIeObjects } from '@viaa/avo2-types';
+import {
+	HetArchiefIeObject,
+	HetArchiefPlayableDisplayIeObject,
+	HetArchiefRelatedIeObject,
+	HetArchiefRelatedIeObjects,
+	HetArchiefSimpleIeObjectType,
+} from '@viaa/avo2-types';
 /* eslint-disable @typescript-eslint/consistent-type-imports */
 // Disable consistent imports since they try to import IeObjectsQueryDto as a type
 // But that breaks the endpoint body validation
@@ -66,9 +72,7 @@ import { convertObjectToXml } from '../helpers/convert-objects-to-xml';
 import { limitAccessToObjectDetails } from '../helpers/limit-access-to-object-details';
 import {
 	AutocompleteField,
-	type IeObject,
 	IeObjectForAccessCheck,
-	type IeObjectPlayableDisplayData,
 	type IeObjectSeo,
 	type IeObjectsWithAggregations,
 } from '../ie-objects.types';
@@ -301,7 +305,7 @@ export class IeObjectsController {
 		user: SessionUserEntity,
 		referer: string,
 		ip: string
-	): Promise<Partial<IeObject>> {
+	): Promise<Partial<HetArchiefIeObject>> {
 		if (!schemaIdentifier) {
 			throw new BadRequestException('Query param fileId is required');
 		}
@@ -329,7 +333,7 @@ export class IeObjectsController {
 		user: SessionUserEntity,
 		referer: string,
 		ip: string
-	): Promise<Partial<IeObject>> {
+	): Promise<Partial<HetArchiefIeObject>> {
 		const accessibleObject = await this.getAccessibleObjectForTicket(
 			playerTicketsQuery.schemaIdentifier,
 			user,
@@ -351,7 +355,7 @@ export class IeObjectsController {
 		return accessibleObject;
 	}
 
-	private objectContainsFilePath(ieObject: Partial<IeObject>, fileId: string): boolean {
+	private objectContainsFilePath(ieObject: Partial<HetArchiefIeObject>, fileId: string): boolean {
 		return Boolean(
 			ieObject.pages?.some((page) =>
 				page.representations?.some((representation) =>
@@ -366,7 +370,7 @@ export class IeObjectsController {
 		user: SessionUserEntity,
 		referer: string,
 		ip: string
-	): Promise<Partial<IeObject>> {
+	): Promise<Partial<HetArchiefIeObject>> {
 		const accessibleObject = await this.getAccessibleObjectForTicket(
 			schemaIdentifier,
 			user,
@@ -736,7 +740,7 @@ export class IeObjectsController {
 		@Param('schemaIdentifier') schemaIdentifier: string,
 		@Query() ieObjectSimilarQueryDto: IeObjectsSimilarQueryDto,
 		@SessionUser() user: SessionUserEntity
-	): Promise<IPagination<Partial<IeObject>>> {
+	): Promise<IPagination<Partial<HetArchiefIeObject>>> {
 		try {
 			const visitorSpaceAccessInfo =
 				await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
@@ -1064,7 +1068,8 @@ export class IeObjectsController {
 				}
 
 				if (
-					mapDcTermsFormatToSimpleType(ieObject?.dctermsFormat) === HetArchiefIeObjectType.AUDIO
+					mapDcTermsFormatToSimpleType(ieObject?.dctermsFormat) ===
+					HetArchiefSimpleIeObjectType.AUDIO
 				) {
 					return {
 						schemaIdentifier: ieObject.schemaIdentifier || null,
@@ -1145,7 +1150,7 @@ export class IeObjectsController {
 		@Referer() referer: string | null,
 		@Ip() ip: string,
 		@Req() request: Request
-	): Promise<(Partial<IeObject> | null)[]> {
+	): Promise<(Partial<HetArchiefIeObject> | null)[]> {
 		try {
 			let ieObjectIdsResolved: string[];
 			if (schemaIdentifiers) {
@@ -1180,10 +1185,10 @@ export class IeObjectsController {
 			const visitorSpaceAccessInfo =
 				await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
 
-			const limitedObjects: Partial<IeObject | null>[] = await mapLimit(
+			const limitedObjects: Partial<HetArchiefIeObject | null>[] = await mapLimit(
 				ieObjectIdsResolved,
 				20,
-				async (ieObjectId: string | null): Promise<Partial<IeObject> | null> => {
+				async (ieObjectId: string | null): Promise<Partial<HetArchiefIeObject> | null> => {
 					try {
 						if (
 							!ieObjectId ||
@@ -1353,7 +1358,7 @@ export class IeObjectsController {
 		@Referer() referer: string | null,
 		@Ip() ip: string,
 		@Req() request: Request
-	): Promise<(IeObjectPlayableDisplayData | null)[]> {
+	): Promise<(HetArchiefPlayableDisplayIeObject | null)[]> {
 		if (!queryDto?.blockId && !queryDto?.objects?.length) {
 			throw new BadRequestException('Body param blockId or objects is required');
 		}

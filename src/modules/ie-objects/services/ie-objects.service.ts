@@ -1,6 +1,5 @@
 import { randomUUID } from 'node:crypto';
 import fs from 'node:fs/promises';
-import type { HetArchiefRelatedIeObject } from '@viaa/avo2-types';
 import { retry } from 'async';
 import { Request } from 'express';
 
@@ -25,16 +24,17 @@ import { compact, find, isArray, isEmpty, isNil, isNumber, kebabCase, omitBy, un
 import type { Configuration } from '~config';
 
 import {
+	type HetArchiefIeObject,
 	type HetArchiefIeObjectFile,
+	HetArchiefIeObjectLicense,
 	type HetArchiefIeObjectPage,
 	type HetArchiefIeObjectRepresentation,
-	type HetArchiefIeObjectTheme,
-} from '@viaa/avo2-types';
-import {
-	HetArchiefIeObjectLicense,
 	type HetArchiefIeObjectSector,
+	type HetArchiefIeObjectTheme,
 	HetArchiefIeObjectType,
 	type HetArchiefIsPartOfKey,
+	type HetArchiefRelatedIeObject,
+	HetArchiefSimpleIeObjectType,
 } from '@viaa/avo2-types';
 import { IeObjectsQueryDto, IeObjectsSimilarQueryDto } from '../dto/ie-objects.dto';
 import { QueryBuilder } from '../elasticsearch/queryBuilder';
@@ -48,7 +48,6 @@ import {
 	type ElasticsearchResponse,
 	type EsQueryAutocompleteMatchPhraseResponse,
 	type GqlLimitedIeObject,
-	type IeObject,
 	IeObjectForThumbnailOnly,
 	type IeObjectPages,
 	type IeObjectsSitemap,
@@ -225,7 +224,7 @@ export class IeObjectsService {
 				// Limit number of results to MAX_COUNT_SEARCH_RESULTS
 				// Since elasticsearch is capped to MAX_COUNT_SEARCH_RESULTS
 				return {
-					...Pagination<IeObject>({
+					...Pagination<HetArchiefIeObject>({
 						items: [],
 						page: inputQuery.page,
 						size: 0,
@@ -292,7 +291,7 @@ export class IeObjectsService {
 				inputQuery.filters
 			);
 			return {
-				...Pagination<IeObject>({
+				...Pagination<HetArchiefIeObject>({
 					// 24 in parallel, since one search page contains 24 items usually
 					items: await mapLimit(adaptedESResponse?.hits?.hits ?? [], 24, async (esHit) =>
 						this.adaptESObjectToObject(esHit._source, referer, ip)
@@ -411,7 +410,7 @@ export class IeObjectsService {
 		ieObjectSimilarQueryDto: IeObjectsSimilarQueryDto,
 		limit = 4,
 		user?: SessionUserEntity
-	): Promise<IPagination<IeObject>> {
+	): Promise<IPagination<HetArchiefIeObject>> {
 		const esIndex = ieObjectSimilarQueryDto?.maintainerId?.toLowerCase();
 
 		// We can reuse the license checking part from the regular search queries:
@@ -501,7 +500,7 @@ export class IeObjectsService {
 		}
 
 		return {
-			...Pagination<IeObject>({
+			...Pagination<HetArchiefIeObject>({
 				items: await mapLimit(adaptedESResponse?.hits?.hits ?? [], 20, async (esHit) =>
 					this.adaptESObjectToObject(esHit._source, referer, ip)
 				),
@@ -571,7 +570,7 @@ export class IeObjectsService {
 		ieObjectId: string,
 		referer: string,
 		ip: string
-	): Promise<Partial<IeObject>> {
+	): Promise<Partial<HetArchiefIeObject>> {
 		const object = await this.findByIeObjectId(ieObjectId, false, referer, ip);
 		return this.adaptMetadata(object);
 	}
@@ -582,7 +581,7 @@ export class IeObjectsService {
 	public async findAllIeObjectMetadataByFolderId(
 		folderId: string,
 		userProfileId: string
-	): Promise<Partial<IeObject>[]> {
+	): Promise<Partial<HetArchiefIeObject>[]> {
 		const { users_folder_ie: allObjects } = await this.dataService.execute<
 			FindAllIeObjectsByFolderIdQuery,
 			FindAllIeObjectsByFolderIdQueryVariables
@@ -719,7 +718,7 @@ export class IeObjectsService {
 		ip: string
 	): Promise<string> {
 		let mainThumbnailUrl: string | null = null;
-		if (mapDcTermsFormatToSimpleType(dctermsFormat) === HetArchiefIeObjectType.AUDIO) {
+		if (mapDcTermsFormatToSimpleType(dctermsFormat) === HetArchiefSimpleIeObjectType.AUDIO) {
 			// Audio waveform
 			mainThumbnailUrl = AUDIO_WAVE_FORM_URL; // avoid the ugly speaker
 		} else {
@@ -745,11 +744,11 @@ export class IeObjectsService {
 
 	public async adaptFromDB(
 		ieObjectResponse: GetIeObjectDetailQuery,
-		parentIeObject: Partial<IeObject> | null,
+		parentIeObject: Partial<HetArchiefIeObject> | null,
 		resolveThumbnailUrl: boolean,
 		referer: string,
 		ip: string
-	): Promise<Partial<IeObject>> {
+	): Promise<Partial<HetArchiefIeObject>> {
 		if (!ieObjectResponse) {
 			return null;
 		}
@@ -846,7 +845,7 @@ export class IeObjectsService {
 			ip
 		);
 
-		const ieObject: IeObject = {
+		const ieObject: HetArchiefIeObject = {
 			schemaIdentifier: ie?.schema_identifier,
 			iri: ieObjectId,
 			dctermsAvailable: ie?.dcterms_available,
@@ -1065,7 +1064,7 @@ export class IeObjectsService {
 		esObject: ElasticsearchObject,
 		referer: string,
 		ip: string
-	): Promise<IeObject> {
+	): Promise<HetArchiefIeObject> {
 		let thumbnailUrl: string | null;
 		if (
 			esObject.dcterms_format === HetArchiefIeObjectType.AUDIO ||
@@ -1129,7 +1128,7 @@ export class IeObjectsService {
 		};
 	}
 
-	public adaptLimitedMetadata(graphQlObject: GqlLimitedIeObject): Partial<IeObject> {
+	public adaptLimitedMetadata(graphQlObject: GqlLimitedIeObject): Partial<HetArchiefIeObject> {
 		/* istanbul ignore next */
 		return {
 			schemaIdentifier: graphQlObject.intellectualEntity?.schema_identifier,
@@ -1156,7 +1155,7 @@ export class IeObjectsService {
 		};
 	}
 
-	public adaptMetadata(ieObject: Partial<IeObject>): Partial<IeObject> {
+	public adaptMetadata(ieObject: Partial<HetArchiefIeObject>): Partial<HetArchiefIeObject> {
 		// unset thumbnail and representations
 		if (ieObject) {
 			ieObject.pages = undefined;
@@ -1535,7 +1534,9 @@ export class IeObjectsService {
 		};
 	}
 
-	public defaultLimitedMetadata(ieObject: Partial<IeObject>): Partial<IeObject> {
+	public defaultLimitedMetadata(
+		ieObject: Partial<HetArchiefIeObject>
+	): Partial<HetArchiefIeObject> {
 		return {
 			name: ieObject?.name,
 			maintainerName: ieObject?.maintainerName,
@@ -1554,13 +1555,13 @@ export class IeObjectsService {
 	}
 
 	public limitObjectInFolder(
-		folderObjectItem: Partial<IeObject>,
+		folderObjectItem: Partial<HetArchiefIeObject>,
 		user: SessionUserEntity,
 		visitorSpaceAccessInfo: IeObjectsVisitorSpaceInfo
-	): Partial<IeObject> {
+	): Partial<HetArchiefIeObject> {
 		const limitedObjectDetails = limitAccessToObjectDetails(
 			folderObjectItem as Pick<
-				IeObject,
+				HetArchiefIeObject,
 				'licenses' | 'schemaIdentifier' | 'maintainerId' | 'sector'
 			>,
 			{
@@ -1880,7 +1881,7 @@ export class IeObjectsService {
 		resolveThumbnailUrl: boolean,
 		referer: string,
 		ip: string
-	): Promise<Partial<IeObject> | null> {
+	): Promise<Partial<HetArchiefIeObject> | null> {
 		// Cache the object for 60 minutes since we need it once for server side rendering and once for client side rendering
 		const response = await this.cacheManager.wrap(
 			CACHE_KEY_PREFIX_IE_OBJECT_DETAIL + objectId,
@@ -1891,7 +1892,7 @@ export class IeObjectsService {
 
 		// Get parent ieObject if it exists
 		const parentIeObjectId = response?.getIsPartOf?.[0]?.isPartOf?.id;
-		let parentIeObject: Partial<IeObject> | null = null;
+		let parentIeObject: Partial<HetArchiefIeObject> | null = null;
 		if (parentIeObjectId) {
 			parentIeObject = await this.findByIeObjectId(
 				parentIeObjectId,
@@ -1945,7 +1946,7 @@ export class IeObjectsService {
 	}
 
 	public getRepresentationAndFileInIeObject(
-		ieObject: Partial<IeObject>,
+		ieObject: Partial<HetArchiefIeObject>,
 		fileId: string
 	): [HetArchiefIeObjectFile | null, HetArchiefIeObjectRepresentation | null] {
 		// Check if requested file has time codes to cut the fragment out of a video
