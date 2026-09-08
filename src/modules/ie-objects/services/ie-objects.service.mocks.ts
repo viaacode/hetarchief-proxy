@@ -1,4 +1,4 @@
-import { IeObjectRepresentation } from '~modules/ie-objects/ie-objects.types';
+import { HetArchiefIeObjectRepresentation } from '@viaa/avo2-types';
 import { AUDIO_WAVE_FORM_URL } from '~shared/consts/audio-wave-form-url';
 
 export const mockAutocompleteQueryResponseNewspaperSeries = {
@@ -117,7 +117,7 @@ export const mockAutocompleteQueryResponseCreators = {
 	},
 };
 
-export const representationMp3: IeObjectRepresentation = {
+export const representationMp3: HetArchiefIeObjectRepresentation = {
 	id: 'https://data.hetarchief.be/id/entity/41ed99a7cab4918da5536322c05a9162',
 	schemaName:
 		"Lageresolutiekopie (mp3): 'Interview met leerlingen van de Europaklassen (week 69)  4-10 februari 1996\n\tschool Anderlecht' (mg7fr16t33)",
@@ -154,7 +154,7 @@ export const representationMp3: IeObjectRepresentation = {
 		},
 	],
 };
-const representationMp4: IeObjectRepresentation = {
+const representationMp4: HetArchiefIeObjectRepresentation = {
 	id: 'https://data.hetarchief.be/id/entity/b510a045a192e5cfda4738dd129af99d',
 	schemaName:
 		"Lageresolutiekopie (mp4): 'Interview met leerlingen van de Europaklassen (week 69)  4-10 februari 1996\n\tschool Anderlecht' (mg7fr16t33)",
@@ -194,7 +194,7 @@ const representationMp4: IeObjectRepresentation = {
 		},
 	],
 };
-const representationMa4: IeObjectRepresentation = {
+const representationMa4: HetArchiefIeObjectRepresentation = {
 	id: 'https://data.hetarchief.be/id/entity/dc83542dfbfa88127b3107600349d045',
 	schemaName:
 		"Lageresolutiekopie (m4a): 'Interview met leerlingen van de Europaklassen (week 69)  4-10 februari 1996\n\tschool Anderlecht' (mg7fr16t33)",
@@ -231,7 +231,7 @@ const representationMa4: IeObjectRepresentation = {
 		},
 	],
 };
-export const representationsNewspaper: IeObjectRepresentation[] = [
+export const representationsNewspaper: HetArchiefIeObjectRepresentation[] = [
 	{
 		id: 'https://data.hetarchief.be/id/entity/26420d7bcb57fa9bad812876bb2fa44c/b565a828249953ec74bae4d396849891',
 		schemaName: "IIIF kopie (jp2): 'La Libre Belgique' (26420d7bcb57fa9bad812876bb2fa44c)",

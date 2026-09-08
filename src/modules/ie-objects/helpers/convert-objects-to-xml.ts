@@ -1,11 +1,12 @@
 import convert from 'xml-js';
 
+import { HetArchiefIeObjectLicense } from '@viaa/avo2-types';
 import {
 	IE_OBJECT_PROPERTY_TO_DUBLIN_CORE,
 	IE_OBJECT_PROPS_METADATA_EXPORT,
 	type XmlNode,
 } from '../ie-objects.conts';
-import { type IeObject, IeObjectLicense } from '../ie-objects.types';
+import { type IeObject } from '../ie-objects.types';
 
 export const convertObjectToXml = (object: Partial<IeObject>, clientHost: string): string => {
 	const dcElements: XmlNode[] = [];
@@ -31,9 +32,9 @@ export const convertObjectToXml = (object: Partial<IeObject>, clientHost: string
 
 	// Rights
 	let rights: string | null;
-	if (object.licenses?.includes(IeObjectLicense.PUBLIC_DOMAIN)) {
+	if (object.licenses?.includes(HetArchiefIeObjectLicense.PUBLIC_DOMAIN)) {
 		rights = 'public domain';
-	} else if (object.licenses?.includes(IeObjectLicense.COPYRIGHT_UNDETERMINED)) {
+	} else if (object.licenses?.includes(HetArchiefIeObjectLicense.COPYRIGHT_UNDETERMINED)) {
 		rights = 'copyright undetermined';
 	} else {
 		rights = null;

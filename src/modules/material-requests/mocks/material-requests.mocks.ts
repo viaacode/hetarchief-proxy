@@ -2,6 +2,7 @@ import { AvoAuthIdpType, PermissionName } from '@viaa/avo2-types';
 
 import { type MaterialRequest, MaterialRequestType } from '../material-requests.types';
 
+import { HetArchiefIeObjectLicense, HetArchiefIeObjectType } from '@viaa/avo2-types';
 import {
 	type FindMaintainersWithMaterialRequestsQuery,
 	type FindMaterialRequestsByIdQuery,
@@ -10,7 +11,6 @@ import {
 	Lookup_App_Material_Request_Status_Enum,
 	Lookup_App_Material_Request_Type_Enum,
 } from '~generated/graphql-db-types-hetarchief';
-import { IeObjectLicense, IeObjectType } from '~modules/ie-objects/ie-objects.types';
 import { representationMp3 } from '~modules/ie-objects/services/ie-objects.service.mocks';
 import { GroupId, GroupName, type User } from '~modules/users/types';
 import { Locale } from '~shared/types/types';
@@ -115,7 +115,7 @@ export const mockGqlMaterialRequest2: FindMaterialRequestsByIdQuery['app_materia
 				'VRT/b1f60efadf5243d78c7c91512adaa6cefe52723ff35848268894c7861d852b79/keyframes/keyframes_1_1/keyframe1.jpg',
 			],
 		},
-		schemaLicenses: [{ schema_license: IeObjectLicense.PUBLIEK_CONTENT }],
+		schemaLicenses: [{ schema_license: HetArchiefIeObjectLicense.PUBLIEK_CONTENT }],
 	},
 	material_request_reuse_form_values: [
 		{
@@ -162,9 +162,10 @@ export const mockMaterialRequest1: MaterialRequest = {
 	maintainerName: 'VRT',
 	maintainerSlug: 'vrt',
 	objectSchemaName: 'Onderzoekscommissie PFAS-PFOS 03-12-2021, 08u5§',
-	objectDctermsFormat: IeObjectType.AUDIO,
+	objectDctermsFormat: HetArchiefIeObjectType.AUDIO,
 	objectThumbnailUrl:
 		'VRT/b1f60efadf5243d78c7c91512adaa6cefe52723ff35848268894c7861d852b79/keyframes/keyframes_1_1/keyframe1.jpg',
+	objectHasAccessToEssence: true,
 	objectAccessThrough: [],
 	objectLicences: [],
 	reuseForm: undefined,
@@ -207,9 +208,10 @@ const mockMaterialRequest2: MaterialRequest = {
 	maintainerLogo: 'https://assets.viaa.be/images/OR-7h1dk9t',
 	maintainerSlug: 'vlaams-parlement',
 	objectSchemaName: 'Onderzoekscommissie PFAS-PFOS 03-12-2021, 08u5§',
-	objectDctermsFormat: IeObjectType.AUDIO,
+	objectDctermsFormat: HetArchiefIeObjectType.AUDIO,
 	objectThumbnailUrl:
 		'VRT/b1f60efadf5243d78c7c91512adaa6cefe52723ff35848268894c7861d852b79/keyframes/keyframes_1_1/keyframe1.jpg',
+	objectHasAccessToEssence: true,
 	objectAccessThrough: [],
 	objectLicences: [],
 	objectRepresentation: representationMp3,

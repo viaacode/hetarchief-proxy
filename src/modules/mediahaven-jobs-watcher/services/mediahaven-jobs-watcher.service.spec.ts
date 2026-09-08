@@ -812,6 +812,35 @@ describe('MediahavenJobsWatcherService', () => {
 					})
 				);
 			});
+
+			it('should mark the material request as failed when creating the export job fails', async () => {
+				const materialRequest = createMockMaterialRequest({
+					id: 'no-job-request',
+					downloadJobId: null,
+				});
+
+				mockMaterialRequestsService.findAllWithUnresolvedDownload.mockResolvedValue([
+					materialRequest,
+				]);
+				mockMaterialRequestsService.updateMaterialRequest.mockResolvedValue(materialRequest);
+				mockFetch.mockResolvedValue({
+					status: 200,
+					json: () => Promise.resolve({ Results: [] }),
+				});
+
+				const createExportJobSpy = vi
+					.spyOn(service, 'createExportJob')
+					.mockRejectedValue(new Error('Failed to create mediahaven export job'));
+				const handleFailedExportJobSpy = vi
+					.spyOn(service, 'handleFailedExportJob')
+					.mockResolvedValue(undefined);
+
+				// Should not throw
+				await expect(service.checkUnresolvedJobs()).resolves.not.toThrow();
+
+				expect(createExportJobSpy).toHaveBeenCalledWith(materialRequest);
+				expect(handleFailedExportJobSpy).toHaveBeenCalledWith('no-job-request');
+			});
 		});
 	});
 });

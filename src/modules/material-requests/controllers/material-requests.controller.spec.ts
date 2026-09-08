@@ -36,6 +36,7 @@ const mockMaterialRequestMessageService: Partial<
 > = {
 	findAll: vi.fn(),
 	countUnreadMessages: vi.fn(),
+	getUnreadMessageOverviewForProfile: vi.fn(),
 };
 
 const mockMaterialRequestPdfGeneratorService: Partial<
@@ -152,6 +153,42 @@ describe('MaterialRequestsController', () => {
 			);
 			const response = await materialRequestsController.getMaintainers();
 			expect(response).toEqual(mockMaintainerWithMaterialRequest);
+		});
+	});
+
+	describe('getUnreadMessagesSummary', () => {
+		afterEach(() => {
+			mockMaterialRequestMessageService.getUnreadMessageOverviewForProfile.mockReset();
+		});
+
+		it('should return the unread messages summary for the logged in user', async () => {
+			const mockSummary = {
+				hasUnreadOutgoingMessages: true,
+				hasUnreadIncomingMessages: false,
+				unreadCountsByMaterialRequestId: { 'mr-1': 2 },
+			};
+			mockMaterialRequestMessageService.getUnreadMessageOverviewForProfile.mockResolvedValueOnce(
+				mockSummary
+			);
+
+			const response = await materialRequestsController.getUnreadMessagesSummary(
+				new SessionUserEntity(mockUser)
+			);
+
+			expect(response).toEqual(mockSummary);
+			expect(
+				mockMaterialRequestMessageService.getUnreadMessageOverviewForProfile
+			).toHaveBeenCalledWith(mockUser.id);
+		});
+
+		it('should throw a CustomError when the service call fails', async () => {
+			mockMaterialRequestMessageService.getUnreadMessageOverviewForProfile.mockRejectedValueOnce(
+				new Error('boom')
+			);
+
+			await expect(
+				materialRequestsController.getUnreadMessagesSummary(new SessionUserEntity(mockUser))
+			).rejects.toThrow('Failed to get unread material request messages summary');
 		});
 	});
 

@@ -1,11 +1,11 @@
 import type { PermissionName } from '@viaa/avo2-types';
 import { AvoAuthIdpType } from '@viaa/avo2-types';
+import { type HetArchiefIeObjectSector } from '@viaa/avo2-types';
 import type {
 	GetUserByIdentityIdQuery,
 	InsertUserMutation,
 	UpdateUserProfileMutation,
 } from '~generated/graphql-db-types-hetarchief';
-import type { IeObjectSector } from '~modules/ie-objects/ie-objects.types';
 import type { Locale } from '~shared/types/types';
 
 export type GqlUser =
@@ -28,7 +28,7 @@ export interface User {
 	isKeyUser: boolean;
 	isEvaluator: boolean;
 	visitorSpaceSlug?: string;
-	sector?: IeObjectSector | null;
+	sector?: HetArchiefIeObjectSector | null;
 	organisationName?: string | null;
 	organisationId?: string | null;
 	organisationAddress?: string | null;

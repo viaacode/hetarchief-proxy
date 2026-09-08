@@ -13,6 +13,9 @@ query getIeObjectPlayableDisplayData($ieObjectId: String!) {
 			hasPreference {
 				ha_pref
 			}
+			organizationSlug {
+				slug
+			}
 		}
 	}
 

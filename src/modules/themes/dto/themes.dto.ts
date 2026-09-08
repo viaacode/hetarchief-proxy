@@ -408,11 +408,25 @@ export class IeObjectInThemeResponseDto {
 	thumbnailUrl: string | null;
 
 	@ApiProperty({
+		type: Boolean,
+		description:
+			"Whether the current user may see/play this object's essence. Use this instead of checking whether thumbnailUrl is set.",
+	})
+	hasAccessToEssence: boolean;
+
+	@ApiProperty({
 		type: String,
 		nullable: true,
 		description: 'The or-id of the maintaining organisation',
 	})
 	maintainerId: string | null;
+
+	@ApiProperty({
+		type: String,
+		nullable: true,
+		description: 'The slug of the maintaining organisation',
+	})
+	maintainerSlug: string | null;
 
 	@ApiProperty({
 		type: String,

@@ -1,5 +1,5 @@
+import { HetArchiefIeObjectSector, HetArchiefIeObjectType } from '@viaa/avo2-types';
 import { describe, expect, it } from 'vitest';
-import { IeObjectSector, IeObjectType } from '../ie-objects.types';
 
 import {
 	ElasticsearchField,
@@ -34,7 +34,7 @@ const mockInputInfo = {
 		idp: null,
 		isKeyUser: false,
 		isEvaluator: false,
-		sector: IeObjectSector.CULTURE,
+		sector: HetArchiefIeObjectSector.CULTURE,
 		organisationId: null,
 		organisationName: 'vrt',
 		visitorSpaceSlug: 'vrt',
@@ -191,7 +191,7 @@ describe('QueryBuilder', () => {
 					filters: [
 						{
 							field: IeObjectsSearchFilterField.FORMAT,
-							value: IeObjectType.VIDEO,
+							value: HetArchiefIeObjectType.VIDEO,
 							operator: Operator.IS,
 						},
 					],
@@ -324,7 +324,7 @@ describe('QueryBuilder', () => {
 					filters: [
 						{
 							field: IeObjectsSearchFilterField.FORMAT,
-							value: IeObjectType.VIDEO,
+							value: HetArchiefIeObjectType.VIDEO,
 							operator: Operator.CONTAINS,
 						},
 					],
@@ -338,6 +338,31 @@ describe('QueryBuilder', () => {
 				field: 'dcterms_medium',
 				size: 500,
 			});
+		});
+
+		it('should turn multiple selected themes into a single OR-ed terms query', () => {
+			const esQuery = QueryBuilder.build(
+				{
+					filters: [
+						{
+							field: IeObjectsSearchFilterField.THEME,
+							multiValue: ['education-learning', 'culture-society'],
+							operator: Operator.IS,
+						},
+					],
+					size: 10,
+					page: 1,
+				},
+				mockInputInfo as any
+			);
+
+			const queryString = JSON.stringify(esQuery.query, null, 2);
+			// A single terms query means the values are OR-ed: https://meemoo.atlassian.net/browse/ARC-3797
+			expect(queryString).toContain('"theme": [');
+			expect(queryString).toContain('"education-learning"');
+			expect(queryString).toContain('"culture-society"');
+			// Themes are in the limited metadata set, so anonymous users can filter on them too
+			expect(queryString).toContain('METADATA-LTD-FILTERS');
 		});
 
 		it('should create two separate aggregations for the RIGHTS field', () => {
@@ -478,7 +503,7 @@ describe('QueryBuilder', () => {
 					user: new SessionUserEntity({
 						...mockUser,
 						isKeyUser: true,
-						sector: IeObjectSector.GOVERNMENT,
+						sector: HetArchiefIeObjectSector.GOVERNMENT,
 						organisationId: 'OR-00000001',
 					}),
 					visitorSpaceInfo: {
@@ -517,7 +542,7 @@ describe('QueryBuilder', () => {
 					user: new SessionUserEntity({
 						...mockUser,
 						isKeyUser: true,
-						sector: IeObjectSector.GOVERNMENT,
+						sector: HetArchiefIeObjectSector.GOVERNMENT,
 						organisationId: 'OR-00000001',
 					}),
 					visitorSpaceInfo: {
@@ -531,8 +556,8 @@ describe('QueryBuilder', () => {
 			expect(stringified).toContain(
 				`${ElasticsearchField.schema_maintainer}.${ElasticsearchField.organization_sector}`
 			);
-			expect(stringified).toContain(IeObjectSector.CULTURE);
-			expect(stringified).toContain(IeObjectSector.RURAL);
+			expect(stringified).toContain(HetArchiefIeObjectSector.CULTURE);
+			expect(stringified).toContain(HetArchiefIeObjectSector.RURAL);
 			// The own-organisation clause should be present because the user has an organisation
 			expect(stringified).toContain('KEY_USERS_OWN_ORGANISATION_OBJECTS');
 		});
@@ -563,7 +588,7 @@ describe('QueryBuilder', () => {
 					user: new SessionUserEntity({
 						...mockUser,
 						isKeyUser: true,
-						sector: IeObjectSector.GOVERNMENT,
+						sector: HetArchiefIeObjectSector.GOVERNMENT,
 						organisationId: null,
 					}),
 					visitorSpaceInfo: {
@@ -607,7 +632,7 @@ describe('QueryBuilder', () => {
 					user: new SessionUserEntity({
 						...mockUser,
 						isKeyUser: true,
-						sector: IeObjectSector.REGIONAL,
+						sector: HetArchiefIeObjectSector.REGIONAL,
 						organisationId: 'OR-00000001',
 					}),
 					visitorSpaceInfo: {
@@ -621,13 +646,13 @@ describe('QueryBuilder', () => {
 			const stringified = JSON.stringify(queryObject);
 			// Culture, Government and Regional all share the same license set (INTRA_CP_CONTENT),
 			// so they are merged into one clause
-			expect(stringified).toContain(IeObjectSector.CULTURE);
-			expect(stringified).toContain(IeObjectSector.GOVERNMENT);
-			expect(stringified).toContain(IeObjectSector.REGIONAL);
+			expect(stringified).toContain(HetArchiefIeObjectSector.CULTURE);
+			expect(stringified).toContain(HetArchiefIeObjectSector.GOVERNMENT);
+			expect(stringified).toContain(HetArchiefIeObjectSector.REGIONAL);
 			// Public and rural objects do not expose intra cp content to a regional user,
 			// so their sectors should not appear in the consultable-only query
-			expect(stringified).not.toContain(IeObjectSector.PUBLIC);
-			expect(stringified).not.toContain(IeObjectSector.RURAL);
+			expect(stringified).not.toContain(HetArchiefIeObjectSector.PUBLIC);
+			expect(stringified).not.toContain(HetArchiefIeObjectSector.RURAL);
 		});
 
 		it('Should set a filter when consultableOnlyOnLocation is set to true', () => {
@@ -656,7 +681,7 @@ describe('QueryBuilder', () => {
 					user: new SessionUserEntity({
 						...mockUser,
 						isKeyUser: true,
-						sector: IeObjectSector.GOVERNMENT,
+						sector: HetArchiefIeObjectSector.GOVERNMENT,
 						organisationId: 'OR-00000001',
 					}),
 					visitorSpaceInfo: {
@@ -938,7 +963,7 @@ describe('QueryBuilder', () => {
 					user: new SessionUserEntity({
 						...mockUser,
 						isKeyUser: true,
-						sector: IeObjectSector.GOVERNMENT,
+						sector: HetArchiefIeObjectSector.GOVERNMENT,
 						organisationId: 'OR-00000001',
 					}),
 					visitorSpaceInfo: {

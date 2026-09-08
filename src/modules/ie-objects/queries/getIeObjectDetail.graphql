@@ -199,7 +199,7 @@ query getIeObjectDetail($ieObjectId: String!) {
 		}
 	}
 
-	getIsRepresentedBy: graph__intellectual_entity(
+	getIsRepresentedBy: graph_intellectual_entity(
 		where: { id: { _eq: $ieObjectId } }
 		order_by: { schema_position: asc }
 	) {
@@ -211,12 +211,15 @@ query getIeObjectDetail($ieObjectId: String!) {
 			schema_in_language
 			schema_start_time
 			schema_end_time
-			schema_transcript
 			schemaTranscriptUrls {
+				schema_transcript
 				schema_transcript_url
 			}
 			edm_is_next_in_sequence
 			updated_at
+			# The thumbnail of this specific (cut) fragment. For cut fragments this differs from the
+			# thumbnail of the file, which is the first keyframe of the full video. See ARC-3690.
+			schema_thumbnail_url
 			includes {
 				file {
 					id

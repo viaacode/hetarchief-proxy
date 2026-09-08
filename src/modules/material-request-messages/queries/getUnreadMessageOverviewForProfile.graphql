@@ -1,0 +1,8 @@
+query getUnreadMessageOverviewForProfile($profileId: uuid!) {
+	app_material_request_message_unread_overview(
+		where: { receiver_profile_id: { _eq: $profileId } }
+	) {
+		material_request_id
+		is_outgoing
+	}
+}

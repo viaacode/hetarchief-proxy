@@ -198,13 +198,25 @@ export class MediahavenJobsWatcherService {
 						return materialRequest.downloadJobId === job.ExportJobId;
 					});
 					if (!relatedJob) {
-						const jobId = await this.createExportJob(materialRequest);
-						await this.materialRequestsService.updateMaterialRequest(materialRequest.id, {
-							download_status: Lookup_App_Material_Request_Download_Status_Enum.New,
-							download_job_id: jobId,
-							updated_at: new Date().toISOString(),
-						});
-						reportItems.started += 1;
+						try {
+							const jobId = await this.createExportJob(materialRequest);
+							await this.materialRequestsService.updateMaterialRequest(materialRequest.id, {
+								download_status: Lookup_App_Material_Request_Download_Status_Enum.New,
+								download_job_id: jobId,
+								updated_at: new Date().toISOString(),
+							});
+							reportItems.started += 1;
+						} catch (err) {
+							console.error(
+								new CustomError('Failed to create mediahaven export job', err, {
+									materialRequestId: materialRequest.id,
+								})
+							);
+							// When the create-export job fails, mark the download status of the material request as failed and send email to meemoo
+							// Otherwise this material request would stay unresolved and be retried on every cron run
+							await this.handleFailedExportJob(materialRequest.id);
+							reportItems.failed += 1;
+						}
 					} else {
 						// One job found
 						switch (relatedJob.Status) {

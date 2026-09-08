@@ -2,25 +2,27 @@ import { PermissionName } from '@viaa/avo2-types';
 import { isEmpty, uniq } from 'lodash';
 
 import {
+	HetArchiefIeObjectLicense,
+	HetArchiefIeObjectSector,
+	HetArchiefIeObjectType,
+} from '@viaa/avo2-types';
+import {
 	AutocompleteEsField,
 	AutocompleteField,
 	type IeObject,
 	IeObjectExtraUserGroupType,
-	IeObjectLicense,
 	IeObjectMetadataSet,
-	IeObjectSector,
 	type IeObjectSectorLicenseMatrix,
-	IeObjectType,
 } from './ie-objects.types';
 
 import { GroupId } from '~modules/users/types';
 
-export const IE_OBJECT_AV_TYPES: Readonly<IeObjectType[]> = [
-	IeObjectType.AUDIO,
-	IeObjectType.AUDIO_FRAGMENT,
-	IeObjectType.FILM,
-	IeObjectType.VIDEO,
-	IeObjectType.VIDEO_FRAGMENT,
+export const IE_OBJECT_AV_TYPES: Readonly<HetArchiefIeObjectType[]> = [
+	HetArchiefIeObjectType.AUDIO,
+	HetArchiefIeObjectType.AUDIO_FRAGMENT,
+	HetArchiefIeObjectType.FILM,
+	HetArchiefIeObjectType.VIDEO,
+	HetArchiefIeObjectType.VIDEO_FRAGMENT,
 ];
 
 // Mirrors FLOWPLAYER_VIDEO_FORMATS/FLOWPLAYER_AUDIO_FORMATS/JSON_FORMATS in the hetarchief-client
@@ -42,25 +44,25 @@ export const JSON_FORMATS: Readonly<string[]> = ['application/json'];
 // Mirrors IMAGE_API_FORMATS in the hetarchief-client repo (src/modules/ie-objects/ie-objects.consts.tsx)
 export const IMAGE_API_FORMATS: Readonly<string[]> = ['image/jph', 'image/jp2'];
 
-export const IE_OBJECT_INTRA_CP_LICENSES: Readonly<IeObjectLicense[]> = [
-	IeObjectLicense.INTRA_CP_CONTENT,
-	IeObjectLicense.INTRA_CP_METADATA_ALL,
-	IeObjectLicense.INTRA_CP_METADATA_LTD,
+export const IE_OBJECT_INTRA_CP_LICENSES: Readonly<HetArchiefIeObjectLicense[]> = [
+	HetArchiefIeObjectLicense.INTRA_CP_CONTENT,
+	HetArchiefIeObjectLicense.INTRA_CP_METADATA_ALL,
+	HetArchiefIeObjectLicense.INTRA_CP_METADATA_LTD,
 ];
 
-export const IE_OBJECT_PUBLIC_LICENSES: Readonly<IeObjectLicense[]> = [
-	IeObjectLicense.PUBLIEK_METADATA_LTD,
-	IeObjectLicense.PUBLIEK_METADATA_ALL,
-	IeObjectLicense.PUBLIEK_CONTENT,
+export const IE_OBJECT_PUBLIC_LICENSES: Readonly<HetArchiefIeObjectLicense[]> = [
+	HetArchiefIeObjectLicense.PUBLIEK_METADATA_LTD,
+	HetArchiefIeObjectLicense.PUBLIEK_METADATA_ALL,
+	HetArchiefIeObjectLicense.PUBLIEK_CONTENT,
 ];
 
-export const IE_OBJECT_VISITOR_LICENSES: Readonly<IeObjectLicense[]> = [
-	IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
-	IeObjectLicense.BEZOEKERTOOL_CONTENT,
+export const IE_OBJECT_VISITOR_LICENSES: Readonly<HetArchiefIeObjectLicense[]> = [
+	HetArchiefIeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
+	HetArchiefIeObjectLicense.BEZOEKERTOOL_CONTENT,
 ];
 
 export const IE_OBJECT_LICENSES_BY_USER_GROUP: Readonly<
-	Record<string, Readonly<IeObjectLicense[]>>
+	Record<string, Readonly<HetArchiefIeObjectLicense[]>>
 > = {
 	[IeObjectExtraUserGroupType.ANONYMOUS]: [...IE_OBJECT_PUBLIC_LICENSES],
 	[GroupId.VISITOR]: [...IE_OBJECT_PUBLIC_LICENSES],
@@ -70,62 +72,62 @@ export const IE_OBJECT_LICENSES_BY_USER_GROUP: Readonly<
 };
 
 export const IE_OBJECT_METADATA_SET_BY_LICENSE: Readonly<
-	Record<IeObjectLicense, Readonly<IeObjectMetadataSet> | null>
+	Record<HetArchiefIeObjectLicense, Readonly<IeObjectMetadataSet> | null>
 > = {
-	[IeObjectLicense.PUBLIEK_METADATA_LTD]: IeObjectMetadataSet.METADATA_LTD,
-	[IeObjectLicense.PUBLIEK_METADATA_ALL]: IeObjectMetadataSet.METADATA_ALL,
-	[IeObjectLicense.PUBLIEK_CONTENT]: IeObjectMetadataSet.METADATA_ALL_WITH_ESSENCE,
-	[IeObjectLicense.BEZOEKERTOOL_METADATA_ALL]: IeObjectMetadataSet.METADATA_ALL,
-	[IeObjectLicense.BEZOEKERTOOL_CONTENT]: IeObjectMetadataSet.METADATA_ALL_WITH_ESSENCE,
-	[IeObjectLicense.INTRA_CP_METADATA_ALL]: IeObjectMetadataSet.METADATA_ALL,
-	[IeObjectLicense.INTRA_CP_CONTENT]: IeObjectMetadataSet.METADATA_ALL_WITH_ESSENCE,
-	[IeObjectLicense.INTRA_CP_METADATA_LTD]: IeObjectMetadataSet.METADATA_LTD,
+	[HetArchiefIeObjectLicense.PUBLIEK_METADATA_LTD]: IeObjectMetadataSet.METADATA_LTD,
+	[HetArchiefIeObjectLicense.PUBLIEK_METADATA_ALL]: IeObjectMetadataSet.METADATA_ALL,
+	[HetArchiefIeObjectLicense.PUBLIEK_CONTENT]: IeObjectMetadataSet.METADATA_ALL_WITH_ESSENCE,
+	[HetArchiefIeObjectLicense.BEZOEKERTOOL_METADATA_ALL]: IeObjectMetadataSet.METADATA_ALL,
+	[HetArchiefIeObjectLicense.BEZOEKERTOOL_CONTENT]: IeObjectMetadataSet.METADATA_ALL_WITH_ESSENCE,
+	[HetArchiefIeObjectLicense.INTRA_CP_METADATA_ALL]: IeObjectMetadataSet.METADATA_ALL,
+	[HetArchiefIeObjectLicense.INTRA_CP_CONTENT]: IeObjectMetadataSet.METADATA_ALL_WITH_ESSENCE,
+	[HetArchiefIeObjectLicense.INTRA_CP_METADATA_LTD]: IeObjectMetadataSet.METADATA_LTD,
 
-	[IeObjectLicense.COPYRIGHT_UNDETERMINED]: IeObjectMetadataSet.EMPTY,
-	[IeObjectLicense.PUBLIC_DOMAIN]: IeObjectMetadataSet.EMPTY,
+	[HetArchiefIeObjectLicense.COPYRIGHT_UNDETERMINED]: IeObjectMetadataSet.EMPTY,
+	[HetArchiefIeObjectLicense.PUBLIC_DOMAIN]: IeObjectMetadataSet.EMPTY,
 };
 
 export const IE_OBJECT_METADATA_SET_BY_OBJECT_AND_USER_SECTOR: Readonly<
-	Record<IeObjectSector, Readonly<IeObjectSectorLicenseMatrix>>
+	Record<HetArchiefIeObjectSector, Readonly<IeObjectSectorLicenseMatrix>>
 > = {
 	// user sector => object sector => accessible licenses
-	[IeObjectSector.CULTURE]: {
-		[IeObjectSector.CULTURE]: IE_OBJECT_INTRA_CP_LICENSES,
-		[IeObjectSector.GOVERNMENT]: IE_OBJECT_INTRA_CP_LICENSES,
-		[IeObjectSector.REGIONAL]: IE_OBJECT_INTRA_CP_LICENSES,
-		[IeObjectSector.PUBLIC]: IE_OBJECT_INTRA_CP_LICENSES,
-		[IeObjectSector.RURAL]: IE_OBJECT_INTRA_CP_LICENSES,
+	[HetArchiefIeObjectSector.CULTURE]: {
+		[HetArchiefIeObjectSector.CULTURE]: IE_OBJECT_INTRA_CP_LICENSES,
+		[HetArchiefIeObjectSector.GOVERNMENT]: IE_OBJECT_INTRA_CP_LICENSES,
+		[HetArchiefIeObjectSector.REGIONAL]: IE_OBJECT_INTRA_CP_LICENSES,
+		[HetArchiefIeObjectSector.PUBLIC]: IE_OBJECT_INTRA_CP_LICENSES,
+		[HetArchiefIeObjectSector.RURAL]: IE_OBJECT_INTRA_CP_LICENSES,
 	},
-	[IeObjectSector.GOVERNMENT]: {
-		[IeObjectSector.CULTURE]: IE_OBJECT_INTRA_CP_LICENSES,
-		[IeObjectSector.GOVERNMENT]: IE_OBJECT_INTRA_CP_LICENSES,
-		[IeObjectSector.REGIONAL]: IE_OBJECT_INTRA_CP_LICENSES,
-		[IeObjectSector.PUBLIC]: IE_OBJECT_INTRA_CP_LICENSES,
-		[IeObjectSector.RURAL]: IE_OBJECT_INTRA_CP_LICENSES,
+	[HetArchiefIeObjectSector.GOVERNMENT]: {
+		[HetArchiefIeObjectSector.CULTURE]: IE_OBJECT_INTRA_CP_LICENSES,
+		[HetArchiefIeObjectSector.GOVERNMENT]: IE_OBJECT_INTRA_CP_LICENSES,
+		[HetArchiefIeObjectSector.REGIONAL]: IE_OBJECT_INTRA_CP_LICENSES,
+		[HetArchiefIeObjectSector.PUBLIC]: IE_OBJECT_INTRA_CP_LICENSES,
+		[HetArchiefIeObjectSector.RURAL]: IE_OBJECT_INTRA_CP_LICENSES,
 	},
-	[IeObjectSector.REGIONAL]: {
-		[IeObjectSector.CULTURE]: IE_OBJECT_INTRA_CP_LICENSES,
-		[IeObjectSector.GOVERNMENT]: IE_OBJECT_INTRA_CP_LICENSES,
-		[IeObjectSector.REGIONAL]: IE_OBJECT_INTRA_CP_LICENSES,
-		[IeObjectSector.PUBLIC]: [
-			IeObjectLicense.INTRA_CP_METADATA_LTD,
-			IeObjectLicense.INTRA_CP_METADATA_ALL,
+	[HetArchiefIeObjectSector.REGIONAL]: {
+		[HetArchiefIeObjectSector.CULTURE]: IE_OBJECT_INTRA_CP_LICENSES,
+		[HetArchiefIeObjectSector.GOVERNMENT]: IE_OBJECT_INTRA_CP_LICENSES,
+		[HetArchiefIeObjectSector.REGIONAL]: IE_OBJECT_INTRA_CP_LICENSES,
+		[HetArchiefIeObjectSector.PUBLIC]: [
+			HetArchiefIeObjectLicense.INTRA_CP_METADATA_LTD,
+			HetArchiefIeObjectLicense.INTRA_CP_METADATA_ALL,
 		],
-		[IeObjectSector.RURAL]: [IeObjectLicense.INTRA_CP_METADATA_LTD],
+		[HetArchiefIeObjectSector.RURAL]: [HetArchiefIeObjectLicense.INTRA_CP_METADATA_LTD],
 	},
-	[IeObjectSector.PUBLIC]: {
-		[IeObjectSector.CULTURE]: IE_OBJECT_INTRA_CP_LICENSES,
-		[IeObjectSector.GOVERNMENT]: IE_OBJECT_INTRA_CP_LICENSES,
-		[IeObjectSector.REGIONAL]: IE_OBJECT_INTRA_CP_LICENSES,
-		[IeObjectSector.PUBLIC]: IE_OBJECT_INTRA_CP_LICENSES,
-		[IeObjectSector.RURAL]: [IeObjectLicense.INTRA_CP_METADATA_LTD],
+	[HetArchiefIeObjectSector.PUBLIC]: {
+		[HetArchiefIeObjectSector.CULTURE]: IE_OBJECT_INTRA_CP_LICENSES,
+		[HetArchiefIeObjectSector.GOVERNMENT]: IE_OBJECT_INTRA_CP_LICENSES,
+		[HetArchiefIeObjectSector.REGIONAL]: IE_OBJECT_INTRA_CP_LICENSES,
+		[HetArchiefIeObjectSector.PUBLIC]: IE_OBJECT_INTRA_CP_LICENSES,
+		[HetArchiefIeObjectSector.RURAL]: [HetArchiefIeObjectLicense.INTRA_CP_METADATA_LTD],
 	},
-	[IeObjectSector.RURAL]: {
-		[IeObjectSector.CULTURE]: IE_OBJECT_INTRA_CP_LICENSES,
-		[IeObjectSector.GOVERNMENT]: IE_OBJECT_INTRA_CP_LICENSES,
-		[IeObjectSector.REGIONAL]: IE_OBJECT_INTRA_CP_LICENSES,
-		[IeObjectSector.PUBLIC]: [IeObjectLicense.INTRA_CP_METADATA_LTD],
-		[IeObjectSector.RURAL]: [IeObjectLicense.INTRA_CP_METADATA_LTD],
+	[HetArchiefIeObjectSector.RURAL]: {
+		[HetArchiefIeObjectSector.CULTURE]: IE_OBJECT_INTRA_CP_LICENSES,
+		[HetArchiefIeObjectSector.GOVERNMENT]: IE_OBJECT_INTRA_CP_LICENSES,
+		[HetArchiefIeObjectSector.REGIONAL]: IE_OBJECT_INTRA_CP_LICENSES,
+		[HetArchiefIeObjectSector.PUBLIC]: [HetArchiefIeObjectLicense.INTRA_CP_METADATA_LTD],
+		[HetArchiefIeObjectSector.RURAL]: [HetArchiefIeObjectLicense.INTRA_CP_METADATA_LTD],
 	},
 };
 

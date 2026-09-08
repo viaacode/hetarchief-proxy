@@ -1,4 +1,4 @@
-import { convertUserInfoToCommonUser, DataService, UserInfoType } from '@meemoo/admin-core-api';
+import { DataService, UserInfoType, convertUserInfoToCommonUser } from '@meemoo/admin-core-api';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import {
 	AvoAuthIdpType,
@@ -7,16 +7,20 @@ import {
 	PermissionName,
 } from '@viaa/avo2-types';
 
+import { type HetArchiefIeObjectSector } from '@viaa/avo2-types';
 import {
+	FindProfileLanguagesByIdsDocument,
+	type FindProfileLanguagesByIdsQuery,
+	type FindProfileLanguagesByIdsQueryVariables,
 	GetUserByEmailDocument,
 	type GetUserByEmailQuery,
 	type GetUserByEmailQueryVariables,
 	GetUserByIdDocument,
+	type GetUserByIdQuery,
+	type GetUserByIdQueryVariables,
 	GetUserByIdentityIdDocument,
 	type GetUserByIdentityIdQuery,
 	type GetUserByIdentityIdQueryVariables,
-	type GetUserByIdQuery,
-	type GetUserByIdQueryVariables,
 	InsertUserDocument,
 	InsertUserIdentityDocument,
 	type InsertUserIdentityMutation,
@@ -35,7 +39,6 @@ import {
 	type UpdateUserProfileMutationVariables,
 	Users_Profile_Set_Input,
 } from '~generated/graphql-db-types-hetarchief';
-import type { IeObjectSector } from '~modules/ie-objects/ie-objects.types';
 import { getOrganisationAddress } from '~modules/organisations/helpers/get-organisation-address';
 import { customError } from '~shared/helpers/custom-error';
 import type { UpdateResponse } from '~shared/types/types';
@@ -86,7 +89,8 @@ export class UsersService {
 				...adaptedUser,
 				organisationId: graphQlUser?.organisation?.org_identifier || null,
 				organisationName: graphQlUser?.organisation?.skos_pref_label || null,
-				sector: (graphQlUser?.organisation?.ha_org_sector || null) as IeObjectSector | null,
+				sector: (graphQlUser?.organisation?.ha_org_sector ||
+					null) as HetArchiefIeObjectSector | null,
 				organisationAddress: orgAddress?.schema_street_address || null,
 				organisationPostalCode: orgAddress?.schema_postal_code || null,
 				organisationLocality: orgAddress?.schema_address_locality || null,
@@ -264,6 +268,46 @@ export class UsersService {
 		}
 
 		return this.adapt(updatedUser?.returning[0]);
+	}
+
+	/**
+	 * Resolve the language for a batch of profile ids in one query, eg: used by the material
+	 * request unread messages digest to render notification text in each recipient's own language.
+	 * Every requested id is guaranteed an entry, defaulted to Dutch when the profile has no language
+	 * set or the query fails entirely - the digest job is fire-and-forget for all recipients at once,
+	 * so a failure here should not stop every user's notification from being sent for lack of a
+	 * confirmed locale.
+	 */
+	public async findLanguagesByProfileIds(
+		profileIds: string[]
+	): Promise<Record<string, Lookup_Languages_Enum>> {
+		if (profileIds.length === 0) {
+			return {};
+		}
+
+		try {
+			const response = await this.dataService.execute<
+				FindProfileLanguagesByIdsQuery,
+				FindProfileLanguagesByIdsQueryVariables
+			>(FindProfileLanguagesByIdsDocument, { ids: profileIds });
+
+			const languageByProfileId = new Map(
+				response.users_profile.map((profile) => [profile.id, profile.language])
+			);
+
+			return Object.fromEntries(
+				profileIds.map((profileId) => [
+					profileId,
+					languageByProfileId.get(profileId) || Lookup_Languages_Enum.Nl,
+				])
+			);
+		} catch (err) {
+			const error = customError('Failed to find languages by profile ids', err, { profileIds });
+			this.logger.error(error);
+			return Object.fromEntries(
+				profileIds.map((profileId) => [profileId, Lookup_Languages_Enum.Nl])
+			);
+		}
 	}
 
 	public async updateLastAccessDate(id: string): Promise<UpdateResponse> {
