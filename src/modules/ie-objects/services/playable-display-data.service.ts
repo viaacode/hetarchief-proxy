@@ -8,13 +8,21 @@ import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/help
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { AvoStillsStillInfo } from '@viaa/avo2-types';
 import { mapLimit } from 'blend-promise-utils';
 import type { Cache } from 'cache-manager';
 import { hoursToSeconds } from 'date-fns';
 import { Request } from 'express';
 import { compact, isNil } from 'lodash';
 
+import {
+	AvoStillsStillInfo,
+	type HetArchiefIeObject,
+	HetArchiefIeObjectLicense,
+	type HetArchiefIeObjectSector,
+	HetArchiefIeObjectType,
+	type HetArchiefPlayableDisplayIeObject,
+	HetArchiefSimpleIeObjectType,
+} from '@viaa/avo2-types';
 import type { Configuration } from '~config';
 import {
 	GetIeObjectPlayableDisplayDataDocument,
@@ -33,12 +41,7 @@ import {
 	JSON_FORMATS,
 } from '~modules/ie-objects/ie-objects.conts';
 import {
-	type IeObject,
 	type IeObjectForAccessCheck,
-	IeObjectLicense,
-	type IeObjectPlayableDisplayData,
-	type IeObjectSector,
-	IeObjectType,
 	type IeObjectsVisitorSpaceInfo,
 	type JsonWaveformData,
 } from '~modules/ie-objects/ie-objects.types';
@@ -56,10 +59,10 @@ import { formattedDurationToSeconds } from '~shared/helpers/formatted-duration-t
 
 interface PlayableDisplayAccess {
 	dbResponse: GetIeObjectPlayableDisplayDataQuery;
-	limitedObject: Partial<IeObject>;
-	dctermsFormat: IeObjectType;
+	limitedObject: Partial<HetArchiefIeObject>;
+	dctermsFormat: HetArchiefIeObjectType;
 	isPublicDomain: boolean;
-	hasEssenceAccess: boolean;
+	hasAccessToEssence: boolean;
 }
 
 interface AudioVideoFileData {
@@ -105,7 +108,7 @@ export class PlayableDisplayDataService {
 		referer: string,
 		ip: string,
 		request: Request
-	): Promise<(IeObjectPlayableDisplayData | null)[]> {
+	): Promise<(HetArchiefPlayableDisplayIeObject | null)[]> {
 		const visitorSpaceAccessInfo =
 			await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
 
@@ -132,24 +135,29 @@ export class PlayableDisplayDataService {
 				schemaIdentifier: string;
 				start?: number;
 				end?: number;
-			}): Promise<IeObjectPlayableDisplayData | null> => {
+			}): Promise<HetArchiefPlayableDisplayIeObject | null> => {
 				try {
 					const access = await resolveAccessOnce(item.schemaIdentifier);
 					if (!access) {
 						return null;
 					}
-					const { dbResponse, limitedObject, dctermsFormat, isPublicDomain, hasEssenceAccess } =
+					const { dbResponse, limitedObject, dctermsFormat, isPublicDomain, hasAccessToEssence } =
 						access;
 
 					const isAudioVideoObject = IE_OBJECT_AV_TYPES.includes(dctermsFormat);
-					const isAudio = mapDcTermsFormatToSimpleType(dctermsFormat) === IeObjectType.AUDIO;
-					let thumbnailUrl: string | null = null;
+					const isAudio =
+						mapDcTermsFormatToSimpleType(dctermsFormat) === HetArchiefSimpleIeObjectType.AUDIO;
+					// Only stand in the waveform for an audio object the user may actually hear: it is a
+					// display substitute for the ugly speaker thumbnail, not something to show for an object
+					// whose essence is out of reach.
+					let thumbnailUrl: string | null =
+						isAudio && hasAccessToEssence ? AUDIO_WAVE_FORM_URL : null;
 					let playableUrl: string | null = null;
 					let mimeType: string | null = null;
 					let peakFileData: number[] | null = null;
 					let newspaperImage: string | null = null;
 
-					if (hasEssenceAccess) {
+					if (hasAccessToEssence) {
 						thumbnailUrl = isAudio ? AUDIO_WAVE_FORM_URL : null; // avoid the ugly speaker
 
 						// Essence access was granted: look up the first playable file, same
@@ -211,6 +219,7 @@ export class PlayableDisplayDataService {
 						schemaIdentifier: limitedObject.schemaIdentifier,
 						name: limitedObject.name,
 						thumbnailUrl,
+						hasAccessToEssence,
 						dctermsFormat: limitedObject.dctermsFormat,
 						maintainerId: limitedObject.maintainerId,
 						maintainerSlug: limitedObject.maintainerSlug,
@@ -490,9 +499,8 @@ export class PlayableDisplayDataService {
 
 	/**
 	 * Resolves an ie-object's playable-display-data db response and applies the license-based
-	 * access check. `pages` is only ever picked when the license grants the essence metadata set,
-	 * regardless of whether it holds real data - its mere presence on the limited object tells us
-	 * if essence access was granted, without needing to look up representations first.
+	 * access check. The censor reports essence access directly as `hasAccessToEssence`, so no
+	 * representations need to be looked up first.
 	 */
 	private async resolvePlayableDisplayAccess(
 		schemaIdentifier: string,
@@ -514,19 +522,19 @@ export class PlayableDisplayDataService {
 
 		const licenses = compact(
 			dbResponse.schemaLicense?.map((license) => license.schema_license)
-		) as IeObjectLicense[];
-		const dctermsFormat = ie.dctermsFormat?.[0]?.dcterms_format as IeObjectType;
+		) as HetArchiefIeObjectLicense[];
+		const dctermsFormat = ie.dctermsFormat?.[0]?.dcterms_format as HetArchiefIeObjectType;
 		const schemaMaintainer = ie.schemaMaintainer;
 		const isPublicDomain: boolean =
-			licenses.includes(IeObjectLicense.PUBLIEK_CONTENT) &&
-			licenses.includes(IeObjectLicense.PUBLIC_DOMAIN);
+			licenses.includes(HetArchiefIeObjectLicense.PUBLIEK_CONTENT) &&
+			licenses.includes(HetArchiefIeObjectLicense.PUBLIC_DOMAIN);
 
 		const limitedObject = limitAccessToObjectDetails(
 			{
 				schemaIdentifier: ie.schema_identifier,
 				licenses,
 				maintainerId: schemaMaintainer?.org_identifier,
-				sector: schemaMaintainer?.ha_org_sector as IeObjectSector,
+				sector: schemaMaintainer?.ha_org_sector as HetArchiefIeObjectSector,
 				name: ie.schema_name,
 				dctermsFormat,
 				maintainerSlug: schemaMaintainer?.organizationSlug?.slug,
@@ -539,7 +547,6 @@ export class PlayableDisplayDataService {
 					(pref) => pref.ha_pref === OrganisationPreference.logoEmbedding
 				),
 				thumbnailUrl: dbResponse.schemaThumbnailUrl?.[0]?.schema_thumbnail_url?.[0],
-				pages: [],
 			} as IeObjectForAccessCheck,
 			{
 				userId: user?.getId(),
@@ -562,7 +569,7 @@ export class PlayableDisplayDataService {
 			limitedObject,
 			dctermsFormat,
 			isPublicDomain,
-			hasEssenceAccess: 'pages' in limitedObject,
+			hasAccessToEssence: !!limitedObject.hasAccessToEssence,
 		};
 	}
 

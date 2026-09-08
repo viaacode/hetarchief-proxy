@@ -8,16 +8,13 @@ import { BadRequestException, ForbiddenException, NotFoundException } from '@nes
 import { ConfigService } from '@nestjs/config';
 import { Test, type TestingModule } from '@nestjs/testing';
 import type { IPagination } from '@studiohyperdrive/pagination';
+import type { HetArchiefRelatedIeObject } from '@viaa/avo2-types';
 import type { Request, Response } from 'express';
 import { cloneDeep } from 'lodash';
 import { type MockInstance, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import {
-	type IeObject,
-	IeObjectLicense,
-	IeObjectType,
-	type RelatedIeObject,
-} from '../ie-objects.types';
+import { HetArchiefIeObjectLicense, HetArchiefIeObjectType } from '@viaa/avo2-types';
+import { type IeObject } from '../ie-objects.types';
 import {
 	mockIeObject1,
 	mockIeObjectWithMetadataSetALL,
@@ -201,7 +198,7 @@ describe('IeObjectsController', () => {
 		it('should return a playable url', async () => {
 			vi.spyOn(ieObjectsController, 'getIeObjectsByIds').mockResolvedValueOnce([
 				{
-					dctermsFormat: IeObjectType.VIDEO,
+					dctermsFormat: HetArchiefIeObjectType.VIDEO,
 					pages: [
 						{
 							pageNumber: 1,
@@ -244,7 +241,7 @@ describe('IeObjectsController', () => {
 		it('should reject playable urls when the file is not part of the object', async () => {
 			vi.spyOn(ieObjectsController, 'getIeObjectsByIds').mockResolvedValueOnce([
 				{
-					dctermsFormat: IeObjectType.VIDEO,
+					dctermsFormat: HetArchiefIeObjectType.VIDEO,
 					pages: [
 						{
 							pageNumber: 1,
@@ -309,7 +306,7 @@ describe('IeObjectsController', () => {
 				};
 				vi.spyOn(ieObjectsController, 'getIeObjectsByIds').mockResolvedValueOnce([
 					{
-						dctermsFormat: IeObjectType.VIDEO,
+						dctermsFormat: HetArchiefIeObjectType.VIDEO,
 						pages: [{ pageNumber: 1, representations: [{ files: [file] }] }],
 					},
 				] as Partial<IeObject>[]);
@@ -419,7 +416,7 @@ describe('IeObjectsController', () => {
 		it('should reject ticket-service requests for AV files', async () => {
 			vi.spyOn(ieObjectsController, 'getIeObjectsByIds').mockResolvedValueOnce([
 				{
-					dctermsFormat: IeObjectType.VIDEO,
+					dctermsFormat: HetArchiefIeObjectType.VIDEO,
 					pages: [
 						{
 							pageNumber: 1,
@@ -452,7 +449,7 @@ describe('IeObjectsController', () => {
 		it('should return ticket-service tokens for newspaper image files', async () => {
 			vi.spyOn(ieObjectsController, 'getIeObjectsByIds').mockResolvedValueOnce([
 				{
-					dctermsFormat: IeObjectType.NEWSPAPER,
+					dctermsFormat: HetArchiefIeObjectType.NEWSPAPER,
 					pages: [
 						{
 							pageNumber: 1,
@@ -498,7 +495,7 @@ describe('IeObjectsController', () => {
 		it('should return a ie object item by id', async () => {
 			const mockResponse = {
 				...mockIeObject1,
-				license: [IeObjectLicense.BEZOEKERTOOL_CONTENT],
+				license: [HetArchiefIeObjectLicense.BEZOEKERTOOL_CONTENT],
 			};
 			mockIeObjectsService.findByIeObjectId.mockResolvedValueOnce(mockResponse);
 
@@ -563,7 +560,7 @@ describe('IeObjectsController', () => {
 		it('should return limited metadata if the user no longer has access', async () => {
 			const mockResponse = {
 				...mockIeObject1,
-				license: [IeObjectLicense.BEZOEKERTOOL_METADATA_ALL],
+				license: [HetArchiefIeObjectLicense.BEZOEKERTOOL_METADATA_ALL],
 				representations: [{ name: 'test' }],
 			};
 			mockIeObjectsService.findByIeObjectId.mockResolvedValueOnce(mockResponse);
@@ -587,7 +584,7 @@ describe('IeObjectsController', () => {
 		it('should return full metadata without essence if the object has no content license', async () => {
 			const mockResponse = {
 				...mockIeObject1,
-				license: [IeObjectLicense.BEZOEKERTOOL_METADATA_ALL],
+				license: [HetArchiefIeObjectLicense.BEZOEKERTOOL_METADATA_ALL],
 				representations: [{ name: 'test' }],
 			};
 			mockIeObjectsService.findByIeObjectId.mockResolvedValueOnce(mockResponse);
@@ -634,7 +631,7 @@ describe('IeObjectsController', () => {
 		it('should return the ieObjectSeo when object has license: PUBLIEK_METADATA_LTD', async () => {
 			const mockResponse = {
 				...mockIeObject1,
-				licenses: [IeObjectLicense.PUBLIEK_METADATA_LTD],
+				licenses: [HetArchiefIeObjectLicense.PUBLIEK_METADATA_LTD],
 			};
 			mockIeObjectsService.findByIeObjectId.mockResolvedValueOnce(mockResponse);
 
@@ -654,7 +651,7 @@ describe('IeObjectsController', () => {
 		it('should return the ieObjectSeo when object has license: PUBLIEK_METADATA_ALL', async () => {
 			const mockResponse = {
 				...mockIeObject1,
-				licenses: [IeObjectLicense.PUBLIEK_METADATA_ALL],
+				licenses: [HetArchiefIeObjectLicense.PUBLIEK_METADATA_ALL],
 			};
 			mockIeObjectsService.findByIeObjectId.mockResolvedValueOnce(mockResponse);
 
@@ -674,7 +671,10 @@ describe('IeObjectsController', () => {
 		it('should return the ieObjectSeo with thumbnail when object has license: PUBLIEK_CONTENT and PUBLIC_DOMAIN', async () => {
 			const mockResponse = {
 				...mockIeObject1,
-				licenses: [IeObjectLicense.PUBLIEK_CONTENT, IeObjectLicense.PUBLIC_DOMAIN],
+				licenses: [
+					HetArchiefIeObjectLicense.PUBLIEK_CONTENT,
+					HetArchiefIeObjectLicense.PUBLIC_DOMAIN,
+				],
 			};
 			mockIeObjectsService.findByIeObjectId.mockResolvedValue(mockResponse);
 
@@ -694,7 +694,7 @@ describe('IeObjectsController', () => {
 		it('should return name = null when object has no valid licence', async () => {
 			const mockResponse = {
 				...mockIeObject1,
-				licenses: [IeObjectLicense.BEZOEKERTOOL_CONTENT],
+				licenses: [HetArchiefIeObjectLicense.BEZOEKERTOOL_CONTENT],
 			};
 			mockIeObjectsService.findByIeObjectId.mockResolvedValueOnce(mockResponse);
 
@@ -766,7 +766,7 @@ describe('IeObjectsController', () => {
 					schemaIdentifier: '1111111111',
 					iri: 'https://data-int.hetarchief.be/id/entity/1111111111',
 					maintainerId: 'OR-test',
-					licenses: [IeObjectLicense.PUBLIEK_METADATA_ALL],
+					licenses: [HetArchiefIeObjectLicense.PUBLIEK_METADATA_ALL],
 				},
 				{
 					...mockIeObjectWithMetadataSetALLWithEssence,
@@ -774,9 +774,9 @@ describe('IeObjectsController', () => {
 					iri: 'https://data-int.hetarchief.be/id/entity/2222222222',
 					premisIsPartOf: 'https://data-int.hetarchief.be/id/entity/99999999',
 					maintainerId: 'OR-test',
-					licenses: [IeObjectLicense.PUBLIEK_METADATA_ALL],
+					licenses: [HetArchiefIeObjectLicense.PUBLIEK_METADATA_ALL],
 				},
-			] as RelatedIeObject[];
+			] as HetArchiefRelatedIeObject[];
 			mockIeObjectsService.getParentIeObject.mockResolvedValueOnce(null);
 			mockIeObjectsService.getChildIeObjects.mockResolvedValueOnce(mockResponse);
 			mockIeObjectsService.getVisitorSpaceAccessInfoFromUser.mockResolvedValueOnce({
@@ -805,8 +805,8 @@ describe('IeObjectsController', () => {
 				iri: 'https://data-int.hetarchief.be/id/entity/9999999999',
 				premisIsPartOf: null,
 				maintainerId: 'OR-test',
-				licenses: [IeObjectLicense.PUBLIEK_METADATA_ALL],
-			} as RelatedIeObject;
+				licenses: [HetArchiefIeObjectLicense.PUBLIEK_METADATA_ALL],
+			} as HetArchiefRelatedIeObject;
 			mockIeObjectsService.getParentIeObject.mockResolvedValueOnce(mockResponse);
 			mockIeObjectsService.getChildIeObjects.mockResolvedValueOnce([]);
 			mockIeObjectsService.getVisitorSpaceAccessInfoFromUser.mockResolvedValueOnce({

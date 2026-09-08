@@ -14,6 +14,7 @@ import type {
 	GqlUpdateFolder,
 } from '../types';
 
+import { type HetArchiefIeObjectSector, type HetArchiefIeObjectType } from '@viaa/avo2-types';
 import {
 	FindFolderByIdDocument,
 	type FindFolderByIdQuery,
@@ -45,7 +46,7 @@ import {
 	type Users_Folder_Ie_Bool_Exp,
 } from '~generated/graphql-db-types-hetarchief';
 import { FolderObjectsQueryDto } from '~modules/folders/dto/folders.dto';
-import type { IeObject, IeObjectSector, IeObjectType } from '~modules/ie-objects/ie-objects.types';
+import type { IeObject } from '~modules/ie-objects/ie-objects.types';
 
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 
@@ -87,9 +88,9 @@ export class FoldersService {
 			maintainerId: gqlIeObject?.schemaMaintainer?.org_identifier,
 			maintainerName: gqlIeObject?.schemaMaintainer?.skos_pref_label,
 			maintainerSlug: gqlIeObject?.schemaMaintainer?.organizationSlug?.slug,
-			sector: (gqlIeObject?.schemaMaintainer?.ha_org_sector as IeObjectSector) || null,
+			sector: (gqlIeObject?.schemaMaintainer?.ha_org_sector as HetArchiefIeObjectSector) || null,
 			description: gqlIeObject?.schema_description,
-			dctermsFormat: gqlIeObject?.dctermsFormat?.[0]?.dcterms_format as IeObjectType,
+			dctermsFormat: gqlIeObject?.dctermsFormat?.[0]?.dcterms_format as HetArchiefIeObjectType,
 			dctermsAvailable: gqlIeObject?.dcterms_available,
 			meemooLocalId: gqlIeObject?.premisIdentifier?.[0]?.meemoo_local_id,
 			name: gqlIeObject?.schema_name,

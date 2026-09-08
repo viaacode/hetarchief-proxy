@@ -1,14 +1,14 @@
 import { AvoAuthIdpType, PermissionName } from '@viaa/avo2-types';
 
 import {
-	type IeObject,
-	IeObjectAccessThrough,
-	IeObjectLicense,
-	type IeObjectSector,
-	IeObjectType,
-	type IeObjectsSitemap,
-	IsPartOfKey,
-} from '../ie-objects.types';
+	type HetArchiefIeObject,
+	HetArchiefIeObjectAccessThrough,
+	HetArchiefIeObjectLicense,
+	type HetArchiefIeObjectSector,
+	HetArchiefIeObjectType,
+	HetArchiefIsPartOfKey,
+} from '@viaa/avo2-types';
+import { type IeObjectsSitemap } from '../ie-objects.types';
 
 import type {
 	FindAllIeObjectsByFolderIdQuery,
@@ -30,7 +30,7 @@ export const mockIeObjectRightsInfo = {
 	licenseDistributor: 'VRT',
 } as const;
 
-export const mockIeObject1: Readonly<IeObject> = {
+export const mockIeObject1: Readonly<HetArchiefIeObject> = {
 	schemaIdentifier: '8911p09j1g',
 	iri: 'https://data-int.hetarchief.be/id/entity/8911p09j1g',
 	premisIdentifier: [{ premisid: 'WP00178829' }],
@@ -72,13 +72,13 @@ export const mockIeObject1: Readonly<IeObject> = {
 		'KARAKTERVORMING',
 	],
 	genre: ['program'],
-	dctermsFormat: IeObjectType.VIDEO,
+	dctermsFormat: HetArchiefIeObjectType.VIDEO,
 	dctermsMedium: ['16mm'],
 	inLanguage: null,
 	thumbnailUrl:
 		'https://media.viaa.be/play/v2/VLAAMSPARLEMENT/49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c/keyframes-thumb/keyframes_1_1/keyframe1.jpg',
 	duration: '00:39:52',
-	licenses: [IeObjectLicense.PUBLIEK_METADATA_LTD],
+	licenses: [HetArchiefIeObjectLicense.PUBLIEK_METADATA_LTD],
 	meemooMediaObjectId: '49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c',
 	dateCreated: '[2020-09-01]',
 	meemooOriginalCp: null,
@@ -87,18 +87,18 @@ export const mockIeObject1: Readonly<IeObject> = {
 	ebucoreObjectType: null,
 	meemooDescriptionCast: null,
 	pages: [],
-	accessThrough: [IeObjectAccessThrough.PUBLIC_INFO],
+	accessThrough: [HetArchiefIeObjectAccessThrough.PUBLIC_INFO],
 	isPartOf: [
 		{
 			iri: 'https://data-int.hetarchief.be/id/entity/4f1mg9x363',
 			schemaIdentifier: '4f1mg9x363',
-			collectionType: IsPartOfKey.series,
+			collectionType: HetArchiefIsPartOfKey.series,
 			name: 'Serie1',
 		},
 		{
 			iri: 'https://data-int.hetarchief.be/id/entity/4f1mg9x363',
 			schemaIdentifier: '4f1mg9x363',
-			collectionType: IsPartOfKey.program,
+			collectionType: HetArchiefIsPartOfKey.program,
 			name: 'Programma1',
 		},
 	],
@@ -110,7 +110,8 @@ export const mockIeObject1: Readonly<IeObject> = {
 	alternativeTitle: null,
 };
 
-export const mockIeObjectWithMetadataSetLTD: Readonly<Partial<IeObject>> = {
+export const mockIeObjectWithMetadataSetLTD: Readonly<Partial<HetArchiefIeObject>> = {
+	hasAccessToEssence: false,
 	meemooOriginalCp: null,
 	schemaIdentifier: '8911p09j1g',
 	iri: 'https://data-int.hetarchief.be/id/entity/8911p09j1g',
@@ -124,7 +125,7 @@ export const mockIeObjectWithMetadataSetLTD: Readonly<Partial<IeObject>> = {
 	maintainerDescription:
 		'De Vlaamse Radio- en Televisieomroeporganisatie, afgekort VRT, is de Nederlandstalige openbare omroep voor radio en televisie in België.',
 	name: 'Durf te vragen R002 A0001',
-	dctermsFormat: IeObjectType.VIDEO,
+	dctermsFormat: HetArchiefIeObjectType.VIDEO,
 	dctermsMedium: ['16mm'],
 	duration: '00:39:52',
 	dateCreated: '[2020-09-01]',
@@ -146,19 +147,19 @@ export const mockIeObjectWithMetadataSetLTD: Readonly<Partial<IeObject>> = {
 		'KARAKTERVORMING',
 	],
 	inLanguage: null,
-	licenses: [IeObjectLicense.PUBLIEK_METADATA_LTD],
-	accessThrough: [IeObjectAccessThrough.VISITOR_SPACE_FOLDERS],
+	licenses: [HetArchiefIeObjectLicense.PUBLIEK_METADATA_LTD],
+	accessThrough: [HetArchiefIeObjectAccessThrough.VISITOR_SPACE_FOLDERS],
 	isPartOf: [
 		{
 			iri: 'https://data-int.hetarchief.be/id/entity/4f1mg9x363',
 			schemaIdentifier: '4f1mg9x363',
-			collectionType: IsPartOfKey.series,
+			collectionType: HetArchiefIsPartOfKey.series,
 			name: 'Serie1',
 		},
 		{
 			iri: 'https://data-int.hetarchief.be/id/entity/4f1mg9x363',
 			schemaIdentifier: '4f1mg9x363',
-			collectionType: IsPartOfKey.program,
+			collectionType: HetArchiefIsPartOfKey.program,
 			name: 'Programma1',
 		},
 	],
@@ -170,7 +171,8 @@ export const mockIeObjectWithMetadataSetLTD: Readonly<Partial<IeObject>> = {
 	temporal: null,
 };
 
-export const mockIeObjectWithMetadataSetALL: Readonly<Partial<IeObject>> = {
+export const mockIeObjectWithMetadataSetALL: Readonly<Partial<HetArchiefIeObject>> = {
+	hasAccessToEssence: false,
 	name: 'Durf te vragen R002 A0001',
 	meemooOriginalCp: null,
 	schemaIdentifier: '8911p09j1g',
@@ -188,17 +190,17 @@ export const mockIeObjectWithMetadataSetALL: Readonly<Partial<IeObject>> = {
 		{
 			iri: 'https://data-int.hetarchief.be/id/entity/4f1mg9x363',
 			schemaIdentifier: '4f1mg9x363',
-			collectionType: IsPartOfKey.series,
+			collectionType: HetArchiefIsPartOfKey.series,
 			name: 'Serie1',
 		},
 		{
 			iri: 'https://data-int.hetarchief.be/id/entity/4f1mg9x363',
 			schemaIdentifier: '4f1mg9x363',
-			collectionType: IsPartOfKey.program,
+			collectionType: HetArchiefIsPartOfKey.program,
 			name: 'Programma1',
 		},
 	],
-	dctermsFormat: IeObjectType.VIDEO,
+	dctermsFormat: HetArchiefIeObjectType.VIDEO,
 	dctermsMedium: ['16mm'],
 	duration: '00:39:52',
 	dateCreated: '[2020-09-01]',
@@ -224,12 +226,15 @@ export const mockIeObjectWithMetadataSetALL: Readonly<Partial<IeObject>> = {
 	],
 	inLanguage: null,
 	licenses: [
-		IeObjectLicense.PUBLIEK_METADATA_ALL,
-		IeObjectLicense.INTRA_CP_CONTENT,
-		IeObjectLicense.INTRA_CP_METADATA_ALL,
-		IeObjectLicense.INTRA_CP_METADATA_LTD,
+		HetArchiefIeObjectLicense.PUBLIEK_METADATA_ALL,
+		HetArchiefIeObjectLicense.INTRA_CP_CONTENT,
+		HetArchiefIeObjectLicense.INTRA_CP_METADATA_ALL,
+		HetArchiefIeObjectLicense.INTRA_CP_METADATA_LTD,
 	],
-	accessThrough: [IeObjectAccessThrough.SECTOR, IeObjectAccessThrough.PUBLIC_INFO],
+	accessThrough: [
+		HetArchiefIeObjectAccessThrough.SECTOR,
+		HetArchiefIeObjectAccessThrough.PUBLIC_INFO,
+	],
 	numberOfPages: null,
 	abrahamInfo: null,
 	spatial: null,
@@ -252,7 +257,8 @@ export const mockIeObjectWithMetadataSetALL: Readonly<Partial<IeObject>> = {
 	synopsis: null,
 };
 
-export const mockIeObjectWithMetadataSetALLWithEssence: Readonly<Partial<IeObject>> = {
+export const mockIeObjectWithMetadataSetALLWithEssence: Readonly<Partial<HetArchiefIeObject>> = {
+	hasAccessToEssence: true,
 	thumbnailUrl:
 		'https://media.viaa.be/play/v2/VLAAMSPARLEMENT/49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c/keyframes-thumb/keyframes_1_1/keyframe1.jpg',
 	pages: [],
@@ -272,7 +278,7 @@ export const mockIeObjectWithMetadataSetALLWithEssence: Readonly<Partial<IeObjec
 	maintainerDescription:
 		'De Vlaamse Radio- en Televisieomroeporganisatie, afgekort VRT, is de Nederlandstalige openbare omroep voor radio en televisie in België.',
 	name: 'Durf te vragen R002 A0001',
-	dctermsFormat: IeObjectType.VIDEO,
+	dctermsFormat: HetArchiefIeObjectType.VIDEO,
 	dctermsMedium: ['16mm'],
 	ebucoreObjectType: null,
 	duration: '00:39:52',
@@ -302,19 +308,19 @@ export const mockIeObjectWithMetadataSetALLWithEssence: Readonly<Partial<IeObjec
 	],
 	inLanguage: null,
 	publisher: null,
-	licenses: [IeObjectLicense.INTRA_CP_CONTENT],
-	accessThrough: [IeObjectAccessThrough.VISITOR_SPACE_FOLDERS],
+	licenses: [HetArchiefIeObjectLicense.INTRA_CP_CONTENT],
+	accessThrough: [HetArchiefIeObjectAccessThrough.VISITOR_SPACE_FOLDERS],
 	isPartOf: [
 		{
 			iri: 'https://data-int.hetarchief.be/id/entity/4f1mg9x363',
 			schemaIdentifier: '4f1mg9x363',
-			collectionType: IsPartOfKey.series,
+			collectionType: HetArchiefIsPartOfKey.series,
 			name: 'Serie1',
 		},
 		{
 			iri: 'https://data-int.hetarchief.be/id/entity/4f1mg9x363',
 			schemaIdentifier: '4f1mg9x363',
-			collectionType: IsPartOfKey.program,
+			collectionType: HetArchiefIsPartOfKey.program,
 			name: 'Programma1',
 		},
 	],
@@ -327,8 +333,9 @@ export const mockIeObjectWithMetadataSetALLWithEssence: Readonly<Partial<IeObjec
 	width: null,
 };
 
-export const mockIeObjectLimitedInFolder: Readonly<Partial<IeObject>> = {
-	accessThrough: [IeObjectAccessThrough.PUBLIC_INFO],
+export const mockIeObjectLimitedInFolder: Readonly<Partial<HetArchiefIeObject>> = {
+	hasAccessToEssence: false,
+	accessThrough: [HetArchiefIeObjectAccessThrough.PUBLIC_INFO],
 	name: 'Durf te vragen R002 A0001',
 	meemooOriginalCp: null,
 	schemaIdentifier: '8911p09j1g',
@@ -346,17 +353,17 @@ export const mockIeObjectLimitedInFolder: Readonly<Partial<IeObject>> = {
 		{
 			iri: 'https://data-int.hetarchief.be/id/entity/4f1mg9x363',
 			schemaIdentifier: '4f1mg9x363',
-			collectionType: IsPartOfKey.series,
+			collectionType: HetArchiefIsPartOfKey.series,
 			name: 'Serie1',
 		},
 		{
 			iri: 'https://data-int.hetarchief.be/id/entity/4f1mg9x363',
 			schemaIdentifier: '4f1mg9x363',
-			collectionType: IsPartOfKey.program,
+			collectionType: HetArchiefIsPartOfKey.program,
 			name: 'Programma1',
 		},
 	],
-	dctermsFormat: IeObjectType.VIDEO,
+	dctermsFormat: HetArchiefIeObjectType.VIDEO,
 	dctermsMedium: ['16mm'],
 	duration: '00:39:52',
 	dateCreated: '[2020-09-01]',
@@ -380,7 +387,7 @@ export const mockIeObjectLimitedInFolder: Readonly<Partial<IeObject>> = {
 		'KARAKTERVORMING',
 	],
 	inLanguage: null,
-	licenses: [IeObjectLicense.PUBLIEK_METADATA_LTD],
+	licenses: [HetArchiefIeObjectLicense.PUBLIEK_METADATA_LTD],
 	numberOfPages: null,
 	abrahamInfo: null,
 	spatial: null,
@@ -393,7 +400,7 @@ export const mockIeObjectLimitedInFolder: Readonly<Partial<IeObject>> = {
 	],
 };
 
-export const mockIeObjectDefaultLimitedMetadata: Readonly<Partial<IeObject>> = {
+export const mockIeObjectDefaultLimitedMetadata: Readonly<Partial<HetArchiefIeObject>> = {
 	name: 'Durf te vragen R002 A0001',
 	maintainerName: 'vrt',
 	maintainerId: 'OR-rf5kf25',
@@ -402,17 +409,17 @@ export const mockIeObjectDefaultLimitedMetadata: Readonly<Partial<IeObject>> = {
 		{
 			iri: 'https://data-int.hetarchief.be/id/entity/4f1mg9x363',
 			schemaIdentifier: '4f1mg9x363',
-			collectionType: IsPartOfKey.series,
+			collectionType: HetArchiefIsPartOfKey.series,
 			name: 'Serie1',
 		},
 		{
 			iri: 'https://data-int.hetarchief.be/id/entity/4f1mg9x363',
 			schemaIdentifier: '4f1mg9x363',
-			collectionType: IsPartOfKey.program,
+			collectionType: HetArchiefIsPartOfKey.program,
 			name: 'Programma1',
 		},
 	],
-	dctermsFormat: IeObjectType.VIDEO,
+	dctermsFormat: HetArchiefIeObjectType.VIDEO,
 	datePublished: '2020-09-01',
 	meemooLocalId: null,
 	providerPurl: null,
@@ -423,7 +430,7 @@ export const mockIeObjectDefaultLimitedMetadata: Readonly<Partial<IeObject>> = {
 	],
 	schemaIdentifier: '8911p09j1g',
 	iri: 'https://data-int.hetarchief.be/id/entity/8911p09j1g',
-	licenses: [IeObjectLicense.PUBLIEK_METADATA_LTD],
+	licenses: [HetArchiefIeObjectLicense.PUBLIEK_METADATA_LTD],
 };
 
 export const mockUser = Object.freeze({
@@ -445,7 +452,7 @@ export const mockUser = Object.freeze({
 export const mockUserInfo: Readonly<{
 	userId: string | null;
 	isKeyUser: boolean;
-	sector: IeObjectSector | null;
+	sector: HetArchiefIeObjectSector | null;
 	groupId: string;
 	maintainerId: string;
 	accessibleObjectIdsThroughFolders: string[];
@@ -873,13 +880,13 @@ export const mockGqlIeObjectFindByFolderId: FindAllIeObjectsByFolderIdQuery['use
 			],
 			schemaIsPartOf: [
 				{
-					type: IsPartOfKey.series,
+					type: HetArchiefIsPartOfKey.series,
 					collection: {
 						schema_name: 'WEB',
 					},
 				},
 				{
-					type: IsPartOfKey.archive,
+					type: HetArchiefIsPartOfKey.archive,
 					collection: {
 						schema_name: 'digitaal archief/videoproducties',
 					},
@@ -905,17 +912,17 @@ export const mockGqlIeObjectFindByFolderId: FindAllIeObjectsByFolderIdQuery['use
 		},
 	});
 
-export const mockGqlIeObjectFindByFolderIdResult: Readonly<Partial<IeObject>> = {
+export const mockGqlIeObjectFindByFolderIdResult: Readonly<Partial<HetArchiefIeObject>> = {
 	dateCreated: null,
 	datePublished: null,
-	dctermsFormat: IeObjectType.VIDEO,
+	dctermsFormat: HetArchiefIeObjectType.VIDEO,
 	isPartOf: [
 		{
-			collectionType: IsPartOfKey.series,
+			collectionType: HetArchiefIsPartOfKey.series,
 			name: 'WEB',
 		},
 		{
-			collectionType: IsPartOfKey.archive,
+			collectionType: HetArchiefIsPartOfKey.archive,
 			name: 'digitaal archief/videoproducties',
 		},
 	],

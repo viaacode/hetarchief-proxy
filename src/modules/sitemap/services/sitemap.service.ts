@@ -11,12 +11,13 @@ import xmlFormat from 'xml-formatter';
 
 import type { SitemapConfig, SitemapItemInfo } from '../sitemap.types';
 
+import { HetArchiefIeObjectLicense } from '@viaa/avo2-types';
 import {
 	GetSitemapConfigDocument,
 	type GetSitemapConfigQuery,
 	Lookup_App_Content_Type_Enum,
 } from '~generated/graphql-db-types-hetarchief';
-import { IeObjectLicense, type IeObjectsSitemap } from '~modules/ie-objects/ie-objects.types';
+import { type IeObjectsSitemap } from '~modules/ie-objects/ie-objects.types';
 
 import type { IPagination } from '@studiohyperdrive/pagination';
 import { AvoFileUploadAssetType, AvoSearchOrderDirection } from '@viaa/avo2-types';
@@ -141,13 +142,16 @@ export class SitemapService {
 
 		// Create sitemap files for all public ie_objects
 		const publicContentIeObjectXmlUrls = await this.createAndUploadIeObjectSitemapEntries(
-			[IeObjectLicense.PUBLIEK_CONTENT],
+			[HetArchiefIeObjectLicense.PUBLIEK_CONTENT],
 			sitemapConfig,
 			0,
 			'public objects'
 		);
 		const publicMetadataIeObjectXmlUrls = await this.createAndUploadIeObjectSitemapEntries(
-			[IeObjectLicense.PUBLIEK_METADATA_LTD, IeObjectLicense.PUBLIEK_METADATA_ALL],
+			[
+				HetArchiefIeObjectLicense.PUBLIEK_METADATA_LTD,
+				HetArchiefIeObjectLicense.PUBLIEK_METADATA_ALL,
+			],
 			sitemapConfig,
 			publicContentIeObjectXmlUrls.length,
 			'metadata objects'
@@ -240,7 +244,7 @@ export class SitemapService {
 	// Helpers
 	// ------------------------------------------------------------------------
 	private async createAndUploadIeObjectSitemapEntries(
-		licenses: IeObjectLicense[],
+		licenses: HetArchiefIeObjectLicense[],
 		sitemapConfig: SitemapConfig,
 		pageOffset: number,
 		label: 'public objects' | 'metadata objects'

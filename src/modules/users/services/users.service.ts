@@ -7,6 +7,7 @@ import {
 	PermissionName,
 } from '@viaa/avo2-types';
 
+import { type HetArchiefIeObjectSector } from '@viaa/avo2-types';
 import {
 	FindProfileLanguagesByIdsDocument,
 	type FindProfileLanguagesByIdsQuery,
@@ -38,7 +39,6 @@ import {
 	type UpdateUserProfileMutationVariables,
 	Users_Profile_Set_Input,
 } from '~generated/graphql-db-types-hetarchief';
-import type { IeObjectSector } from '~modules/ie-objects/ie-objects.types';
 import { getOrganisationAddress } from '~modules/organisations/helpers/get-organisation-address';
 import { customError } from '~shared/helpers/custom-error';
 import type { UpdateResponse } from '~shared/types/types';
@@ -89,7 +89,8 @@ export class UsersService {
 				...adaptedUser,
 				organisationId: graphQlUser?.organisation?.org_identifier || null,
 				organisationName: graphQlUser?.organisation?.skos_pref_label || null,
-				sector: (graphQlUser?.organisation?.ha_org_sector || null) as IeObjectSector | null,
+				sector: (graphQlUser?.organisation?.ha_org_sector ||
+					null) as HetArchiefIeObjectSector | null,
 				organisationAddress: orgAddress?.schema_street_address || null,
 				organisationPostalCode: orgAddress?.schema_postal_code || null,
 				organisationLocality: orgAddress?.schema_address_locality || null,

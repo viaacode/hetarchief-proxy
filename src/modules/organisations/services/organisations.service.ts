@@ -14,6 +14,7 @@ import {
 
 import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
+import { type HetArchiefIeObjectSector } from '@viaa/avo2-types';
 import { hoursToSeconds } from 'date-fns';
 import {
 	FindOrganisationSlugsDocument,
@@ -33,7 +34,6 @@ import {
 	UpdateOrganisationSlugMutation,
 	UpdateOrganisationSlugMutationVariables,
 } from '~generated/graphql-db-types-hetarchief';
-import type { IeObjectSector } from '~modules/ie-objects/ie-objects.types';
 import { OrganisationSlugQueryDto } from '~modules/organisations/dto/organisations.dto';
 import { getOrganisationAddress } from '~modules/organisations/helpers/get-organisation-address';
 import { ORDER_PROP_TO_DB_PROP } from '~modules/organisations/organisations.consts';
@@ -74,7 +74,7 @@ export class OrganisationsService {
 			schemaName: gqlOrganisation?.skos_pref_label,
 			createdAt: gqlOrganisation?.created_at,
 			updatedAt: gqlOrganisation?.updated_at,
-			sector: gqlOrganisation?.ha_org_sector as IeObjectSector,
+			sector: gqlOrganisation?.ha_org_sector as HetArchiefIeObjectSector,
 			formUrl: gqlOrganisation?.ha_org_request_form,
 			slug: gqlOrganisation?.organizationSlug?.slug,
 			vatNumber: gqlOrganisation?.schema_vat_id || null,
