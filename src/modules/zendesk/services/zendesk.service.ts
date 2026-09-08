@@ -25,8 +25,11 @@ const TOKEN_EXPIRE_MARGIN_SECONDS = 60;
 // Fallback lifetime for oauth clients that were created before 2026-04-30 and have no expires_in
 const TOKEN_DEFAULT_EXPIRES_IN_SECONDS = 1800;
 
-// Covers both POST /requests.json and POST /uploads.json
-const TOKEN_SCOPE = 'tickets:write';
+// Scope required by POST /requests.json. Note that this is NOT covered by tickets:write: the
+// requests api (end user requests) and the tickets api (agent side tickets) have separate scopes.
+// The oauth client has to be granted this scope in the zendesk admin center, otherwise the token
+// endpoint replies with invalid_scope.
+const TOKEN_SCOPE = 'requests:write';
 
 export class ZendeskService {
 	private static logger: Logger = new Logger(ZendeskService.name, { timestamp: true });

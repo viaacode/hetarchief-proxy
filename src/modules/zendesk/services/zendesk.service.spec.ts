@@ -43,7 +43,7 @@ function mockTokenEndpoint(accessToken: string) {
 		json: async () => ({
 			access_token: accessToken,
 			expires_in: 1800,
-			scope: 'tickets:write',
+			scope: 'requests:write',
 			token_type: 'bearer',
 		}),
 	});
@@ -75,7 +75,7 @@ describe('ZendeskService', () => {
 				grant_type: 'client_credentials',
 				client_id: 'test-client-id',
 				client_secret: 'test-client-secret',
-				scope: 'tickets:write',
+				scope: 'requests:write',
 			}),
 		});
 		expect(mockCreateClient).toHaveBeenCalledWith(
