@@ -784,6 +784,81 @@ describe('ieObjectsService', () => {
 		});
 	});
 
+	describe('adaptRepresentations', () => {
+		// Every fragment cut from a video is represented by the same full video file, so that file's
+		// hasMediaFragment lists the windows of all of its fragments. Taking the first one handed the
+		// player another fragment's footage under the requested fragment's metadata. ARC-3690
+		const buildFragmentRepresentation = (id: string) => ({
+			id,
+			schema_name: id,
+			schema_in_language: null,
+			schema_start_time: '00:10:00',
+			schema_end_time: '00:10:30',
+			schemaTranscriptUrls: null,
+			edm_is_next_in_sequence: null,
+			updated_at: '2025-01-01T00:00:00Z',
+			is_media_fragment_of: 'shared-file-id',
+			schema_thumbnail_url: null,
+			includes: [
+				{
+					file: {
+						id: 'shared-file-id',
+						schema_name: 'full-video.mp4',
+						ebucore_has_mime_type: 'video/mp4',
+						premis_stored_at: '/path/to/full-video.mp4',
+						schema_thumbnail_url: null,
+						schema_duration: null,
+						edm_is_next_in_sequence: null,
+						created_at: null,
+						hasMediaFragment: [
+							{
+								id: 'sibling-fragment',
+								schema_start_time: '00:00:00',
+								schema_end_time: '00:00:30',
+								schema_name: 'sibling-fragment',
+							},
+							{
+								id: 'requested-fragment',
+								schema_start_time: '00:10:00',
+								schema_end_time: '00:10:30',
+								schema_name: 'requested-fragment',
+							},
+						],
+					},
+				},
+			],
+		});
+
+		it('resolves the media fragment window of the representation itself, not the first one on the shared file', async () => {
+			const result = await ieObjectsService.adaptRepresentations(
+				[buildFragmentRepresentation('requested-fragment')] as any,
+				false,
+				false,
+				'referer',
+				'127.0.0.1'
+			);
+
+			expect(result[0].files[0].mediaFragment).toEqual({ startTime: 600, endTime: 630 });
+		});
+
+		it('has no media fragment window when the file holds none for this representation', async () => {
+			const mainRepresentation = {
+				...buildFragmentRepresentation('main-representation'),
+				is_media_fragment_of: null,
+			};
+
+			const result = await ieObjectsService.adaptRepresentations(
+				[mainRepresentation] as any,
+				false,
+				false,
+				'referer',
+				'127.0.0.1'
+			);
+
+			expect(result[0].files[0].mediaFragment).toBeNull();
+		});
+	});
+
 	describe('adaptRepresentationsPaged', () => {
 		const baseRepresentation = {
 			schema_in_language: null,
