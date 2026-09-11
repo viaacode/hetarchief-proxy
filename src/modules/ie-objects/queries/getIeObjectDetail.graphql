@@ -15,6 +15,14 @@ query getIeObjectDetail($ieObjectId: String!) {
 		schema_abstract
 		bibframe_edition
 		ebucore_synopsis
+		schemaNames {
+			schema_name
+			is_ai_generated
+		}
+		ebucoreSynopses {
+			ebucore_synopsis
+			is_ai_generated
+		}
 		schema_number_of_pages: ha_des_number_of_pages
 		premis_is_part_of: relation_is_part_of
 		rights {

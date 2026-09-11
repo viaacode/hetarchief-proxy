@@ -84,6 +84,7 @@ export interface IeObject {
 	maintainerOverlay: boolean | null;
 	maintainerIiifAgreement?: boolean | null;
 	name: string;
+	nameAi?: string | null;
 	publisher: any;
 	spatial: string[];
 	temporal: string[];
@@ -118,6 +119,7 @@ export interface IeObject {
 		uri: string;
 	};
 	synopsis: string;
+	synopsisAi?: string | null;
 	collectionName?: string;
 	collectionId?: string;
 	collectionSeasonNumber?: string;

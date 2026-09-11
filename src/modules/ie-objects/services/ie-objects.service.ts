@@ -887,6 +887,9 @@ export class IeObjectsService {
 			spatial: compact(schemaSpatialResponse?.map((item) => item.schema_spatial)), // Location of the content
 			temporal: compact(schemaTemporalResponse?.map((item) => item.schema_temporal)),
 			synopsis: ie?.ebucore_synopsis,
+			synopsisAi:
+				ie?.ebucoreSynopses?.find((variant) => variant.is_ai_generated)?.ebucore_synopsis ??
+				null,
 			copyrightHolder: compact(
 				schemaCopyrightHolderResponse?.map((item) => item.schema_copyright_holder)
 			).join(', '),
@@ -908,6 +911,7 @@ export class IeObjectsService {
 			),
 			sector: schemaMaintainer?.ha_org_sector as HetArchiefIeObjectSector,
 			name: ie?.schema_name,
+			nameAi: ie?.schemaNames?.find((variant) => variant.is_ai_generated)?.schema_name ?? null,
 			thumbnailUrl: mainThumbnailUrl,
 			premisIsPartOf: ie?.premis_is_part_of,
 			isPartOf: isPartOfParentCollections,

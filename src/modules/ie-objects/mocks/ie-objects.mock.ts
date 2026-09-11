@@ -507,6 +507,8 @@ export const mockIeObject2: GetIeObjectDetailQuery = {
 			schema_abstract: null,
 			bibframe_edition: null,
 			ebucore_synopsis: null,
+			schemaNames: [],
+			ebucoreSynopses: [],
 			schema_number_of_pages: null,
 			premis_is_part_of: null,
 			schemaMaintainer: {
