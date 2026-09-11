@@ -136,7 +136,7 @@ describe('contentBlockToPlayableDisplayDataItems', () => {
 						],
 					})
 				)
-			).toEqual([{ schemaIdentifier: '086348mc8s', start: 10, end: 20 }]);
+			).toEqual([{ schemaIdentifier: '086348mc8s' }]);
 		});
 
 		it('ignores an incomplete or empty snippet', () => {
@@ -187,6 +187,33 @@ describe('contentBlockToPlayableDisplayDataItems', () => {
 					})
 				)
 			).toEqual([null]);
+		});
+	});
+
+	describe('OVERVIEW_WITH_CAROUSEL', () => {
+		it('resolves only the elements whose picker points at an ie-object', () => {
+			expect(
+				contentBlockToPlayableDisplayDataItems(
+					mockBlock('OVERVIEW_WITH_CAROUSEL', {
+						elements: [
+							{ mediaItem: { type: 'IE_OBJECT', value: '086348mc8s' }, image: 'a.jpg' },
+							{ mediaItem: { type: 'CONTENT_PAGE', value: '42' }, image: 'b.jpg' },
+							{
+								mediaItem: { type: 'EXTERNAL_LINK', value: 'https://example.com' },
+								image: 'c.jpg',
+							},
+							{ image: 'd.jpg' },
+							{ mediaItem: { type: 'IE_OBJECT', value: 'qstt4fps28' }, image: 'e.jpg' },
+						],
+					})
+				)
+			).toEqual([
+				{ schemaIdentifier: '086348mc8s' },
+				null,
+				null,
+				null,
+				{ schemaIdentifier: 'qstt4fps28' },
+			]);
 		});
 	});
 

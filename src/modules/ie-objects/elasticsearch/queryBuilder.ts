@@ -12,6 +12,7 @@ import {
 	uniq,
 } from 'lodash';
 
+import { HetArchiefIeObjectLicense, type HetArchiefIeObjectSector } from '@viaa/avo2-types';
 import { IeObjectsQueryDto, SearchFilter } from '../dto/ie-objects.dto';
 import {
 	buildFreeTextFilter,
@@ -19,7 +20,6 @@ import {
 } from '../helpers/convert-node-to-es-query-filter-objects';
 import { encodeSearchterm } from '../helpers/encode-search-term';
 import { IE_OBJECT_METADATA_SET_BY_OBJECT_AND_USER_SECTOR } from '../ie-objects.conts';
-import { IeObjectLicense, type IeObjectSector } from '../ie-objects.types';
 
 import {
 	AGGS_PROPERTIES,
@@ -678,7 +678,7 @@ export class QueryBuilder {
 					},
 					{
 						terms: {
-							[ElasticsearchField.schema_license]: [IeObjectLicense.BEZOEKERTOOL_CONTENT],
+							[ElasticsearchField.schema_license]: [HetArchiefIeObjectLicense.BEZOEKERTOOL_CONTENT],
 						},
 					},
 				],
@@ -707,17 +707,19 @@ export class QueryBuilder {
 					OR([
 						{
 							terms: {
-								[ElasticsearchField.schema_license]: [IeObjectLicense.PUBLIEK_CONTENT],
+								[ElasticsearchField.schema_license]: [HetArchiefIeObjectLicense.PUBLIEK_CONTENT],
 							},
 						},
 						{
 							terms: {
-								[ElasticsearchField.schema_license]: [IeObjectLicense.BEZOEKERTOOL_CONTENT],
+								[ElasticsearchField.schema_license]: [
+									HetArchiefIeObjectLicense.BEZOEKERTOOL_CONTENT,
+								],
 							},
 						},
 						{
 							terms: {
-								[ElasticsearchField.schema_license]: [IeObjectLicense.INTRA_CP_CONTENT],
+								[ElasticsearchField.schema_license]: [HetArchiefIeObjectLicense.INTRA_CP_CONTENT],
 							},
 						},
 					]),
@@ -733,7 +735,7 @@ export class QueryBuilder {
 					{
 						terms: {
 							_name: 'CONSULTABLE_PUBLIC_DOMAIN',
-							[ElasticsearchField.schema_license]: [IeObjectLicense.PUBLIC_DOMAIN],
+							[ElasticsearchField.schema_license]: [HetArchiefIeObjectLicense.PUBLIC_DOMAIN],
 						},
 					},
 				],
@@ -866,7 +868,7 @@ export class QueryBuilder {
 			{
 				terms: {
 					_name: 'PUBLIC-METDATA_LTD',
-					[ElasticsearchField.schema_license]: [IeObjectLicense.PUBLIEK_METADATA_LTD],
+					[ElasticsearchField.schema_license]: [HetArchiefIeObjectLicense.PUBLIEK_METADATA_LTD],
 				},
 			},
 		];
@@ -886,10 +888,10 @@ export class QueryBuilder {
 					// If the filter is set to only consultable media, we only return objects with the PUBLIEK_CONTENT license
 					// https://meemoo.atlassian.net/browse/ARC-3050
 					[ElasticsearchField.schema_license]: containsOnlyConsultableFilter
-						? [IeObjectLicense.PUBLIEK_CONTENT]
+						? [HetArchiefIeObjectLicense.PUBLIEK_CONTENT]
 						: [
-								IeObjectLicense.PUBLIEK_METADATA_ALL,
-								IeObjectLicense.PUBLIEK_CONTENT, // Does this license contain PUBLIEK_METADATA_ALL?
+								HetArchiefIeObjectLicense.PUBLIEK_METADATA_ALL,
+								HetArchiefIeObjectLicense.PUBLIEK_CONTENT, // Does this license contain PUBLIEK_METADATA_ALL?
 							],
 				},
 			},
@@ -927,8 +929,11 @@ export class QueryBuilder {
 						// If the filter is set to only consultable media, we only return objects with the PUBLIEK_CONTENT license
 						// https://meemoo.atlassian.net/browse/ARC-3050
 						[ElasticsearchField.schema_license]: containsOnlyConsultableFilter
-							? [IeObjectLicense.BEZOEKERTOOL_CONTENT]
-							: [IeObjectLicense.BEZOEKERTOOL_METADATA_ALL, IeObjectLicense.BEZOEKERTOOL_CONTENT],
+							? [HetArchiefIeObjectLicense.BEZOEKERTOOL_CONTENT]
+							: [
+									HetArchiefIeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
+									HetArchiefIeObjectLicense.BEZOEKERTOOL_CONTENT,
+								],
 					},
 				},
 			]),
@@ -961,8 +966,11 @@ export class QueryBuilder {
 						// If the filter is set to only consultable media, we only return objects with the PUBLIEK_CONTENT license
 						// https://meemoo.atlassian.net/browse/ARC-3050
 						[ElasticsearchField.schema_license]: containsOnlyConsultableFilter
-							? [IeObjectLicense.BEZOEKERTOOL_CONTENT]
-							: [IeObjectLicense.BEZOEKERTOOL_METADATA_ALL, IeObjectLicense.BEZOEKERTOOL_CONTENT],
+							? [HetArchiefIeObjectLicense.BEZOEKERTOOL_CONTENT]
+							: [
+									HetArchiefIeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
+									HetArchiefIeObjectLicense.BEZOEKERTOOL_CONTENT,
+								],
 					},
 				},
 				{
@@ -1004,8 +1012,11 @@ export class QueryBuilder {
 							// If the filter is set to only consultable media, we only return objects with the PUBLIEK_CONTENT license
 							// https://meemoo.atlassian.net/browse/ARC-3050
 							[ElasticsearchField.schema_license]: containsOnlyConsultableFilter
-								? [IeObjectLicense.BEZOEKERTOOL_CONTENT]
-								: [IeObjectLicense.BEZOEKERTOOL_METADATA_ALL, IeObjectLicense.BEZOEKERTOOL_CONTENT],
+								? [HetArchiefIeObjectLicense.BEZOEKERTOOL_CONTENT]
+								: [
+										HetArchiefIeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
+										HetArchiefIeObjectLicense.BEZOEKERTOOL_CONTENT,
+									],
 						},
 					},
 				]),
@@ -1028,7 +1039,7 @@ export class QueryBuilder {
 		const { user } = inputInfo;
 
 		if (user?.getIsKeyUser() && !isNil(user?.getSector())) {
-			const userSector = user.getSector() as IeObjectSector;
+			const userSector = user.getSector() as HetArchiefIeObjectSector;
 
 			// The licenses a key user from sector X can access for objects of sector Y
 			const accessibleLicensesByObjectSector =
@@ -1038,9 +1049,12 @@ export class QueryBuilder {
 			// take into account the METADATA_ALL and CONTENT intra cp licenses (not METADATA_LTD).
 			// If the filter is set to only consultable media, we further restrict to the CONTENT license.
 			// https://meemoo.atlassian.net/browse/ARC-3050
-			const consideredLicenses: IeObjectLicense[] = containsOnlyConsultableFilter
-				? [IeObjectLicense.INTRA_CP_CONTENT]
-				: [IeObjectLicense.INTRA_CP_METADATA_ALL, IeObjectLicense.INTRA_CP_CONTENT];
+			const consideredLicenses: HetArchiefIeObjectLicense[] = containsOnlyConsultableFilter
+				? [HetArchiefIeObjectLicense.INTRA_CP_CONTENT]
+				: [
+						HetArchiefIeObjectLicense.INTRA_CP_METADATA_ALL,
+						HetArchiefIeObjectLicense.INTRA_CP_CONTENT,
+					];
 
 			// 6.1) Check if the object belongs to an organisation whose sector is visible to the
 			// current user's sector, and the object has a license that grants access for that
@@ -1049,7 +1063,10 @@ export class QueryBuilder {
 			// bool clause per license group instead of one clause per sector.
 			const sectorLicensePairs = compact(
 				(
-					Object.entries(accessibleLicensesByObjectSector) as [IeObjectSector, IeObjectLicense[]][]
+					Object.entries(accessibleLicensesByObjectSector) as [
+						HetArchiefIeObjectSector,
+						HetArchiefIeObjectLicense[],
+					][]
 				).map(([objectSector, accessibleLicenses]) => {
 					const licenses = intersection(accessibleLicenses, consideredLicenses);
 					return isEmpty(licenses)

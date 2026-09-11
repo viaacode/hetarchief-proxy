@@ -3,8 +3,8 @@ import { AvoUserCommonUser, PermissionName } from '@viaa/avo2-types';
 
 import { GroupName, User } from '../types';
 
-import { convertUserInfoToCommonUser, UserInfoType } from '@meemoo/admin-core-api';
-import type { IeObjectSector } from '~modules/ie-objects/ie-objects.types';
+import { UserInfoType, convertUserInfoToCommonUser } from '@meemoo/admin-core-api';
+import { type HetArchiefIeObjectSector } from '@viaa/avo2-types';
 import { Locale } from '~shared/types/types';
 
 export class SessionUserEntity {
@@ -76,7 +76,7 @@ export class SessionUserEntity {
 		return this.user?.organisationId || null;
 	}
 
-	public getSector(): IeObjectSector | null {
+	public getSector(): HetArchiefIeObjectSector | null {
 		return this.user?.sector || null;
 	}
 

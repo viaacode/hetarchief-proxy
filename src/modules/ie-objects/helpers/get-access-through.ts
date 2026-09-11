@@ -1,4 +1,4 @@
-import { IeObjectAccessThrough } from '../ie-objects.types';
+import { HetArchiefIeObjectAccessThrough } from '@viaa/avo2-types';
 
 export const getAccessThrough = ({
 	hasFullAccess,
@@ -10,22 +10,22 @@ export const getAccessThrough = ({
 	hasFolderAccess: boolean;
 	hasIntraCPLicenses: boolean;
 	hasPublicLicenses: boolean;
-}): IeObjectAccessThrough[] => {
+}): HetArchiefIeObjectAccessThrough[] => {
 	const accessThrough = [];
 	if (hasIntraCPLicenses) {
-		accessThrough.push(IeObjectAccessThrough.SECTOR);
+		accessThrough.push(HetArchiefIeObjectAccessThrough.SECTOR);
 	}
 
 	if (hasFolderAccess) {
-		accessThrough.push(IeObjectAccessThrough.VISITOR_SPACE_FOLDERS);
+		accessThrough.push(HetArchiefIeObjectAccessThrough.VISITOR_SPACE_FOLDERS);
 	}
 
 	if (hasFullAccess) {
-		accessThrough.push(IeObjectAccessThrough.VISITOR_SPACE_FULL);
+		accessThrough.push(HetArchiefIeObjectAccessThrough.VISITOR_SPACE_FULL);
 	}
 
 	if (hasPublicLicenses) {
-		accessThrough.push(IeObjectAccessThrough.PUBLIC_INFO);
+		accessThrough.push(HetArchiefIeObjectAccessThrough.PUBLIC_INFO);
 	}
 
 	return accessThrough;
