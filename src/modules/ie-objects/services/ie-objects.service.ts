@@ -1339,6 +1339,7 @@ export class IeObjectsService {
 						thumbnailUrl: representationThumbnailUrlResolved,
 						files: await this.adaptFiles(
 							representation.includes,
+							representation.id,
 							resolveThumbnailUrl,
 							isPublicDomain,
 							referer,
@@ -1354,6 +1355,7 @@ export class IeObjectsService {
 
 	public async adaptFiles(
 		dbIncludeFiles: DbIncludeFiles,
+		representationId: string | null,
 		resolveThumbnailUrl: boolean,
 		isPublicDomain: boolean,
 		referer: string,
@@ -1393,7 +1395,7 @@ export class IeObjectsService {
 						duration: file.schema_duration,
 						edmIsNextInSequence: file.edm_is_next_in_sequence,
 						createdAt: file.created_at,
-						mediaFragment: this.adaptMediaFragment(file),
+						mediaFragment: this.adaptMediaFragment(file, representationId),
 					};
 				}
 			)
@@ -1401,17 +1403,30 @@ export class IeObjectsService {
 	}
 
 	/**
-	 * Checks if first hasMediaFragment has valid start- and end time
-	 * and returns a simplified format
+	 * Returns the start and end time of the window this file's cut fragment covers, in integer
+	 * seconds, or null when the file has no such window for the given representation.
+	 *
+	 * The window must be looked up by representation id: every fragment cut from a video is
+	 * represented by the *same* full video file, so file.hasMediaFragment lists the windows of all
+	 * of its fragments. Taking the first one handed the player the window of an arbitrary sibling
+	 * fragment - the requested fragment's metadata with another fragment's footage.
+	 * See https://meemoo.atlassian.net/browse/ARC-3690
+	 *
 	 * schema_start_time and schema_end_time are in the format: HH:mm:ss.µµµ
 	 * and this function converts that to integer seconds
 	 * @param file
+	 * @param representationId the representation the file was fetched under
 	 */
-	private adaptMediaFragment(file: DbFile): { startTime: number; endTime: number } | null {
+	private adaptMediaFragment(
+		file: DbFile,
+		representationId: string | null
+	): { startTime: number; endTime: number } | null {
+		const mediaFragment = representationId
+			? file.hasMediaFragment?.find((fragment) => fragment.id === representationId)
+			: undefined;
 		// format: HH:mm:ss.µµµ
-		const startTimeFormatted: string | undefined | null =
-			file.hasMediaFragment?.[0]?.schema_start_time;
-		const endTimeFormatted: string | undefined | null = file.hasMediaFragment?.[0]?.schema_end_time;
+		const startTimeFormatted: string | undefined | null = mediaFragment?.schema_start_time;
+		const endTimeFormatted: string | undefined | null = mediaFragment?.schema_end_time;
 
 		if (isNil(startTimeFormatted) || isNil(endTimeFormatted)) {
 			return null;

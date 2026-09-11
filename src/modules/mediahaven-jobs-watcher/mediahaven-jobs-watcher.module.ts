@@ -1,5 +1,5 @@
 import { DataModule, MediahavenModule } from '@meemoo/admin-core-api';
-import { forwardRef, Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { EventsModule } from '~modules/events';
 import { MaterialRequestMessagesModule } from '~modules/material-request-messages';

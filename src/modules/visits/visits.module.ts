@@ -1,5 +1,5 @@
 import { AdminTranslationsModule, DataModule } from '@meemoo/admin-core-api';
-import { forwardRef, Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 
 import { VisitsController } from './controllers/visits.controller';
