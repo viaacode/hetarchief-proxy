@@ -312,6 +312,9 @@ describe('QueryBuilder', () => {
 
 			const queryString = JSON.stringify(esQuery.query, null, 2);
 			expect(queryString).toContain('"query": "intervi*"');
+			// Every word of a "bevat" condition has to be in the object, not just one of them.
+			// https://meemoo.atlassian.net/browse/ARC-3806
+			expect(queryString).toContain('"default_operator": "AND"');
 			expect(queryString).toContain('METADATA-LTD-FILTERS');
 			expect(queryString).toContain('PUBLIC-METDATA_LTD');
 			expect(queryString).toContain('VIAA-PUBLIEK-METADATA-ALL');
@@ -985,6 +988,196 @@ describe('QueryBuilder', () => {
 			const allMetadataFiltersString = JSON.stringify(allMetadataFilters, null, 2);
 			expect(allMetadataFiltersString).toContain('visitor-space-id');
 			expect(allMetadataFiltersString).toContain('VIAA-INTRA_CP-CONTENT');
+		});
+	});
+
+	describe('or relations inside one filter (ARC-3806)', () => {
+		const collectBools = (node: any, acc: any[] = []): any[] => {
+			if (!node || typeof node !== 'object') {
+				return acc;
+			}
+			if (node.bool) {
+				acc.push(node.bool);
+			}
+			for (const value of Object.values(node)) {
+				if (Array.isArray(value)) {
+					for (const entry of value) {
+						collectBools(entry, acc);
+					}
+				} else if (value && typeof value === 'object') {
+					collectBools(value, acc);
+				}
+			}
+			return acc;
+		};
+
+		const getFilterBool = (esQuery: any): any =>
+			collectBools(esQuery.query).find((bool) => bool._name === 'METADATA-ALL-FILTERS');
+
+		const build = (filters: any[]) =>
+			QueryBuilder.build(
+				{ filters, size: 10, page: 1, requestedAggs: [IeObjectsSearchFilterField.FORMAT] },
+				mockInputInfo as any
+			);
+
+		it('or-s two values of the same filter into one should group', () => {
+			const filterBool = getFilterBool(
+				build([
+					{ field: IeObjectsSearchFilterField.GENRE, value: 'concert', operator: Operator.IS },
+					{ field: IeObjectsSearchFilterField.GENRE, value: 'dans', operator: Operator.IS },
+				])
+			);
+
+			expect(filterBool.must).toHaveLength(1);
+			expect(filterBool.must[0].bool.minimum_should_match).toEqual(1);
+			expect(filterBool.must[0].bool.should).toHaveLength(2);
+			expect(JSON.stringify(filterBool.must[0].bool.should)).toContain('concert');
+			expect(JSON.stringify(filterBool.must[0].bool.should)).toContain('dans');
+		});
+
+		it('and-s values of two different filters', () => {
+			const filterBool = getFilterBool(
+				build([
+					{ field: IeObjectsSearchFilterField.GENRE, value: 'concert', operator: Operator.IS },
+					{ field: IeObjectsSearchFilterField.MEDIUM, value: 'dvd', operator: Operator.IS },
+				])
+			);
+
+			expect(filterBool.must).toHaveLength(2);
+			for (const clause of filterBool.must) {
+				expect(clause.bool).toBeUndefined();
+			}
+		});
+
+		it('or-s the conditions of one text filter into one should group', () => {
+			const filterBool = getFilterBool(
+				build([
+					{
+						field: IeObjectsSearchFilterField.CAST,
+						value: 'Magriet Hermans',
+						operator: Operator.CONTAINS,
+					},
+					{
+						field: IeObjectsSearchFilterField.CAST,
+						value: 'Luc Appermont',
+						operator: Operator.CONTAINS,
+					},
+				])
+			);
+
+			expect(filterBool.must).toHaveLength(1);
+			expect(filterBool.must[0].bool.minimum_should_match).toEqual(1);
+			expect(filterBool.must[0].bool.should).toHaveLength(2);
+		});
+
+		it('keeps a "bevat niet" condition as an exclusion next to the or group', () => {
+			const filterBool = getFilterBool(
+				build([
+					{
+						field: IeObjectsSearchFilterField.CAST,
+						value: 'Magriet Hermans',
+						operator: Operator.CONTAINS,
+					},
+					{
+						field: IeObjectsSearchFilterField.CAST,
+						value: 'Luc Appermont',
+						operator: Operator.CONTAINS_NOT,
+					},
+				])
+			);
+
+			expect(filterBool.must).toHaveLength(1);
+			expect(JSON.stringify(filterBool.must)).toContain('magriet hermans');
+			expect(filterBool.must_not).toHaveLength(1);
+			expect(JSON.stringify(filterBool.must_not)).toContain('luc appermont');
+		});
+
+		it('keeps a between range and-ed, not or-ed', () => {
+			const filterBool = getFilterBool(
+				build([
+					{
+						field: IeObjectsSearchFilterField.CREATED,
+						value: '2020-01-01',
+						operator: Operator.GTE,
+					},
+					{
+						field: IeObjectsSearchFilterField.CREATED,
+						value: '2021-01-01',
+						operator: Operator.LTE,
+					},
+				])
+			);
+
+			expect(filterBool.filter).toHaveLength(2);
+			for (const clause of filterBool.filter) {
+				expect(clause.range).toBeDefined();
+			}
+		});
+
+		it('keeps two search bar terms and-ed', () => {
+			const filterBool = getFilterBool(
+				build([
+					{ field: IeObjectsSearchFilterField.QUERY, value: 'kat', operator: Operator.CONTAINS },
+					{ field: IeObjectsSearchFilterField.QUERY, value: 'hond', operator: Operator.CONTAINS },
+				])
+			);
+
+			expect(filterBool.must).toHaveLength(2);
+		});
+
+		it('leaves a single value filter as it was', () => {
+			const filterBool = getFilterBool(
+				build([
+					{ field: IeObjectsSearchFilterField.GENRE, value: 'concert', operator: Operator.IS },
+				])
+			);
+
+			expect(filterBool.must).toHaveLength(1);
+			expect(filterBool.must[0].bool).toBeUndefined();
+			expect(filterBool.must[0].term['schema_genre.keyword']).toEqual('concert');
+		});
+
+		it('builds a terms query for a creator filter with several values', () => {
+			const filterBool = getFilterBool(
+				build([
+					{
+						field: IeObjectsSearchFilterField.CREATOR,
+						multiValue: ['VRT', 'Amsab-ISG'],
+						operator: Operator.IS,
+					},
+				])
+			);
+
+			expect(filterBool.must).toHaveLength(1);
+			expect(filterBool.must[0].terms['schema_creator_text.keyword']).toEqual(['VRT', 'Amsab-ISG']);
+		});
+
+		it('or-s the maintainers of the FA example while and-ing them with the series', () => {
+			const filterBool = getFilterBool(
+				build([
+					{
+						field: IeObjectsSearchFilterField.NEWSPAPER_SERIES_NAME,
+						multiValue: ['Reeks A', 'Reeks B'],
+						operator: Operator.IS,
+					},
+					{
+						field: IeObjectsSearchFilterField.MAINTAINER_ID,
+						multiValue: ['OR-1', 'OR-2'],
+						operator: Operator.IS,
+					},
+				])
+			);
+
+			expect(filterBool.must).toHaveLength(2);
+			const asString = JSON.stringify(filterBool.must);
+			expect(asString).toContain('Reeks A');
+			expect(asString).toContain('Reeks B');
+			expect(asString).toContain('OR-1');
+			expect(asString).toContain('OR-2');
+			// Each filter is one terms clause, so the values inside it are or-ed by elasticsearch
+			for (const clause of filterBool.must) {
+				expect(clause.terms).toBeDefined();
+			}
 		});
 	});
 });
