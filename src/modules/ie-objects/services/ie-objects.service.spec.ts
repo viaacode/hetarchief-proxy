@@ -838,6 +838,7 @@ describe('ieObjectsService', () => {
 				'127.0.0.1'
 			);
 
+			expect(result[0].files[0].id).toEqual('shared-file-id');
 			expect(result[0].files[0].mediaFragment).toEqual({ startTime: 600, endTime: 630 });
 		});
 
