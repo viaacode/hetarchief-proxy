@@ -502,7 +502,14 @@ export class QueryBuilder {
 						}
 					} else {
 						const searchTemplate =
-							MULTI_MATCH_QUERY_MAPPING.fuzzy[searchFilter.field][metadataAccessType];
+							MULTI_MATCH_QUERY_MAPPING.fuzzy[searchFilter.field]?.[metadataAccessType];
+
+						if (!searchTemplate) {
+							throw new BadRequestException(
+								`A fuzzy search is not supported for multi field: '${searchFilter.field}'`
+							);
+						}
+
 						textFilters = [buildFreeTextFilter(searchTemplate, searchFilter)];
 					}
 

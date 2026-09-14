@@ -252,6 +252,24 @@ describe('QueryBuilder', () => {
 			expect(getMultiMatchFieldsForQuery(queryObject?.query, false)).toEqual(QUERY_FIELDS_ALL);
 		});
 
+		it('should the contains operator on the identifier field and should return a query object', () => {
+			const queryObject = QueryBuilder.build(
+				{
+					filters: [
+						{
+							field: IeObjectsSearchFilterField.IDENTIFIER,
+							operator: Operator.CONTAINS,
+							value: 'testvalue',
+						},
+					],
+					size: 10,
+					page: 1,
+				},
+				mockInputInfo as any
+			);
+			expect(JSON.stringify(queryObject?.query)).toContain('"schema_identifier":"testvalue"');
+		});
+
 		it('throws an internal server exception when an unknown filter value is passed', () => {
 			let error: any;
 			try {

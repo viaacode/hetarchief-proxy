@@ -149,6 +149,12 @@ export const MULTI_MATCH_QUERY_MAPPING: Record<
 			limited: descriptionSearchQueryFuzzy,
 			all: descriptionSearchQueryFuzzy,
 		},
+		// The identifier fields are keyword fields, on which a fuzzy match cannot do more than an
+		// exact one, so both operators share a template
+		identifier: {
+			limited: identifierSearchQueryExact,
+			all: identifierSearchQueryExact,
+		},
 	},
 	exact: {
 		name: {
