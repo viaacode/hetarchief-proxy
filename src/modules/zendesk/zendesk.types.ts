@@ -1,3 +1,5 @@
+import type { Locale } from '~shared/types/types';
+
 export type ZendeskID = number;
 
 export type ViaChannel = 'api' | 'web' | 'mobile' | 'rule' | 'system';
@@ -102,3 +104,53 @@ export interface ZendeskAccessToken {
 	expiresIn: number;
 	createdAt: Date;
 }
+
+/**
+ * Kept in sync by hand with `ReportReason` in
+ * hetarchief-client/src/modules/shared/services/zendesk-service/zendesk.types.ts
+ */
+export enum ReportReason {
+	METADATA_ISSUE = 'METADATA_ISSUE',
+	GENERAL_QUESTION = 'GENERAL_QUESTION',
+	LEGAL_REMARK = 'LEGAL_REMARK',
+}
+
+/**
+ * Kept in sync by hand with `ReportLegalReason` in
+ * hetarchief-client/src/modules/shared/services/zendesk-service/zendesk.types.ts
+ */
+export enum ReportLegalReason {
+	OPT_OUT_OR_REMOVAL = 'OPT_OUT_OR_REMOVAL',
+	IP_COMPLAINT = 'IP_COMPLAINT',
+	GDPR_PRIVACY = 'GDPR_PRIVACY',
+}
+
+// Human-readable labels per reportReason/reportLegalReason, in the reporter's own language, used
+// to build the Zendesk ticket subject/body. Text should match what the client shows for each
+// radio option (hetarchief-client's ReportBlade.const.ts) — kept in sync by hand.
+export const REPORT_REASON_LABELS: Record<Locale, Record<ReportReason, string>> = {
+	nl: {
+		[ReportReason.METADATA_ISSUE]: 'Metadata probleem',
+		[ReportReason.GENERAL_QUESTION]: 'Ander probleem',
+		[ReportReason.LEGAL_REMARK]: 'Juridische opmerking',
+	},
+	en: {
+		[ReportReason.METADATA_ISSUE]: 'Metadata issue',
+		[ReportReason.GENERAL_QUESTION]: 'Other issue',
+		[ReportReason.LEGAL_REMARK]: 'Legal remark',
+	},
+};
+
+export const REPORT_LEGAL_REASON_LABELS: Record<Locale, Record<ReportLegalReason, string>> = {
+	nl: {
+		[ReportLegalReason.OPT_OUT_OR_REMOVAL]: 'Opt-out Out-of-Commerce regeling of verwijdering',
+		[ReportLegalReason.IP_COMPLAINT]: 'Klacht wegens mogelijke inbreuk op intellectuele rechten',
+		[ReportLegalReason.GDPR_PRIVACY]: 'Uitoefenen van rechten volgens GDPR of privacywetgeving',
+	},
+	en: {
+		[ReportLegalReason.OPT_OUT_OR_REMOVAL]: 'Opt-out of the Out-of-Commerce scheme or removal',
+		[ReportLegalReason.IP_COMPLAINT]:
+			'Complaint about possible infringement of intellectual rights',
+		[ReportLegalReason.GDPR_PRIVACY]: 'Exercising rights under GDPR or privacy legislation',
+	},
+};

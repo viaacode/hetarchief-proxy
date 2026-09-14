@@ -1,15 +1,27 @@
 import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
-import { InternalServerErrorException, Logger } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { addSeconds, isFuture } from 'date-fns';
 import zendesk from 'node-zendesk';
 
-import { CreateTicketRequestDto } from '../dto/zendesk.dto';
-import type {
-	CreateTicketResponse,
-	ZendeskAccessToken,
-	ZendeskOauthTokenResponse,
+import { CreateIeObjectSupportRequestDto, CreateTicketRequestDto } from '../dto/zendesk.dto';
+import {
+	type CreateTicketResponse,
+	REPORT_LEGAL_REASON_LABELS,
+	REPORT_REASON_LABELS,
+	ReportReason,
+	type ZendeskAccessToken,
+	type ZendeskOauthTokenResponse,
 } from '../zendesk.types';
 
+import type { Configuration } from '~config';
+import {
+	ConsentToTrackOption,
+	EmailTemplate,
+} from '~modules/campaign-monitor/campaign-monitor.types';
+import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
+import { ContactPointType } from '~modules/organisations/organisations.types';
+import { OrganisationsService } from '~modules/organisations/services/organisations.service';
 import { checkRequiredEnvs } from '~shared/helpers/env-check';
 
 /**
@@ -31,9 +43,16 @@ const TOKEN_DEFAULT_EXPIRES_IN_SECONDS = 1800;
 // endpoint replies with invalid_scope.
 const TOKEN_SCOPE = 'requests:write';
 
+@Injectable()
 export class ZendeskService {
 	private static logger: Logger = new Logger(ZendeskService.name, { timestamp: true });
 	private static accessToken: ZendeskAccessToken | null = null;
+
+	constructor(
+		private campaignMonitorService: CampaignMonitorService,
+		private organisationsService: OrganisationsService,
+		private configService: ConfigService<Configuration>
+	) {}
 
 	public static initialize() {
 		checkRequiredEnvs([
@@ -158,5 +177,87 @@ export class ZendeskService {
 				reject(error);
 			}
 		});
+	}
+
+	/**
+	 * Report a problem with an ie-object. A metadata issue emails the object's maintainer (or
+	 * meemoo support as a fallback) directly and never creates a Zendesk ticket; any other reason
+	 * creates a Zendesk ticket and never sends an email.
+	 */
+	public async createIeObjectSupportTicket(
+		dto: CreateIeObjectSupportRequestDto
+	): Promise<CreateTicketResponse | undefined> {
+		// The own-org self-fix screen never calls this endpoint, so METADATA_ISSUE here always
+		// means the other-org variant, which needs a maintainerId to look up who to email.
+		if (dto.reportReason === ReportReason.METADATA_ISSUE) {
+			await this.notifyMaintainerOfMetadataIssue(dto);
+			return undefined;
+		}
+
+		return await ZendeskService.createTicket(ZendeskService.buildIeObjectSupportTicket(dto));
+	}
+
+	private static buildIeObjectSupportTicket(
+		dto: CreateIeObjectSupportRequestDto
+	): CreateTicketRequestDto {
+		const reasonLabel = REPORT_REASON_LABELS[dto.locale][dto.reportReason];
+		const legalReasonLabel = dto.reportLegalReason
+			? REPORT_LEGAL_REASON_LABELS[dto.locale][dto.reportLegalReason]
+			: undefined;
+		const subject = [reasonLabel, legalReasonLabel].filter(Boolean).join(' - ');
+
+		return {
+			subject,
+			comment: {
+				url: dto.url,
+				body: dto.message,
+				html_body: `<dl><dt>${reasonLabel}</dt><dd>${dto.message}</dd><dt>URL</dt><dd>${dto.url}</dd></dl>`,
+				public: false,
+			},
+			requester: {
+				name: dto.name || 'Anonymous',
+				email: dto.email,
+			},
+		};
+	}
+
+	private async notifyMaintainerOfMetadataIssue(
+		dto: CreateIeObjectSupportRequestDto
+	): Promise<void> {
+		let contactEmail: string | undefined;
+		if (dto.maintainerId) {
+			const [organisation] = await this.organisationsService.findOrganisationsBySchemaIdentifiers([
+				dto.maintainerId,
+			]);
+			contactEmail = organisation?.contactPoint?.find(
+				(contactPoint) => contactPoint.contactType === ContactPointType.ontsluiting
+			)?.email;
+		}
+
+		if (!contactEmail) {
+			ZendeskService.logger.warn(
+				`No "ontsluiting" contact email found for maintainer ${dto.maintainerId}, falling back to the meemoo support address for the metadata issue notification email`
+			);
+		}
+
+		await this.campaignMonitorService.sendTransactionalMail(
+			{
+				template: EmailTemplate.CAMPAIGN_MONITOR_TEMPLATE_REPORT_METADATA_ISSUE_IE_OBJECT,
+				data: {
+					to: contactEmail || this.configService.get('MEEMOO_MAINTAINER_MISSING_EMAIL_FALLBACK'),
+					replyTo: dto.email || null,
+					consentToTrack: ConsentToTrackOption.UNCHANGED,
+					data: {
+						reporter_name: dto.name,
+						reporter_email: dto.email,
+						message: dto.message,
+						object_url: dto.url,
+						mam_url: dto.mamUrl,
+						ai_meemoo_url: dto.aiMeemooUrl,
+					},
+				},
+			},
+			dto.locale
+		);
 	}
 }
