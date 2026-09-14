@@ -116,14 +116,12 @@ export class CreateIeObjectSupportRequestDto {
 	url: string;
 
 	@IsString()
-	@IsOptional()
-	@ApiPropertyOptional({ type: String })
-	email?: string;
+	@ApiProperty({ type: String, description: 'The email address of the reporter' })
+	email: string;
 
 	@IsString()
-	@IsOptional()
-	@ApiPropertyOptional({ type: String })
-	name?: string;
+	@ApiProperty({ type: String, description: 'The name of the reporter' })
+	name: string;
 
 	@IsString()
 	@IsOptional()

@@ -1,3 +1,4 @@
+import { TranslationsService } from '@meemoo/admin-core-api';
 import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
 import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -7,11 +8,11 @@ import zendesk from 'node-zendesk';
 import { CreateIeObjectSupportRequestDto, CreateTicketRequestDto } from '../dto/zendesk.dto';
 import {
 	type CreateTicketResponse,
-	REPORT_LEGAL_REASON_LABELS,
-	REPORT_REASON_LABELS,
 	ReportReason,
 	type ZendeskAccessToken,
 	type ZendeskOauthTokenResponse,
+	getReportLegalReasonLabels,
+	getReportReasonLabels,
 } from '../zendesk.types';
 
 import type { Configuration } from '~config';
@@ -51,7 +52,8 @@ export class ZendeskService {
 	constructor(
 		private campaignMonitorService: CampaignMonitorService,
 		private organisationsService: OrganisationsService,
-		private configService: ConfigService<Configuration>
+		private configService: ConfigService<Configuration>,
+		private translationsService: TranslationsService
 	) {}
 
 	public static initialize() {
@@ -194,28 +196,44 @@ export class ZendeskService {
 			return undefined;
 		}
 
-		return await ZendeskService.createTicket(ZendeskService.buildIeObjectSupportTicket(dto));
+		return await ZendeskService.createTicket(this.buildIeObjectSupportTicket(dto));
 	}
 
-	private static buildIeObjectSupportTicket(
-		dto: CreateIeObjectSupportRequestDto
-	): CreateTicketRequestDto {
-		const reasonLabel = REPORT_REASON_LABELS[dto.locale][dto.reportReason];
+	private buildIeObjectSupportTicket(dto: CreateIeObjectSupportRequestDto): CreateTicketRequestDto {
+		const reasonLabel = getReportReasonLabels(this.translationsService, dto.locale)[
+			dto.reportReason
+		];
 		const legalReasonLabel = dto.reportLegalReason
-			? REPORT_LEGAL_REASON_LABELS[dto.locale][dto.reportLegalReason]
+			? getReportLegalReasonLabels(this.translationsService, dto.locale)[dto.reportLegalReason]
 			: undefined;
-		const subject = [reasonLabel, legalReasonLabel].filter(Boolean).join(' - ');
+		const legalReasonRow = legalReasonLabel ? `<dd>${legalReasonLabel}</dd>` : '';
 
 		return {
-			subject,
+			subject: this.translationsService.tText(
+				'modules/visitor-space/components/report-blade/report-blade___media-item-gerapporteerd-door-gebruiker-op-het-archief',
+				{},
+				dto.locale
+			),
 			comment: {
 				url: dto.url,
 				body: dto.message,
-				html_body: `<dl><dt>${reasonLabel}</dt><dd>${dto.message}</dd><dt>URL</dt><dd>${dto.url}</dd></dl>`,
+				html_body: `<dl><dt>${this.translationsService.tText(
+					'modules/visitor-space/components/report-blade/report-blade___reden-van-rapporteren',
+					{},
+					dto.locale
+				)}</dt><dd>${reasonLabel}</dd>${legalReasonRow}<dt>${this.translationsService.tText(
+					'modules/visitor-space/components/report-blade/report-blade___opmerking',
+					{},
+					dto.locale
+				)}</dt><dd>${dto.message}</dd><dt>${this.translationsService.tText(
+					'modules/visitor-space/components/report-blade/report-blade___pagina-url',
+					{},
+					dto.locale
+				)}</dt><dd>${dto.url}</dd></dl>`,
 				public: false,
 			},
 			requester: {
-				name: dto.name || 'Anonymous',
+				name: dto.name,
 				email: dto.email,
 			},
 		};
@@ -245,7 +263,7 @@ export class ZendeskService {
 				template: EmailTemplate.CAMPAIGN_MONITOR_TEMPLATE_REPORT_METADATA_ISSUE_IE_OBJECT,
 				data: {
 					to: contactEmail || this.configService.get('MEEMOO_MAINTAINER_MISSING_EMAIL_FALLBACK'),
-					replyTo: dto.email || null,
+					replyTo: dto.email,
 					consentToTrack: ConsentToTrackOption.UNCHANGED,
 					data: {
 						reporter_name: dto.name,

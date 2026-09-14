@@ -1,3 +1,5 @@
+import type { TranslationsService } from '@meemoo/admin-core-api';
+
 import type { Locale } from '~shared/types/types';
 
 export type ZendeskID = number;
@@ -126,31 +128,53 @@ export enum ReportLegalReason {
 }
 
 // Human-readable labels per reportReason/reportLegalReason, in the reporter's own language, used
-// to build the Zendesk ticket subject/body. Text should match what the client shows for each
-// radio option (hetarchief-client's ReportBlade.const.ts) — kept in sync by hand.
-export const REPORT_REASON_LABELS: Record<Locale, Record<ReportReason, string>> = {
-	nl: {
-		[ReportReason.METADATA_ISSUE]: 'Metadata probleem',
-		[ReportReason.GENERAL_QUESTION]: 'Ander probleem',
-		[ReportReason.LEGAL_REMARK]: 'Juridische opmerking',
-	},
-	en: {
-		[ReportReason.METADATA_ISSUE]: 'Metadata issue',
-		[ReportReason.GENERAL_QUESTION]: 'Other issue',
-		[ReportReason.LEGAL_REMARK]: 'Legal remark',
-	},
-};
+// to build the Zendesk ticket subject/body. Resolved through the same admin-managed translations
+// module as the client, using the exact same keys as the matching radio option in
+// hetarchief-client's ReportBlade.const.ts, so the two stay in sync automatically.
+export function getReportReasonLabels(
+	translationsService: TranslationsService,
+	locale: Locale
+): Record<ReportReason, string> {
+	return {
+		// Own-org METADATA_ISSUE is informational-only and never calls this endpoint, so this key
+		// always matches the other-org "Ik heb een probleem met de metadata van dit object" option.
+		[ReportReason.METADATA_ISSUE]: translationsService.tText(
+			'modules/visitor-space/components/report-blade/report-blade___ik-heb-een-probleem-met-de-metadata-van-dit-object',
+			{},
+			locale
+		),
+		[ReportReason.GENERAL_QUESTION]: translationsService.tText(
+			'modules/visitor-space/components/report-blade/report-blade___ik-heb-een-ander-probleem-met-dit-object',
+			{},
+			locale
+		),
+		[ReportReason.LEGAL_REMARK]: translationsService.tText(
+			'modules/visitor-space/components/report-blade/report-blade___ik-wil-een-juridische-opmerking-geven-ivm-auteursrecht-of-gdpr-privacy',
+			{},
+			locale
+		),
+	};
+}
 
-export const REPORT_LEGAL_REASON_LABELS: Record<Locale, Record<ReportLegalReason, string>> = {
-	nl: {
-		[ReportLegalReason.OPT_OUT_OR_REMOVAL]: 'Opt-out Out-of-Commerce regeling of verwijdering',
-		[ReportLegalReason.IP_COMPLAINT]: 'Klacht wegens mogelijke inbreuk op intellectuele rechten',
-		[ReportLegalReason.GDPR_PRIVACY]: 'Uitoefenen van rechten volgens GDPR of privacywetgeving',
-	},
-	en: {
-		[ReportLegalReason.OPT_OUT_OR_REMOVAL]: 'Opt-out of the Out-of-Commerce scheme or removal',
-		[ReportLegalReason.IP_COMPLAINT]:
-			'Complaint about possible infringement of intellectual rights',
-		[ReportLegalReason.GDPR_PRIVACY]: 'Exercising rights under GDPR or privacy legislation',
-	},
-};
+export function getReportLegalReasonLabels(
+	translationsService: TranslationsService,
+	locale: Locale
+): Record<ReportLegalReason, string> {
+	return {
+		[ReportLegalReason.OPT_OUT_OR_REMOVAL]: translationsService.tText(
+			'modules/visitor-space/components/report-blade/report-blade___ik-ben-rechthebbende-en-wil-een-opt-out-op-de-out-of-commerce-regeling-aanvragen-voor-dit-materiaal-of-een-verwijdering',
+			{},
+			locale
+		),
+		[ReportLegalReason.IP_COMPLAINT]: translationsService.tText(
+			'modules/visitor-space/components/report-blade/report-blade___ik-ben-rechthebbende-en-wil-een-klacht-indienen-wegens-mogelijke-inbreuk-op-intellectuele-rechten',
+			{},
+			locale
+		),
+		[ReportLegalReason.GDPR_PRIVACY]: translationsService.tText(
+			'modules/visitor-space/components/report-blade/report-blade___ik-wil-mijn-rechten-uitoefenen-volgens-de-gdpr-of-privacy-wetgeving-met-betrekking-tot-dit-materiaal-vb-portretrecht',
+			{},
+			locale
+		),
+	};
+}
