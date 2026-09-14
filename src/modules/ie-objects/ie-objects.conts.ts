@@ -134,6 +134,7 @@ export const IE_OBJECT_METADATA_SET_BY_OBJECT_AND_USER_SECTOR: Readonly<
 const IE_OBJECT_PROPS_METADATA_SET_LTD: Readonly<(keyof IeObject)[]> = [
 	'name',
 	'nameAi',
+	'synopsisAi',
 	'collectionName',
 	'collectionId',
 	'issueNumber',
@@ -192,7 +193,6 @@ const IE_OBJECT_PROPS_METADATA_SET_ALL: Readonly<(keyof IeObject)[]> = [
 	'bibframeProductionMethod',
 	'bibframeEdition',
 	'synopsis',
-	'synopsisAi',
 	// Themes are only ever linked to publicly disclosed objects. The client additionally hides the
 	// section for kiosk users and for objects without a VIAA-PUBLIEK-CONTENT license. See ARC-3826.
 	'themes',
@@ -230,6 +230,8 @@ export const IE_OBJECT_PROPS_METADATA_EXPORT: Readonly<(keyof IeObject)[]> = [
 	'maintainerId',
 	'maintainerName',
 	'name',
+	'nameAi',
+	'synopsisAi',
 	'collectionName',
 	'issueNumber',
 	'isPartOf',

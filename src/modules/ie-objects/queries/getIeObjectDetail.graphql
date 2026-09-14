@@ -15,11 +15,11 @@ query getIeObjectDetail($ieObjectId: String!) {
 		schema_abstract
 		bibframe_edition
 		ebucore_synopsis
-		schemaNames {
+		schemaNames(order_by: { created_at: asc }) {
 			schema_name
 			is_ai_generated
 		}
-		ebucoreSynopses {
+		ebucoreSynopses(order_by: { created_at: asc }) {
 			ebucore_synopsis
 			is_ai_generated
 		}
