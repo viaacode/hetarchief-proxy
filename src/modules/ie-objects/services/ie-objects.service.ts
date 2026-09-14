@@ -888,8 +888,7 @@ export class IeObjectsService {
 			temporal: compact(schemaTemporalResponse?.map((item) => item.schema_temporal)),
 			synopsis: ie?.ebucore_synopsis,
 			synopsisAi:
-				ie?.ebucoreSynopses?.find((variant) => variant.is_ai_generated)?.ebucore_synopsis ??
-				null,
+				ie?.ebucoreSynopses?.find((variant) => variant.is_ai_generated)?.ebucore_synopsis ?? null,
 			copyrightHolder: compact(
 				schemaCopyrightHolderResponse?.map((item) => item.schema_copyright_holder)
 			).join(', '),
