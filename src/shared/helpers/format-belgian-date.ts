@@ -1,4 +1,4 @@
-import { formatInTimeZone, type OptionsWithTZ } from 'date-fns-tz';
+import { type OptionsWithTZ, formatInTimeZone } from 'date-fns-tz';
 import { nlBE } from 'date-fns/locale';
 
 export function convertToDate(date: string): Date {

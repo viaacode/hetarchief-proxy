@@ -42,6 +42,7 @@ query getIeObjectPlayableDisplayData($ieObjectId: String!) {
 					ebucore_has_mime_type
 					premis_stored_at
 					hasMediaFragment {
+						id
 						schema_start_time
 						schema_end_time
 					}
@@ -60,6 +61,7 @@ query getIeObjectPlayableDisplayData($ieObjectId: String!) {
 					ebucore_has_mime_type
 					premis_stored_at
 					hasMediaFragment {
+						id
 						schema_start_time
 						schema_end_time
 					}

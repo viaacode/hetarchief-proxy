@@ -84,3 +84,21 @@ export interface CreateTicketResponse extends AuditableModel {
 	readonly recipient: string | null;
 	readonly followup_source_id: string | null;
 }
+
+/**
+ * Response of POST {ZENDESK_TOKEN_ENDPOINT} with the client credentials grant
+ * @see https://developer.zendesk.com/api-reference/ticketing/oauth/grant_type_tokens/
+ */
+export interface ZendeskOauthTokenResponse {
+	access_token: string;
+	// Only set for oauth clients created on or after 2026-04-30
+	expires_in?: number | undefined;
+	scope: string;
+	token_type: string;
+}
+
+export interface ZendeskAccessToken {
+	accessToken: string;
+	expiresIn: number;
+	createdAt: Date;
+}

@@ -164,14 +164,18 @@ export class PlayableDisplayDataService {
 						// selection as the object detail page
 						const representation = findFirstPlayableRepresentation(dbResponse, isAudioVideoObject);
 						const files = compact((representation?.includes || []).map((include) => include.file));
-						const isMediaFragmentOf = !!representation?.is_media_fragment_of;
+						// The representation is only relevant here as the key to its own cut window in
+						// the shared parent file, so pass the id along only when it is a cut fragment
+						const mediaFragmentRepresentationId = representation?.is_media_fragment_of
+							? (representation.id ?? null)
+							: null;
 
 						if (isAudioVideoObject) {
 							const audioVideoData = await this.resolveAudioVideoFileData(
 								files,
 								item,
 								isAudio,
-								isMediaFragmentOf,
+								mediaFragmentRepresentationId,
 								referer,
 								ip,
 								isPublicDomain
@@ -270,7 +274,7 @@ export class PlayableDisplayDataService {
 		files: PlayableDisplayDataFile[],
 		item: { start?: number; end?: number },
 		isAudio: boolean,
-		isMediaFragmentOf: boolean,
+		mediaFragmentRepresentationId: string | null,
 		referer: string,
 		ip: string,
 		isPublicDomain: boolean
@@ -290,7 +294,7 @@ export class PlayableDisplayDataService {
 			// url for the full object and could seek outside the snippet the editor selected.
 			const { startTime, endTime } = this.resolveMediaSnippetPlayableUrl(
 				playableFile,
-				isMediaFragmentOf,
+				mediaFragmentRepresentationId,
 				item
 			);
 			playableUrl = await this.resolveFileTicketUrl(
@@ -580,6 +584,10 @@ export class PlayableDisplayDataService {
 	 * https://meemoo.atlassian.net/browse/ARC-3690?focusedCommentId=87432), narrowed further to the
 	 * editorial snippet the caller asked for (https://meemoo.atlassian.net/browse/ARC-3832).
 	 *
+	 * The window is looked up by representation id, since every fragment cut from a video shares
+	 * the same full video file and hasMediaFragment therefore lists the windows of all of that
+	 * file's fragments - picking the first one played an arbitrary sibling fragment. ARC-3690
+	 *
 	 * Snip times are relative to the object as the editor sees it - which, for a media fragment,
 	 * starts at 0 inside a longer parent file - so they're shifted into the parent file's timeline
 	 * and kept inside the fragment's own window.
@@ -590,13 +598,17 @@ export class PlayableDisplayDataService {
 	 */
 	private resolveMediaSnippetPlayableUrl(
 		file: PlayableDisplayDataFile,
-		isMediaFragmentOf: boolean,
+		mediaFragmentRepresentationId: string | null,
 		item: { start?: number; end?: number }
 	): { startTime: number | undefined; endTime: number | undefined } {
 		let fragmentStart: number | undefined;
 		let fragmentEnd: number | undefined;
-		const fragment = file.hasMediaFragment?.[0];
-		if (isMediaFragmentOf && fragment?.schema_start_time && fragment?.schema_end_time) {
+		const fragment = mediaFragmentRepresentationId
+			? file.hasMediaFragment?.find(
+					(mediaFragment) => mediaFragment.id === mediaFragmentRepresentationId
+				)
+			: undefined;
+		if (fragment?.schema_start_time && fragment?.schema_end_time) {
 			fragmentStart = formattedDurationToSeconds(fragment.schema_start_time);
 			fragmentEnd = formattedDurationToSeconds(fragment.schema_end_time);
 		}
