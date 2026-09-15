@@ -149,6 +149,12 @@ export const MULTI_MATCH_QUERY_MAPPING: Record<
 			limited: descriptionSearchQueryFuzzy,
 			all: descriptionSearchQueryFuzzy,
 		},
+		// The identifier fields are keyword fields, on which a fuzzy match cannot do more than an
+		// exact one, so both operators share a template
+		identifier: {
+			limited: identifierSearchQueryExact,
+			all: identifierSearchQueryExact,
+		},
 	},
 	exact: {
 		name: {
@@ -388,6 +394,8 @@ export const NEEDS_FILTER_SUFFIX: { [prop in IeObjectsSearchFilterField]?: strin
 	[IeObjectsSearchFilterField.MENTIONS]: 'keyword',
 	[IeObjectsSearchFilterField.PUBLISHER]: 'keyword',
 	[IeObjectsSearchFilterField.CREATOR]: 'keyword',
+	// schema_location_created.keyword carries a lowercase normalizer, so an exact match lands on it
+	[IeObjectsSearchFilterField.LOCATION_CREATED]: 'keyword',
 
 	// http://es-qas-hetarchief.private.cloud.meemoo.be/_mapping
 	// These are already type keyword:

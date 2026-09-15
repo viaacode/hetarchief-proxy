@@ -275,8 +275,10 @@ export class IeObjectsService {
 				);
 			}
 
-			if (inputQuery.size > 0 && process.env.NODE_ENV === 'local') {
-				fs.writeFile('response.json', JSON.stringify(objectResponse, null, 2));
+			// The catch above leaves objectResponse undefined when the query fails, and an unawaited
+			// rejection here takes the whole service down
+			if (objectResponse && inputQuery.size > 0 && process.env.NODE_ENV === 'local') {
+				await fs.writeFile('response.json', JSON.stringify(objectResponse, null, 2));
 			}
 
 			if (this.configService.get('ELASTICSEARCH_LOG_QUERIES')) {

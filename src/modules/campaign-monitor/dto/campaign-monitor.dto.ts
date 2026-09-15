@@ -127,6 +127,38 @@ export class CampaignMonitorConfirmationData {
 	activation_url: string;
 }
 
+export class CampaignMonitorReportMetadataIssueData {
+	@IsString()
+	@IsOptional()
+	@ApiPropertyOptional({ type: String })
+	reporter_name?: string;
+
+	@IsString()
+	@IsOptional()
+	@ApiPropertyOptional({ type: String })
+	reporter_email?: string;
+
+	@IsString()
+	@IsOptional()
+	@ApiPropertyOptional({ type: String })
+	message?: string;
+
+	@IsString()
+	@IsOptional()
+	@ApiPropertyOptional({ type: String })
+	object_url?: string;
+
+	@IsString()
+	@IsOptional()
+	@ApiPropertyOptional({ type: String })
+	mam_url?: string;
+
+	@IsString()
+	@IsOptional()
+	@ApiPropertyOptional({ type: String })
+	ai_meemoo_url?: string;
+}
+
 export class CampaignMonitorUpdatePreferencesData {
 	@IsString()
 	@IsOptional()
@@ -224,7 +256,8 @@ export class CampaignMonitorData {
 		| CampaignMonitorVisitData
 		| CampaignMonitorShareFolderInfo
 		| CampaignMonitorMaterialRequestData
-		| CampaignMonitorConfirmationData;
+		| CampaignMonitorConfirmationData
+		| CampaignMonitorReportMetadataIssueData;
 }
 
 export class CampaignMonitorSendMailDto {

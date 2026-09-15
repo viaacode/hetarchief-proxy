@@ -1,6 +1,7 @@
 import {
 	CampaignMonitorConfirmationData,
 	CampaignMonitorMaterialRequestData,
+	CampaignMonitorReportMetadataIssueData,
 	CampaignMonitorVisitData,
 } from './dto/campaign-monitor.dto';
 
@@ -28,6 +29,7 @@ export enum EmailTemplate {
 	CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_ADDITIONAL_REQUIREMENTS_SENT = 'CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_ADDITIONAL_REQUIREMENTS_SENT',
 	CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_ADDITIONAL_REQUIREMENTS_REMINDER = 'CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_ADDITIONAL_REQUIREMENTS_REMINDER',
 	CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_ADDITIONAL_REQUIREMENTS_ACCEPTED = 'CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_ADDITIONAL_REQUIREMENTS_ACCEPTED',
+	CAMPAIGN_MONITOR_TEMPLATE_REPORT_METADATA_ISSUE_IE_OBJECT = 'CAMPAIGN_MONITOR_TEMPLATE_REPORT_METADATA_ISSUE_IE_OBJECT',
 }
 
 export interface VisitEmailInfo {
@@ -123,6 +125,7 @@ export interface CmSendEmailInfo {
 		| CampaignMonitorShareFolderInfo
 		| CampaignMonitorMaterialRequestData
 		| CampaignMonitorConfirmationData
+		| CampaignMonitorReportMetadataIssueData
 	) & { reply_to_email?: string };
 	AddRecipientsToList?: boolean;
 	ConsentToTrack?: ConsentToTrackOption;
