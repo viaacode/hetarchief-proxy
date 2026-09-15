@@ -321,11 +321,14 @@ export class QueryBuilder {
 		if (searchFilter.field === IeObjectsSearchFilterField.CREATOR) {
 			// Creator is always the full name, so we can collapse "contains" under "is" and collapse "contains_not" under "is_not"
 			// https://meemoo.atlassian.net/browse/ARC-1844?focusedCommentId=58372
+			// The checkbox/autocomplete filters send their values in multiValue, the advanced filters in value,
+			// so resolve both here into a term/terms query
+			const creatorValue = QueryBuilder.buildValue(searchFilter);
 			return {
 				occurrenceType: OCCURRENCE_TYPE[searchFilter.operator],
 				query: {
-					term: {
-						[`${ElasticsearchField.schema_creator}_text.keyword`]: searchFilter.value,
+					[isArray(creatorValue) ? QueryType.TERMS : QueryType.TERM]: {
+						[`${ElasticsearchField.schema_creator}_text.keyword`]: creatorValue,
 					},
 				},
 			};
