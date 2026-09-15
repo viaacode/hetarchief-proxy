@@ -14,7 +14,11 @@ import type {
 	GqlUpdateFolder,
 } from '../types';
 
-import { type HetArchiefIeObjectSector, type HetArchiefIeObjectType } from '@viaa/avo2-types';
+import {
+	HetArchiefIeObject,
+	type HetArchiefIeObjectSector,
+	type HetArchiefIeObjectType,
+} from '@viaa/avo2-types';
 import {
 	FindFolderByIdDocument,
 	type FindFolderByIdQuery,
@@ -46,7 +50,6 @@ import {
 	type Users_Folder_Ie_Bool_Exp,
 } from '~generated/graphql-db-types-hetarchief';
 import { FolderObjectsQueryDto } from '~modules/folders/dto/folders.dto';
-import type { IeObject } from '~modules/ie-objects/ie-objects.types';
 
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 
@@ -70,7 +73,7 @@ export class FoldersService {
 		gqlIeObject: GqlObject | undefined,
 		referer: string,
 		ip: string
-	): Promise<Partial<IeObject> | undefined> {
+	): Promise<Partial<HetArchiefIeObject> | undefined> {
 		if (!gqlIeObject) {
 			return undefined;
 		}
@@ -157,7 +160,7 @@ export class FoldersService {
 		gqlFolderObjectLink: FolderObjectLink | undefined,
 		referer: string,
 		ip: string
-	): Promise<(Partial<IeObject> & { folderEntryCreatedAt: string }) | undefined> {
+	): Promise<(Partial<HetArchiefIeObject> & { folderEntryCreatedAt: string }) | undefined> {
 		if (!gqlFolderObjectLink) {
 			return undefined;
 		}
@@ -226,7 +229,7 @@ export class FoldersService {
 		queryDto: FolderObjectsQueryDto,
 		referer: string,
 		ip: string
-	): Promise<IPagination<Partial<IeObject> & { folderEntryCreatedAt: string }>> {
+	): Promise<IPagination<Partial<HetArchiefIeObject> & { folderEntryCreatedAt: string }>> {
 		const { query, page, size } = queryDto;
 		const { offset, limit } = PaginationHelper.convertPagination(page, size);
 		let where: Users_Folder_Ie_Bool_Exp = {};
@@ -342,7 +345,7 @@ export class FoldersService {
 		ieObjectId: string,
 		referer: string,
 		ip: string
-	): Promise<(Partial<IeObject> & { folderEntryCreatedAt: string }) | null> {
+	): Promise<(Partial<HetArchiefIeObject> & { folderEntryCreatedAt: string }) | null> {
 		const response = await this.dataService.execute<
 			FindIeObjectInFolderQuery,
 			FindIeObjectInFolderQueryVariables
@@ -362,7 +365,7 @@ export class FoldersService {
 		ieObjectId: string,
 		referer: string,
 		ip: string
-	): Promise<Partial<IeObject> & { folderEntryCreatedAt: string }> {
+	): Promise<Partial<HetArchiefIeObject> & { folderEntryCreatedAt: string }> {
 		const folderObject = await this.findObjectInFolderById(folderId, ieObjectId, referer, ip);
 		if (folderObject) {
 			throw new BadRequestException({

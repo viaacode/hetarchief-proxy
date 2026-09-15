@@ -1,6 +1,6 @@
 import { intersection, isEmpty, pick, uniq } from 'lodash';
 
-import { HetArchiefIeObjectLicense } from '@viaa/avo2-types';
+import { HetArchiefIeObject, HetArchiefIeObjectLicense } from '@viaa/avo2-types';
 import {
 	IE_OBJECT_INTRA_CP_LICENSES,
 	IE_OBJECT_LICENSES_BY_USER_GROUP,
@@ -9,11 +9,7 @@ import {
 	IE_OBJECT_PROPS_BY_METADATA_SET,
 	IE_OBJECT_PUBLIC_LICENSES,
 } from '../ie-objects.conts';
-import {
-	type IeObject,
-	IeObjectExtraUserGroupType,
-	IeObjectMetadataSet,
-} from '../ie-objects.types';
+import { IeObjectExtraUserGroupType, IeObjectMetadataSet } from '../ie-objects.types';
 
 import { getAccessThrough } from './get-access-through';
 
@@ -22,10 +18,10 @@ import { GroupId } from '~modules/users/types';
 
 // figure out what properties the user can see and which should be stripped
 export const limitAccessToObjectDetails = (
-	ieObject: Pick<IeObject, 'licenses' | 'schemaIdentifier' | 'maintainerId' | 'sector'> &
-		Partial<IeObject>,
+	ieObject: Pick<HetArchiefIeObject, 'licenses' | 'schemaIdentifier' | 'maintainerId' | 'sector'> &
+		Partial<HetArchiefIeObject>,
 	userInfo: LimitAccessUserInfo
-): Partial<IeObject> => {
+): Partial<HetArchiefIeObject> => {
 	if (process.env.IE_OBJECT_LOG_ACCESS_CHECKS === 'true') {
 		console.info('limit access to ie-object with user info: ', JSON.stringify(userInfo));
 	}

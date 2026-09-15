@@ -58,6 +58,7 @@ import {
 } from '../material-requests.types';
 
 import {
+	HetArchiefIeObject,
 	HetArchiefIeObjectAccessThrough,
 	HetArchiefIeObjectLicense,
 	type HetArchiefIeObjectSector,
@@ -124,7 +125,7 @@ import {
 	UpdateMaterialRequestStatusMutationVariables,
 } from '~generated/graphql-db-types-hetarchief';
 import { type MaterialRequestEmailInfo } from '~modules/campaign-monitor/campaign-monitor.types';
-import { type IeObject, IeObjectsVisitorSpaceInfo } from '~modules/ie-objects/ie-objects.types';
+import { IeObjectsVisitorSpaceInfo } from '~modules/ie-objects/ie-objects.types';
 import type { Organisation } from '~modules/organisations/organisations.types';
 
 import { OrganisationsService } from '~modules/organisations/services/organisations.service';
@@ -1162,7 +1163,7 @@ export class MaterialRequestsService {
 		let hasAccessToEssence = false;
 		if (user && objectId) {
 			const objectForAccessChecks: Pick<
-				IeObject,
+				HetArchiefIeObject,
 				'licenses' | 'schemaIdentifier' | 'maintainerId' | 'sector'
 			> = {
 				maintainerId: rawObject.schemaMaintainer.org_identifier,
@@ -1430,7 +1431,10 @@ export class MaterialRequestsService {
 	}
 
 	public getAccessThroughAndLicences(
-		objectMetadata: Pick<IeObject, 'licenses' | 'schemaIdentifier' | 'maintainerId' | 'sector'>,
+		objectMetadata: Pick<
+			HetArchiefIeObject,
+			'licenses' | 'schemaIdentifier' | 'maintainerId' | 'sector'
+		>,
 		visitorSpaceAccessInfo: IeObjectsVisitorSpaceInfo,
 		user: SessionUserEntity
 	): {

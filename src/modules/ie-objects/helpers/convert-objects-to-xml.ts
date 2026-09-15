@@ -1,18 +1,20 @@
 import convert from 'xml-js';
 
-import { HetArchiefIeObjectLicense } from '@viaa/avo2-types';
+import { HetArchiefIeObject, HetArchiefIeObjectLicense } from '@viaa/avo2-types';
 import {
 	IE_OBJECT_PROPERTY_TO_DUBLIN_CORE,
 	IE_OBJECT_PROPS_METADATA_EXPORT,
 	type XmlNode,
 } from '../ie-objects.conts';
-import { type IeObject } from '../ie-objects.types';
 
-export const convertObjectToXml = (object: Partial<IeObject>, clientHost: string): string => {
+export const convertObjectToXml = (
+	object: Partial<HetArchiefIeObject>,
+	clientHost: string
+): string => {
 	const dcElements: XmlNode[] = [];
 
 	for (const key of IE_OBJECT_PROPS_METADATA_EXPORT) {
-		const value = object[key as keyof IeObject];
+		const value = object[key as keyof HetArchiefIeObject];
 		if (value) {
 			const dcFields = IE_OBJECT_PROPERTY_TO_DUBLIN_CORE[key](value);
 			const dcFieldsWithValues = dcFields.filter(

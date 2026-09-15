@@ -4,6 +4,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import {
+	type HetArchiefIeObject,
 	HetArchiefIeObjectLicense,
 	type HetArchiefIeObjectSector,
 	HetArchiefIeObjectType,
@@ -51,7 +52,7 @@ import {
 } from '~generated/graphql-db-types-hetarchief';
 import { limitAccessToObjectDetails } from '~modules/ie-objects/helpers/limit-access-to-object-details';
 import { mapDcTermsFormatToSimpleType } from '~modules/ie-objects/helpers/map-dc-terms-format-to-simple-type';
-import { type IeObject, IeObjectsVisitorSpaceInfo } from '~modules/ie-objects/ie-objects.types';
+import { IeObjectsVisitorSpaceInfo } from '~modules/ie-objects/ie-objects.types';
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { AUDIO_WAVE_FORM_URL } from '~shared/consts/audio-wave-form-url';
@@ -464,7 +465,7 @@ export class ThemesService {
 		}
 
 		const objectForAccessChecks: Pick<
-			IeObject,
+			HetArchiefIeObject,
 			'licenses' | 'schemaIdentifier' | 'maintainerId' | 'sector'
 		> = {
 			maintainerId: rawIeObject.schemaMaintainer?.org_identifier,
