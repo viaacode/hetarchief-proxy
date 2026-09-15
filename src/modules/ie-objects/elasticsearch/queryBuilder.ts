@@ -333,7 +333,7 @@ export class QueryBuilder {
 				},
 			};
 		}
-		if (FLATTENED_FIELDS.includes(searchFilter.field)) {
+		if (FLATTENED_FIELDS.includes(searchFilter.field) && searchFilter.value) {
 			// Flattened fields should be case-insensitive, so we always search on the lowercase value
 			searchFilter.value = searchFilter.value.toLowerCase();
 		}
@@ -375,6 +375,10 @@ export class QueryBuilder {
 					query_string: {
 						query: `${searchFilter.value.toLowerCase()}*`,
 						default_field: elasticKey,
+						// Every word the user typed has to be in the object, rather than any one of
+						// them, which is what elasticsearch would do on its own.
+						// https://meemoo.atlassian.net/browse/ARC-3806
+						default_operator: 'AND',
 					},
 				},
 			};
@@ -465,41 +469,104 @@ export class QueryBuilder {
 			);
 		}
 
-		for (const searchFilter of validatedFilters) {
-			// First, check for special 'multi match fields'. Fields like query, name and description
-			// query multiple fields at once
-			if (MULTI_MATCH_FIELDS.includes(searchFilter.field)) {
-				if (!searchFilter.value && !searchFilter.multiValue?.length) {
-					throw new BadRequestException(
-						`Value cannot be empty when filtering on field '${searchFilter.field}'`
-					);
-				}
-				if (QueryBuilder.isFuzzyOperator(searchFilter.operator)) {
-					// Use a multi field search template to fuzzy search in elasticsearch across multiple fields
+		// Clauses that come from one filter in the ui are OR-ed, clauses from different filters stay
+		// AND-ed. https://meemoo.atlassian.net/browse/ARC-3806
+		const filtersByField = groupBy(validatedFilters, (searchFilter) => searchFilter.field);
 
-					let textFilters: any[];
-					if (searchFilter.field === IeObjectsSearchFilterField.QUERY) {
-						// We only want to parse a boolean query if it contains some boolean operators or quotes or parentheses
-						if (QueryBuilder.isBooleanSearchTerm(searchFilter.value)) {
-							try {
-								textFilters = [
-									convertNodeToEsQueryFilterObjects(
-										jsep(encodeSearchterm(searchFilter.value)),
-										{
-											fuzzy: MULTI_MATCH_QUERY_MAPPING.fuzzy.query[metadataAccessType],
-											exact: MULTI_MATCH_QUERY_MAPPING.exact.query[metadataAccessType],
-										},
-										searchFilter
-									),
-								];
-							} catch (err) {
-								// Search term with logical operators could not be parsed
-								// Fall back to regular text search
-								const searchTemplate = MULTI_MATCH_QUERY_MAPPING.fuzzy.query[metadataAccessType];
-								textFilters = [buildFreeTextFilter(searchTemplate, searchFilter)];
-							}
-						} else {
-							// If no boolean operators were found, do a simple text search using the fuzzy search term template
+		for (const fieldFilters of Object.values(filtersByField)) {
+			for (const searchFilter of fieldFilters.filter(
+				(filter) => !QueryBuilder.canOrGroup(filter)
+			)) {
+				for (const clause of QueryBuilder.buildClausesForFilter(searchFilter, metadataAccessType)) {
+					applyFilter(filterObject, clause);
+				}
+			}
+
+			const orClauses = fieldFilters
+				.filter((filter) => QueryBuilder.canOrGroup(filter))
+				.flatMap((searchFilter) =>
+					QueryBuilder.buildClausesForFilter(searchFilter, metadataAccessType)
+				);
+
+			if (orClauses.length === 1) {
+				applyFilter(filterObject, orClauses[0]);
+			} else if (orClauses.length > 1) {
+				const orGroup = OR(orClauses.map((clause) => clause.query));
+				if (orGroup) {
+					applyFilter(filterObject, {
+						occurrenceType: OccurenceType.must,
+						query: orGroup,
+					});
+				}
+			}
+		}
+
+		if (filterArray.length > 0) {
+			applyFilter(filterObject, {
+				occurrenceType: 'filter',
+				query: filterArray,
+			});
+		}
+
+		if (!filterObject.bool?.must && !filterObject.bool?.must_not && !filterObject.bool?.filter) {
+			return {};
+		}
+
+		return filterObject;
+	}
+
+	/**
+	 * May this filter's clauses join the OR group of its field?
+	 *
+	 * Only the matching operators may. A range operator (gte/lte) must stay AND-ed, since a
+	 * "between" is sent as a gte plus an lte on the same field. Search terms from the search bar
+	 * must stay AND-ed too, since each extra term narrows the result set.
+	 * A "not" operator excludes, and an exclusion stays AND-ed for the same reason.
+	 */
+	private static canOrGroup(searchFilter: SearchFilter): boolean {
+		return (
+			searchFilter.field !== IeObjectsSearchFilterField.QUERY &&
+			[Operator.CONTAINS, Operator.IS].includes(searchFilter.operator)
+		);
+	}
+
+	/**
+	 * Builds the elasticsearch clauses for one filter entry.
+	 * A filter on a multi match field can produce more than one clause.
+	 */
+	private static buildClausesForFilter(
+		searchFilter: SearchFilter,
+		metadataAccessType: MetadataAccessType
+	): { occurrenceType: string; query: any }[] {
+		// First, check for special 'multi match fields'. Fields like query, name and description
+		// query multiple fields at once
+		if (MULTI_MATCH_FIELDS.includes(searchFilter.field)) {
+			if (!searchFilter.value && !searchFilter.multiValue?.length) {
+				throw new BadRequestException(
+					`Value cannot be empty when filtering on field '${searchFilter.field}'`
+				);
+			}
+			if (QueryBuilder.isFuzzyOperator(searchFilter.operator)) {
+				// Use a multi field search template to fuzzy search in elasticsearch across multiple fields
+
+				let textFilters: any[];
+				if (searchFilter.field === IeObjectsSearchFilterField.QUERY) {
+					// We only want to parse a boolean query if it contains some boolean operators or quotes or parentheses
+					if (QueryBuilder.isBooleanSearchTerm(searchFilter.value)) {
+						try {
+							textFilters = [
+								convertNodeToEsQueryFilterObjects(
+									jsep(encodeSearchterm(searchFilter.value)),
+									{
+										fuzzy: MULTI_MATCH_QUERY_MAPPING.fuzzy.query[metadataAccessType],
+										exact: MULTI_MATCH_QUERY_MAPPING.exact.query[metadataAccessType],
+									},
+									searchFilter
+								),
+							];
+						} catch {
+							// Search term with logical operators could not be parsed
+							// Fall back to regular text search
 							const searchTemplate = MULTI_MATCH_QUERY_MAPPING.fuzzy.query[metadataAccessType];
 							textFilters = [buildFreeTextFilter(searchTemplate, searchFilter)];
 						}
@@ -515,68 +582,54 @@ export class QueryBuilder {
 
 						textFilters = [buildFreeTextFilter(searchTemplate, searchFilter)];
 					}
-
-					for (const filter of textFilters) {
-						applyFilter(filterObject, {
-							occurrenceType: QueryBuilder.getOccurrenceType(searchFilter.operator),
-							query: filter,
-						});
-					}
-					continue;
-				}
-				// Exact match
-				// Use a multi field search template to exact search in elasticsearch across multiple fields
-				const searchTemplate =
-					MULTI_MATCH_QUERY_MAPPING.exact[searchFilter.field][metadataAccessType];
-
-				if (!searchTemplate) {
-					throw new BadRequestException(
-						`An exact search is not supported for multi field: '${searchFilter.field}'`
-					);
+				} else {
+					const searchTemplate =
+						MULTI_MATCH_QUERY_MAPPING.fuzzy[searchFilter.field][metadataAccessType];
+					textFilters = [buildFreeTextFilter(searchTemplate, searchFilter)];
 				}
 
-				const textFilter = buildFreeTextFilter(searchTemplate, searchFilter);
-
-				applyFilter(filterObject, {
+				return textFilters.map((filter) => ({
 					occurrenceType: QueryBuilder.getOccurrenceType(searchFilter.operator),
-					query: textFilter,
-				});
-				continue;
+					query: filter,
+				}));
 			}
-			/**
-			 * query/advanced query fields are NOT allowed to be queried with the is/isNot operator
-			 * name is a multi_match field, but is allowed to be queried using is/isNot operator
-			 */
-			if (searchFilter.field === IeObjectsSearchFilterField.QUERY) {
+			// Exact match
+			// Use a multi field search template to exact search in elasticsearch across multiple fields
+			const searchTemplate =
+				MULTI_MATCH_QUERY_MAPPING.exact[searchFilter.field][metadataAccessType];
+
+			if (!searchTemplate) {
 				throw new BadRequestException(
-					`Field '${searchFilter.field}' cannot be queried with the '${searchFilter.operator}' operator.`
+					`An exact search is not supported for multi field: '${searchFilter.field}'`
 				);
 			}
 
-			// Map frontend filter names to elasticsearch names
-			const elasticKey = READABLE_TO_ELASTIC_FILTER_NAMES[searchFilter.field];
-			if (!elasticKey) {
-				throw new InternalServerErrorException(
-					`Failed to resolve field to the ES fieldname: ${searchFilter.field}`
-				);
-			}
-
-			const advancedFilter = QueryBuilder.buildFilter(elasticKey, searchFilter);
-			applyFilter(filterObject, advancedFilter);
+			return [
+				{
+					occurrenceType: QueryBuilder.getOccurrenceType(searchFilter.operator),
+					query: buildFreeTextFilter(searchTemplate, searchFilter),
+				},
+			];
+		}
+		/**
+		 * query/advanced query fields are NOT allowed to be queried with the is/isNot operator
+		 * name is a multi_match field, but is allowed to be queried using is/isNot operator
+		 */
+		if (searchFilter.field === IeObjectsSearchFilterField.QUERY) {
+			throw new BadRequestException(
+				`Field '${searchFilter.field}' cannot be queried with the '${searchFilter.operator}' operator.`
+			);
 		}
 
-		if (filterArray.length > 0) {
-			applyFilter(filterObject, {
-				occurrenceType: 'filter',
-				query: filterArray,
-			});
+		// Map frontend filter names to elasticsearch names
+		const elasticKey = READABLE_TO_ELASTIC_FILTER_NAMES[searchFilter.field];
+		if (!elasticKey) {
+			throw new InternalServerErrorException(
+				`Failed to resolve field to the ES fieldname: ${searchFilter.field}`
+			);
 		}
 
-		if (!filterObject.bool?.must && !filterObject.bool?.must_not && !filterObject.bool?.filter) {
-			return {};
-		}
-
-		return filterObject;
+		return [QueryBuilder.buildFilter(elasticKey, searchFilter)];
 	}
 
 	/**

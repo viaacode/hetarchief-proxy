@@ -26,6 +26,7 @@
     "lint": "biome lint",
     "lint:fix": "biome lint --write --unsafe",
     "format": "biome format --write",
+    "type-check": "tsc --noEmit",
     "test": "vitest run",
     "test:ci": "vitest run --maxWorkers=1 --no-color",
     "test:watch": "vitest",
