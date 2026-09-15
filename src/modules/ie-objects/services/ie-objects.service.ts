@@ -1660,6 +1660,9 @@ export class IeObjectsService {
 			const escapedQuery = query
 				.trim()
 				.toLowerCase()
+				// * → \*
+				// ? → \?
+				// \ → \\
 				.replace(/([*?\\])/g, '\\$1');
 			mustClauses.push({
 				wildcard: {
