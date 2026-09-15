@@ -321,9 +321,9 @@ export class QueryBuilder {
 		if (searchFilter.field === IeObjectsSearchFilterField.CREATOR) {
 			// Creator is always the full name, so we can collapse "contains" under "is" and collapse "contains_not" under "is_not"
 			// https://meemoo.atlassian.net/browse/ARC-1844?focusedCommentId=58372
-			const creatorValue = searchFilter.multiValue?.length
-				? searchFilter.multiValue
-				: searchFilter.value;
+			// The checkbox/autocomplete filters send their values in multiValue, the advanced filters in value,
+			// so resolve both here into a term/terms query
+			const creatorValue = QueryBuilder.buildValue(searchFilter);
 			return {
 				occurrenceType: OCCURRENCE_TYPE[searchFilter.operator],
 				query: {
@@ -571,8 +571,15 @@ export class QueryBuilder {
 							textFilters = [buildFreeTextFilter(searchTemplate, searchFilter)];
 						}
 					} else {
-						// If no boolean operators were found, do a simple text search using the fuzzy search term template
-						const searchTemplate = MULTI_MATCH_QUERY_MAPPING.fuzzy.query[metadataAccessType];
+						const searchTemplate =
+							MULTI_MATCH_QUERY_MAPPING.fuzzy[searchFilter.field]?.[metadataAccessType];
+
+						if (!searchTemplate) {
+							throw new BadRequestException(
+								`A fuzzy search is not supported for multi field: '${searchFilter.field}'`
+							);
+						}
+
 						textFilters = [buildFreeTextFilter(searchTemplate, searchFilter)];
 					}
 				} else {

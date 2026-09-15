@@ -104,6 +104,7 @@ query getIeObjectDetail($ieObjectId: String!) {
 					edm_is_next_in_sequence
 					created_at
 					hasMediaFragment {
+						id
 						schema_start_time
 						schema_end_time
 						schema_name
@@ -231,6 +232,7 @@ query getIeObjectDetail($ieObjectId: String!) {
 					edm_is_next_in_sequence
 					created_at
 					hasMediaFragment {
+						id
 						schema_start_time
 						schema_end_time
 						schema_name

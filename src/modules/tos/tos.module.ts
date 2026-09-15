@@ -1,5 +1,5 @@
 import { DataModule } from '@meemoo/admin-core-api';
-import { forwardRef, Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 
 import { CacheModule } from '@nestjs/cache-manager';
 import { TosController } from './controllers/tos.controller';

@@ -4,7 +4,7 @@ import { join } from 'node:path';
 import { AssetsService, TranslationsService } from '@meemoo/admin-core-api';
 import { Injectable } from '@nestjs/common';
 import { AvoFileUploadAssetType } from '@viaa/avo2-types';
-import { format, isValid, Locale as DateFnsLocale, parseISO } from 'date-fns';
+import { Locale as DateFnsLocale, format, isValid, parseISO } from 'date-fns';
 import { enGB, nlBE } from 'date-fns/locale';
 import { drop, take } from 'lodash';
 import PDFDocument from 'pdfkit';

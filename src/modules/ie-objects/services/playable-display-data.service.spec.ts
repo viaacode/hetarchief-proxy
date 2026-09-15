@@ -465,7 +465,11 @@ describe('PlayableDisplayDataService', () => {
 											file: {
 												...mockVideoFile,
 												hasMediaFragment: [
-													{ schema_start_time: '00:00:10', schema_end_time: '00:00:20' },
+													{
+														id: 'representation-1',
+														schema_start_time: '00:00:10',
+														schema_end_time: '00:00:20',
+													},
 												],
 											},
 										},
@@ -855,6 +859,62 @@ describe('PlayableDisplayDataService', () => {
 			});
 		});
 
+		it("cuts to the requested fragment's own window, not the first window on the shared file", async () => {
+			// Every fragment cut from a video is represented by the same full video file, so its
+			// hasMediaFragment lists the windows of all of them. Picking the first one played a
+			// sibling fragment's footage under the requested fragment's metadata. ARC-3690
+			mockDataService.execute.mockResolvedValueOnce(
+				buildMockDbResponse({
+					getIsRepresentedBy: [
+						{
+							isRepresentedBy: [
+								{
+									...mockRepresentation,
+									id: 'requested-fragment',
+									is_media_fragment_of: 'shared-file',
+									includes: [
+										{
+											file: {
+												...mockVideoFile,
+												hasMediaFragment: [
+													{
+														id: 'sibling-fragment',
+														schema_start_time: '00:00:00',
+														schema_end_time: '00:00:30',
+													},
+													{
+														id: 'requested-fragment',
+														schema_start_time: '00:10:00',
+														schema_end_time: '00:10:30',
+													},
+												],
+											},
+										},
+									],
+								},
+							],
+						},
+					],
+				}) as GetIeObjectPlayableDisplayDataQuery
+			);
+
+			await playableDisplayDataService.getIeObjectsPlayableDisplayData(
+				[{ schemaIdentifier: 'mock-schema-identifier' }],
+				mockCpAdminUser,
+				'referer',
+				'127.0.0.1',
+				{} as any
+			);
+
+			expect(mockPlayerTicketService.getPlayableUrl).toHaveBeenCalledWith('OR-rf5kf25/file-1.mp4', {
+				referer: 'referer',
+				ip: '127.0.0.1',
+				isPublicDomain: false,
+				startTime: 600,
+				endTime: 630,
+			});
+		});
+
 		it('shifts the snippet into the parent file timeline and clamps it to the media fragment window', async () => {
 			const fragmentRepresentation = {
 				...mockRepresentation,
@@ -866,7 +926,13 @@ describe('PlayableDisplayDataService', () => {
 							...mockVideoFile,
 							id: 'fragment-file',
 							premis_stored_at: 'OR-rf5kf25/fragment-file.mp4',
-							hasMediaFragment: [{ schema_start_time: '00:01:40', schema_end_time: '00:02:00' }],
+							hasMediaFragment: [
+								{
+									id: 'fragment-representation',
+									schema_start_time: '00:01:40',
+									schema_end_time: '00:02:00',
+								},
+							],
 						},
 					},
 				],
