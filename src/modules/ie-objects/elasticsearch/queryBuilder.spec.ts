@@ -270,6 +270,30 @@ describe('QueryBuilder', () => {
 			expect(JSON.stringify(queryObject?.query)).toContain('"schema_identifier":"testvalue"');
 		});
 
+		// The identifier is a keyword field, so a fuzzy match cannot do more than an exact one and
+		// both operators share a query template. The UI labels contains as "Is" for that reason.
+		it('should build the same query for the is operator on the identifier field', () => {
+			const buildWithOperator = (operator: Operator) =>
+				QueryBuilder.build(
+					{
+						filters: [
+							{
+								field: IeObjectsSearchFilterField.IDENTIFIER,
+								operator,
+								value: 'testvalue',
+							},
+						],
+						size: 10,
+						page: 1,
+					},
+					mockInputInfo as any
+				);
+
+			expect(JSON.stringify(buildWithOperator(Operator.IS)?.query)).toEqual(
+				JSON.stringify(buildWithOperator(Operator.CONTAINS)?.query)
+			);
+		});
+
 		it('throws an internal server exception when an unknown filter value is passed', () => {
 			let error: any;
 			try {
