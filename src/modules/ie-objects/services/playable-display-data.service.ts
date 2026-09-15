@@ -539,7 +539,7 @@ export class PlayableDisplayDataService {
 				licenses,
 				maintainerId: schemaMaintainer?.org_identifier,
 				sector: schemaMaintainer?.ha_org_sector as HetArchiefIeObjectSector,
-				name: ie.schema_name,
+				name: ie.schemaNames?.find((name) => !name?.is_ai_generated),
 				dctermsFormat,
 				maintainerSlug: schemaMaintainer?.organizationSlug?.slug,
 				maintainerName: schemaMaintainer?.skos_pref_label,

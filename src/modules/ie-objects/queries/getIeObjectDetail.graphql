@@ -5,7 +5,6 @@ query getIeObjectDetail($ieObjectId: String!) {
 		schema_position
 		schema_date_published
 		dcterms_available
-		schema_name
 		schema_description
 		schema_date_created
 		ebucore_has_cast_member
@@ -14,7 +13,6 @@ query getIeObjectDetail($ieObjectId: String!) {
 		schema_copyright_notice
 		schema_abstract
 		bibframe_edition
-		ebucore_synopsis
 		schemaNames(order_by: { created_at: asc }) {
 			schema_name
 			is_ai_generated
@@ -144,6 +142,10 @@ query getIeObjectDetail($ieObjectId: String!) {
 			meemoo_local_id
 			premis_is_part_of
 			bibframe_edition
+			schemaNames(where: { is_ai_generated: { _eq: false } }) {
+				schema_name
+				is_ai_generated
+			}
 			schemaMaintainer {
 				org_identifier
 				skos_pref_label
@@ -203,7 +205,9 @@ query getIeObjectDetail($ieObjectId: String!) {
 					schema_alternate_name
 				}
 				bibframe_edition
-				ebucore_synopsis
+				ebucoreSynopses(where: { is_ai_generated: { _eq: false } }) {
+					ebucore_synopsis
+				}
 			}
 		}
 	}

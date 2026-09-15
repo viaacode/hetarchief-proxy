@@ -93,7 +93,7 @@ export class FoldersService {
 			dctermsFormat: gqlIeObject?.dctermsFormat?.[0]?.dcterms_format as HetArchiefIeObjectType,
 			dctermsAvailable: gqlIeObject?.dcterms_available,
 			meemooLocalId: gqlIeObject?.premisIdentifier?.[0]?.meemoo_local_id,
-			name: gqlIeObject?.schema_name,
+			name: gqlIeObject?.schemaNames[0]?.schema_name,
 			thumbnailUrl,
 			datePublished: gqlIeObject?.schema_date_published || null,
 			duration: gqlIeObject?.schemaDuration?.schema_duration || null,

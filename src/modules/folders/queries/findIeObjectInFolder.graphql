@@ -9,11 +9,14 @@ query findIeObjectInFolder($folderId: uuid, $ieObjectId: String) {
 		intellectualEntity {
 			id
 			schema_identifier
-			schema_name
 			schema_description
 			dcterms_available
 			schema_date_published
 			schema_date_created
+			schemaNames(where: { is_ai_generated: { _eq: false } }) {
+				schema_name
+				is_ai_generated
+			}
 			schemaThumbnail {
 				schema_thumbnail_url
 			}

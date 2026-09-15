@@ -313,7 +313,7 @@ describe('MaterialRequestsService', () => {
 			);
 			// object
 			expect(adapted.objectSchemaName).toEqual(
-				mockGqlMaterialRequest2.intellectualEntity.schema_name
+				mockGqlMaterialRequest2.intellectualEntity.schemaNames?.[0]?.schema_name
 			);
 			expect(adapted.objectDctermsFormat).toEqual(
 				mockGqlMaterialRequest2.intellectualEntity.dctermsFormat[0].dcterms_format

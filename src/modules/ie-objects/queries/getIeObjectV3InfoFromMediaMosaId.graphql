@@ -6,7 +6,10 @@ query getIeObjectV3InfoFromMediaMosaId($mediaMosaId: String) {
 					slug
 				}
 			}
-			schema_name
+			schemaNames(where: { is_ai_generated: { _eq: false } }) {
+				schema_name
+				is_ai_generated
+			}
 			schema_identifier
 		}
 	}

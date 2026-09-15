@@ -139,6 +139,7 @@ import { AUDIO_WAVE_FORM_URL } from '~shared/consts/audio-wave-form-url';
 import { customError } from '~shared/helpers/custom-error';
 import { checkRequiredEnvs } from '~shared/helpers/env-check';
 import { formattedDurationToSeconds } from '~shared/helpers/formatted-duration-to-seconds';
+import { getSchemaName } from '~shared/helpers/get-schema-name';
 
 checkRequiredEnvs(['ELASTICSEARCH_URL', 'IE_OBJECT_ID_PREFIX']);
 
@@ -353,7 +354,7 @@ export class IeObjectsService {
 		}
 		return {
 			schema_identifier: ieObjectInfo.schema_identifier,
-			title: ieObjectInfo.schema_name,
+			title: getSchemaName(ieObjectInfo),
 			maintainerSlug: ieObjectInfo.schemaMaintainer.organizationSlug?.slug,
 		};
 	}
@@ -888,7 +889,8 @@ export class IeObjectsService {
 			publisher: compact(schemaPublisherResponse?.map((item) => item.schema_publisher_array)),
 			spatial: compact(schemaSpatialResponse?.map((item) => item.schema_spatial)), // Location of the content
 			temporal: compact(schemaTemporalResponse?.map((item) => item.schema_temporal)),
-			synopsis: ie?.ebucore_synopsis,
+			synopsis:
+				ie?.ebucoreSynopses?.find((variant) => !variant.is_ai_generated)?.ebucore_synopsis ?? null,
 			synopsisAi:
 				ie?.ebucoreSynopses?.find((variant) => variant.is_ai_generated)?.ebucore_synopsis ?? null,
 			copyrightHolder: compact(
@@ -911,7 +913,7 @@ export class IeObjectsService {
 				(pref) => pref.ha_pref === OrganisationPreference.iiifDissemination
 			),
 			sector: schemaMaintainer?.ha_org_sector as HetArchiefIeObjectSector,
-			name: ie?.schema_name,
+			name: ie?.schemaNames?.find((variant) => !variant.is_ai_generated)?.schema_name ?? null,
 			nameAi: ie?.schemaNames?.find((variant) => variant.is_ai_generated)?.schema_name ?? null,
 			thumbnailUrl: mainThumbnailUrl,
 			premisIsPartOf: ie?.premis_is_part_of,
@@ -1005,7 +1007,7 @@ export class IeObjectsService {
 			maintainerName: gqlIeObject?.schemaMaintainer?.skos_pref_label,
 			maintainerSlug: gqlIeObject?.schemaMaintainer?.organizationSlug?.slug,
 			sector: gqlIeObject?.schemaMaintainer?.ha_org_sector as HetArchiefIeObjectSector,
-			name: gqlIeObject?.schema_name,
+			name: getSchemaName(gqlIeObject),
 			thumbnailUrl,
 		};
 	}
@@ -1139,7 +1141,7 @@ export class IeObjectsService {
 		return {
 			schemaIdentifier: graphQlObject.intellectualEntity?.schema_identifier,
 			maintainerName: graphQlObject.intellectualEntity?.schemaMaintainer?.skos_pref_label,
-			name: graphQlObject.intellectualEntity?.schema_name,
+			name: getSchemaName(graphQlObject.intellectualEntity),
 			dctermsFormat: graphQlObject.intellectualEntity?.dctermsFormat?.[0]
 				?.dcterms_format as HetArchiefIeObjectType,
 			dateCreated: graphQlObject.intellectualEntity?.schema_date_created || null,
@@ -1455,7 +1457,7 @@ export class IeObjectsService {
 		return {
 			schemaIdentifier: gqlIeObject?.schema_identifier,
 			maintainerSlug: kebabCase(gqlIeObject?.schemaMaintainer?.skos_pref_label || ''),
-			name: gqlIeObject?.schema_name,
+			name: getSchemaName(gqlIeObject),
 			updatedAt: gqlIeObject?.updated_at,
 		};
 	}

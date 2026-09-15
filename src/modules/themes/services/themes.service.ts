@@ -439,7 +439,7 @@ export class ThemesService {
 		return {
 			id: rawIeObject.id,
 			schemaIdentifier: rawIeObject.schema_identifier ?? null,
-			name: rawIeObject.schema_name ?? null,
+			name: rawIeObject.schemaNames?.[0]?.schema_name ?? null,
 			format: rawIeObject.dctermsFormat?.[0]?.dcterms_format ?? null,
 			thumbnailUrl: thumbnailUrl ?? null,
 			hasAccessToEssence,

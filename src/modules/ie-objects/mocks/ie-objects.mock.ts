@@ -497,7 +497,11 @@ export const mockIeObject2: GetIeObjectDetailQuery = {
 			schema_position: null,
 			schema_date_published: null,
 			dcterms_available: null,
-			schema_name: 'In Dienende liefde (prosessie zuster Agnes Boudry)',
+			schemaNames: [
+				{
+					schema_name: 'In Dienende liefde (prosessie zuster Agnes Boudry)',
+				},
+			],
 			schema_description: null,
 			schema_date_created: 'XXXX-XX-XX',
 			ebucore_has_cast_member: null,
@@ -506,8 +510,6 @@ export const mockIeObject2: GetIeObjectDetailQuery = {
 			schema_copyright_notice: '© stadsarchiefieper',
 			schema_abstract: null,
 			bibframe_edition: null,
-			ebucore_synopsis: null,
-			schemaNames: [],
 			ebucoreSynopses: [],
 			schema_number_of_pages: null,
 			premis_is_part_of: null,
@@ -540,7 +542,11 @@ export const mockIeObject2: GetIeObjectDetailQuery = {
 				schema_position: null,
 				schema_date_published: '1892-09-09',
 				dcterms_available: null,
-				schema_name: 'Gazet van Antwerpen - 1892-09-09',
+				schemaNames: [
+					{
+						schema_name: 'Gazet van Antwerpen - 1892-09-09',
+					},
+				],
 				schema_description: null,
 				schema_creator: null,
 				dcterms_format: 'newspaper',
@@ -606,7 +612,7 @@ export const mockIeObject2: GetIeObjectDetailQuery = {
 					schema_abstract: null,
 					schemaAlternateName: [],
 					bibframe_edition: null,
-					ebucore_synopsis: null,
+					ebucoreSynopses: [],
 				},
 			},
 		},
@@ -803,7 +809,11 @@ const mockRelatedIeObject:
 	| GetChildIeObjectsQuery['graph_intellectual_entity'][0]['hasPart'][0] = {
 	id: 'https://data-int.hetarchief.be/id/entity/4f1mg9x363',
 	schema_identifier: '4f1mg9x363',
-	schema_name: 'Het annoncenblad van Moll en omliggende dorpen',
+	schemaNames: [
+		{
+			schema_name: 'Het annoncenblad van Moll en omliggende dorpen',
+		},
+	],
 	dcterms_available: '2020-08-28T11:48:11',
 	schema_date_created: '1911-10-21',
 	schema_date_published: '1911-10-21',
@@ -871,7 +881,11 @@ export const mockGqlIeObjectFindByFolderId: FindAllIeObjectsByFolderIdQuery['use
 				org_identifier: 'OR-rf5kf25',
 				skos_pref_label: 'Huis van Alijn',
 			},
-			schema_name: 'Op de boerderij',
+			schemaNames: [
+				{
+					schema_name: 'Op de boerderij',
+				},
+			],
 			dcterms_format: 'video',
 			schema_date_created_lower_bound: '2018-01-01',
 			schema_date_published: null,
@@ -937,8 +951,12 @@ export const mockGqlIeObjectFindByFolderIdResult: Readonly<Partial<HetArchiefIeO
 export const mockGqlSitemapObject: FindIeObjectsForSitemapQuery['graph_intellectual_entity'][0] =
 	Object.freeze({
 		schema_identifier: '4f1mg9x363',
-		schema_name: 'Durf te vragen R002 A0001',
 		updated_at: '2023-04-13',
+		schemaNames: [
+			{
+				schema_name: 'Durf te vragen R002 A0001',
+			},
+		],
 		schemaMaintainer: {
 			org_identifier: 'OR-rf5kf25',
 			skos_pref_label: 'VRT',

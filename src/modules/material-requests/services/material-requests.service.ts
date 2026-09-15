@@ -1237,7 +1237,7 @@ export class MaterialRequestsService {
 			id: graphQlMaterialRequest.id,
 			objectId,
 			objectSchemaIdentifier,
-			objectSchemaName: rawObject?.schema_name,
+			objectSchemaName: rawObject?.schemaNames?.[0]?.schema_name,
 			objectDctermsFormat: rawObject?.dctermsFormat?.[0]?.dcterms_format as HetArchiefIeObjectType,
 			objectThumbnailUrl,
 			objectHasAccessToEssence: hasAccessToEssence,

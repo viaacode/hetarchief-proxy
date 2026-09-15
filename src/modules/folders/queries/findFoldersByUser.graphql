@@ -17,8 +17,11 @@ query findFoldersByUser($userProfileId: uuid, $offset: Int, $limit: Int) {
 			intellectualEntity {
 				id
 				schema_identifier
-				schema_name
 				dcterms_available
+				schemaNames(where: { is_ai_generated: { _eq: false } }) {
+					schema_name
+					is_ai_generated
+				}
 			}
 		}
 	}
