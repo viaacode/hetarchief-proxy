@@ -153,6 +153,7 @@ import { UsersService } from '~modules/users/services/users.service';
 import { GroupName } from '~modules/users/types';
 import { AUDIO_WAVE_FORM_URL } from '~shared/consts/audio-wave-form-url';
 import { customError } from '~shared/helpers/custom-error';
+import { getSchemaName } from '~shared/helpers/get-schema-name';
 import { PaginationHelper } from '~shared/helpers/pagination';
 import { SortDirection } from '~shared/types';
 
@@ -1238,7 +1239,7 @@ export class MaterialRequestsService {
 			id: graphQlMaterialRequest.id,
 			objectId,
 			objectSchemaIdentifier,
-			objectSchemaName: rawObject?.schemaNames?.[0]?.schema_name,
+			objectSchemaName: getSchemaName(rawObject),
 			objectDctermsFormat: rawObject?.dctermsFormat?.[0]?.dcterms_format as HetArchiefIeObjectType,
 			objectThumbnailUrl,
 			objectHasAccessToEssence: hasAccessToEssence,

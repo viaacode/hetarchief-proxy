@@ -56,6 +56,7 @@ import { IeObjectsVisitorSpaceInfo } from '~modules/ie-objects/ie-objects.types'
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { AUDIO_WAVE_FORM_URL } from '~shared/consts/audio-wave-form-url';
+import { getSchemaName } from '~shared/helpers/get-schema-name';
 import { SortDirectionWithRandom } from '~shared/types';
 import {
 	AddIeObjectToThemeResultDto,
@@ -440,7 +441,7 @@ export class ThemesService {
 		return {
 			id: rawIeObject.id,
 			schemaIdentifier: rawIeObject.schema_identifier ?? null,
-			name: rawIeObject.schemaNames?.[0]?.schema_name ?? null,
+			name: getSchemaName(rawIeObject),
 			format: rawIeObject.dctermsFormat?.[0]?.dcterms_format ?? null,
 			thumbnailUrl: thumbnailUrl ?? null,
 			hasAccessToEssence,

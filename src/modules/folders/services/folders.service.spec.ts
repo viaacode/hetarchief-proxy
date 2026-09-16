@@ -24,6 +24,7 @@ import { mockGqlFolder } from '~modules/folders/services/__mocks__/users_folder'
 import type { FolderObjectLink, GqlObject } from '~modules/folders/types';
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { VisitsService } from '~modules/visits/services/visits.service';
+import { getSchemaName } from '~shared/helpers/get-schema-name';
 import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockDataService: Partial<Record<keyof DataService, MockInstance>> = {
@@ -330,9 +331,7 @@ describe('FoldersService', () => {
 			expect(adapted.schemaIdentifier).toEqual(
 				mockGqlFolderObjectLink.intellectualEntity.schema_identifier
 			);
-			expect(adapted.name).toEqual(
-				mockGqlFolderObjectLink.intellectualEntity.schemaNames[0]?.schema_name
-			);
+			expect(adapted.name).toEqual(getSchemaName(mockGqlFolderObjectLink.intellectualEntity));
 			expect(adapted.dctermsAvailable).toEqual(
 				mockGqlFolderObjectLink.intellectualEntity.dcterms_available
 			);

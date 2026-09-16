@@ -55,6 +55,7 @@ import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.servic
 
 import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
 import { VisitsService } from '~modules/visits/services/visits.service';
+import { getSchemaName } from '~shared/helpers/get-schema-name';
 import { PaginationHelper } from '~shared/helpers/pagination';
 
 @Injectable()
@@ -96,7 +97,7 @@ export class FoldersService {
 			dctermsFormat: gqlIeObject?.dctermsFormat?.[0]?.dcterms_format as HetArchiefIeObjectType,
 			dctermsAvailable: gqlIeObject?.dcterms_available,
 			meemooLocalId: gqlIeObject?.premisIdentifier?.[0]?.meemoo_local_id,
-			name: gqlIeObject?.schemaNames[0]?.schema_name,
+			name: getSchemaName(gqlIeObject),
 			thumbnailUrl,
 			datePublished: gqlIeObject?.schema_date_published || null,
 			duration: gqlIeObject?.schemaDuration?.schema_duration || null,

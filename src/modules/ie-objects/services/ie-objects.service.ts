@@ -913,7 +913,7 @@ export class IeObjectsService {
 				(pref) => pref.ha_pref === OrganisationPreference.iiifDissemination
 			),
 			sector: schemaMaintainer?.ha_org_sector as HetArchiefIeObjectSector,
-			name: ie?.schemaNames?.find((variant) => !variant.is_ai_generated)?.schema_name ?? null,
+			name: getSchemaName(ie),
 			nameAi: ie?.schemaNames?.find((variant) => variant.is_ai_generated)?.schema_name ?? null,
 			thumbnailUrl: mainThumbnailUrl,
 			premisIsPartOf: ie?.premis_is_part_of,
