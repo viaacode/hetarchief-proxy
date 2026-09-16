@@ -45,12 +45,11 @@ import {
 import { decryptData, encryptData } from '../helpers/crypto-helper';
 
 import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
-import { Lookup_Languages_Enum } from '~generated/graphql-db-types-hetarchief';
 import {
-	MaterialRequest,
-	MaterialRequestRequesterCapacity,
-	MaterialRequestType,
-} from '~modules/material-requests/material-requests.types';
+	Lookup_App_Material_Request_Type_Enum,
+	Lookup_Languages_Enum,
+} from '~generated/graphql-db-types-hetarchief';
+import { MaterialRequest } from '~modules/material-requests/material-requests.types';
 import type { VisitRequest } from '~modules/visits/types';
 import { customError } from '~shared/helpers/custom-error';
 import { checkRequiredEnvs } from '~shared/helpers/env-check';
@@ -517,14 +516,25 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 		if (
 			emailInfo.template === EmailTemplate.CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_MAINTAINER
 		) {
+			const requestUrl =
+				emailInfo.language === Lookup_Languages_Enum.En
+					? 'en/management/item-requests'
+					: 'beheer/materiaalaanvragen';
+
 			return {
 				user_firstname: emailInfo.requesterFirstName,
 				user_lastname: emailInfo.requesterLastName,
 				cp_name: emailInfo.materialRequests[0]?.maintainerName,
 				cp_email: emailInfo.materialRequests[0]?.contactMail,
-				request_list: emailInfo.materialRequests.map((materialRequest) =>
-					this.convertMaterialRequestToEmailTemplateFields(materialRequest, emailInfo.language)
-				),
+				request_list: emailInfo.materialRequests.map((materialRequest) => ({
+					...this.convertMaterialRequestToEmailTemplateFields(materialRequest, emailInfo.language),
+					request_url: stringifyUrl({
+						url: `${this.configService.get('CLIENT_HOST')}/${requestUrl}`,
+						query: {
+							materialRequest: materialRequest.id,
+						},
+					}),
+				})),
 				user_request_context: MATERIAL_REQUEST_REQUESTER_CAPACITY_TRANSLATIONS(
 					emailInfo.language,
 					this.translationsService
@@ -591,6 +601,9 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 			request_type: MATERIAL_REQUEST_TYPE_TRANSLATIONS(language, this.translationsService)[
 				materialRequest.type
 			],
+			is_complex_reuse_flow:
+				materialRequest.type === Lookup_App_Material_Request_Type_Enum.Reuse &&
+				!!materialRequest.reuseForm,
 			request_description: materialRequest.reason,
 			material_request_id: materialRequest.id,
 		};
