@@ -62,12 +62,14 @@ const mockGqlFolder2: FindFoldersByUserQuery['users_folder'][0] = {
 	intellectualEntities: [],
 };
 
+const MOCK_SCHEMA_NAME = 'CGSO. De mannenbeweging - mannenemancipatie - 1982';
+
 const mockGqlFolderObject: GqlObject = {
 	id: 'https://data-qas.hetarchief.be/id/entity/8s4jm2514q',
 	schema_identifier: '8s4jm2514q',
 	schemaNames: [
 		{
-			schema_name: 'CGSO. De mannenbeweging - mannenemancipatie - 1982',
+			schema_name: MOCK_SCHEMA_NAME,
 		},
 	],
 	dcterms_available: '2015-09-19T12:08:24',
@@ -131,7 +133,7 @@ const mockGqlFolderObjectsResult: FindFolderIeObjectsByFolderIdQuery = {
 				schema_identifier: '8s4jm2514q',
 				schemaNames: [
 					{
-						schema_name: 'CGSO. De mannenbeweging - mannenemancipatie - 1982',
+						schema_name: MOCK_SCHEMA_NAME,
 					},
 				],
 				dcterms_available: '2015-09-19T12:08:24',
@@ -172,7 +174,7 @@ const mockGqlFolderObjectResult: FindIeObjectInFolderQuery = {
 				schema_identifier: '8s4jm2514q',
 				schemaNames: [
 					{
-						schema_name: 'CGSO. De mannenbeweging - mannenemancipatie - 1982',
+						schema_name: MOCK_SCHEMA_NAME,
 					},
 				],
 				dcterms_available: '2015-09-19T12:08:24',
@@ -201,7 +203,7 @@ const mockGqlFolderObjectResult: FindIeObjectInFolderQuery = {
 
 const mockFolderObject: Partial<HetArchiefIeObject> & { folderEntryCreatedAt: string } = {
 	schemaIdentifier: '8s4jm2514q',
-	name: 'CGSO. De mannenbeweging - mannenemancipatie - 1982',
+	name: MOCK_SCHEMA_NAME,
 	dctermsAvailable: '2015-09-19T12:08:24',
 	creator: null,
 	dctermsFormat: HetArchiefIeObjectType.VIDEO,
@@ -331,7 +333,7 @@ describe('FoldersService', () => {
 			expect(adapted.schemaIdentifier).toEqual(
 				mockGqlFolderObjectLink.intellectualEntity.schema_identifier
 			);
-			expect(adapted.name).toEqual(getSchemaName(mockGqlFolderObjectLink.intellectualEntity));
+			expect(adapted.name).toEqual(MOCK_SCHEMA_NAME);
 			expect(adapted.dctermsAvailable).toEqual(
 				mockGqlFolderObjectLink.intellectualEntity.dcterms_available
 			);
