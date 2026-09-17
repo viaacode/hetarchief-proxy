@@ -2,14 +2,14 @@ import { flatten } from 'flat';
 import _ from 'lodash';
 import Papa from 'papaparse';
 
+import { HetArchiefIeObject } from '@viaa/avo2-types';
 import { IE_OBJECT_PROPS_METADATA_EXPORT } from '../ie-objects.conts';
-import type { IeObject } from '../ie-objects.types';
 
 /**
  * converts isPartOf object to isPartOf.serie, isPartOfProgramma, ...
  * @param ieObject
  */
-function mapIeObjectForExport(ieObject: Partial<IeObject>): any {
+function mapIeObjectForExport(ieObject: Partial<HetArchiefIeObject>): any {
 	// Flatten isPartOf property
 	const ieObjectCopy = _.pick(ieObject, IE_OBJECT_PROPS_METADATA_EXPORT);
 	// biome-ignore lint/performance/noDelete: This property cannot be on the object, otherwise it will get exported as an empty string to csv
@@ -29,12 +29,12 @@ function mapIeObjectForExport(ieObject: Partial<IeObject>): any {
 	};
 }
 
-export const convertObjectsToCsv = (objects: Partial<IeObject>[]): string => {
+export const convertObjectsToCsv = (objects: Partial<HetArchiefIeObject>[]): string => {
 	const csvData = objects.map(mapIeObjectForExport);
 	return Papa.unparse([flatten(csvData)], { delimiter: ';', newline: '\n' });
 };
 
-export const convertObjectToCsv = (ieObject: Partial<IeObject>): string => {
+export const convertObjectToCsv = (ieObject: Partial<HetArchiefIeObject>): string => {
 	return Papa.unparse([flatten(mapIeObjectForExport(ieObject))], {
 		delimiter: ';',
 		newline: '\n',

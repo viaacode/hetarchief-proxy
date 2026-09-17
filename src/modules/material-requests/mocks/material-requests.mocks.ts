@@ -49,7 +49,11 @@ export const mockGqlMaterialRequest1: FindMaterialRequestsQuery['app_material_re
 		},
 		schema_identifier: '0000003g0k',
 		id: 'https://data-int.hetarchief.be/id/entity/0000003g0k',
-		schema_name: '',
+		schemaNames: [
+			{
+				schema_name: '',
+			},
+		],
 		premisIdentifier: [],
 		dctermsFormat: [
 			{
@@ -103,7 +107,11 @@ export const mockGqlMaterialRequest2: FindMaterialRequestsByIdQuery['app_materia
 		},
 		schema_identifier: '0000003g0k',
 		id: 'https://data-int.hetarchief.be/id/entity/0000003g0k',
-		schema_name: 'STIHL: SV DUBLIN ZOO/STIHL zoo na',
+		schemaNames: [
+			{
+				schema_name: 'STIHL: SV DUBLIN ZOO/STIHL zoo na',
+			},
+		],
 		premisIdentifier: [],
 		dctermsFormat: [
 			{

@@ -8,8 +8,11 @@ query findIeObjectsForSitemap($licenses: [String!]!, $offset: Int!, $limit: Int)
 		limit: $limit
 	) {
 		schema_identifier
-		schema_name
 		updated_at
+		schemaNames(where: { is_ai_generated: { _eq: false } }) {
+			schema_name
+			is_ai_generated
+		}
 		schemaMaintainer {
 			org_identifier
 			skos_pref_label

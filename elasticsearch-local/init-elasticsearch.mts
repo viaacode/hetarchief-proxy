@@ -1,7 +1,7 @@
 import fs from 'fs/promises';
 import * as path from 'node:path';
 
-interface IeObject {
+interface EsIeObject {
 	document: string;
 	id: string;
 	index: string;
@@ -57,7 +57,7 @@ async function setMapping(index: string, mapping: any) {
 	}
 }
 
-async function loadIeObjects(): Promise<IeObject[]> {
+async function loadIeObjects(): Promise<EsIeObject[]> {
 	const response = await fetch('http://localhost:9000/v1/graphql', {
 		method: 'POST',
 		body: JSON.stringify({
@@ -80,7 +80,7 @@ async function loadIeObjects(): Promise<IeObject[]> {
 	return data.graph__index_intellectual_entity;
 }
 
-async function insertIeObjects(ieObjects: IeObject[]): Promise<void> {
+async function insertIeObjects(ieObjects: EsIeObject[]): Promise<void> {
 	const bulkData: string[] = ieObjects.flatMap((ieObject) => [
 		JSON.stringify({ index: { _index: ieObject.index, _id: ieObject.id } }),
 		JSON.stringify(ieObject.document),

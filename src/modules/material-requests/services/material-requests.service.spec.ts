@@ -45,6 +45,7 @@ import { OrganisationsService } from '~modules/organisations/services/organisati
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { UsersService } from '~modules/users/services/users.service';
+import { getSchemaName } from '~shared/helpers/get-schema-name';
 import { TestingLogger } from '~shared/logging/test-logger';
 import { mockConfigService } from '~shared/test/mock-config-service';
 
@@ -317,7 +318,7 @@ describe('MaterialRequestsService', () => {
 			);
 			// object
 			expect(adapted.objectSchemaName).toEqual(
-				mockGqlMaterialRequest2.intellectualEntity.schema_name
+				getSchemaName(mockGqlMaterialRequest2.intellectualEntity)
 			);
 			expect(adapted.objectDctermsFormat).toEqual(
 				mockGqlMaterialRequest2.intellectualEntity.dctermsFormat[0].dcterms_format

@@ -5,7 +5,11 @@ import { type MockInstance, afterEach, beforeEach, describe, expect, it, vi } fr
 
 import { FoldersService } from './folders.service';
 
-import { HetArchiefIeObjectType, HetArchiefIsPartOfKey } from '@viaa/avo2-types';
+import {
+	HetArchiefIeObject,
+	HetArchiefIeObjectType,
+	HetArchiefIsPartOfKey,
+} from '@viaa/avo2-types';
 import type {
 	FindFolderIeObjectsByFolderIdQuery,
 	FindFoldersByUserQuery,
@@ -18,9 +22,9 @@ import type {
 } from '~generated/graphql-db-types-hetarchief';
 import { mockGqlFolder } from '~modules/folders/services/__mocks__/users_folder';
 import type { FolderObjectLink, GqlObject } from '~modules/folders/types';
-import { type IeObject } from '~modules/ie-objects/ie-objects.types';
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { VisitsService } from '~modules/visits/services/visits.service';
+import { getSchemaName } from '~shared/helpers/get-schema-name';
 import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockDataService: Partial<Record<keyof DataService, MockInstance>> = {
@@ -58,10 +62,16 @@ const mockGqlFolder2: FindFoldersByUserQuery['users_folder'][0] = {
 	intellectualEntities: [],
 };
 
+const MOCK_SCHEMA_NAME = 'CGSO. De mannenbeweging - mannenemancipatie - 1982';
+
 const mockGqlFolderObject: GqlObject = {
 	id: 'https://data-qas.hetarchief.be/id/entity/8s4jm2514q',
 	schema_identifier: '8s4jm2514q',
-	schema_name: 'CGSO. De mannenbeweging - mannenemancipatie - 1982',
+	schemaNames: [
+		{
+			schema_name: MOCK_SCHEMA_NAME,
+		},
+	],
 	dcterms_available: '2015-09-19T12:08:24',
 	dctermsFormat: [
 		{
@@ -121,7 +131,11 @@ const mockGqlFolderObjectsResult: FindFolderIeObjectsByFolderIdQuery = {
 			intellectualEntity: {
 				id: 'https://data-qas.hetarchief.be/id/entity/8s4jm2514q',
 				schema_identifier: '8s4jm2514q',
-				schema_name: 'CGSO. De mannenbeweging - mannenemancipatie - 1982',
+				schemaNames: [
+					{
+						schema_name: MOCK_SCHEMA_NAME,
+					},
+				],
 				dcterms_available: '2015-09-19T12:08:24',
 				schemaThumbnail: {
 					schema_thumbnail_url: [
@@ -158,7 +172,11 @@ const mockGqlFolderObjectResult: FindIeObjectInFolderQuery = {
 			intellectualEntity: {
 				id: 'https://data-qas.hetarchief.be/id/entity/8s4jm2514q',
 				schema_identifier: '8s4jm2514q',
-				schema_name: 'CGSO. De mannenbeweging - mannenemancipatie - 1982',
+				schemaNames: [
+					{
+						schema_name: MOCK_SCHEMA_NAME,
+					},
+				],
 				dcterms_available: '2015-09-19T12:08:24',
 				schemaThumbnail: {
 					schema_thumbnail_url: [
@@ -183,9 +201,9 @@ const mockGqlFolderObjectResult: FindIeObjectInFolderQuery = {
 	],
 };
 
-const mockFolderObject: Partial<IeObject> & { folderEntryCreatedAt: string } = {
+const mockFolderObject: Partial<HetArchiefIeObject> & { folderEntryCreatedAt: string } = {
 	schemaIdentifier: '8s4jm2514q',
-	name: 'CGSO. De mannenbeweging - mannenemancipatie - 1982',
+	name: MOCK_SCHEMA_NAME,
 	dctermsAvailable: '2015-09-19T12:08:24',
 	creator: null,
 	dctermsFormat: HetArchiefIeObjectType.VIDEO,
@@ -259,7 +277,7 @@ describe('FoldersService', () => {
 
 	describe('adapt', () => {
 		it('returns undefined if no graphQl object was given', async () => {
-			const adapted: Partial<IeObject> | undefined = await foldersService.adaptIeObject(
+			const adapted: Partial<HetArchiefIeObject> | undefined = await foldersService.adaptIeObject(
 				undefined,
 				'referer',
 				''
@@ -315,7 +333,7 @@ describe('FoldersService', () => {
 			expect(adapted.schemaIdentifier).toEqual(
 				mockGqlFolderObjectLink.intellectualEntity.schema_identifier
 			);
-			expect(adapted.name).toEqual(mockGqlFolderObjectLink.intellectualEntity.schema_name);
+			expect(adapted.name).toEqual(MOCK_SCHEMA_NAME);
 			expect(adapted.dctermsAvailable).toEqual(
 				mockGqlFolderObjectLink.intellectualEntity.dcterms_available
 			);

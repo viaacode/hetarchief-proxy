@@ -19,7 +19,10 @@ query getThemeWithObjects(
 			ieObject {
 				id
 				schema_identifier
-				schema_name
+				schemaNames(where: { is_ai_generated: { _eq: false } }) {
+					schema_name
+					is_ai_generated
+				}
 				dctermsFormat {
 					dcterms_format
 				}

@@ -8,11 +8,14 @@ query getParentIeObject($currentObjectIri: String!) {
 		isPartOf {
 			id
 			schema_identifier
-			schema_name
 			dcterms_available
 			schema_date_created
 			schema_date_published
 			schema_description
+			schemaNames(where: { is_ai_generated: { _eq: false } }) {
+				schema_name
+				is_ai_generated
+			}
 			dctermsFormat {
 				dcterms_format
 			}

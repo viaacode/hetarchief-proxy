@@ -1,4 +1,3 @@
-import type { IeObject } from '../ie-objects.types';
 import {
 	mockIeObjectWithMetadataSetALL,
 	mockIeObjectWithMetadataSetALLWithEssence,
@@ -10,13 +9,14 @@ import {
 
 import { convertObjectToXml } from './convert-objects-to-xml';
 
+import { HetArchiefIeObject } from '@viaa/avo2-types';
 import { describe, expect, it } from 'vitest';
 import { mockConfigService } from '~shared/test/mock-config-service';
 
 describe('convertObjectToXml', () => {
 	it('returns the xml version of an object', () => {
 		const xml = convertObjectToXml(
-			{ meemooOriginalCp: '1' } as unknown as IeObject,
+			{ meemooOriginalCp: '1' } as unknown as HetArchiefIeObject,
 			mockConfigService.get('CLIENT_HOST') as string
 		);
 		expect(xml.startsWith('<?xml version="1.0" encoding="UTF-8"?>')).toBeTruthy();

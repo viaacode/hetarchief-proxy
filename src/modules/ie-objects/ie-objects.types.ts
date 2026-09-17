@@ -3,15 +3,10 @@ import type { IPagination } from '@studiohyperdrive/pagination';
 import type { FindAllIeObjectsByFolderIdQuery } from '~generated/graphql-db-types-hetarchief';
 
 import type {
-	HetArchiefIeObjectAccessThrough,
-	HetArchiefIeObjectFile,
+	HetArchiefIeObject,
 	HetArchiefIeObjectLicense,
 	HetArchiefIeObjectPage,
-	HetArchiefIeObjectRepresentation,
-	HetArchiefIeObjectRightsInfo,
 	HetArchiefIeObjectSector,
-	HetArchiefIeObjectTheme,
-	HetArchiefIeObjectType,
 	HetArchiefIsPartOfCollection,
 } from '@viaa/avo2-types';
 
@@ -20,7 +15,7 @@ export type IeObjectSectorLicenseMatrix = Readonly<
 >;
 
 export type IeObjectSeo = Pick<
-	IeObject,
+	HetArchiefIeObject,
 	'name' | 'description' | 'thumbnailUrl' | 'maintainerSlug'
 >;
 
@@ -45,116 +40,13 @@ export interface IeObjectPages {
 	isCutFragment: boolean; // https://meemoo.atlassian.net/browse/ARC-3690
 }
 
-/**
- * This info now lives in another place and no longer resides under is_part_of
- * alternatief → table: graph.schema_alternate_name, column: schema_alternate_name
- * serienummer → table: graph.collection, column: schema_season_number
- * seizoennummer → table: graph.collection, column: schema_season_number
- * registratie → not available for now
- * stuk → not available for now
- */
-
-/**
- * A theme this object belongs to, as shown in the metadata panel of the detail page.
- * See ARC-3826. The name and content page path are exposed in both languages, the
- * client picks the one matching the UI language.
- */
-
-export interface IeObject {
-	dctermsAvailable: string;
-	dctermsFormat: HetArchiefIeObjectType;
-	dctermsMedium: string[];
-	premisIdentifier: Record<string, string>[];
-	abstract: string;
-	creator: any;
-	dateCreated: string | null;
-	datePublished: string;
-	description: string;
-	duration: string;
-	genre: string[];
-	iri: string;
-	schemaIdentifier: string; // Unique id per object
-	inLanguage: string[];
-	keywords: string[];
-	licenses: HetArchiefIeObjectLicense[];
-	maintainerId: string;
-	maintainerName: string;
-	maintainerSlug: string;
-	maintainerLogo: string | null;
-	maintainerOverlay: boolean | null;
-	maintainerIiifAgreement?: boolean | null;
-	name: string;
-	publisher: any;
-	spatial: string[];
-	temporal: string[];
-	sector?: HetArchiefIeObjectSector;
-	accessThrough?: HetArchiefIeObjectAccessThrough[];
-	/**
-	 * Whether the current user may see/play this object's essence. Computed in
-	 * limitAccessToObjectDetails from the licenses the user can access, so it is independent of
-	 * whether a thumbnail file exists. Clients use this instead of checking thumbnailUrl.
-	 */
-	hasAccessToEssence?: boolean;
-	ebucoreObjectType?: string | null;
-	meemoofilmContainsEmbeddedCaption?: boolean;
-	contributor?: any;
-	copyrightHolder?: string;
-	premisIsPartOf?: string | null;
-	isPartOf?: HetArchiefIsPartOfCollection[];
-	numberOfPages?: number;
-	pageNumber?: number;
-	meemooDescriptionCast?: string;
-	maintainerFormUrl?: string | null;
-	maintainerDescription?: string;
-	maintainerSiteUrl?: string;
-	meemooLocalId?: string;
-	providerPurl?: string | null;
-	meemooOriginalCp?: string;
-	durationInSeconds?: number;
-	copyrightNotice?: string;
-	meemooMediaObjectId?: string;
-	abrahamInfo?: {
-		id: string;
-		uri: string;
-	};
-	synopsis: string;
-	collectionName?: string;
-	collectionId?: string;
-	collectionSeasonNumber?: string;
-	issueNumber?: string;
-	fragmentId?: string;
-	creditText?: string;
-	preceededBy?: string[];
-	succeededBy?: string[];
-	width?: string;
-	height?: string;
-	bibframeProductionMethod?: string | null;
-	bibframeEdition?: string | null;
-	locationCreated?: string;
-	startDate?: string;
-	endDate?: string;
-	carrierDate?: string;
-	newspaperPublisher?: string;
-	alternativeTitle?: string[];
-	digitizationDate?: string;
-	children?: number;
-	rightsInfo?: HetArchiefIeObjectRightsInfo;
-	themes?: HetArchiefIeObjectTheme[];
-
-	// ESSENCE
-	thumbnailUrl: string;
-	transcript?: string;
-	pages?: HetArchiefIeObjectPage[];
-	mentions?: Mention[];
-}
-
 export type IeObjectForAccessCheck = Pick<
-	IeObject,
+	HetArchiefIeObject,
 	'schemaIdentifier' | 'licenses' | 'maintainerId' | 'sector'
 >;
 
 export type IeObjectForThumbnailOnly = Pick<
-	IeObject,
+	HetArchiefIeObject,
 	'thumbnailUrl' | 'schemaIdentifier' | 'licenses' | 'maintainerId' | 'sector' | 'dctermsFormat'
 >;
 
@@ -166,32 +58,6 @@ export interface JsonWaveformData {
 	bits: number;
 	length: number;
 	data: number[];
-}
-
-export interface IeObjectPlayableDisplayData {
-	schemaIdentifier: string;
-	name: string;
-	thumbnailUrl: string | null;
-	/** Whether the current user may see/play this object's essence. See IeObject.hasAccessToEssence */
-	hasAccessToEssence: boolean;
-	dctermsFormat: HetArchiefIeObjectType;
-	maintainerId: string;
-	maintainerSlug: string;
-	maintainerName: string;
-	maintainerLogo: string | null;
-	maintainerOverlay: boolean;
-	/** Audio/video objects only: ready-to-play, signed URL for the file to feed directly into a player, or null if none is playable/accessible */
-	playableUrl?: string | null;
-	/** Audio/video objects only: mime type of the file playableUrl points to, so the client knows how to handle it */
-	mimeType?: string | null;
-	/** Audio/video objects only: peak/waveform sample data, for audio and audio fragments only - just the sample array, the rest of the peak file's metadata isn't used. Additive data for the waveform overlay, not a substitute for playableUrl */
-	peakfileData?: number[] | null;
-	/** Non audio/video objects only (e.g. newspapers): self-contained base64 data uri of the IIIF detail image, or null if none is accessible/couldn't be resolved. Use this directly as an <img src> */
-	newspaperImage?: string | null;
-	snipPoint?: {
-		start?: number;
-		end?: number;
-	};
 }
 
 export interface MediaSearchAggregation<T> {
@@ -309,7 +175,7 @@ export interface ElasticsearchObject {
 	children?: number;
 }
 
-export interface IeObjectsWithAggregations extends IPagination<Partial<IeObject>> {
+export interface IeObjectsWithAggregations extends IPagination<Partial<HetArchiefIeObject>> {
 	aggregations: any;
 	searchTerms: { isLiteral: boolean; value: string }[];
 	searchTermsParsedSuccessfully: boolean;

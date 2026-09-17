@@ -1,6 +1,6 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 import type { IPagination } from '@studiohyperdrive/pagination';
-import { AvoAuthIdpType, PermissionName } from '@viaa/avo2-types';
+import { AvoAuthIdpType, HetArchiefIeObject, PermissionName } from '@viaa/avo2-types';
 import type { Request } from 'express';
 import { type MockInstance, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -12,7 +12,6 @@ import { HetArchiefIeObjectType } from '@viaa/avo2-types';
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 import { EventsService } from '~modules/events/services/events.service';
 import { type Folder, FolderStatus } from '~modules/folders/types';
-import { type IeObject } from '~modules/ie-objects/ie-objects.types';
 import { mockIeObject1 } from '~modules/ie-objects/mocks/ie-objects.mock';
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
@@ -52,26 +51,27 @@ const mockFoldersResponse: IPagination<Folder> = {
 const mockSchemaIdentifier =
 	'ec124bb2bd7b43a8b3dec94bd6567fec3f723d4c91cb418ba6eb26ded1ca1ef04b9ddbc8e98149858cc58dfebad3e6f5';
 
-const mockFolderObjectsResponse: IPagination<Partial<IeObject & { folderEntryCreatedAt: string }>> =
-	{
-		items: [
-			{
-				schemaIdentifier: '1',
-				name: 'CGSO. De mannenbeweging - mannenemancipatie - 1982',
-				datePublished: '2015-09-19T12:08:24',
-				creator: null,
-				dctermsFormat: HetArchiefIeObjectType.VIDEO,
-				numberOfPages: null,
-				thumbnailUrl:
-					'/viaa/AMSAB/5dc89b7e75e649e191cd86196c255147cd1a0796146d4255acfde239296fa534/keyframes-thumb/keyframes_1_1/keyframe1.jpg',
-				folderEntryCreatedAt: '2022-02-02T10:55:16.542503',
-			},
-		],
-		page: 1,
-		size: 10,
-		total: 1,
-		pages: 1,
-	};
+const mockFolderObjectsResponse: IPagination<
+	Partial<HetArchiefIeObject & { folderEntryCreatedAt: string }>
+> = {
+	items: [
+		{
+			schemaIdentifier: '1',
+			name: 'CGSO. De mannenbeweging - mannenemancipatie - 1982',
+			datePublished: '2015-09-19T12:08:24',
+			creator: null,
+			dctermsFormat: HetArchiefIeObjectType.VIDEO,
+			numberOfPages: null,
+			thumbnailUrl:
+				'/viaa/AMSAB/5dc89b7e75e649e191cd86196c255147cd1a0796146d4255acfde239296fa534/keyframes-thumb/keyframes_1_1/keyframe1.jpg',
+			folderEntryCreatedAt: '2022-02-02T10:55:16.542503',
+		},
+	],
+	page: 1,
+	size: 10,
+	total: 1,
+	pages: 1,
+};
 
 const mockUser: User = {
 	id: 'e791ecf1-e121-4c54-9d2e-34524b6467c6',
@@ -120,7 +120,7 @@ const mockIeObjectsService: Partial<Record<keyof IeObjectsService, MockInstance>
 	findAllIeObjectMetadataByFolderId: vi.fn(),
 	findByIeObjectId: vi.fn(),
 	getVisitorSpaceAccessInfoFromUser: vi.fn(),
-	limitObjectInFolder: vi.fn((folderObjectItem: Partial<IeObject>) => folderObjectItem),
+	limitObjectInFolder: vi.fn((folderObjectItem: Partial<HetArchiefIeObject>) => folderObjectItem),
 	getIeObjectIdFromObjectSchemaIdentifier: vi.fn(),
 };
 

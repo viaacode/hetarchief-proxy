@@ -56,6 +56,7 @@ import { OrganisationPreference } from '~modules/organisations/organisations.typ
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { AUDIO_WAVE_FORM_URL } from '~shared/consts/audio-wave-form-url';
 import { formattedDurationToSeconds } from '~shared/helpers/formatted-duration-to-seconds';
+import { getSchemaName } from '~shared/helpers/get-schema-name';
 
 interface PlayableDisplayAccess {
 	dbResponse: GetIeObjectPlayableDisplayDataQuery;
@@ -539,7 +540,7 @@ export class PlayableDisplayDataService {
 				licenses,
 				maintainerId: schemaMaintainer?.org_identifier,
 				sector: schemaMaintainer?.ha_org_sector as HetArchiefIeObjectSector,
-				name: ie.schema_name,
+				name: getSchemaName(ie),
 				dctermsFormat,
 				maintainerSlug: schemaMaintainer?.organizationSlug?.slug,
 				maintainerName: schemaMaintainer?.skos_pref_label,

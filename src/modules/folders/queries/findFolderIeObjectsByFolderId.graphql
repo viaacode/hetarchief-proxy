@@ -18,7 +18,10 @@ query findFolderIeObjectsByFolderId(
 		intellectualEntity {
 			id
 			schema_identifier
-			schema_name
+			schemaNames(where: { is_ai_generated: { _eq: false } }) {
+				schema_name
+				is_ai_generated
+			}
 			schema_description
 			dcterms_available
 			schema_date_published

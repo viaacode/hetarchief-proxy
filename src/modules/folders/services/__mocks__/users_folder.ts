@@ -14,7 +14,11 @@ export const mockGqlFolder: GqlFolderWithIeObjects = {
 			intellectualEntity: {
 				id: 'https://datahub.io/dataset/8s4jm2514q',
 				schema_identifier: '8s4jm2514q',
-				schema_name: 'CGSO. De mannenbeweging - mannenemancipatie - 1982',
+				schemaNames: [
+					{
+						schema_name: 'CGSO. De mannenbeweging - mannenemancipatie - 1982',
+					},
+				],
 			},
 		},
 	],

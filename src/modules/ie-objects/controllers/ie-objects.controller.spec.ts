@@ -8,13 +8,12 @@ import { BadRequestException, ForbiddenException, NotFoundException } from '@nes
 import { ConfigService } from '@nestjs/config';
 import { Test, type TestingModule } from '@nestjs/testing';
 import type { IPagination } from '@studiohyperdrive/pagination';
-import type { HetArchiefRelatedIeObject } from '@viaa/avo2-types';
+import type { HetArchiefIeObject, HetArchiefRelatedIeObject } from '@viaa/avo2-types';
 import type { Request, Response } from 'express';
 import { cloneDeep } from 'lodash';
 import { type MockInstance, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { HetArchiefIeObjectLicense, HetArchiefIeObjectType } from '@viaa/avo2-types';
-import { type IeObject } from '../ie-objects.types';
 import {
 	mockIeObject1,
 	mockIeObjectWithMetadataSetALL,
@@ -40,7 +39,7 @@ import { TestingLogger } from '~shared/logging/test-logger';
 import { mockConfigService } from '~shared/test/mock-config-service';
 
 // Use function to return object to avoid cross contaminating the tests. Always a fresh object
-const getMockMediaResponse = (): IPagination<Partial<IeObject>> =>
+const getMockMediaResponse = (): IPagination<Partial<HetArchiefIeObject>> =>
 	cloneDeep({
 		items: [mockIeObject1, mockIeObjectWithMetadataSetLTD, mockIeObjectWithMetadataSetALL],
 		page: 1,
@@ -216,7 +215,7 @@ describe('IeObjectsController', () => {
 						},
 					],
 				},
-			] as Partial<IeObject>[]);
+			] as Partial<HetArchiefIeObject>[]);
 			mockPlayerTicketService.getPlayableUrl.mockResolvedValueOnce('http://playme');
 			mockIeObjectsService.getRepresentationAndFileInIeObject.mockReturnValueOnce([
 				{
@@ -258,7 +257,7 @@ describe('IeObjectsController', () => {
 						},
 					],
 				},
-			] as Partial<IeObject>[]);
+			] as Partial<HetArchiefIeObject>[]);
 
 			await expect(
 				ieObjectsController.getPlayableUrl(
@@ -309,7 +308,7 @@ describe('IeObjectsController', () => {
 						dctermsFormat: HetArchiefIeObjectType.VIDEO,
 						pages: [{ pageNumber: 1, representations: [{ files: [file] }] }],
 					},
-				] as Partial<IeObject>[]);
+				] as Partial<HetArchiefIeObject>[]);
 				mockPlayerTicketService.getPlayableUrl.mockResolvedValueOnce('http://playme');
 				mockIeObjectsService.getRepresentationAndFileInIeObject.mockReturnValueOnce([
 					file,
@@ -433,7 +432,7 @@ describe('IeObjectsController', () => {
 						},
 					],
 				},
-			] as Partial<IeObject>[]);
+			] as Partial<HetArchiefIeObject>[]);
 
 			await expect(
 				ieObjectsController.getTicketServiceTokens(
@@ -466,7 +465,7 @@ describe('IeObjectsController', () => {
 						},
 					],
 				},
-			] as Partial<IeObject>[]);
+			] as Partial<HetArchiefIeObject>[]);
 			mockPlayerTicketController.getTicketServiceTokenForFilePath.mockResolvedValueOnce('token');
 
 			const tokens = await ieObjectsController.getTicketServiceTokens(

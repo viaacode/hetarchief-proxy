@@ -79,10 +79,13 @@ mutation updateMaterialRequestForUser(
 			}
 			intellectualEntity {
 				schema_identifier
-				schema_name
 				id
 				schema_date_published
 				created_at
+				schemaNames(where: { is_ai_generated: { _eq: false } }) {
+					schema_name
+					is_ai_generated
+				}
 				premisIdentifier(limit: 1) {
 					value
 				}

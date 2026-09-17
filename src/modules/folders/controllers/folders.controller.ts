@@ -32,9 +32,8 @@ import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
 import { CreateOrUpdateFolderDto, FolderObjectsQueryDto } from '~modules/folders/dto/folders.dto';
 
-import { HetArchiefIeObjectLicense } from '@viaa/avo2-types';
+import { HetArchiefIeObject, HetArchiefIeObjectLicense } from '@viaa/avo2-types';
 import { FoldersService } from '~modules/folders/services/folders.service';
-import { type IeObject } from '~modules/ie-objects/ie-objects.types';
 
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
@@ -114,8 +113,8 @@ export class FoldersController {
 		@Param('folderId', ParseUUIDPipe) folderId: string,
 		@Query() queryDto: FolderObjectsQueryDto,
 		@SessionUser() user: SessionUserEntity
-	): Promise<IPagination<Partial<IeObject>>> {
-		const folderObjects: IPagination<Partial<IeObject>> =
+	): Promise<IPagination<Partial<HetArchiefIeObject>>> {
+		const folderObjects: IPagination<Partial<HetArchiefIeObject>> =
 			await this.foldersService.findObjectsByFolderId(
 				folderId,
 				user?.getId(),
@@ -226,7 +225,7 @@ export class FoldersController {
 		@Param('folderId') folderId: string,
 		@Param('objectSchemaIdentifier') objectSchemaIdentifier: string,
 		@SessionUser() user: SessionUserEntity
-	): Promise<Partial<IeObject> & { folderEntryCreatedAt: string }> {
+	): Promise<Partial<HetArchiefIeObject> & { folderEntryCreatedAt: string }> {
 		const collection = await this.foldersService.findFolderById(folderId, referer, ip);
 		if (collection.userProfileId !== user?.getId()) {
 			throw new ForbiddenException('You can only add objects to your own folders');
@@ -312,7 +311,7 @@ export class FoldersController {
 		@Query('newFolderId') newFolderId: string,
 		@SessionUser() user: SessionUserEntity,
 		@Req() request: Request
-	): Promise<Partial<IeObject> & { folderEntryCreatedAt: string }> {
+	): Promise<Partial<HetArchiefIeObject> & { folderEntryCreatedAt: string }> {
 		// Check user is owner of both folders
 		const [oldFolder, newFolder] = await Promise.all([
 			this.foldersService.findFolderById(oldFolderId, referer, ip),
@@ -429,7 +428,7 @@ export class FoldersController {
 		);
 
 		// Get all the objects from the original collection and add them to the new collection
-		let folderObjects: IPagination<Partial<IeObject>>;
+		let folderObjects: IPagination<Partial<HetArchiefIeObject>>;
 		try {
 			folderObjects = await this.foldersService.findObjectsByFolderId(
 				folderId,
