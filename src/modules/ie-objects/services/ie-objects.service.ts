@@ -6,6 +6,7 @@ import { Request } from 'express';
 import { DataService, PlayerTicketService } from '@meemoo/admin-core-api';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import {
+	ForbiddenException,
 	Inject,
 	Injectable,
 	InternalServerErrorException,
@@ -68,6 +69,7 @@ import {
 	type IeObjectsSitemap,
 	type IeObjectsVisitorSpaceInfo,
 	type IeObjectsWithAggregations,
+	KEY_USER_ONLY_AUTOCOMPLETE_FIELDS,
 	type Mention,
 } from '../ie-objects.types';
 
@@ -1662,6 +1664,11 @@ export class IeObjectsService {
 		inputQuery: IeObjectsQueryDto,
 		user?: SessionUserEntity
 	): Promise<string[]> {
+		// The AI metadata autocomplete fields are reserved for key users
+		if (KEY_USER_ONLY_AUTOCOMPLETE_FIELDS.includes(field) && !user?.getIsKeyUser()) {
+			throw new ForbiddenException(`Field '${field}' is only available to key users.`);
+		}
+
 		// Get active visits for the current user
 		// Need this to retrieve visitorSpaceAccessInfo
 		const visitorSpaceAccessInfo = await this.getVisitorSpaceAccessInfoFromUser(user);

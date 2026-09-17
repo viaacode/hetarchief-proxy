@@ -1,4 +1,8 @@
-import { BadRequestException, InternalServerErrorException } from '@nestjs/common';
+import {
+	BadRequestException,
+	ForbiddenException,
+	InternalServerErrorException,
+} from '@nestjs/common';
 import jsep from 'jsep';
 import {
 	clamp,
@@ -30,6 +34,7 @@ import {
 	IE_OBJECTS_SEARCH_FILTER_FIELD_IN_METADATA_ALL,
 	IE_OBJECTS_SEARCH_FILTER_FIELD_IN_METADATA_LIMITED,
 	IeObjectsSearchFilterField,
+	KEY_USER_ONLY_SEARCH_FILTER_FIELDS,
 	MAX_COUNT_SEARCH_RESULTS,
 	MAX_NUMBER_SEARCH_RESULTS,
 	MULTI_MATCH_FIELDS,
@@ -84,6 +89,19 @@ export class QueryBuilder {
 			}
 			return false;
 		});
+
+		// The AI metadata filters are reserved for key users
+		if (!inputInfo.user?.getIsKeyUser()) {
+			const keyUserOnlyFilter = (searchRequest?.filters || []).find((searchFilter) =>
+				KEY_USER_ONLY_SEARCH_FILTER_FIELDS.includes(searchFilter.field)
+			);
+			if (keyUserOnlyFilter) {
+				throw new ForbiddenException(
+					`Field '${keyUserOnlyFilter.field}' is only available to key users.`
+				);
+			}
+		}
+
 		try {
 			const isRandomOrder = searchRequest.orderProp === OrderProperty.RANDOM;
 			// Build the elasticsearch query object in 2 parts

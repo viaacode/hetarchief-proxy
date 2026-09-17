@@ -650,6 +650,9 @@ export const AUTOCOMPLETE_FIELD_TO_ES_FIELD_NAME: Record<AutocompleteField, stri
 	[AutocompleteField.locationCreated]: AutocompleteEsField.locationCreated,
 	[AutocompleteField.newspaperSeriesName]: AutocompleteEsField.newspaperSeriesName,
 	[AutocompleteField.mentions]: AutocompleteEsField.mentions,
+	[AutocompleteField.mentionPerson]: AutocompleteEsField.mentionPerson,
+	[AutocompleteField.mentionPlace]: AutocompleteEsField.mentionPlace,
+	[AutocompleteField.mentionOrganisation]: AutocompleteEsField.mentionOrganisation,
 };
 
 export enum ERROR_CODE {

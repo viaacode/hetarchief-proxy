@@ -117,6 +117,46 @@ export const mockAutocompleteQueryResponseCreators = {
 	},
 };
 
+export const mockAutocompleteQueryResponseMentionPersons = {
+	took: 12,
+	timed_out: false,
+	_shards: {
+		total: 121,
+		successful: 121,
+		skipped: 0,
+		failed: 0,
+	},
+	hits: {
+		total: {
+			value: 2,
+			relation: 'eq',
+		},
+		max_score: 3.1,
+		hits: [
+			{
+				_index: 'or-g44hq0v_2025-05-19t14.23.28',
+				_id: 'qs00000h0f',
+				_score: 3.1,
+				_source: {},
+				fields: {
+					'schema_mentions_person_ai.sayt': ['Jan Jansen'],
+					'schema_mentions_person_ai.keyword': ['jan jansen'],
+				},
+			},
+			{
+				_index: 'or-g44hq0v_2025-05-19t14.23.28',
+				_id: 'qs3r0psc67',
+				_score: 2.4,
+				_source: {},
+				fields: {
+					'schema_mentions_person_ai.sayt': ['Jan Peeters'],
+					'schema_mentions_person_ai.keyword': ['jan peeters'],
+				},
+			},
+		],
+	},
+};
+
 export const representationMp3: HetArchiefIeObjectRepresentation = {
 	id: 'https://data.hetarchief.be/id/entity/41ed99a7cab4918da5536322c05a9162',
 	schemaName:

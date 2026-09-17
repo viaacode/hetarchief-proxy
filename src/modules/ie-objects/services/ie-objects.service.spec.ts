@@ -52,6 +52,7 @@ import {
 	cleanupRepresentations4,
 	cleanupRepresentations5,
 	mockAutocompleteQueryResponseCreators,
+	mockAutocompleteQueryResponseMentionPersons,
 	mockAutocompleteQueryResponseNewspaperSeries,
 	representationsNewspaper,
 } from '~modules/ie-objects/services/ie-objects.service.mocks';
@@ -776,6 +777,43 @@ describe('ieObjectsService', () => {
 			expect(esQuery.query.bool.must[0].wildcard['schema_creator_text.keyword'].value).toEqual(
 				'*a\\*b*'
 			);
+		});
+
+		it('queries the AI mention field for a key user', async () => {
+			mockVisitsService.findAll.mockResolvedValueOnce({ items: [] });
+			const executeQuery = vi
+				.spyOn(ieObjectsService, 'executeQuery')
+				.mockResolvedValueOnce(mockAutocompleteQueryResponseMentionPersons);
+
+			const result = await ieObjectsService.getMetadataAutocomplete(
+				AutocompleteField.mentionPerson,
+				'jan',
+				{ filters: [], page: 1, size: 4 },
+				new SessionUserEntity({ ...mockUser, isKeyUser: true })
+			);
+
+			const esQuery = executeQuery.mock.calls[0][1] as any;
+			expect(esQuery.fields).toEqual(['schema_mentions_person_ai.sayt']);
+			expect(esQuery.query.bool.must).toContainEqual({
+				wildcard: {
+					'schema_mentions_person_ai.keyword': { value: '*jan*', case_insensitive: true },
+				},
+			});
+			expect(result).toEqual(['Jan Jansen', 'Jan Peeters']);
+		});
+
+		it('refuses an AI mention field for a non key user', async () => {
+			const executeQuery = vi.spyOn(ieObjectsService, 'executeQuery');
+
+			await expect(
+				ieObjectsService.getMetadataAutocomplete(
+					AutocompleteField.mentionPerson,
+					'jan',
+					{ filters: [], page: 1, size: 4 },
+					new SessionUserEntity({ ...mockUser, isKeyUser: false })
+				)
+			).rejects.toThrowError("Field 'mentionPerson' is only available to key users.");
+			expect(executeQuery).not.toHaveBeenCalled();
 		});
 	});
 

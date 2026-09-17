@@ -77,6 +77,7 @@ import {
 	IeObjectForAccessCheck,
 	type IeObjectSeo,
 	type IeObjectsWithAggregations,
+	KEY_USER_ONLY_AUTOCOMPLETE_FIELDS,
 } from '../ie-objects.types';
 
 import { IeObjectsService } from '../services/ie-objects.service';
@@ -990,16 +991,72 @@ export class IeObjectsController {
 	}
 
 	@Post('metadata/autocomplete')
-	@ApiOperation({ summary: 'Get metadata autocomplete suggestions for a given field' })
+	@ApiOperation({
+		summary: 'Get metadata autocomplete suggestions for a given field',
+		description: `Available fields: ${Object.values(AutocompleteField).join(
+			', '
+		)}. The AI metadata fields (${KEY_USER_ONLY_AUTOCOMPLETE_FIELDS.join(
+			', '
+		)}) are only available to key users.`,
+	})
 	@ApiBody({
 		type: IeObjectsAutocompleteQueryDto,
 		required: true,
 		description: 'Autocomplete query with field, optional query string, and filters',
+		examples: {
+			creator: {
+				summary: 'Creators containing "dirk"',
+				value: {
+					field: AutocompleteField.creator,
+					query: 'dirk',
+					filters: [],
+				},
+			},
+			mentionPerson: {
+				summary: 'AI detected persons containing "jan" (key users only)',
+				value: {
+					field: AutocompleteField.mentionPerson,
+					query: 'jan',
+					filters: [],
+				},
+			},
+			withFilters: {
+				summary: 'Places mentioned in Flemish newspapers, narrowed by the current search',
+				value: {
+					field: AutocompleteField.mentionPlace,
+					query: 'gen',
+					filters: [
+						{
+							field: IeObjectsSearchFilterField.FORMAT,
+							multiValue: ['newspaper'],
+							operator: Operator.IS,
+						},
+						{
+							field: IeObjectsSearchFilterField.LANGUAGE,
+							multiValue: ['nl'],
+							operator: Operator.IS,
+						},
+					],
+				},
+			},
+			emptyQuery: {
+				summary: 'All values of a field (empty query returns the sorted list)',
+				value: {
+					field: AutocompleteField.newspaperSeriesName,
+					query: '',
+					filters: [],
+				},
+			},
+		},
 	})
 	@ApiOkResponse({ description: 'Returns an array of autocomplete suggestion strings' })
 	@ApiBadRequestResponse({ description: 'Invalid or missing field, or missing filters' })
+	@ApiForbiddenResponse({
+		description: 'The requested field is only available to key users',
+	})
 	public async getMetadataAutocomplete(
-		@Body() queryDto: IeObjectsAutocompleteQueryDto | null
+		@Body() queryDto: IeObjectsAutocompleteQueryDto | null,
+		@SessionUser() user: SessionUserEntity
 	): Promise<string[]> {
 		if (!Object.values(AutocompleteField).includes(queryDto?.field)) {
 			throw new BadRequestException({
@@ -1013,13 +1070,18 @@ export class IeObjectsController {
 		if (!queryDto?.filters) {
 			throw new BadRequestException('Body param filters is required');
 		}
-		return this.ieObjectsService.getMetadataAutocomplete(queryDto.field, queryDto.query || '', {
-			filters: queryDto.filters,
-			page: 1,
-			size: 2000,
-			orderProp: OrderProperty.RELEVANCE,
-			orderDirection: SortDirection.desc,
-		});
+		return this.ieObjectsService.getMetadataAutocomplete(
+			queryDto.field,
+			queryDto.query || '',
+			{
+				filters: queryDto.filters,
+				page: 1,
+				size: 2000,
+				orderProp: OrderProperty.RELEVANCE,
+				orderDirection: SortDirection.desc,
+			},
+			user
+		);
 	}
 
 	/**

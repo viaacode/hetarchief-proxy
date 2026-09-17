@@ -16,11 +16,15 @@ import { isArray } from 'lodash';
 
 import {
 	IeObjectsSearchFilterField,
+	KEY_USER_ONLY_SEARCH_FILTER_FIELDS,
 	Operator,
 	OrderProperty,
 } from '../elasticsearch/elasticsearch.consts';
 
-import { AutocompleteField } from '~modules/ie-objects/ie-objects.types';
+import {
+	AutocompleteField,
+	KEY_USER_ONLY_AUTOCOMPLETE_FIELDS,
+} from '~modules/ie-objects/ie-objects.types';
 import { commaSeparatedStringToArray } from '~shared/helpers/comma-separated-string-to-array';
 import { SortDirection } from '~shared/types';
 
@@ -31,7 +35,9 @@ export class SearchFilter {
 		type: String,
 		description: `The field to filter on. Options are: ${Object.values(
 			IeObjectsSearchFilterField
-		).join(', ')}`,
+		).join(', ')}. The AI metadata fields (${KEY_USER_ONLY_SEARCH_FILTER_FIELDS.join(
+			', '
+		)}) are only available to key users.`,
 	})
 	field: IeObjectsSearchFilterField;
 
@@ -82,7 +88,9 @@ export class IeObjectsAutocompleteQueryDto {
 	@Type(() => String)
 	@ApiProperty({
 		type: String,
-		description: 'The field to find autocomplete values for',
+		description: `The field to find autocomplete values for. The AI metadata fields (${KEY_USER_ONLY_AUTOCOMPLETE_FIELDS.join(
+			', '
+		)}) are only available to key users.`,
 		enum: AutocompleteField,
 	})
 	field: AutocompleteField;

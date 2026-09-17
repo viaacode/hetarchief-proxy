@@ -178,6 +178,9 @@ export interface ElasticsearchObject {
 	meemoofilm_embedded_caption_language?: string;
 	schema_location_created?: string | null;
 	schema_mentions?: string[] | null;
+	schema_mentions_person_ai?: string[] | null;
+	schema_mentions_place_ai?: string[] | null;
+	schema_mentions_organization_ai?: string[] | null;
 	children?: number;
 }
 
@@ -208,6 +211,11 @@ export enum AutocompleteField {
 	locationCreated = 'locationCreated',
 	newspaperSeriesName = 'newspaperSeriesName',
 	mentions = 'mentions',
+	// AI detected mentions, split per entity type. Only available to key users, see
+	// KEY_USER_ONLY_AUTOCOMPLETE_FIELDS.
+	mentionPerson = 'mentionPerson',
+	mentionPlace = 'mentionPlace',
+	mentionOrganisation = 'mentionOrganisation',
 }
 
 export enum AutocompleteEsField {
@@ -215,7 +223,20 @@ export enum AutocompleteEsField {
 	locationCreated = 'schema_location_created',
 	newspaperSeriesName = 'schema_is_part_of.newspaper',
 	mentions = 'schema_mentions',
+	mentionPerson = 'schema_mentions_person_ai',
+	mentionPlace = 'schema_mentions_place_ai',
+	mentionOrganisation = 'schema_mentions_organization_ai',
 }
+
+/**
+ * These autocomplete fields search in AI generated metadata, so they are only available to key
+ * users. Enforced in IeObjectsService.getMetadataAutocomplete.
+ */
+export const KEY_USER_ONLY_AUTOCOMPLETE_FIELDS: AutocompleteField[] = [
+	AutocompleteField.mentionPerson,
+	AutocompleteField.mentionPlace,
+	AutocompleteField.mentionOrganisation,
+];
 
 export interface EsQueryAutocompleteMatchPhraseResponse {
 	took: number;
