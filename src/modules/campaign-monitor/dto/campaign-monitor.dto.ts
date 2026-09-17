@@ -217,6 +217,10 @@ export class RequestListItem {
 	@IsString()
 	@IsOptional()
 	material_request_id?: string;
+
+	@IsBoolean()
+	@IsOptional()
+	is_complex_reuse_flow?: boolean;
 }
 
 export class CampaignMonitorData {

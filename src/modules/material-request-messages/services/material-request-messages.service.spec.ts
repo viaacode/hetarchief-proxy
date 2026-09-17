@@ -7,6 +7,7 @@ import { MaterialRequestPdfGeneratorService } from './material-request-pdf-gener
 
 import {
 	type GetEvaluatorsForOrganisationQuery,
+	type GetMaterialRequestMessagesQuery,
 	type GetUnreadMessageCountsPerUserQuery,
 	type GetUnreadMessageOverviewForProfileQuery,
 	type InsertMaterialRequestMessageMutation,
@@ -157,6 +158,54 @@ describe('MaterialRequestMessagesService', () => {
 			const result = await materialRequestMessagesService.getUnreadMessageCountsPerUser();
 
 			expect(result).toEqual([]);
+		});
+	});
+
+	describe('adaptEvent', () => {
+		it('includes the sender language in the adapted event', () => {
+			const message: GetMaterialRequestMessagesQuery['app_material_request_messages_and_events'][0] =
+				{
+					id: 'message-1',
+					material_request_id: 'mr-1',
+					message_type: Lookup_App_Material_Request_Message_Type_Enum.Message,
+					body: null,
+					created_at: '2026-08-26T09:00:00.000Z',
+					sender_profile_id: 'requester-1',
+					sender: {
+						first_name: 'Ilya',
+						last_name: 'Korsakov',
+						mail: 'ilya.korsakov@example.com',
+						language: 'nl' as any,
+						organisation: {
+							org_identifier: 'OR-1',
+							skos_pref_label: 'VRT',
+						} as any,
+					},
+					attachments: [],
+				} as any;
+
+			const adapted = materialRequestMessagesService.adaptEvent(message);
+
+			expect(adapted.senderProfile.language).toBe('nl');
+			expect(adapted.senderProfile.mail).toBe('ilya.korsakov@example.com');
+		});
+
+		it('leaves the sender language undefined when there is no sender', () => {
+			const message: GetMaterialRequestMessagesQuery['app_material_request_messages_and_events'][0] =
+				{
+					id: 'message-1',
+					material_request_id: 'mr-1',
+					message_type: Lookup_App_Material_Request_Message_Type_Enum.Message,
+					body: null,
+					created_at: '2026-08-26T09:00:00.000Z',
+					sender_profile_id: null,
+					sender: null,
+					attachments: [],
+				} as any;
+
+			const adapted = materialRequestMessagesService.adaptEvent(message);
+
+			expect(adapted.senderProfile.language).toBeUndefined();
 		});
 	});
 
