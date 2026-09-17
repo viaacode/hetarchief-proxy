@@ -41,6 +41,7 @@ export interface MaterialRequestEvent {
 		mail: string;
 		firstName: string;
 		lastName: string;
+		language: string;
 		organisation: {
 			id: string;
 			name: string;
