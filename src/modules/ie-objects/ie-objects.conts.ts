@@ -1,4 +1,4 @@
-import { PermissionName } from '@viaa/avo2-types';
+import { HetArchiefIeObject, PermissionName } from '@viaa/avo2-types';
 import { isEmpty, uniq } from 'lodash';
 
 import {
@@ -9,7 +9,6 @@ import {
 import {
 	AutocompleteEsField,
 	AutocompleteField,
-	type IeObject,
 	IeObjectExtraUserGroupType,
 	IeObjectMetadataSet,
 	type IeObjectSectorLicenseMatrix,
@@ -131,8 +130,10 @@ export const IE_OBJECT_METADATA_SET_BY_OBJECT_AND_USER_SECTOR: Readonly<
 	},
 };
 
-const IE_OBJECT_PROPS_METADATA_SET_LTD: Readonly<(keyof IeObject)[]> = [
+const IE_OBJECT_PROPS_METADATA_SET_LTD: Readonly<(keyof HetArchiefIeObject)[]> = [
 	'name',
+	'nameAi',
+	'synopsisAi',
 	'collectionName',
 	'collectionId',
 	'issueNumber',
@@ -174,7 +175,7 @@ const IE_OBJECT_PROPS_METADATA_SET_LTD: Readonly<(keyof IeObject)[]> = [
 	'copyrightHolder',
 	'children',
 ];
-const IE_OBJECT_PROPS_METADATA_SET_ALL: Readonly<(keyof IeObject)[]> = [
+const IE_OBJECT_PROPS_METADATA_SET_ALL: Readonly<(keyof HetArchiefIeObject)[]> = [
 	'premisIdentifier',
 	'ebucoreObjectType',
 	'abstract',
@@ -195,7 +196,7 @@ const IE_OBJECT_PROPS_METADATA_SET_ALL: Readonly<(keyof IeObject)[]> = [
 	// section for kiosk users and for objects without a VIAA-PUBLIEK-CONTENT license. See ARC-3826.
 	'themes',
 ];
-const IE_OBJECT_PROPS_METADATA_SET_ESSENCE: Readonly<(keyof IeObject)[]> = [
+const IE_OBJECT_PROPS_METADATA_SET_ESSENCE: Readonly<(keyof HetArchiefIeObject)[]> = [
 	'thumbnailUrl',
 	'pages',
 	'mentions',
@@ -217,7 +218,7 @@ export const IE_OBJECT_PROPS_BY_METADATA_SET: Readonly<Record<string, string[]>>
 	],
 };
 
-export const IE_OBJECT_PROPS_METADATA_EXPORT: Readonly<(keyof IeObject)[]> = [
+export const IE_OBJECT_PROPS_METADATA_EXPORT: Readonly<(keyof HetArchiefIeObject)[]> = [
 	// LTD
 	'schemaIdentifier',
 	'meemooOriginalCp',
@@ -228,6 +229,8 @@ export const IE_OBJECT_PROPS_METADATA_EXPORT: Readonly<(keyof IeObject)[]> = [
 	'maintainerId',
 	'maintainerName',
 	'name',
+	'nameAi',
+	'synopsisAi',
 	'collectionName',
 	'issueNumber',
 	'isPartOf',
@@ -480,7 +483,7 @@ export const IE_OBJECT_PROPERTY_TO_DUBLIN_CORE: Record<string, XmlNodeFactory> =
 			attributes: { note: 'Number of pages' },
 		},
 	],
-	abrahamInfo: (value: IeObject['abrahamInfo']) => {
+	abrahamInfo: (value: HetArchiefIeObject['abrahamInfo']) => {
 		return [
 			{
 				type: 'element',

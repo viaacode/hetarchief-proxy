@@ -4,6 +4,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import {
+	type HetArchiefIeObject,
 	HetArchiefIeObjectLicense,
 	type HetArchiefIeObjectSector,
 	HetArchiefIeObjectType,
@@ -51,10 +52,11 @@ import {
 } from '~generated/graphql-db-types-hetarchief';
 import { limitAccessToObjectDetails } from '~modules/ie-objects/helpers/limit-access-to-object-details';
 import { mapDcTermsFormatToSimpleType } from '~modules/ie-objects/helpers/map-dc-terms-format-to-simple-type';
-import { type IeObject, IeObjectsVisitorSpaceInfo } from '~modules/ie-objects/ie-objects.types';
+import { IeObjectsVisitorSpaceInfo } from '~modules/ie-objects/ie-objects.types';
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { AUDIO_WAVE_FORM_URL } from '~shared/consts/audio-wave-form-url';
+import { getSchemaName } from '~shared/helpers/get-schema-name';
 import { SortDirectionWithRandom } from '~shared/types';
 import {
 	AddIeObjectToThemeResultDto,
@@ -439,7 +441,7 @@ export class ThemesService {
 		return {
 			id: rawIeObject.id,
 			schemaIdentifier: rawIeObject.schema_identifier ?? null,
-			name: rawIeObject.schema_name ?? null,
+			name: getSchemaName(rawIeObject),
 			format: rawIeObject.dctermsFormat?.[0]?.dcterms_format ?? null,
 			thumbnailUrl: thumbnailUrl ?? null,
 			hasAccessToEssence,
@@ -464,7 +466,7 @@ export class ThemesService {
 		}
 
 		const objectForAccessChecks: Pick<
-			IeObject,
+			HetArchiefIeObject,
 			'licenses' | 'schemaIdentifier' | 'maintainerId' | 'sector'
 		> = {
 			maintainerId: rawIeObject.schemaMaintainer?.org_identifier,

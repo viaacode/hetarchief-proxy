@@ -1,3 +1,4 @@
+import { HetArchiefIeObject } from '@viaa/avo2-types';
 import type {
 	FindFolderByIdQuery,
 	FindFolderIeObjectsByFolderIdQuery,
@@ -7,7 +8,6 @@ import type {
 	InsertFolderMutation,
 	UpdateFolderMutation,
 } from '~generated/graphql-db-types-hetarchief';
-import type { IeObject } from '~modules/ie-objects/ie-objects.types';
 
 export interface Folder {
 	id: string;
@@ -18,7 +18,7 @@ export interface Folder {
 	isDefault: boolean;
 	userProfileId: string;
 	duration?: string;
-	objects?: Partial<IeObject>[];
+	objects?: Partial<HetArchiefIeObject>[];
 	usedForLimitedAccessUntil?: string | null;
 }
 

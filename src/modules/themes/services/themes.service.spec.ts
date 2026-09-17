@@ -42,7 +42,11 @@ const mockGetIeObjectsInThemeResponse: GetThemeWithObjectsInRandomOrderQuery = {
 			{
 				ieObject: {
 					id: 'ie-uuid-1',
-					schema_name: 'Natuur documentaire',
+					schemaNames: [
+						{
+							schema_name: 'Natuur documentaire',
+						},
+					],
 					dctermsFormat: [{ dcterms_format: 'video' }],
 					schemaThumbnail: { schema_thumbnail_url: ['https://example.com/thumb1.jpg'] },
 					schemaMaintainer: {
@@ -56,7 +60,11 @@ const mockGetIeObjectsInThemeResponse: GetThemeWithObjectsInRandomOrderQuery = {
 			{
 				ieObject: {
 					id: 'ie-uuid-2',
-					schema_name: 'Natuur foto',
+					schemaNames: [
+						{
+							schema_name: 'Natuur foto',
+						},
+					],
 					dctermsFormat: [{ dcterms_format: 'image' }],
 					schemaThumbnail: null,
 					schemaMaintainer: {

@@ -1,4 +1,3 @@
-import type { IeObject } from '../ie-objects.types';
 import {
 	mockIeObjectWithMetadataSetALL,
 	mockIeObjectWithMetadataSetALLWithEssence,
@@ -8,6 +7,7 @@ import {
 	mockIeObjectWithMetadataSetLtdCsv,
 } from '../mocks/ie-objects.mock';
 
+import { HetArchiefIeObject } from '@viaa/avo2-types';
 import { describe, expect, it } from 'vitest';
 import { convertObjectToCsv, convertObjectsToCsv } from './convert-objects-to-csv';
 
@@ -16,7 +16,7 @@ describe('convertObjectToCsv', () => {
 		const csv = convertObjectToCsv({
 			otherKey: 'otherValue',
 			meemooOriginalCp: '1',
-		} as unknown as IeObject);
+		} as unknown as HetArchiefIeObject);
 		expect(csv.startsWith('meemooOriginalCp')).toBeTruthy();
 	});
 
@@ -25,7 +25,7 @@ describe('convertObjectToCsv', () => {
 			otherKey: 'otherValue',
 			meemooOriginalCp: '1',
 			creator: { Maker: 'test' },
-		} as unknown as IeObject);
+		} as unknown as HetArchiefIeObject);
 		expect(csv.startsWith('meemooOriginalCp;creator.Maker')).toBeTruthy();
 		expect(csv.endsWith('1;test')).toBeTruthy();
 	});
@@ -48,7 +48,7 @@ describe('convertObjectsToCsv', () => {
 	it('returns the csv version of an array of objects', () => {
 		const csv = convertObjectsToCsv([
 			{ otherKey: 'otherValue', meemooOriginalCp: '1' },
-		] as unknown as IeObject[]);
+		] as unknown as HetArchiefIeObject[]);
 		expect(csv.startsWith('0.meemooOriginalCp')).toBeTruthy();
 	});
 
@@ -59,7 +59,7 @@ describe('convertObjectsToCsv', () => {
 				meemooOriginalCp: '1',
 				creator: { Maker: 'test' },
 			},
-		] as unknown as IeObject[]);
+		] as unknown as HetArchiefIeObject[]);
 		expect(csv.startsWith('0.meemooOriginalCp;0.creator.Maker')).toBeTruthy();
 		expect(csv.endsWith('1;test')).toBeTruthy();
 	});

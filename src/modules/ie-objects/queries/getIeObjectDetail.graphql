@@ -5,7 +5,6 @@ query getIeObjectDetail($ieObjectId: String!) {
 		schema_position
 		schema_date_published
 		dcterms_available
-		schema_name
 		schema_description
 		schema_date_created
 		ebucore_has_cast_member
@@ -14,7 +13,14 @@ query getIeObjectDetail($ieObjectId: String!) {
 		schema_copyright_notice
 		schema_abstract
 		bibframe_edition
-		ebucore_synopsis
+		schemaNames(order_by: { created_at: asc }) {
+			schema_name
+			is_ai_generated
+		}
+		ebucoreSynopses(order_by: { created_at: asc }) {
+			ebucore_synopsis
+			is_ai_generated
+		}
 		schema_number_of_pages: ha_des_number_of_pages
 		premis_is_part_of: relation_is_part_of
 		rights {
@@ -124,7 +130,6 @@ query getIeObjectDetail($ieObjectId: String!) {
 			schema_position
 			schema_date_published
 			dcterms_available
-			schema_name
 			schema_description
 			schema_creator
 			dcterms_format
@@ -136,6 +141,10 @@ query getIeObjectDetail($ieObjectId: String!) {
 			meemoo_local_id
 			premis_is_part_of
 			bibframe_edition
+			schemaNames(where: { is_ai_generated: { _eq: false } }) {
+				schema_name
+				is_ai_generated
+			}
 			schemaMaintainer {
 				org_identifier
 				skos_pref_label
@@ -195,7 +204,9 @@ query getIeObjectDetail($ieObjectId: String!) {
 					schema_alternate_name
 				}
 				bibframe_edition
-				ebucore_synopsis
+				ebucoreSynopses(where: { is_ai_generated: { _eq: false } }) {
+					ebucore_synopsis
+				}
 			}
 		}
 	}
