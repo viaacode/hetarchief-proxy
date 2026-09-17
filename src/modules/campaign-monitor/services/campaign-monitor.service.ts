@@ -403,9 +403,6 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 				throw error;
 			}
 
-			this.logger.warn('send data to:', emailInfo.data.to);
-			this.logger.warn('reply to: ', emailInfo.data.replyTo);
-
 			let cmTemplateId: string;
 			if (Object.values(EmailTemplate).includes(emailInfo.template as any)) {
 				cmTemplateId = getTemplateId(emailInfo.template, lang);
