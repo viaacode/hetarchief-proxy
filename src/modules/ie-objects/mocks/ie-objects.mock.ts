@@ -112,6 +112,7 @@ export const mockIeObject1: Readonly<HetArchiefIeObject> = {
 
 export const mockIeObjectWithMetadataSetLTD: Readonly<Partial<HetArchiefIeObject>> = {
 	hasAccessToEssence: false,
+	limitedBySectorLogic: false,
 	meemooOriginalCp: null,
 	schemaIdentifier: '8911p09j1g',
 	iri: 'https://data-int.hetarchief.be/id/entity/8911p09j1g',
@@ -173,6 +174,7 @@ export const mockIeObjectWithMetadataSetLTD: Readonly<Partial<HetArchiefIeObject
 
 export const mockIeObjectWithMetadataSetALL: Readonly<Partial<HetArchiefIeObject>> = {
 	hasAccessToEssence: false,
+	limitedBySectorLogic: false,
 	name: 'Durf te vragen R002 A0001',
 	meemooOriginalCp: null,
 	schemaIdentifier: '8911p09j1g',
@@ -259,6 +261,7 @@ export const mockIeObjectWithMetadataSetALL: Readonly<Partial<HetArchiefIeObject
 
 export const mockIeObjectWithMetadataSetALLWithEssence: Readonly<Partial<HetArchiefIeObject>> = {
 	hasAccessToEssence: true,
+	limitedBySectorLogic: false,
 	thumbnailUrl:
 		'https://media.viaa.be/play/v2/VLAAMSPARLEMENT/49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c/keyframes-thumb/keyframes_1_1/keyframe1.jpg',
 	pages: [],
@@ -335,6 +338,7 @@ export const mockIeObjectWithMetadataSetALLWithEssence: Readonly<Partial<HetArch
 
 export const mockIeObjectLimitedInFolder: Readonly<Partial<HetArchiefIeObject>> = {
 	hasAccessToEssence: false,
+	limitedBySectorLogic: false,
 	accessThrough: [HetArchiefIeObjectAccessThrough.PUBLIC_INFO],
 	name: 'Durf te vragen R002 A0001',
 	meemooOriginalCp: null,

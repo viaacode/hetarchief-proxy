@@ -211,6 +211,26 @@ export class PlayerTicketsQueryDto {
 	endTime?: number;
 }
 
+export class IeObjectMentionsQueryDto {
+	@IsString()
+	@ApiProperty({
+		type: String,
+		description: 'The schema identifier of the ie-object that contains the requested file',
+		example: '9z9089fx9s',
+		required: true,
+	})
+	schemaIdentifier: string;
+
+	@IsString()
+	@ApiProperty({
+		type: String,
+		description: 'Get the AI-detected mentions for the file with this id',
+		example: 'https://data-int.hetarchief.be/id/entity/abdce2329b10260be65c9b68fb84f960',
+		required: true,
+	})
+	fileId: string;
+}
+
 export class ThumbnailQueryDto {
 	@IsString()
 	@ApiProperty({

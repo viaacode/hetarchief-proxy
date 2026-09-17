@@ -1,0 +1,23 @@
+query getMentionsByFileId($fileId: String!) {
+	graph_file(where: { id: { _eq: $fileId } }, limit: 1) {
+		id
+		schema_duration
+		has_annotations {
+			id
+			annotation_type
+			annotation_confidence
+			is_ai_generated
+			has_annotation_related_artefact_thing {
+				id
+				type
+				wiki_id
+				schema_name
+				schema_thumbnail_url
+			}
+			is_annotated_media_resource {
+				start_offset
+				end_offset
+			}
+		}
+	}
+}

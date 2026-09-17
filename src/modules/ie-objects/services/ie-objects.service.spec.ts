@@ -989,4 +989,282 @@ describe('ieObjectsService', () => {
 			);
 		});
 	});
+
+	describe('getMentionsByFileId', () => {
+		const mockFileId = 'https://data-int.hetarchief.be/id/entity/file-1';
+
+		const buildAnnotation = (overrides: Record<string, unknown> = {}) => ({
+			id: 'annotation-1',
+			annotation_type: 'face',
+			annotation_confidence: 0.9,
+			is_ai_generated: true,
+			has_annotation_related_artefact_thing: {
+				id: 'https://data-int.hetarchief.be/id/entity/thing-1',
+				type: 'person',
+				wiki_id: 'Q2723306',
+				schema_name: 'Els Ampe',
+				schema_thumbnail_url: 'https://assets.viaa.be/thing-1.jpg',
+			},
+			is_annotated_media_resource: [{ start_offset: 30, end_offset: 35 }],
+			...overrides,
+		});
+
+		const mockGetMentions = (annotations: unknown[], schemaDuration: unknown = 600) => {
+			mockDataService.execute.mockResolvedValueOnce({
+				graph_file: [
+					{ id: mockFileId, schema_duration: schemaDuration, has_annotations: annotations },
+				],
+			});
+		};
+
+		it('throws a NotFoundException when the file does not exist', async () => {
+			mockDataService.execute.mockResolvedValueOnce({ graph_file: [] });
+
+			await expect(
+				ieObjectsService.getMentionsByFileId(mockFileId, 'referer', '127.0.0.1')
+			).rejects.toThrow(`File with id '${mockFileId}' not found`);
+		});
+
+		it('returns the duration of the file alongside the mentions', async () => {
+			mockGetMentions([buildAnnotation()], '1234.5');
+
+			const result = await ieObjectsService.getMentionsByFileId(mockFileId, 'referer', '127.0.0.1');
+
+			expect(result.durationSeconds).toEqual(1234.5);
+			expect(result.mentions).toHaveLength(1);
+		});
+
+		it('collapses the same wikidata entity recognised under different thing iris into one mention', async () => {
+			mockGetMentions([
+				buildAnnotation({
+					id: 'annotation-face',
+					is_annotated_media_resource: [{ start_offset: 90, end_offset: 95 }],
+				}),
+				buildAnnotation({
+					id: 'annotation-ner',
+					annotation_type: 'named-entity',
+					has_annotation_related_artefact_thing: {
+						// Different thing row, same person: must not produce a second avatar
+						id: 'https://data-int.hetarchief.be/id/entity/thing-2',
+						type: 'person',
+						wiki_id: 'Q2723306',
+						schema_name: 'Els Ampe',
+						schema_thumbnail_url: null,
+					},
+					is_annotated_media_resource: [{ start_offset: 12, end_offset: 20 }],
+				}),
+			]);
+
+			const { mentions } = await ieObjectsService.getMentionsByFileId(
+				mockFileId,
+				'referer',
+				'127.0.0.1'
+			);
+
+			expect(mentions).toHaveLength(1);
+			expect(mentions[0].id).toEqual('Q2723306');
+			expect(mentions[0].wikidataUrl).toEqual('https://www.wikidata.org/wiki/Q2723306');
+			// Occurrences of both recognition methods, sorted by start time
+			expect(mentions[0].occurrences.map((occurrence) => occurrence.startTime)).toEqual([12, 90]);
+			expect(mentions[0].occurrences.map((occurrence) => occurrence.annotationType)).toEqual([
+				'named-entity',
+				'face',
+			]);
+		});
+
+		it('keeps entities without a wiki id separate, keyed on their thing iri', async () => {
+			mockGetMentions([
+				buildAnnotation({
+					has_annotation_related_artefact_thing: {
+						id: 'https://data-int.hetarchief.be/id/entity/thing-a',
+						type: 'place',
+						wiki_id: null,
+						schema_name: 'Brussel',
+						schema_thumbnail_url: null,
+					},
+				}),
+				buildAnnotation({
+					has_annotation_related_artefact_thing: {
+						id: 'https://data-int.hetarchief.be/id/entity/thing-b',
+						type: 'organization',
+						wiki_id: null,
+						schema_name: 'VRT',
+						schema_thumbnail_url: null,
+					},
+					is_annotated_media_resource: [{ start_offset: 60, end_offset: 65 }],
+				}),
+			]);
+
+			const { mentions } = await ieObjectsService.getMentionsByFileId(
+				mockFileId,
+				'referer',
+				'127.0.0.1'
+			);
+
+			expect(mentions).toHaveLength(2);
+			expect(mentions.map((mention) => mention.id)).toEqual([
+				'https://data-int.hetarchief.be/id/entity/thing-a',
+				'https://data-int.hetarchief.be/id/entity/thing-b',
+			]);
+			expect(mentions.map((mention) => mention.type)).toEqual(['place', 'organization']);
+			expect(mentions.map((mention) => mention.wikidataId)).toEqual([null, null]);
+			expect(mentions.map((mention) => mention.wikidataUrl)).toEqual([null, null]);
+		});
+
+		it('drops annotations without an entity', async () => {
+			mockGetMentions([
+				buildAnnotation(),
+				buildAnnotation({ has_annotation_related_artefact_thing: null }),
+			]);
+
+			const { mentions } = await ieObjectsService.getMentionsByFileId(
+				mockFileId,
+				'referer',
+				'127.0.0.1'
+			);
+
+			expect(mentions).toHaveLength(1);
+		});
+
+		it('yields one timeless occurrence for an annotation without media fragments', async () => {
+			mockGetMentions([
+				buildAnnotation({ annotation_type: 'named-entity', is_annotated_media_resource: [] }),
+			]);
+
+			const { mentions } = await ieObjectsService.getMentionsByFileId(
+				mockFileId,
+				'referer',
+				'127.0.0.1'
+			);
+
+			expect(mentions[0].occurrences).toEqual([
+				{
+					startTime: null,
+					endTime: null,
+					confidence: 0.9,
+					annotationType: 'named-entity',
+					isAiGenerated: true,
+				},
+			]);
+		});
+
+		it('emits one occurrence per media fragment of a single annotation', async () => {
+			mockGetMentions([
+				buildAnnotation({
+					is_annotated_media_resource: [
+						{ start_offset: 50, end_offset: 55 },
+						{ start_offset: 10, end_offset: 15 },
+					],
+				}),
+			]);
+
+			const { mentions } = await ieObjectsService.getMentionsByFileId(
+				mockFileId,
+				'referer',
+				'127.0.0.1'
+			);
+
+			expect(mentions[0].occurrences.map((occurrence) => occurrence.startTime)).toEqual([10, 50]);
+			expect(mentions[0].occurrences.map((occurrence) => occurrence.endTime)).toEqual([15, 55]);
+		});
+
+		it('sorts entities chronologically, with timeless entities last', async () => {
+			mockGetMentions([
+				buildAnnotation({
+					has_annotation_related_artefact_thing: {
+						id: 'thing-late',
+						type: 'person',
+						wiki_id: null,
+						schema_name: 'Late',
+						schema_thumbnail_url: null,
+					},
+					is_annotated_media_resource: [{ start_offset: 500, end_offset: 505 }],
+				}),
+				buildAnnotation({
+					has_annotation_related_artefact_thing: {
+						id: 'thing-timeless',
+						type: 'person',
+						wiki_id: null,
+						schema_name: 'Timeless',
+						schema_thumbnail_url: null,
+					},
+					is_annotated_media_resource: [],
+				}),
+				buildAnnotation({
+					has_annotation_related_artefact_thing: {
+						id: 'thing-early',
+						type: 'person',
+						wiki_id: null,
+						schema_name: 'Early',
+						schema_thumbnail_url: null,
+					},
+					is_annotated_media_resource: [{ start_offset: 5, end_offset: 9 }],
+				}),
+			]);
+
+			const { mentions } = await ieObjectsService.getMentionsByFileId(
+				mockFileId,
+				'referer',
+				'127.0.0.1'
+			);
+
+			expect(mentions.map((mention) => mention.name)).toEqual(['Early', 'Late', 'Timeless']);
+		});
+
+		it('resolves the entity thumbnail once per entity and nulls it when there is none', async () => {
+			mockPlayerTicketService.resolveThumbnailUrl.mockResolvedValue(
+				'https://assets.viaa.be/thing-1.jpg?token=abc'
+			);
+			mockGetMentions([
+				buildAnnotation({ id: 'annotation-face' }),
+				// Same entity, second recognition: must not trigger a second token
+				buildAnnotation({ id: 'annotation-speaker', annotation_type: 'speaker' }),
+				buildAnnotation({
+					has_annotation_related_artefact_thing: {
+						id: 'thing-no-still',
+						type: 'place',
+						wiki_id: null,
+						schema_name: 'Brussel',
+						schema_thumbnail_url: null,
+					},
+				}),
+			]);
+
+			const { mentions } = await ieObjectsService.getMentionsByFileId(
+				mockFileId,
+				'referer',
+				'127.0.0.1'
+			);
+
+			expect(mockPlayerTicketService.resolveThumbnailUrl).toHaveBeenCalledTimes(1);
+			expect(mentions.find((mention) => mention.name === 'Els Ampe').thumbnailUrl).toEqual(
+				'https://assets.viaa.be/thing-1.jpg?token=abc'
+			);
+			expect(mentions.find((mention) => mention.name === 'Brussel').thumbnailUrl).toBeNull();
+		});
+
+		it('passes unknown annotation types and entity types through as null', async () => {
+			mockGetMentions([
+				buildAnnotation({
+					annotation_type: 'something-new',
+					has_annotation_related_artefact_thing: {
+						id: 'thing-x',
+						type: 'event',
+						wiki_id: null,
+						schema_name: 'Iets',
+						schema_thumbnail_url: null,
+					},
+				}),
+			]);
+
+			const { mentions } = await ieObjectsService.getMentionsByFileId(
+				mockFileId,
+				'referer',
+				'127.0.0.1'
+			);
+
+			expect(mentions[0].type).toBeNull();
+			expect(mentions[0].occurrences[0].annotationType).toBeNull();
+		});
+	});
 });

@@ -54,6 +54,7 @@ import {
 	HetArchiefIeObjectType,
 } from '@viaa/avo2-types';
 import {
+	IeObjectMentionsQueryDto,
 	IeObjectsAutocompleteQueryDto,
 	IeObjectsPlayableDisplayDataQueryDto,
 	IeObjectsQueryDto,
@@ -72,6 +73,7 @@ import { convertObjectToXml } from '../helpers/convert-objects-to-xml';
 import { limitAccessToObjectDetails } from '../helpers/limit-access-to-object-details';
 import {
 	AutocompleteField,
+	type FileMentionsResponse,
 	IeObjectForAccessCheck,
 	type IeObjectSeo,
 	type IeObjectsWithAggregations,
@@ -384,6 +386,84 @@ export class IeObjectsController {
 		return accessibleObject;
 	}
 
+	@Get('mentions')
+	@ApiOperation({
+		summary:
+			'Get the AI-detected people, places and organisations on an AV file, with the timestamps at which each occurs',
+	})
+	@ApiOkResponse({ description: 'Returns the mentions grouped per entity, sorted chronologically' })
+	@ApiForbiddenResponse({
+		description:
+			'The caller is not a key user, or the object is not disclosed for key use, is not AV material, does not contain the file, is restricted by sector logic, or has no AI metadata license',
+	})
+	public async getMentions(
+		@Referer() referer: string,
+		@Ip() ip: string,
+		@Query() mentionsQuery: IeObjectMentionsQueryDto,
+		@SessionUser() user: SessionUserEntity
+	): Promise<FileMentionsResponse> {
+		// AI metadata is for key users only. "Key user" is a flag on the profile rather than a user
+		// group, so this cannot be expressed as a PermissionName. Kiosk visitors are never key users.
+		if (!user?.getIsKeyUser()) {
+			throw new ForbiddenException(
+				'You do not have permission to view AI metadata (not a key user)'
+			);
+		}
+
+		const accessibleObject = await this.getAccessibleObjectForTicket(
+			mentionsQuery.schemaIdentifier,
+			user,
+			referer,
+			ip
+		);
+
+		// Newspapers keep their own mentions on the object detail; only AV material is in scope here
+		if (!IE_OBJECT_AV_TYPES.includes(accessibleObject.dctermsFormat as HetArchiefIeObjectType)) {
+			throw new ForbiddenException(
+				'You do not have permission to view the mentions of this file (non AV material)'
+			);
+		}
+		if (!this.objectContainsFilePath(accessibleObject, mentionsQuery.fileId)) {
+			throw new ForbiddenException(
+				"You do not have permission to view the mentions of this file (ie object doesn't contain file)"
+			);
+		}
+
+		// AI metadata is never disclosed across a sector restriction, even when the object carries
+		// the AI license and the user can see the rest of its metadata.
+		if (accessibleObject.limitedBySectorLogic) {
+			throw new ForbiddenException(
+				'You do not have permission to view the AI metadata of this object (limited by sector logic)'
+			);
+		}
+
+		// Deliberately the object's own licenses, not the set the user can access: the AI license is
+		// a feature flag on the object, and unlocks no props of its own.
+		if (!accessibleObject.licenses?.includes(HetArchiefIeObjectLicense.INTRA_CP_METADATA_AI)) {
+			throw new ForbiddenException(
+				'You do not have permission to view the AI metadata of this object (no AI metadata license)'
+			);
+		}
+
+		const isPublicDomain: boolean =
+			accessibleObject.licenses.includes(HetArchiefIeObjectLicense.PUBLIEK_CONTENT) &&
+			accessibleObject.licenses.includes(HetArchiefIeObjectLicense.PUBLIC_DOMAIN);
+
+		const { durationSeconds, mentions } = await this.ieObjectsService.getMentionsByFileId(
+			mentionsQuery.fileId,
+			referer,
+			ip,
+			isPublicDomain
+		);
+
+		return {
+			fileId: mentionsQuery.fileId,
+			durationSeconds,
+			hasAccessToEssence: !!accessibleObject.hasAccessToEssence,
+			mentions,
+		};
+	}
+
 	@Get('thumbnail-ticket')
 	@ApiOperation({ summary: 'Get a thumbnail URL for a given ie-object id' })
 	@ApiQuery({
@@ -405,7 +485,7 @@ export class IeObjectsController {
 	@ApiParam({
 		name: 'schemaIdentifier',
 		description: 'The schema identifier of the ie-object',
-		example: '086348mc8s',
+		example: '9z9089fx9s',
 	})
 	@ApiOkResponse({ description: 'Returns SEO metadata for the ie-object' })
 	@ApiNotFoundResponse({ description: 'Ie-object not found' })
@@ -446,7 +526,7 @@ export class IeObjectsController {
 	/**
 	 * Export metadata to xml
 	 * @param ip
-	 * @param ieObjectId ieObjectId (eg: https://data.hetarchief.be/id/entity/086348mc8s)
+	 * @param ieObjectId ieObjectId (eg: https://data.hetarchief.be/id/entity/9z9089fx9s)
 	 * @param currentPageUrl The current page that is open on the client's browser (for event logging purposes)
 	 * @param referer
 	 * @param request
@@ -460,7 +540,7 @@ export class IeObjectsController {
 		name: 'ieObjectId',
 		required: true,
 		description: 'The IRI object id of the ie-object',
-		example: 'https://data.hetarchief.be/id/entity/086348mc8s',
+		example: 'https://data.hetarchief.be/id/entity/9z9089fx9s',
 	})
 	@ApiQuery({
 		name: 'currentPageUrl',
@@ -531,7 +611,7 @@ export class IeObjectsController {
 	 * Export metadata to csv
 	 * @param referer
 	 * @param ip
-	 * @param ieObjectId The iri object id of the ie object (eg: https://data.hetarchief.be/id/entity/086348mc8s)
+	 * @param ieObjectId The iri object id of the ie object (eg: https://data.hetarchief.be/id/entity/9z9089fx9s)
 	 * @param currentPageUrl
 	 * @param request
 	 * @param res
@@ -544,7 +624,7 @@ export class IeObjectsController {
 		name: 'ieObjectId',
 		required: true,
 		description: 'The IRI object id of the ie-object',
-		example: 'https://data.hetarchief.be/id/entity/086348mc8s',
+		example: 'https://data.hetarchief.be/id/entity/9z9089fx9s',
 	})
 	@ApiQuery({
 		name: 'currentPageUrl',
@@ -667,7 +747,7 @@ export class IeObjectsController {
 		name: 'ieObjectIri',
 		required: true,
 		description: 'The IRI of the ie-object',
-		example: 'https://data.hetarchief.be/id/entity/086348mc8s',
+		example: 'https://data.hetarchief.be/id/entity/9z9089fx9s',
 	})
 	@ApiOkResponse({ description: 'Returns parent and children ie-objects' })
 	public async getRelatedIeObjects(
@@ -719,7 +799,7 @@ export class IeObjectsController {
 	 * Get objects that are similar
 	 * @param referer
 	 * @param ip
-	 * @param schemaIdentifier schema identifier of the object. eg: 086348mc8s
+	 * @param schemaIdentifier schema identifier of the object. eg: 9z9089fx9s
 	 * @param ieObjectSimilarQueryDto
 	 * @param user
 	 */
@@ -731,7 +811,7 @@ export class IeObjectsController {
 	@ApiParam({
 		name: 'schemaIdentifier',
 		description: 'Schema identifier of the ie-object',
-		example: '086348mc8s',
+		example: '9z9089fx9s',
 	})
 	@ApiOkResponse({ description: 'Returns a paginated list of similar ie-objects' })
 	public async getSimilar(
@@ -975,7 +1055,7 @@ export class IeObjectsController {
 
 	/**
 	 * Get ie object thumbnail by their ids (schema identifiers)
-	 * @param schemaIdentifiers ie object schema_identifiers. eg: 086348mc8s, qstt4fps28
+	 * @param schemaIdentifiers ie object schema_identifiers. eg: 9z9089fx9s, qstt4fps28
 	 * @param referer site making the request. eg: https://qas-v3.hetarchief.be
 	 * @param ip Ip of the client making the request. eg: 172.17.45.216
 	 * @param user Currently logged-in user
@@ -988,7 +1068,7 @@ export class IeObjectsController {
 		required: true,
 		isArray: true,
 		description: 'The schema identifiers of the ie-objects',
-		example: ['086348mc8s', 'qstt4fps28'],
+		example: ['9z9089fx9s', 'qstt4fps28'],
 	})
 	@ApiOkResponse({
 		description: 'Returns an array of schema identifiers with their (possibly null) thumbnail URLs',
@@ -1107,7 +1187,7 @@ export class IeObjectsController {
 
 	/**
 	 * Get ie objects by their schemaIdentifier (aka PID)
-	 * @param schemaIdentifiers ie object schema_identifiers. eg: 086348mc8s, qstt4fps28
+	 * @param schemaIdentifiers ie object schema_identifiers. eg: 9z9089fx9s, qstt4fps28
 	 * @param ieObjectIds
 	 * @param user Currently logged-in user
 	 * @param resolveThumbnailUrl
@@ -1123,14 +1203,14 @@ export class IeObjectsController {
 		required: false,
 		isArray: true,
 		description: 'Schema identifiers (PIDs) of the ie-objects',
-		example: ['086348mc8s', 'qstt4fps28'],
+		example: ['9z9089fx9s', 'qstt4fps28'],
 	})
 	@ApiQuery({
 		name: 'ieObjectIds',
 		required: false,
 		isArray: true,
 		description: 'Full IRI ie-object ids',
-		example: ['https://data.hetarchief.be/id/entity/086348mc8s'],
+		example: ['https://data.hetarchief.be/id/entity/9z9089fx9s'],
 	})
 	@ApiQuery({
 		name: 'resolveThumbnailUrl',
