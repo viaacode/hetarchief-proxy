@@ -30,6 +30,7 @@ import {
 	InsertNotificationsDocument,
 	type InsertNotificationsMutation,
 	type InsertNotificationsMutationVariables,
+	Lookup_App_Material_Request_Message_Type_Enum,
 	Lookup_Languages_Enum,
 	UpdateAllNotificationsForUserDocument,
 	type UpdateAllNotificationsForUserMutation,
@@ -45,6 +46,7 @@ import {
 } from '~modules/campaign-monitor/campaign-monitor.types';
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 import { SendRequestListDto } from '~modules/material-requests/dto/material-requests.dto';
+import { getStatusEvent } from '~modules/material-requests/material-requests.consts';
 import {
 	MaterialRequest,
 	MaterialRequestSendRequestListUserInfo,
@@ -599,6 +601,11 @@ export class NotificationsService {
 		recipients: string[]
 	) {
 		try {
+			const additionalConditionsEvent = getStatusEvent(
+				materialRequest.history,
+				Lookup_App_Material_Request_Message_Type_Enum.AdditionalConditions
+			);
+
 			const [notifications] = await Promise.all([
 				this.create(
 					this.createForMaterialRequest(
@@ -612,8 +619,8 @@ export class NotificationsService {
 						template:
 							EmailTemplate.CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_ADDITIONAL_REQUIREMENTS_ACCEPTED,
 						data: {
-							to: materialRequest.requesterMail,
-							replyTo: materialRequest.contactMail,
+							to: additionalConditionsEvent?.senderProfile?.mail ?? materialRequest.contactMail,
+							replyTo: materialRequest.requesterMail,
 							data: this.campaignMonitorService.convertMaterialRequestsToAdditionalConditionsEmailTemplateData(
 								materialRequest,
 								materialRequest.requesterLanguage

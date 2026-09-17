@@ -168,6 +168,7 @@ export class MaterialRequestMessagesService {
 					name: message.sender?.organisation.skos_pref_label,
 				},
 				mail: message.sender?.mail,
+				language: message.sender?.language,
 			},
 		};
 	}

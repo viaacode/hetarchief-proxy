@@ -2,7 +2,7 @@ import { DataService, MaintenanceAlertsService, TranslationsService } from '@mee
 import { Test, type TestingModule } from '@nestjs/testing';
 import { AvoAuthIdpType, PermissionName } from '@viaa/avo2-types';
 import { addHours, addMonths, subHours } from 'date-fns';
-import { type MockInstance, beforeEach, describe, expect, it, vi } from 'vitest';
+import { type MockInstance, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { NotificationsService } from './notifications.service';
 
@@ -11,12 +11,15 @@ import {
 	type DeleteNotificationsMutation,
 	type FindNotificationsByUserQuery,
 	type InsertNotificationsMutation,
+	Lookup_App_Material_Request_Message_Type_Enum,
 	Lookup_Languages_Enum,
 	Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum,
 	type UpdateAllNotificationsForUserMutation,
 	type UpdateNotificationMutation,
 } from '~generated/graphql-db-types-hetarchief';
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
+import type { MaterialRequest } from '~modules/material-requests/material-requests.types';
+import { mockMaterialRequest1 } from '~modules/material-requests/mocks/material-requests.mocks';
 import { mockGqlNotification } from '~modules/notifications/services/__mocks__/app_notification';
 import {
 	type GqlNotification,
@@ -187,6 +190,8 @@ const mockDataService: Partial<Record<keyof DataService, MockInstance>> = {
 const mockCampaignMonitorService: Partial<Record<keyof CampaignMonitorService, MockInstance>> = {
 	sendForVisit: vi.fn().mockResolvedValue(true),
 	getAdminEmail: vi.fn().mockImplementation((email) => email),
+	sendTransactionalMail: vi.fn().mockResolvedValue(undefined),
+	convertMaterialRequestsToAdditionalConditionsEmailTemplateData: vi.fn().mockReturnValue({}),
 };
 
 const mockMaintenanceAlertsService: Partial<Record<keyof MaintenanceAlertsService, MockInstance>> =
@@ -540,6 +545,73 @@ describe('NotificationsService', () => {
 			expect(response).toHaveLength(1);
 			expect(response[0].status).toEqual(NotificationStatus.UNREAD);
 			createForMultipleRecipientsSpy.mockRestore();
+		});
+	});
+
+	describe('sendEmailForAcceptanceOfAdditionalConditionsToEvaluators', () => {
+		afterEach(() => {
+			mockCampaignMonitorService.sendTransactionalMail.mockClear();
+		});
+
+		it('sends the mail to the evaluator that asked for the additional conditions, replying to the requester', async () => {
+			const createSpy = vi
+				.spyOn(notificationsService, 'create')
+				.mockResolvedValueOnce([mockNotification]);
+			const materialRequest: MaterialRequest = {
+				...mockMaterialRequest1,
+				contactMail: 'maintainer@example.com',
+				history: [
+					{
+						id: 'event-1',
+						materialRequestId: mockMaterialRequest1.id,
+						messageType: Lookup_App_Material_Request_Message_Type_Enum.AdditionalConditions,
+						body: { conditions: [], autoApproveAfterAcceptAdditionalConditions: false },
+						createdAt: '2026-01-01T00:00:00.000Z',
+						senderProfile: {
+							id: 'evaluator-1',
+							mail: 'evaluator@example.com',
+							firstName: 'Eva',
+							lastName: 'Luator',
+							language: Locale.Nl,
+							organisation: { id: 'OR-1', name: 'VRT' },
+						},
+					},
+				],
+			};
+
+			await notificationsService.sendEmailForAcceptanceOfAdditionalConditionsToEvaluators(
+				materialRequest,
+				materialRequest.requesterId,
+				['evaluator-1']
+			);
+
+			expect(mockCampaignMonitorService.sendTransactionalMail).toHaveBeenCalledTimes(1);
+			const [emailPayload] = mockCampaignMonitorService.sendTransactionalMail.mock.calls[0];
+			expect(emailPayload.data.to).toBe('evaluator@example.com');
+			expect(emailPayload.data.replyTo).toBe(materialRequest.requesterMail);
+			createSpy.mockRestore();
+		});
+
+		it('falls back to the contact mail when there is no additional-conditions event in the history', async () => {
+			const createSpy = vi
+				.spyOn(notificationsService, 'create')
+				.mockResolvedValueOnce([mockNotification]);
+			const materialRequest: MaterialRequest = {
+				...mockMaterialRequest1,
+				contactMail: 'maintainer@example.com',
+				history: [],
+			};
+
+			await notificationsService.sendEmailForAcceptanceOfAdditionalConditionsToEvaluators(
+				materialRequest,
+				materialRequest.requesterId,
+				['evaluator-1']
+			);
+
+			const [emailPayload] = mockCampaignMonitorService.sendTransactionalMail.mock.calls[0];
+			expect(emailPayload.data.to).toBe(materialRequest.contactMail);
+			expect(emailPayload.data.replyTo).toBe(materialRequest.requesterMail);
+			createSpy.mockRestore();
 		});
 	});
 

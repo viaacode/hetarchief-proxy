@@ -898,11 +898,46 @@ export class MaterialRequestsService {
 				NotificationType.MATERIAL_REQUEST_DOWNLOAD_EXECUTED,
 			].includes(notificationType);
 
+			let mailTo: string | null = null;
+			let language: Locale | null = null;
+
+			if (notificationType === NotificationType.MATERIAL_REQUEST_CANCELLED) {
+				const hasAdditionalConditions = getStatusEvent(
+					request.history,
+					Lookup_App_Material_Request_Message_Type_Enum.AdditionalConditions
+				);
+
+				if (hasAdditionalConditions) {
+					// Send the mail to the evaluator that has asked for these conditions
+					mailTo = hasAdditionalConditions.senderProfile?.mail;
+					language = hasAdditionalConditions.senderProfile?.language as Locale;
+				}
+			} else if (notificationType === NotificationType.MATERIAL_REQUEST_DOWNLOAD_EXECUTED) {
+				const approvedEvent = getStatusEvent(
+					request.history,
+					Lookup_App_Material_Request_Message_Type_Enum.Approved
+				);
+
+				if (approvedEvent) {
+					// Send the mail to the evaluator that approved this request
+					mailTo = approvedEvent.senderProfile?.mail;
+					language = approvedEvent.senderProfile?.language as Locale;
+				}
+			}
+
+			if (!mailTo) {
+				mailTo = sentToMaintainer ? request.contactMail : request.requesterMail;
+			}
+
+			if (!language) {
+				language = sentToMaintainer ? Locale.Nl : (requesterUser.language as Lookup_Languages_Enum);
+			}
+
 			const emailInfo: MaterialRequestEmailInfo = {
-				to: sentToMaintainer ? request.contactMail : request.requesterMail,
+				to: mailTo,
 				replyTo: sentToMaintainer ? request.requesterMail : null,
 				template,
-				language: sentToMaintainer ? Locale.Nl : (requesterUser.language as Lookup_Languages_Enum),
+				language,
 				materialRequests: [request],
 				sendRequestListDto: {
 					type: request.requesterCapacity,

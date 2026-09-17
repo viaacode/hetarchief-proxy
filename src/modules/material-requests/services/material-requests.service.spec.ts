@@ -4,7 +4,7 @@ vi.mock('~modules/mediahaven-jobs-watcher/services/mediahaven-jobs-watcher.servi
 	MediahavenJobsWatcherService: class MediahavenJobsWatcherService {},
 }));
 
-import { AssetsService, DataService, VideoStillsService } from '@meemoo/admin-core-api';
+import { AssetsService, DataService, Locale, VideoStillsService } from '@meemoo/admin-core-api';
 import { Test, type TestingModule } from '@nestjs/testing';
 import { type MockInstance, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -15,6 +15,7 @@ import {
 	mockGqlMaterialRequest2,
 	mockGqlMaterialRequest3,
 	mockMaintainerWithMaterialRequest,
+	mockMaterialRequest1,
 	mockUser,
 	mockUserProfileId,
 } from '../mocks/material-requests.mocks';
@@ -22,7 +23,7 @@ import {
 import { MaterialRequestsService } from './material-requests.service';
 
 import { ConfigService } from '@nestjs/config';
-import { HetArchiefIeObjectLicense } from '@viaa/avo2-types';
+import { type AvoUserCommonUser, HetArchiefIeObjectLicense } from '@viaa/avo2-types';
 import type {
 	DeleteMaterialRequestMutation,
 	FindMaintainersWithMaterialRequestsQuery,
@@ -32,11 +33,13 @@ import type {
 	InsertMaterialRequestMutation,
 	UpdateMaterialRequestMutation,
 } from '~generated/graphql-db-types-hetarchief';
+import { Lookup_App_Material_Request_Message_Type_Enum } from '~generated/graphql-db-types-hetarchief';
 import { EventsService } from '~modules/events/services/events.service';
 import { IeObjectsVisitorSpaceInfo } from '~modules/ie-objects/ie-objects.types';
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { MaterialRequestMessagesService } from '~modules/material-request-messages/services/material-request-messages.service';
 import { MediahavenJobsWatcherService } from '~modules/mediahaven-jobs-watcher/services/mediahaven-jobs-watcher.service';
+import { NotificationType } from '~modules/notifications/types';
 import { mockOrganisations } from '~modules/organisations/mocks/organisations.mocks';
 import { OrganisationsService } from '~modules/organisations/services/organisations.service';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
@@ -131,6 +134,7 @@ const mockMaterialRequestMessageService: Partial<
 	countUnreadMessages: vi.fn(),
 	adaptEvent: vi.fn((message) => message),
 	getUnreadMessageCountsPerUser: vi.fn(),
+	getEvaluatorsForOrganisation: vi.fn(),
 };
 
 const getDefaultMaterialRequestByIdResponse = (): {
@@ -672,6 +676,160 @@ describe('MaterialRequestsService', () => {
 			expect(countsByProfileId.get('profile-1')).toEqual({ outgoing: 2, incoming: 1 });
 			expect(countsByProfileId.get('profile-2')).toEqual({ outgoing: 0, incoming: 1 });
 			expect(languageByProfileId).toEqual({ 'profile-1': 'nl', 'profile-2': 'en' });
+		});
+	});
+
+	describe('sentStatusUpdateNotification', () => {
+		const mockRequesterUser: AvoUserCommonUser = {
+			profileId: 'requester-profile-1',
+			firstName: 'Ilya',
+			lastName: 'Korsakov',
+			language: Locale.En,
+			loms: [],
+		};
+
+		const getMockRequest = () => ({
+			...mockMaterialRequest1,
+			contactMail: 'maintainer@example.com',
+			requesterMail: 'requester@example.com',
+			history: [],
+		});
+
+		beforeEach(() => {
+			mockNotificationsService.onStatusUpdateMaterialRequest.mockReset();
+			mockMaterialRequestMessageService.getEvaluatorsForOrganisation.mockReset();
+			mockMaterialRequestMessageService.getEvaluatorsForOrganisation.mockResolvedValue([
+				'evaluator-1',
+			]);
+		});
+
+		it('sends the mail to the evaluator that requested additional conditions when a request with additional conditions is cancelled', async () => {
+			const request = {
+				...getMockRequest(),
+				history: [
+					{
+						id: 'event-1',
+						materialRequestId: getMockRequest().id,
+						messageType: Lookup_App_Material_Request_Message_Type_Enum.AdditionalConditions,
+						body: {},
+						createdAt: '2026-01-01T00:00:00.000Z',
+						senderProfile: {
+							id: 'evaluator-1',
+							mail: 'evaluator@example.com',
+							firstName: 'Eva',
+							lastName: 'Luator',
+							language: Locale.En,
+							organisation: { id: 'OR-1', name: 'VRT' },
+						},
+					},
+				],
+			};
+
+			await materialRequestsService.sentStatusUpdateNotification(
+				NotificationType.MATERIAL_REQUEST_CANCELLED,
+				request as any,
+				mockRequesterUser
+			);
+
+			expect(mockNotificationsService.onStatusUpdateMaterialRequest).toHaveBeenCalledTimes(1);
+			const [emailInfo, notificationType, receiverIds] =
+				mockNotificationsService.onStatusUpdateMaterialRequest.mock.calls[0];
+			expect(emailInfo.to).toBe('evaluator@example.com');
+			expect(emailInfo.language).toBe(Locale.En);
+			expect(emailInfo.replyTo).toBe(request.requesterMail);
+			expect(notificationType).toBe(NotificationType.MATERIAL_REQUEST_CANCELLED);
+			expect(receiverIds).toEqual(['evaluator-1']);
+		});
+
+		it('falls back to the contact mail and Dutch when a cancelled request has no additional-conditions event', async () => {
+			const request = getMockRequest();
+
+			await materialRequestsService.sentStatusUpdateNotification(
+				NotificationType.MATERIAL_REQUEST_CANCELLED,
+				request as any,
+				mockRequesterUser
+			);
+
+			const [emailInfo] = mockNotificationsService.onStatusUpdateMaterialRequest.mock.calls[0];
+			expect(emailInfo.to).toBe(request.contactMail);
+			expect(emailInfo.language).toBe(Locale.Nl);
+		});
+
+		it('sends the mail to the evaluator that approved the request when a download was executed', async () => {
+			const request = {
+				...getMockRequest(),
+				history: [
+					{
+						id: 'event-1',
+						materialRequestId: getMockRequest().id,
+						messageType: Lookup_App_Material_Request_Message_Type_Enum.Approved,
+						body: {},
+						createdAt: '2026-01-01T00:00:00.000Z',
+						senderProfile: {
+							id: 'evaluator-2',
+							mail: 'approver@example.com',
+							firstName: 'App',
+							lastName: 'Rover',
+							language: Locale.En,
+							organisation: { id: 'OR-1', name: 'VRT' },
+						},
+					},
+				],
+			};
+
+			await materialRequestsService.sentStatusUpdateNotification(
+				NotificationType.MATERIAL_REQUEST_DOWNLOAD_EXECUTED,
+				request as any,
+				mockRequesterUser
+			);
+
+			const [emailInfo] = mockNotificationsService.onStatusUpdateMaterialRequest.mock.calls[0];
+			expect(emailInfo.to).toBe('approver@example.com');
+			expect(emailInfo.language).toBe(Locale.En);
+		});
+
+		it('falls back to the contact mail and Dutch when a download-executed request has no approved event', async () => {
+			const request = getMockRequest();
+
+			await materialRequestsService.sentStatusUpdateNotification(
+				NotificationType.MATERIAL_REQUEST_DOWNLOAD_EXECUTED,
+				request as any,
+				mockRequesterUser
+			);
+
+			const [emailInfo] = mockNotificationsService.onStatusUpdateMaterialRequest.mock.calls[0];
+			expect(emailInfo.to).toBe(request.contactMail);
+			expect(emailInfo.language).toBe(Locale.Nl);
+		});
+
+		it('sends the mail to the requester using their own language when the request is approved', async () => {
+			const request = getMockRequest();
+
+			await materialRequestsService.sentStatusUpdateNotification(
+				NotificationType.MATERIAL_REQUEST_APPROVED,
+				request as any,
+				mockRequesterUser
+			);
+
+			expect(mockNotificationsService.onStatusUpdateMaterialRequest).toHaveBeenCalledTimes(1);
+			const [emailInfo, , receiverIds] =
+				mockNotificationsService.onStatusUpdateMaterialRequest.mock.calls[0];
+			expect(emailInfo.to).toBe(request.requesterMail);
+			expect(emailInfo.replyTo).toBeNull();
+			expect(emailInfo.language).toBe(mockRequesterUser.language);
+			expect(receiverIds).toEqual([mockRequesterUser.profileId]);
+		});
+
+		it('does nothing when the notification type has no email template', async () => {
+			const request = getMockRequest();
+
+			await materialRequestsService.sentStatusUpdateNotification(
+				NotificationType.MATERIAL_REQUEST_UNREAD_MESSAGES_OUTGOING,
+				request as any,
+				mockRequesterUser
+			);
+
+			expect(mockNotificationsService.onStatusUpdateMaterialRequest).not.toHaveBeenCalled();
 		});
 	});
 
