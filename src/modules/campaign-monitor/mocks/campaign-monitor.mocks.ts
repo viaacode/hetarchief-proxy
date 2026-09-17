@@ -103,7 +103,10 @@ export const mockRequestListItemToMaintainer: RequestListItem = {
 		mockMaterialRequest1.maintainerSlug
 	}/${mockMaterialRequest1.objectSchemaIdentifier}`,
 	request_type: 'Ik wil dit object hergebruiken',
+	is_complex_reuse_flow: false,
 	request_description: mockMaterialRequest1.reason,
+	// Not using stringifyUrl to see that request url is mapped correctly
+	request_url: `${mockConfigService.get('CLIENT_HOST')}/beheer/materiaalaanvragen?materialRequest=${mockMaterialRequest1.id}`,
 	material_request_id: mockMaterialRequest1.id,
 };
 
@@ -116,6 +119,7 @@ export const mockRequestListItemToRequester: RequestListItem = {
 		mockMaterialRequest1.maintainerSlug
 	}/${mockMaterialRequest1.objectSchemaIdentifier}`,
 	request_type: 'Ik wil dit object hergebruiken',
+	is_complex_reuse_flow: false,
 	request_description: mockMaterialRequest1.reason,
 	// Not using stringifyUrl to see that request url is mapped correctly
 	request_url: `${mockConfigService.get('CLIENT_HOST')}/account/mijn-materiaalaanvragen?materialRequest=${mockMaterialRequest1.id}`,

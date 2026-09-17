@@ -27,6 +27,7 @@ mutation updateMaterialRequest(
 					first_name
 					last_name
 					mail
+					language
 					organisation {
 						org_identifier
 						skos_pref_label

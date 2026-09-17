@@ -21,6 +21,7 @@ mutation insertMaterialRequestMessage(
 		sender_profile_id
 		sender {
 			full_name
+			language
 			organisation {
 				org_identifier
 				skos_pref_label
