@@ -1985,7 +1985,7 @@ export class IeObjectsService {
 			)
 		);
 
-		// "Chronologisch gesorteerd: de eerste persoon die in het object herkend wordt eerst."
+		// "Chronologically sorted: the first person that is recognised in the object."
 		// Entities that were never placed on the timeline go last, alphabetically for stable output.
 		return mentions.sort((left, right) => {
 			const leftStart = left.occurrences[0]?.startTime ?? Number.POSITIVE_INFINITY;
