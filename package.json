@@ -39,7 +39,7 @@
   },
   "dependencies": {
     "@aws-sdk/s3-request-presigner": "^3.717.0",
-    "@meemoo/admin-core-api": "6.0.41",
+    "@meemoo/admin-core-api": "6.0.45",
     "@nestjs/common": "9.4.3",
     "@nestjs/config": "3.2.3",
     "@nestjs/core": "9.4.3",
@@ -47,7 +47,7 @@
     "@nestjs/schedule": "3.0.4",
     "@nestjs/swagger": "7.4.0",
     "@studiohyperdrive/pagination": "1.0.0",
-    "@viaa/avo2-types": "5.0.23",
+    "@viaa/avo2-types": "5.0.24",
     "app-root-path": "3.0.0",
     "archiver": "7.0.1",
     "async": "^3.2.6",
