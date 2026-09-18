@@ -80,7 +80,7 @@ describe('IeObjectsDto', () => {
 
 		it('rejects a non-numeric cuepoint', async () => {
 			const dto = plainToInstance(IeObjectsPlayableDisplayDataQueryDto, {
-				objects: [{ schemaIdentifier: '086348mc8s', start: '10' }],
+				objects: [{ schemaIdentifier: '9z9089fx9s', start: '10' }],
 			});
 			const errors = await validate(dto);
 			expect(errors).not.toEqual([]);

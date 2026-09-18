@@ -16,11 +16,15 @@ import { isArray } from 'lodash';
 
 import {
 	IeObjectsSearchFilterField,
+	KEY_USER_ONLY_SEARCH_FILTER_FIELDS,
 	Operator,
 	OrderProperty,
 } from '../elasticsearch/elasticsearch.consts';
 
-import { AutocompleteField } from '~modules/ie-objects/ie-objects.types';
+import {
+	AutocompleteField,
+	KEY_USER_ONLY_AUTOCOMPLETE_FIELDS,
+} from '~modules/ie-objects/ie-objects.types';
 import { commaSeparatedStringToArray } from '~shared/helpers/comma-separated-string-to-array';
 import { SortDirection } from '~shared/types';
 
@@ -31,7 +35,9 @@ export class SearchFilter {
 		type: String,
 		description: `The field to filter on. Options are: ${Object.values(
 			IeObjectsSearchFilterField
-		).join(', ')}`,
+		).join(', ')}. The AI metadata fields (${KEY_USER_ONLY_SEARCH_FILTER_FIELDS.join(
+			', '
+		)}) are only available to key users.`,
 	})
 	field: IeObjectsSearchFilterField;
 
@@ -82,7 +88,9 @@ export class IeObjectsAutocompleteQueryDto {
 	@Type(() => String)
 	@ApiProperty({
 		type: String,
-		description: 'The field to find autocomplete values for',
+		description: `The field to find autocomplete values for. The AI metadata fields (${KEY_USER_ONLY_AUTOCOMPLETE_FIELDS.join(
+			', '
+		)}) are only available to key users.`,
 		enum: AutocompleteField,
 	})
 	field: AutocompleteField;
@@ -209,6 +217,26 @@ export class PlayerTicketsQueryDto {
 		example: 25,
 	})
 	endTime?: number;
+}
+
+export class IeObjectMentionsQueryDto {
+	@IsString()
+	@ApiProperty({
+		type: String,
+		description: 'The schema identifier of the ie-object that contains the requested file',
+		example: '9z9089fx9s',
+		required: true,
+	})
+	schemaIdentifier: string;
+
+	@IsString()
+	@ApiProperty({
+		type: String,
+		description: 'Get the AI-detected mentions for the file with this id',
+		example: 'https://data-int.hetarchief.be/id/entity/abdce2329b10260be65c9b68fb84f960',
+		required: true,
+	})
+	fileId: string;
 }
 
 export class ThumbnailQueryDto {

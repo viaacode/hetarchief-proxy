@@ -46,12 +46,14 @@ export const IMAGE_API_FORMATS: Readonly<string[]> = ['image/jph', 'image/jp2'];
 export const IE_OBJECT_INTRA_CP_LICENSES: Readonly<HetArchiefIeObjectLicense[]> = [
 	HetArchiefIeObjectLicense.INTRA_CP_CONTENT,
 	HetArchiefIeObjectLicense.INTRA_CP_METADATA_ALL,
+	HetArchiefIeObjectLicense.INTRA_CP_METADATA_AI,
 	HetArchiefIeObjectLicense.INTRA_CP_METADATA_LTD,
 ];
 
 export const IE_OBJECT_PUBLIC_LICENSES: Readonly<HetArchiefIeObjectLicense[]> = [
 	HetArchiefIeObjectLicense.PUBLIEK_METADATA_LTD,
 	HetArchiefIeObjectLicense.PUBLIEK_METADATA_ALL,
+	HetArchiefIeObjectLicense.PUBLIEK_METADATA_AI,
 	HetArchiefIeObjectLicense.PUBLIEK_CONTENT,
 ];
 
@@ -81,6 +83,12 @@ export const IE_OBJECT_METADATA_SET_BY_LICENSE: Readonly<
 	[HetArchiefIeObjectLicense.INTRA_CP_METADATA_ALL]: IeObjectMetadataSet.METADATA_ALL,
 	[HetArchiefIeObjectLicense.INTRA_CP_CONTENT]: IeObjectMetadataSet.METADATA_ALL_WITH_ESSENCE,
 	[HetArchiefIeObjectLicense.INTRA_CP_METADATA_LTD]: IeObjectMetadataSet.METADATA_LTD,
+
+	// The AI licenses unlock only the AI-generated title and summary. They are orthogonal to the
+	// tiers above: the prop sets of all accessible licenses are unioned, so an object without an AI
+	// license keeps its regular metadata and simply loses nameAi/synopsisAi.
+	[HetArchiefIeObjectLicense.INTRA_CP_METADATA_AI]: IeObjectMetadataSet.METADATA_AI,
+	[HetArchiefIeObjectLicense.PUBLIEK_METADATA_AI]: IeObjectMetadataSet.METADATA_AI,
 
 	[HetArchiefIeObjectLicense.COPYRIGHT_UNDETERMINED]: IeObjectMetadataSet.EMPTY,
 	[HetArchiefIeObjectLicense.PUBLIC_DOMAIN]: IeObjectMetadataSet.EMPTY,
@@ -132,8 +140,6 @@ export const IE_OBJECT_METADATA_SET_BY_OBJECT_AND_USER_SECTOR: Readonly<
 
 const IE_OBJECT_PROPS_METADATA_SET_LTD: Readonly<(keyof HetArchiefIeObject)[]> = [
 	'name',
-	'nameAi',
-	'synopsisAi',
 	'collectionName',
 	'collectionId',
 	'issueNumber',
@@ -203,9 +209,17 @@ const IE_OBJECT_PROPS_METADATA_SET_ESSENCE: Readonly<(keyof HetArchiefIeObject)[
 	'transcript',
 	'rightsInfo',
 ];
+// Only disclosed through VIAA-INTRA_CP-METADATA-AI / VIAA-PUBLIEK-METADATA-AI, never through the
+// regular metadata tiers: an object can have a full metadata license without disclosing its AI
+// metadata.
+const IE_OBJECT_PROPS_METADATA_SET_AI: Readonly<(keyof HetArchiefIeObject)[]> = [
+	'nameAi',
+	'synopsisAi',
+];
 
 export const IE_OBJECT_PROPS_BY_METADATA_SET: Readonly<Record<string, string[]>> = {
 	[IeObjectMetadataSet.EMPTY]: [],
+	[IeObjectMetadataSet.METADATA_AI]: [...IE_OBJECT_PROPS_METADATA_SET_AI],
 	[IeObjectMetadataSet.METADATA_LTD]: [...IE_OBJECT_PROPS_METADATA_SET_LTD],
 	[IeObjectMetadataSet.METADATA_ALL]: [
 		...IE_OBJECT_PROPS_METADATA_SET_LTD,
@@ -636,6 +650,9 @@ export const AUTOCOMPLETE_FIELD_TO_ES_FIELD_NAME: Record<AutocompleteField, stri
 	[AutocompleteField.locationCreated]: AutocompleteEsField.locationCreated,
 	[AutocompleteField.newspaperSeriesName]: AutocompleteEsField.newspaperSeriesName,
 	[AutocompleteField.mentions]: AutocompleteEsField.mentions,
+	[AutocompleteField.mentionPerson]: AutocompleteEsField.mentionPerson,
+	[AutocompleteField.mentionPlace]: AutocompleteEsField.mentionPlace,
+	[AutocompleteField.mentionOrganisation]: AutocompleteEsField.mentionOrganisation,
 };
 
 export enum ERROR_CODE {

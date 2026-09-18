@@ -343,6 +343,63 @@
         }
       }
     },
+    "schema_mentions_person_ai": {
+      "type": "text",
+      "fields": {
+        "keyword": {
+          "type": "keyword",
+          "normalizer": "lowercase"
+        },
+        "sayt": {
+          "type": "search_as_you_type",
+          "doc_values": false,
+          "max_shingle_size": 3,
+          "analyzer": "norm_complete"
+        },
+        "white_space": {
+          "type": "text",
+          "analyzer": "whitespace"
+        }
+      }
+    },
+    "schema_mentions_place_ai": {
+      "type": "text",
+      "fields": {
+        "keyword": {
+          "type": "keyword",
+          "normalizer": "lowercase"
+        },
+        "sayt": {
+          "type": "search_as_you_type",
+          "doc_values": false,
+          "max_shingle_size": 3,
+          "analyzer": "norm_complete"
+        },
+        "white_space": {
+          "type": "text",
+          "analyzer": "whitespace"
+        }
+      }
+    },
+    "schema_mentions_organization_ai": {
+      "type": "text",
+      "fields": {
+        "keyword": {
+          "type": "keyword",
+          "normalizer": "lowercase"
+        },
+        "sayt": {
+          "type": "search_as_you_type",
+          "doc_values": false,
+          "max_shingle_size": 3,
+          "analyzer": "norm_complete"
+        },
+        "white_space": {
+          "type": "text",
+          "analyzer": "whitespace"
+        }
+      }
+    },
     "schema_mentions": {
       "type": "text",
       "fields": {

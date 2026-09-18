@@ -76,6 +76,11 @@ export const limitAccessToObjectDetails = (
 	// Step 1b - Sector as extra filter on INTRA_CP_CONTENT, INTRA_CP_METADATA OR BOTH
 	// ---------------------------------------------------
 
+	// Whether the sector matrix below handed back fewer INTRA_CP licenses than the object carries.
+	// AI metadata is never disclosed across a sector restriction, so /ie-objects/mentions refuses
+	// when this is true. Stays false when the branch doesn't run: no sector restriction was applied.
+	let limitedBySectorLogic = false;
+
 	// If user is part of CP, MEEMOO or VISITOR user groups AND
 	// user has a sector AND
 	// ie object has a sector AND
@@ -99,6 +104,9 @@ export const limitAccessToObjectDetails = (
 			// User linked to maintainer of the object can always see everything that the object allows
 			licensesBySector.push(...IE_OBJECT_INTRA_CP_LICENSES);
 		}
+
+		limitedBySectorLogic =
+			intersection(objectIntraCpLicenses, licensesBySector).length < objectIntraCpLicenses.length;
 
 		// Determine common ground between ie object licenses and user group licenses
 		userAccessibleLicenses.push(...licensesBySector);
@@ -162,5 +170,6 @@ export const limitAccessToObjectDetails = (
 		...limitedIeObject,
 		accessThrough,
 		hasAccessToEssence,
+		limitedBySectorLogic,
 	};
 };

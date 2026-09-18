@@ -20,6 +20,11 @@ export enum IeObjectsSearchFilterField {
 	CREATOR = 'creator',
 	LOCATION_CREATED = 'locationCreated',
 	MENTIONS = 'mentions',
+	// AI detected mentions, split per entity type. Only available to key users, see
+	// KEY_USER_ONLY_SEARCH_FILTER_FIELDS.
+	MENTION_PERSON = 'mentionPerson',
+	MENTION_PLACE = 'mentionPlace',
+	MENTION_ORGANISATION = 'mentionOrganisation',
 	DESCRIPTION = 'description',
 	DURATION = 'duration',
 	SPACIAL_COVERAGE = 'spacialCoverage',
@@ -61,6 +66,9 @@ export const IE_OBJECTS_SEARCH_FILTER_FIELD_IN_METADATA_LIMITED: IeObjectsSearch
 	IeObjectsSearchFilterField.NEWSPAPER_SERIES_NAME,
 	IeObjectsSearchFilterField.LOCATION_CREATED,
 	IeObjectsSearchFilterField.MENTIONS,
+	IeObjectsSearchFilterField.MENTION_PERSON,
+	IeObjectsSearchFilterField.MENTION_PLACE,
+	IeObjectsSearchFilterField.MENTION_ORGANISATION,
 	IeObjectsSearchFilterField.DESCRIPTION,
 	IeObjectsSearchFilterField.DURATION,
 	IeObjectsSearchFilterField.SPACIAL_COVERAGE,
@@ -94,6 +102,17 @@ export const IE_OBJECTS_SEARCH_FILTER_FIELD_IN_METADATA_ALL: IeObjectsSearchFilt
 	IeObjectsSearchFilterField.OBJECT_TYPE,
 	IeObjectsSearchFilterField.CONSULTABLE_MEDIA,
 	IeObjectsSearchFilterField.CONSULTABLE_PUBLIC_DOMAIN,
+];
+
+/**
+ * These filters search in AI generated metadata, so they are only available to key users.
+ * Enforced in QueryBuilder.build for search and in IeObjectsService.getMetadataAutocomplete for
+ * autocomplete.
+ */
+export const KEY_USER_ONLY_SEARCH_FILTER_FIELDS: IeObjectsSearchFilterField[] = [
+	IeObjectsSearchFilterField.MENTION_PERSON,
+	IeObjectsSearchFilterField.MENTION_PLACE,
+	IeObjectsSearchFilterField.MENTION_ORGANISATION,
 ];
 
 export enum Operator {
@@ -185,6 +204,9 @@ export const DEFAULT_QUERY_TYPE: { [prop in IeObjectsSearchFilterField]: QueryTy
 	[IeObjectsSearchFilterField.NEWSPAPER_SERIES_NAME]: QueryType.TERMS,
 	[IeObjectsSearchFilterField.LOCATION_CREATED]: QueryType.TERMS,
 	[IeObjectsSearchFilterField.MENTIONS]: QueryType.TERMS,
+	[IeObjectsSearchFilterField.MENTION_PERSON]: QueryType.TERMS,
+	[IeObjectsSearchFilterField.MENTION_PLACE]: QueryType.TERMS,
+	[IeObjectsSearchFilterField.MENTION_ORGANISATION]: QueryType.TERMS,
 	[IeObjectsSearchFilterField.CREATED]: QueryType.RANGE,
 	[IeObjectsSearchFilterField.PUBLISHED]: QueryType.RANGE,
 	[IeObjectsSearchFilterField.RELEASE_DATE]: QueryType.RANGE,
@@ -292,6 +314,9 @@ export enum ElasticsearchField {
 	schema_identifier = 'schema_identifier',
 	schema_license = 'schema_license',
 	schema_mentions = 'schema_mentions',
+	schema_mentions_person_ai = 'schema_mentions_person_ai',
+	schema_mentions_place_ai = 'schema_mentions_place_ai',
+	schema_mentions_organization_ai = 'schema_mentions_organization_ai',
 	schema_is_part_of = 'schema_is_part_of',
 	newspaper = 'newspaper',
 	schema_location_created = 'schema_location_created',
@@ -321,6 +346,10 @@ export const READABLE_TO_ELASTIC_FILTER_NAMES: {
 	[IeObjectsSearchFilterField.NEWSPAPER_SERIES_NAME]: `${ElasticsearchField.schema_is_part_of}.${ElasticsearchField.newspaper}`,
 	[IeObjectsSearchFilterField.LOCATION_CREATED]: ElasticsearchField.schema_location_created,
 	[IeObjectsSearchFilterField.MENTIONS]: ElasticsearchField.schema_mentions,
+	[IeObjectsSearchFilterField.MENTION_PERSON]: ElasticsearchField.schema_mentions_person_ai,
+	[IeObjectsSearchFilterField.MENTION_PLACE]: ElasticsearchField.schema_mentions_place_ai,
+	[IeObjectsSearchFilterField.MENTION_ORGANISATION]:
+		ElasticsearchField.schema_mentions_organization_ai,
 	[IeObjectsSearchFilterField.CREATED]: ElasticsearchField.schema_date_created,
 	[IeObjectsSearchFilterField.PUBLISHED]: ElasticsearchField.schema_date_published,
 	[IeObjectsSearchFilterField.DESCRIPTION]: ElasticsearchField.schema_description,
@@ -396,6 +425,9 @@ export const NEEDS_FILTER_SUFFIX: { [prop in IeObjectsSearchFilterField]?: strin
 	[IeObjectsSearchFilterField.OBJECT_TYPE]: 'keyword',
 	[IeObjectsSearchFilterField.NEWSPAPER_SERIES_NAME]: 'keyword',
 	[IeObjectsSearchFilterField.MENTIONS]: 'keyword',
+	[IeObjectsSearchFilterField.MENTION_PERSON]: 'keyword',
+	[IeObjectsSearchFilterField.MENTION_PLACE]: 'keyword',
+	[IeObjectsSearchFilterField.MENTION_ORGANISATION]: 'keyword',
 	[IeObjectsSearchFilterField.LOCATION_CREATED]: 'keyword',
 	[IeObjectsSearchFilterField.PUBLISHER]: 'keyword',
 	[IeObjectsSearchFilterField.CREATOR]: 'keyword',

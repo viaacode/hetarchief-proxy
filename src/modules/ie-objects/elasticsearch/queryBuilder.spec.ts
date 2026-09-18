@@ -1222,4 +1222,114 @@ describe('QueryBuilder', () => {
 			}
 		});
 	});
+
+	describe('AI mention filters', () => {
+		const mockKeyUserInputInfo = {
+			...mockInputInfo,
+			user: new SessionUserEntity({
+				...(mockInputInfo.user as any).getUser(),
+				isKeyUser: true,
+			}),
+		};
+
+		const collectBools = (node: any, acc: any[] = []): any[] => {
+			if (!node || typeof node !== 'object') {
+				return acc;
+			}
+			if (node.bool) {
+				acc.push(node.bool);
+			}
+			for (const value of Object.values(node)) {
+				if (Array.isArray(value)) {
+					for (const entry of value) {
+						collectBools(entry, acc);
+					}
+				} else if (value && typeof value === 'object') {
+					collectBools(value, acc);
+				}
+			}
+			return acc;
+		};
+
+		const getFilterBool = (esQuery: any): any =>
+			collectBools(esQuery.query).find((bool) => bool._name === 'METADATA-ALL-FILTERS');
+
+		it('or-s multiple values of a mentionPerson filter into one terms clause', () => {
+			const filterBool = getFilterBool(
+				QueryBuilder.build(
+					{
+						page: 1,
+						size: 10,
+						filters: [
+							{
+								field: IeObjectsSearchFilterField.MENTION_PERSON,
+								multiValue: ['jan jansen', 'piet peeters'],
+								operator: Operator.IS,
+							},
+						],
+					} as any,
+					mockKeyUserInputInfo as any
+				)
+			);
+
+			expect(filterBool.must).toHaveLength(1);
+			expect(filterBool.must[0].terms).toEqual({
+				[`${ElasticsearchField.schema_mentions_person_ai}.keyword`]: ['jan jansen', 'piet peeters'],
+			});
+		});
+
+		it('and-s mentionPerson, mentionPlace and mentionOrganisation filters', () => {
+			const filterBool = getFilterBool(
+				QueryBuilder.build(
+					{
+						page: 1,
+						size: 10,
+						filters: [
+							{
+								field: IeObjectsSearchFilterField.MENTION_PERSON,
+								multiValue: ['jan jansen'],
+								operator: Operator.IS,
+							},
+							{
+								field: IeObjectsSearchFilterField.MENTION_PLACE,
+								multiValue: ['gent'],
+								operator: Operator.IS,
+							},
+							{
+								field: IeObjectsSearchFilterField.MENTION_ORGANISATION,
+								multiValue: ['vrt'],
+								operator: Operator.IS,
+							},
+						],
+					} as any,
+					mockKeyUserInputInfo as any
+				)
+			);
+
+			expect(filterBool.must).toHaveLength(3);
+			const asString = JSON.stringify(filterBool.must);
+			expect(asString).toContain(`${ElasticsearchField.schema_mentions_person_ai}.keyword`);
+			expect(asString).toContain(`${ElasticsearchField.schema_mentions_place_ai}.keyword`);
+			expect(asString).toContain(`${ElasticsearchField.schema_mentions_organization_ai}.keyword`);
+		});
+
+		it('throws a ForbiddenException when a non key user filters on an AI mention field', () => {
+			expect(() =>
+				QueryBuilder.build(
+					{
+						page: 1,
+						size: 10,
+						filters: [
+							{
+								field: IeObjectsSearchFilterField.MENTION_PERSON,
+								multiValue: ['jan jansen'],
+								operator: Operator.IS,
+							},
+						],
+					} as any,
+					mockInputInfo as any
+				)
+			).toThrowError("Field 'mentionPerson' is only available to key users.");
+		});
+	});
 });

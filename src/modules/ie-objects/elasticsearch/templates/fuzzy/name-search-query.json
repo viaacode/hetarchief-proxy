@@ -7,6 +7,7 @@
       "boost": 100,
       "fields": [
         "schema_name^20",
+        "schema_name_ai^5",
         "schema_is_part_of.newspaper^20",
         "schema_is_part_of.alternatief^20",
         "schema_is_part_of.serie^20",
@@ -20,7 +21,11 @@
       "type": "phrase",
       "slop": 5,
       "boost": 100,
-      "fields": ["schema_name.lemma_split^20", "schema_is_part_of.programma.lemma_split^20"]
+      "fields": [
+        "schema_name.lemma_split^20",
+        "schema_name_ai.lemma_split^5",
+        "schema_is_part_of.programma.lemma_split^20"
+      ]
     }
   },
   {
@@ -30,7 +35,11 @@
       "boost": 40,
       "operator": "or",
       "minimum_should_match": "2<80%",
-      "fields": ["schema_name.lemma_split^20", "schema_is_part_of.programma.lemma_split^20"]
+      "fields": [
+        "schema_name.lemma_split^20",
+        "schema_name_ai.lemma_split^5",
+        "schema_is_part_of.programma.lemma_split^20"
+      ]
     }
   },
   {
@@ -41,6 +50,7 @@
       "boost": 100,
       "fields": [
         "schema_name.lemma_split_spell^20",
+        "schema_name_ai.lemma_split_spell^5",
         "schema_is_part_of.programma.lemma_split_spell^20"
       ]
     }
@@ -54,6 +64,7 @@
       "minimum_should_match": "2<80%",
       "fields": [
         "schema_name.lemma_split_spell^20",
+        "schema_name_ai.lemma_split_spell^5",
         "schema_is_part_of.programma.lemma_split_spell^20"
       ]
     }

@@ -6,6 +6,7 @@ import { Request } from 'express';
 import { DataService, PlayerTicketService } from '@meemoo/admin-core-api';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import {
+	ForbiddenException,
 	Inject,
 	Injectable,
 	InternalServerErrorException,
@@ -19,7 +20,18 @@ import { mapLimit } from 'blend-promise-utils';
 import type { Cache } from 'cache-manager';
 import got, { type Got } from 'got';
 
-import { compact, find, isArray, isEmpty, isNil, isNumber, kebabCase, omitBy, uniq } from 'lodash';
+import {
+	compact,
+	find,
+	groupBy,
+	isArray,
+	isEmpty,
+	isNil,
+	isNumber,
+	kebabCase,
+	omitBy,
+	uniq,
+} from 'lodash';
 
 import type { Configuration } from '~config';
 
@@ -47,12 +59,17 @@ import {
 	type ElasticsearchObject,
 	type ElasticsearchResponse,
 	type EsQueryAutocompleteMatchPhraseResponse,
+	type FileMention,
+	FileMentionAnnotationType,
+	FileMentionEntityType,
+	type FileMentionOccurrence,
 	type GqlLimitedIeObject,
 	IeObjectForThumbnailOnly,
 	type IeObjectPages,
 	type IeObjectsSitemap,
 	type IeObjectsVisitorSpaceInfo,
 	type IeObjectsWithAggregations,
+	KEY_USER_ONLY_AUTOCOMPLETE_FIELDS,
 	type Mention,
 } from '../ie-objects.types';
 
@@ -81,6 +98,9 @@ import {
 	GetIeObjectV3InfoFromMediaMosaIdDocument,
 	GetIeObjectV3InfoFromMediaMosaIdQuery,
 	GetIeObjectV3InfoFromMediaMosaIdQueryVariables,
+	GetMentionsByFileIdDocument,
+	type GetMentionsByFileIdQuery,
+	type GetMentionsByFileIdQueryVariables,
 	GetParentIeObjectDocument,
 	type GetParentIeObjectQuery,
 	type GetParentIeObjectQueryVariables,
@@ -550,7 +570,7 @@ export class IeObjectsService {
 	}
 
 	/**
-	 * Get one Intellectual Entity object thumbnail by its object id (eg: https://data.hetarchief.be/id/entity/086348mc8s)
+	 * Get one Intellectual Entity object thumbnail by its object id (eg: https://data.hetarchief.be/id/entity/9z9089fx9s)
 	 */
 	public async findThumbnailByIeObjectId(
 		objectId: string
@@ -1644,6 +1664,11 @@ export class IeObjectsService {
 		inputQuery: IeObjectsQueryDto,
 		user?: SessionUserEntity
 	): Promise<string[]> {
+		// The AI metadata autocomplete fields are reserved for key users
+		if (KEY_USER_ONLY_AUTOCOMPLETE_FIELDS.includes(field) && !user?.getIsKeyUser()) {
+			throw new ForbiddenException(`Field '${field}' is only available to key users.`);
+		}
+
 		// Get active visits for the current user
 		// Need this to retrieve visitorSpaceAccessInfo
 		const visitorSpaceAccessInfo = await this.getVisitorSpaceAccessInfoFromUser(user);
@@ -1840,6 +1865,152 @@ export class IeObjectsService {
 	}
 
 	/**
+	 * Get the AI-detected people, places and organisations on a single AV file, grouped per entity.
+	 * Authorization is the caller's job: see IeObjectsController.getMentions.
+	 *
+	 * @param fileId iri of the premis:File, eg https://data-qas.hetarchief.be/id/entity/<uuid>
+	 * @param referer needed to mint the short lived thumbnail tokens
+	 * @param ip needed to mint the short lived thumbnail tokens
+	 * @param isPublicDomain whether the object is public domain, affects the thumbnail token
+	 */
+	public async getMentionsByFileId(
+		fileId: string,
+		referer: string | null,
+		ip: string,
+		isPublicDomain = false
+	): Promise<{ durationSeconds: number | null; mentions: FileMention[] }> {
+		const response = await this.dataService.execute<
+			GetMentionsByFileIdQuery,
+			GetMentionsByFileIdQueryVariables
+		>(GetMentionsByFileIdDocument, { fileId });
+
+		const file = response?.graph_file?.[0];
+		if (!file) {
+			throw new NotFoundException(`File with id '${fileId}' not found`);
+		}
+
+		return {
+			durationSeconds: this.parseNumber(file.schema_duration),
+			mentions: await this.adaptFileMentions(file.has_annotations, referer, ip, isPublicDomain),
+		};
+	}
+
+	/**
+	 * Group the raw annotations on a file into one entry per entity, sorted chronologically.
+	 *
+	 * Grouping is on wiki_id when present, falling back to the thing iri: the same person is often
+	 * recognised by several methods (face + speaker + NER) within one object, each producing its own
+	 * thing row, and the functional analysis requires exactly one avatar per person.
+	 * @private
+	 */
+	private async adaptFileMentions(
+		annotations: GetMentionsByFileIdQuery['graph_file'][0]['has_annotations'],
+		referer: string | null,
+		ip: string,
+		isPublicDomain: boolean
+	): Promise<FileMention[]> {
+		// Annotations without an entity cannot be rendered: there is nothing to label the avatar with
+		const annotationsWithThing = (annotations || []).filter(
+			(annotation) => !!annotation.has_annotation_related_artefact_thing
+		);
+
+		const annotationsByEntity = groupBy(
+			annotationsWithThing,
+			(annotation) =>
+				annotation.has_annotation_related_artefact_thing.wiki_id ||
+				annotation.has_annotation_related_artefact_thing.id
+		);
+
+		const mentions = await Promise.all(
+			Object.entries(annotationsByEntity).map(
+				async ([id, entityAnnotations]): Promise<FileMention> => {
+					const thing = entityAnnotations[0].has_annotation_related_artefact_thing;
+
+					const occurrences: FileMentionOccurrence[] = entityAnnotations.flatMap((annotation) => {
+						const annotationType = Object.values(FileMentionAnnotationType).includes(
+							annotation.annotation_type as FileMentionAnnotationType
+						)
+							? (annotation.annotation_type as FileMentionAnnotationType)
+							: null;
+						const confidence = this.parseNumber(annotation.annotation_confidence);
+						const isAiGenerated = annotation.is_ai_generated ?? false;
+
+						// Some annotations (typically NER hits) have no media fragment at all. Keep them:
+						// the entity was detected, we just cannot place it on the timeline.
+						if (isEmpty(annotation.is_annotated_media_resource)) {
+							return [
+								{ startTime: null, endTime: null, confidence, annotationType, isAiGenerated },
+							];
+						}
+
+						return annotation.is_annotated_media_resource.map((mediaResource) => ({
+							startTime: this.parseNumber(mediaResource.start_offset),
+							endTime: this.parseNumber(mediaResource.end_offset),
+							confidence,
+							annotationType,
+							isAiGenerated,
+						}));
+					});
+
+					// Occurrences without a time sort last, so the first entry is the entity's TC-in
+					occurrences.sort(
+						(left, right) =>
+							(left.startTime ?? Number.POSITIVE_INFINITY) -
+							(right.startTime ?? Number.POSITIVE_INFINITY)
+					);
+
+					const type = Object.values(FileMentionEntityType).includes(
+						thing.type as FileMentionEntityType
+					)
+						? (thing.type as FileMentionEntityType)
+						: null;
+
+					return {
+						id,
+						iri: thing.id,
+						name: thing.schema_name,
+						type,
+						wikidataId: thing.wiki_id ?? null,
+						wikidataUrl: thing.wiki_id ? `https://www.wikidata.org/wiki/${thing.wiki_id}` : null,
+						thumbnailUrl:
+							(await this.getThumbnailUrlWithToken(
+								thing.schema_thumbnail_url,
+								referer,
+								ip,
+								isPublicDomain
+							)) ?? null,
+						occurrences,
+					};
+				}
+			)
+		);
+
+		// "Chronologically sorted: the first person that is recognised in the object."
+		// Entities that were never placed on the timeline go last, alphabetically for stable output.
+		return mentions.sort((left, right) => {
+			const leftStart = left.occurrences[0]?.startTime ?? Number.POSITIVE_INFINITY;
+			const rightStart = right.occurrences[0]?.startTime ?? Number.POSITIVE_INFINITY;
+			if (leftStart !== rightStart) {
+				return leftStart - rightStart;
+			}
+			return (left.name || '').localeCompare(right.name || '');
+		});
+	}
+
+	/**
+	 * Coerce a hasura `numeric` (which graphql-codegen types as `any` and which arrives as either a
+	 * number or a string depending on precision) to a number. Null for anything unparseable.
+	 * @private
+	 */
+	private parseNumber(value: unknown): number | null {
+		if (isNil(value)) {
+			return null;
+		}
+		const parsed = Number(value);
+		return Number.isFinite(parsed) ? parsed : null;
+	}
+
+	/**
 	 * Cleanup the representations to avoid returning certain media files that are not playable
 	 * https://meemoo.atlassian.net/browse/ARC-3121
 	 * @param representations
@@ -1903,7 +2074,7 @@ export class IeObjectsService {
 	}
 
 	/**
-	 * Get one Intellectual Entity object by its object id (eg: https://data.hetarchief.be/id/entity/086348mc8s)
+	 * Get one Intellectual Entity object by its object id (eg: https://data.hetarchief.be/id/entity/9z9089fx9s)
 	 * (not all details are available in ES)
 	 */
 	public async findByIeObjectId(

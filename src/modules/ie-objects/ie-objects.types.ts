@@ -25,6 +25,12 @@ export enum IeObjectMetadataSet {
 	METADATA_LTD = 'METADATA_LTD',
 	METADATA_ALL = 'METADATA_ALL',
 	METADATA_ALL_WITH_ESSENCE = 'METADATA_ALL_WITH_ESSENCE',
+	/**
+	 * The AI-generated title and summary. Orthogonal to the tiers above rather than a level of its
+	 * own: an object discloses AI metadata through a separate license, so a user can have
+	 * METADATA_ALL without it, or (in theory) this without METADATA_ALL.
+	 */
+	METADATA_AI = 'METADATA_AI',
 	EMPTY = 'EMPTY',
 }
 
@@ -172,6 +178,9 @@ export interface ElasticsearchObject {
 	meemoofilm_embedded_caption_language?: string;
 	schema_location_created?: string | null;
 	schema_mentions?: string[] | null;
+	schema_mentions_person_ai?: string[] | null;
+	schema_mentions_place_ai?: string[] | null;
+	schema_mentions_organization_ai?: string[] | null;
 	children?: number;
 }
 
@@ -202,6 +211,11 @@ export enum AutocompleteField {
 	locationCreated = 'locationCreated',
 	newspaperSeriesName = 'newspaperSeriesName',
 	mentions = 'mentions',
+	// AI detected mentions, split per entity type. Only available to key users, see
+	// KEY_USER_ONLY_AUTOCOMPLETE_FIELDS.
+	mentionPerson = 'mentionPerson',
+	mentionPlace = 'mentionPlace',
+	mentionOrganisation = 'mentionOrganisation',
 }
 
 export enum AutocompleteEsField {
@@ -209,7 +223,20 @@ export enum AutocompleteEsField {
 	locationCreated = 'schema_location_created',
 	newspaperSeriesName = 'schema_is_part_of.newspaper',
 	mentions = 'schema_mentions',
+	mentionPerson = 'schema_mentions_person_ai',
+	mentionPlace = 'schema_mentions_place_ai',
+	mentionOrganisation = 'schema_mentions_organization_ai',
 }
+
+/**
+ * These autocomplete fields search in AI generated metadata, so they are only available to key
+ * users. Enforced in IeObjectsService.getMetadataAutocomplete.
+ */
+export const KEY_USER_ONLY_AUTOCOMPLETE_FIELDS: AutocompleteField[] = [
+	AutocompleteField.mentionPerson,
+	AutocompleteField.mentionPlace,
+	AutocompleteField.mentionOrganisation,
+];
 
 export interface EsQueryAutocompleteMatchPhraseResponse {
 	took: number;
@@ -254,4 +281,56 @@ export interface MentionHighlight {
 	y: number;
 	width: number;
 	height: number;
+}
+
+/**
+ * AI-detected entities on an AV file, served by GET /ie-objects/mentions. Deliberately separate from
+ * the newspaper Mention above: those are OCR highlights on a page (x/y/w/h, no time), these are
+ * recognitions on a media fragment (time offsets, no coordinates). The functional analysis requires
+ * the two to stay technically distinct.
+ */
+export enum FileMentionEntityType {
+	PERSON = 'person',
+	PLACE = 'place',
+	ORGANIZATION = 'organization',
+}
+
+/** The only three values graph__file_has_annotation.annotation_type holds today */
+export enum FileMentionAnnotationType {
+	FACE = 'face',
+	SPEAKER = 'speaker',
+	NAMED_ENTITY = 'named-entity',
+}
+
+export interface FileMentionOccurrence {
+	/** TC-in in seconds, null for annotations without a media fragment (some NER hits) */
+	startTime: number | null;
+	/** TC-out in seconds */
+	endTime: number | null;
+	confidence: number | null;
+	/** Passed through as-is when it isn't one of the known values */
+	annotationType: FileMentionAnnotationType | null;
+	isAiGenerated: boolean;
+}
+
+export interface FileMention {
+	/** wiki_id when the entity has one, else the thing iri. Stable key for the client. */
+	id: string;
+	/** thing iri of the first annotation in the group */
+	iri: string;
+	name: string;
+	type: FileMentionEntityType | null;
+	wikidataId: string | null;
+	wikidataUrl: string | null;
+	thumbnailUrl: string | null;
+	occurrences: FileMentionOccurrence[];
+}
+
+export interface FileMentionsResponse {
+	fileId: string;
+	/** Width of the client's timeline: the full length of the AV item */
+	durationSeconds: number | null;
+	/** False -> the client renders the timeline non-interactively */
+	hasAccessToEssence: boolean;
+	mentions: FileMention[];
 }

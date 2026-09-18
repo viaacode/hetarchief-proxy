@@ -65,6 +65,9 @@ describe('Limit access to object details', () => {
 			...mockIeObjectWithMetadataSetALL,
 			maintainerId: 'OR-zp3w03v',
 			licenses: [HetArchiefIeObjectLicense.PUBLIEK_METADATA_ALL, ...IE_OBJECT_INTRA_CP_LICENSES],
+			// PUBLIC user vs RURAL object only unlocks INTRA_CP_METADATA_LTD of the object's four
+			// INTRA_CP licenses
+			limitedBySectorLogic: true,
 			accessThrough: [
 				HetArchiefIeObjectAccessThrough.SECTOR,
 				HetArchiefIeObjectAccessThrough.PUBLIC_INFO,
@@ -300,6 +303,8 @@ describe('Limit access to object details', () => {
 			...mockIeObjectWithMetadataSetLTD,
 			maintainerId: 'OR-wh2dd79',
 			licenses: [HetArchiefIeObjectLicense.INTRA_CP_CONTENT],
+			// REGIONAL user vs RURAL object downgrades INTRA_CP_CONTENT to INTRA_CP_METADATA_LTD
+			limitedBySectorLogic: true,
 			accessThrough: [HetArchiefIeObjectAccessThrough.SECTOR],
 		});
 	});
@@ -403,6 +408,8 @@ describe('Limit access to object details', () => {
 				HetArchiefIeObjectLicense.PUBLIEK_METADATA_ALL,
 				HetArchiefIeObjectLicense.INTRA_CP_CONTENT,
 			],
+			// RURAL user vs RURAL object of another maintainer downgrades INTRA_CP_CONTENT to LTD
+			limitedBySectorLogic: true,
 			accessThrough: [
 				HetArchiefIeObjectAccessThrough.SECTOR,
 				HetArchiefIeObjectAccessThrough.PUBLIC_INFO,
@@ -934,6 +941,175 @@ describe('Limit access to object details', () => {
 
 			expect(result?.hasAccessToEssence).toEqual(true);
 			expect(result?.thumbnailUrl).toBeUndefined();
+		});
+	});
+
+	// nameAi and synopsisAi are disclosed by their own license, not by the regular metadata tiers:
+	// an object can be fully described publicly while withholding what the AI made of it.
+	describe('AI metadata props', () => {
+		const aiObject = {
+			...mockIeObject1,
+			nameAi: 'Door AI gegenereerde titel',
+			synopsisAi: 'Door AI gegenereerde samenvatting',
+		};
+		const anonymousUser: LimitAccessUserInfo = {
+			...mockUserInfo,
+			groupId: undefined,
+			sector: null,
+			maintainerId: null,
+			accessibleVisitorSpaceIds: [],
+			accessibleObjectIdsThroughFolders: [],
+		};
+
+		it.each([
+			HetArchiefIeObjectLicense.PUBLIEK_METADATA_LTD,
+			HetArchiefIeObjectLicense.PUBLIEK_METADATA_ALL,
+			HetArchiefIeObjectLicense.PUBLIEK_CONTENT,
+		])('strips nameAi and synopsisAi for the non-AI license %s', (license) => {
+			const result = limitAccessToObjectDetails(
+				{ ...aiObject, licenses: [license] },
+				anonymousUser
+			);
+
+			expect(result).toBeDefined();
+			expect(result?.nameAi).toBeUndefined();
+			expect(result?.synopsisAi).toBeUndefined();
+			// The regular title is unaffected
+			expect(result?.name).toEqual(mockIeObject1.name);
+		});
+
+		it('keeps nameAi and synopsisAi when the object carries the public AI license', () => {
+			const result = limitAccessToObjectDetails(
+				{
+					...aiObject,
+					licenses: [
+						HetArchiefIeObjectLicense.PUBLIEK_METADATA_ALL,
+						HetArchiefIeObjectLicense.PUBLIEK_METADATA_AI,
+					],
+				},
+				anonymousUser
+			);
+
+			expect(result?.nameAi).toEqual('Door AI gegenereerde titel');
+			expect(result?.synopsisAi).toEqual('Door AI gegenereerde samenvatting');
+			// And the AI license does not hand out anything beyond those two props
+			expect(result?.thumbnailUrl).toBeUndefined();
+		});
+
+		it('keeps nameAi and synopsisAi when a key user reaches the intra CP AI license', () => {
+			const result = limitAccessToObjectDetails(
+				{
+					...aiObject,
+					maintainerId: 'OR-rf5kf25',
+					sector: HetArchiefIeObjectSector.CULTURE,
+					licenses: [
+						HetArchiefIeObjectLicense.INTRA_CP_METADATA_ALL,
+						HetArchiefIeObjectLicense.INTRA_CP_METADATA_AI,
+					],
+				},
+				{
+					...mockUserInfo,
+					groupId: GroupId.CP_ADMIN,
+					isKeyUser: true,
+					sector: HetArchiefIeObjectSector.CULTURE,
+					accessibleVisitorSpaceIds: [],
+					accessibleObjectIdsThroughFolders: [],
+				}
+			);
+
+			expect(result?.nameAi).toEqual('Door AI gegenereerde titel');
+			expect(result?.synopsisAi).toEqual('Door AI gegenereerde samenvatting');
+		});
+
+		// The sector matrix hands back only INTRA_CP_METADATA_LTD here, so the AI license never
+		// reaches the user even though the object carries it.
+		it('strips nameAi and synopsisAi when sector logic withholds the AI license', () => {
+			const result = limitAccessToObjectDetails(
+				{
+					...aiObject,
+					maintainerId: 'OR-wh2dd79',
+					sector: HetArchiefIeObjectSector.RURAL,
+					licenses: [
+						HetArchiefIeObjectLicense.INTRA_CP_METADATA_ALL,
+						HetArchiefIeObjectLicense.INTRA_CP_METADATA_AI,
+					],
+				},
+				{
+					...mockUserInfo,
+					maintainerId: 'OR-h41jm06',
+					groupId: GroupId.CP_ADMIN,
+					isKeyUser: true,
+					sector: HetArchiefIeObjectSector.REGIONAL,
+					accessibleVisitorSpaceIds: [],
+					accessibleObjectIdsThroughFolders: [],
+				}
+			);
+
+			expect(result?.nameAi).toBeUndefined();
+			expect(result?.synopsisAi).toBeUndefined();
+			expect(result?.limitedBySectorLogic).toEqual(true);
+		});
+	});
+
+	describe('limitedBySectorLogic', () => {
+		// A key user from the REGIONAL sector looking at a RURAL object: the sector matrix only
+		// hands back INTRA_CP_METADATA_LTD, so the object's other INTRA_CP licenses are withheld.
+		const sectorLimitedUser: LimitAccessUserInfo = {
+			...mockUserInfo,
+			maintainerId: 'OR-h41jm06',
+			groupId: GroupId.CP_ADMIN,
+			isKeyUser: true,
+			sector: HetArchiefIeObjectSector.REGIONAL,
+			accessibleVisitorSpaceIds: [],
+			accessibleObjectIdsThroughFolders: [],
+		};
+		const ruralObject = {
+			...mockIeObject1,
+			maintainerId: 'OR-wh2dd79',
+			sector: HetArchiefIeObjectSector.RURAL,
+			licenses: [...IE_OBJECT_INTRA_CP_LICENSES],
+		};
+
+		it('is true when the sector matrix strips INTRA_CP licenses off the object', () => {
+			const result = limitAccessToObjectDetails(ruralObject, sectorLimitedUser);
+
+			expect(result?.limitedBySectorLogic).toEqual(true);
+		});
+
+		it('is false when the user is linked to the maintainer of the object', () => {
+			const result = limitAccessToObjectDetails(ruralObject, {
+				...sectorLimitedUser,
+				maintainerId: ruralObject.maintainerId,
+			});
+
+			expect(result?.limitedBySectorLogic).toEqual(false);
+		});
+
+		it('is false when the sector matrix hands back every INTRA_CP license the object carries', () => {
+			const result = limitAccessToObjectDetails(
+				{ ...ruralObject, sector: HetArchiefIeObjectSector.CULTURE },
+				sectorLimitedUser
+			);
+
+			expect(result?.limitedBySectorLogic).toEqual(false);
+		});
+
+		it('is false when the sector branch does not run because the user has no sector', () => {
+			const result = limitAccessToObjectDetails(
+				{ ...ruralObject, licenses: [HetArchiefIeObjectLicense.PUBLIEK_METADATA_ALL] },
+				{ ...sectorLimitedUser, sector: undefined }
+			);
+
+			expect(result?.limitedBySectorLogic).toEqual(false);
+		});
+
+		it('is false when the sector branch does not run because the object has no INTRA_CP licenses', () => {
+			const result = limitAccessToObjectDetails(
+				{ ...ruralObject, licenses: [HetArchiefIeObjectLicense.PUBLIEK_METADATA_ALL] },
+				sectorLimitedUser
+			);
+
+			expect(result?.limitedBySectorLogic).toEqual(false);
 		});
 	});
 });

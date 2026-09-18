@@ -148,7 +148,9 @@ describe('PlayableDisplayDataService', () => {
 				ieObject: [
 					{
 						schema_identifier: 'mock-schema-identifier',
-						schema_name: 'Mock playable object',
+						// The query selects the name through the schemaNames relation, which is also where
+						// the AI generated title lives. getSchemaName picks the non-AI one.
+						schemaNames: [{ schema_name: 'Mock playable object', is_ai_generated: false }],
 						dctermsFormat: [{ dcterms_format: HetArchiefIeObjectType.VIDEO }],
 						schemaMaintainer: {
 							org_identifier: 'OR-rf5kf25',

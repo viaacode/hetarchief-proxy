@@ -63,6 +63,7 @@ const mockIeObjectsService: Partial<Record<keyof IeObjectsService, MockInstance>
 	})),
 	getIeObjectIdFromObjectSchemaIdentifier: vi.fn().mockResolvedValue('mock-ie-object-id'),
 	getRepresentationAndFileInIeObject: vi.fn(),
+	getMentionsByFileId: vi.fn(),
 };
 
 const mockPlayableDisplayDataService: Partial<
@@ -480,6 +481,156 @@ describe('IeObjectsController', () => {
 		});
 	});
 
+	describe('getMentions', () => {
+		const mockKeyUser: SessionUserEntity = new SessionUserEntity({ ...mockUser, isKeyUser: true });
+		const mockFileId = 'https://data-int.hetarchief.be/id/entity/file-1';
+		const mockMentionsQuery = { schemaIdentifier: 'schema-id', fileId: mockFileId };
+
+		const buildAccessibleObject = (
+			overrides: Partial<HetArchiefIeObject> = {}
+		): Partial<HetArchiefIeObject> =>
+			({
+				dctermsFormat: HetArchiefIeObjectType.VIDEO,
+				licenses: [HetArchiefIeObjectLicense.INTRA_CP_METADATA_AI],
+				hasAccessToEssence: true,
+				limitedBySectorLogic: false,
+				// Only the file id matters here: objectContainsFilePath is all that reads this
+				pages: [{ pageNumber: 1, representations: [{ files: [{ id: mockFileId }] }] }],
+				...overrides,
+			}) as Partial<HetArchiefIeObject>;
+
+		const mockAccessibleObject = (overrides: Partial<HetArchiefIeObject> = {}) => {
+			vi.spyOn(ieObjectsController, 'getIeObjectsByIds').mockResolvedValueOnce([
+				buildAccessibleObject(overrides),
+			] as Partial<HetArchiefIeObject>[]);
+		};
+
+		it('should reject callers that are not key users', async () => {
+			await expect(
+				ieObjectsController.getMentions('referer', '127.0.0.1', mockMentionsQuery, mockSessionUser)
+			).rejects.toThrow(ForbiddenException);
+
+			// The object must not even be fetched for a non key user
+			expect(mockIeObjectsService.getMentionsByFileId).not.toHaveBeenCalled();
+		});
+
+		it('should reject when the object is not visible to the user', async () => {
+			vi.spyOn(ieObjectsController, 'getIeObjectsByIds').mockResolvedValueOnce([]);
+
+			await expect(
+				ieObjectsController.getMentions('referer', '127.0.0.1', mockMentionsQuery, mockKeyUser)
+			).rejects.toThrow(ForbiddenException);
+		});
+
+		it('should reject non AV material such as newspapers', async () => {
+			mockAccessibleObject({ dctermsFormat: HetArchiefIeObjectType.NEWSPAPER });
+
+			await expect(
+				ieObjectsController.getMentions('referer', '127.0.0.1', mockMentionsQuery, mockKeyUser)
+			).rejects.toThrow(ForbiddenException);
+		});
+
+		it('should reject a fileId that does not belong to the object', async () => {
+			mockAccessibleObject();
+
+			await expect(
+				ieObjectsController.getMentions(
+					'referer',
+					'127.0.0.1',
+					{ ...mockMentionsQuery, fileId: 'https://data-int.hetarchief.be/id/entity/other-file' },
+					mockKeyUser
+				)
+			).rejects.toThrow(ForbiddenException);
+		});
+
+		it('should reject when the object is restricted by sector logic', async () => {
+			mockAccessibleObject({ limitedBySectorLogic: true });
+
+			await expect(
+				ieObjectsController.getMentions('referer', '127.0.0.1', mockMentionsQuery, mockKeyUser)
+			).rejects.toThrow(ForbiddenException);
+		});
+
+		it('should reject when the object has no AI metadata license', async () => {
+			mockAccessibleObject({ licenses: [HetArchiefIeObjectLicense.INTRA_CP_METADATA_ALL] });
+
+			await expect(
+				ieObjectsController.getMentions('referer', '127.0.0.1', mockMentionsQuery, mockKeyUser)
+			).rejects.toThrow(ForbiddenException);
+		});
+
+		it('should return the mentions of the file', async () => {
+			mockAccessibleObject();
+			mockIeObjectsService.getMentionsByFileId.mockResolvedValueOnce({
+				durationSeconds: 600,
+				mentions: [{ id: 'Q2723306', name: 'Els Ampe' }],
+			});
+
+			const response = await ieObjectsController.getMentions(
+				'referer',
+				'127.0.0.1',
+				mockMentionsQuery,
+				mockKeyUser
+			);
+
+			expect(response).toEqual({
+				fileId: mockFileId,
+				durationSeconds: 600,
+				hasAccessToEssence: true,
+				mentions: [{ id: 'Q2723306', name: 'Els Ampe' }],
+			});
+			expect(mockIeObjectsService.getMentionsByFileId).toHaveBeenCalledWith(
+				mockFileId,
+				'referer',
+				'127.0.0.1',
+				false
+			);
+		});
+
+		// The functional analysis is contradictory on this; the agreed behaviour is to send the
+		// occurrences anyway and let the client render the timeline non-interactively.
+		it('should return the mentions without essence access', async () => {
+			mockAccessibleObject({ hasAccessToEssence: false });
+			mockIeObjectsService.getMentionsByFileId.mockResolvedValueOnce({
+				durationSeconds: 600,
+				mentions: [{ id: 'Q2723306', name: 'Els Ampe' }],
+			});
+
+			const response = await ieObjectsController.getMentions(
+				'referer',
+				'127.0.0.1',
+				mockMentionsQuery,
+				mockKeyUser
+			);
+
+			expect(response.hasAccessToEssence).toEqual(false);
+			expect(response.mentions).toHaveLength(1);
+		});
+
+		it('should flag public domain objects so the thumbnail tokens are minted accordingly', async () => {
+			mockAccessibleObject({
+				licenses: [
+					HetArchiefIeObjectLicense.INTRA_CP_METADATA_AI,
+					HetArchiefIeObjectLicense.PUBLIEK_CONTENT,
+					HetArchiefIeObjectLicense.PUBLIC_DOMAIN,
+				],
+			});
+			mockIeObjectsService.getMentionsByFileId.mockResolvedValueOnce({
+				durationSeconds: null,
+				mentions: [],
+			});
+
+			await ieObjectsController.getMentions('referer', '127.0.0.1', mockMentionsQuery, mockKeyUser);
+
+			expect(mockIeObjectsService.getMentionsByFileId).toHaveBeenCalledWith(
+				mockFileId,
+				'referer',
+				'127.0.0.1',
+				true
+			);
+		});
+	});
+
 	describe('getThumbnailUrl', () => {
 		it('should return a thumbnail url', async () => {
 			mockPlayerTicketService.getThumbnailUrl.mockResolvedValueOnce('http://playme');
@@ -855,7 +1006,7 @@ describe('IeObjectsController', () => {
 				id: blockId,
 				type: 'HETARCHIEF_VIDEO',
 				components: {
-					mediaItem: { type: 'IE_OBJECT', value: '086348mc8s' },
+					mediaItem: { type: 'IE_OBJECT', value: '9z9089fx9s' },
 					startTime: '00:01:30',
 					endTime: '00:02:00',
 				},
@@ -871,7 +1022,7 @@ describe('IeObjectsController', () => {
 			);
 
 			expect(mockPlayableDisplayDataService.getIeObjectsPlayableDisplayData).toHaveBeenCalledWith(
-				[{ schemaIdentifier: '086348mc8s', start: 90, end: 120 }],
+				[{ schemaIdentifier: '9z9089fx9s', start: 90, end: 120 }],
 				mockSessionUser,
 				'referer',
 				'127.0.0.1',
@@ -928,7 +1079,7 @@ describe('IeObjectsController', () => {
 			mockPlayableDisplayDataService.getIeObjectsPlayableDisplayData.mockResolvedValueOnce([null]);
 
 			await ieObjectsController.getIeObjectsPlayableDisplayData(
-				{ objects: [{ schemaIdentifier: '086348mc8s', start: 10, end: 20 }] },
+				{ objects: [{ schemaIdentifier: '9z9089fx9s', start: 10, end: 20 }] },
 				mockSessionUser,
 				'referer',
 				'127.0.0.1',
@@ -937,7 +1088,7 @@ describe('IeObjectsController', () => {
 
 			expect(mockContentPagesService.getContentPageBlockById).not.toHaveBeenCalled();
 			expect(mockPlayableDisplayDataService.getIeObjectsPlayableDisplayData).toHaveBeenCalledWith(
-				[{ schemaIdentifier: '086348mc8s', start: 10, end: 20 }],
+				[{ schemaIdentifier: '9z9089fx9s', start: 10, end: 20 }],
 				mockSessionUser,
 				'referer',
 				'127.0.0.1',
@@ -949,7 +1100,7 @@ describe('IeObjectsController', () => {
 			const visitor = new SessionUserEntity({ ...mockUser, permissions: [] });
 
 			const response = await ieObjectsController.getIeObjectsPlayableDisplayData(
-				{ objects: [{ schemaIdentifier: '086348mc8s', start: 10, end: 20 }] },
+				{ objects: [{ schemaIdentifier: '9z9089fx9s', start: 10, end: 20 }] },
 				visitor,
 				'referer',
 				'127.0.0.1',
