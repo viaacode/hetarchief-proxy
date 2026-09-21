@@ -83,6 +83,9 @@ export const IE_OBJECT_METADATA_SET_BY_LICENSE: Readonly<
 	[HetArchiefIeObjectLicense.INTRA_CP_CONTENT]: IeObjectMetadataSet.METADATA_ALL_WITH_ESSENCE,
 	[HetArchiefIeObjectLicense.INTRA_CP_METADATA_LTD]: IeObjectMetadataSet.METADATA_LTD,
 
+	[HetArchiefIeObjectLicense.PUBLIEK_METADATA_AI]: IeObjectMetadataSet.EMPTY,
+	[HetArchiefIeObjectLicense.INTRA_CP_METADATA_AI]: IeObjectMetadataSet.EMPTY,
+
 	[HetArchiefIeObjectLicense.COPYRIGHT_UNDETERMINED]: IeObjectMetadataSet.EMPTY,
 	[HetArchiefIeObjectLicense.PUBLIC_DOMAIN]: IeObjectMetadataSet.EMPTY,
 };
