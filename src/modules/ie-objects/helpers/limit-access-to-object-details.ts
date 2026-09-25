@@ -24,7 +24,7 @@ import { GroupId } from '~modules/users/types';
 export const limitAccessToObjectDetails = (
 	ieObject: Pick<HetArchiefIeObject, 'licenses' | 'schemaIdentifier' | 'maintainerId' | 'sector'> &
 		Partial<HetArchiefIeObject>,
-	userInfo: LimitAccessUserInfo
+	userInfo: LimitAccessUserInfo,
 	trace?: LimitAccessTrace
 ): Partial<HetArchiefIeObject> => {
 	if (process.env.IE_OBJECT_LOG_ACCESS_CHECKS === 'true') {

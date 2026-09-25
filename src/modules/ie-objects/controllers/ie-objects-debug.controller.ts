@@ -15,7 +15,11 @@ import {
 	ApiOperation,
 	ApiTags,
 } from '@nestjs/swagger';
-import { HetArchiefIeObjectAccessThrough, HetArchiefIeObjectLicense } from '@viaa/avo2-types';
+import {
+	type HetArchiefIeObject,
+	HetArchiefIeObjectAccessThrough,
+	HetArchiefIeObjectLicense,
+} from '@viaa/avo2-types';
 import { intersection } from 'lodash';
 
 import { IeObjectAccessDebugDto } from '../dto/ie-objects.dto';
@@ -27,7 +31,7 @@ import {
 } from '../helpers/build-ie-object-access-report';
 import { limitAccessToObjectDetails } from '../helpers/limit-access-to-object-details';
 import type { LimitAccessTrace } from '../helpers/limit-access-to-object-details.types';
-import type { IeObject, IeObjectForAccessCheck } from '../ie-objects.types';
+import type { IeObjectForAccessCheck } from '../ie-objects.types';
 import { IeObjectsService } from '../services/ie-objects.service';
 
 import { SessionUserEntity } from '~modules/users/classes/session-user';
@@ -77,9 +81,7 @@ export class IeObjectsDebugController {
 		// Only one object per report, to keep the report readable
 		const schemaIdentifier = body.schemaIdentifier?.trim();
 		if (!schemaIdentifier || !/^[a-zA-Z0-9]+$/.test(schemaIdentifier)) {
-			throw new BadRequestException(
-				'schemaIdentifier must be a single PID, containing only letters and numbers'
-			);
+			throw new BadRequestException('schemaIdentifier must be a single PID');
 		}
 
 		// Check the access for the user with the given email, or else for the admin themselves
@@ -113,6 +115,7 @@ export class IeObjectsDebugController {
 			organisationName: user.getOrganisationName(),
 			sector: user.getSector(),
 			isKeyUser: user.getIsKeyUser(),
+			isEvaluator: user.getIsEvaluator(),
 			fullAccessVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
 			folderAccessObjectIds: visitorSpaceAccessInfo.objectIds,
 		};
@@ -133,7 +136,7 @@ export class IeObjectsDebugController {
 			true, // always resolve the thumbnail url, so the report shows the url the user would get
 			referer,
 			ip
-		)) as Partial<IeObject> | null;
+		)) as Partial<HetArchiefIeObject> | null;
 		if (!ieObject) {
 			return { viewer, report: null, errorCode: IeObjectAccessDebugErrorCode.OBJECT_NOT_FOUND };
 		}

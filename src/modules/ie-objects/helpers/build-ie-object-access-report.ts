@@ -1,4 +1,4 @@
-import type { HetArchiefIeObjectLicense } from '@viaa/avo2-types';
+import type { HetArchiefIeObject, HetArchiefIeObjectLicense } from '@viaa/avo2-types';
 import { isEmpty, isNil, uniq } from 'lodash';
 
 import {
@@ -8,7 +8,7 @@ import {
 	IE_OBJECT_PUBLIC_LICENSES,
 	IE_OBJECT_VISITOR_LICENSES,
 } from '../ie-objects.conts';
-import { type IeObject, IeObjectMetadataSet } from '../ie-objects.types';
+import { IeObjectMetadataSet } from '../ie-objects.types';
 
 import type { LimitAccessTrace } from './limit-access-to-object-details.types';
 
@@ -30,6 +30,7 @@ export interface IeObjectAccessDebugViewer {
 	organisationName: string | null;
 	sector: string | null;
 	isKeyUser: boolean;
+	isEvaluator: boolean;
 	fullAccessVisitorSpaceIds: string[];
 	folderAccessObjectIds: string[];
 }
@@ -68,8 +69,8 @@ export interface IeObjectAccessDebugField {
 }
 
 export interface IeObjectAccessDebugReport {
-	ieObject: Partial<IeObject>;
-	limitedIeObject: Partial<IeObject> | null;
+	ieObject: Partial<HetArchiefIeObject>;
+	limitedIeObject: Partial<HetArchiefIeObject> | null;
 	isVisible: boolean;
 	highestMetadataSet: IeObjectMetadataSet;
 	licenses: IeObjectAccessDebugLicense[];
@@ -178,7 +179,7 @@ const getNotVisibleReasons = (
 };
 
 const getFields = (
-	ieObject: Partial<IeObject>,
+	ieObject: Partial<HetArchiefIeObject>,
 	trace: LimitAccessTrace
 ): IeObjectAccessDebugField[] => {
 	const visibleProps = trace.visibleProps || [];
@@ -207,8 +208,8 @@ const getFields = (
 };
 
 export const buildIeObjectAccessReport = (
-	ieObject: Partial<IeObject>,
-	limitedIeObject: Partial<IeObject> | null,
+	ieObject: Partial<HetArchiefIeObject>,
+	limitedIeObject: Partial<HetArchiefIeObject> | null,
 	trace: LimitAccessTrace,
 	meemooAdminVisitorSpaceFullAdded: boolean
 ): IeObjectAccessDebugReport => {
