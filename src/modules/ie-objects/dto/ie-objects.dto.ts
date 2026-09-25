@@ -4,6 +4,7 @@ import {
 	ArrayMaxSize,
 	ArrayNotEmpty,
 	IsArray,
+	IsBoolean,
 	IsEnum,
 	IsInt,
 	IsNumber,
@@ -310,4 +311,32 @@ export class IeObjectsPlayableDisplayDataQueryDto {
 		description: `Content page editor only: the ie-objects of a content block that has not been saved yet, so it has no blockId to look up. Ignored for users without content page edit permissions. Max ${PLAYABLE_DISPLAY_DATA_MAX_OBJECTS} items.`,
 	})
 	objects?: IeObjectPlayableDisplayDataItemDto[];
+}
+
+export class IeObjectAccessDebugDto {
+	@IsString()
+	@ApiProperty({
+		type: String,
+		description: 'Schema identifier (PID) of a single ie-object',
+		example: 'qsj38kdw2z',
+	})
+	schemaIdentifier: string;
+
+	@IsString()
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		description:
+			'Email of the user to check the access for. Defaults to the logged in user (or anonymous, see the anonymous property)',
+	})
+	email?: string;
+
+	@IsBoolean()
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: Boolean,
+		description:
+			'Check the access for an anonymous visitor (not logged in). Ignored when email is given',
+	})
+	anonymous?: boolean;
 }
