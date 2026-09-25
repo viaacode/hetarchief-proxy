@@ -1167,10 +1167,16 @@ export class IeObjectsController {
 						schemaIdentifiersResolved,
 						12,
 						async (schemaIdentifier: string): Promise<string | null> => {
-							return await this.ieObjectsService.getIeObjectIdFromObjectSchemaIdentifier(
-								schemaIdentifier,
-								request
-							);
+							try {
+								return await this.ieObjectsService.getIeObjectIdFromObjectSchemaIdentifier(
+									schemaIdentifier,
+									request
+								);
+							} catch {
+								// An unknown pid (eg: removed or re-ingested object) should not break the whole batch
+								// The error is already logged by the service, the client filters out the null entries
+								return null;
+							}
 						}
 					);
 				}
