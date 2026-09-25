@@ -8,6 +8,7 @@ import { CacheModule } from '@nestjs/cache-manager';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 
+import { IeObjectsDebugController } from './controllers/ie-objects-debug.controller';
 import { IeObjectsController } from './controllers/ie-objects.controller';
 import { IeObjectsService } from './services/ie-objects.service';
 import { PlayableDisplayDataService } from './services/playable-display-data.service';
@@ -15,10 +16,11 @@ import { PlayableDisplayDataService } from './services/playable-display-data.ser
 import { EventsModule } from '~modules/events';
 import { OrganisationsModule } from '~modules/organisations/organisations.module';
 import { SpacesModule } from '~modules/spaces';
+import { UsersModule } from '~modules/users';
 import { VisitsModule } from '~modules/visits';
 
 @Module({
-	controllers: [IeObjectsController],
+	controllers: [IeObjectsDebugController, IeObjectsController],
 	imports: [
 		ConfigModule,
 		ContentPagesModule,
@@ -29,6 +31,7 @@ import { VisitsModule } from '~modules/visits';
 		VideoStillsModule,
 		OrganisationsModule,
 		SpacesModule,
+		UsersModule,
 		CacheModule.register({
 			max: 1000,
 		}),

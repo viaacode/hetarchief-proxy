@@ -13,14 +13,19 @@ import { IeObjectExtraUserGroupType, IeObjectMetadataSet } from '../ie-objects.t
 
 import { getAccessThrough } from './get-access-through';
 
-import type { LimitAccessUserInfo } from '~modules/ie-objects/helpers/limit-access-to-object-details.types';
+import type {
+	LimitAccessTrace,
+	LimitAccessUserInfo,
+} from '~modules/ie-objects/helpers/limit-access-to-object-details.types';
 import { GroupId } from '~modules/users/types';
 
 // figure out what properties the user can see and which should be stripped
+// Pass a trace object to get the intermediate values of each step (used by the access debug report)
 export const limitAccessToObjectDetails = (
 	ieObject: Pick<HetArchiefIeObject, 'licenses' | 'schemaIdentifier' | 'maintainerId' | 'sector'> &
 		Partial<HetArchiefIeObject>,
-	userInfo: LimitAccessUserInfo
+	userInfo: LimitAccessUserInfo,
+	trace?: LimitAccessTrace
 ): Partial<HetArchiefIeObject> => {
 	if (process.env.IE_OBJECT_LOG_ACCESS_CHECKS === 'true') {
 		console.info('limit access to ie-object with user info: ', JSON.stringify(userInfo));
@@ -62,6 +67,15 @@ export const limitAccessToObjectDetails = (
 	if (ieObjectLicenses.includes(HetArchiefIeObjectLicense.PUBLIEK_METADATA_ALL)) {
 		ieObjectLicenses.push(HetArchiefIeObjectLicense.PUBLIEK_METADATA_LTD);
 	}
+	if (trace) {
+		trace.userGroupLicenses = [...userGroupLicenses];
+		trace.originalObjectLicenses = [...(ieObject.licenses || [])];
+		trace.impliedObjectLicenses = uniq(
+			ieObjectLicenses.filter((license) => !(ieObject.licenses || []).includes(license))
+		);
+		trace.hasFolderAccess = hasFolderAccess;
+		trace.hasFullVisitorSpaceAccess = hasFullVisitorSpaceAccess;
+	}
 
 	// public licenses can be accessed if the object has public licenses
 	// Kiosk users can only see objects from the maintainer they are linked to
@@ -71,6 +85,11 @@ export const limitAccessToObjectDetails = (
 		ieObject.maintainerId === userInfo.maintainerId
 	) {
 		userAccessibleLicenses.push(...intersection(ieObjectLicenses, IE_OBJECT_PUBLIC_LICENSES));
+	}
+	if (trace) {
+		trace.isKioskUserOfOtherMaintainer =
+			userInfo.groupId === GroupId.KIOSK_VISITOR && ieObject.maintainerId !== userInfo.maintainerId;
+		trace.publicLicensesGranted = [...userAccessibleLicenses];
 	}
 
 	// Step 1b - Sector as extra filter on INTRA_CP_CONTENT, INTRA_CP_METADATA OR BOTH
@@ -86,15 +105,30 @@ export const limitAccessToObjectDetails = (
 	// ie object has a sector AND
 	// user is key user AND
 	// ie object has INTRA CP licenses AND
-	if (
+	const sectorCheckApplies =
 		[GroupId.CP_ADMIN, GroupId.MEEMOO_ADMIN, GroupId.VISITOR].includes(
 			userInfo.groupId as GroupId
 		) &&
-		userInfo?.sector &&
-		ieObject?.sector &&
-		userInfo?.isKeyUser &&
-		!isEmpty(objectIntraCpLicenses)
-	) {
+		!!userInfo?.sector &&
+		!!ieObject?.sector &&
+		!!userInfo?.isKeyUser &&
+		!isEmpty(objectIntraCpLicenses);
+	if (trace) {
+		trace.sectorCheck = {
+			userGroupAllowed: [GroupId.CP_ADMIN, GroupId.MEEMOO_ADMIN, GroupId.VISITOR].includes(
+				userInfo.groupId as GroupId
+			),
+			userHasSector: !!userInfo?.sector,
+			objectHasSector: !!ieObject?.sector,
+			isKeyUser: !!userInfo?.isKeyUser,
+			objectHasIntraCpLicenses: !isEmpty(objectIntraCpLicenses),
+			applies: sectorCheckApplies,
+			isOwnMaintainer: !!ieObject.maintainerId && ieObject.maintainerId === userInfo.maintainerId,
+			licensesBySector: [],
+			licensesGranted: [],
+		};
+	}
+	if (sectorCheckApplies) {
 		// User from sector X can view an ieObject with sector Y
 		const licensesBySector = [
 			...IE_OBJECT_METADATA_SET_BY_OBJECT_AND_USER_SECTOR[userInfo.sector][ieObject.sector],
@@ -110,6 +144,13 @@ export const limitAccessToObjectDetails = (
 
 		// Determine common ground between ie object licenses and user group licenses
 		userAccessibleLicenses.push(...licensesBySector);
+
+		if (trace) {
+			trace.sectorCheck.licensesBySector = [
+				...IE_OBJECT_METADATA_SET_BY_OBJECT_AND_USER_SECTOR[userInfo.sector][ieObject.sector],
+			];
+			trace.sectorCheck.licensesGranted = uniq(licensesBySector);
+		}
 	}
 	// If user is part of VISITOR && has folder access -> add visitor metadata license to licenses
 	// If user is part of VISITOR && has full access -> add visitor content license to licenses
@@ -121,6 +162,10 @@ export const limitAccessToObjectDetails = (
 
 		// Determine common ground between ie object licenses and user group licenses
 		userAccessibleLicenses.push(...userGroupLicenses);
+
+		if (trace) {
+			trace.visitorSpaceLicensesGranted = uniq(userGroupLicenses);
+		}
 	}
 
 	const accessibleLicenses = uniq(intersection(ieObjectLicenses, userAccessibleLicenses));
@@ -129,6 +174,14 @@ export const limitAccessToObjectDetails = (
 		console.info('userAccessibleLicenses: ', JSON.stringify(userAccessibleLicenses));
 		console.info('ieObjectLicenses: ', JSON.stringify(ieObjectLicenses));
 		console.info('accessibleLicenses: ', JSON.stringify(accessibleLicenses));
+	}
+
+	if (trace) {
+		trace.userAccessibleLicenses = uniq(userAccessibleLicenses);
+		trace.accessibleLicenses = [...accessibleLicenses];
+		trace.visibleProps = [];
+		trace.hasAccessToEssence = false;
+		trace.accessThrough = [];
 	}
 
 	// Step 2 - Determine ieObject limited props
@@ -165,6 +218,12 @@ export const limitAccessToObjectDetails = (
 		hasIntraCPLicenses: intersection(accessibleLicenses, IE_OBJECT_INTRA_CP_LICENSES).length > 0,
 		hasPublicLicenses: intersection(accessibleLicenses, IE_OBJECT_PUBLIC_LICENSES).length > 0,
 	});
+
+	if (trace) {
+		trace.visibleProps = [...ieObjectLimitedProps];
+		trace.hasAccessToEssence = hasAccessToEssence;
+		trace.accessThrough = [...accessThrough];
+	}
 
 	return {
 		...limitedIeObject,
