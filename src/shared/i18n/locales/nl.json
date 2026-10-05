@@ -54,7 +54,7 @@
   "modules/material-request-messages/services/material-request-pdf-generator___type-ontsluiting-label": "Type ontsluiting",
   "modules/material-request-messages/services/material-request-pdf-generator___uitgevoerd-door": "Uitgevoerd door",
   "modules/material-request-messages/services/material-request-pdf-generator___volledig-materiaal": "Volledig materiaal",
-  "modules/material-request-messages/services/material-request-pdf-generator___voorwaarden-aanvaard-op": "Voorwaarden aanvaard op",
+  "modules/material-request-messages/services/material-request-pdf-generator___voorwaarden-aanvaard-op": "Voorwaarden aanvaard op {{sentAt}}",
   "modules/material-request-messages/services/material-request-pdf-generator___voorwaarden-verstuurd-op": "Voorwaarden verstuurd op {{sentAt}}",
   "modules/material-request-messages/services/material-request-pdf-generator___wijziging-materiaal-label": "Wijziging materiaal",
   "modules/material-requests/const/index___copyright-display-around-object": "Copyright vermelding bij object",
