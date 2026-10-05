@@ -899,6 +899,9 @@
 										<li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">User question: {{ item.request_type }}</li>
 										<li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">More information about the request:&nbsp;{{ item.request_description }}</li>
 									</ul>
+									{% if item.is_complex_reuse_flow %}
+									<p style="Margin-top: 12px;Margin-bottom: 0;">This is an extended request for reuse. This request will be handled further on hetarchief.be. <a style="text-decoration: underline;transition: opacity 0.1s ease-in;color: #009690;" href="{{ item.request_url }}">View and evaluate the material request</a></p>
+									{% endif %}
 									<p style="color: #00C8AA">___</p>
 									{% endfor %}
 

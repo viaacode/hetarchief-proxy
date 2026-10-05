@@ -36,7 +36,10 @@ fe933d54-23ec-43bc-93f6-a1a3f4a68617 (https://meemoo.createsend.com/triggered/wo
 			"pid": "meemoo id",
 			"page_url": "https://qas.hetarchief.be/item-url",
 			"request_type": "bekijken/herbruiken/meer info",
-			"request_description": "input invulveld gebruiker"
+			"request_description": "input invulveld gebruiker",
+			"material_request_id": "uuid van de materiaalaanvraag",
+			"request_url": "https://qas.hetarchief.be/...?materialRequest=<id> (link naar de materiaalaanvraag op het platform)",
+			"is_complex_reuse_flow": true
 		}
 	],
 	"user_request_context": "beroepsdoeleinden/onderzoek/...",
@@ -77,7 +80,10 @@ f93e7d47-5974-4965-a327-72471f5a0d4d (https://meemoo.createsend.com/triggered/wo
 			"pid": "meemoo id",
 			"page_url": "https://qas.hetarchief.be/item-url",
 			"request_type": "bekijken/herbruiken/meer info",
-			"request_description": "input invulveld gebruiker"
+			"request_description": "input invulveld gebruiker",
+			"material_request_id": "uuid van de materiaalaanvraag",
+			"request_url": "https://qas.hetarchief.be/...?materialRequest=<id> (link naar de materiaalaanvraag op het platform)",
+			"is_complex_reuse_flow": true
 		}
 	],
 	"user_request_context": "beroepsdoeleinden/onderzoek/...",
