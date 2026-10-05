@@ -901,6 +901,9 @@
 										<li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">Gebruikersvraag: {{ item.request_type }}</li>
 										<li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">Meer informatie bij de aanvraag:&nbsp;{{ item.request_description }}</li>
 									</ul>
+									{% if item.is_complex_reuse_flow %}
+									<p style="Margin-top: 12px;Margin-bottom: 0;">Dit is een uitgebreide aanvraag voor hergebruik. Deze aanvraag wordt verder afgehandeld op hetarchief.be. <a style="text-decoration: underline;transition: opacity 0.1s ease-in;color: #009690;" href="{{ item.request_url }}">Bekijk en beoordeel de materiaalaanvraag</a></p>
+									{% endif %}
 									<p style="color: #00C8AA">___</p>
 									{% endfor %}
 
