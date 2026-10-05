@@ -1,6 +1,21 @@
 query getFileStoredAtByIeObjectId($ieObjectId: String) {
 	graph_representation(where: { premis_represents: { _eq: $ieObjectId } }) {
-		includes(where: { file: { ebucore_has_mime_type: { _eq: "video/mp4" } } }) {
+		includes(
+			where: {
+				file: {
+					ebucore_has_mime_type: {
+						_in: [
+							"video/mp4"
+							"application/mp4"
+							"video/ogv"
+							"video/webm"
+							"video/m3u8"
+							"application/vnd.apple.mpegurl"
+						]
+					}
+				}
+			}
+		) {
 			file {
 				premis_stored_at
 			}

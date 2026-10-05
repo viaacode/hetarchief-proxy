@@ -633,7 +633,7 @@ export class MediahavenJobsWatcherService {
 	 * Fetch the representation through the graph.representation table by id => https://data-qas.hetarchief.be/id/entity/55638edcc4a9b8f665c9c3552473517a
 	 * Get the file ids below the representation use graph.includes filtered by representation id
 	 * Get the file info in the graph.file table by file id
-	 * Get the first file of ebucore_has_type === 'video/mp4' => https://data-qas.hetarchief.be/id/entity/6eedd53f51f9721b8ea7c111ebf7604f
+	 * Get the first file of ebucore_has_type === 'video/mp4' or other video formats => https://data-qas.hetarchief.be/id/entity/6eedd53f51f9721b8ea7c111ebf7604f
 	 * premis_stored_at => extract long id => https://media-qas.viaa.be/play/v2/SBS/aaf815a5a39e414291c14603edbe336a0cf599d0da2146c7a9578def535362cd/browse.mp4 => aaf815a5a39e414291c14603edbe336a0cf599d0da2146c7a9578def535362cd
 	 * lookup id in graph.mh_fragment_identifier => ilike id + '%' to get the full id
 	 * mh_fragment_identifier => is de record id to use in mediahaven export job
@@ -684,7 +684,7 @@ export class MediahavenJobsWatcherService {
 	 * This ie-object contains multiple representations => graph.representation => premis_represents === ie object id
 	 * Get the file ids below the representations use graph.includes filtered by representation id
 	 * Get the file infos in the graph.file table by file ids
-	 * Get the files of ebucore_has_type === 'video/mp4' => https://data-qas.hetarchief.be/id/entity/6eedd53f51f9721b8ea7c111ebf7604f
+	 * Get the files of ebucore_has_type === 'video/mp4' or other video formats => https://data-qas.hetarchief.be/id/entity/6eedd53f51f9721b8ea7c111ebf7604f
 	 * premis_stored_at => extract long id => https://media-qas.viaa.be/play/v2/SBS/aaf815a5a39e414291c14603edbe336a0cf599d0da2146c7a9578def535362cd/browse.mp4 => aaf815a5a39e414291c14603edbe336a0cf599d0da2146c7a9578def535362cd
 	 * lookup id in graph.mh_fragment_identifier => ilike id + '%' to get the full id
 	 * mh_fragment_identifier => is de record id to use in mediahaven export job

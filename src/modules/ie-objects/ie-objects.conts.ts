@@ -29,6 +29,7 @@ export const IE_OBJECT_AV_TYPES: Readonly<HetArchiefIeObjectType[]> = [
 // representation matching these mime types as the file to play/visualize.
 export const FLOWPLAYER_VIDEO_FORMATS: Readonly<string[]> = [
 	'video/mp4',
+	'application/mp4',
 	'video/ogv',
 	'video/webm',
 	'video/m3u8',
