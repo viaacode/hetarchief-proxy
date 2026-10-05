@@ -1,0 +1,21 @@
+# Installed / generated inside the image
+node_modules
+dist
+coverage
+*.tsbuildinfo
+
+# Local only files
+.git
+.env
+.idea
+.vscode
+.claude
+ai-files
+sessions
+tmp
+elasticsearch-local
+*.log
+query.json
+query-autocomplete.json
+response.json
+postman_collection.json

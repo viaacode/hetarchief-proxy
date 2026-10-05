@@ -13,7 +13,7 @@ pipeline {
         spec:
           containers:
           - name: default
-            image: ${getImageFromDockerfile()}
+            image: ${getAgentImage()}
             command:
             - cat
             tty: true
@@ -53,40 +53,46 @@ pipeline {
 				}
 			}
 		}
-		stage('Test code') {
-//            steps {
-//                sh 'make -f ./openshift/Makefile test'
-//            }
-			steps {
-				container('default') {
-					script {
-						sh '''#!/bin/bash
-							npm ci --include=dev
-							npm run test:ci
-						'''
+		// Tests and the image build don't depend on each other, so run them at the same time.
+		// The deploy stages only run when both succeed.
+		stage('Test and build') {
+			failFast true
+			parallel {
+				stage('Test code') {
+					steps {
+						container('default') {
+							script {
+								sh '''#!/bin/bash
+									npm ci --include=dev --no-audit --no-fund
+									npm run test:ci
+								'''
+							}
+						}
 					}
 				}
-			}
-		}
-		stage('Build code') {
-			when {
-				not {
-					buildingTag()
-				}
-			}
-			steps {
-				container('oc') {
-					script {
-						sh '''#!/bin/bash
-                        oc project $OC_PROJECT
-                        oc import-image $BASE_IMG --confirm
-                        oc set image-lookup $BASE_IMG_NAME
-                        oc new-build -l ref=$BRANCH_NAME --strategy=docker --name $APP_NAME --to $APP_NAME:$GIT_SHORT_COMMIT --binary --context-dir="" || echo "Probably already exists, start new build"
-                        sleep 3
-                        oc annotate --overwrite buildconfig/$APP_NAME ref=$BRANCH_NAME shortcommit=$GIT_SHORT_COMMIT
-                        patch-bc-current-ref.sh
-                        oc start-build $APP_NAME --from-dir=. --follow=true --wait=true
-                        '''
+				stage('Build code') {
+					when {
+						not {
+							buildingTag()
+						}
+					}
+					steps {
+						container('oc') {
+							script {
+								// Exclude node_modules and dist from the upload: the Docker build installs and builds those itself,
+								// and the test stage is writing node_modules in the same workspace at the same time
+								sh '''#!/bin/bash
+								oc project $OC_PROJECT
+								oc import-image $BASE_IMG --from=docker.io/library/$BASE_IMG --confirm
+								oc set image-lookup $BASE_IMG_NAME
+								oc new-build -l ref=$BRANCH_NAME --strategy=docker --name $APP_NAME --to $APP_NAME:$GIT_SHORT_COMMIT --binary --context-dir="" || echo "Probably already exists, start new build"
+								sleep 3
+								oc annotate --overwrite buildconfig/$APP_NAME ref=$BRANCH_NAME shortcommit=$GIT_SHORT_COMMIT
+								patch-bc-current-ref.sh
+								oc start-build $APP_NAME --from-dir=. --exclude='(^|/)(\\.git|node_modules|dist|coverage)(/|$)' --follow=true --wait=true
+								'''
+							}
+						}
 					}
 				}
 			}
@@ -191,8 +197,14 @@ pipeline {
 	}
 }
 
-void getImageFromDockerfile() {
+// Image the Jenkins test container runs in. Not alpine, because the pipeline steps use bash
+void getAgentImage() {
 	return 'node:24'
+}
+
+// Must match the FROM lines in the Dockerfile
+void getImageFromDockerfile() {
+	return 'node:24-alpine'
 }
 
 void getBaseImageName() {
