@@ -13,7 +13,11 @@ import type { Request, Response } from 'express';
 import { cloneDeep } from 'lodash';
 import { type MockInstance, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { HetArchiefIeObjectLicense, HetArchiefIeObjectType } from '@viaa/avo2-types';
+import {
+	HetArchiefIeObjectAccessThrough,
+	HetArchiefIeObjectLicense,
+	HetArchiefIeObjectType,
+} from '@viaa/avo2-types';
 import {
 	mockIeObject1,
 	mockIeObjectWithMetadataSetALL,
@@ -491,9 +495,13 @@ describe('IeObjectsController', () => {
 		): Partial<HetArchiefIeObject> =>
 			({
 				dctermsFormat: HetArchiefIeObjectType.VIDEO,
-				licenses: [HetArchiefIeObjectLicense.INTRA_CP_METADATA_AI],
+				licenses: [
+					HetArchiefIeObjectLicense.INTRA_CP_METADATA_ALL,
+					HetArchiefIeObjectLicense.INTRA_CP_METADATA_AI,
+				],
 				hasAccessToEssence: true,
 				limitedBySectorLogic: false,
+				accessThrough: [HetArchiefIeObjectAccessThrough.SECTOR],
 				// Only the file id matters here: objectContainsFilePath is all that reads this
 				pages: [{ pageNumber: 1, representations: [{ files: [{ id: mockFileId }] }] }],
 				...overrides,
@@ -559,6 +567,54 @@ describe('IeObjectsController', () => {
 			).rejects.toThrow(ForbiddenException);
 		});
 
+		it('should reject a key user that only reaches the object through its public licenses', async () => {
+			// eg. the user has no sector, so the sector branch didn't run and limitedBySectorLogic is false
+			mockAccessibleObject({
+				accessThrough: [HetArchiefIeObjectAccessThrough.PUBLIC_INFO],
+			});
+
+			await expect(
+				ieObjectsController.getMentions('referer', '127.0.0.1', mockMentionsQuery, mockKeyUser)
+			).rejects.toThrow(ForbiddenException);
+			expect(mockIeObjectsService.getMentionsByFileId).not.toHaveBeenCalled();
+		});
+
+		it('should reject when the object is only disclosed for key use with the LTD license', async () => {
+			mockAccessibleObject({
+				licenses: [
+					HetArchiefIeObjectLicense.INTRA_CP_METADATA_LTD,
+					HetArchiefIeObjectLicense.INTRA_CP_METADATA_AI,
+				],
+			});
+
+			await expect(
+				ieObjectsController.getMentions('referer', '127.0.0.1', mockMentionsQuery, mockKeyUser)
+			).rejects.toThrow(ForbiddenException);
+		});
+
+		it('should return the mentions of an object without the essence, disclosed with the ALL license', async () => {
+			mockAccessibleObject({
+				hasAccessToEssence: false,
+				licenses: [
+					HetArchiefIeObjectLicense.INTRA_CP_METADATA_ALL,
+					HetArchiefIeObjectLicense.INTRA_CP_METADATA_AI,
+				],
+			});
+			mockIeObjectsService.getMentionsByFileId.mockResolvedValueOnce({
+				durationSeconds: 600,
+				mentions: [],
+			});
+
+			const response = await ieObjectsController.getMentions(
+				'referer',
+				'127.0.0.1',
+				mockMentionsQuery,
+				mockKeyUser
+			);
+
+			expect(response.hasAccessToEssence).toEqual(false);
+		});
+
 		it('should return the mentions of the file', async () => {
 			mockAccessibleObject();
 			mockIeObjectsService.getMentionsByFileId.mockResolvedValueOnce({
@@ -610,6 +666,7 @@ describe('IeObjectsController', () => {
 		it('should flag public domain objects so the thumbnail tokens are minted accordingly', async () => {
 			mockAccessibleObject({
 				licenses: [
+					HetArchiefIeObjectLicense.INTRA_CP_METADATA_ALL,
 					HetArchiefIeObjectLicense.INTRA_CP_METADATA_AI,
 					HetArchiefIeObjectLicense.PUBLIEK_CONTENT,
 					HetArchiefIeObjectLicense.PUBLIC_DOMAIN,

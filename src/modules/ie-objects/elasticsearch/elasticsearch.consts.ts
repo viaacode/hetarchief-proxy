@@ -1,12 +1,19 @@
 import type { IeObjectsVisitorSpaceInfo } from '../ie-objects.types';
 
 import identifierSearchQueryExact from './templates/exact/identifier-search-query.json';
+import nameSearchQueryExactAi from './templates/exact/name-search-query--ai.json';
 import nameSearchQueryExact from './templates/exact/name-search-query.json';
+import searchQueryAllExactAi from './templates/exact/search-query--metadata-all--ai.json';
 import searchQueryAllExact from './templates/exact/search-query--metadata-all.json';
+import searchQueryLimitedExactAi from './templates/exact/search-query--metadata-limited--ai.json';
 import searchQueryLimitedExact from './templates/exact/search-query--metadata-limited.json';
+import descriptionSearchQueryFuzzyAi from './templates/fuzzy/description-search-query--ai.json';
 import descriptionSearchQueryFuzzy from './templates/fuzzy/description-search-query.json';
+import nameSearchQueryFuzzyAi from './templates/fuzzy/name-search-query--ai.json';
 import nameSearchQueryFuzzy from './templates/fuzzy/name-search-query.json';
+import searchQueryAllFuzzyAi from './templates/fuzzy/search-query--metadata-all--ai.json';
 import searchQueryAllFuzzy from './templates/fuzzy/search-query--metadata-all.json';
+import searchQueryLimitedFuzzyAi from './templates/fuzzy/search-query--metadata-limited--ai.json';
 import searchQueryLimitedFuzzy from './templates/fuzzy/search-query--metadata-limited.json';
 
 import { SessionUserEntity } from '~modules/users/classes/session-user';
@@ -187,6 +194,38 @@ export const MULTI_MATCH_QUERY_MAPPING: Record<
 		query: {
 			limited: searchQueryLimitedExact,
 			all: searchQueryAllExact,
+		},
+	},
+};
+
+// The AI fields are kept out of the templates above: they may only be searched on objects whose AI
+// metadata the user can see, see QueryBuilder.buildAiMetadataAccessFilter
+export const MULTI_MATCH_AI_QUERY_MAPPING: Record<
+	'fuzzy' | 'exact',
+	Partial<Record<IeObjectsSearchFilterField, Record<'limited' | 'all', any>>>
+> = {
+	fuzzy: {
+		[IeObjectsSearchFilterField.QUERY]: {
+			limited: searchQueryLimitedFuzzyAi,
+			all: searchQueryAllFuzzyAi,
+		},
+		[IeObjectsSearchFilterField.NAME]: {
+			limited: nameSearchQueryFuzzyAi,
+			all: nameSearchQueryFuzzyAi,
+		},
+		[IeObjectsSearchFilterField.DESCRIPTION]: {
+			limited: descriptionSearchQueryFuzzyAi,
+			all: descriptionSearchQueryFuzzyAi,
+		},
+	},
+	exact: {
+		[IeObjectsSearchFilterField.QUERY]: {
+			limited: searchQueryLimitedExactAi,
+			all: searchQueryAllExactAi,
+		},
+		[IeObjectsSearchFilterField.NAME]: {
+			limited: nameSearchQueryExactAi,
+			all: nameSearchQueryExactAi,
 		},
 	},
 };

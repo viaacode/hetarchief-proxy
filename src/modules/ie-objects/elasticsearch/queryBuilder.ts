@@ -37,6 +37,7 @@ import {
 	KEY_USER_ONLY_SEARCH_FILTER_FIELDS,
 	MAX_COUNT_SEARCH_RESULTS,
 	MAX_NUMBER_SEARCH_RESULTS,
+	MULTI_MATCH_AI_QUERY_MAPPING,
 	MULTI_MATCH_FIELDS,
 	MULTI_MATCH_QUERY_MAPPING,
 	MetadataAccessType,
@@ -495,7 +496,11 @@ export class QueryBuilder {
 			for (const searchFilter of fieldFilters.filter(
 				(filter) => !QueryBuilder.canOrGroup(filter)
 			)) {
-				for (const clause of QueryBuilder.buildClausesForFilter(searchFilter, metadataAccessType)) {
+				for (const clause of QueryBuilder.buildClausesForFilter(
+					searchFilter,
+					metadataAccessType,
+					inputInfo
+				)) {
 					applyFilter(filterObject, clause);
 				}
 			}
@@ -503,7 +508,7 @@ export class QueryBuilder {
 			const orClauses = fieldFilters
 				.filter((filter) => QueryBuilder.canOrGroup(filter))
 				.flatMap((searchFilter) =>
-					QueryBuilder.buildClausesForFilter(searchFilter, metadataAccessType)
+					QueryBuilder.buildClausesForFilter(searchFilter, metadataAccessType, inputInfo)
 				);
 
 			if (orClauses.length === 1) {
@@ -554,7 +559,8 @@ export class QueryBuilder {
 	 */
 	private static buildClausesForFilter(
 		searchFilter: SearchFilter,
-		metadataAccessType: MetadataAccessType
+		metadataAccessType: MetadataAccessType,
+		inputInfo: QueryBuilderInputInfo
 	): { occurrenceType: string; query: any }[] {
 		// First, check for special 'multi match fields'. Fields like query, name and description
 		// query multiple fields at once
@@ -564,6 +570,14 @@ export class QueryBuilder {
 					`Value cannot be empty when filtering on field '${searchFilter.field}'`
 				);
 			}
+			// The AI fields join the template as one more clause, which only matches objects whose AI
+			// metadata the user can see
+			const withAiFields = (searchTemplate: any[], matchType: 'fuzzy' | 'exact'): any[] =>
+				QueryBuilder.withAiFields(
+					searchTemplate,
+					MULTI_MATCH_AI_QUERY_MAPPING[matchType][searchFilter.field]?.[metadataAccessType],
+					inputInfo
+				);
 			if (QueryBuilder.isFuzzyOperator(searchFilter.operator)) {
 				// Use a multi field search template to fuzzy search in elasticsearch across multiple fields
 
@@ -576,8 +590,14 @@ export class QueryBuilder {
 								convertNodeToEsQueryFilterObjects(
 									jsep(encodeSearchterm(searchFilter.value)),
 									{
-										fuzzy: MULTI_MATCH_QUERY_MAPPING.fuzzy.query[metadataAccessType],
-										exact: MULTI_MATCH_QUERY_MAPPING.exact.query[metadataAccessType],
+										fuzzy: withAiFields(
+											MULTI_MATCH_QUERY_MAPPING.fuzzy.query[metadataAccessType],
+											'fuzzy'
+										),
+										exact: withAiFields(
+											MULTI_MATCH_QUERY_MAPPING.exact.query[metadataAccessType],
+											'exact'
+										),
 									},
 									searchFilter
 								),
@@ -585,7 +605,10 @@ export class QueryBuilder {
 						} catch {
 							// Search term with logical operators could not be parsed
 							// Fall back to regular text search
-							const searchTemplate = MULTI_MATCH_QUERY_MAPPING.fuzzy.query[metadataAccessType];
+							const searchTemplate = withAiFields(
+								MULTI_MATCH_QUERY_MAPPING.fuzzy.query[metadataAccessType],
+								'fuzzy'
+							);
 							textFilters = [buildFreeTextFilter(searchTemplate, searchFilter)];
 						}
 					} else {
@@ -598,12 +621,14 @@ export class QueryBuilder {
 							);
 						}
 
-						textFilters = [buildFreeTextFilter(searchTemplate, searchFilter)];
+						textFilters = [
+							buildFreeTextFilter(withAiFields(searchTemplate, 'fuzzy'), searchFilter),
+						];
 					}
 				} else {
 					const searchTemplate =
 						MULTI_MATCH_QUERY_MAPPING.fuzzy[searchFilter.field][metadataAccessType];
-					textFilters = [buildFreeTextFilter(searchTemplate, searchFilter)];
+					textFilters = [buildFreeTextFilter(withAiFields(searchTemplate, 'fuzzy'), searchFilter)];
 				}
 
 				return textFilters.map((filter) => ({
@@ -625,7 +650,7 @@ export class QueryBuilder {
 			return [
 				{
 					occurrenceType: QueryBuilder.getOccurrenceType(searchFilter.operator),
-					query: buildFreeTextFilter(searchTemplate, searchFilter),
+					query: buildFreeTextFilter(withAiFields(searchTemplate, 'exact'), searchFilter),
 				},
 			];
 		}
@@ -647,7 +672,115 @@ export class QueryBuilder {
 			);
 		}
 
-		return [QueryBuilder.buildFilter(elasticKey, searchFilter)];
+		const clause = QueryBuilder.buildFilter(elasticKey, searchFilter);
+
+		// The AI entity filters only match on objects whose AI metadata the user can see. Otherwise a
+		// filter on "person = X" would reveal a mention that the detail page hides. For the negative
+		// operators this means objects with hidden AI metadata are not excluded either.
+		if (KEY_USER_ONLY_SEARCH_FILTER_FIELDS.includes(searchFilter.field)) {
+			const aiAccessFilter = QueryBuilder.buildKeyUserAiAccessFilter(inputInfo);
+			return [
+				{
+					...clause,
+					// Both parts in filter context: no scoring, and elasticsearch caches them per segment.
+					// The access part is the same for every entity filter, so it is cached after the first.
+					query: aiAccessFilter
+						? { bool: { filter: [aiAccessFilter, clause.query] } }
+						: { match_none: {} },
+				},
+			];
+		}
+
+		return [clause];
+	}
+
+	/**
+	 * Adds the AI fields to a search template, but only on objects whose AI metadata the user can see.
+	 * Without this a user could find an object on text that they are not allowed to read.
+	 */
+	private static withAiFields(
+		searchTemplate: any[],
+		aiSearchTemplate: any[] | undefined,
+		inputInfo: QueryBuilderInputInfo
+	): any[] {
+		if (!aiSearchTemplate) {
+			return searchTemplate;
+		}
+		const aiClause = AND([
+			QueryBuilder.buildAiMetadataAccessFilter(inputInfo),
+			OR(aiSearchTemplate),
+		]);
+		return aiClause ? [...searchTemplate, aiClause] : searchTemplate;
+	}
+
+	/**
+	 * Objects of which the user can see the AI title and summary. Mirrors limitAccessToObjectDetails:
+	 * * VIAA-PUBLIEK-METADATA-AI on an object that is publicly disclosed, never for kiosk users
+	 * * OR VIAA-INTRA_CP-METADATA-AI for a key user that sees the object, with the sector logic
+	 *   handing out the AI license
+	 * Returns null when no object qualifies.
+	 */
+	private static buildAiMetadataAccessFilter(
+		inputInfo: QueryBuilderInputInfo
+	): ElasticsearchSubQuery | null {
+		const { user } = inputInfo;
+		const accessFilters: (ElasticsearchSubQuery | null)[] = [];
+
+		if (user?.getGroupName() !== GroupName.KIOSK_VISITOR) {
+			accessFilters.push(
+				AND([
+					{
+						terms: {
+							_name: 'AI-PUBLIC-METADATA-AI',
+							[ElasticsearchField.schema_license]: [HetArchiefIeObjectLicense.PUBLIEK_METADATA_AI],
+						},
+					},
+					{
+						terms: {
+							[ElasticsearchField.schema_license]: [
+								HetArchiefIeObjectLicense.PUBLIEK_METADATA_LTD,
+								HetArchiefIeObjectLicense.PUBLIEK_METADATA_ALL,
+								HetArchiefIeObjectLicense.PUBLIEK_CONTENT,
+							],
+						},
+					},
+				])
+			);
+		}
+
+		accessFilters.push(QueryBuilder.buildKeyUserAiAccessFilter(inputInfo));
+
+		return OR(accessFilters);
+	}
+
+	/**
+	 * Objects of which a key user can see the AI metadata: the object carries VIAA-INTRA_CP-METADATA-AI,
+	 * is disclosed for key use with more than LTD (INTRA_CP METADATA-ALL or CONTENT) and the sector
+	 * logic hands out the AI license. Mirrors limitAccessToObjectDetails and the mentions endpoint.
+	 * Returns null when no object qualifies, eg. for users that are not key users.
+	 */
+	public static buildKeyUserAiAccessFilter(
+		inputInfo: QueryBuilderInputInfo
+	): ElasticsearchSubQuery | null {
+		const keyUserAccess = OR(
+			QueryBuilder.buildLicensesFilterKeyUsers(
+				inputInfo,
+				false,
+				HetArchiefIeObjectLicense.INTRA_CP_METADATA_AI
+			)
+		);
+		if (!keyUserAccess) {
+			return null;
+		}
+		return AND([
+			{
+				terms: {
+					_name: 'AI-INTRA-CP-METADATA-AI',
+					[ElasticsearchField.schema_license]: [HetArchiefIeObjectLicense.INTRA_CP_METADATA_AI],
+				},
+			},
+			keyUserAccess,
+		]);
 	}
 
 	/**
@@ -1055,11 +1188,13 @@ export class QueryBuilder {
 	 * that the object has the INTRA CP license
 	 * @param inputInfo
 	 * @param containsOnlyConsultableFilter
+	 * @param requiredAccessibleLicense
 	 * @private
 	 */
 	private static buildLicensesFilterKeyUsers(
 		inputInfo: QueryBuilderInputInfo,
-		containsOnlyConsultableFilter: boolean
+		containsOnlyConsultableFilter: boolean,
+		requiredAccessibleLicense?: HetArchiefIeObjectLicense
 	): ElasticsearchSubQuery[] {
 		const { user } = inputInfo;
 
@@ -1094,7 +1229,10 @@ export class QueryBuilder {
 					][]
 				).map(([objectSector, accessibleLicenses]) => {
 					const licenses = intersection(accessibleLicenses, consideredLicenses);
-					return isEmpty(licenses)
+					// The sector logic can withhold a license that the object carries
+					const isRequiredLicenseWithheld =
+						!!requiredAccessibleLicense && !accessibleLicenses.includes(requiredAccessibleLicense);
+					return isEmpty(licenses) || isRequiredLicenseWithheld
 						? null
 						: { sector: objectSector, licenses, key: [...licenses].sort().join(',') };
 				})

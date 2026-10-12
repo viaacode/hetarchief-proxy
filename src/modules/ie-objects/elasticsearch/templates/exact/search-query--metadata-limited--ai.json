@@ -1,0 +1,10 @@
+[
+  {
+    "multi_match": {
+      "query": "{{query}}",
+      "type": "phrase",
+      "boost": 100,
+      "fields": ["schema_name_ai^5", "ebucore_synopsis_ai^0.25"]
+    }
+  }
+]
