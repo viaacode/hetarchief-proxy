@@ -1170,7 +1170,12 @@ export class QueryBuilder {
 		forEach(searchRequest.requestedAggs || AGGS_PROPERTIES, (aggProperty) => {
 			const elasticProperty =
 				READABLE_TO_ELASTIC_FILTER_NAMES[aggProperty as IeObjectsSearchFilterField];
-			if (aggProperty === IeObjectsSearchFilterField.RIGHTS) {
+			// Herbruikbaarheid has no field of its own: its categories are derived from the rights
+			// aggregations in IeObjectsService.adaptESResponse
+			if (
+				aggProperty === IeObjectsSearchFilterField.RIGHTS ||
+				aggProperty === IeObjectsSearchFilterField.REUSABILITY
+			) {
 				aggs[ElasticsearchField.dcterms_rights_statement] = {
 					terms: {
 						field: ElasticsearchField.dcterms_rights_statement,

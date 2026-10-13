@@ -30,6 +30,7 @@ import {
 	isNumber,
 	kebabCase,
 	omitBy,
+	sum,
 	uniq,
 } from 'lodash';
 
@@ -120,6 +121,8 @@ import {
 	ElasticsearchField,
 	IeObjectsSearchFilterField,
 	MAX_COUNT_SEARCH_RESULTS,
+	REUSABILITY_FILTER_VALUES,
+	type ReusabilityCategory,
 } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
 import { AND } from '~modules/ie-objects/elasticsearch/queryBuilder.helpers';
 import {
@@ -1081,6 +1084,30 @@ export class IeObjectsService {
 					}
 					return true; // not an audio fragment bucket -> include in response
 				});
+		}
+
+		// Offer a reusability category when one of the rights statements it groups has hits
+		if (
+			esResponse?.aggregations?.[ElasticsearchField.dcterms_rights_statement] ||
+			esResponse?.aggregations?.[`${ElasticsearchField.reuse_category}.${ElasticsearchField.id}`]
+		) {
+			const rightsWithHits = new Map<string, number>();
+			for (const bucket of [
+				...(esResponse.aggregations[ElasticsearchField.dcterms_rights_statement]?.buckets ?? []),
+				...(esResponse.aggregations[`${ElasticsearchField.reuse_category}.${ElasticsearchField.id}`]
+					?.buckets ?? []),
+			]) {
+				rightsWithHits.set(bucket.key, (rightsWithHits.get(bucket.key) ?? 0) + bucket.doc_count);
+			}
+
+			esResponse.aggregations.reusability = {
+				buckets: (
+					Object.entries(REUSABILITY_FILTER_VALUES) as [ReusabilityCategory, string[]][]
+				).flatMap(([category, rights]) => {
+					const docCount = sum(rights.map((right) => rightsWithHits.get(right) ?? 0));
+					return docCount > 0 ? [{ key: category, doc_count: docCount }] : [];
+				}),
+			};
 		}
 
 		// sanity check
