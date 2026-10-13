@@ -253,6 +253,7 @@ export const mockIeObjectWithMetadataSetALL: Readonly<Partial<HetArchiefIeObject
 	meemooDescriptionCast: null,
 	meemooMediaObjectId: '49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c',
 	publisher: null,
+	locationCreated: null,
 	alternativeTitle: null,
 	width: null,
 	height: null,
@@ -311,6 +312,7 @@ export const mockIeObjectWithMetadataSetALLWithEssence: Readonly<Partial<HetArch
 	],
 	inLanguage: null,
 	publisher: null,
+	locationCreated: null,
 	licenses: [HetArchiefIeObjectLicense.INTRA_CP_CONTENT],
 	accessThrough: [HetArchiefIeObjectAccessThrough.VISITOR_SPACE_FOLDERS],
 	isPartOf: [

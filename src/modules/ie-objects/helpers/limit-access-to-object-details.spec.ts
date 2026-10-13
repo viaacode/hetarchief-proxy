@@ -1049,6 +1049,182 @@ describe('Limit access to object details', () => {
 			expect(result?.synopsisAi).toBeUndefined();
 			expect(result?.limitedBySectorLogic).toEqual(true);
 		});
+
+		it('strips nameAi and synopsisAi for a kiosk user of the own maintainer, the rest stays', () => {
+			const result = limitAccessToObjectDetails(
+				{
+					...aiObject,
+					licenses: [
+						HetArchiefIeObjectLicense.PUBLIEK_CONTENT,
+						HetArchiefIeObjectLicense.PUBLIEK_METADATA_AI,
+					],
+				},
+				{
+					...anonymousUser,
+					groupId: GroupId.KIOSK_VISITOR,
+					maintainerId: aiObject.maintainerId,
+				}
+			);
+
+			expect(result?.nameAi).toBeUndefined();
+			expect(result?.synopsisAi).toBeUndefined();
+			expect(result?.name).toEqual(mockIeObject1.name);
+			expect(result?.thumbnailUrl).toBeDefined();
+		});
+
+		it('discloses nothing when the object only carries the public AI license', () => {
+			const result = limitAccessToObjectDetails(
+				{ ...aiObject, licenses: [HetArchiefIeObjectLicense.PUBLIEK_METADATA_AI] },
+				anonymousUser
+			);
+
+			expect(result).toBeNull();
+		});
+
+		it('discloses nothing when the object only carries the intra CP AI license', () => {
+			const result = limitAccessToObjectDetails(
+				{
+					...aiObject,
+					maintainerId: 'OR-rf5kf25',
+					sector: HetArchiefIeObjectSector.CULTURE,
+					licenses: [HetArchiefIeObjectLicense.INTRA_CP_METADATA_AI],
+				},
+				{
+					...mockUserInfo,
+					groupId: GroupId.CP_ADMIN,
+					isKeyUser: true,
+					sector: HetArchiefIeObjectSector.CULTURE,
+					accessibleVisitorSpaceIds: [],
+					accessibleObjectIdsThroughFolders: [],
+				}
+			);
+
+			expect(result).toBeNull();
+		});
+
+		it('strips nameAi for a key user when the object is only disclosed with the LTD license', () => {
+			const result = limitAccessToObjectDetails(
+				{
+					...aiObject,
+					maintainerId: 'OR-rf5kf25',
+					sector: HetArchiefIeObjectSector.CULTURE,
+					licenses: [
+						HetArchiefIeObjectLicense.INTRA_CP_METADATA_LTD,
+						HetArchiefIeObjectLicense.INTRA_CP_METADATA_AI,
+					],
+				},
+				{
+					...mockUserInfo,
+					groupId: GroupId.CP_ADMIN,
+					isKeyUser: true,
+					sector: HetArchiefIeObjectSector.CULTURE,
+					accessibleVisitorSpaceIds: [],
+					accessibleObjectIdsThroughFolders: [],
+				}
+			);
+
+			expect(result?.nameAi).toBeUndefined();
+			expect(result?.synopsisAi).toBeUndefined();
+			expect(result?.name).toEqual(mockIeObject1.name);
+		});
+
+		it('keeps nameAi for a key user when the object is disclosed with INTRA_CP_CONTENT', () => {
+			const result = limitAccessToObjectDetails(
+				{
+					...aiObject,
+					maintainerId: 'OR-rf5kf25',
+					sector: HetArchiefIeObjectSector.CULTURE,
+					licenses: [
+						HetArchiefIeObjectLicense.INTRA_CP_CONTENT,
+						HetArchiefIeObjectLicense.INTRA_CP_METADATA_AI,
+					],
+				},
+				{
+					...mockUserInfo,
+					groupId: GroupId.CP_ADMIN,
+					isKeyUser: true,
+					sector: HetArchiefIeObjectSector.CULTURE,
+					accessibleVisitorSpaceIds: [],
+					accessibleObjectIdsThroughFolders: [],
+				}
+			);
+
+			expect(result?.nameAi).toEqual('Door AI gegenereerde titel');
+			expect(result?.hasAccessToEssence).toEqual(true);
+		});
+
+		it('does not let the intra CP AI license unlock the public AI props, or the other way around', () => {
+			const keyUser: LimitAccessUserInfo = {
+				...mockUserInfo,
+				groupId: GroupId.CP_ADMIN,
+				isKeyUser: true,
+				sector: HetArchiefIeObjectSector.CULTURE,
+				maintainerId: 'OR-rf5kf25',
+				accessibleVisitorSpaceIds: [],
+				accessibleObjectIdsThroughFolders: [],
+			};
+
+			// Public disclosure, but only the intra CP AI license: key use is not disclosed
+			const publicWithIntraAi = limitAccessToObjectDetails(
+				{
+					...aiObject,
+					maintainerId: 'OR-other',
+					sector: HetArchiefIeObjectSector.CULTURE,
+					licenses: [
+						HetArchiefIeObjectLicense.PUBLIEK_METADATA_ALL,
+						HetArchiefIeObjectLicense.INTRA_CP_METADATA_AI,
+					],
+				},
+				keyUser
+			);
+			expect(publicWithIntraAi?.nameAi).toBeUndefined();
+
+			// Key use disclosure, but only the public AI license: the public is not disclosed
+			const intraWithPublicAi = limitAccessToObjectDetails(
+				{
+					...aiObject,
+					maintainerId: 'OR-other',
+					sector: HetArchiefIeObjectSector.CULTURE,
+					licenses: [
+						HetArchiefIeObjectLicense.INTRA_CP_METADATA_ALL,
+						HetArchiefIeObjectLicense.PUBLIEK_METADATA_AI,
+					],
+				},
+				keyUser
+			);
+			expect(intraWithPublicAi?.nameAi).toBeUndefined();
+			expect(intraWithPublicAi?.accessThrough).not.toContain(
+				HetArchiefIeObjectAccessThrough.PUBLIC_INFO
+			);
+		});
+
+		// The AI entities and the AI title stay visible without the essence, only the player
+		// features go: the client greys out the timeline based on hasAccessToEssence.
+		it('keeps nameAi but reports no access to the essence for a key user without INTRA_CP_CONTENT', () => {
+			const result = limitAccessToObjectDetails(
+				{
+					...aiObject,
+					maintainerId: 'OR-rf5kf25',
+					sector: HetArchiefIeObjectSector.CULTURE,
+					licenses: [
+						HetArchiefIeObjectLicense.INTRA_CP_METADATA_ALL,
+						HetArchiefIeObjectLicense.INTRA_CP_METADATA_AI,
+					],
+				},
+				{
+					...mockUserInfo,
+					groupId: GroupId.CP_ADMIN,
+					isKeyUser: true,
+					sector: HetArchiefIeObjectSector.CULTURE,
+					accessibleVisitorSpaceIds: [],
+					accessibleObjectIdsThroughFolders: [],
+				}
+			);
+
+			expect(result?.nameAi).toEqual('Door AI gegenereerde titel');
+			expect(result?.hasAccessToEssence).toEqual(false);
+			expect(result?.thumbnailUrl).toBeUndefined();
+		});
 	});
 
 	describe('limitedBySectorLogic', () => {

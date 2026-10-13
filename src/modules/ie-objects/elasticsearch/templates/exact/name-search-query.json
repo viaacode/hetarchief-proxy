@@ -10,11 +10,6 @@
         },
         {
           "term": {
-            "schema_name_ai.keyword": "{{query}}"
-          }
-        },
-        {
-          "term": {
             "schema_is_part_of.newspaper": "{{query}}"
           }
         },

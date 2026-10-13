@@ -7,7 +7,6 @@
       "boost": 100,
       "fields": [
         "schema_description^20",
-        "ebucore_synopsis_ai^5",
         "schema_abstract",
         "schema_transcript",
         "meemoo_description_programme",
@@ -23,7 +22,6 @@
       "boost": 100,
       "fields": [
         "schema_description.lemma_split^20",
-        "ebucore_synopsis_ai.lemma_split^5",
         "schema_abstract.lemma_split",
         "meemoo_description_programme.lemma_split"
       ]
@@ -38,7 +36,6 @@
       "minimum_should_match": "2<80%",
       "fields": [
         "schema_description.lemma_split^20",
-        "ebucore_synopsis_ai.lemma_split^5",
         "schema_abstract.lemma_split",
         "meemoo_description_programme.lemma_split"
       ]
@@ -52,7 +49,6 @@
       "boost": 100,
       "fields": [
         "schema_description.lemma_split_spell^20",
-        "ebucore_synopsis_ai.lemma_split_spell^5",
         "schema_abstract.lemma_split_spell",
         "meemoo_description_programme.lemma_split_spell"
       ]
@@ -67,7 +63,6 @@
       "minimum_should_match": "2<80%",
       "fields": [
         "schema_description.lemma_split_spell^20",
-        "ebucore_synopsis_ai.lemma_split_spell^5",
         "schema_abstract.lemma_split_spell",
         "meemoo_description_programme.lemma_split_spell"
       ]

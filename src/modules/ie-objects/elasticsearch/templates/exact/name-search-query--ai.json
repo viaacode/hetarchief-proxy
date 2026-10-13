@@ -1,0 +1,7 @@
+[
+  {
+    "term": {
+      "schema_name_ai.keyword": "{{query}}"
+    }
+  }
+]

@@ -1,10 +1,15 @@
-import { HetArchiefIeObjectSector, HetArchiefIeObjectType } from '@viaa/avo2-types';
+import {
+	HetArchiefIeObjectLicense,
+	HetArchiefIeObjectSector,
+	HetArchiefIeObjectType,
+} from '@viaa/avo2-types';
 import { describe, expect, it } from 'vitest';
 
 import {
 	ElasticsearchField,
 	type ElasticsearchSubQuery,
 	IeObjectsSearchFilterField,
+	MULTI_MATCH_AI_QUERY_MAPPING,
 	MULTI_MATCH_QUERY_MAPPING,
 	Operator,
 	OrderProperty,
@@ -12,6 +17,8 @@ import {
 	RightsLabel,
 } from './elasticsearch.consts';
 import { QueryBuilder } from './queryBuilder';
+
+import { IE_OBJECT_METADATA_SET_BY_OBJECT_AND_USER_SECTOR } from '~modules/ie-objects/ie-objects.conts';
 
 import { mockUser } from '~modules/ie-objects/mocks/ie-objects.mock';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
@@ -145,11 +152,12 @@ describe('QueryBuilder', () => {
 				mockInputInfo as any
 			);
 
-			// Limited metadata needs to be searched for the keyword in the limited metadata fields
+			// Limited metadata needs to be searched for the keyword in the limited metadata fields:
+			// the 11 clauses of the template, plus one for the AI fields, which the user may search
 			expect(
 				esQuery?.query?.bool?.should?.[0]?.bool?.should?.[0]?.bool?.must?.[0]?.bool?.should
 					?.length || 0
-			).toEqual(11);
+			).toEqual(12);
 			// Only search the "limited" metadata fields
 			expect(getMultiMatchFieldsForQuery(esQuery.query, true)).toEqual(QUERY_FIELDS_LIMITED);
 
@@ -157,7 +165,7 @@ describe('QueryBuilder', () => {
 			expect(
 				esQuery?.query?.bool?.should?.[1]?.bool?.should?.[0]?.bool?.must?.[0]?.bool?.should
 					?.length || 0
-			).toEqual(11);
+			).toEqual(12);
 			// Search the "all" metadata fields
 			expect(getMultiMatchFieldsForQuery(esQuery.query, false)).toEqual(QUERY_FIELDS_ALL);
 		});
@@ -1229,6 +1237,8 @@ describe('QueryBuilder', () => {
 			user: new SessionUserEntity({
 				...(mockInputInfo.user as any).getUser(),
 				isKeyUser: true,
+				sector: HetArchiefIeObjectSector.CULTURE,
+				organisationId: 'OR-rf5kf25',
 			}),
 		};
 
@@ -1273,8 +1283,95 @@ describe('QueryBuilder', () => {
 			);
 
 			expect(filterBool.must).toHaveLength(1);
-			expect(filterBool.must[0].terms).toEqual({
+			// The access gate comes first, the entity terms last
+			const entityClause = filterBool.must[0].bool.filter.at(-1);
+			expect(entityClause.terms).toEqual({
 				[`${ElasticsearchField.schema_mentions_person_ai}.keyword`]: ['jan jansen', 'piet peeters'],
+			});
+		});
+
+		describe('access to the AI metadata of the object', () => {
+			const buildMentionFilter = (inputInfo: unknown, operator = Operator.IS) =>
+				getFilterBool(
+					QueryBuilder.build(
+						{
+							page: 1,
+							size: 10,
+							filters: [
+								{
+									field: IeObjectsSearchFilterField.MENTION_PERSON,
+									multiValue: ['jan jansen'],
+									operator,
+								},
+							],
+						} as any,
+						inputInfo as any
+					)
+				);
+
+			it('only matches objects that carry the intra CP AI license and are disclosed for key use', () => {
+				const filterBool = buildMentionFilter(mockKeyUserInputInfo);
+				const gate = JSON.stringify(filterBool.must[0].bool.filter[0]);
+
+				expect(gate).toContain(HetArchiefIeObjectLicense.INTRA_CP_METADATA_AI);
+				expect(gate).toContain(HetArchiefIeObjectLicense.INTRA_CP_METADATA_ALL);
+				expect(gate).toContain(HetArchiefIeObjectLicense.INTRA_CP_CONTENT);
+				// The AI title license of the public does not unlock entities
+				expect(gate).not.toContain(HetArchiefIeObjectLicense.PUBLIEK_METADATA_AI);
+				// LTD does not count as disclosed
+				expect(gate).not.toContain(HetArchiefIeObjectLicense.INTRA_CP_METADATA_LTD);
+			});
+
+			it('uses filter context so the gate does not score and can be cached', () => {
+				const filterBool = buildMentionFilter(mockKeyUserInputInfo);
+
+				expect(filterBool.must[0].bool.filter).toHaveLength(2);
+				expect(filterBool.must[0].bool.must).toBeUndefined();
+				expect(filterBool.must[0].bool.should).toBeUndefined();
+			});
+
+			it('keeps objects with hidden AI metadata in the results of a negative filter', () => {
+				const filterBool = buildMentionFilter(mockKeyUserInputInfo, Operator.IS_NOT);
+
+				// Excluding on the entity must also be gated, or a missing object reveals the mention
+				expect(filterBool.must_not).toHaveLength(1);
+				const gate = JSON.stringify(filterBool.must_not[0].bool.filter[0]);
+				expect(gate).toContain(HetArchiefIeObjectLicense.INTRA_CP_METADATA_AI);
+			});
+
+			it('matches nothing for a key user without a sector', () => {
+				const filterBool = buildMentionFilter({
+					...mockKeyUserInputInfo,
+					user: new SessionUserEntity({
+						...(mockKeyUserInputInfo.user as any).getUser(),
+						sector: null,
+					}),
+				});
+
+				expect(filterBool.must).toEqual([{ match_none: {} }]);
+			});
+
+			it('does not gate filters that are not AI filters', () => {
+				const filterBool = getFilterBool(
+					QueryBuilder.build(
+						{
+							page: 1,
+							size: 10,
+							filters: [
+								{
+									field: IeObjectsSearchFilterField.CREATOR,
+									multiValue: ['jan jansen'],
+									operator: Operator.IS,
+								},
+							],
+						} as any,
+						mockKeyUserInputInfo as any
+					)
+				);
+
+				expect(JSON.stringify(filterBool)).not.toContain(
+					HetArchiefIeObjectLicense.INTRA_CP_METADATA_AI
+				);
 			});
 		});
 
@@ -1330,6 +1427,243 @@ describe('QueryBuilder', () => {
 					mockInputInfo as any
 				)
 			).toThrowError("Field 'mentionPerson' is only available to key users.");
+		});
+	});
+	describe('AI title and summary search', () => {
+		const userWith = (overrides: Record<string, unknown>) => ({
+			...mockInputInfo,
+			user: new SessionUserEntity({
+				...(mockInputInfo.user as any).getUser(),
+				...overrides,
+			}),
+		});
+		const anonymousInputInfo = { ...mockInputInfo, user: undefined };
+		const loggedInInputInfo = userWith({ isKeyUser: false });
+		const keyUserInputInfo = userWith({
+			isKeyUser: true,
+			groupId: GroupId.CP_ADMIN,
+			groupName: GroupName.CP_ADMIN,
+			sector: HetArchiefIeObjectSector.CULTURE,
+			organisationId: 'OR-rf5kf25',
+		});
+		const regionalKeyUserInputInfo = userWith({
+			isKeyUser: true,
+			groupId: GroupId.CP_ADMIN,
+			groupName: GroupName.CP_ADMIN,
+			sector: HetArchiefIeObjectSector.REGIONAL,
+			organisationId: null,
+		});
+		const kioskInputInfo = userWith({
+			isKeyUser: false,
+			groupId: GroupId.KIOSK_VISITOR,
+			groupName: GroupName.KIOSK_VISITOR,
+			organisationId: 'OR-rf5kf25',
+		});
+
+		const accessFilter = (inputInfo: unknown) =>
+			(QueryBuilder as any).buildAiMetadataAccessFilter(inputInfo);
+
+		const buildWith = (
+			field: IeObjectsSearchFilterField,
+			operator: Operator,
+			inputInfo: unknown,
+			value = 'trade'
+		): string =>
+			JSON.stringify(
+				QueryBuilder.build(
+					{ page: 1, size: 10, filters: [{ field, value, operator }] } as any,
+					inputInfo as any
+				).query
+			);
+
+		describe('who may match on the AI fields', () => {
+			it('limits an anonymous user to the public AI license on a disclosed object', () => {
+				const filter = JSON.stringify(accessFilter(anonymousInputInfo));
+
+				expect(filter).toContain(HetArchiefIeObjectLicense.PUBLIEK_METADATA_AI);
+				expect(filter).toContain(HetArchiefIeObjectLicense.PUBLIEK_METADATA_LTD);
+				expect(filter).toContain(HetArchiefIeObjectLicense.PUBLIEK_CONTENT);
+				expect(filter).not.toContain(HetArchiefIeObjectLicense.INTRA_CP_METADATA_AI);
+			});
+
+			it('does not hand a user that is not a key user the intra CP AI license', () => {
+				const filter = JSON.stringify(accessFilter(loggedInInputInfo));
+
+				expect(filter).toContain(HetArchiefIeObjectLicense.PUBLIEK_METADATA_AI);
+				expect(filter).not.toContain(HetArchiefIeObjectLicense.INTRA_CP_METADATA_AI);
+			});
+
+			it('gives a key user the public and the intra CP AI license', () => {
+				const filter = JSON.stringify(accessFilter(keyUserInputInfo));
+
+				expect(filter).toContain(HetArchiefIeObjectLicense.PUBLIEK_METADATA_AI);
+				expect(filter).toContain(HetArchiefIeObjectLicense.INTRA_CP_METADATA_AI);
+			});
+
+			it('matches nothing for a kiosk user', () => {
+				expect(accessFilter(kioskInputInfo)).toBeNull();
+			});
+
+			it('only lets a key user match on sectors whose sector logic hands out the AI license', () => {
+				const filter = JSON.stringify(accessFilter(regionalKeyUserInputInfo));
+				const sectorsWithAiLicense = Object.entries(
+					IE_OBJECT_METADATA_SET_BY_OBJECT_AND_USER_SECTOR[HetArchiefIeObjectSector.REGIONAL]
+				)
+					.filter(([, licenses]) =>
+						licenses.includes(HetArchiefIeObjectLicense.INTRA_CP_METADATA_AI)
+					)
+					.map(([sector]) => sector);
+
+				// A regional key user only gets the LTD license on a rural object, see limitAccessToObjectDetails
+				expect(sectorsWithAiLicense).not.toContain(HetArchiefIeObjectSector.RURAL);
+				expect(filter).not.toContain(`"${HetArchiefIeObjectSector.RURAL}"`);
+				for (const sector of sectorsWithAiLicense) {
+					expect(filter).toContain(`"${sector}"`);
+				}
+			});
+		});
+
+		describe.each([
+			['name', IeObjectsSearchFilterField.NAME, Operator.CONTAINS, 'schema_name_ai'],
+			['name (exact)', IeObjectsSearchFilterField.NAME, Operator.IS, 'schema_name_ai.keyword'],
+			[
+				'description',
+				IeObjectsSearchFilterField.DESCRIPTION,
+				Operator.CONTAINS,
+				'ebucore_synopsis_ai',
+			],
+		])('searching on the %s', (_label, field, operator, aiField) => {
+			it('also searches the AI field for a user that may see it', () => {
+				expect(buildWith(field, operator, anonymousInputInfo)).toContain(`"${aiField}`);
+				expect(buildWith(field, operator, keyUserInputInfo)).toContain(`"${aiField}`);
+			});
+
+			it('never searches the AI field for a kiosk user', () => {
+				expect(buildWith(field, operator, kioskInputInfo)).not.toContain('_ai');
+			});
+
+			it('only searches the AI field on objects with the AI license', () => {
+				const query = buildWith(field, operator, anonymousInputInfo);
+				const aiClauses = query.split(aiField).length - 1;
+
+				// Every occurrence sits next to the license check that gates it
+				expect(aiClauses).toBeGreaterThan(0);
+				expect(query.split('AI-PUBLIC-METADATA-AI').length - 1).toBeGreaterThan(0);
+				expect(query.indexOf('AI-PUBLIC-METADATA-AI')).toBeLessThan(query.indexOf(aiField));
+			});
+		});
+
+		describe('searching with the search bar', () => {
+			const searches: [string, string][] = [
+				['a plain search term', 'trade'],
+				['a quoted search term', '"world trade"'],
+				['a search term with boolean operators', 'trade AND water'],
+				['a search term with an exclusion', 'trade NOT water'],
+			];
+
+			it.each(searches)('also searches the AI title and summary for %s', (_label, value) => {
+				const query = buildWith(
+					IeObjectsSearchFilterField.QUERY,
+					Operator.CONTAINS,
+					anonymousInputInfo,
+					value
+				);
+
+				expect(query).toContain('"schema_name_ai');
+				expect(query).toContain('"ebucore_synopsis_ai');
+				expect(query.indexOf('AI-PUBLIC-METADATA-AI')).toBeLessThan(query.indexOf('_ai'));
+			});
+
+			it.each(searches)(
+				'never searches the AI fields for a kiosk user with %s',
+				(_label, value) => {
+					const query = buildWith(
+						IeObjectsSearchFilterField.QUERY,
+						Operator.CONTAINS,
+						kioskInputInfo,
+						value
+					);
+
+					expect(query).not.toContain('_ai');
+					expect(query).toContain('"schema_name');
+				}
+			);
+
+			it('searches the AI fields for an exact search term with the is operator', () => {
+				const query = buildWith(
+					IeObjectsSearchFilterField.QUERY,
+					Operator.IS,
+					keyUserInputInfo,
+					'world trade'
+				);
+
+				expect(query).toContain('"schema_name_ai');
+				expect(query).toContain('AI-INTRA-CP-METADATA-AI');
+			});
+
+			it('searches the AI fields in the limited and in the full metadata branch', () => {
+				const query = buildWith(
+					IeObjectsSearchFilterField.QUERY,
+					Operator.CONTAINS,
+					anonymousInputInfo
+				);
+				const branches: any[] = JSON.parse(query).bool.should;
+
+				for (const branch of branches) {
+					expect(JSON.stringify(branch)).toContain('"schema_name_ai');
+				}
+			});
+
+			it('weighs the AI title and summary just below the title and description', () => {
+				const mapping = MULTI_MATCH_AI_QUERY_MAPPING;
+				const weightOf = (fields: string[], prefix: string): number => {
+					const field = fields.find((candidate) => candidate.startsWith(prefix));
+					return Number(field?.split('^')[1] ?? 1);
+				};
+
+				for (const matchType of ['fuzzy', 'exact'] as const) {
+					for (const access of ['limited', 'all'] as const) {
+						const regular = MULTI_MATCH_QUERY_MAPPING[matchType].query[access].filter(
+							(clause: any) => clause.multi_match
+						);
+						const ai = mapping[matchType][IeObjectsSearchFilterField.QUERY][access];
+
+						expect(ai.length).toBeGreaterThan(0);
+						for (const aiClause of ai) {
+							// Same type and boost as the regular clause it was derived from
+							const regularClause = regular.find(
+								(clause: any) =>
+									clause.multi_match.type === aiClause.multi_match.type &&
+									clause.multi_match.boost === aiClause.multi_match.boost &&
+									clause.multi_match.fields.some((field: string) =>
+										field.startsWith(
+											aiClause.multi_match.fields[0]
+												.replace('schema_name_ai', 'schema_name')
+												.split('^')[0]
+										)
+									)
+							);
+							expect(regularClause).toBeDefined();
+							expect(weightOf(aiClause.multi_match.fields, 'schema_name_ai')).toBeLessThan(
+								weightOf(regularClause.multi_match.fields, 'schema_name')
+							);
+							expect(weightOf(aiClause.multi_match.fields, 'ebucore_synopsis_ai')).toBeLessThan(
+								weightOf(regularClause.multi_match.fields, 'schema_description')
+							);
+						}
+					}
+				}
+			});
+		});
+
+		it('keeps the regular fields searchable for a kiosk user', () => {
+			const query = buildWith(IeObjectsSearchFilterField.NAME, Operator.CONTAINS, kioskInputInfo);
+
+			expect(query).toContain('"schema_name');
+		});
+
+		it('keeps the AI fields out of the shared search templates', () => {
+			expect(JSON.stringify(MULTI_MATCH_QUERY_MAPPING)).not.toContain('_ai');
 		});
 	});
 });

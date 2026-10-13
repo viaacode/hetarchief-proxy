@@ -438,11 +438,33 @@ export class IeObjectsController {
 			);
 		}
 
+		// limitedBySectorLogic stays false when the sector check doesn't run (user or object without
+		// sector, user group outside CP admin/meemoo admin/visitor). Then the user reached the object
+		// through its public licenses only, so the key use licenses checked below don't apply to them.
+		if (!accessibleObject.accessThrough?.includes(HetArchiefIeObjectAccessThrough.SECTOR)) {
+			throw new ForbiddenException(
+				'You do not have permission to view the AI metadata of this object (not disclosed for key use to this user)'
+			);
+		}
+
 		// Deliberately the object's own licenses, not the set the user can access: the AI license is
 		// a feature flag on the object, and unlocks no props of its own.
 		if (!accessibleObject.licenses?.includes(HetArchiefIeObjectLicense.INTRA_CP_METADATA_AI)) {
 			throw new ForbiddenException(
 				'You do not have permission to view the AI metadata of this object (no AI metadata license)'
+			);
+		}
+		// The AI license only counts on an object that is disclosed for key use with more than LTD
+		if (
+			!accessibleObject.licenses.some((license) =>
+				[
+					HetArchiefIeObjectLicense.INTRA_CP_METADATA_ALL,
+					HetArchiefIeObjectLicense.INTRA_CP_CONTENT,
+				].includes(license)
+			)
+		) {
+			throw new ForbiddenException(
+				'You do not have permission to view the AI metadata of this object (not disclosed for key use)'
 			);
 		}
 

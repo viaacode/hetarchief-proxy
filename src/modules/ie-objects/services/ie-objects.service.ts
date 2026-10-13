@@ -1720,6 +1720,18 @@ export class IeObjectsService {
 			mustClauses.push(esQuery.query);
 		}
 
+		// Only suggest AI entities of objects whose AI metadata the user can see
+		if (KEY_USER_ONLY_AUTOCOMPLETE_FIELDS.includes(field)) {
+			const aiAccessFilter = QueryBuilder.buildKeyUserAiAccessFilter({
+				user,
+				visitorSpaceInfo: visitorSpaceAccessInfo,
+			});
+			if (!aiAccessFilter) {
+				return [];
+			}
+			mustClauses.push({ bool: { filter: [aiAccessFilter] } });
+		}
+
 		esQuery.query = {
 			bool: {
 				must: mustClauses.length ? mustClauses : [{ match_all: {} }],
