@@ -6,7 +6,7 @@ import {
 } from '@meemoo/admin-core-api';
 import { ConflictException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { format } from 'date-fns';
-import { compact, kebabCase, uniqBy } from 'lodash';
+import { compact, uniqBy } from 'lodash';
 
 import type { SitemapConfig, SitemapItemInfo } from '../sitemap.types';
 
@@ -20,6 +20,7 @@ import { type IeObjectsSitemap } from '~modules/ie-objects/ie-objects.types';
 
 import { AvoFileUploadAssetType, AvoSearchOrderDirection } from '@viaa/avo2-types';
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
+import { getIeObjectNameSlug } from '~modules/sitemap/helpers/get-ie-object-name-slug';
 import { SITEMAP_BATCH_DELAY_MS, SITEMAP_XML_OBJECTS_SIZE } from '~modules/sitemap/sitemap.consts';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { customError } from '~shared/helpers/custom-error';
@@ -388,7 +389,7 @@ export class SitemapService {
 	}
 
 	private mapIeObjectToSitemapInfo(object: IeObjectsSitemap): SitemapItemInfo {
-		const objectPath = `${object.maintainerSlug}/${object.schemaIdentifier}/${kebabCase(object.name)}`;
+		const objectPath = `${object.maintainerSlug}/${object.schemaIdentifier}/${getIeObjectNameSlug(object.name)}`;
 
 		return {
 			loc: `/zoeken/${objectPath}`,
