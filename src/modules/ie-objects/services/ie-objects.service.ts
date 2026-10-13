@@ -618,11 +618,18 @@ export class IeObjectsService {
 		});
 	}
 
+	/**
+	 * Fetches a batch of ie objects for the sitemap using keyset pagination on the primary key
+	 * Offset pagination gets slower with every page, since the database has to skip all previous rows
+	 * @param licenses
+	 * @param afterId only objects with an id greater than this id are returned. Pass '' for the first batch
+	 * @param limit
+	 */
 	public async findIeObjectsForSitemap(
 		licenses: HetArchiefIeObjectLicense[],
-		offset: number,
+		afterId: string,
 		limit: number
-	): Promise<IPagination<IeObjectsSitemap>> {
+	): Promise<{ items: IeObjectsSitemap[]; lastId: string | null }> {
 		try {
 			// Excludes ie-objects where dcterms_format === newspaperpage, since those pages don't load the newspaper images correctly
 			// https://meemoo.atlassian.net/browse/ARC-3202
@@ -630,7 +637,7 @@ export class IeObjectsService {
 				this.dataService.execute<
 					FindIeObjectsForSitemapQuery,
 					FindIeObjectsForSitemapQueryVariables
-				>(FindIeObjectsForSitemapDocument, { licenses, limit, offset });
+				>(FindIeObjectsForSitemapDocument, { licenses, limit, afterId });
 			const response = await retry(
 				{
 					interval: 60000,
@@ -640,12 +647,10 @@ export class IeObjectsService {
 			);
 			const ieObjects = response.graph_intellectual_entity;
 
-			return Pagination<IeObjectsSitemap>({
+			return {
 				items: ieObjects.map((ieObject) => this.adaptForSitemap(ieObject)),
-				page: Math.floor(offset / limit),
-				size: limit,
-				total: 0,
-			});
+				lastId: ieObjects.at(-1)?.id ?? null,
+			};
 		} catch (err) {
 			throw new InternalServerErrorException('Failed getting ieObjects for sitemap', err);
 		}

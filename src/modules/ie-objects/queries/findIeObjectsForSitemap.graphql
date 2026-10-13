@@ -1,12 +1,14 @@
-query findIeObjectsForSitemap($licenses: [String!]!, $offset: Int!, $limit: Int) {
+query findIeObjectsForSitemap($licenses: [String!]!, $afterId: String!, $limit: Int) {
 	graph_intellectual_entity(
 		where: {
+			id: { _gt: $afterId }
 			schemaLicenses: { schema_license: { _in: $licenses } }
 			dctermsFormat: { dcterms_format: { _neq: "newspaperpage" } }
 		}
-		offset: $offset
+		order_by: { id: asc }
 		limit: $limit
 	) {
+		id
 		schema_identifier
 		updated_at
 		schemaNames(where: { is_ai_generated: { _eq: false } }) {

@@ -4,10 +4,9 @@ import {
 	DataService,
 	DbContentPage,
 } from '@meemoo/admin-core-api';
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { ConflictException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { format } from 'date-fns';
 import { compact, kebabCase, uniqBy } from 'lodash';
-import xmlFormat from 'xml-formatter';
 
 import type { SitemapConfig, SitemapItemInfo } from '../sitemap.types';
 
@@ -19,10 +18,9 @@ import {
 } from '~generated/graphql-db-types-hetarchief';
 import { type IeObjectsSitemap } from '~modules/ie-objects/ie-objects.types';
 
-import type { IPagination } from '@studiohyperdrive/pagination';
 import { AvoFileUploadAssetType, AvoSearchOrderDirection } from '@viaa/avo2-types';
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
-import { SITEMAP_XML_OBJECTS_SIZE } from '~modules/sitemap/sitemap.consts';
+import { SITEMAP_BATCH_DELAY_MS, SITEMAP_XML_OBJECTS_SIZE } from '~modules/sitemap/sitemap.consts';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { customError } from '~shared/helpers/custom-error';
 import { Locale, VisitorSpaceStatus } from '~shared/types/types';
@@ -30,6 +28,7 @@ import { Locale, VisitorSpaceStatus } from '~shared/types/types';
 @Injectable()
 export class SitemapService {
 	private readonly CLIENT_HOST_RESOLVED: string;
+	private isGeneratingSitemap = false;
 
 	constructor(
 		private dataService: DataService,
@@ -44,7 +43,24 @@ export class SitemapService {
 		).replace('http://', 'https://');
 	}
 
-	public async generateSitemap(sitemapConfig: SitemapConfig) {
+	public get isGenerating(): boolean {
+		return this.isGeneratingSitemap;
+	}
+
+	public async generateSitemap(sitemapConfig: SitemapConfig): Promise<string> {
+		// Only allow one generation at a time, otherwise multiple triggers multiply the load on the pod and the database
+		if (this.isGeneratingSitemap) {
+			throw new ConflictException('Sitemap generation is already in progress');
+		}
+		this.isGeneratingSitemap = true;
+		try {
+			return await this.generateSitemapInternal(sitemapConfig);
+		} finally {
+			this.isGeneratingSitemap = false;
+		}
+	}
+
+	private async generateSitemapInternal(sitemapConfig: SitemapConfig): Promise<string> {
 		const staticPageSitemapEntries: SitemapItemInfo[] = [
 			{
 				loc: '/',
@@ -128,15 +144,7 @@ export class SitemapService {
 			sitemapConfig
 		);
 
-		const renderedGeneralXml = xmlFormat(
-			`
-			<?xml version="1.0" encoding="UTF-8"?>
-			<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
-			${generalSitemapEntries.map((entry) => this.renderPage(entry)).join('\n')}
-			</urlset>
-		`,
-			{ lineSeparator: '\n' }
-		);
+		const renderedGeneralXml = this.renderUrlSet(generalSitemapEntries);
 
 		xmlUrls.push(await this.uploadXml(renderedGeneralXml, 'general.xml'));
 
@@ -160,15 +168,12 @@ export class SitemapService {
 		xmlUrls.push(...publicMetadataIeObjectXmlUrls);
 
 		// Generate index xml
-		const indexXml = xmlFormat(
-			`
-			<?xml version="1.0" encoding="UTF-8"?>
-			<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-				${xmlUrls.map((url) => this.renderSitemapIndexEntry(url)).join('\n')}
-			</sitemapindex>
-		`,
-			{ lineSeparator: '\n' }
-		);
+		const indexXml = [
+			'<?xml version="1.0" encoding="UTF-8"?>',
+			'<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+			...xmlUrls.map((url) => this.renderSitemapIndexEntry(url)),
+			'</sitemapindex>',
+		].join('\n');
 		await this.uploadXml(indexXml, 'index.xml');
 		console.info('Sitemap generation completed successfully');
 		return renderedGeneralXml; // This is returned for unit tests
@@ -251,26 +256,35 @@ export class SitemapService {
 	) {
 		try {
 			const xmlUrls: string[] = [];
-			let i = 0;
-			let ieObjectsResponse: IPagination<IeObjectsSitemap>;
+			let processedCount = 0;
+			let batchIndex = 0;
+			let lastId = '';
+			let ieObjectsResponse: Awaited<ReturnType<IeObjectsService['findIeObjectsForSitemap']>>;
 
 			do {
 				ieObjectsResponse = await this.ieObjectsService.findIeObjectsForSitemap(
 					licenses,
-					i,
+					lastId,
 					SITEMAP_XML_OBJECTS_SIZE
 				);
-				if ((ieObjectsResponse.items?.length || 0) > 0) {
+				const items = ieObjectsResponse?.items || [];
+				if (items.length > 0) {
 					const xmlUrl = await this.formatAndUploadIeObjectAsSitemapXml(
-						ieObjectsResponse.items,
-						pageOffset + ieObjectsResponse.page,
+						items,
+						pageOffset + batchIndex,
 						sitemapConfig
 					);
-					console.info(`Uploading sitemap for ${label}: ${i} objects processed`);
+					processedCount += items.length;
+					batchIndex++;
+					lastId = ieObjectsResponse.lastId;
+					console.info(`Uploading sitemap for ${label}: ${processedCount} objects processed`);
 					xmlUrls.push(xmlUrl);
+
+					// Give the database and the event loop some breathing room between batches,
+					// so the sitemap generation doesn't slow down the website
+					await this.sleep(SITEMAP_BATCH_DELAY_MS);
 				}
-				i += SITEMAP_XML_OBJECTS_SIZE;
-			} while ((ieObjectsResponse?.items?.length || 0) > 0);
+			} while ((ieObjectsResponse?.items?.length || 0) > 0 && !!lastId);
 			return xmlUrls;
 		} catch (err) {
 			const error = customError('Failed to createAndUploadIeObjectSitemapEntries', err, {
@@ -304,21 +318,36 @@ export class SitemapService {
 
 	private renderPage(pageInfo: SitemapItemInfo): string {
 		const url = this.limitUrl(`${this.CLIENT_HOST_RESOLVED}${pageInfo.loc}`);
-		return `
-			<url>
-				<loc>${url}</loc>
-				${this.renderPageLinks(pageInfo.links)}
-				${pageInfo.lastmod ? `<lastmod>${pageInfo.lastmod}</lastmod>` : ''}
-				<changefreq>${pageInfo.changefreq}</changefreq>
-				${pageInfo.priority ? `<priority>${pageInfo.priority}</priority>` : ''}
-			</url>`;
+		return compact([
+			'<url>',
+			`<loc>${url}</loc>`,
+			this.renderPageLinks(pageInfo.links),
+			pageInfo.lastmod ? `<lastmod>${pageInfo.lastmod}</lastmod>` : null,
+			`<changefreq>${pageInfo.changefreq}</changefreq>`,
+			pageInfo.priority ? `<priority>${pageInfo.priority}</priority>` : null,
+			'</url>',
+		]).join('\n');
+	}
+
+	/**
+	 * Renders the xml as a plain string, without pretty-printing it
+	 * Formatting libraries parse the whole document into a tree, which uses a lot of memory for thousands of entries
+	 */
+	private renderUrlSet(entries: SitemapItemInfo[]): string {
+		return [
+			'<?xml version="1.0" encoding="UTF-8"?>',
+			'<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">',
+			...entries.map((entry) => this.renderPage(entry)),
+			'</urlset>',
+		].join('\n');
 	}
 
 	private renderSitemapIndexEntry(url: string): string {
-		return `
-		<sitemap>
-			<loc>${this.limitUrl(url)}</loc>
-		</sitemap>`;
+		return ['<sitemap>', `<loc>${this.limitUrl(url)}</loc>`, '</sitemap>'].join('\n');
+	}
+
+	private sleep(ms: number): Promise<void> {
+		return new Promise((resolve) => setTimeout(resolve, ms));
 	}
 
 	private limitUrl(url: string): string {
@@ -379,7 +408,7 @@ export class SitemapService {
 	}
 
 	private async formatAndUploadIeObjectAsSitemapXml(
-		ieObjects: any[],
+		ieObjects: IeObjectsSitemap[],
 		pageIndex: number,
 		sitemapConfig: SitemapConfig
 	): Promise<string> {
@@ -388,15 +417,7 @@ export class SitemapService {
 			sitemapConfig
 		);
 
-		const renderedXml = xmlFormat(
-			`
-				<?xml version="1.0" encoding="UTF-8"?>
-				<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
-					${ieObjectSitemapEntries.map((entry) => this.renderPage(entry)).join('\n')}
-				</urlset>
-			`,
-			{ lineSeparator: '\n' }
-		);
+		const renderedXml = this.renderUrlSet(ieObjectSitemapEntries);
 
 		return await this.uploadXml(renderedXml, `item-detail-${pageIndex}.xml`);
 	}

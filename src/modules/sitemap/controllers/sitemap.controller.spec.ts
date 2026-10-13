@@ -14,6 +14,7 @@ import { mockConfigService } from '~shared/test/mock-config-service';
 const mockSitemapService = {
 	generateSitemap: vi.fn(),
 	getSitemapConfig: vi.fn(),
+	isGenerating: false,
 };
 
 describe('SitemapController', () => {
@@ -66,6 +67,19 @@ describe('SitemapController', () => {
 			expect(result).toEqual(
 				`${process.env.ASSET_SERVER_ENDPOINT}/${process.env.ASSET_SERVER_BUCKET_NAME}/${AvoFileUploadAssetType.SITEMAP}/index.xml`
 			);
+		});
+
+		it('should refuse to start a second generation while one is running', async () => {
+			mockSitemapService.isGenerating = true;
+			mockSitemapService.generateSitemap.mockClear();
+			try {
+				await expect(
+					sitemapController.generateSitemap(mockConfigService.get('PROXY_API_KEY') as string)
+				).rejects.toThrow('Sitemap generation is already in progress');
+				expect(mockSitemapService.generateSitemap).not.toHaveBeenCalled();
+			} finally {
+				mockSitemapService.isGenerating = false;
+			}
 		});
 	});
 });
