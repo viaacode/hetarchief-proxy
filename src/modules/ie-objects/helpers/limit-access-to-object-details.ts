@@ -186,14 +186,45 @@ export const limitAccessToObjectDetails = (
 
 	// Step 2 - Determine ieObject limited props
 	// ---------------------------------------------------
-	if (isEmpty(accessibleLicenses)) {
+	// An AI license only adds AI props on top of an object that is disclosed in its own tier: key use
+	// needs INTRA_CP_METADATA_ALL or INTRA_CP_CONTENT, public needs PUBLIEK_METADATA_LTD, _ALL or
+	// _CONTENT. On its own, or next to a lower tier, it discloses nothing.
+	const disclosedLicenses = accessibleLicenses.filter(
+		(accessibleLicense: HetArchiefIeObjectLicense) => {
+			if (accessibleLicense === HetArchiefIeObjectLicense.INTRA_CP_METADATA_AI) {
+				return accessibleLicenses.some((license) =>
+					[
+						HetArchiefIeObjectLicense.INTRA_CP_METADATA_ALL,
+						HetArchiefIeObjectLicense.INTRA_CP_CONTENT,
+					].includes(license)
+				);
+			}
+			if (accessibleLicense === HetArchiefIeObjectLicense.PUBLIEK_METADATA_AI) {
+				return accessibleLicenses.some((license) =>
+					[
+						HetArchiefIeObjectLicense.PUBLIEK_METADATA_LTD,
+						HetArchiefIeObjectLicense.PUBLIEK_METADATA_ALL,
+						HetArchiefIeObjectLicense.PUBLIEK_CONTENT,
+					].includes(license)
+				);
+			}
+			return true;
+		}
+	);
+	if (isEmpty(disclosedLicenses)) {
 		return null;
 	}
 
+	// Kiosk users never get AI metadata, even when the object carries the public AI license
+	const isKioskUser = userInfo.groupId === GroupId.KIOSK_VISITOR;
 	const ieObjectLimitedProps: string[] = uniq(
-		accessibleLicenses.flatMap((accessibleLicense: HetArchiefIeObjectLicense) => {
+		disclosedLicenses.flatMap((accessibleLicense: HetArchiefIeObjectLicense) => {
 			return IE_OBJECT_PROPS_BY_METADATA_SET[IE_OBJECT_METADATA_SET_BY_LICENSE[accessibleLicense]];
 		})
+	).filter(
+		(prop) =>
+			!isKioskUser ||
+			!IE_OBJECT_PROPS_BY_METADATA_SET[IeObjectMetadataSet.METADATA_AI].includes(prop)
 	);
 
 	// Whether the user may see the essence of this object: the thumbnail, pages, mentions,
@@ -215,8 +246,8 @@ export const limitAccessToObjectDetails = (
 	const accessThrough = getAccessThrough({
 		hasFullAccess: hasFullVisitorSpaceAccess,
 		hasFolderAccess,
-		hasIntraCPLicenses: intersection(accessibleLicenses, IE_OBJECT_INTRA_CP_LICENSES).length > 0,
-		hasPublicLicenses: intersection(accessibleLicenses, IE_OBJECT_PUBLIC_LICENSES).length > 0,
+		hasIntraCPLicenses: intersection(disclosedLicenses, IE_OBJECT_INTRA_CP_LICENSES).length > 0,
+		hasPublicLicenses: intersection(disclosedLicenses, IE_OBJECT_PUBLIC_LICENSES).length > 0,
 	});
 
 	if (trace) {

@@ -16,7 +16,11 @@ import {
 } from 'vitest';
 
 import { HetArchiefIeObjectRepresentation } from '@viaa/avo2-types';
-import { HetArchiefIeObjectLicense, HetArchiefIeObjectType } from '@viaa/avo2-types';
+import {
+	HetArchiefIeObjectLicense,
+	HetArchiefIeObjectSector,
+	HetArchiefIeObjectType,
+} from '@viaa/avo2-types';
 import {
 	IeObjectsSearchFilterField,
 	Operator,
@@ -779,6 +783,13 @@ describe('ieObjectsService', () => {
 			);
 		});
 
+		const keyUserWithSector = new SessionUserEntity({
+			...mockUser,
+			isKeyUser: true,
+			sector: HetArchiefIeObjectSector.CULTURE,
+			organisationId: 'OR-rf5kf25',
+		});
+
 		it('queries the AI mention field for a key user', async () => {
 			mockVisitsService.findAll.mockResolvedValueOnce({ items: [] });
 			const executeQuery = vi
@@ -789,7 +800,7 @@ describe('ieObjectsService', () => {
 				AutocompleteField.mentionPerson,
 				'jan',
 				{ filters: [], page: 1, size: 4 },
-				new SessionUserEntity({ ...mockUser, isKeyUser: true })
+				keyUserWithSector
 			);
 
 			const esQuery = executeQuery.mock.calls[0][1] as any;
@@ -800,6 +811,59 @@ describe('ieObjectsService', () => {
 				},
 			});
 			expect(result).toEqual(['Jan Jansen', 'Jan Peeters']);
+		});
+
+		it('only suggests AI mentions of objects whose AI metadata the key user can see', async () => {
+			mockVisitsService.findAll.mockResolvedValueOnce({ items: [] });
+			const executeQuery = vi
+				.spyOn(ieObjectsService, 'executeQuery')
+				.mockResolvedValueOnce(mockAutocompleteQueryResponseMentionPersons);
+
+			await ieObjectsService.getMetadataAutocomplete(
+				AutocompleteField.mentionPerson,
+				'jan',
+				{ filters: [], page: 1, size: 4 },
+				keyUserWithSector
+			);
+
+			const esQuery = executeQuery.mock.calls[0][1] as any;
+			const gate = JSON.stringify(
+				esQuery.query.bool.must.filter((clause: any) => clause.bool?.filter)
+			);
+			expect(gate).toContain(HetArchiefIeObjectLicense.INTRA_CP_METADATA_AI);
+			expect(gate).toContain(HetArchiefIeObjectLicense.INTRA_CP_METADATA_ALL);
+		});
+
+		it('suggests nothing when no object has AI metadata that the key user can see', async () => {
+			mockVisitsService.findAll.mockResolvedValueOnce({ items: [] });
+			const executeQuery = vi.spyOn(ieObjectsService, 'executeQuery');
+
+			const result = await ieObjectsService.getMetadataAutocomplete(
+				AutocompleteField.mentionPerson,
+				'jan',
+				{ filters: [], page: 1, size: 4 },
+				new SessionUserEntity({ ...mockUser, isKeyUser: true, sector: null })
+			);
+
+			expect(result).toEqual([]);
+			expect(executeQuery).not.toHaveBeenCalled();
+		});
+
+		it('does not gate the autocomplete of fields that are not AI fields', async () => {
+			const executeQuery = vi
+				.spyOn(ieObjectsService, 'executeQuery')
+				.mockResolvedValueOnce(mockAutocompleteQueryResponseCreators);
+
+			await ieObjectsService.getMetadataAutocomplete(AutocompleteField.creator, 'Dirk', {
+				filters: [],
+				page: 1,
+				size: 4,
+			});
+
+			const esQuery = executeQuery.mock.calls[0][1] as any;
+			expect(JSON.stringify(esQuery.query)).not.toContain(
+				HetArchiefIeObjectLicense.INTRA_CP_METADATA_AI
+			);
 		});
 
 		it('refuses an AI mention field for a non key user', async () => {
