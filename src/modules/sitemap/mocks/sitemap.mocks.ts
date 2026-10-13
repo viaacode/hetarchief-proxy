@@ -95,103 +95,61 @@ export const mockSitemapSpaces = {
 
 export const mockGeneralXml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
-    <url>
-        <loc>
-            https://hetarchief.be/
-        </loc>
-        <xhtml:link rel="alternate" hreflang="en" href="https://hetarchief.be/en/"/>
-        <xhtml:link rel="alternate" hreflang="nl" href="https://hetarchief.be/"/>
-        <changefreq>
-            monthly
-        </changefreq>
-        <priority>
-            1
-        </priority>
-    </url>
-    <url>
-        <loc>
-            https://hetarchief.be/bezoek
-        </loc>
-        <xhtml:link rel="alternate" hreflang="en" href="https://hetarchief.be/en/visit"/>
-        <xhtml:link rel="alternate" hreflang="nl" href="https://hetarchief.be/bezoek"/>
-        <changefreq>
-            monthly
-        </changefreq>
-        <priority>
-            1
-        </priority>
-    </url>
-    <url>
-        <loc>
-            https://hetarchief.be/zoeken
-        </loc>
-        <xhtml:link rel="alternate" hreflang="en" href="https://hetarchief.be/en/search"/>
-        <xhtml:link rel="alternate" hreflang="nl" href="https://hetarchief.be/zoeken"/>
-        <changefreq>
-            monthly
-        </changefreq>
-    </url>
-    <url>
-        <loc>
-            https://hetarchief.be/gebruiksvoorwaarden
-        </loc>
-        <xhtml:link rel="alternate" hreflang="en" href="https://hetarchief.be/en/user-conditions"/>
-        <xhtml:link rel="alternate" hreflang="nl" href="https://hetarchief.be/gebruiksvoorwaarden"/>
-        <changefreq>
-            monthly
-        </changefreq>
-    </url>
-    <url>
-        <loc>
-            https://hetarchief.be/cookiebeleid
-        </loc>
-        <xhtml:link rel="alternate" hreflang="en" href="https://hetarchief.be/en/cookie-policy"/>
-        <xhtml:link rel="alternate" hreflang="nl" href="https://hetarchief.be/cookiebeleid"/>
-        <changefreq>
-            monthly
-        </changefreq>
-    </url>
-    <url>
-        <loc>
-            https://hetarchief.be/nieuwsbrief
-        </loc>
-        <xhtml:link rel="alternate" hreflang="en" href="https://hetarchief.be/en/newsletter"/>
-        <xhtml:link rel="alternate" hreflang="nl" href="https://hetarchief.be/nieuwsbrief"/>
-        <changefreq>
-            monthly
-        </changefreq>
-    </url>
-    <url>
-        <loc>
-            https://hetarchief.be/mock-content-page-url
-        </loc>
-        <xhtml:link rel="alternate" hreflang="en" href="https://hetarchief.be/en/mock-content-page-url-en"/>
-        <xhtml:link rel="alternate" hreflang="nl" href="https://hetarchief.be/mock-content-page-url"/>
-        <lastmod>
-            2023-04-18
-        </lastmod>
-        <changefreq>
-            monthly
-        </changefreq>
-    </url>
-    <url>
-        <loc>
-            https://hetarchief.be/zoeken/?aanbieders=OR-rf5kf25
-        </loc>
-        <xhtml:link rel="alternate" hreflang="nl" href="https://hetarchief.be/zoeken/?aanbieders=OR-rf5kf25"/>
-        <xhtml:link rel="alternate" hreflang="en" href="https://hetarchief.be/en/search/?aanbieders=OR-rf5kf25"/>
-        <changefreq>
-            weekly
-        </changefreq>
-    </url>
-    <url>
-        <loc>
-            https://hetarchief.be/zoeken/?aanbieders=OR-spacex
-        </loc>
-        <xhtml:link rel="alternate" hreflang="nl" href="https://hetarchief.be/zoeken/?aanbieders=OR-spacex"/>
-        <xhtml:link rel="alternate" hreflang="en" href="https://hetarchief.be/en/search/?aanbieders=OR-spacex"/>
-        <changefreq>
-            weekly
-        </changefreq>
-    </url>
+<url>
+<loc>https://hetarchief.be/</loc>
+<xhtml:link rel="alternate" hreflang="en" href="https://hetarchief.be/en/"/>
+<xhtml:link rel="alternate" hreflang="nl" href="https://hetarchief.be/"/>
+<changefreq>monthly</changefreq>
+<priority>1</priority>
+</url>
+<url>
+<loc>https://hetarchief.be/bezoek</loc>
+<xhtml:link rel="alternate" hreflang="en" href="https://hetarchief.be/en/visit"/>
+<xhtml:link rel="alternate" hreflang="nl" href="https://hetarchief.be/bezoek"/>
+<changefreq>monthly</changefreq>
+<priority>1</priority>
+</url>
+<url>
+<loc>https://hetarchief.be/zoeken</loc>
+<xhtml:link rel="alternate" hreflang="en" href="https://hetarchief.be/en/search"/>
+<xhtml:link rel="alternate" hreflang="nl" href="https://hetarchief.be/zoeken"/>
+<changefreq>monthly</changefreq>
+</url>
+<url>
+<loc>https://hetarchief.be/gebruiksvoorwaarden</loc>
+<xhtml:link rel="alternate" hreflang="en" href="https://hetarchief.be/en/user-conditions"/>
+<xhtml:link rel="alternate" hreflang="nl" href="https://hetarchief.be/gebruiksvoorwaarden"/>
+<changefreq>monthly</changefreq>
+</url>
+<url>
+<loc>https://hetarchief.be/cookiebeleid</loc>
+<xhtml:link rel="alternate" hreflang="en" href="https://hetarchief.be/en/cookie-policy"/>
+<xhtml:link rel="alternate" hreflang="nl" href="https://hetarchief.be/cookiebeleid"/>
+<changefreq>monthly</changefreq>
+</url>
+<url>
+<loc>https://hetarchief.be/nieuwsbrief</loc>
+<xhtml:link rel="alternate" hreflang="en" href="https://hetarchief.be/en/newsletter"/>
+<xhtml:link rel="alternate" hreflang="nl" href="https://hetarchief.be/nieuwsbrief"/>
+<changefreq>monthly</changefreq>
+</url>
+<url>
+<loc>https://hetarchief.be/mock-content-page-url</loc>
+<xhtml:link rel="alternate" hreflang="en" href="https://hetarchief.be/en/mock-content-page-url-en"/>
+<xhtml:link rel="alternate" hreflang="nl" href="https://hetarchief.be/mock-content-page-url"/>
+<lastmod>2023-04-18</lastmod>
+<changefreq>monthly</changefreq>
+</url>
+<url>
+<loc>https://hetarchief.be/zoeken/?aanbieders=OR-rf5kf25</loc>
+<xhtml:link rel="alternate" hreflang="nl" href="https://hetarchief.be/zoeken/?aanbieders=OR-rf5kf25"/>
+<xhtml:link rel="alternate" hreflang="en" href="https://hetarchief.be/en/search/?aanbieders=OR-rf5kf25"/>
+<changefreq>weekly</changefreq>
+</url>
+<url>
+<loc>https://hetarchief.be/zoeken/?aanbieders=OR-spacex</loc>
+<xhtml:link rel="alternate" hreflang="nl" href="https://hetarchief.be/zoeken/?aanbieders=OR-spacex"/>
+<xhtml:link rel="alternate" hreflang="en" href="https://hetarchief.be/en/search/?aanbieders=OR-spacex"/>
+<changefreq>weekly</changefreq>
+</url>
 </urlset>`;

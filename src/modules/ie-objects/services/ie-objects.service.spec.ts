@@ -518,7 +518,7 @@ describe('ieObjectsService', () => {
 						HetArchiefIeObjectLicense.PUBLIEK_METADATA_LTD,
 						HetArchiefIeObjectLicense.PUBLIEK_METADATA_ALL,
 					],
-					0,
+					'',
 					50
 				);
 				fail('findIeObjectsForSitemap should have thrown an error');
@@ -538,11 +538,12 @@ describe('ieObjectsService', () => {
 					HetArchiefIeObjectLicense.PUBLIEK_METADATA_LTD,
 					HetArchiefIeObjectLicense.PUBLIEK_METADATA_ALL,
 				],
-				0,
+				'',
 				50
 			);
 
 			expect(result.items).toEqual([mockSitemapObject]);
+			expect(result.lastId).toEqual(mockGqlSitemapObject.id);
 		});
 	});
 

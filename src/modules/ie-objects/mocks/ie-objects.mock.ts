@@ -956,6 +956,7 @@ export const mockGqlIeObjectFindByFolderIdResult: Readonly<Partial<HetArchiefIeO
 
 export const mockGqlSitemapObject: FindIeObjectsForSitemapQuery['graph_intellectual_entity'][0] =
 	Object.freeze({
+		id: 'https://data-int.hetarchief.be/id/entity/4f1mg9x363',
 		schema_identifier: '4f1mg9x363',
 		updated_at: '2023-04-13',
 		schemaNames: [
