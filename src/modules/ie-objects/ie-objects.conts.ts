@@ -189,6 +189,7 @@ const IE_OBJECT_PROPS_METADATA_SET_ALL: Readonly<(keyof HetArchiefIeObject)[]> =
 	'meemooDescriptionCast',
 	'meemooMediaObjectId',
 	'publisher',
+	'locationCreated', // Plaats van uitgave
 	'alternativeTitle',
 	'preceededBy',
 	'succeededBy',
