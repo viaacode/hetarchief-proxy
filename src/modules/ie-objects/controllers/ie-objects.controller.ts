@@ -55,6 +55,7 @@ import {
 } from '@viaa/avo2-types';
 import {
 	IeObjectMentionsQueryDto,
+	IeObjectSubtitlesQueryDto,
 	IeObjectsAutocompleteQueryDto,
 	IeObjectsPlayableDisplayDataQueryDto,
 	IeObjectsQueryDto,
@@ -82,6 +83,7 @@ import {
 
 import { IeObjectsService } from '../services/ie-objects.service';
 import { PlayableDisplayDataService } from '../services/playable-display-data.service';
+import { SubtitlesService } from '../services/subtitles.service';
 
 import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
 import { mapLimit } from 'blend-promise-utils';
@@ -94,6 +96,7 @@ import {
 	OrderProperty,
 } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
 import { mapDcTermsFormatToSimpleType } from '~modules/ie-objects/helpers/map-dc-terms-format-to-simple-type';
+import { isSubtitleMimeType } from '~modules/ie-objects/helpers/subtitles';
 import {
 	ERROR_CODE,
 	IE_OBJECT_AV_TYPES,
@@ -117,6 +120,7 @@ export class IeObjectsController {
 		private playableDisplayDataService: PlayableDisplayDataService,
 		private eventsService: EventsService,
 		private playerTicketService: PlayerTicketService,
+		private subtitlesService: SubtitlesService,
 		private playerTicketController: PlayerTicketController,
 		private contentPagesService: ContentPagesService,
 		private configService: ConfigService<Configuration>
@@ -180,6 +184,11 @@ export class IeObjectsController {
 				},
 				404
 			);
+		}
+
+		// Subtitle files are only served as WebVTT through the subtitles endpoint, never as a playable ticket
+		if (isSubtitleMimeType(requestedFile.mimeType)) {
+			throw new ForbiddenException('You do not have permission to play this file (subtitle file)');
 		}
 
 		// Check if we need to cut the video / audio file
@@ -463,6 +472,84 @@ export class IeObjectsController {
 			hasAccessToEssence: !!accessibleObject.hasAccessToEssence,
 			mentions,
 		};
+	}
+
+	@Get('subtitles')
+	@ApiOperation({
+		summary:
+			'Get the AI generated subtitles of an AV file as WebVTT. The file is streamed by the proxy so it is never served from a public URL',
+	})
+	@ApiOkResponse({ description: 'Returns the subtitles as WebVTT' })
+	@ApiForbiddenResponse({
+		description:
+			'The caller is not a key user, or the object is not disclosed for key use, is not AV material, does not contain the file, or is restricted by sector logic',
+	})
+	@ApiNotFoundResponse({ description: 'The file is not a subtitle file' })
+	public async getSubtitles(
+		@Referer() referer: string,
+		@Ip() ip: string,
+		@Query() subtitlesQuery: IeObjectSubtitlesQueryDto,
+		@SessionUser() user: SessionUserEntity,
+		@Res({ passthrough: true }) res: Response
+	): Promise<string> {
+		// AI subtitles are for key users only
+		if (!user?.getIsKeyUser()) {
+			throw new ForbiddenException(
+				'You do not have permission to view AI subtitles (not a key user)'
+			);
+		}
+
+		const accessibleObject = await this.getAccessibleObjectForTicket(
+			subtitlesQuery.schemaIdentifier,
+			user,
+			referer,
+			ip
+		);
+
+		if (!IE_OBJECT_AV_TYPES.includes(accessibleObject.dctermsFormat as HetArchiefIeObjectType)) {
+			throw new ForbiddenException(
+				'You do not have permission to view the subtitles of this file (non AV material)'
+			);
+		}
+		if (!accessibleObject.hasAccessToEssence) {
+			throw new ForbiddenException(
+				'You do not have permission to view the subtitles of this file (no access to the essence)'
+			);
+		}
+		if (accessibleObject.limitedBySectorLogic) {
+			throw new ForbiddenException(
+				'You do not have permission to view the AI subtitles of this object (limited by sector logic)'
+			);
+		}
+
+		// Deliberately the object's own licenses, as for the mentions: the AI license is a feature flag
+		if (!accessibleObject.licenses?.includes(HetArchiefIeObjectLicense.INTRA_CP_METADATA_AI)) {
+			throw new ForbiddenException(
+				'You do not have permission to view the AI subtitles of this object (no AI metadata license)'
+			);
+		}
+
+		// Only a file that is listed in the pages of the accessible object is ever fetched: no caller supplied path
+		const [subtitleFile] = this.ieObjectsService.getRepresentationAndFileInIeObject(
+			accessibleObject,
+			subtitlesQuery.fileId
+		);
+		if (!subtitleFile) {
+			throw new ForbiddenException(
+				"You do not have permission to view the subtitles of this file (ie object doesn't contain file)"
+			);
+		}
+		if (!isSubtitleMimeType(subtitleFile.mimeType)) {
+			throw new NotFoundException('The requested file is not a subtitle file');
+		}
+
+		const vtt = await this.subtitlesService.getVtt(subtitleFile.storedAt);
+
+		// Set here instead of with @Header: those would also end up on the JSON body of an error response
+		res.setHeader('Content-Type', 'text/vtt; charset=utf-8');
+		res.setHeader('Cache-Control', 'private, no-store');
+		res.setHeader('Content-Disposition', 'inline');
+		return vtt;
 	}
 
 	@Get('thumbnail-ticket')

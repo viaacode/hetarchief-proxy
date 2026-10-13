@@ -233,6 +233,8 @@ const config = (): Configuration => {
 			'MEDIAHAVEN_S3_EXPORT_LOCATION_BUCKET_URL',
 			true
 		),
+		ALTO_S3_ACCESS_KEY_ID: getEnvValue('ALTO_S3_ACCESS_KEY_ID', false),
+		ALTO_S3_SECRET_ACCESS_KEY: getEnvValue('ALTO_S3_SECRET_ACCESS_KEY', false),
 	};
 	return configValues;
 };

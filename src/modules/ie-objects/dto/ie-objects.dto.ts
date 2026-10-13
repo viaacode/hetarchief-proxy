@@ -26,7 +26,6 @@ import {
 	AutocompleteField,
 	KEY_USER_ONLY_AUTOCOMPLETE_FIELDS,
 } from '~modules/ie-objects/ie-objects.types';
-import { commaSeparatedStringToArray } from '~shared/helpers/comma-separated-string-to-array';
 import { SortDirection } from '~shared/types';
 
 export class SearchFilter {
@@ -234,6 +233,26 @@ export class IeObjectMentionsQueryDto {
 	@ApiProperty({
 		type: String,
 		description: 'Get the AI-detected mentions for the file with this id',
+		example: 'https://data-int.hetarchief.be/id/entity/abdce2329b10260be65c9b68fb84f960',
+		required: true,
+	})
+	fileId: string;
+}
+
+export class IeObjectSubtitlesQueryDto {
+	@IsString()
+	@ApiProperty({
+		type: String,
+		description: 'The schema identifier of the ie-object that contains the subtitle file',
+		example: '9z9089fx9s',
+		required: true,
+	})
+	schemaIdentifier: string;
+
+	@IsString()
+	@ApiProperty({
+		type: String,
+		description: 'The id of the subtitle file, as listed in the files of the ie-object pages',
 		example: 'https://data-int.hetarchief.be/id/entity/abdce2329b10260be65c9b68fb84f960',
 		required: true,
 	})

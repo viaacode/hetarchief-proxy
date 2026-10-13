@@ -68,6 +68,8 @@ export const configValidationSchema = Joi.object({
 	VIDEO_STILLS_TOKEN_CLIENT_ID: Joi.string(),
 	VIDEO_STILLS_TOKEN_CLIENT_SECRET: Joi.string(),
 	VIDEO_STILLS_ENDPOINT: Joi.string(),
+	ALTO_S3_ACCESS_KEY_ID: Joi.string(),
+	ALTO_S3_SECRET_ACCESS_KEY: Joi.string(),
 });
 
 export const DEFAULT_CONFIG = {

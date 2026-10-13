@@ -8,6 +8,7 @@ import {
 	IE_OBJECT_METADATA_SET_BY_OBJECT_AND_USER_SECTOR,
 	IE_OBJECT_PROPS_BY_METADATA_SET,
 	IE_OBJECT_PUBLIC_LICENSES,
+	IE_OBJECT_SUBTITLE_MIME_TYPES,
 } from '../ie-objects.conts';
 import { IeObjectExtraUserGroupType, IeObjectMetadataSet } from '../ie-objects.types';
 
@@ -210,6 +211,26 @@ export const limitAccessToObjectDetails = (
 	// Step 3 - Return ie object with limited access props
 	// ---------------------------------------------------
 	const limitedIeObject = pick(ieObject, ieObjectLimitedProps);
+
+	// AI subtitles: key users only, never across a sector restriction, only with access to the
+	// essence, and only when the object carries the AI metadata license. That license is a feature
+	// flag on the object itself, not one of the licenses the user can access (same as the mentions).
+	const canSeeAiSubtitles =
+		userInfo.isKeyUser &&
+		!limitedBySectorLogic &&
+		hasAccessToEssence &&
+		ieObjectLicenses.includes(HetArchiefIeObjectLicense.INTRA_CP_METADATA_AI);
+	if (limitedIeObject.pages && !canSeeAiSubtitles) {
+		limitedIeObject.pages = limitedIeObject.pages.map((page) => ({
+			...page,
+			representations: page.representations?.map((representation) => ({
+				...representation,
+				files: representation.files?.filter(
+					(file) => !IE_OBJECT_SUBTITLE_MIME_TYPES.includes(file.mimeType)
+				),
+			})),
+		}));
+	}
 
 	// Determine access through
 	const accessThrough = getAccessThrough({

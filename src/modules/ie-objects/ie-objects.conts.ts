@@ -44,6 +44,16 @@ export const JSON_FORMATS: Readonly<string[]> = ['application/json'];
 // Mirrors IMAGE_API_FORMATS in the hetarchief-client repo (src/modules/ie-objects/ie-objects.consts.tsx)
 export const IMAGE_API_FORMATS: Readonly<string[]> = ['image/jph', 'image/jp2'];
 
+export const SUBTITLE_VTT_MIME_TYPE = 'text/vtt';
+export const SUBTITLE_SRT_MIME_TYPE = 'application/x-subrip';
+// Mirrors SUBTITLE_FORMATS in the hetarchief-client repo (src/modules/ie-objects/ie-objects.consts.tsx)
+export const IE_OBJECT_SUBTITLE_MIME_TYPES: Readonly<string[]> = [
+	SUBTITLE_VTT_MIME_TYPE,
+	SUBTITLE_SRT_MIME_TYPE,
+	'text/srt',
+	'application/x-srt',
+];
+
 export const IE_OBJECT_INTRA_CP_LICENSES: Readonly<HetArchiefIeObjectLicense[]> = [
 	HetArchiefIeObjectLicense.INTRA_CP_CONTENT,
 	HetArchiefIeObjectLicense.INTRA_CP_METADATA_ALL,
