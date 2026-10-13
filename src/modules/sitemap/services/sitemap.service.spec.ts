@@ -70,6 +70,8 @@ describe('SitemapService', () => {
 			.compile();
 
 		sitemapService = module.get<SitemapService>(SitemapService);
+		// Skip the pause between batches in tests
+		vi.spyOn(sitemapService as any, 'sleep').mockResolvedValue(undefined);
 	});
 
 	afterEach(() => {
@@ -199,35 +201,29 @@ describe('SitemapService', () => {
 			// Public ie objects
 			mockIeObjectsService.findIeObjectsForSitemap.mockResolvedValueOnce({
 				items: [mockSitemapObject],
-				total: 1,
-				size: 1,
+				lastId: 'https://data-int.hetarchief.be/id/entity/4f1mg9x363',
 			});
 			mockIeObjectsService.findIeObjectsForSitemap.mockResolvedValueOnce({
 				items: [mockSitemapObject],
-				total: 1,
-				size: 1,
+				lastId: 'https://data-int.hetarchief.be/id/entity/4f1mg9x363',
 			});
 			mockIeObjectsService.findIeObjectsForSitemap.mockResolvedValueOnce({
 				items: [],
-				total: 0,
-				size: 0,
+				lastId: null,
 			});
 
 			// Non-public ie objects
 			mockIeObjectsService.findIeObjectsForSitemap.mockResolvedValueOnce({
 				items: [mockSitemapObject],
-				total: 1,
-				size: 1,
+				lastId: 'https://data-int.hetarchief.be/id/entity/4f1mg9x363',
 			});
 			mockIeObjectsService.findIeObjectsForSitemap.mockResolvedValueOnce({
 				items: [mockSitemapObject],
-				total: 1,
-				size: 1,
+				lastId: 'https://data-int.hetarchief.be/id/entity/4f1mg9x363',
 			});
 			mockIeObjectsService.findIeObjectsForSitemap.mockResolvedValueOnce({
 				items: [],
-				total: 0,
-				size: 0,
+				lastId: null,
 			});
 
 			mockAssetsService.uploadAndTrack.mockResolvedValueOnce(
