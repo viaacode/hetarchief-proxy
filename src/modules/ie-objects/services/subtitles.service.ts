@@ -7,13 +7,9 @@ import { convertSrtToVtt } from '../helpers/subtitles';
 import { Configuration } from '~config';
 import { customError } from '~shared/helpers/custom-error';
 
-// The AI transcripts live in a private bucket on the meemoo S3 gateway, next to the ALTO files.
-// Only a stored_at on that gateway is ever read, whatever the graph says.
-const S3_GATEWAY_HOST = /^s3(-int|-tst|-qas|-prd)?\.do\.viaa\.be$/;
-
 @Injectable()
 export class SubtitlesService {
-	// One client per gateway origin (a handful at most, see S3_GATEWAY_HOST), reused across requests
+	// One client per gateway origin (in practice only the ALTO_S3_GATEWAY_HOST), reused across requests
 	private s3Clients = new Map<string, S3Client>();
 
 	constructor(private configService: ConfigService<Configuration>) {}
@@ -25,9 +21,16 @@ export class SubtitlesService {
 	 */
 	public async getVtt(storedAt: string): Promise<string> {
 		try {
-			const { origin, hostname, pathname } = new URL(storedAt);
-			if (!S3_GATEWAY_HOST.test(hostname)) {
-				throw new Error(`Subtitle file is not stored on the s3 gateway: ${hostname}`);
+			// The AI transcripts live in a private bucket on the meemoo S3 gateway, next to the ALTO files.
+			// Only a stored_at on exactly that gateway origin is ever read, whatever the graph says.
+			// Fails closed when not configured. The origin includes scheme and port, since the signed request goes there.
+			const gatewayHost = this.configService.get('ALTO_S3_GATEWAY_HOST');
+			if (!gatewayHost) {
+				throw new Error('ALTO_S3_GATEWAY_HOST is not configured');
+			}
+			const { origin, pathname } = new URL(storedAt);
+			if (origin !== `https://${gatewayHost.toLowerCase()}`) {
+				throw new Error(`Subtitle file is not stored on the s3 gateway: ${origin}`);
 			}
 
 			// Path style: /<bucket>/<key>

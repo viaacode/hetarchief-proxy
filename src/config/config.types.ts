@@ -95,6 +95,7 @@ export interface Configuration {
 	MEDIAHAVEN_EXPORT_JOB_RETRY_DELAY_HOURS: number;
 	ALTO_S3_ACCESS_KEY_ID: string;
 	ALTO_S3_SECRET_ACCESS_KEY: string;
+	ALTO_S3_GATEWAY_HOST: string;
 }
 
 export type ConfigService = NestConfigService<Configuration>;

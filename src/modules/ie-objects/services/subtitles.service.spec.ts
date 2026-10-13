@@ -30,9 +30,14 @@ describe('SubtitlesService', () => {
 
 	beforeEach(() => {
 		service = new SubtitlesService(mockConfigService as any);
-		mockConfigService.get.mockImplementation((key: string) =>
-			key === 'ALTO_S3_ACCESS_KEY_ID' ? 'access-key' : 'secret-key'
-		);
+		mockConfigService.get.mockImplementation((key: string) => {
+			const values: Record<string, string> = {
+				ALTO_S3_ACCESS_KEY_ID: 'access-key',
+				ALTO_S3_SECRET_ACCESS_KEY: 'secret-key',
+				ALTO_S3_GATEWAY_HOST: 's3-int.do.viaa.be',
+			};
+			return values[key];
+		});
 		mockSend.mockResolvedValue({ Body: { transformToString: async () => srt } });
 	});
 
@@ -58,8 +63,20 @@ describe('SubtitlesService', () => {
 	});
 
 	it('refuses a location that is not on the s3 gateway', async () => {
-		await expect(service.getVtt('https://example.com/alto/file.srt')).rejects.toThrow();
+		await expect(service.getVtt('https://example.com/alto/file.srt')).rejects.toThrow(
+			'Failed to read subtitle file'
+		);
 
+		expect(mockSend).not.toHaveBeenCalled();
+	});
+
+	it.each([
+		['plain http', 'http://s3-int.do.viaa.be/alto/file.srt'],
+		['another port', 'https://s3-int.do.viaa.be:8443/alto/file.srt'],
+	])('refuses the gateway host over %s', async (_label, location) => {
+		await expect(service.getVtt(location)).rejects.toThrow('Failed to read subtitle file');
+
+		expect(mockS3Client).not.toHaveBeenCalled();
 		expect(mockSend).not.toHaveBeenCalled();
 	});
 
@@ -83,10 +100,23 @@ describe('SubtitlesService', () => {
 		await expect(service.getVtt(storedAt)).rejects.toThrow(NotFoundException);
 	});
 
-	it('fails when the s3 credentials are not configured', async () => {
-		mockConfigService.get.mockReturnValue(undefined);
+	it('refuses every location when the gateway host is not configured', async () => {
+		mockConfigService.get.mockImplementation((key: string) =>
+			key === 'ALTO_S3_GATEWAY_HOST' ? undefined : 'value'
+		);
 
-		await expect(service.getVtt(storedAt)).rejects.toThrow();
+		await expect(service.getVtt(storedAt)).rejects.toThrow('Failed to read subtitle file');
+		expect(mockS3Client).not.toHaveBeenCalled();
+		expect(mockSend).not.toHaveBeenCalled();
+	});
+
+	it('fails when the s3 credentials are not configured', async () => {
+		mockConfigService.get.mockImplementation((key: string) =>
+			key === 'ALTO_S3_GATEWAY_HOST' ? 's3-int.do.viaa.be' : undefined
+		);
+
+		await expect(service.getVtt(storedAt)).rejects.toThrow('Failed to read subtitle file');
+		expect(mockS3Client).not.toHaveBeenCalled();
 		expect(mockSend).not.toHaveBeenCalled();
 	});
 });

@@ -70,6 +70,7 @@ export const configValidationSchema = Joi.object({
 	VIDEO_STILLS_ENDPOINT: Joi.string(),
 	ALTO_S3_ACCESS_KEY_ID: Joi.string(),
 	ALTO_S3_SECRET_ACCESS_KEY: Joi.string(),
+	ALTO_S3_GATEWAY_HOST: Joi.string(),
 });
 
 export const DEFAULT_CONFIG = {
