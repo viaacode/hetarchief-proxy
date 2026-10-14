@@ -9,7 +9,7 @@ import { customError } from '~shared/helpers/custom-error';
 
 @Injectable()
 export class SubtitlesService {
-	// One client per gateway origin (in practice only the ALTO_S3_GATEWAY_HOST), reused across requests
+	// One client per gateway origin (in practice only the ALTO_S3_ENDPOINT), reused across requests
 	private s3Clients = new Map<string, S3Client>();
 
 	constructor(private configService: ConfigService<Configuration>) {}
@@ -24,13 +24,13 @@ export class SubtitlesService {
 			// The AI transcripts live in a private bucket on the meemoo S3 gateway, next to the ALTO files.
 			// Only a stored_at on exactly that gateway origin is ever read, whatever the graph says.
 			// Fails closed when not configured. The origin includes scheme and port, since the signed request goes there.
-			const gatewayHost = this.configService.get('ALTO_S3_GATEWAY_HOST');
+			const gatewayHost = this.configService.get('ALTO_S3_ENDPOINT');
 			if (!gatewayHost) {
-				throw new Error('ALTO_S3_GATEWAY_HOST is not configured');
+				throw new Error('ALTO_S3_ENDPOINT is not configured');
 			}
 			const { origin, pathname } = new URL(storedAt);
 			if (origin !== `https://${gatewayHost.toLowerCase()}`) {
-				throw new Error(`Subtitle file is not stored on the s3 gateway: ${origin}`);
+				throw new Error(`Subtitle file is not stored on a whitelisted the s3 bucket: ${origin}`);
 			}
 
 			// Path style: /<bucket>/<key>

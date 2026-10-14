@@ -34,7 +34,7 @@ describe('SubtitlesService', () => {
 			const values: Record<string, string> = {
 				ALTO_S3_ACCESS_KEY_ID: 'access-key',
 				ALTO_S3_SECRET_ACCESS_KEY: 'secret-key',
-				ALTO_S3_GATEWAY_HOST: 's3-int.do.viaa.be',
+				ALTO_S3_ENDPOINT: 's3-int.do.viaa.be',
 			};
 			return values[key];
 		});
@@ -102,7 +102,7 @@ describe('SubtitlesService', () => {
 
 	it('refuses every location when the gateway host is not configured', async () => {
 		mockConfigService.get.mockImplementation((key: string) =>
-			key === 'ALTO_S3_GATEWAY_HOST' ? undefined : 'value'
+			key === 'ALTO_S3_ENDPOINT' ? undefined : 'value'
 		);
 
 		await expect(service.getVtt(storedAt)).rejects.toThrow('Failed to read subtitle file');
@@ -112,7 +112,7 @@ describe('SubtitlesService', () => {
 
 	it('fails when the s3 credentials are not configured', async () => {
 		mockConfigService.get.mockImplementation((key: string) =>
-			key === 'ALTO_S3_GATEWAY_HOST' ? 's3-int.do.viaa.be' : undefined
+			key === 'ALTO_S3_ENDPOINT' ? 's3-int.do.viaa.be' : undefined
 		);
 
 		await expect(service.getVtt(storedAt)).rejects.toThrow('Failed to read subtitle file');
