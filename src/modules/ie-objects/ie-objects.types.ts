@@ -1,6 +1,7 @@
 import type { IPagination } from '@studiohyperdrive/pagination';
 
 import type { FindAllIeObjectsByFolderIdQuery } from '~generated/graphql-db-types-hetarchief';
+import type { ReusabilityCategory } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
 
 import type {
 	HetArchiefIeObject,
@@ -98,6 +99,12 @@ export interface ElasticsearchResponse {
 		schema_genre: MediaSearchAggregation<string>;
 		schema_creator: MediaSearchAggregation<string>;
 		schema_in_language: MediaSearchAggregation<string>;
+		/**
+		 * One bucket per reusability category that has hits. Derived, not an elasticsearch field.
+		 * Only the presence of a bucket is meaningful: doc_count sums rights buckets, so a document
+		 * with several rights is counted more than once.
+		 */
+		reusability?: Pick<MediaSearchAggregation<ReusabilityCategory>, 'buckets'>;
 	};
 }
 

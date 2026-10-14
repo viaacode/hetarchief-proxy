@@ -438,6 +438,19 @@ describe('QueryBuilder', () => {
 			});
 		});
 
+		it('should request the rights aggregations for the REUSABILITY field', () => {
+			const esQuery = QueryBuilder.build(
+				{
+					filters: [],
+					size: 10,
+					page: 1,
+					requestedAggs: [IeObjectsSearchFilterField.REUSABILITY],
+				},
+				mockInputInfo as any
+			);
+			expect(Object.keys(esQuery.aggs)).toEqual(['dcterms_rights_statement', 'reuse_category.id']);
+		});
+
 		it('should sort on a given order property', () => {
 			const orderProp = OrderProperty.NAME;
 			const orderDirection = SortDirection.asc;

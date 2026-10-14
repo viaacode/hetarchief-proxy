@@ -195,6 +195,78 @@ describe('ieObjectsService', () => {
 			);
 			expect(result.aggregations.dcterms_format.buckets[0].doc_count).toEqual(1);
 		});
+
+		it('only adds the reusability categories whose rights statements have hits', async () => {
+			const esResponse = {
+				aggregations: {
+					dcterms_rights_statement: {
+						buckets: [{ key: RightsLabel.PUBLIC_DOMAIN, doc_count: 2 }],
+					},
+					'reuse_category.id': {
+						buckets: [
+							{ key: RightsLabel.CC0, doc_count: 3 },
+							{ key: RightsLabel.IN_COPYRIGHT, doc_count: 1 },
+						],
+					},
+				},
+			} as unknown as ElasticsearchResponse;
+			const result = await ieObjectsService.adaptESResponse(esResponse);
+			expect(result.aggregations.reusability.buckets).toEqual([
+				{ key: 'freely-reusable', doc_count: 5 },
+				{ key: 'possibly-reusable', doc_count: 1 },
+			]);
+		});
+
+		it('derives the reusability categories when only the audio/video rights were aggregated', async () => {
+			const esResponse = {
+				aggregations: {
+					'reuse_category.id': {
+						buckets: [{ key: RightsLabel.CC_BY, doc_count: 2 }],
+					},
+				},
+			} as unknown as ElasticsearchResponse;
+			const result = await ieObjectsService.adaptESResponse(esResponse);
+			expect(result.aggregations.reusability.buckets).toEqual([
+				{ key: 'reusable-with-conditions', doc_count: 2 },
+			]);
+		});
+
+		it('adds no reusability category for a rights statement that belongs to none', async () => {
+			const esResponse = {
+				aggregations: {
+					dcterms_rights_statement: {
+						buckets: [{ key: 'https://rightsstatements.org/page/NoC-US/1.0/', doc_count: 4 }],
+					},
+				},
+			} as unknown as ElasticsearchResponse;
+			const result = await ieObjectsService.adaptESResponse(esResponse);
+			expect(result.aggregations.reusability.buckets).toEqual([]);
+		});
+
+		it('merges a rights statement that is in both rights aggregations into one category bucket', async () => {
+			const esResponse = {
+				aggregations: {
+					dcterms_rights_statement: {
+						buckets: [{ key: RightsLabel.COPYRIGHT_UNDETERMINED, doc_count: 2 }],
+					},
+					'reuse_category.id': {
+						buckets: [{ key: RightsLabel.COPYRIGHT_UNDETERMINED, doc_count: 3 }],
+					},
+				},
+			} as unknown as ElasticsearchResponse;
+			const result = await ieObjectsService.adaptESResponse(esResponse);
+			expect(result.aggregations.reusability.buckets).toEqual([
+				{ key: 'possibly-reusable', doc_count: 5 },
+			]);
+		});
+
+		it('adds no reusability aggregation when the rights were not requested', async () => {
+			const esResponse = {
+				aggregations: { dcterms_format: { buckets: [] } },
+			} as unknown as ElasticsearchResponse;
+			const result = await ieObjectsService.adaptESResponse(esResponse);
+			expect(result.aggregations.reusability).toBeUndefined();
+		});
 	});
 
 	describe('findMetadataBySchemaIdentifier', () => {
