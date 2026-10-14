@@ -498,6 +498,7 @@ export const mockIeObject2: GetIeObjectDetailQuery = {
 	],
 	getIeObject: [
 		{
+			rights: null,
 			schema_identifier: '086350m40w',
 			id: 'https://data-int.hetarchief.be/id/entity/086350m40w',
 			schema_position: null,
@@ -506,6 +507,7 @@ export const mockIeObject2: GetIeObjectDetailQuery = {
 			schemaNames: [
 				{
 					schema_name: 'In Dienende liefde (prosessie zuster Agnes Boudry)',
+					is_ai_generated: false,
 				},
 			],
 			schema_description: null,
@@ -520,6 +522,7 @@ export const mockIeObject2: GetIeObjectDetailQuery = {
 			schema_number_of_pages: null,
 			premis_is_part_of: null,
 			schemaMaintainer: {
+				organizationSlug: null,
 				org_identifier: 'OR-x05xc02',
 				skos_pref_label: 'Stadsarchief Ieper',
 				ha_org_has_logo: 'https://assets-int.viaa.be/images/OR-x05xc02',
@@ -551,6 +554,7 @@ export const mockIeObject2: GetIeObjectDetailQuery = {
 				schemaNames: [
 					{
 						schema_name: 'Gazet van Antwerpen - 1892-09-09',
+						is_ai_generated: false,
 					},
 				],
 				schema_description: null,
@@ -570,6 +574,7 @@ export const mockIeObject2: GetIeObjectDetailQuery = {
 				premis_is_part_of: null,
 				bibframe_edition: 'test-parent-bibframe_edition',
 				schemaMaintainer: {
+					organizationSlug: null,
 					org_identifier: 'OR-v97zq9j',
 					skos_pref_label: 'Erfgoedbibliotheek Hendrik Conscience',
 					ha_org_has_logo: 'https://assets-qas.viaa.be/images/OR-v97zq9j',
@@ -729,9 +734,11 @@ export const mockIeObject2: GetIeObjectDetailQuery = {
 	],
 	getHasPart: [
 		{
+			schema_position: null,
 			schemaMentions: [],
 			isRepresentedBy: [
 				{
+					schema_thumbnail_url: null,
 					id: 'https://data-int.hetarchief.be/id/entity/e453ce2e9f8f7f92c4c2d6c6b62f49a0',
 					schema_name:
 						"Lageresolutiekopie (mp4): 'In Dienende liefde (prosessie zuster Agnes Boudry)' (043c23ce2f6419dabad1071911e4cc5a)",
@@ -779,6 +786,7 @@ export const mockIeObject2: GetIeObjectDetailQuery = {
 	],
 	getIsRepresentedBy: [
 		{
+			schema_position: null,
 			isRepresentedBy: [],
 		},
 	],
@@ -818,6 +826,7 @@ const mockRelatedIeObject:
 	schemaNames: [
 		{
 			schema_name: 'Het annoncenblad van Moll en omliggende dorpen',
+			is_ai_generated: false,
 		},
 	],
 	dcterms_available: '2020-08-28T11:48:11',
@@ -848,6 +857,7 @@ const mockRelatedIeObject:
 		org_identifier: 'OR-rf5kf25',
 		skos_pref_label: 'VRT',
 		ha_org_sector: 'Publieke Omroep',
+		organizationSlug: null,
 	},
 };
 
@@ -880,16 +890,24 @@ export const mockGqlIeObjectFindByFolderId: FindAllIeObjectsByFolderIdQuery['use
 	Object.freeze({
 		intellectualEntity: {
 			schema_identifier: '4f1mg9x363',
+			schema_description: null,
+			dcterms_available: null,
+			schema_date_created: null,
+			schemaThumbnail: null,
+			schemaDuration: null,
 			premis_identifier: {
 				batch: ['PRD-BD-OR-1v5bc86-2020-10-19-16-20-07-874'],
 			},
 			schemaMaintainer: {
 				org_identifier: 'OR-rf5kf25',
 				skos_pref_label: 'Huis van Alijn',
+				ha_org_sector: null,
+				organizationSlug: null,
 			},
 			schemaNames: [
 				{
 					schema_name: 'Op de boerderij',
+					is_ai_generated: false,
 				},
 			],
 			dcterms_format: 'video',
@@ -962,6 +980,7 @@ export const mockGqlSitemapObject: FindIeObjectsForSitemapQuery['graph_intellect
 		schemaNames: [
 			{
 				schema_name: 'Durf te vragen R002 A0001',
+				is_ai_generated: false,
 			},
 		],
 		schemaMaintainer: {

@@ -14,9 +14,9 @@ import { HetArchiefIeObjectLicense } from '@viaa/avo2-types';
 import {
 	GetSitemapConfigDocument,
 	type GetSitemapConfigQuery,
-	Lookup_App_Content_Type_Enum,
 } from '~generated/graphql-db-types-hetarchief';
 import { type IeObjectsSitemap } from '~modules/ie-objects/ie-objects.types';
+import { Lookup_App_Content_Type_Enum } from '~shared/types/lookup-enums';
 
 import { AvoFileUploadAssetType, AvoSearchOrderDirection } from '@viaa/avo2-types';
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';

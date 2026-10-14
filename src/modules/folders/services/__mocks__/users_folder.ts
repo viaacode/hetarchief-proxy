@@ -12,11 +12,13 @@ export const mockGqlFolder: GqlFolderWithIeObjects = {
 		{
 			created_at: '2022-02-19T09:19:09.487977',
 			intellectualEntity: {
+				dcterms_available: null,
 				id: 'https://datahub.io/dataset/8s4jm2514q',
 				schema_identifier: '8s4jm2514q',
 				schemaNames: [
 					{
 						schema_name: 'CGSO. De mannenbeweging - mannenemancipatie - 1982',
+						is_ai_generated: false,
 					},
 				],
 			},

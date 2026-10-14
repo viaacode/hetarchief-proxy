@@ -6,6 +6,10 @@ import { Locale } from '~shared/types/types';
 export const mockUserResponse: { users_profile: GqlUser[] } = {
 	users_profile: [
 		{
+			last_access_at: null,
+			created_at: null,
+			updated_at: null,
+			organisation: null,
 			id: 'df8024f9-ebdc-4f45-8390-72980a3f29f6',
 			first_name: 'Marie',
 			last_name: 'Odhiambo',

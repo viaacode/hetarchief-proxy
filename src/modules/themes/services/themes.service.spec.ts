@@ -31,6 +31,10 @@ const mockSessionUser = new SessionUserEntity(mockUser);
 
 const mockGetIeObjectsInThemeResponse: GetThemeWithObjectsInRandomOrderQuery = {
 	app_theme_by_pk: {
+		description_nl: null,
+		description_en: null,
+		content_page_path_nl: null,
+		content_page_path_en: null,
 		id: 'theme-uuid-1',
 		slug: mockThemeSlug,
 		name_nl: 'Cultuur en samenleving',
@@ -41,15 +45,19 @@ const mockGetIeObjectsInThemeResponse: GetThemeWithObjectsInRandomOrderQuery = {
 		ieObjectLinksRandomOrder: [
 			{
 				ieObject: {
+					schema_identifier: null,
 					id: 'ie-uuid-1',
 					schemaNames: [
 						{
 							schema_name: 'Natuur documentaire',
+							is_ai_generated: false,
 						},
 					],
 					dctermsFormat: [{ dcterms_format: 'video' }],
 					schemaThumbnail: { schema_thumbnail_url: ['https://example.com/thumb1.jpg'] },
 					schemaMaintainer: {
+						organizationSlug: null,
+						ha_org_sector: null,
 						id: 'or-abc123',
 						skos_pref_label: 'VRT',
 						org_identifier: 'OR-abc123',
@@ -59,15 +67,19 @@ const mockGetIeObjectsInThemeResponse: GetThemeWithObjectsInRandomOrderQuery = {
 			},
 			{
 				ieObject: {
+					schema_identifier: null,
 					id: 'ie-uuid-2',
 					schemaNames: [
 						{
 							schema_name: 'Natuur foto',
+							is_ai_generated: false,
 						},
 					],
 					dctermsFormat: [{ dcterms_format: 'image' }],
 					schemaThumbnail: null,
 					schemaMaintainer: {
+						organizationSlug: null,
+						ha_org_sector: null,
 						id: 'or-def456',
 						skos_pref_label: 'RTBF',
 						org_identifier: 'OR-def456',

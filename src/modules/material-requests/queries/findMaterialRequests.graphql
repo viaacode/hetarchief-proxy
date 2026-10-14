@@ -89,6 +89,7 @@ query findMaterialRequests(
 		ie_object_representation_id
 		objectRepresentation {
 			id
+			schema_thumbnail_url
 			schema_name
 			is_media_fragment_of
 			schema_in_language

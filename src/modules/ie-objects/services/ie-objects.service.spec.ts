@@ -449,6 +449,7 @@ describe('ieObjectsService', () => {
 			const objectIeMock = cloneDeep(mockIeObject2);
 			objectIeMock.getHasPart = [];
 			objectIeMock.getIsRepresentedBy[0] = {
+				schema_position: null,
 				isRepresentedBy: [
 					{
 						...objectIeMock.getIsRepresentedBy[0]?.isRepresentedBy?.[0],

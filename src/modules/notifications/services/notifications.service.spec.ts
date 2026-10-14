@@ -36,6 +36,7 @@ import { TestingLogger } from '~shared/logging/test-logger';
 import { AudienceType, Locale, VisitorSpaceStatus } from '~shared/types/types';
 
 const mockGqlNotification1: GqlNotification = {
+	material_request: null,
 	id: '1586f042-c61a-46b8-946b-ca2c2ea351ad',
 	description: 'Bert2 Verhelst2 wil je bezoekersruimte bezoeken',
 	title: 'Er is aan aanvraag om je bezoekersruimte te bezoeken',

@@ -36,6 +36,7 @@ const mockMaterialRequest: MaterialRequest = {
 
 const mockInsertedMessage: InsertMaterialRequestMessageMutation['insert_app_material_request_messages_and_events_one'] =
 	{
+		sender: null,
 		id: 'message-1',
 		message_type: Lookup_App_Material_Request_Message_Type_Enum.Message,
 		sender_profile_id: 'requester-1',
