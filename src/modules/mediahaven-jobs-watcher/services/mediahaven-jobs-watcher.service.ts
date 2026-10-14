@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto';
 import { GetObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { DataService, MediahavenService } from '@meemoo/admin-core-api';
@@ -8,8 +9,7 @@ import { AvoUserCommonUser } from '@viaa/avo2-types';
 import { mapLimit } from 'blend-promise-utils';
 import { isBefore, isPast, parseISO, subHours, subMinutes } from 'date-fns';
 import { compact, isNil, noop } from 'lodash';
-import { stringifyUrl } from 'query-string';
-import { v4 as uuidv4 } from 'uuid';
+import queryString from 'query-string';
 import { Configuration } from '~config';
 import {
 	GetFileStoredAtByIeObjectIdDocument,
@@ -109,7 +109,7 @@ export class MediahavenJobsWatcherService {
 		this.eventsService
 			.insertEvents([
 				{
-					id: uuidv4(),
+					id: randomUUID(),
 					type: LogEventType.ITEM_REQUEST_DOWNLOAD_AVAILABLE,
 					source: 'mediahaven-jobs-watcher/download-statuses',
 					subject: materialRequest.id,
@@ -504,7 +504,7 @@ export class MediahavenJobsWatcherService {
 		try {
 			body = await this.getMediaHavenExportJobRequestBody(materialRequest);
 			const accessToken = await this.getAccessToken();
-			url = stringifyUrl({
+			url = queryString.stringifyUrl({
 				url: `${this.configService.get('MEDIAHAVEN_API_ENDPOINT')}/exports`,
 			});
 			const response = await fetch(url, {
@@ -569,7 +569,7 @@ export class MediahavenJobsWatcherService {
 
 	public async getJobsFromMediahaven(): Promise<MediahavenJobInfo[]> {
 		const accessToken = await this.getAccessToken();
-		const url = stringifyUrl({
+		const url = queryString.stringifyUrl({
 			url: `${this.configService.get('MEDIAHAVEN_API_ENDPOINT')}/exports`,
 			query: {
 				tag: this.configService.get('MEDIAHAVEN_EXPORT_JOBS_TAG'),

@@ -1,11 +1,12 @@
 import {
 	DataService,
+	type IPagination,
 	Locale,
 	MaintenanceAlertsService,
+	Pagination,
 	TranslationsService,
 } from '@meemoo/admin-core-api';
 import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
-import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { isPast } from 'date-fns';
 
 import { DeleteNotificationDto } from '../dto/notifications.dto';

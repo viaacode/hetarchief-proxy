@@ -1,6 +1,6 @@
+import type { IPagination } from '@meemoo/admin-core-api';
 import { Controller, Get, Query } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import type { IPagination } from '@studiohyperdrive/pagination';
 
 import { ContentPartnersQueryDto } from '../dto/content-partners.dto';
 

@@ -2,7 +2,9 @@ import { parse } from 'node:path';
 import {
 	AssetsService,
 	DataService,
+	type IPagination,
 	Locale,
+	Pagination,
 	StillsObjectType,
 	VideoStillsService,
 } from '@meemoo/admin-core-api';
@@ -13,7 +15,6 @@ import {
 	Logger,
 	NotFoundException,
 } from '@nestjs/common';
-import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { mapLimit } from 'blend-promise-utils';
 import {
 	compact,

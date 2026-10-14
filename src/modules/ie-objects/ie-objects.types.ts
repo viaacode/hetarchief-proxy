@@ -1,4 +1,4 @@
-import type { IPagination } from '@studiohyperdrive/pagination';
+import type { IPagination } from '@meemoo/admin-core-api';
 
 import type { FindAllIeObjectsByFolderIdQuery } from '~generated/graphql-db-types-hetarchief';
 

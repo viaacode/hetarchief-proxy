@@ -1,4 +1,4 @@
-import { DataService } from '@meemoo/admin-core-api';
+import { DataService, IPagination, Pagination } from '@meemoo/admin-core-api';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Inject, Injectable, InternalServerErrorException } from '@nestjs/common';
 import type { Cache } from 'cache-manager';
@@ -13,7 +13,6 @@ import {
 } from '../organisations.types';
 
 import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
-import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { type HetArchiefIeObjectSector } from '@viaa/avo2-types';
 import { hoursToMilliseconds } from 'date-fns';
 import {

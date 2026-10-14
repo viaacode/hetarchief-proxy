@@ -19,7 +19,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { AvoAuthIdpType } from '@viaa/avo2-types';
 import type { Request, Response } from 'express';
 import { get, isEmpty, isEqual, pick } from 'lodash';
-import { stringifyUrl } from 'query-string';
+import queryString from 'query-string';
 
 import type { Configuration } from '~config';
 
@@ -282,11 +282,11 @@ export class HetArchiefController {
 		@Query('locale') locale: Locale = Locale.Nl
 	) {
 		try {
-			const serverRedirectUrl = stringifyUrl({
+			const serverRedirectUrl = queryString.stringifyUrl({
 				url: `${this.configService.get('HOST')}/auth/hetarchief/login`,
 				query: { returnToUrl },
 			});
-			const url = stringifyUrl({
+			const url = queryString.stringifyUrl({
 				url: decodeURIComponent(this.configService.get('SSUM_REGISTRATION_PAGE')).replace(
 					'{locale}',
 					locale

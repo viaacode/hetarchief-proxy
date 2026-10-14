@@ -1,8 +1,7 @@
-import { DataService } from '@meemoo/admin-core-api';
+import { DataService, type IPagination, Pagination } from '@meemoo/admin-core-api';
 import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
 import { Injectable, NotFoundException } from '@nestjs/common';
 
-import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import {
 	type HetArchiefIeObject,
 	HetArchiefIeObjectLicense,

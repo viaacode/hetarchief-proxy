@@ -1,3 +1,3 @@
 module.exports = {
-	extends: ['@studiohyperdrive/commitlint-config'],
+	extends: ['@commitlint/config-conventional'],
 };

@@ -1,5 +1,5 @@
+import type { IPagination } from '@meemoo/admin-core-api';
 import { Test, type TestingModule } from '@nestjs/testing';
-import type { IPagination } from '@studiohyperdrive/pagination';
 import { AvoAuthIdpType, HetArchiefIeObject, PermissionName } from '@viaa/avo2-types';
 import type { Request } from 'express';
 import { type MockInstance, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';

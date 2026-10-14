@@ -3,7 +3,12 @@ import fs from 'node:fs/promises';
 import { retry } from 'async';
 import { Request } from 'express';
 
-import { DataService, PlayerTicketService } from '@meemoo/admin-core-api';
+import {
+	DataService,
+	type IPagination,
+	Pagination,
+	PlayerTicketService,
+} from '@meemoo/admin-core-api';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import {
 	ForbiddenException,
@@ -15,7 +20,6 @@ import {
 } from '@nestjs/common';
 
 import { ConfigService } from '@nestjs/config';
-import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { mapLimit } from 'blend-promise-utils';
 import type { Cache } from 'cache-manager';
 import got, { type Got } from 'got';

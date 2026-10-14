@@ -12,8 +12,8 @@ import { ApiTags } from '@nestjs/swagger';
 
 import { Organisation, OrganisationSlug } from '~modules/organisations/organisations.types';
 
+import { IPagination } from '@meemoo/admin-core-api';
 import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
-import { IPagination } from '@studiohyperdrive/pagination';
 import { PermissionName } from '@viaa/avo2-types';
 import {
 	OrganisationSlugQueryDto,

@@ -1,9 +1,8 @@
 import { TranslationsService } from '@meemoo/admin-core-api';
 import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
-import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { addSeconds, isFuture } from 'date-fns';
-import zendesk from 'node-zendesk';
 
 import { CreateIeObjectSupportRequestDto, CreateTicketRequestDto } from '../dto/zendesk.dto';
 import {
@@ -125,19 +124,6 @@ export class ZendeskService {
 	}
 
 	/**
-	 * The access token expires, so the client has to be built per request instead of once at startup
-	 */
-	private static async getClient(forceRefreshToken = false) {
-		return zendesk.createClient({
-			oauth: true,
-			token: await ZendeskService.getAccessToken(forceRefreshToken),
-			remoteUri: process.env.ZENDESK_ENDPOINT as string,
-			// Only used for basic auth, but required by the node-zendesk typings
-			username: '',
-		});
-	}
-
-	/**
 	 * Create a new ticket in zendesk
 	 * @param request
 	 */
@@ -160,25 +146,33 @@ export class ZendeskService {
 		request: CreateTicketRequestDto,
 		forceRefreshToken = false
 	): Promise<CreateTicketResponse> {
-		const client = await ZendeskService.getClient(forceRefreshToken);
-		return new Promise<CreateTicketResponse>((resolve, reject) => {
-			try {
-				client.requests.create(
-					{ request },
-					(error: Error | undefined, response: any, result: any) => {
-						error ? reject(error) : resolve(result);
-					}
-				);
-			} catch (err) {
-				const error = new InternalServerErrorException({
-					message: 'Failed to create ticket through the zendesk api',
-					innerException: err,
-					additionalInfo: { request },
-				});
-				ZendeskService.logger.error(error);
-				reject(error);
-			}
+		const accessToken = await ZendeskService.getAccessToken(forceRefreshToken);
+		const response = await fetch(`${process.env.ZENDESK_ENDPOINT}/requests.json`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				Accept: 'application/json',
+				Authorization: `Bearer ${accessToken}`,
+			},
+			body: JSON.stringify({ request }),
 		});
+		if (!response.ok) {
+			// Keep the zendesk status code, createTicket uses it to detect a revoked token (401)
+			const error = new CustomError(
+				'Failed to create ticket through the zendesk api',
+				null,
+				{
+					status: response.status,
+					statusText: response.statusText,
+					responseBody: await response.text().catch(() => null),
+					request,
+				},
+				response.status
+			);
+			ZendeskService.logger.error(error);
+			throw error;
+		}
+		return ((await response.json()) as { request: CreateTicketResponse }).request;
 	}
 
 	/**

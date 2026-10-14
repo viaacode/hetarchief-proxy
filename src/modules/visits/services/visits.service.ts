@@ -1,4 +1,4 @@
-import { DataService } from '@meemoo/admin-core-api';
+import { DataService, type IPagination, Pagination } from '@meemoo/admin-core-api';
 import {
 	BadRequestException,
 	ForbiddenException,
@@ -7,7 +7,6 @@ import {
 	Logger,
 	NotFoundException,
 } from '@nestjs/common';
-import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { addMinutes, isBefore, isFuture, isPast, parseISO } from 'date-fns';
 import { compact, isArray, isEmpty, set, uniq } from 'lodash';
 

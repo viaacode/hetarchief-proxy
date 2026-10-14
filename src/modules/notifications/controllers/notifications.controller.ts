@@ -1,4 +1,4 @@
-import { Locale, TranslationsService } from '@meemoo/admin-core-api';
+import { type IPagination, Locale, TranslationsService } from '@meemoo/admin-core-api';
 import {
 	Controller,
 	ForbiddenException,
@@ -11,7 +11,6 @@ import {
 	UseGuards,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import type { IPagination } from '@studiohyperdrive/pagination';
 import { addMonths } from 'date-fns';
 
 import { type Notification, NotificationStatus, NotificationType } from '../types';

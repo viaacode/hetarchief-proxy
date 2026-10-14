@@ -1,3 +1,4 @@
+import { type IPagination, Pagination } from '@meemoo/admin-core-api';
 import {
 	Body,
 	Controller,
@@ -14,7 +15,6 @@ import {
 	UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import * as promiseUtils from 'blend-promise-utils';
 import type { Request } from 'express';
 import { compact, isNil, noop } from 'lodash';
