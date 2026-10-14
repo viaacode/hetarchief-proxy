@@ -13,6 +13,7 @@
     "sourceMap": true,
     "noEmit": true,
     "baseUrl": "./",
+    "ignoreDeprecations": "6.0",
     "paths": {
       "~config": ["src/config"],
       "~config/*": ["src/config/*"],
@@ -28,6 +29,8 @@
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false
+    "noFallthroughCasesInSwitch": false,
+    "strict": false,
+    "types": ["*"]
   }
 }

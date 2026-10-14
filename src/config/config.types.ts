@@ -1,5 +1,5 @@
 import { ConfigService as NestConfigService } from '@nestjs/config';
-import type { MulterOptions } from '@nestjs/platform-express/multer/interfaces/multer-options.interface';
+import type { MulterModuleOptions } from '@nestjs/platform-express';
 import type { AvoCoreDatabaseType } from '@viaa/avo2-types';
 
 export interface Configuration {
@@ -64,7 +64,7 @@ export interface Configuration {
 	ASSET_SERVER_TOKEN_USERNAME: string;
 	ASSET_SERVER_BUCKET_NAME: string;
 	TEMP_ASSET_FOLDER: string;
-	MULTER_OPTIONS: MulterOptions;
+	MULTER_OPTIONS: MulterModuleOptions;
 	MEEMOO_ADMIN_ORGANIZATION_IDS: string;
 	REROUTE_EMAILS_TO: string;
 	MEEMOO_MAINTAINER_MISSING_EMAIL_FALLBACK: string;

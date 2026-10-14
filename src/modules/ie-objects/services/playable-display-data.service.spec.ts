@@ -3,7 +3,7 @@ import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { ConfigService } from '@nestjs/config';
 import { Test, type TestingModule } from '@nestjs/testing';
 import type { Cache } from 'cache-manager';
-import { hoursToSeconds } from 'date-fns';
+import { hoursToMilliseconds } from 'date-fns';
 import {
 	type MockInstance,
 	afterAll,
@@ -278,7 +278,7 @@ describe('PlayableDisplayDataService', () => {
 			expect(mockCacheService.wrap).toHaveBeenCalledWith(
 				`ie-objects-newspaper-image__${mockImageFile.premis_stored_at}`,
 				expect.any(Function),
-				hoursToSeconds(1)
+				hoursToMilliseconds(1)
 			);
 		});
 
@@ -697,7 +697,7 @@ describe('PlayableDisplayDataService', () => {
 			expect(mockCacheService.wrap).toHaveBeenCalledWith(
 				`ie-objects-peakfile-data__${mockPeakFile.premis_stored_at}`,
 				expect.any(Function),
-				hoursToSeconds(1)
+				hoursToMilliseconds(1)
 			);
 		});
 

@@ -7,6 +7,7 @@ import {
 import { CacheModule } from '@nestjs/cache-manager';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { KeyvCacheableMemory } from 'cacheable';
 
 import { IeObjectsDebugController } from './controllers/ie-objects-debug.controller';
 import { IeObjectsController } from './controllers/ie-objects.controller';
@@ -33,7 +34,7 @@ import { VisitsModule } from '~modules/visits';
 		SpacesModule,
 		UsersModule,
 		CacheModule.register({
-			max: 1000,
+			stores: [new KeyvCacheableMemory({ lruSize: 1000 })],
 		}),
 	],
 	providers: [IeObjectsService, PlayableDisplayDataService, IeObjectsController],
