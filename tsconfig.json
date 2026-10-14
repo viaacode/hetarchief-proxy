@@ -1,7 +1,6 @@
 {
   "compilerOptions": {
     "module": "commonjs",
-    "declaration": true,
     "removeComments": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
@@ -12,15 +11,13 @@
     "lib": ["ES2024"],
     "sourceMap": true,
     "noEmit": true,
-    "baseUrl": "./",
-    "ignoreDeprecations": "6.0",
     "paths": {
-      "~config": ["src/config"],
-      "~config/*": ["src/config/*"],
-      "~modules/*": ["src/modules/*"],
-      "~generated/*": ["src/generated/*"],
-      "~shared": ["src/shared"],
-      "~shared/*": ["src/shared/*"]
+      "~config": ["./src/config"],
+      "~config/*": ["./src/config/*"],
+      "~modules/*": ["./src/modules/*"],
+      "~generated/*": ["./src/generated/*"],
+      "~shared": ["./src/shared"],
+      "~shared/*": ["./src/shared/*"]
     },
     "resolveJsonModule": true,
     "incremental": true,
@@ -31,6 +28,6 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
     "strict": false,
-    "types": ["*"]
+    "types": ["node", "multer"]
   }
 }
