@@ -1,7 +1,5 @@
-import type { DbContentBlock } from '@meemoo/admin-core-api';
+import { type DbContentBlock, Lookup_App_Content_Block_Type_Enum } from '@meemoo/admin-core-api';
 import { AvoCoreContentPickerType } from '@viaa/avo2-types';
-
-import { Lookup_App_Content_Block_Type_Enum } from '~shared/types/lookup-enums';
 
 /**
  * One object to fetch playable display data for, as derived from a content block config.
