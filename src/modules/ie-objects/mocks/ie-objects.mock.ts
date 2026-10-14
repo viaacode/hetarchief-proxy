@@ -756,6 +756,7 @@ export const mockIeObject2: GetIeObjectDetailQuery = {
 								edm_is_next_in_sequence: null,
 								created_at: '2025-03-10T15:24:56.403442+01:00',
 								hasMediaFragment: [],
+								has_captionings: [],
 							},
 						},
 						{
@@ -770,6 +771,7 @@ export const mockIeObject2: GetIeObjectDetailQuery = {
 								edm_is_next_in_sequence: null,
 								created_at: '2025-03-10T15:24:56.403442+01:00',
 								hasMediaFragment: [],
+								has_captionings: [],
 							},
 						},
 					],

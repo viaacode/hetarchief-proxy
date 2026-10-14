@@ -29,6 +29,7 @@ import {
 } from '../mocks/ie-objects.mock';
 import { IeObjectsService } from '../services/ie-objects.service';
 import { PlayableDisplayDataService } from '../services/playable-display-data.service';
+import { SubtitlesService } from '../services/subtitles.service';
 
 import { IeObjectsController } from './ie-objects.controller';
 
@@ -103,6 +104,10 @@ const mockVisitsService: Partial<Record<keyof VisitsService, MockInstance>> = {
 	findAll: vi.fn(),
 };
 
+const mockSubtitlesService: Partial<Record<keyof SubtitlesService, MockInstance>> = {
+	getVtt: vi.fn(),
+};
+
 const mockOrganisationsService: Partial<Record<keyof OrganisationsService, MockInstance>> = {
 	findOrganisationsBySchemaIdentifiers: vi.fn(),
 };
@@ -133,6 +138,10 @@ describe('IeObjectsController', () => {
 				{
 					provide: PlayerTicketService,
 					useValue: mockPlayerTicketService,
+				},
+				{
+					provide: SubtitlesService,
+					useValue: mockSubtitlesService,
 				},
 				{
 					provide: PlayerTicketController,
@@ -240,6 +249,49 @@ describe('IeObjectsController', () => {
 				mockSessionUser
 			);
 			expect(url).toEqual('http://playme');
+		});
+
+		it('should reject playable urls for a subtitle file', async () => {
+			vi.spyOn(ieObjectsController, 'getIeObjectsByIds').mockResolvedValueOnce([
+				{
+					dctermsFormat: HetArchiefIeObjectType.VIDEO,
+					pages: [
+						{
+							pageNumber: 1,
+							representations: [
+								{
+									files: [
+										{
+											id: 'website/id/entity/subtitle-id',
+											storedAt: 'https://s3-int.do.viaa.be/alto/file.srt',
+											mimeType: 'text/vtt',
+										},
+									],
+								},
+							],
+						},
+					],
+				},
+			] as Partial<HetArchiefIeObject>[]);
+			mockPlayerTicketService.getPlayableUrl.mockClear();
+			mockIeObjectsService.getRepresentationAndFileInIeObject.mockReturnValueOnce([
+				{
+					id: 'website/id/entity/subtitle-id',
+					storedAt: 'https://s3-int.do.viaa.be/alto/file.srt',
+					mimeType: 'text/vtt',
+				},
+				{ id: 'representation-id' },
+			]);
+
+			await expect(
+				ieObjectsController.getPlayableUrl(
+					'referer',
+					'127.0.0.1',
+					{ schemaIdentifier: 'schema-id', fileId: 'website/id/entity/subtitle-id' },
+					mockSessionUser
+				)
+			).rejects.toThrow(ForbiddenException);
+			expect(mockPlayerTicketService.getPlayableUrl).not.toHaveBeenCalled();
 		});
 
 		it('should reject playable urls when the file is not part of the object', async () => {
@@ -685,6 +737,124 @@ describe('IeObjectsController', () => {
 				'127.0.0.1',
 				true
 			);
+		});
+	});
+
+	describe('getSubtitles', () => {
+		const mockKeyUser: SessionUserEntity = new SessionUserEntity({ ...mockUser, isKeyUser: true });
+		const mockFileId = 'https://data-int.hetarchief.be/id/entity/subtitle-1';
+		const mockSubtitlesQuery = { schemaIdentifier: 'schema-id', fileId: mockFileId };
+		const subtitleFile = {
+			id: mockFileId,
+			mimeType: 'text/vtt',
+			storedAt: '/path/to/transcript.vtt',
+		};
+
+		const mockAccessibleObject = (overrides: Partial<HetArchiefIeObject> = {}) => {
+			vi.spyOn(ieObjectsController, 'getIeObjectsByIds').mockResolvedValueOnce([
+				{
+					dctermsFormat: HetArchiefIeObjectType.VIDEO,
+					licenses: [HetArchiefIeObjectLicense.INTRA_CP_METADATA_AI],
+					hasAccessToEssence: true,
+					limitedBySectorLogic: false,
+					...overrides,
+				},
+			] as Partial<HetArchiefIeObject>[]);
+		};
+		const mockSubtitleFile = (file: unknown = subtitleFile) => {
+			mockIeObjectsService.getRepresentationAndFileInIeObject.mockReturnValueOnce([file, {}]);
+		};
+		const mockRes = { setHeader: vi.fn() };
+		const getSubtitles = (user: SessionUserEntity = mockKeyUser) =>
+			ieObjectsController.getSubtitles(
+				'referer',
+				'127.0.0.1',
+				mockSubtitlesQuery,
+				user,
+				mockRes as unknown as Response
+			);
+		afterEach(() => {
+			mockRes.setHeader.mockReset();
+			mockSubtitlesService.getVtt.mockReset();
+			mockIeObjectsService.getRepresentationAndFileInIeObject.mockReset();
+		});
+
+		it('should reject callers that are not key users', async () => {
+			await expect(getSubtitles(mockSessionUser)).rejects.toThrow(ForbiddenException);
+
+			expect(mockSubtitlesService.getVtt).not.toHaveBeenCalled();
+		});
+
+		it('should reject when the object is not visible to the user', async () => {
+			vi.spyOn(ieObjectsController, 'getIeObjectsByIds').mockResolvedValueOnce([]);
+
+			await expect(getSubtitles()).rejects.toThrow(ForbiddenException);
+		});
+
+		it('should reject non AV material', async () => {
+			mockAccessibleObject({ dctermsFormat: HetArchiefIeObjectType.NEWSPAPER });
+
+			await expect(getSubtitles()).rejects.toThrow(ForbiddenException);
+		});
+
+		it('should reject without access to the essence', async () => {
+			mockAccessibleObject({ hasAccessToEssence: false });
+
+			await expect(getSubtitles()).rejects.toThrow(ForbiddenException);
+		});
+
+		it('should reject when the object is restricted by sector logic', async () => {
+			mockAccessibleObject({ limitedBySectorLogic: true });
+
+			await expect(getSubtitles()).rejects.toThrow(ForbiddenException);
+		});
+
+		it('should reject when the object has no AI metadata license', async () => {
+			mockAccessibleObject({ licenses: [HetArchiefIeObjectLicense.INTRA_CP_CONTENT] });
+
+			await expect(getSubtitles()).rejects.toThrow(ForbiddenException);
+			expect(mockSubtitlesService.getVtt).not.toHaveBeenCalled();
+		});
+
+		it('should reject a fileId that does not belong to the object', async () => {
+			mockAccessibleObject();
+			mockSubtitleFile(null);
+
+			await expect(getSubtitles()).rejects.toThrow(ForbiddenException);
+			expect(mockSubtitlesService.getVtt).not.toHaveBeenCalled();
+		});
+
+		it('should reject a file that is not a subtitle file', async () => {
+			mockAccessibleObject();
+			mockSubtitleFile({ ...subtitleFile, mimeType: 'video/mp4' });
+
+			await expect(getSubtitles()).rejects.toThrow(NotFoundException);
+			expect(mockSubtitlesService.getVtt).not.toHaveBeenCalled();
+		});
+
+		it('should return the vtt content of the file', async () => {
+			mockAccessibleObject();
+			mockSubtitleFile();
+			mockSubtitlesService.getVtt.mockResolvedValueOnce(
+				'WEBVTT\n\n00:00:01.000 --> 00:00:02.000\nHallo\n'
+			);
+
+			const vtt = await getSubtitles();
+
+			expect(vtt).toEqual('WEBVTT\n\n00:00:01.000 --> 00:00:02.000\nHallo\n');
+			// The stored location of the file in the object, never a caller supplied path
+			expect(mockSubtitlesService.getVtt).toHaveBeenCalledWith('/path/to/transcript.vtt');
+			expect(mockRes.setHeader).toHaveBeenCalledWith('Content-Type', 'text/vtt; charset=utf-8');
+			expect(mockRes.setHeader).toHaveBeenCalledWith('Cache-Control', 'private, no-store');
+		});
+
+		it('should pass on the failure when the file cannot be read', async () => {
+			mockAccessibleObject();
+			mockSubtitleFile();
+			mockSubtitlesService.getVtt.mockRejectedValueOnce(new Error('S3 access denied'));
+
+			await expect(getSubtitles()).rejects.toThrow('S3 access denied');
+			expect(mockRes.setHeader).not.toHaveBeenCalled();
 		});
 	});
 

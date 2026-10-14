@@ -54,6 +54,7 @@ import { convertQueryToLiteralString } from '../helpers/convert-query-to-literal
 import { getSearchEndpoint } from '../helpers/get-search-endpoint';
 import { getVisitorSpaceAccessInfoFromVisits } from '../helpers/get-visitor-space-access-info-from-visits';
 import { limitAccessToObjectDetails } from '../helpers/limit-access-to-object-details';
+import { getSubtitleMimeType } from '../helpers/subtitles';
 import {
 	AutocompleteField,
 	type ElasticsearchObject,
@@ -1331,7 +1332,7 @@ export class IeObjectsService {
 	}
 
 	public async adaptRepresentations(
-		isRepresentedBy: DbIeObjectWithRepresentations['isRepresentedBy'] | undefined,
+		isRepresentedBy: DbRepresentation[] | undefined,
 		resolveThumbnailUrl: boolean,
 		isPublicDomain: boolean,
 		referer?: string,
@@ -1398,7 +1399,7 @@ export class IeObjectsService {
 		}
 
 		/* istanbul ignore next */
-		return compact(
+		const files = compact(
 			await mapLimit(
 				dbIncludeFiles,
 				20,
@@ -1431,6 +1432,36 @@ export class IeObjectsService {
 					};
 				}
 			)
+		);
+
+		// AI subtitles sit in the same representation as the video they belong to
+		const subtitleFiles = dbIncludeFiles.flatMap((includeFile: DbIncludeFile) =>
+			this.adaptSubtitleFiles(includeFile.file)
+		);
+
+		return [...files, ...subtitleFiles];
+	}
+
+	// The query only selects AI generated captionings: subtitles delivered by the content partner are not shown
+	private adaptSubtitleFiles(file: DbFile): HetArchiefIeObjectFile[] {
+		return compact(
+			(file?.has_captionings || []).map((captioning): HetArchiefIeObjectFile | null => {
+				const mimeType = getSubtitleMimeType(captioning);
+				if (!captioning.id || !captioning.premis_stored_at || !mimeType) {
+					return null;
+				}
+
+				return {
+					id: captioning.id,
+					name: captioning.schema_name,
+					mimeType,
+					storedAt: captioning.premis_stored_at,
+					duration: captioning.schema_duration,
+					edmIsNextInSequence: captioning.edm_is_next_in_sequence,
+					createdAt: captioning.created_at,
+					mediaFragment: null,
+				};
+			})
 		);
 	}
 

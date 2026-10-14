@@ -1288,4 +1288,135 @@ describe('Limit access to object details', () => {
 			expect(result?.limitedBySectorLogic).toEqual(false);
 		});
 	});
+
+	describe('AI subtitles', () => {
+		const file = (id: string, mimeType: string) => ({
+			id,
+			name: id,
+			mimeType,
+			storedAt: `/path/${id}`,
+			duration: null,
+			edmIsNextInSequence: null,
+			createdAt: null,
+			mediaFragment: null,
+		});
+		const buildPages = () => [
+			{
+				pageNumber: 1,
+				representations: [
+					{
+						id: 'representation-1',
+						files: [file('video', 'video/mp4'), file('subtitle', 'text/vtt')],
+					},
+				],
+			},
+		];
+		const buildObject = (licenses: HetArchiefIeObjectLicense[]) =>
+			({
+				...mockIeObject1,
+				maintainerId: 'OR-mw28d4m',
+				sector: HetArchiefIeObjectSector.REGIONAL,
+				licenses,
+				pages: buildPages(),
+			}) as any;
+		const keyUser: LimitAccessUserInfo = {
+			...mockUserInfo,
+			groupId: GroupId.CP_ADMIN,
+			isKeyUser: true,
+			sector: HetArchiefIeObjectSector.REGIONAL,
+			maintainerId: 'OR-mw28d4m',
+			accessibleVisitorSpaceIds: [],
+			accessibleObjectIdsThroughFolders: [],
+		};
+		const fileIds = (result: ReturnType<typeof limitAccessToObjectDetails>) =>
+			result?.pages?.[0]?.representations?.[0]?.files?.map((f) => f.id);
+
+		it('keeps the subtitle file for a key user with access to the essence and the AI license', () => {
+			const result = limitAccessToObjectDetails(
+				buildObject([
+					HetArchiefIeObjectLicense.INTRA_CP_CONTENT,
+					HetArchiefIeObjectLicense.INTRA_CP_METADATA_AI,
+				]),
+				keyUser
+			);
+
+			expect(fileIds(result)).toEqual(['video', 'subtitle']);
+		});
+
+		it('strips the subtitle file when the object has no AI license', () => {
+			const result = limitAccessToObjectDetails(
+				buildObject([HetArchiefIeObjectLicense.INTRA_CP_CONTENT]),
+				keyUser
+			);
+
+			expect(result?.hasAccessToEssence).toEqual(true);
+			expect(fileIds(result)).toEqual(['video']);
+		});
+
+		it('hides the subtitle file when the key user has no access to the essence', () => {
+			const result = limitAccessToObjectDetails(
+				buildObject([HetArchiefIeObjectLicense.INTRA_CP_METADATA_ALL]),
+				keyUser
+			);
+
+			expect(result?.hasAccessToEssence).toEqual(false);
+			// The pages are not even visible without the essence
+			expect(fileIds(result) ?? []).not.toContain('subtitle');
+		});
+
+		it('strips the subtitle file for a user that is not a key user', () => {
+			const result = limitAccessToObjectDetails(
+				buildObject([
+					HetArchiefIeObjectLicense.INTRA_CP_CONTENT,
+					HetArchiefIeObjectLicense.INTRA_CP_METADATA_AI,
+					HetArchiefIeObjectLicense.PUBLIEK_CONTENT,
+				]),
+				{ ...keyUser, isKeyUser: false }
+			);
+
+			expect(fileIds(result)).toEqual(['video']);
+		});
+
+		it('strips the subtitle file for an anonymous user on a public object', () => {
+			const result = limitAccessToObjectDetails(
+				buildObject([
+					HetArchiefIeObjectLicense.PUBLIEK_CONTENT,
+					HetArchiefIeObjectLicense.INTRA_CP_METADATA_AI,
+				]),
+				{ ...mockUserInfo, groupId: undefined, sector: null, maintainerId: null }
+			);
+
+			expect(fileIds(result)).toEqual(['video']);
+		});
+
+		it('strips the subtitle file when the access is limited by sector logic', () => {
+			const result = limitAccessToObjectDetails(
+				{
+					// PUBLIEK_CONTENT keeps the pages visible while the INTRA_CP access is sector limited
+					...buildObject([
+						HetArchiefIeObjectLicense.INTRA_CP_CONTENT,
+						HetArchiefIeObjectLicense.INTRA_CP_METADATA_AI,
+						HetArchiefIeObjectLicense.PUBLIEK_CONTENT,
+					]),
+					maintainerId: 'OR-other',
+					sector: HetArchiefIeObjectSector.RURAL,
+				},
+				{ ...keyUser, sector: HetArchiefIeObjectSector.PUBLIC }
+			);
+
+			expect(result?.limitedBySectorLogic).toEqual(true);
+			expect(fileIds(result)).toEqual(['video']);
+		});
+
+		it('does not touch the original object', () => {
+			const ieObject = buildObject([
+				HetArchiefIeObjectLicense.INTRA_CP_CONTENT,
+				HetArchiefIeObjectLicense.INTRA_CP_METADATA_AI,
+			]);
+
+			limitAccessToObjectDetails(ieObject, keyUser);
+
+			expect(ieObject.pages[0].representations[0].files).toHaveLength(2);
+		});
+	});
 });

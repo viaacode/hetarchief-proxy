@@ -9,11 +9,18 @@ export type DbIeObjectWithRepresentations =
 
 export type DbIeObjectWithMentions = GetIeObjectDetailQuery['getHasPart'][0];
 
-export type DbRepresentation = DbIeObjectWithRepresentations['isRepresentedBy'][0];
+type DbRepresentationFromDetailQuery = DbIeObjectWithRepresentations['isRepresentedBy'][0];
+type DbFileFromDetailQuery = DbRepresentationFromDetailQuery['includes'][0]['file'];
 
-export type DbIncludeFiles = DbRepresentation['includes'];
-export type DbIncludeFile = DbRepresentation['includes'][0];
-export type DbFile = DbIncludeFile['file'];
+// has_captionings is only selected by the ie-object detail query: other callers (eg: material requests)
+// pass representations without it
+export type DbFile = Omit<DbFileFromDetailQuery, 'has_captionings'> &
+	Partial<Pick<DbFileFromDetailQuery, 'has_captionings'>>;
+export type DbIncludeFile = { __typename?: 'graph_includes'; file: DbFile };
+export type DbIncludeFiles = DbIncludeFile[];
+export type DbRepresentation = Omit<DbRepresentationFromDetailQuery, 'includes'> & {
+	includes: DbIncludeFiles;
+};
 
 export type PlayableDisplayDataPage =
 	| GetIeObjectPlayableDisplayDataQuery['getHasPart'][0]

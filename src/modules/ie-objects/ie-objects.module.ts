@@ -12,6 +12,7 @@ import { IeObjectsDebugController } from './controllers/ie-objects-debug.control
 import { IeObjectsController } from './controllers/ie-objects.controller';
 import { IeObjectsService } from './services/ie-objects.service';
 import { PlayableDisplayDataService } from './services/playable-display-data.service';
+import { SubtitlesService } from './services/subtitles.service';
 
 import { EventsModule } from '~modules/events';
 import { OrganisationsModule } from '~modules/organisations/organisations.module';
@@ -36,7 +37,7 @@ import { VisitsModule } from '~modules/visits';
 			max: 1000,
 		}),
 	],
-	providers: [IeObjectsService, PlayableDisplayDataService, IeObjectsController],
+	providers: [IeObjectsService, PlayableDisplayDataService, SubtitlesService, IeObjectsController],
 	exports: [IeObjectsService, PlayableDisplayDataService, IeObjectsController],
 })
 export class IeObjectsModule {}

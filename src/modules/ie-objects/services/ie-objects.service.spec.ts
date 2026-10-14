@@ -999,6 +999,86 @@ describe('ieObjectsService', () => {
 
 			expect(result[0].files[0].mediaFragment).toBeNull();
 		});
+
+		describe('subtitles', () => {
+			const buildCaptioning = (overrides: Record<string, unknown> = {}) => ({
+				id: 'captioning-id',
+				schema_name: 'transcript.vtt',
+				ebucore_has_mime_type: 'text/vtt',
+				premis_stored_at: '/path/to/transcript.vtt',
+				premis_original_name: 'transcript.vtt',
+				schema_duration: null,
+				edm_is_next_in_sequence: null,
+				created_at: '2025-01-01T00:00:00Z',
+				...overrides,
+			});
+			const buildRepresentationWithCaptionings = (captionings: unknown[]) => {
+				const representation = buildFragmentRepresentation('main-representation');
+				representation.includes[0].file = {
+					...representation.includes[0].file,
+					hasMediaFragment: [],
+					has_captionings: captionings,
+				} as any;
+				return representation;
+			};
+			const adapt = (captionings: unknown[]) =>
+				ieObjectsService.adaptRepresentations(
+					[buildRepresentationWithCaptionings(captionings)] as any,
+					false,
+					false,
+					'referer',
+					'127.0.0.1'
+				);
+
+			it('adds the captioning as a subtitle file next to the video in the same representation', async () => {
+				const result = await adapt([buildCaptioning()]);
+
+				expect(result[0].files).toHaveLength(2);
+				expect(result[0].files[0].id).toEqual('shared-file-id');
+				expect(result[0].files[1]).toEqual({
+					id: 'captioning-id',
+					name: 'transcript.vtt',
+					mimeType: 'text/vtt',
+					storedAt: '/path/to/transcript.vtt',
+					duration: null,
+					edmIsNextInSequence: null,
+					createdAt: '2025-01-01T00:00:00Z',
+					mediaFragment: null,
+				});
+			});
+
+			it('keeps srt captionings and derives the mime type from the extension when it is missing', async () => {
+				const result = await adapt([
+					buildCaptioning({
+						id: 'srt-id',
+						ebucore_has_mime_type: null,
+						premis_stored_at: '/path/to/transcript.srt',
+						premis_original_name: 'transcript.srt',
+					}),
+				]);
+
+				expect(result[0].files[1].id).toEqual('srt-id');
+				expect(result[0].files[1].mimeType).toEqual('application/x-subrip');
+			});
+
+			it('skips captionings that are not subtitle files', async () => {
+				const result = await adapt([
+					buildCaptioning({
+						ebucore_has_mime_type: 'application/pdf',
+						premis_stored_at: '/path/to/transcript.pdf',
+						premis_original_name: 'transcript.pdf',
+					}),
+				]);
+
+				expect(result[0].files).toHaveLength(1);
+			});
+
+			it('adds no subtitle files when the file has no captionings', async () => {
+				const result = await adapt([]);
+
+				expect(result[0].files).toHaveLength(1);
+			});
+		});
 	});
 
 	describe('adaptRepresentationsPaged', () => {
