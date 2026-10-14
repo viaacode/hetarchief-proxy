@@ -38,7 +38,9 @@ describe('SubtitlesService', () => {
 			};
 			return values[key];
 		});
-		mockSend.mockResolvedValue({ Body: { transformToString: async () => srt } });
+		mockSend.mockResolvedValue({
+			Body: { transformToByteArray: async () => Buffer.from(srt, 'utf-8') },
+		});
 	});
 
 	afterEach(() => {

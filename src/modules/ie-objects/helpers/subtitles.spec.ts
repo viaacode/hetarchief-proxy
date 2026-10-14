@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { convertSrtToVtt, getSubtitleMimeType, isSubtitleMimeType } from './subtitles';
+import {
+	convertSrtToVtt,
+	decodeSubtitleBytes,
+	getSubtitleMimeType,
+	isSubtitleMimeType,
+} from './subtitles';
 
 describe('subtitles helpers', () => {
 	describe('isSubtitleMimeType', () => {
@@ -51,10 +56,76 @@ describe('subtitles helpers', () => {
 			expect(convertSrtToVtt(vtt)).toBe(vtt);
 		});
 
+		it('only converts the timestamps of a timing line, not cue text', () => {
+			expect(
+				convertSrtToVtt('1\n00:00:01,000 --> 00:00:02,500\nA --> B, om 10:30:45,123 uur\n')
+			).toBe('WEBVTT\n\n1\n00:00:01.000 --> 00:00:02.500\nA --> B, om 10:30:45,123 uur\n');
+		});
+
+		it('converts timestamps without hours and keeps cue settings', () => {
+			expect(convertSrtToVtt('1\n01:02,500 --> 01:03,000 X1:100 X2:200\nHi\n')).toBe(
+				'WEBVTT\n\n1\n01:02.500 --> 01:03.000 X1:100 X2:200\nHi\n'
+			);
+		});
+
+		it('converts legacy brace tags', () => {
+			expect(
+				convertSrtToVtt('1\n00:00:01,000 --> 00:00:02,000\n{i}Hallo{/i} {b}x{\\b} {\\u1}y{\\u}\n')
+			).toBe('WEBVTT\n\n1\n00:00:01.000 --> 00:00:02.000\n<i>Hallo</i> <b>x</b> <u>y</u>\n');
+		});
+
+		it('moves {\\an8} to a cue setting on the timing line', () => {
+			expect(
+				convertSrtToVtt('1\n00:00:01,000 --> 00:00:02,000\n{\\an8}Boven\nTweede regel\n')
+			).toBe('WEBVTT\n\n1\n00:00:01.000 --> 00:00:02.000 line:5%\nBoven\nTweede regel\n');
+		});
+
+		it('moves {\\an7} and {\\an9} to a cue setting too', () => {
+			expect(convertSrtToVtt('1\n00:00:01,000 --> 00:00:02,000\n{\\an9}Rechtsboven\n')).toBe(
+				'WEBVTT\n\n1\n00:00:01.000 --> 00:00:02.000 line:5%\nRechtsboven\n'
+			);
+		});
+
+		it('drops other {\\anN} alignments from the cue text', () => {
+			expect(convertSrtToVtt('1\n00:00:01,000 --> 00:00:02,000\n{\\an2}Onder\n')).toBe(
+				'WEBVTT\n\n1\n00:00:01.000 --> 00:00:02.000\nOnder\n'
+			);
+		});
+
+		it('treats a whitespace-only line as a cue separator', () => {
+			expect(
+				convertSrtToVtt(
+					'1\n00:00:01,000 --> 00:00:02,000\nA\n \t\n2\n00:00:03,000 --> 00:00:04,000\nB\n'
+				)
+			).toBe(
+				'WEBVTT\n\n1\n00:00:01.000 --> 00:00:02.000\nA\n\n2\n00:00:03.000 --> 00:00:04.000\nB\n'
+			);
+		});
+
+		it('trims leading and trailing whitespace from every line', () => {
+			expect(convertSrtToVtt('1\n  00:00:01,000 --> 00:00:02,000 \n  Hi there  \n')).toBe(
+				'WEBVTT\n\n1\n00:00:01.000 --> 00:00:02.000\nHi there\n'
+			);
+		});
+
 		it('strips a byte order mark', () => {
 			expect(convertSrtToVtt('﻿1\n00:00:01,000 --> 00:00:02,000\nHi\n')).toBe(
 				'WEBVTT\n\n1\n00:00:01.000 --> 00:00:02.000\nHi\n'
 			);
+		});
+	});
+
+	describe('decodeSubtitleBytes', () => {
+		it('decodes utf-8', () => {
+			expect(decodeSubtitleBytes(Buffer.from('Café', 'utf-8'))).toBe('Café');
+		});
+
+		it('decodes utf-16 with a byte order mark', () => {
+			expect(decodeSubtitleBytes(Buffer.from('\uFEFFCafé', 'utf16le'))).toBe('Café');
+		});
+
+		it('falls back to windows-1252 when the bytes are not valid utf-8', () => {
+			expect(decodeSubtitleBytes(Uint8Array.from([0x43, 0x61, 0x66, 0xe9]))).toBe('Café');
 		});
 	});
 });

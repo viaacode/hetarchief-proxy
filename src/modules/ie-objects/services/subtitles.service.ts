@@ -2,7 +2,7 @@ import { GetObjectCommand, NoSuchKey, S3Client } from '@aws-sdk/client-s3';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
-import { convertSrtToVtt } from '../helpers/subtitles';
+import { convertSrtToVtt, decodeSubtitleBytes } from '../helpers/subtitles';
 
 import { Configuration } from '~config';
 import { customError } from '~shared/helpers/custom-error';
@@ -43,7 +43,7 @@ export class SubtitlesService {
 			const response = await this.getS3Client(origin).send(
 				new GetObjectCommand({ Bucket: bucket, Key: key })
 			);
-			return convertSrtToVtt(await response.Body.transformToString('utf-8'));
+			return convertSrtToVtt(decodeSubtitleBytes(await response.Body.transformToByteArray()));
 		} catch (err) {
 			if (err instanceof NoSuchKey) {
 				throw new NotFoundException('The subtitle file does not exist');

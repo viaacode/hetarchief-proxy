@@ -31,6 +31,24 @@ export const getSubtitleMimeType = (file: {
 };
 
 /**
+ * Decodes subtitle file bytes: UTF-16 when there is a byte order mark, UTF-8 when valid, otherwise windows-1252
+ * (legacy SRT files are often saved in that encoding).
+ */
+export const decodeSubtitleBytes = (bytes: Uint8Array): string => {
+	if (bytes[0] === 0xff && bytes[1] === 0xfe) {
+		return new TextDecoder('utf-16le').decode(bytes);
+	}
+	if (bytes[0] === 0xfe && bytes[1] === 0xff) {
+		return new TextDecoder('utf-16be').decode(bytes);
+	}
+	try {
+		return new TextDecoder('utf-8', { fatal: true }).decode(bytes);
+	} catch {
+		return new TextDecoder('windows-1252').decode(bytes);
+	}
+};
+
+/**
  * Converts SRT subtitles to WebVTT. Content that already is WebVTT is returned unchanged.
  */
 export const convertSrtToVtt = (content: string): string => {
@@ -39,7 +57,24 @@ export const convertSrtToVtt = (content: string): string => {
 		return normalized;
 	}
 
-	// SRT uses a comma as millisecond separator, WebVTT a dot. Only touch the timing lines, not the cue text.
-	const converted = normalized.replace(/^.*-->.*$/gm, (line) => line.replace(/,/g, '.'));
-	return `WEBVTT\n\n${converted}`;
+	// SRT uses a comma as millisecond separator, WebVTT a dot. Only touch the two timestamps of a timing line,
+	// not cue text (which can contain an arrow or a comma-timestamp itself).
+	const converted = normalized
+		// Trimming also empties whitespace-only lines, which would not end a WebVTT cue (only an empty line does).
+		.replace(/^[ \t]+|[ \t]+$/gm, '')
+		.replace(
+			/^(\s*(?:\d+:)?\d{1,2}:\d{2}),(\d{3}\s*-->\s*(?:\d+:)?\d{1,2}:\d{2}),(\d{3})/gm,
+			'$1.$2.$3'
+		);
+
+	// Legacy brace markup: {i}/{\i1} open and {/i}/{\i} close an i/b/u tag. {\an7-9} (top position) is a cue
+	// setting in WebVTT, so it moves to the end of the timing line. Other {\anN} alignments are dropped.
+	const withTags = converted
+		.replace(/\{\\([ibu])\}/g, '</$1>')
+		.replace(/\{\\([ibu])1\}/g, '<$1>')
+		.replace(/\{([ibu])\}/g, '<$1>')
+		.replace(/\{\/([ibu])\}/g, '</$1>')
+		.replace(/^([^\n]*\d\s*-->[^\n]*)\n\{\\an[789]\}/gm, '$1 line:5%\n')
+		.replace(/\{\\an[1-9]\}/g, '');
+	return `WEBVTT\n\n${withTags}`;
 };
