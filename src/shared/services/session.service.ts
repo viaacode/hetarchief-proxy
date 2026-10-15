@@ -121,7 +121,8 @@ export class SessionService {
 			sessionConfig.store = new RedisStore({ client: await this.getConnectedRedisClient() });
 		} else if (process.platform !== 'win32') {
 			// Windows doesn't handle multithreaded file access very well
-			sessionConfig.store = new FileStore({});
+			// No retries: a missing session file just means there is no session (eg: an old session cookie in the browser)
+			sessionConfig.store = new FileStore({ retries: 0 });
 		}
 		// Otherwise express-session falls back to its in-memory store
 

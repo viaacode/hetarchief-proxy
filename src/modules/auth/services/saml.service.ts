@@ -16,14 +16,21 @@ import type { Locale } from '~shared/types/types';
 export abstract class SamlService {
 	protected logger: Logger;
 
-	private serviceProvider: ServiceProvider;
-	private identityProvider: IdentityProvider;
+	private samlConfig: SamlConfig | undefined;
+	private serviceProvider: ServiceProvider | undefined;
+	private identityProvider: IdentityProvider | undefined;
 	private ssoLoginUrl: string | undefined;
 	private ssoLogoutUrl: string | undefined;
 
 	constructor(protected configService: ConfigService<Configuration>) {}
 
+	/**
+	 * Fetches the idp metadata and sets up the saml service and identity provider
+	 * Does not throw, so the proxy still starts when the idp is unavailable. getProviders retries on the next login
+	 * @param samlConfig
+	 */
 	public async init(samlConfig: SamlConfig) {
+		this.samlConfig = samlConfig;
 		const { url, entityId, privateKey, certificate, assertEndpoint } = samlConfig;
 		if (this.configService.get('LOG_SAML_CONFIGURATION') === 'true') {
 			this.logger.log('SAML config ', {
@@ -93,17 +100,43 @@ export abstract class SamlService {
 				allow_unencrypted_assertion: process.env.SAML_ALLOW_UNENCRYPTED_ASSERTIONS === 'true',
 			});
 		} catch (err) {
-			this.logger.error('Failed to get meta data from idp server', { err, endpoint: url });
+			this.logger.error(
+				`Failed to get meta data from idp server: ${url}, error: ${(err as Error)?.message}`,
+				(err as Error)?.stack
+			);
 		}
+	}
+
+	/**
+	 * Returns the saml service and identity provider
+	 * If loading the idp metadata failed on startup, eg: because the idp was unreachable, it is retried here
+	 */
+	private async getProviders(): Promise<{
+		serviceProvider: ServiceProvider;
+		identityProvider: IdentityProvider;
+	}> {
+		if ((!this.serviceProvider || !this.identityProvider) && this.samlConfig) {
+			await this.init(this.samlConfig);
+		}
+		if (!this.serviceProvider || !this.identityProvider) {
+			throw new Error(
+				`SAML is not initialized, failed to load the idp metadata from ${this.samlConfig?.url}`
+			);
+		}
+		return {
+			serviceProvider: this.serviceProvider,
+			identityProvider: this.identityProvider,
+		};
 	}
 
 	/**
 	 * login url
 	 */
-	public createLoginRequestUrl(returnToUrl: string, language: Locale): Promise<string> {
+	public async createLoginRequestUrl(returnToUrl: string, language: Locale): Promise<string> {
+		const { serviceProvider, identityProvider } = await this.getProviders();
 		return new Promise<string>((resolve, reject) => {
-			this.serviceProvider.create_login_request_url(
-				this.identityProvider,
+			serviceProvider.create_login_request_url(
+				identityProvider,
 				{
 					relay_state: JSON.stringify({ returnToUrl, language }),
 				},
@@ -118,10 +151,11 @@ export abstract class SamlService {
 		});
 	}
 
-	public createLogoutRequestUrl(nameId: string, returnToUrl: string): Promise<string> {
+	public async createLogoutRequestUrl(nameId: string, returnToUrl: string): Promise<string> {
+		const { serviceProvider, identityProvider } = await this.getProviders();
 		return new Promise<string>((resolve, reject) => {
-			this.serviceProvider.create_logout_request_url(
-				this.identityProvider,
+			serviceProvider.create_logout_request_url(
+				identityProvider,
 				{
 					relay_state: JSON.stringify({ returnToUrl }),
 					name_id: nameId,
@@ -137,10 +171,11 @@ export abstract class SamlService {
 		});
 	}
 
-	public createLogoutResponseUrl(relayState: any) {
+	public async createLogoutResponseUrl(relayState: any): Promise<string> {
+		const { serviceProvider, identityProvider } = await this.getProviders();
 		return new Promise<string>((resolve, reject) => {
-			this.serviceProvider.create_logout_response_url(
-				this.identityProvider,
+			serviceProvider.create_logout_response_url(
+				identityProvider,
 				{ relay_state: relayState },
 				(error: any, responseUrl: string) => {
 					if (error) {
@@ -153,10 +188,11 @@ export abstract class SamlService {
 		});
 	}
 
-	public assertSamlResponse(requestBody: SamlCallbackBody): Promise<LdapUser> {
+	public async assertSamlResponse(requestBody: SamlCallbackBody): Promise<LdapUser> {
+		const { serviceProvider, identityProvider } = await this.getProviders();
 		return new Promise((resolve, reject) => {
-			this.serviceProvider.post_assert(
-				this.identityProvider,
+			serviceProvider.post_assert(
+				identityProvider,
 				{
 					request_body: requestBody,
 					allow_unencrypted_assertion: true,
