@@ -65,36 +65,15 @@ export class HetArchiefController {
 
 	/**
 	 * Url of the error page that explains to the user that logging in, registering or logging out failed
-	 * @param action which auth action failed
-	 * @param language language of the title and message
+	 * @param title already translated title
+	 * @param message already translated message
 	 */
-	private getAuthErrorPageUrl(
-		action: 'login' | 'register' | 'logout',
-		language: Locale | string | undefined
-	): string {
-		const locale = language === Locale.En ? Locale.En : Locale.Nl;
-		const texts = {
-			login: {
-				title: 'modules/auth/controllers/het-archief___inloggen-mislukt',
-				message:
-					'modules/auth/controllers/het-archief___er-ging-iets-mis-bij-het-inloggen-probeer-het-later-opnieuw',
-			},
-			register: {
-				title: 'modules/auth/controllers/het-archief___registreren-mislukt',
-				message:
-					'modules/auth/controllers/het-archief___er-ging-iets-mis-bij-het-registreren-probeer-het-later-opnieuw',
-			},
-			logout: {
-				title: 'modules/auth/controllers/het-archief___uitloggen-mislukt',
-				message:
-					'modules/auth/controllers/het-archief___er-ging-iets-mis-bij-het-uitloggen-probeer-het-later-opnieuw',
-			},
-		}[action];
-		return getErrorPageUrl(
-			this.configService.get('HOST'),
-			this.translationsService.tText(texts.title, null, locale),
-			this.translationsService.tText(texts.message, null, locale)
-		);
+	private getAuthErrorPageUrl(title: string, message: string): string {
+		return getErrorPageUrl(this.configService.get('HOST'), title, message);
+	}
+
+	private getLocale(language: Locale | string | undefined): Locale {
+		return language === Locale.En ? Locale.En : Locale.Nl;
 	}
 
 	@Get('login')
@@ -120,7 +99,18 @@ export class HetArchiefController {
 		} catch (err) {
 			this.logger.error('Failed during hetarchief auth login route', err);
 			return {
-				url: this.getAuthErrorPageUrl('login', language),
+				url: this.getAuthErrorPageUrl(
+					this.translationsService.tText(
+						'modules/auth/controllers/het-archief___inloggen-mislukt',
+						null,
+						this.getLocale(language)
+					),
+					this.translationsService.tText(
+						'modules/auth/controllers/het-archief___er-ging-iets-mis-bij-het-inloggen-probeer-het-later-opnieuw',
+						null,
+						this.getLocale(language)
+					)
+				),
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,
 			};
 		}
@@ -308,7 +298,20 @@ export class HetArchiefController {
 				return;
 			}
 			this.logger.error('Failed during hetarchief auth login-callback route', err);
-			response.redirect(this.getAuthErrorPageUrl('login', info?.language));
+			response.redirect(
+				this.getAuthErrorPageUrl(
+					this.translationsService.tText(
+						'modules/auth/controllers/het-archief___inloggen-mislukt',
+						null,
+						this.getLocale(info?.language)
+					),
+					this.translationsService.tText(
+						'modules/auth/controllers/het-archief___er-ging-iets-mis-bij-het-inloggen-probeer-het-later-opnieuw',
+						null,
+						this.getLocale(info?.language)
+					)
+				)
+			);
 		}
 	}
 
@@ -346,7 +349,18 @@ export class HetArchiefController {
 		} catch (err) {
 			this.logger.error('Failed during hetarchief auth register route', err);
 			return {
-				url: this.getAuthErrorPageUrl('register', locale),
+				url: this.getAuthErrorPageUrl(
+					this.translationsService.tText(
+						'modules/auth/controllers/het-archief___registreren-mislukt',
+						null,
+						this.getLocale(locale)
+					),
+					this.translationsService.tText(
+						'modules/auth/controllers/het-archief___er-ging-iets-mis-bij-het-registreren-probeer-het-later-opnieuw',
+						null,
+						this.getLocale(locale)
+					)
+				),
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,
 			};
 		}
@@ -385,7 +399,18 @@ export class HetArchiefController {
 		} catch (err) {
 			this.logger.error('Failed during hetarchief auth logout route', err);
 			return {
-				url: this.getAuthErrorPageUrl('logout', language),
+				url: this.getAuthErrorPageUrl(
+					this.translationsService.tText(
+						'modules/auth/controllers/het-archief___uitloggen-mislukt',
+						null,
+						this.getLocale(language)
+					),
+					this.translationsService.tText(
+						'modules/auth/controllers/het-archief___er-ging-iets-mis-bij-het-uitloggen-probeer-het-later-opnieuw',
+						null,
+						this.getLocale(language)
+					)
+				),
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,
 			};
 		}
@@ -425,7 +450,20 @@ export class HetArchiefController {
 			response.redirect(responseUrl);
 		} catch (err) {
 			this.logger.error('Failed during hetarchief auth POST logout-callback route', err);
-			response.redirect(this.getAuthErrorPageUrl('logout', undefined));
+			response.redirect(
+				this.getAuthErrorPageUrl(
+					this.translationsService.tText(
+						'modules/auth/controllers/het-archief___uitloggen-mislukt',
+						null,
+						this.getLocale(undefined)
+					),
+					this.translationsService.tText(
+						'modules/auth/controllers/het-archief___er-ging-iets-mis-bij-het-uitloggen-probeer-het-later-opnieuw',
+						null,
+						this.getLocale(undefined)
+					)
+				)
+			);
 		}
 	}
 }
