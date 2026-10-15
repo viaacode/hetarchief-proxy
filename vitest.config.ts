@@ -18,7 +18,7 @@ export default defineConfig({
 		globals: true,
 		environment: 'node',
 		include: ['**/*.spec.ts'],
-		setupFiles: ['../test/vitest.setup.ts', '../vitest.setup.redis-mock.ts'],
+		setupFiles: ['../test/vitest.setup.ts'],
 		pool: 'threads',
 		maxWorkers: 8,
 	},
