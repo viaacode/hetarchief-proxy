@@ -1,24 +1,11 @@
 import { ConfigService } from '@nestjs/config';
-import { SchedulerRegistry } from '@nestjs/schedule';
 import { Test, type TestingModule } from '@nestjs/testing';
 import type { CookieOptions } from 'express-session';
-import { type MockInstance, beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { TestingLogger } from '~shared/logging/test-logger';
 import { SessionService } from '~shared/services/session.service';
 import { mockConfigService } from '~shared/test/mock-config-service';
-
-const mockSchedulerRegistry: Partial<Record<keyof SchedulerRegistry, MockInstance>> = {
-	addCronJob: vi.fn(),
-};
-
-const mockCronJob = {
-	start: vi.fn(),
-};
-
-vi.mock('cron', () => ({
-	CronJob: vi.fn(() => mockCronJob),
-}));
 
 const mockRedisClient = {
 	isReady: false,
@@ -46,10 +33,6 @@ describe('SessionService', () => {
 				{
 					provide: ConfigService,
 					useValue: mockConfigService,
-				},
-				{
-					provide: SchedulerRegistry,
-					useValue: mockSchedulerRegistry,
 				},
 			],
 		})

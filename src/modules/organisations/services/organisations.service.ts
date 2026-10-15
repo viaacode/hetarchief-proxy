@@ -15,7 +15,7 @@ import {
 import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { type HetArchiefIeObjectSector } from '@viaa/avo2-types';
-import { hoursToSeconds } from 'date-fns';
+import { hoursToMilliseconds } from 'date-fns';
 import {
 	FindOrganisationSlugsDocument,
 	FindOrganisationSlugsQuery,
@@ -138,7 +138,7 @@ export class OrganisationsService {
 				'CONTENT_PARTNERS_MAINTAINER_GRID',
 				() => this.fetchAllContentPartnersThatHaveObjects(),
 				// cache for 1 hour
-				hoursToSeconds(1)
+				hoursToMilliseconds(1)
 			);
 
 			return shuffle(allContentPartners.filter((contentPartner) => !!contentPartner.logoUrl)).slice(

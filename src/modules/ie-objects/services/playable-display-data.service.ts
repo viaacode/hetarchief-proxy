@@ -10,7 +10,7 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { mapLimit } from 'blend-promise-utils';
 import type { Cache } from 'cache-manager';
-import { hoursToSeconds } from 'date-fns';
+import { hoursToMilliseconds } from 'date-fns';
 import { Request } from 'express';
 import { compact, isNil } from 'lodash';
 
@@ -354,7 +354,7 @@ export class PlayableDisplayDataService {
 				CACHE_KEY_PREFIX_IE_OBJECT_NEWSPAPER_IMAGE + imageFile.premis_stored_at,
 				() => this.fetchAndEncodeIiifImage(imageFile.premis_stored_at, referer, ip, isPublicDomain),
 				// cache for 1 hour
-				hoursToSeconds(1)
+				hoursToMilliseconds(1)
 			);
 		} catch (err) {
 			this.logger.error(
@@ -470,7 +470,7 @@ export class PlayableDisplayDataService {
 				CACHE_KEY_PREFIX_IE_OBJECT_PEAKFILE_DATA + peakFile.premis_stored_at,
 				() => this.fetchPeakFileData(peakFile),
 				// cache for 1 hour
-				hoursToSeconds(1)
+				hoursToMilliseconds(1)
 			);
 		} catch (err) {
 			this.logger.error(
@@ -498,7 +498,7 @@ export class PlayableDisplayDataService {
 			CACHE_KEY_PREFIX_IE_OBJECT_PLAYABLE_DISPLAY_DATA + ieObjectId,
 			() => this.getPlayableDisplayDataFromDb(ieObjectId),
 			// cache for 1 hour
-			hoursToSeconds(1)
+			hoursToMilliseconds(1)
 		);
 	}
 

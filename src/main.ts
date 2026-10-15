@@ -4,8 +4,8 @@
 import { ValidationPipe } from '@nestjs/common';
 import { ConfigService as NestConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
+import type { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { json } from 'express';
 import session from 'express-session';
 import helmet from 'helmet';
 
@@ -17,7 +17,10 @@ import { SessionService } from '~shared/services/session.service';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
-	const app = await NestFactory.create(AppModule);
+	const app = await NestFactory.create<NestExpressApplication>(AppModule);
+
+	/** Keep express 4 query parsing (qs) so nested and bracket array query params keep working in express 5 */
+	app.set('query parser', 'extended');
 	const configService = app.get<ConfigService>(NestConfigService);
 	const port = configService.get('PORT');
 
@@ -41,7 +44,7 @@ async function bootstrap() {
 	app.use(helmet());
 
 	/** Increase POST json body size */
-	app.use(json({ limit: '500kb' }));
+	app.useBodyParser('json', { limit: '500kb' });
 
 	/** Validation */
 	app.useGlobalPipes(

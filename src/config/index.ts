@@ -1,5 +1,4 @@
-import { ForbiddenException } from '@nestjs/common';
-import { NotImplementedException } from '@nestjs/common/exceptions/not-implemented.exception';
+import { ForbiddenException, NotImplementedException } from '@nestjs/common';
 import type { AvoCoreDatabaseType } from '@viaa/avo2-types';
 
 import { DEFAULT_CONFIG } from './config.const';
