@@ -10,8 +10,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import * as promiseUtils from 'blend-promise-utils';
 import { groupBy, head, isArray, isEmpty, isNil, toPairs } from 'lodash';
-import * as queryString from 'query-string';
-import { stringifyUrl } from 'query-string';
+import queryString from 'query-string';
 
 import type { Configuration } from '~config';
 
@@ -281,7 +280,7 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 		let url: string | null = null;
 
 		try {
-			url = stringifyUrl({
+			url = queryString.stringifyUrl({
 				url: `/${this.subscriberEndpoint}/${this.newsletterListId}.json`,
 				query: { email },
 			});
@@ -528,7 +527,7 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 				cp_email: emailInfo.materialRequests[0]?.contactMail,
 				request_list: emailInfo.materialRequests.map((materialRequest) => ({
 					...this.convertMaterialRequestToEmailTemplateFields(materialRequest, emailInfo.language),
-					request_url: stringifyUrl({
+					request_url: queryString.stringifyUrl({
 						url: `${this.configService.get('CLIENT_HOST')}/${requestUrl}`,
 						query: {
 							materialRequest: materialRequest.id,
@@ -555,7 +554,7 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 			user_lastname: emailInfo.requesterLastName,
 			request_list: emailInfo.materialRequests.map((materialRequest) => ({
 				...this.convertMaterialRequestToEmailTemplateFields(materialRequest, emailInfo.language),
-				request_url: stringifyUrl({
+				request_url: queryString.stringifyUrl({
 					url: `${this.configService.get('CLIENT_HOST')}/${requestUrl}`,
 					query: {
 						materialRequest: materialRequest.id,

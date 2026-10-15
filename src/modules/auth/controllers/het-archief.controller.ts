@@ -3,7 +3,6 @@ import {
 	Body,
 	Controller,
 	Get,
-	HttpException,
 	HttpStatus,
 	Logger,
 	Post,
@@ -19,7 +18,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { AvoAuthIdpType } from '@viaa/avo2-types';
 import type { Request, Response } from 'express';
 import { get, isEmpty, isEqual, pick } from 'lodash';
-import { stringifyUrl } from 'query-string';
+import queryString from 'query-string';
 
 import type { Configuration } from '~config';
 
@@ -30,6 +29,7 @@ import { HetArchiefService } from '../services/het-archief.service';
 import { IdpService } from '../services/idp.service';
 import type { RelayState, SamlCallbackBody } from '../types';
 
+import { getErrorPageUrl } from '~modules/auth/error-page-redirect';
 import { orgNotLinkedLogoutAndRedirectToErrorPage } from '~modules/auth/org-not-linked-redirect';
 
 import { EventsService } from '~modules/events/services/events.service';
@@ -63,6 +63,19 @@ export class HetArchiefController {
 		private organisationService: OrganisationsService
 	) {}
 
+	/**
+	 * Url of the error page that explains to the user that logging in, registering or logging out failed
+	 * @param title already translated title
+	 * @param message already translated message
+	 */
+	private getAuthErrorPageUrl(title: string, message: string): string {
+		return getErrorPageUrl(this.configService.get('HOST'), title, message);
+	}
+
+	private getLocale(language: Locale | string | undefined): Locale {
+		return language === Locale.En ? Locale.En : Locale.Nl;
+	}
+
 	@Get('login')
 	@Redirect()
 	public async loginRoute(
@@ -85,8 +98,22 @@ export class HetArchiefController {
 			};
 		} catch (err) {
 			this.logger.error('Failed during hetarchief auth login route', err);
+			return {
+				url: this.getAuthErrorPageUrl(
+					this.translationsService.tText(
+						'modules/auth/controllers/het-archief___inloggen-mislukt',
+						null,
+						this.getLocale(language)
+					),
+					this.translationsService.tText(
+						'modules/auth/controllers/het-archief___er-ging-iets-mis-bij-het-inloggen-probeer-het-later-opnieuw',
+						null,
+						this.getLocale(language)
+					)
+				),
+				statusCode: HttpStatus.TEMPORARY_REDIRECT,
+			};
 		}
-		// TODO redirect user to error page (see AVO - redirectToClientErrorPage)
 	}
 
 	/**
@@ -243,16 +270,20 @@ export class HetArchiefController {
 			response.redirect(returnToUrlCleaned);
 		} catch (err) {
 			const proxyHost = this.configService.get('HOST');
-			if (err.message === 'SAML Response is no longer valid') {
-				return {
-					url: `${proxyHost}/auth/hetarchief/login&returnToUrl=${info.returnToUrl}`,
-					statusCode: HttpStatus.TEMPORARY_REDIRECT,
-				};
+			// This route uses @Res(), so redirects have to be sent through the response, returned values are ignored
+			if (err?.message === 'SAML Response is no longer valid') {
+				response.redirect(
+					queryString.stringifyUrl({
+						url: `${proxyHost}/auth/hetarchief/login`,
+						query: { returnToUrl: info?.returnToUrl, language: info?.language },
+					})
+				);
+				return;
 			}
-			if (err.message.includes(NO_ORG_LINKED)) {
+			if (err?.message?.includes(NO_ORG_LINKED)) {
 				this.logger.debug('orgNotLinkedLogoutAndRedirectToErrorPage');
 
-				return orgNotLinkedLogoutAndRedirectToErrorPage(
+				const { url } = orgNotLinkedLogoutAndRedirectToErrorPage(
 					response,
 					proxyHost,
 					AvoAuthIdpType.HETARCHIEF,
@@ -263,14 +294,24 @@ export class HetArchiefController {
 						Locale.En
 					)
 				);
+				response.redirect(url);
+				return;
 			}
 			this.logger.error('Failed during hetarchief auth login-callback route', err);
-			throw new HttpException(
-				'Failed during hetarchief auth login-callback route',
-				HttpStatus.FORBIDDEN,
-				err
+			response.redirect(
+				this.getAuthErrorPageUrl(
+					this.translationsService.tText(
+						'modules/auth/controllers/het-archief___inloggen-mislukt',
+						null,
+						this.getLocale(info?.language)
+					),
+					this.translationsService.tText(
+						'modules/auth/controllers/het-archief___er-ging-iets-mis-bij-het-inloggen-probeer-het-later-opnieuw',
+						null,
+						this.getLocale(info?.language)
+					)
+				)
 			);
-			// TODO redirect user to error page (see AVO - redirectToClientErrorPage)
 		}
 	}
 
@@ -282,11 +323,11 @@ export class HetArchiefController {
 		@Query('locale') locale: Locale = Locale.Nl
 	) {
 		try {
-			const serverRedirectUrl = stringifyUrl({
+			const serverRedirectUrl = queryString.stringifyUrl({
 				url: `${this.configService.get('HOST')}/auth/hetarchief/login`,
 				query: { returnToUrl },
 			});
-			const url = stringifyUrl({
+			const url = queryString.stringifyUrl({
 				url: decodeURIComponent(this.configService.get('SSUM_REGISTRATION_PAGE')).replace(
 					'{locale}',
 					locale
@@ -307,8 +348,22 @@ export class HetArchiefController {
 			};
 		} catch (err) {
 			this.logger.error('Failed during hetarchief auth register route', err);
+			return {
+				url: this.getAuthErrorPageUrl(
+					this.translationsService.tText(
+						'modules/auth/controllers/het-archief___registreren-mislukt',
+						null,
+						this.getLocale(locale)
+					),
+					this.translationsService.tText(
+						'modules/auth/controllers/het-archief___er-ging-iets-mis-bij-het-registreren-probeer-het-later-opnieuw',
+						null,
+						this.getLocale(locale)
+					)
+				),
+				statusCode: HttpStatus.TEMPORARY_REDIRECT,
+			};
 		}
-		// TODO redirect user to error page (see AVO - redirectToClientErrorPage)
 	}
 
 	@Get('logout')
@@ -318,6 +373,8 @@ export class HetArchiefController {
 		@Query('returnToUrl') returnToUrl: string,
 		@Query('forceLogout') forceLogout: 'true' | 'false' = 'false'
 	) {
+		// Read the language before logging out, since logging out clears the user from the session
+		const language = SessionHelper.getArchiefUserInfo(session)?.language;
 		try {
 			if (
 				forceLogout === 'true' ||
@@ -341,8 +398,22 @@ export class HetArchiefController {
 			};
 		} catch (err) {
 			this.logger.error('Failed during hetarchief auth logout route', err);
+			return {
+				url: this.getAuthErrorPageUrl(
+					this.translationsService.tText(
+						'modules/auth/controllers/het-archief___uitloggen-mislukt',
+						null,
+						this.getLocale(language)
+					),
+					this.translationsService.tText(
+						'modules/auth/controllers/het-archief___er-ging-iets-mis-bij-het-uitloggen-probeer-het-later-opnieuw',
+						null,
+						this.getLocale(language)
+					)
+				),
+				statusCode: HttpStatus.TEMPORARY_REDIRECT,
+			};
 		}
-		// TODO redirect user to error page (see AVO - redirectToClientErrorPage)
 	}
 
 	/**
@@ -379,7 +450,20 @@ export class HetArchiefController {
 			response.redirect(responseUrl);
 		} catch (err) {
 			this.logger.error('Failed during hetarchief auth POST logout-callback route', err);
-			// TODO redirect user to error page (see AVO - redirectToClientErrorPage)
+			response.redirect(
+				this.getAuthErrorPageUrl(
+					this.translationsService.tText(
+						'modules/auth/controllers/het-archief___uitloggen-mislukt',
+						null,
+						this.getLocale(undefined)
+					),
+					this.translationsService.tText(
+						'modules/auth/controllers/het-archief___er-ging-iets-mis-bij-het-uitloggen-probeer-het-later-opnieuw',
+						null,
+						this.getLocale(undefined)
+					)
+				)
+			);
 		}
 	}
 }

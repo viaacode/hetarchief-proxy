@@ -40,11 +40,13 @@ describe('ContentPartnersService', () => {
 				id: 'https://data-int.hetarchief.be/id/organization/OR-test',
 				org_identifier: 'OR-test',
 				skos_pref_label: 'Test org',
+				organization_slug: 'test-org',
 			});
 			// test some sample keys
 			expect(adapted).toEqual({
 				id: 'OR-test',
 				name: 'Test org',
+				slug: 'test-org',
 			});
 		});
 	});

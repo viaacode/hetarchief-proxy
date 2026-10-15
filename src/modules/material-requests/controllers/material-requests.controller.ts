@@ -1,4 +1,5 @@
 import { randomUUID } from 'node:crypto';
+import type { IPagination } from '@meemoo/admin-core-api';
 import {
 	Body,
 	Controller,
@@ -15,7 +16,6 @@ import {
 	UseGuards,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import type { IPagination } from '@studiohyperdrive/pagination';
 import { AvoAuthIdpType, PermissionName } from '@viaa/avo2-types';
 import type { Request } from 'express';
 import { isEmpty, isNil, noop } from 'lodash';

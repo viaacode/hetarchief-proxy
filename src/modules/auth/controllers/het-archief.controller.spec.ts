@@ -5,6 +5,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { AvoAuthIdpType } from '@viaa/avo2-types';
 import type { Request, Response } from 'express';
 import { noop } from 'lodash';
+import queryString from 'query-string';
 import { Mock, type MockInstance, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { HetArchiefService } from '../services/het-archief.service';
@@ -205,12 +206,19 @@ describe('HetArchiefController', () => {
 			});
 		});
 
-		it('should catch an exception when generating the login url', async () => {
+		it('should redirect to the error page when generating the login url fails', async () => {
 			mockArchiefService.createLoginRequestUrl.mockImplementation(() => {
 				throw new Error('Test error handling');
 			});
 			const result = await hetArchiefController.loginRoute({}, hetArchiefLoginUrl);
-			expect(result).toBeUndefined();
+			expect(result.statusCode).toEqual(HttpStatus.TEMPORARY_REDIRECT);
+			expect(queryString.parseUrl(result.url)).toEqual({
+				url: `${mockConfigService.get('HOST')}/not-found`,
+				query: {
+					title: 'Inloggen mislukt',
+					message: 'Er ging iets mis bij het inloggen. Probeer het later opnieuw.',
+				},
+			});
 		});
 	});
 
@@ -299,22 +307,25 @@ describe('HetArchiefController', () => {
 			expect(mockUsersService.updateUser).toBeCalled();
 		});
 
-		it('should throw an exception on invalid saml response', async () => {
+		it('should redirect to the error page on an invalid saml response', async () => {
 			mockOrganisationsService.findOrganisationsBySchemaIdentifiers.mockResolvedValue(
 				mockOrganisations
 			);
 			mockArchiefService.assertSamlResponse.mockImplementation(() => {
 				throw new Error('Test error handling');
 			});
-			let error: any;
-			try {
-				await hetArchiefController.loginCallback(mockRequest, {}, samlResponse, {
-					redirect: noop,
-				} as Response);
-			} catch (e) {
-				error = e;
-			}
-			expect(error.message).toEqual('Failed during hetarchief auth login-callback route');
+			const redirect = vi.fn();
+			await hetArchiefController.loginCallback(mockRequest, {}, samlResponse, {
+				redirect,
+			} as unknown as Response);
+			expect(redirect).toHaveBeenCalledTimes(1);
+			expect(queryString.parseUrl(redirect.mock.calls[0][0])).toEqual({
+				url: `${mockConfigService.get('HOST')}/not-found`,
+				query: {
+					title: 'Inloggen mislukt',
+					message: 'Er ging iets mis bij het inloggen. Probeer het later opnieuw.',
+				},
+			});
 		});
 
 		it('should redirect to the login route if the idp response is no longer valid', async () => {
@@ -330,14 +341,14 @@ describe('HetArchiefController', () => {
 			mockArchiefService.assertSamlResponse.mockRejectedValue({
 				message: 'SAML Response is no longer valid',
 			});
-			const response = await hetArchiefController.loginCallback(mockRequest, {}, samlResponse, {
-				redirect: noop,
-			} as Response);
-			expect(response).toEqual({
-				url: `${mockConfigService.get(
-					'HOST'
-				)}/auth/hetarchief/login&returnToUrl=${hetArchiefLoginUrl}`,
-				statusCode: HttpStatus.TEMPORARY_REDIRECT,
+			const redirect = vi.fn();
+			await hetArchiefController.loginCallback(mockRequest, {}, samlResponse, {
+				redirect,
+			} as unknown as Response);
+			expect(redirect).toHaveBeenCalledTimes(1);
+			expect(queryString.parseUrl(redirect.mock.calls[0][0])).toEqual({
+				url: `${mockConfigService.get('HOST')}/auth/hetarchief/login`,
+				query: { returnToUrl: hetArchiefLoginUrl, language: archiefUser.language },
 			});
 		});
 	});
@@ -364,12 +375,19 @@ describe('HetArchiefController', () => {
 			});
 		});
 
-		it('should catch an exception when generating the logout url', async () => {
+		it('should redirect to the error page when generating the logout url fails', async () => {
 			mockArchiefService.createLogoutRequestUrl.mockImplementation(() => {
 				throw new Error('Test error handling');
 			});
 			const result = await hetArchiefController.logout(getNewMockSession(), hetArchiefLoginUrl);
-			expect(result).toBeUndefined();
+			expect(result.statusCode).toEqual(HttpStatus.TEMPORARY_REDIRECT);
+			expect(queryString.parseUrl(result.url)).toEqual({
+				url: `${mockConfigService.get('HOST')}/not-found`,
+				query: {
+					title: 'Uitloggen mislukt',
+					message: 'Er ging iets mis bij het uitloggen. Probeer het later opnieuw.',
+				},
+			});
 		});
 	});
 
@@ -413,7 +431,7 @@ describe('HetArchiefController', () => {
 			expect(mockResponseObject.redirect).toBeCalledWith('logout-response-url');
 		});
 
-		it('should catch an exception when generating the logout response url', async () => {
+		it('should redirect to the error page when generating the logout response url fails', async () => {
 			mockArchiefService.createLogoutResponseUrl.mockImplementation(() => {
 				throw new Error('Test error handling');
 			});
@@ -425,7 +443,10 @@ describe('HetArchiefController', () => {
 				},
 				mockResponseObject
 			);
-			expect(mockResponseObject.redirect).toBeCalledTimes(0);
+			expect(mockResponseObject.redirect).toBeCalledTimes(1);
+			expect(
+				queryString.parseUrl((mockResponseObject.redirect as Mock).mock.calls[0][0]).url
+			).toEqual(`${mockConfigService.get('HOST')}/not-found`);
 		});
 	});
 });

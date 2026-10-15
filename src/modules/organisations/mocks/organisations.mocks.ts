@@ -8,12 +8,14 @@ import {
 import { HetArchiefIeObjectSector } from '@viaa/avo2-types';
 
 export const mockGqlOrganisation: GqlOrganisation = {
+	foaf_homepage: null,
 	id: 'https://data-int.hetarchief.be/id/organization/OR-rf5kf25',
 	org_identifier: 'OR-rf5kf25',
 	schemaContactPoint: [
 		{
 			schema_contact_type: ContactPointType.ontsluiting,
 			schema_email: 'vrtarchief@vrt.be',
+			schema_telephone: null,
 		},
 	],
 	ha_org_has_logo: 'https://assets.viaa.be/images/OR-rf5kf25',

@@ -420,8 +420,8 @@ describe('VisitsService', () => {
 			mockDataService.execute
 				.mockResolvedValueOnce(getDefaultVisitsResponse())
 				.mockResolvedValueOnce({
-					update_maintainer_visitor_space_request_by_pk: {
-						id: mockGqlVisitRequest.id,
+					update_maintainer_visitor_space_request: {
+						returning: [{ id: mockGqlVisitRequest.id }],
 					},
 				} as UpdateVisitMutation)
 				.mockResolvedValueOnce(getDefaultVisitsResponse());
@@ -443,8 +443,8 @@ describe('VisitsService', () => {
 			mockDataService.execute
 				.mockResolvedValueOnce(getDefaultVisitsResponse())
 				.mockResolvedValueOnce({
-					update_maintainer_visitor_space_request_by_pk: {
-						id: mockGqlVisitRequest.id,
+					update_maintainer_visitor_space_request: {
+						returning: [{ id: mockGqlVisitRequest.id }],
 					},
 				} as UpdateVisitMutation)
 				.mockResolvedValueOnce(getDefaultVisitsResponse());
@@ -464,8 +464,8 @@ describe('VisitsService', () => {
 			mockDataService.execute
 				.mockResolvedValueOnce(getDefaultVisitsResponse())
 				.mockResolvedValueOnce({
-					update_maintainer_visitor_space_request_by_pk: {
-						id: mockGqlVisitRequest.id,
+					update_maintainer_visitor_space_request: {
+						returning: [{ id: mockGqlVisitRequest.id }],
 					},
 				} as UpdateVisitMutation)
 				.mockResolvedValueOnce(getDefaultVisitsResponse());
@@ -524,8 +524,8 @@ describe('VisitsService', () => {
 			mockDataService.execute
 				.mockResolvedValueOnce(getDefaultVisitsResponse())
 				.mockResolvedValueOnce({
-					update_maintainer_visitor_space_request_by_pk: {
-						id: mockGqlVisitRequest.id,
+					update_maintainer_visitor_space_request: {
+						returning: [{ id: mockGqlVisitRequest.id }],
 					},
 				} as UpdateVisitMutation)
 				.mockResolvedValueOnce({

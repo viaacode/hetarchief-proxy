@@ -1,4 +1,4 @@
-import { AssetsService } from '@meemoo/admin-core-api';
+import { AssetsService, type IPagination } from '@meemoo/admin-core-api';
 import {
 	Body,
 	Controller,
@@ -29,7 +29,6 @@ import { PermissionName } from '@viaa/avo2-types';
 
 import { RequireAllPermissions } from '~shared/decorators/require-permissions.decorator';
 
-import { type IPagination } from '@studiohyperdrive/pagination';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Ip } from '~shared/decorators/ip.decorator';
 import { Referer } from '~shared/decorators/referer.decorator';

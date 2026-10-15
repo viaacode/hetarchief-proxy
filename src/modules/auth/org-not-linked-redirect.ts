@@ -2,6 +2,8 @@ import type { AvoAuthIdpType } from '@viaa/avo2-types';
 import type { Response } from 'express';
 import queryString from 'query-string';
 
+import { getErrorPageUrl } from './error-page-redirect';
+
 /**
  * If a kiosk user or a maintainer admin is not linked to a space in the ACM (Account manager meemoo)
  * Then we should logout that user and redirect them to an error page
@@ -21,10 +23,7 @@ export function orgNotLinkedLogoutAndRedirectToErrorPage(
 		url: queryString.stringifyUrl({
 			url: `${proxyHost}/auth/${idp.toLowerCase()}/logout`,
 			query: {
-				returnToUrl: queryString.stringifyUrl({
-					url: `${proxyHost}/not-found`,
-					query: { message, title },
-				}),
+				returnToUrl: getErrorPageUrl(proxyHost, title, message),
 				forceLogout: 'true',
 			},
 		}),

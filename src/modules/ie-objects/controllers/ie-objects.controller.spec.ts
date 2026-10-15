@@ -1,5 +1,6 @@
 import {
 	ContentPagesService,
+	type IPagination,
 	PlayerTicketController,
 	PlayerTicketService,
 	TranslationsService,
@@ -7,7 +8,6 @@ import {
 import { BadRequestException, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Test, type TestingModule } from '@nestjs/testing';
-import type { IPagination } from '@studiohyperdrive/pagination';
 import type { HetArchiefIeObject, HetArchiefRelatedIeObject } from '@viaa/avo2-types';
 import type { Request, Response } from 'express';
 import { cloneDeep } from 'lodash';

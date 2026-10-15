@@ -1,6 +1,5 @@
-import { DataService } from '@meemoo/admin-core-api';
+import { DataService, type IPagination, Pagination } from '@meemoo/admin-core-api';
 import { Injectable } from '@nestjs/common';
-import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { countBy, set } from 'lodash';
 import {
 	MaterialRequestAttachment,

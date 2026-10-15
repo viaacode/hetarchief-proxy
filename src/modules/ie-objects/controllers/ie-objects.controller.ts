@@ -11,6 +11,7 @@ import {
 
 import {
 	ContentPagesService,
+	type IPagination,
 	PlayerTicketController,
 	PlayerTicketService,
 } from '@meemoo/admin-core-api';
@@ -42,7 +43,6 @@ import {
 	ApiQuery,
 	ApiTags,
 } from '@nestjs/swagger';
-import type { IPagination } from '@studiohyperdrive/pagination';
 import type { Request, Response } from 'express';
 import { compact, intersection, isNil, kebabCase } from 'lodash';
 

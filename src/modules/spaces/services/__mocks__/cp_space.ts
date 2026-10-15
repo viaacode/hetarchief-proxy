@@ -17,6 +17,8 @@ export const mockGqlSpace: GqlSpace = {
 	created_at: '2022-01-19T10:25:51.320763',
 	updated_at: '2022-01-19T10:25:51.320763',
 	organisation: {
+		foaf_homepage: null,
+		organizationSlug: null,
 		id: 'https://data-int.hetarchief.be/id/organization/OR-rf5kf25',
 		skos_pref_label: 'VRT',
 		org_identifier: 'OR-rf5kf25',
@@ -24,6 +26,7 @@ export const mockGqlSpace: GqlSpace = {
 			{
 				schema_contact_type: ContactPointType.ontsluiting,
 				schema_email: 'test@email.be',
+				schema_telephone: null,
 			},
 		],
 		dcterms_description:

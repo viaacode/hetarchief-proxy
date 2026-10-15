@@ -1,6 +1,5 @@
-import { DataService } from '@meemoo/admin-core-api';
+import { DataService, type IPagination, Pagination } from '@meemoo/admin-core-api';
 import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { format } from 'date-fns';
 import type { Request } from 'express';
 import { isEmpty, maxBy } from 'lodash';

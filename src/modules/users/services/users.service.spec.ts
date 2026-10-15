@@ -240,7 +240,7 @@ describe('UsersService', () => {
 				update_users_profile: {
 					affected_rows: 1,
 				},
-			} as UpdateUserLastAccessDateMutation);
+			} as unknown as UpdateUserLastAccessDateMutation);
 
 			const response = await usersService.updateLastAccessDate('user-123');
 			expect(response).toEqual({ affectedRows: 1 });
@@ -249,7 +249,7 @@ describe('UsersService', () => {
 		it('should catch and not throw an error', async () => {
 			mockDataService.execute.mockResolvedValueOnce({
 				errors: 'Something went wrong',
-			} as UpdateUserLastAccessDateMutation);
+			} as unknown as UpdateUserLastAccessDateMutation);
 
 			const response = await usersService.updateLastAccessDate('user-123');
 			expect(response).toBeUndefined();

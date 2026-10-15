@@ -58,6 +58,7 @@ export const mockGqlVisitRequest: GqlVisit = {
 			id: 'https://data-int.hetarchief.be/id/organization/OR-d79593p',
 			skos_pref_label: 'BRUZZ',
 			org_identifier: 'OR-d79593p',
+			foaf_homepage: null,
 			organizationSlug: {
 				slug: 'bruzz',
 			},
@@ -65,6 +66,7 @@ export const mockGqlVisitRequest: GqlVisit = {
 				{
 					schema_contact_type: 'ontsluiting',
 					schema_email: null,
+					schema_telephone: null,
 				},
 			],
 			dcterms_description:

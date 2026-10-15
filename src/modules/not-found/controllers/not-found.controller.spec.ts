@@ -61,5 +61,33 @@ describe('NotFoundController', () => {
 			expect(notFound).toContain('<title>');
 			expect(notFound).toContain(process.env.CLIENT_HOST);
 		});
+
+		it('should show the title and message of each request', async () => {
+			const first = await notFoundController.getNotFoundPage(
+				'First message',
+				'First title',
+				new SessionUserEntity(mockUser)
+			);
+			const second = await notFoundController.getNotFoundPage(
+				'Second message',
+				'Second title',
+				new SessionUserEntity(mockUser)
+			);
+			expect(first).toContain('First title');
+			expect(second).toContain('Second title');
+			expect(second).toContain('Second message');
+			expect(second).not.toContain('First title');
+		});
+
+		it('should escape html in the title and message', async () => {
+			const page = await notFoundController.getNotFoundPage(
+				'<img src=x onerror=alert(1)>',
+				'<script>alert(1)</script>',
+				new SessionUserEntity(mockUser)
+			);
+			expect(page).not.toContain('<script>alert(1)</script>');
+			expect(page).not.toContain('<img src=x');
+			expect(page).toContain('&lt;script&gt;alert(1)&lt;/script&gt;');
+		});
 	});
 });

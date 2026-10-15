@@ -3,6 +3,7 @@ import {
 	ContentPagesService,
 	DataService,
 	DbContentPage,
+	Lookup_App_Content_Type_Enum,
 } from '@meemoo/admin-core-api';
 import { ConflictException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { format } from 'date-fns';
@@ -14,7 +15,6 @@ import { HetArchiefIeObjectLicense } from '@viaa/avo2-types';
 import {
 	GetSitemapConfigDocument,
 	type GetSitemapConfigQuery,
-	Lookup_App_Content_Type_Enum,
 } from '~generated/graphql-db-types-hetarchief';
 import { type IeObjectsSitemap } from '~modules/ie-objects/ie-objects.types';
 

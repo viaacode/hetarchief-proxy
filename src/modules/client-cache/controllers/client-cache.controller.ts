@@ -3,7 +3,7 @@ import { Controller, Headers, Post, Query, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import got from 'got';
-import { stringifyUrl } from 'query-string';
+import queryString from 'query-string';
 
 import { PermissionName } from '@viaa/avo2-types';
 import type { Configuration } from '~config';
@@ -36,7 +36,7 @@ export class ClientCacheController {
 
 		return got
 			.post({
-				url: stringifyUrl({
+				url: queryString.stringifyUrl({
 					url: `${clientHost}/api/clear-cache`,
 					query: {
 						language,

@@ -1,6 +1,10 @@
-import { DataService, TranslationsService } from '@meemoo/admin-core-api';
+import {
+	DataService,
+	type IPagination,
+	Pagination,
+	TranslationsService,
+} from '@meemoo/admin-core-api';
 import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
-import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { set } from 'lodash';
 
 import { CreateSpaceDto, SpacesQueryDto, UpdateSpaceDto } from '../dto/spaces.dto';

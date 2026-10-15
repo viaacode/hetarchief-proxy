@@ -9,11 +9,8 @@ import { CreateIeObjectSupportRequestDto } from '../dto/zendesk.dto';
 import { ReportLegalReason, ReportReason } from '../zendesk.types';
 import { ZendeskService } from './zendesk.service';
 
-const mockCreateClient = vi.hoisted(() => vi.fn());
-
-vi.mock('node-zendesk', () => ({
-	default: { createClient: mockCreateClient },
-}));
+const TOKEN_ENDPOINT = 'https://meemoo.zendesk.com/oauth/tokens';
+const REQUESTS_ENDPOINT = 'https://meemoo.zendesk.com/api/v2/requests.json';
 
 const mockTicketRequest = {
 	subject: 'Test ticket',
@@ -23,37 +20,62 @@ const mockTicketRequest = {
 const mockTicketResponse = { id: 1, subject: 'Test ticket' };
 
 /**
- * A node-zendesk client whose requests.create() fails with the given status codes before succeeding
+ * A fetch mock for the zendesk oauth token endpoint and the zendesk requests api
+ * Every token request returns the next access token, the last one is reused
+ * The requests api fails with the given status codes before succeeding
  */
-function mockZendeskClient(failWithStatusCodes: number[] = []) {
+function mockZendeskFetch({
+	accessTokens = ['access-token-1'],
+	failWithStatusCodes = [],
+}: { accessTokens?: string[]; failWithStatusCodes?: number[] } = {}) {
+	const tokens = [...accessTokens];
 	const statusCodes = [...failWithStatusCodes];
-	return {
-		requests: {
-			create: vi.fn((_body, callback) => {
-				const statusCode = statusCodes.shift();
-				if (statusCode) {
-					const error: Error & { statusCode?: number } = new Error(`Zendesk Error (${statusCode})`);
-					error.statusCode = statusCode;
-					callback(error, null, null);
-					return;
-				}
-				callback(undefined, null, mockTicketResponse);
-			}),
-		},
-	};
+	return vi.fn(async (url: string, _init?: RequestInit) => {
+		if (url === TOKEN_ENDPOINT) {
+			const accessToken = tokens.length > 1 ? tokens.shift() : tokens[0];
+			return {
+				ok: true,
+				status: 201,
+				statusText: 'Created',
+				json: async () => ({
+					access_token: accessToken,
+					expires_in: 1800,
+					scope: 'requests:write',
+					token_type: 'bearer',
+				}),
+			};
+		}
+		const statusCode = statusCodes.shift();
+		if (statusCode) {
+			return {
+				ok: false,
+				status: statusCode,
+				statusText: 'Error',
+				text: async () => `Zendesk Error (${statusCode})`,
+			};
+		}
+		return { ok: true, status: 201, json: async () => ({ request: mockTicketResponse }) };
+	});
 }
 
-function mockTokenEndpoint(accessToken: string) {
-	return vi.fn().mockResolvedValue({
-		status: 201,
-		statusText: 'Created',
-		json: async () => ({
-			access_token: accessToken,
-			expires_in: 1800,
-			scope: 'requests:write',
-			token_type: 'bearer',
-		}),
-	});
+function getRequestsApiCalls(fetchMock: ReturnType<typeof mockZendeskFetch>) {
+	return fetchMock.mock.calls.filter(([url]) => url === REQUESTS_ENDPOINT);
+}
+
+/**
+ * The ticket requests that were sent to the zendesk requests api
+ */
+function getSentTicketRequests(fetchMock: ReturnType<typeof mockZendeskFetch>) {
+	return getRequestsApiCalls(fetchMock).map(([, init]) => JSON.parse(init?.body as string).request);
+}
+
+/**
+ * The bearer tokens that were used to call the zendesk requests api
+ */
+function getUsedAccessTokens(fetchMock: ReturnType<typeof mockZendeskFetch>) {
+	return getRequestsApiCalls(fetchMock).map(([, init]) =>
+		(init?.headers as Record<string, string>).Authorization.replace('Bearer ', '')
+	);
 }
 
 describe('CreateIeObjectSupportRequestDto validation', () => {
@@ -174,13 +196,12 @@ describe('ZendeskService', () => {
 	});
 
 	it('requests an oauth access token with the client credentials grant', async () => {
-		const fetchMock = mockTokenEndpoint('access-token-1');
+		const fetchMock = mockZendeskFetch();
 		vi.stubGlobal('fetch', fetchMock);
-		mockCreateClient.mockReturnValue(mockZendeskClient());
 
 		await ZendeskService.createTicket(mockTicketRequest as any);
 
-		expect(fetchMock).toHaveBeenCalledWith('https://meemoo.zendesk.com/oauth/tokens', {
+		expect(fetchMock).toHaveBeenCalledWith(TOKEN_ENDPOINT, {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
 			body: JSON.stringify({
@@ -190,47 +211,49 @@ describe('ZendeskService', () => {
 				scope: 'requests:write',
 			}),
 		});
-		expect(mockCreateClient).toHaveBeenCalledWith(
-			expect.objectContaining({ oauth: true, token: 'access-token-1' })
-		);
+		expect(getUsedAccessTokens(fetchMock)).toEqual(['access-token-1']);
 	});
 
-	it('reuses the cached access token while it is still valid', async () => {
-		const fetchMock = mockTokenEndpoint('access-token-1');
+	it('creates the ticket through the zendesk requests api', async () => {
+		const fetchMock = mockZendeskFetch();
 		vi.stubGlobal('fetch', fetchMock);
-		mockCreateClient.mockReturnValue(mockZendeskClient());
-
-		await ZendeskService.createTicket(mockTicketRequest as any);
-		await ZendeskService.createTicket(mockTicketRequest as any);
-
-		expect(fetchMock).toHaveBeenCalledTimes(1);
-		expect(mockCreateClient).toHaveBeenCalledTimes(2);
-	});
-
-	it('fetches a new access token and retries once when zendesk returns a 401', async () => {
-		const fetchMock = vi
-			.fn()
-			.mockResolvedValueOnce({
-				status: 201,
-				json: async () => ({ access_token: 'revoked-token', expires_in: 1800 }),
-			})
-			.mockResolvedValueOnce({
-				status: 201,
-				json: async () => ({ access_token: 'fresh-token', expires_in: 1800 }),
-			});
-		vi.stubGlobal('fetch', fetchMock);
-		mockCreateClient
-			.mockReturnValueOnce(mockZendeskClient([401]))
-			.mockReturnValueOnce(mockZendeskClient());
 
 		const result = await ZendeskService.createTicket(mockTicketRequest as any);
 
 		expect(result).toEqual(mockTicketResponse);
-		expect(fetchMock).toHaveBeenCalledTimes(2);
-		expect(mockCreateClient).toHaveBeenNthCalledWith(
-			2,
-			expect.objectContaining({ token: 'fresh-token' })
-		);
+		expect(fetchMock).toHaveBeenCalledWith(REQUESTS_ENDPOINT, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				Accept: 'application/json',
+				Authorization: 'Bearer access-token-1',
+			},
+			body: JSON.stringify({ request: mockTicketRequest }),
+		});
+	});
+
+	it('reuses the cached access token while it is still valid', async () => {
+		const fetchMock = mockZendeskFetch();
+		vi.stubGlobal('fetch', fetchMock);
+
+		await ZendeskService.createTicket(mockTicketRequest as any);
+		await ZendeskService.createTicket(mockTicketRequest as any);
+
+		expect(fetchMock.mock.calls.filter(([url]) => url === TOKEN_ENDPOINT)).toHaveLength(1);
+		expect(getRequestsApiCalls(fetchMock)).toHaveLength(2);
+	});
+
+	it('fetches a new access token and retries once when zendesk returns a 401', async () => {
+		const fetchMock = mockZendeskFetch({
+			accessTokens: ['revoked-token', 'fresh-token'],
+			failWithStatusCodes: [401],
+		});
+		vi.stubGlobal('fetch', fetchMock);
+
+		const result = await ZendeskService.createTicket(mockTicketRequest as any);
+
+		expect(result).toEqual(mockTicketResponse);
+		expect(getUsedAccessTokens(fetchMock)).toEqual(['revoked-token', 'fresh-token']);
 	});
 
 	it('throws when the token endpoint fails', async () => {
@@ -247,13 +270,13 @@ describe('ZendeskService', () => {
 	});
 
 	it('does not retry more than once on a 401 from the zendesk api', async () => {
-		vi.stubGlobal('fetch', mockTokenEndpoint('access-token-1'));
-		mockCreateClient.mockReturnValue(mockZendeskClient([401, 401]));
+		const fetchMock = mockZendeskFetch({ failWithStatusCodes: [401, 401] });
+		vi.stubGlobal('fetch', fetchMock);
 
 		await expect(ZendeskService.createTicket(mockTicketRequest as any)).rejects.toMatchObject({
 			statusCode: 401,
 		});
-		expect(mockCreateClient).toHaveBeenCalledTimes(2);
+		expect(getRequestsApiCalls(fetchMock)).toHaveLength(2);
 	});
 });
 
@@ -287,6 +310,8 @@ describe('ZendeskService#createIeObjectSupportTicket', () => {
 		name: 'Test Reporter',
 	} as CreateIeObjectSupportRequestDto;
 
+	let fetchMock: ReturnType<typeof mockZendeskFetch>;
+
 	beforeEach(() => {
 		vi.clearAllMocks();
 		(ZendeskService as any).accessToken = null;
@@ -296,13 +321,12 @@ describe('ZendeskService#createIeObjectSupportTicket', () => {
 		process.env.ZENDESK_CLIENT_ID = 'test-client-id';
 		process.env.ZENDESK_CLIENT_SECRET = 'test-client-secret';
 
-		vi.stubGlobal('fetch', mockTokenEndpoint('access-token-1'));
+		fetchMock = mockZendeskFetch();
+		vi.stubGlobal('fetch', fetchMock);
 		mockOrganisationsService.findOrganisationsBySchemaIdentifiers.mockResolvedValue([]);
 	});
 
 	it('creates a Zendesk ticket for GENERAL_QUESTION and never emails a maintainer', async () => {
-		mockCreateClient.mockReturnValue(mockZendeskClient());
-
 		const result = await createService().createIeObjectSupportTicket(baseDto);
 
 		expect(result).toEqual(mockTicketResponse);
@@ -311,12 +335,9 @@ describe('ZendeskService#createIeObjectSupportTicket', () => {
 	});
 
 	it('maps the reporter name, email, message and url onto the created ticket', async () => {
-		const client = mockZendeskClient();
-		mockCreateClient.mockReturnValue(client);
-
 		await createService().createIeObjectSupportTicket(baseDto);
 
-		const [{ request }] = (client.requests.create as any).mock.calls[0];
+		const [request] = getSentTicketRequests(fetchMock);
 		expect(request.requester).toEqual({ name: baseDto.name, email: baseDto.email });
 		expect(request.comment.body).toBe(baseDto.message);
 		expect(request.comment.url).toBe(baseDto.url);
@@ -324,9 +345,6 @@ describe('ZendeskService#createIeObjectSupportTicket', () => {
 	});
 
 	it('builds the ticket subject from the fixed subject key, resolved in the reporter locale', async () => {
-		const client = mockZendeskClient();
-		mockCreateClient.mockReturnValue(client);
-
 		await createService().createIeObjectSupportTicket(baseDto);
 
 		expect(mockTranslationsService.tText).toHaveBeenCalledWith(
@@ -334,15 +352,13 @@ describe('ZendeskService#createIeObjectSupportTicket', () => {
 			{},
 			baseDto.locale
 		);
-		const [{ request }] = (client.requests.create as any).mock.calls[0];
+		const [request] = getSentTicketRequests(fetchMock);
 		expect(request.subject).toBe(
 			`modules/visitor-space/components/report-blade/report-blade___media-item-gerapporteerd-door-gebruiker-op-het-archief::${baseDto.locale}`
 		);
 	});
 
 	it('creates a Zendesk ticket for LEGAL_REMARK and never emails a maintainer', async () => {
-		mockCreateClient.mockReturnValue(mockZendeskClient());
-
 		await createService().createIeObjectSupportTicket({
 			...baseDto,
 			reportReason: ReportReason.LEGAL_REMARK,
@@ -368,33 +384,25 @@ describe('ZendeskService#createIeObjectSupportTicket', () => {
 	])(
 		'includes the %s legal reason label in the ticket body for LEGAL_REMARK',
 		async (reportLegalReason, expectedKey) => {
-			const client = mockZendeskClient();
-			mockCreateClient.mockReturnValue(client);
-
 			await createService().createIeObjectSupportTicket({
 				...baseDto,
 				reportReason: ReportReason.LEGAL_REMARK,
 				reportLegalReason,
 			});
 
-			const [{ request }] = (client.requests.create as any).mock.calls[0];
+			const [request] = getSentTicketRequests(fetchMock);
 			expect(request.comment.html_body).toContain(`${expectedKey}::nl`);
 		}
 	);
 
 	it('does not leak the string "undefined" into the ticket body when there is no legal reason', async () => {
-		const client = mockZendeskClient();
-		mockCreateClient.mockReturnValue(client);
-
 		await createService().createIeObjectSupportTicket(baseDto);
 
-		const [{ request }] = (client.requests.create as any).mock.calls[0];
+		const [request] = getSentTicketRequests(fetchMock);
 		expect(request.comment.html_body).not.toContain('undefined');
 	});
 
 	it('emails the resolved "ontsluiting" contact for METADATA_ISSUE and never creates a ticket', async () => {
-		const client = mockZendeskClient();
-		mockCreateClient.mockReturnValue(client);
 		mockOrganisationsService.findOrganisationsBySchemaIdentifiers.mockResolvedValue([
 			{
 				contactPoint: [
@@ -416,7 +424,7 @@ describe('ZendeskService#createIeObjectSupportTicket', () => {
 		expect(mockOrganisationsService.findOrganisationsBySchemaIdentifiers).toHaveBeenCalledWith([
 			'maintainer-id-1',
 		]);
-		expect(client.requests.create).not.toHaveBeenCalled();
+		expect(getSentTicketRequests(fetchMock)).toHaveLength(0);
 		expect(mockCampaignMonitorService.sendTransactionalMail).toHaveBeenCalledTimes(1);
 
 		const [mailInfo, lang] = mockCampaignMonitorService.sendTransactionalMail.mock.calls[0];
@@ -434,8 +442,6 @@ describe('ZendeskService#createIeObjectSupportTicket', () => {
 	});
 
 	it('falls back to the meemoo support address and never creates a ticket when no "ontsluiting" contact can be resolved', async () => {
-		const client = mockZendeskClient();
-		mockCreateClient.mockReturnValue(client);
 		mockOrganisationsService.findOrganisationsBySchemaIdentifiers.mockResolvedValue([
 			{ contactPoint: [{ contactType: 'facturatie', email: 'billing@example.be' }] },
 		]);
@@ -447,16 +453,13 @@ describe('ZendeskService#createIeObjectSupportTicket', () => {
 		});
 
 		expect(result).toBeUndefined();
-		expect(client.requests.create).not.toHaveBeenCalled();
+		expect(getSentTicketRequests(fetchMock)).toHaveLength(0);
 		expect(mockCampaignMonitorService.sendTransactionalMail).toHaveBeenCalledTimes(1);
 		const [mailInfo] = mockCampaignMonitorService.sendTransactionalMail.mock.calls[0];
 		expect(mailInfo.data.to).toBe('support@meemoo.be');
 	});
 
 	it('falls back to the meemoo support address when METADATA_ISSUE has no maintainerId at all', async () => {
-		const client = mockZendeskClient();
-		mockCreateClient.mockReturnValue(client);
-
 		const result = await createService().createIeObjectSupportTicket({
 			...baseDto,
 			reportReason: ReportReason.METADATA_ISSUE,
@@ -464,30 +467,22 @@ describe('ZendeskService#createIeObjectSupportTicket', () => {
 
 		expect(result).toBeUndefined();
 		expect(mockOrganisationsService.findOrganisationsBySchemaIdentifiers).not.toHaveBeenCalled();
-		expect(client.requests.create).not.toHaveBeenCalled();
+		expect(getSentTicketRequests(fetchMock)).toHaveLength(0);
 		const [mailInfo] = mockCampaignMonitorService.sendTransactionalMail.mock.calls[0];
 		expect(mailInfo.data.to).toBe('support@meemoo.be');
 	});
 
 	it('uses the requested locale to build both the ticket subject and body in NL and EN', async () => {
-		const nlClient = mockZendeskClient();
-		mockCreateClient.mockReturnValueOnce(nlClient);
 		await createService().createIeObjectSupportTicket({ ...baseDto, locale: Locale.Nl });
-		const [{ request: nlRequest }] = (nlClient.requests.create as any).mock.calls[0];
-
-		(ZendeskService as any).accessToken = null;
-		vi.stubGlobal('fetch', mockTokenEndpoint('access-token-2'));
-		const enClient = mockZendeskClient();
-		mockCreateClient.mockReturnValueOnce(enClient);
 		await createService().createIeObjectSupportTicket({ ...baseDto, locale: Locale.En });
-		const [{ request: enRequest }] = (enClient.requests.create as any).mock.calls[0];
+		const [nlRequest, enRequest] = getSentTicketRequests(fetchMock);
 
 		expect(nlRequest.subject).not.toEqual(enRequest.subject);
 		expect(nlRequest.comment.html_body).not.toEqual(enRequest.comment.html_body);
 	});
 
 	it('propagates the error when the Zendesk API fails to create the ticket', async () => {
-		mockCreateClient.mockReturnValue(mockZendeskClient([500, 500]));
+		vi.stubGlobal('fetch', mockZendeskFetch({ failWithStatusCodes: [500, 500] }));
 
 		await expect(createService().createIeObjectSupportTicket(baseDto)).rejects.toBeTruthy();
 	});

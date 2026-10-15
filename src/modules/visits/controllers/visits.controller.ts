@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
 
-import { TranslationsService } from '@meemoo/admin-core-api';
+import { type IPagination, Pagination, TranslationsService } from '@meemoo/admin-core-api';
 import {
 	BadRequestException,
 	Body,
@@ -18,8 +18,6 @@ import {
 	UseGuards,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { Pagination } from '@studiohyperdrive/pagination';
-import type { IPagination } from '@studiohyperdrive/pagination/dist/lib/pagination.types';
 import { isFuture } from 'date-fns';
 import type { Request } from 'express';
 import { uniqBy } from 'lodash';

@@ -65,11 +65,16 @@ const mockGqlFolder2: FindFoldersByUserQuery['users_folder'][0] = {
 const MOCK_SCHEMA_NAME = 'CGSO. De mannenbeweging - mannenemancipatie - 1982';
 
 const mockGqlFolderObject: GqlObject = {
+	schemaMaintainer: null,
+	schema_description: null,
+	schema_date_published: null,
+	schema_date_created: null,
 	id: 'https://data-qas.hetarchief.be/id/entity/8s4jm2514q',
 	schema_identifier: '8s4jm2514q',
 	schemaNames: [
 		{
 			schema_name: MOCK_SCHEMA_NAME,
+			is_ai_generated: false,
 		},
 	],
 	dcterms_available: '2015-09-19T12:08:24',
@@ -129,11 +134,16 @@ const mockGqlFolderObjectsResult: FindFolderIeObjectsByFolderIdQuery = {
 			created_at: '2022-02-02T10:55:16.542503',
 			ie_object_id: 'https://data-qas.hetarchief.be/id/entity/8s4jm2514q',
 			intellectualEntity: {
+				schemaMaintainer: null,
+				schema_description: null,
+				schema_date_published: null,
+				schema_date_created: null,
 				id: 'https://data-qas.hetarchief.be/id/entity/8s4jm2514q',
 				schema_identifier: '8s4jm2514q',
 				schemaNames: [
 					{
 						schema_name: MOCK_SCHEMA_NAME,
+						is_ai_generated: false,
 					},
 				],
 				dcterms_available: '2015-09-19T12:08:24',
@@ -170,11 +180,16 @@ const mockGqlFolderObjectResult: FindIeObjectInFolderQuery = {
 		{
 			created_at: '2022-02-02T10:55:16.542503',
 			intellectualEntity: {
+				schemaMaintainer: null,
+				schema_description: null,
+				schema_date_published: null,
+				schema_date_created: null,
 				id: 'https://data-qas.hetarchief.be/id/entity/8s4jm2514q',
 				schema_identifier: '8s4jm2514q',
 				schemaNames: [
 					{
 						schema_name: MOCK_SCHEMA_NAME,
+						is_ai_generated: false,
 					},
 				],
 				dcterms_available: '2015-09-19T12:08:24',

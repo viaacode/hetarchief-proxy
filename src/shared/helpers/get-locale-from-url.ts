@@ -1,4 +1,4 @@
-import { parseUrl } from 'query-string';
+import queryString from 'query-string';
 
 import { Locale } from '~shared/types/types';
 
@@ -8,7 +8,7 @@ import { Locale } from '~shared/types/types';
  * @param url
  */
 export function getLocaleFromUrl(url: string): Locale {
-	const urlWithoutQueryParams = parseUrl(url).url;
+	const urlWithoutQueryParams = queryString.parseUrl(url).url;
 	return (
 		Object.values(Locale).find((languageCode) => {
 			return (

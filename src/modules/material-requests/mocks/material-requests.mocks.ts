@@ -18,6 +18,13 @@ import { Locale } from '~shared/types/types';
 export const mockUserProfileId = 'eccf3357-bc87-42e4-a91c-5a0ba8cb550a';
 
 export const mockGqlMaterialRequest1: FindMaterialRequestsQuery['app_material_requests'][0] = {
+	organisation_name: null,
+	ie_object_representation_id: null,
+	objectRepresentation: null,
+	requested_at: null,
+	group_id: null,
+	name: null,
+	download_available_at: null,
 	id: '9471f49f-5ac0-43f5-a74a-09c4c56463a4',
 	ie_object_id: 'https://data-int.hetarchief.be/id/entity/0000003g0k',
 	profile_id: 'e1d792cc-4624-48cb-aab3-80ef90521b54',
@@ -32,13 +39,19 @@ export const mockGqlMaterialRequest1: FindMaterialRequestsQuery['app_material_re
 	requester_capacity: Lookup_App_Material_Request_Requester_Capacity_Enum.Education as any,
 	download_status: null,
 	requested_by: {
+		group: null,
+		first_name: null,
+		last_name: null,
 		id: 'b6c5419f-6a19-4a41-a400-e0bbc0429c4f',
 		full_name: 'Ilya Korsakov',
 		mail: 'ilya.korsakov@example.com',
 		language: Locale.Nl,
 	},
 	intellectualEntity: {
+		schema_date_published: null,
+		created_at: null,
 		schemaMaintainer: {
+			ha_org_sector: null,
 			org_identifier: 'OR-rf5kf25',
 			skos_pref_label: 'VRT',
 			ha_org_has_logo: 'https://assets.viaa.be/images/OR-rf5kf25',
@@ -52,6 +65,7 @@ export const mockGqlMaterialRequest1: FindMaterialRequestsQuery['app_material_re
 		schemaNames: [
 			{
 				schema_name: '',
+				is_ai_generated: false,
 			},
 		],
 		premisIdentifier: [],
@@ -70,6 +84,14 @@ export const mockGqlMaterialRequest1: FindMaterialRequestsQuery['app_material_re
 };
 
 export const mockGqlMaterialRequest2: FindMaterialRequestsByIdQuery['app_material_requests'][0] = {
+	download_available_at: null,
+	organisation_name: null,
+	ie_object_representation_id: null,
+	objectRepresentation: null,
+	requested_at: null,
+	group_id: null,
+	name: null,
+	download_status: null,
 	id: '9471f49f-5ac0-43f5-a74a-09c4c56463a4',
 	ie_object_id: 'https://data-int.hetarchief.be/id/entity/0000003g0k',
 	profile_id: 'e1d792cc-4624-48cb-aab3-80ef90521b54',
@@ -84,6 +106,8 @@ export const mockGqlMaterialRequest2: FindMaterialRequestsByIdQuery['app_materia
 	organisation: null,
 	requester_capacity: Lookup_App_Material_Request_Requester_Capacity_Enum.Education as any,
 	requested_by: {
+		first_name: null,
+		last_name: null,
 		id: 'b6c5419f-6a19-4a41-a400-e0bbc0429c4f',
 		full_name: 'Ilya Korsakov',
 		mail: 'ilya.korsakov@example.com',
@@ -96,7 +120,10 @@ export const mockGqlMaterialRequest2: FindMaterialRequestsByIdQuery['app_materia
 		},
 	},
 	intellectualEntity: {
+		schema_date_published: null,
+		created_at: null,
 		schemaMaintainer: {
+			ha_org_sector: null,
 			org_identifier: 'OR-rf5kf25',
 			skos_pref_label: 'VRT',
 			ha_org_has_logo: 'https://assets.viaa.be/images/OR-rf5kf25',
@@ -110,6 +137,7 @@ export const mockGqlMaterialRequest2: FindMaterialRequestsByIdQuery['app_materia
 		schemaNames: [
 			{
 				schema_name: 'STIHL: SV DUBLIN ZOO/STIHL zoo na',
+				is_ai_generated: false,
 			},
 		],
 		premisIdentifier: [],
@@ -257,6 +285,8 @@ export const mockUser: User = {
 
 export const mockGqlMaintainers: FindMaintainersWithMaterialRequestsQuery['graph_organisations_with_material_requests'][0] =
 	{
+		id: null,
+		organization_slug: null,
 		org_identifier: 'OR-rf5kf25',
 		skos_pref_label: 'VRT',
 	};
