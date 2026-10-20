@@ -1,9 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import fs from 'node:fs/promises';
-import { retry } from 'async';
-import { Request } from 'express';
-
 import { DataService, PlayerTicketService } from '@meemoo/admin-core-api';
+import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import {
 	ForbiddenException,
@@ -13,29 +11,8 @@ import {
 	Logger,
 	NotFoundException,
 } from '@nestjs/common';
-
 import { ConfigService } from '@nestjs/config';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
-import { mapLimit } from 'blend-promise-utils';
-import type { Cache } from 'cache-manager';
-import got, { type Got } from 'got';
-
-import {
-	compact,
-	find,
-	groupBy,
-	isArray,
-	isEmpty,
-	isNil,
-	isNumber,
-	kebabCase,
-	omitBy,
-	sum,
-	uniq,
-} from 'lodash';
-
-import type { Configuration } from '~config';
-
 import {
 	type HetArchiefIeObject,
 	type HetArchiefIeObjectFile,
@@ -49,32 +26,26 @@ import {
 	type HetArchiefRelatedIeObject,
 	HetArchiefSimpleIeObjectType,
 } from '@viaa/avo2-types';
-import { IeObjectsQueryDto, IeObjectsSimilarQueryDto } from '../dto/ie-objects.dto';
-import { QueryBuilder } from '../elasticsearch/queryBuilder';
-import { convertQueryToLiteralString } from '../helpers/convert-query-to-literal-string';
-import { getSearchEndpoint } from '../helpers/get-search-endpoint';
-import { getVisitorSpaceAccessInfoFromVisits } from '../helpers/get-visitor-space-access-info-from-visits';
-import { limitAccessToObjectDetails } from '../helpers/limit-access-to-object-details';
-import { getSubtitleMimeType } from '../helpers/subtitles';
+import { retry } from 'async';
+import { mapLimit } from 'blend-promise-utils';
+import type { Cache } from 'cache-manager';
+import { hoursToSeconds } from 'date-fns';
+import { Request } from 'express';
+import got, { type Got } from 'got';
 import {
-	AutocompleteField,
-	type ElasticsearchObject,
-	type ElasticsearchResponse,
-	type EsQueryAutocompleteMatchPhraseResponse,
-	type FileMention,
-	FileMentionAnnotationType,
-	FileMentionEntityType,
-	type FileMentionOccurrence,
-	type GqlLimitedIeObject,
-	IeObjectForThumbnailOnly,
-	type IeObjectPages,
-	type IeObjectsSitemap,
-	type IeObjectsVisitorSpaceInfo,
-	type IeObjectsWithAggregations,
-	KEY_USER_ONLY_AUTOCOMPLETE_FIELDS,
-	type Mention,
-} from '../ie-objects.types';
-
+	compact,
+	find,
+	groupBy,
+	isArray,
+	isEmpty,
+	isNil,
+	isNumber,
+	kebabCase,
+	omitBy,
+	sum,
+	uniq,
+} from 'lodash';
+import type { Configuration } from '~config';
 import {
 	FindAllIeObjectsByFolderIdDocument,
 	type FindAllIeObjectsByFolderIdQuery,
@@ -127,18 +98,19 @@ import {
 } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
 import { AND } from '~modules/ie-objects/elasticsearch/queryBuilder.helpers';
 import {
-	type SearchTermParseResult,
 	convertStringToSearchTerms,
+	type SearchTermParseResult,
 } from '~modules/ie-objects/helpers/convert-string-to-search-terms';
+import { mapDcTermsFormatToSimpleType } from '~modules/ie-objects/helpers/map-dc-terms-format-to-simple-type';
 import {
 	AUTOCOMPLETE_FIELD_TO_ES_FIELD_NAME,
 	IE_OBJECT_AV_TYPES,
 } from '~modules/ie-objects/ie-objects.conts';
 import {
-	CACHE_KEY_PREFIX_IE_OBJECTS_SEARCH,
 	CACHE_KEY_PREFIX_IE_OBJECT_DETAIL,
 	CACHE_KEY_PREFIX_IE_OBJECT_PID_TO_ID,
 	CACHE_KEY_PREFIX_IE_OBJECT_THUMBNAIL,
+	CACHE_KEY_PREFIX_IE_OBJECTS_SEARCH,
 } from '~modules/ie-objects/services/ie-objects.service.consts';
 import {
 	type DbFile,
@@ -149,14 +121,9 @@ import {
 	type DbRepresentation,
 } from '~modules/ie-objects/services/ie-objects.service.types';
 import { OrganisationPreference } from '~modules/organisations/organisations.types';
-
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupName } from '~modules/users/types';
-
-import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
-import { hoursToSeconds } from 'date-fns';
-import { mapDcTermsFormatToSimpleType } from '~modules/ie-objects/helpers/map-dc-terms-format-to-simple-type';
 import { VisitsService } from '~modules/visits/services/visits.service';
 import { VisitStatus, VisitTimeframe } from '~modules/visits/types';
 import { AUDIO_WAVE_FORM_URL } from '~shared/consts/audio-wave-form-url';
@@ -164,6 +131,31 @@ import { customError } from '~shared/helpers/custom-error';
 import { checkRequiredEnvs } from '~shared/helpers/env-check';
 import { formattedDurationToSeconds } from '~shared/helpers/formatted-duration-to-seconds';
 import { getSchemaName } from '~shared/helpers/get-schema-name';
+import { IeObjectsQueryDto, IeObjectsSimilarQueryDto } from '../dto/ie-objects.dto';
+import { QueryBuilder } from '../elasticsearch/queryBuilder';
+import { convertQueryToLiteralString } from '../helpers/convert-query-to-literal-string';
+import { getSearchEndpoint } from '../helpers/get-search-endpoint';
+import { getVisitorSpaceAccessInfoFromVisits } from '../helpers/get-visitor-space-access-info-from-visits';
+import { limitAccessToObjectDetails } from '../helpers/limit-access-to-object-details';
+import { getSubtitleMimeType } from '../helpers/subtitles';
+import {
+	AutocompleteField,
+	type ElasticsearchObject,
+	type ElasticsearchResponse,
+	type EsQueryAutocompleteMatchPhraseResponse,
+	type FileMention,
+	FileMentionAnnotationType,
+	FileMentionEntityType,
+	type FileMentionOccurrence,
+	type GqlLimitedIeObject,
+	IeObjectForThumbnailOnly,
+	type IeObjectPages,
+	type IeObjectsSitemap,
+	type IeObjectsVisitorSpaceInfo,
+	type IeObjectsWithAggregations,
+	KEY_USER_ONLY_AUTOCOMPLETE_FIELDS,
+	type Mention,
+} from '../ie-objects.types';
 
 checkRequiredEnvs(['ELASTICSEARCH_URL', 'IE_OBJECT_ID_PREFIX']);
 
@@ -1436,7 +1428,7 @@ export class IeObjectsService {
 						return null;
 					}
 
-					let thumbnailUrl: string | undefined = undefined;
+					let thumbnailUrl: string | undefined;
 					if (resolveThumbnailUrl) {
 						thumbnailUrl = await this.getThumbnailUrlWithToken(
 							file.schema_thumbnail_url,
@@ -2237,6 +2229,7 @@ export class IeObjectsService {
 						requestedRepresentation = representation;
 						return true; // Stop searching
 					}
+					return false;
 				});
 			});
 		});
