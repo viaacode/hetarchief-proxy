@@ -15,6 +15,7 @@ import {
 	PlayerTicketController,
 	PlayerTicketService,
 } from '@meemoo/admin-core-api';
+import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
 import {
 	BadRequestException,
 	Body,
@@ -30,7 +31,6 @@ import {
 	Req,
 	Res,
 } from '@nestjs/common';
-
 import { ConfigService } from '@nestjs/config';
 import {
 	ApiBadRequestResponse,
@@ -43,50 +43,15 @@ import {
 	ApiQuery,
 	ApiTags,
 } from '@nestjs/swagger';
-import type { Request, Response } from 'express';
-import { compact, intersection, isNil, kebabCase } from 'lodash';
-
-import type { Configuration } from '~config';
-
 import {
 	HetArchiefIeObjectAccessThrough,
 	HetArchiefIeObjectLicense,
 	HetArchiefIeObjectType,
 } from '@viaa/avo2-types';
-import {
-	IeObjectMentionsQueryDto,
-	IeObjectSubtitlesQueryDto,
-	IeObjectsAutocompleteQueryDto,
-	IeObjectsPlayableDisplayDataQueryDto,
-	IeObjectsQueryDto,
-	IeObjectsSimilarQueryDto,
-	PlayerTicketsQueryDto,
-	ThumbnailQueryDto,
-} from '../dto/ie-objects.dto';
-import { checkAndFixFormatFilter } from '../helpers/check-and-fix-format-filter';
-import {
-	PLAYABLE_DISPLAY_DATA_BLOCK_TYPES,
-	type PlayableDisplayDataItem,
-	contentBlockToPlayableDisplayDataItems,
-} from '../helpers/content-block-to-playable-items';
-import { convertObjectToCsv } from '../helpers/convert-objects-to-csv';
-import { convertObjectToXml } from '../helpers/convert-objects-to-xml';
-import { limitAccessToObjectDetails } from '../helpers/limit-access-to-object-details';
-import {
-	AutocompleteField,
-	type FileMentionsResponse,
-	IeObjectForAccessCheck,
-	type IeObjectSeo,
-	type IeObjectsWithAggregations,
-	KEY_USER_ONLY_AUTOCOMPLETE_FIELDS,
-} from '../ie-objects.types';
-
-import { IeObjectsService } from '../services/ie-objects.service';
-import { PlayableDisplayDataService } from '../services/playable-display-data.service';
-import { SubtitlesService } from '../services/subtitles.service';
-
-import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
 import { mapLimit } from 'blend-promise-utils';
+import type { Request, Response } from 'express';
+import { compact, intersection, isNil, kebabCase } from 'lodash';
+import type { Configuration } from '~config';
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
 import {
@@ -111,6 +76,36 @@ import { SessionUser } from '~shared/decorators/user.decorator';
 import { customError } from '~shared/helpers/custom-error';
 import { EventsHelper } from '~shared/helpers/events';
 import { SortDirection } from '~shared/types';
+import {
+	IeObjectMentionsQueryDto,
+	IeObjectSubtitlesQueryDto,
+	IeObjectsAutocompleteQueryDto,
+	IeObjectsPlayableDisplayDataQueryDto,
+	IeObjectsQueryDto,
+	IeObjectsSimilarQueryDto,
+	PlayerTicketsQueryDto,
+	ThumbnailQueryDto,
+} from '../dto/ie-objects.dto';
+import { checkAndFixFormatFilter } from '../helpers/check-and-fix-format-filter';
+import {
+	contentBlockToPlayableDisplayDataItems,
+	PLAYABLE_DISPLAY_DATA_BLOCK_TYPES,
+	type PlayableDisplayDataItem,
+} from '../helpers/content-block-to-playable-items';
+import { convertObjectToCsv } from '../helpers/convert-objects-to-csv';
+import { convertObjectToXml } from '../helpers/convert-objects-to-xml';
+import { limitAccessToObjectDetails } from '../helpers/limit-access-to-object-details';
+import {
+	AutocompleteField,
+	type FileMentionsResponse,
+	IeObjectForAccessCheck,
+	type IeObjectSeo,
+	type IeObjectsWithAggregations,
+	KEY_USER_ONLY_AUTOCOMPLETE_FIELDS,
+} from '../ie-objects.types';
+import { IeObjectsService } from '../services/ie-objects.service';
+import { PlayableDisplayDataService } from '../services/playable-display-data.service';
+import { SubtitlesService } from '../services/subtitles.service';
 
 @ApiTags('Ie Objects')
 @Controller('ie-objects')

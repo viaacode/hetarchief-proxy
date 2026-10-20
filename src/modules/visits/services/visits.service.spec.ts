@@ -1,11 +1,7 @@
 import { DataService } from '@meemoo/admin-core-api';
 import { Test, type TestingModule } from '@nestjs/testing';
 import { addHours, subHours } from 'date-fns';
-import { type MockInstance, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-
-import { mockGqlVisitRequest, mockVisitApproved } from './__mocks__/cp_visit';
-import { VisitsService } from './visits.service';
-
+import { afterEach, beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
 import {
 	type FindPendingOrApprovedVisitRequestsForUserQuery,
 	type FindVisitsQuery,
@@ -25,6 +21,8 @@ import {
 } from '~modules/visits/types';
 import { TestingLogger } from '~shared/logging/test-logger';
 import { Locale } from '~shared/types/types';
+import { mockGqlVisitRequest, mockVisitApproved } from './__mocks__/cp_visit';
+import { VisitsService } from './visits.service';
 
 const mockDataService: Partial<Record<keyof DataService, MockInstance>> = {
 	execute: vi.fn(),

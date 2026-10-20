@@ -1,6 +1,5 @@
-import { JSEP_DIGIT_PREFIX } from '../elasticsearch/elasticsearch.consts';
-
 import { describe, expect, it } from 'vitest';
+import { JSEP_DIGIT_PREFIX } from '../elasticsearch/elasticsearch.consts';
 import { decodeSearchterm, encodeSearchterm } from './encode-search-term';
 
 describe('encode and decode search terms', () => {

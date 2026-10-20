@@ -1,4 +1,4 @@
-import { UserInfoType, convertUserInfoToCommonUser } from '@meemoo/admin-core-api';
+import { convertUserInfoToCommonUser, UserInfoType } from '@meemoo/admin-core-api';
 import {
 	Controller,
 	Get,
@@ -14,23 +14,18 @@ import {
 
 import { ConfigService } from '@nestjs/config';
 import { ApiTags } from '@nestjs/swagger';
+import { AvoUserCommonUser, AvoUserHetArchiefUser } from '@viaa/avo2-types';
 import { isToday, parseISO } from 'date-fns';
-
 import type { Configuration } from '~config';
-
-import { IdpService } from '../services/idp.service';
-import { LoginMessage, type LoginResponse } from '../types';
-
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
-
 import { UsersService } from '~modules/users/services/users.service';
 import { SessionHelper } from '~shared/auth/session-helper';
 import { SessionUser } from '~shared/decorators/user.decorator';
 import { APIKEY, ApiKeyGuard } from '~shared/guards/api-key.guard';
-
-import { AvoUserCommonUser, AvoUserHetArchiefUser } from '@viaa/avo2-types';
 import { SessionService } from '~shared/services/session.service';
+import { IdpService } from '../services/idp.service';
+import { LoginMessage, type LoginResponse } from '../types';
 
 @ApiTags('Auth')
 @Controller('auth')

@@ -1,9 +1,7 @@
 import type { ExecutionContext } from '@nestjs/common';
-import { describe, expect, it, vi } from 'vitest';
-
-import { PermissionGuard } from './permission.guard';
-
 import { PermissionName } from '@viaa/avo2-types';
+import { describe, expect, it, vi } from 'vitest';
+import { PermissionGuard } from './permission.guard';
 
 const mockExecutionContextWithPermissions = (permissions) =>
 	({

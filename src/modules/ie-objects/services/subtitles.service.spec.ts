@@ -1,7 +1,6 @@
+import { NoSuchKey } from '@aws-sdk/client-s3';
 import { NotFoundException } from '@nestjs/common';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-
-import { NoSuchKey } from '@aws-sdk/client-s3';
 import { SubtitlesService } from './subtitles.service';
 
 const mockSend = vi.fn();

@@ -13,6 +13,7 @@
     "Andry Charlier <andry.charlier@studiohyperdrive.be>"
   ],
   "scripts": {
+    "prepare": "lefthook install || echo \"lefthook install skipped, see message above\"",
     "prebuild": "rimraf dist",
     "build": "nest build",
     "start": "nest start",
@@ -33,7 +34,6 @@
     "test:cov": "vitest run --coverage",
     "test:debug": "vitest run --inspect --no-file-parallelism",
     "test:e2e": "vitest run --config ./vitest-e2e.config.ts",
-    "install-pre-commit-hook": "lefthook install",
     "generate-database-types": "dotenv -e ./.env/.env.local graphql-codegen -- --config codegen-hetarchief.yml",
     "bump": "bump-package-versions --part=patch --strategy=highest ./package.json"
   },
@@ -80,7 +80,7 @@
     "xml-js": "1.6.11"
   },
   "devDependencies": {
-    "@biomejs/biome": "1.9.4",
+    "@biomejs/biome": "2.5.15",
     "@commitlint/cli": "^21.2.3",
     "@commitlint/config-conventional": "^21.2.3",
     "@graphql-codegen/cli": "^7.4.6",
@@ -111,8 +111,7 @@
     "dotenv-cli": "5.1.0",
     "glob": "7.2.0",
     "graphql": "17.0.2",
-    "lefthook": "^1.11.13",
-    "prettier": "3.0.3",
+    "lefthook": "2.2.2",
     "rimraf": "^6.1.2",
     "sort-object-keys": "1.1.3",
     "source-map-support": "0.5.21",
@@ -131,11 +130,11 @@
     }
   },
   "allowScripts": {
-    "@biomejs/biome@1.9.4": true,
+    "@biomejs/biome@2.5.15": true,
     "@swc/core@1.16.18": true,
     "core-js@3.36.0": true,
     "esbuild@0.27.2": true,
     "fsevents@2.3.3": true,
-    "lefthook@1.11.13": true
+    "lefthook@2.2.2": true
   }
 }

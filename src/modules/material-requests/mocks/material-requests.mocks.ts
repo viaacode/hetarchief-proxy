@@ -1,8 +1,9 @@
-import { AvoAuthIdpType, PermissionName } from '@viaa/avo2-types';
-
-import { type MaterialRequest, MaterialRequestType } from '../material-requests.types';
-
-import { HetArchiefIeObjectLicense, HetArchiefIeObjectType } from '@viaa/avo2-types';
+import {
+	AvoAuthIdpType,
+	HetArchiefIeObjectLicense,
+	HetArchiefIeObjectType,
+	PermissionName,
+} from '@viaa/avo2-types';
 import {
 	type FindMaintainersWithMaterialRequestsQuery,
 	type FindMaterialRequestsByIdQuery,
@@ -14,6 +15,7 @@ import {
 import { representationMp3 } from '~modules/ie-objects/services/ie-objects.service.mocks';
 import { GroupId, GroupName, type User } from '~modules/users/types';
 import { Locale } from '~shared/types/types';
+import { type MaterialRequest, MaterialRequestType } from '../material-requests.types';
 
 export const mockUserProfileId = 'eccf3357-bc87-42e4-a91c-5a0ba8cb550a';
 

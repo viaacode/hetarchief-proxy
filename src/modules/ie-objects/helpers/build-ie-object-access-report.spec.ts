@@ -1,18 +1,15 @@
 import { HetArchiefIeObjectLicense, HetArchiefIeObjectSector } from '@viaa/avo2-types';
 import { describe, expect, it } from 'vitest';
-
+import { GroupId } from '~modules/users/types';
 import { IeObjectMetadataSet } from '../ie-objects.types';
 import { mockIeObject1, mockUserInfo } from '../mocks/ie-objects.mock';
-
 import {
+	buildIeObjectAccessReport,
 	IeObjectAccessGrantedThrough,
 	IeObjectNotVisibleReason,
-	buildIeObjectAccessReport,
 } from './build-ie-object-access-report';
 import { limitAccessToObjectDetails } from './limit-access-to-object-details';
 import type { LimitAccessTrace } from './limit-access-to-object-details.types';
-
-import { GroupId } from '~modules/users/types';
 
 const anonymousUserInfo = {
 	...mockUserInfo,

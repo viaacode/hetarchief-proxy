@@ -7,11 +7,9 @@ import saml2, { type IdentityProvider, type ServiceProvider } from 'saml2-js';
 import convert from 'xml-js';
 
 import type { Configuration } from '~config';
-
-import type { DecodedSamlResponse, IdpMetaData, SamlCallbackBody, SamlConfig } from '../types';
-
 import type { LdapUser } from '~shared/auth/auth.types';
 import type { Locale } from '~shared/types/types';
+import type { DecodedSamlResponse, IdpMetaData, SamlCallbackBody, SamlConfig } from '../types';
 
 export abstract class SamlService {
 	protected logger: Logger;

@@ -1,13 +1,10 @@
 import { DataService } from '@meemoo/admin-core-api';
 import { Test, type TestingModule } from '@nestjs/testing';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-
-import { UsersService } from '../services/users.service';
-
-import { UsersController } from './users.controller';
-
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 import { TestingLogger } from '~shared/logging/test-logger';
+import { UsersService } from '../services/users.service';
+import { UsersController } from './users.controller';
 
 const mockUserResponse = {
 	id: '123',

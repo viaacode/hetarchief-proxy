@@ -1,6 +1,6 @@
 import { AssetsService } from '@meemoo/admin-core-api';
 import { Test, type TestingModule } from '@nestjs/testing';
-import { type MockInstance, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
 
 import { mockUser } from '~modules/ie-objects/mocks/ie-objects.mock';
 import { SessionUserEntity } from '~modules/users/classes/session-user';

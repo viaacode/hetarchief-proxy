@@ -6,25 +6,25 @@ import {
 	Lookup_App_Content_Type_Enum,
 } from '@meemoo/admin-core-api';
 import { ConflictException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+	AvoFileUploadAssetType,
+	AvoSearchOrderDirection,
+	HetArchiefIeObjectLicense,
+} from '@viaa/avo2-types';
 import { format } from 'date-fns';
 import { compact, uniqBy } from 'lodash';
-
-import type { SitemapConfig, SitemapItemInfo } from '../sitemap.types';
-
-import { HetArchiefIeObjectLicense } from '@viaa/avo2-types';
 import {
 	GetSitemapConfigDocument,
 	type GetSitemapConfigQuery,
 } from '~generated/graphql-db-types-hetarchief';
 import { type IeObjectsSitemap } from '~modules/ie-objects/ie-objects.types';
-
-import { AvoFileUploadAssetType, AvoSearchOrderDirection } from '@viaa/avo2-types';
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { getIeObjectNameSlug } from '~modules/sitemap/helpers/get-ie-object-name-slug';
 import { SITEMAP_BATCH_DELAY_MS, SITEMAP_XML_OBJECTS_SIZE } from '~modules/sitemap/sitemap.consts';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { customError } from '~shared/helpers/custom-error';
 import { Locale, VisitorSpaceStatus } from '~shared/types/types';
+import type { SitemapConfig, SitemapItemInfo } from '../sitemap.types';
 
 @Injectable()
 export class SitemapService {
@@ -285,7 +285,7 @@ export class SitemapService {
 					// so the sitemap generation doesn't slow down the website
 					await this.sleep(SITEMAP_BATCH_DELAY_MS);
 				}
-			} while ((ieObjectsResponse?.items?.length || 0) > 0 && !!lastId);
+			} while ((ieObjectsResponse?.items?.length || 0) > 0 && lastId);
 			return xmlUrls;
 		} catch (err) {
 			const error = customError('Failed to createAndUploadIeObjectSitemapEntries', err, {

@@ -1,15 +1,12 @@
 import { DataService } from '@meemoo/admin-core-api';
 import { Injectable, Logger } from '@nestjs/common';
-
-import packageJson from '../../../../package.json';
-
 import {
 	GetFirstObjectIdDocument,
 	type GetFirstObjectIdQuery,
 } from '~generated/graphql-db-types-hetarchief';
 import { ALL_INDEXES } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
-
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
+import packageJson from '../../../../package.json';
 
 @Injectable()
 export class StatusService {

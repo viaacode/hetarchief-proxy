@@ -1,4 +1,5 @@
 import { type IPagination, Pagination } from '@meemoo/admin-core-api';
+import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
 import {
 	Body,
 	Controller,
@@ -15,32 +16,22 @@ import {
 	UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { HetArchiefIeObject, HetArchiefIeObjectLicense, PermissionName } from '@viaa/avo2-types';
 import * as promiseUtils from 'blend-promise-utils';
 import type { Request } from 'express';
 import { compact, isNil, noop } from 'lodash';
-
-import { type Folder, type FolderShared, FolderStatus } from '../types';
-
 import {
 	ConsentToTrackOption,
 	EmailTemplate,
 } from '~modules/campaign-monitor/campaign-monitor.types';
-
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
-
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
 import { CreateOrUpdateFolderDto, FolderObjectsQueryDto } from '~modules/folders/dto/folders.dto';
-
-import { HetArchiefIeObject, HetArchiefIeObjectLicense } from '@viaa/avo2-types';
 import { FoldersService } from '~modules/folders/services/folders.service';
-
+import { mapDcTermsFormatToSimpleType } from '~modules/ie-objects/helpers/map-dc-terms-format-to-simple-type';
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
-
-import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
-import { PermissionName } from '@viaa/avo2-types';
-import { mapDcTermsFormatToSimpleType } from '~modules/ie-objects/helpers/map-dc-terms-format-to-simple-type';
 import { UsersService } from '~modules/users/services/users.service';
 import { Ip } from '~shared/decorators/ip.decorator';
 import { Referer } from '~shared/decorators/referer.decorator';
@@ -50,6 +41,7 @@ import { LoggedInGuard } from '~shared/guards/logged-in.guard';
 import { customError } from '~shared/helpers/custom-error';
 import { EventsHelper } from '~shared/helpers/events';
 import { Locale } from '~shared/types/types';
+import { type Folder, type FolderShared, FolderStatus } from '../types';
 
 @ApiTags('Folders')
 @Controller('folders') // TODO rename this to folders, and also change this in the client

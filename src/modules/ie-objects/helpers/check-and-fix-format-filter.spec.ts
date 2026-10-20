@@ -1,7 +1,6 @@
 import { HetArchiefIeObjectType } from '@viaa/avo2-types';
-import { IeObjectsSearchFilterField, Operator } from '../elasticsearch/elasticsearch.consts';
-
 import { describe, expect, it } from 'vitest';
+import { IeObjectsSearchFilterField, Operator } from '../elasticsearch/elasticsearch.consts';
 import { checkAndFixFormatFilter } from './check-and-fix-format-filter';
 
 describe('checkAndFixFormatFilter', () => {

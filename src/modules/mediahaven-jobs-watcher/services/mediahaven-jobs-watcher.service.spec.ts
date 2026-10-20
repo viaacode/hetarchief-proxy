@@ -1,22 +1,20 @@
 import { DataService, MediahavenService } from '@meemoo/admin-core-api';
 import { ConfigService } from '@nestjs/config';
 import { Test, type TestingModule } from '@nestjs/testing';
-import { type MockInstance, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-
-import {
-	MamJobStatus,
-	type MediahavenJobInfo,
-} from '~modules/mediahaven-jobs-watcher/mediahaven-jobs-watcher.types';
-import { MediahavenJobsWatcherService } from './mediahaven-jobs-watcher.service';
-
+import { afterEach, beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
 import { Lookup_App_Material_Request_Download_Status_Enum } from '~generated/graphql-db-types-hetarchief';
 import { EventsService } from '~modules/events/services/events.service';
 import { MaterialRequestMessagesService } from '~modules/material-request-messages/services/material-request-messages.service';
 import type { MaterialRequestForDownload } from '~modules/material-requests/material-requests.types';
 import { MaterialRequestsService } from '~modules/material-requests/services/material-requests.service';
+import {
+	MamJobStatus,
+	type MediahavenJobInfo,
+} from '~modules/mediahaven-jobs-watcher/mediahaven-jobs-watcher.types';
 import { UsersService } from '~modules/users/services/users.service';
 import { TestingLogger } from '~shared/logging/test-logger';
 import { mockConfigService } from '~shared/test/mock-config-service';
+import { MediahavenJobsWatcherService } from './mediahaven-jobs-watcher.service';
 
 const mockDataService: Partial<Record<keyof DataService, MockInstance>> = {
 	execute: vi.fn(),

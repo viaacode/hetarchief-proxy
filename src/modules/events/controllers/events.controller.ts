@@ -2,15 +2,12 @@ import { Body, Controller, Post, Req } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import type { Request } from 'express';
 import { isbot } from 'isbot';
-
-import { CreateEventsDto } from '../dto/events.dto';
-
-import { EventsService } from '../services/events.service';
-
 import type { LogEvent } from '~modules/events/types';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { SessionUser } from '~shared/decorators/user.decorator';
 import { EventsHelper } from '~shared/helpers/events';
+import { CreateEventsDto } from '../dto/events.dto';
+import { EventsService } from '../services/events.service';
 
 @ApiTags('Events')
 @Controller('events')

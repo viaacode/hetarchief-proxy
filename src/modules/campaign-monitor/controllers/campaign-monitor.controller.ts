@@ -11,27 +11,22 @@ import {
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import type { Request } from 'express';
-
-import { type CampaignMonitorNewsletterPreferences } from '../campaign-monitor.types';
-
-import {
-	CampaignMonitorConfirmMailQueryDto,
-	CampaignMonitorNewsletterPreferencesQueryDto,
-	CampaignMonitorNewsletterUpdatePreferencesQueryDto,
-} from '../dto/campaign-monitor.dto';
-
-import { CampaignMonitorService } from '../services/campaign-monitor.service';
-
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
-
 import { UsersService } from '~modules/users/services/users.service';
 import { GroupName } from '~modules/users/types';
 import { SessionUser } from '~shared/decorators/user.decorator';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
 import { EventsHelper } from '~shared/helpers/events';
 import { Locale } from '~shared/types/types';
+import { type CampaignMonitorNewsletterPreferences } from '../campaign-monitor.types';
+import {
+	CampaignMonitorConfirmMailQueryDto,
+	CampaignMonitorNewsletterPreferencesQueryDto,
+	CampaignMonitorNewsletterUpdatePreferencesQueryDto,
+} from '../dto/campaign-monitor.dto';
+import { CampaignMonitorService } from '../services/campaign-monitor.service';
 
 @ApiTags('Campaign-monitor')
 @Controller('campaign-monitor')

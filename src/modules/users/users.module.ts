@@ -1,10 +1,8 @@
 import { DataModule } from '@meemoo/admin-core-api';
-import { Module, forwardRef } from '@nestjs/common';
-
+import { forwardRef, Module } from '@nestjs/common';
+import { CampaignMonitorModule } from '~modules/campaign-monitor';
 import { UsersController } from './controllers/users.controller';
 import { UsersService } from './services/users.service';
-
-import { CampaignMonitorModule } from '~modules/campaign-monitor';
 
 @Module({
 	controllers: [UsersController],

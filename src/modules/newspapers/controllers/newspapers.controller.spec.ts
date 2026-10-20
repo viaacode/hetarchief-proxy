@@ -1,4 +1,4 @@
-import { type MockInstance, beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
 /* eslint-disable @typescript-eslint/consistent-type-imports */
 // Disable consistent imports since they try to import IeObjectsQueryDto as a type
 // But that breaks the endpoint body validation
@@ -8,15 +8,12 @@ import { ForbiddenException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Test, type TestingModule } from '@nestjs/testing';
 import type { Request, Response } from 'express';
-
-import { NewspapersService } from '../services/newspapers.service';
-
-import { NewspapersController } from './newspapers.controller';
-
 import { EventsService } from '~modules/events/services/events.service';
 import { IeObjectsController } from '~modules/ie-objects/controllers/ie-objects.controller';
 import { TestingLogger } from '~shared/logging/test-logger';
 import { mockConfigService } from '~shared/test/mock-config-service';
+import { NewspapersService } from '../services/newspapers.service';
+import { NewspapersController } from './newspapers.controller';
 
 const mockNewspapersService: Partial<Record<keyof NewspapersService, MockInstance>> = {};
 const mockIeObjectsController = {

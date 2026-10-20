@@ -10,12 +10,10 @@ import {
 	IsOptional,
 	IsString,
 } from 'class-validator';
-
-import { MaterialRequestOrderProp, MaterialRequestType } from '../material-requests.types';
-
 import { Lookup_App_Material_Request_Status_Enum } from '~generated/graphql-db-types-hetarchief';
 import { commaSeparatedStringToArray } from '~shared/helpers/comma-separated-string-to-array';
 import { SortDirection } from '~shared/types';
+import { MaterialRequestOrderProp, MaterialRequestType } from '../material-requests.types';
 
 export class MaterialRequestsQueryDto {
 	@IsString()

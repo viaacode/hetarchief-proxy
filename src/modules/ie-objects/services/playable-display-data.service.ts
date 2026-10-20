@@ -8,12 +8,6 @@ import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/help
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { mapLimit } from 'blend-promise-utils';
-import type { Cache } from 'cache-manager';
-import { hoursToMilliseconds } from 'date-fns';
-import { Request } from 'express';
-import { compact, isNil } from 'lodash';
-
 import {
 	AvoStillsStillInfo,
 	type HetArchiefIeObject,
@@ -23,6 +17,11 @@ import {
 	type HetArchiefPlayableDisplayIeObject,
 	HetArchiefSimpleIeObjectType,
 } from '@viaa/avo2-types';
+import { mapLimit } from 'blend-promise-utils';
+import type { Cache } from 'cache-manager';
+import { hoursToMilliseconds } from 'date-fns';
+import { Request } from 'express';
+import { compact, isNil } from 'lodash';
 import type { Configuration } from '~config';
 import {
 	GetIeObjectPlayableDisplayDataDocument,

@@ -1,8 +1,4 @@
 import type { IPagination } from '@meemoo/admin-core-api';
-
-import type { FindAllIeObjectsByFolderIdQuery } from '~generated/graphql-db-types-hetarchief';
-import type { ReusabilityCategory } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
-
 import type {
 	HetArchiefIeObject,
 	HetArchiefIeObjectLicense,
@@ -10,6 +6,8 @@ import type {
 	HetArchiefIeObjectSector,
 	HetArchiefIsPartOfCollection,
 } from '@viaa/avo2-types';
+import type { FindAllIeObjectsByFolderIdQuery } from '~generated/graphql-db-types-hetarchief';
+import type { ReusabilityCategory } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
 
 export type IeObjectSectorLicenseMatrix = Readonly<
 	Record<HetArchiefIeObjectSector, Readonly<HetArchiefIeObjectLicense[]>>

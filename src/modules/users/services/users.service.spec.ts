@@ -1,10 +1,7 @@
 import { DataService } from '@meemoo/admin-core-api';
 import { Test, type TestingModule } from '@nestjs/testing';
 import { AvoAuthIdpType, PermissionName } from '@viaa/avo2-types';
-import { type MockInstance, beforeEach, describe, expect, it, vi } from 'vitest';
-
-import { UsersService } from './users.service';
-
+import { beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
 import {
 	type FindProfileLanguagesByIdsQuery,
 	type GetUserByIdentityIdQuery,
@@ -16,6 +13,7 @@ import {
 import { mockUserResponse } from '~modules/users/services/__mock__/user.mock';
 import { GroupId, GroupName, type User } from '~modules/users/types';
 import { TestingLogger } from '~shared/logging/test-logger';
+import { UsersService } from './users.service';
 
 const mockDataService: Partial<Record<keyof DataService, MockInstance>> = {
 	execute: vi.fn(),

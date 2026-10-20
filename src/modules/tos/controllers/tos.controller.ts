@@ -1,7 +1,6 @@
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Controller, Get, Inject, Logger } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-
-import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import type { Cache } from 'cache-manager';
 import { hoursToMilliseconds } from 'date-fns';
 import { TosService } from '../services/tos.service';

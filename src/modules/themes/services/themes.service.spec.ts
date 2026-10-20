@@ -1,18 +1,17 @@
 import { DataService } from '@meemoo/admin-core-api';
 import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
 import { Test, type TestingModule } from '@nestjs/testing';
+import { HetArchiefIeObjectLicense } from '@viaa/avo2-types';
 import {
-	type MockInstance,
 	afterEach,
 	beforeAll,
 	beforeEach,
 	describe,
 	expect,
 	it,
+	type MockInstance,
 	vi,
 } from 'vitest';
-
-import { HetArchiefIeObjectLicense } from '@viaa/avo2-types';
 import { GetThemeWithObjectsInRandomOrderQuery } from '~generated/graphql-db-types-hetarchief';
 import { mockUser } from '~modules/ie-objects/mocks/ie-objects.mock';
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';

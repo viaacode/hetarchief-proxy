@@ -1,14 +1,12 @@
 import { AdminTranslationsModule, AssetsModule, DataModule } from '@meemoo/admin-core-api';
 import { Module } from '@nestjs/common';
-
-import { MaterialRequestMessagesController } from './controllers/material-request-messages.controller';
-import { MaterialRequestMessagesService } from './services/material-request-messages.service';
-
 import { ConfigModule } from '@nestjs/config';
 import { MaterialRequestPdfGeneratorService } from '~modules/material-request-messages/services/material-request-pdf-generator';
 import { MaterialRequestsModule } from '~modules/material-requests';
 import { NotificationsModule } from '~modules/notifications';
 import { UsersModule } from '~modules/users';
+import { MaterialRequestMessagesController } from './controllers/material-request-messages.controller';
+import { MaterialRequestMessagesService } from './services/material-request-messages.service';
 
 @Module({
 	controllers: [MaterialRequestMessagesController],

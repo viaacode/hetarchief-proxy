@@ -1,13 +1,12 @@
-import { DataService, UserInfoType, convertUserInfoToCommonUser } from '@meemoo/admin-core-api';
+import { convertUserInfoToCommonUser, DataService, UserInfoType } from '@meemoo/admin-core-api';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import {
 	AvoAuthIdpType,
 	AvoUserCommonUser,
 	AvoUserHetArchiefUser,
+	type HetArchiefIeObjectSector,
 	PermissionName,
 } from '@viaa/avo2-types';
-
-import { type HetArchiefIeObjectSector } from '@viaa/avo2-types';
 import {
 	FindProfileLanguagesByIdsDocument,
 	type FindProfileLanguagesByIdsQuery,
@@ -16,11 +15,11 @@ import {
 	type GetUserByEmailQuery,
 	type GetUserByEmailQueryVariables,
 	GetUserByIdDocument,
-	type GetUserByIdQuery,
-	type GetUserByIdQueryVariables,
 	GetUserByIdentityIdDocument,
 	type GetUserByIdentityIdQuery,
 	type GetUserByIdentityIdQueryVariables,
+	type GetUserByIdQuery,
+	type GetUserByIdQueryVariables,
 	InsertUserDocument,
 	InsertUserIdentityDocument,
 	type InsertUserIdentityMutation,

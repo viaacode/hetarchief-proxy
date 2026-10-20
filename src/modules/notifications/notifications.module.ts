@@ -3,14 +3,12 @@ import {
 	DataModule,
 	MaintenanceAlertsModule,
 } from '@meemoo/admin-core-api';
-import { Module, forwardRef } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-
-import { NotificationsController } from './controllers/notifications.controller';
-import { NotificationsService } from './services/notifications.service';
-
 import { CampaignMonitorModule } from '~modules/campaign-monitor';
 import { VisitsModule } from '~modules/visits';
+import { NotificationsController } from './controllers/notifications.controller';
+import { NotificationsService } from './services/notifications.service';
 
 @Module({
 	controllers: [NotificationsController],

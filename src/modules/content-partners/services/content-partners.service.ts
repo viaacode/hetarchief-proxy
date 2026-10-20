@@ -1,15 +1,13 @@
 import { DataService, type IPagination, Pagination } from '@meemoo/admin-core-api';
 import { Injectable } from '@nestjs/common';
-
-import { ContentPartnersQueryDto } from '../dto/content-partners.dto';
-import type { ContentPartner } from '../types';
-
 import {
 	FindContentPartnersDocument,
 	type FindContentPartnersQuery,
 	type FindContentPartnersQueryVariables,
 	type Graph_Organization_Bool_Exp,
 } from '~generated/graphql-db-types-hetarchief';
+import { ContentPartnersQueryDto } from '../dto/content-partners.dto';
+import type { ContentPartner } from '../types';
 
 @Injectable()
 export class ContentPartnersService {

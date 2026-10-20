@@ -1,10 +1,6 @@
 import { DataService } from '@meemoo/admin-core-api';
 import { Test, type TestingModule } from '@nestjs/testing';
-import { type MockInstance, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-
-import { MaterialRequestMessagesService } from './material-request-messages.service';
-import { MaterialRequestPdfGeneratorService } from './material-request-pdf-generator';
-
+import { afterEach, beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
 import {
 	type GetEvaluatorsForOrganisationQuery,
 	type GetMaterialRequestMessagesQuery,
@@ -15,6 +11,8 @@ import {
 } from '~generated/graphql-db-types-hetarchief';
 import { MaterialRequest } from '~modules/material-requests/material-requests.types';
 import { TestingLogger } from '~shared/logging/test-logger';
+import { MaterialRequestMessagesService } from './material-request-messages.service';
+import { MaterialRequestPdfGeneratorService } from './material-request-pdf-generator';
 
 const mockDataService: Partial<Record<keyof DataService, MockInstance>> = {
 	execute: vi.fn(),

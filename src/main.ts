@@ -10,10 +10,8 @@ import session from 'express-session';
 import helmet from 'helmet';
 
 import { ConfigService } from '~config';
-
-import packageJson from '../package.json';
-
 import { SessionService } from '~shared/services/session.service';
+import packageJson from '../package.json';
 import { AppModule } from './app.module';
 
 async function bootstrap() {

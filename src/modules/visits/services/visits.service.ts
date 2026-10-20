@@ -9,22 +9,6 @@ import {
 } from '@nestjs/common';
 import { addMinutes, isBefore, isFuture, isPast, parseISO } from 'date-fns';
 import { compact, isArray, isEmpty, set, uniq } from 'lodash';
-
-import { CreateVisitDto, UpdateVisitDto, VisitsQueryDto } from '../dto/visits.dto';
-import {
-	AccessStatus,
-	type GqlNote,
-	type GqlUpdateVisit,
-	type GqlVisit,
-	type GqlVisitWithNotes,
-	type Note,
-	VisitAccessType,
-	type VisitRequest,
-	type VisitSpaceCount,
-	VisitStatus,
-	VisitTimeframe,
-} from '../types';
-
 import {
 	DeleteVisitFolderAccessDocument,
 	type DeleteVisitFolderAccessMutation,
@@ -73,13 +57,26 @@ import {
 	type UpdateVisitMutation,
 	type UpdateVisitMutationVariables,
 } from '~generated/graphql-db-types-hetarchief';
-
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { ORDER_PROP_TO_DB_PROP } from '~modules/visits/consts';
 import { convertToDate } from '~shared/helpers/format-belgian-date';
 import { PaginationHelper } from '~shared/helpers/pagination';
 import { SortDirection } from '~shared/types';
 import type { VisitorSpaceStatus } from '~shared/types/types';
+import { CreateVisitDto, UpdateVisitDto, VisitsQueryDto } from '../dto/visits.dto';
+import {
+	AccessStatus,
+	type GqlNote,
+	type GqlUpdateVisit,
+	type GqlVisit,
+	type GqlVisitWithNotes,
+	type Note,
+	VisitAccessType,
+	type VisitRequest,
+	type VisitSpaceCount,
+	VisitStatus,
+	VisitTimeframe,
+} from '../types';
 
 @Injectable()
 export class VisitsService {

@@ -1,22 +1,20 @@
-import type { IeObjectsVisitorSpaceInfo } from '../ie-objects.types';
-
-import identifierSearchQueryExact from './templates/exact/identifier-search-query.json';
-import nameSearchQueryExactAi from './templates/exact/name-search-query--ai.json';
-import nameSearchQueryExact from './templates/exact/name-search-query.json';
-import searchQueryAllExactAi from './templates/exact/search-query--metadata-all--ai.json';
-import searchQueryAllExact from './templates/exact/search-query--metadata-all.json';
-import searchQueryLimitedExactAi from './templates/exact/search-query--metadata-limited--ai.json';
-import searchQueryLimitedExact from './templates/exact/search-query--metadata-limited.json';
-import descriptionSearchQueryFuzzyAi from './templates/fuzzy/description-search-query--ai.json';
-import descriptionSearchQueryFuzzy from './templates/fuzzy/description-search-query.json';
-import nameSearchQueryFuzzyAi from './templates/fuzzy/name-search-query--ai.json';
-import nameSearchQueryFuzzy from './templates/fuzzy/name-search-query.json';
-import searchQueryAllFuzzyAi from './templates/fuzzy/search-query--metadata-all--ai.json';
-import searchQueryAllFuzzy from './templates/fuzzy/search-query--metadata-all.json';
-import searchQueryLimitedFuzzyAi from './templates/fuzzy/search-query--metadata-limited--ai.json';
-import searchQueryLimitedFuzzy from './templates/fuzzy/search-query--metadata-limited.json';
-
 import { SessionUserEntity } from '~modules/users/classes/session-user';
+import type { IeObjectsVisitorSpaceInfo } from '../ie-objects.types';
+import identifierSearchQueryExact from './templates/exact/identifier-search-query.json';
+import nameSearchQueryExact from './templates/exact/name-search-query.json';
+import nameSearchQueryExactAi from './templates/exact/name-search-query--ai.json';
+import searchQueryAllExact from './templates/exact/search-query--metadata-all.json';
+import searchQueryAllExactAi from './templates/exact/search-query--metadata-all--ai.json';
+import searchQueryLimitedExact from './templates/exact/search-query--metadata-limited.json';
+import searchQueryLimitedExactAi from './templates/exact/search-query--metadata-limited--ai.json';
+import descriptionSearchQueryFuzzy from './templates/fuzzy/description-search-query.json';
+import descriptionSearchQueryFuzzyAi from './templates/fuzzy/description-search-query--ai.json';
+import nameSearchQueryFuzzy from './templates/fuzzy/name-search-query.json';
+import nameSearchQueryFuzzyAi from './templates/fuzzy/name-search-query--ai.json';
+import searchQueryAllFuzzy from './templates/fuzzy/search-query--metadata-all.json';
+import searchQueryAllFuzzyAi from './templates/fuzzy/search-query--metadata-all--ai.json';
+import searchQueryLimitedFuzzy from './templates/fuzzy/search-query--metadata-limited.json';
+import searchQueryLimitedFuzzyAi from './templates/fuzzy/search-query--metadata-limited--ai.json';
 
 export const ALL_INDEXES = 'or-*';
 

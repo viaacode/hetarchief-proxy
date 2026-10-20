@@ -27,7 +27,10 @@ const mockTicketResponse = { id: 1, subject: 'Test ticket' };
 function mockZendeskFetch({
 	accessTokens = ['access-token-1'],
 	failWithStatusCodes = [],
-}: { accessTokens?: string[]; failWithStatusCodes?: number[] } = {}) {
+}: {
+	accessTokens?: string[];
+	failWithStatusCodes?: number[];
+} = {}) {
 	const tokens = [...accessTokens];
 	const statusCodes = [...failWithStatusCodes];
 	return vi.fn(async (url: string, _init?: RequestInit) => {
@@ -74,7 +77,7 @@ function getSentTicketRequests(fetchMock: ReturnType<typeof mockZendeskFetch>) {
  */
 function getUsedAccessTokens(fetchMock: ReturnType<typeof mockZendeskFetch>) {
 	return getRequestsApiCalls(fetchMock).map(([, init]) =>
-		(init?.headers as Record<string, string>).Authorization.replace('Bearer ', '')
+		(init?.headers as Record<string, string>)?.Authorization?.replace('Bearer ', '')
 	);
 }
 

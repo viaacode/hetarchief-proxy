@@ -21,25 +21,23 @@ import {
 	HetArchiefIeObjectLicense,
 } from '@viaa/avo2-types';
 import { intersection } from 'lodash';
-
-import { IeObjectAccessDebugDto } from '../dto/ie-objects.dto';
-import {
-	IeObjectAccessDebugErrorCode,
-	type IeObjectAccessDebugResponse,
-	type IeObjectAccessDebugViewer,
-	buildIeObjectAccessReport,
-} from '../helpers/build-ie-object-access-report';
-import { limitAccessToObjectDetails } from '../helpers/limit-access-to-object-details';
-import type { LimitAccessTrace } from '../helpers/limit-access-to-object-details.types';
-import type { IeObjectForAccessCheck } from '../ie-objects.types';
-import { IeObjectsService } from '../services/ie-objects.service';
-
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { UsersService } from '~modules/users/services/users.service';
 import { GroupName } from '~modules/users/types';
 import { Ip } from '~shared/decorators/ip.decorator';
 import { Referer } from '~shared/decorators/referer.decorator';
 import { SessionUser } from '~shared/decorators/user.decorator';
+import { IeObjectAccessDebugDto } from '../dto/ie-objects.dto';
+import {
+	buildIeObjectAccessReport,
+	IeObjectAccessDebugErrorCode,
+	type IeObjectAccessDebugResponse,
+	type IeObjectAccessDebugViewer,
+} from '../helpers/build-ie-object-access-report';
+import { limitAccessToObjectDetails } from '../helpers/limit-access-to-object-details';
+import type { LimitAccessTrace } from '../helpers/limit-access-to-object-details.types';
+import type { IeObjectForAccessCheck } from '../ie-objects.types';
+import { IeObjectsService } from '../services/ie-objects.service';
 
 /**
  * Debug tool for meemoo admins (admin dashboard: /admin/objecten): explains why an ie-object is

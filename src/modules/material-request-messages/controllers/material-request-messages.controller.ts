@@ -1,4 +1,7 @@
+import { randomUUID } from 'node:crypto';
+import path from 'node:path';
 import { AssetsService, type IPagination } from '@meemoo/admin-core-api';
+import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
 import {
 	BadRequestException,
 	Body,
@@ -16,13 +19,9 @@ import {
 	UseGuards,
 	UseInterceptors,
 } from '@nestjs/common';
+import { FilesInterceptor } from '@nestjs/platform-express';
 import { ApiBody, ApiConsumes, ApiOperation, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { AvoFileUploadAssetType, PermissionName } from '@viaa/avo2-types';
-
-import { randomUUID } from 'node:crypto';
-import path from 'node:path';
-import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
-import { FilesInterceptor } from '@nestjs/platform-express';
 import archiver from 'archiver';
 import { mapLimit } from 'blend-promise-utils';
 import type { Request, Response } from 'express';

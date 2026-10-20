@@ -1,11 +1,10 @@
+import { HetArchiefIeObjectSector } from '@viaa/avo2-types';
 import {
 	ContactPointType,
 	type GqlOrganisation,
 	type Organisation,
 	PostalAddressType,
 } from '../organisations.types';
-
-import { HetArchiefIeObjectSector } from '@viaa/avo2-types';
 
 export const mockGqlOrganisation: GqlOrganisation = {
 	foaf_homepage: null,

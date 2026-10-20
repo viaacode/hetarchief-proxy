@@ -6,13 +6,7 @@ import { AvoAuthIdpType } from '@viaa/avo2-types';
 import type { Request, Response } from 'express';
 import { noop } from 'lodash';
 import queryString from 'query-string';
-import { Mock, type MockInstance, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-
-import { HetArchiefService } from '../services/het-archief.service';
-import { IdpService } from '../services/idp.service';
-
-import { HetArchiefController } from './het-archief.controller';
-
+import { afterEach, beforeEach, describe, expect, it, Mock, type MockInstance, vi } from 'vitest';
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 import { EventsService } from '~modules/events/services/events.service';
 import { FoldersService } from '~modules/folders/services/folders.service';
@@ -23,6 +17,9 @@ import { GroupId } from '~modules/users/types';
 import { mockTranslationsService } from '~shared/helpers/mockTranslationsService';
 import { TestingLogger } from '~shared/logging/test-logger';
 import { MOCK_SSUM_REGISTRATION_PAGE, mockConfigService } from '~shared/test/mock-config-service';
+import { HetArchiefService } from '../services/het-archief.service';
+import { IdpService } from '../services/idp.service';
+import { HetArchiefController } from './het-archief.controller';
 
 const hetArchiefLoginUrl = 'http://localhost:3200';
 const hetArchiefLogoutUrl = 'http://localhost:3200';

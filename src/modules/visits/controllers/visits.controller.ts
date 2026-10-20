@@ -18,28 +18,14 @@ import {
 	UseGuards,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { PermissionName } from '@viaa/avo2-types';
 import { isFuture } from 'date-fns';
 import type { Request } from 'express';
 import { uniqBy } from 'lodash';
-
-import { CreateVisitDto, UpdateVisitDto, VisitsQueryDto } from '../dto/visits.dto';
-
-import { VisitsService } from '../services/visits.service';
-import {
-	type AccessStatus,
-	VisitAccessType,
-	type VisitRequest,
-	type VisitSpaceCount,
-	VisitStatus,
-} from '../types';
-
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
-
 import { NotificationsService } from '~modules/notifications/services/notifications.service';
 import { NotificationType } from '~modules/notifications/types';
-
-import { PermissionName } from '@viaa/avo2-types';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import type { VisitorSpace } from '~modules/spaces/spaces.types';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
@@ -51,6 +37,15 @@ import { SessionUser } from '~shared/decorators/user.decorator';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
 import { EventsHelper } from '~shared/helpers/events';
 import { VisitorSpaceStatus } from '~shared/types/types';
+import { CreateVisitDto, UpdateVisitDto, VisitsQueryDto } from '../dto/visits.dto';
+import { VisitsService } from '../services/visits.service';
+import {
+	type AccessStatus,
+	VisitAccessType,
+	type VisitRequest,
+	type VisitSpaceCount,
+	VisitStatus,
+} from '../types';
 
 @UseGuards(LoggedInGuard)
 @ApiTags('Visits')

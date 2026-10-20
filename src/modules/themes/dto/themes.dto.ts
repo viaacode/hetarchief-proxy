@@ -7,8 +7,8 @@ import {
 	IsNumber,
 	IsOptional,
 	IsString,
-	IsUUID,
 	IsUrl,
+	IsUUID,
 	Min,
 } from 'class-validator';
 import { commaSeparatedStringToArray } from '~shared/helpers/comma-separated-string-to-array';

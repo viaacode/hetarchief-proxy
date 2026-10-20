@@ -1,13 +1,10 @@
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Test, type TestingModule } from '@nestjs/testing';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-
+import { TestingLogger } from '~shared/logging/test-logger';
 import { TosService } from '../services/tos.service';
 import type { Tos } from '../types';
-
 import { TosController } from './tos.controller';
-
-import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockTosResponse: Tos = {
 	updatedAt: '1997-01-01T00:00:00.000Z',

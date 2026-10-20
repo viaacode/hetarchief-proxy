@@ -1,15 +1,12 @@
 import { DataService } from '@meemoo/admin-core-api';
 import { Test, type TestingModule } from '@nestjs/testing';
-import { format } from 'date-fns';
-import { type MockInstance, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-
-import { FoldersService } from './folders.service';
-
 import {
 	HetArchiefIeObject,
 	HetArchiefIeObjectType,
 	HetArchiefIsPartOfKey,
 } from '@viaa/avo2-types';
+import { format } from 'date-fns';
+import { afterEach, beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
 import type {
 	FindFolderIeObjectsByFolderIdQuery,
 	FindFoldersByUserQuery,
@@ -26,6 +23,7 @@ import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.servic
 import { VisitsService } from '~modules/visits/services/visits.service';
 import { getSchemaName } from '~shared/helpers/get-schema-name';
 import { TestingLogger } from '~shared/logging/test-logger';
+import { FoldersService } from './folders.service';
 
 const mockDataService: Partial<Record<keyof DataService, MockInstance>> = {
 	execute: vi.fn(),

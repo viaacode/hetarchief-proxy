@@ -10,16 +10,13 @@ import {
 	UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-
-import { UpdateAcceptedTosDto, UpdateUserLangDto } from '../dto/users.dto';
-
-import { UsersService } from '../services/users.service';
-import type { User } from '../types';
-
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 import { SessionHelper } from '~shared/auth/session-helper';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
 import { customError } from '~shared/helpers/custom-error';
+import { UpdateAcceptedTosDto, UpdateUserLangDto } from '../dto/users.dto';
+import { UsersService } from '../services/users.service';
+import type { User } from '../types';
 
 @ApiTags('Users')
 @Controller('users')

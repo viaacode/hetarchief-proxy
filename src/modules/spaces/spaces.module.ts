@@ -1,5 +1,5 @@
 import { AdminTranslationsModule, AssetsModule, DataModule } from '@meemoo/admin-core-api';
-import { Module, forwardRef } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MulterModule } from '@nestjs/platform-express';
 

@@ -1,11 +1,9 @@
 import { DataService } from '@meemoo/admin-core-api';
 import { Test, type TestingModule } from '@nestjs/testing';
-import { type MockInstance, beforeEach, describe, expect, it, vi } from 'vitest';
-
-import { TosService } from './tos.service';
-
+import { beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
 import type { GetTosLastUpdatedAtQuery } from '~generated/graphql-db-types-hetarchief';
 import { TestingLogger } from '~shared/logging/test-logger';
+import { TosService } from './tos.service';
 
 const mockDataService: Partial<Record<keyof DataService, MockInstance>> = {
 	execute: vi.fn(),

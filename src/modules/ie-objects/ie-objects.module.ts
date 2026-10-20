@@ -8,18 +8,16 @@ import { CacheModule } from '@nestjs/cache-manager';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { KeyvCacheableMemory } from 'cacheable';
-
-import { IeObjectsDebugController } from './controllers/ie-objects-debug.controller';
-import { IeObjectsController } from './controllers/ie-objects.controller';
-import { IeObjectsService } from './services/ie-objects.service';
-import { PlayableDisplayDataService } from './services/playable-display-data.service';
-import { SubtitlesService } from './services/subtitles.service';
-
 import { EventsModule } from '~modules/events';
 import { OrganisationsModule } from '~modules/organisations/organisations.module';
 import { SpacesModule } from '~modules/spaces';
 import { UsersModule } from '~modules/users';
 import { VisitsModule } from '~modules/visits';
+import { IeObjectsController } from './controllers/ie-objects.controller';
+import { IeObjectsDebugController } from './controllers/ie-objects-debug.controller';
+import { IeObjectsService } from './services/ie-objects.service';
+import { PlayableDisplayDataService } from './services/playable-display-data.service';
+import { SubtitlesService } from './services/subtitles.service';
 
 @Module({
 	controllers: [IeObjectsDebugController, IeObjectsController],

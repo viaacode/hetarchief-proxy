@@ -1,3 +1,5 @@
+import { IPagination } from '@meemoo/admin-core-api';
+import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
 import {
 	BadRequestException,
 	Body,
@@ -9,16 +11,12 @@ import {
 	UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-
-import { Organisation, OrganisationSlug } from '~modules/organisations/organisations.types';
-
-import { IPagination } from '@meemoo/admin-core-api';
-import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
 import { PermissionName } from '@viaa/avo2-types';
 import {
 	OrganisationSlugQueryDto,
 	UpdateOrganisationSlugDto,
 } from '~modules/organisations/dto/organisations.dto';
+import { Organisation, OrganisationSlug } from '~modules/organisations/organisations.types';
 import { OrganisationsService } from '~modules/organisations/services/organisations.service';
 import { RequireAnyPermissions } from '~shared/decorators/require-any-permissions.decorator';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';

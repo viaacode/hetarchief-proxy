@@ -12,24 +12,20 @@ import {
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { addMonths } from 'date-fns';
-
-import { type Notification, NotificationStatus, NotificationType } from '../types';
-
 import type { App_Notification_Insert_Input } from '~generated/graphql-db-types-hetarchief';
 import {
 	CreateFromMaintenanceAlertDto,
 	NotificationsQueryDto,
 } from '~modules/notifications/dto/notifications.dto';
-
 import { NotificationsService } from '~modules/notifications/services/notifications.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
-
 import { VisitsService } from '~modules/visits/services/visits.service';
 import type { VisitRequest } from '~modules/visits/types';
 import { SessionUser } from '~shared/decorators/user.decorator';
 import { APIKEY, ApiKeyGuard } from '~shared/guards/api-key.guard';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
 import { formatAsBelgianDate } from '~shared/helpers/format-belgian-date';
+import { type Notification, NotificationStatus, NotificationType } from '../types';
 
 @ApiTags('Notifications')
 @Controller('notifications')

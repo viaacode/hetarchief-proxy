@@ -17,20 +17,17 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBody, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { uniqBy } from 'lodash';
-
-import { CreateSpaceDto, SpacesQueryDto, UpdateSpaceDto } from '../dto/spaces.dto';
-
-import { SpacesService } from '../services/spaces.service';
-import type { VisitorSpace } from '../spaces.types';
-
 import { AvoFileUploadAssetType, PermissionName } from '@viaa/avo2-types';
+import { uniqBy } from 'lodash';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupName } from '~modules/users/types';
 import { RequireAnyPermissions } from '~shared/decorators/require-any-permissions.decorator';
 import { RequireAllPermissions } from '~shared/decorators/require-permissions.decorator';
 import { SessionUser } from '~shared/decorators/user.decorator';
 import { VisitorSpaceStatus } from '~shared/types/types';
+import { CreateSpaceDto, SpacesQueryDto, UpdateSpaceDto } from '../dto/spaces.dto';
+import { SpacesService } from '../services/spaces.service';
+import type { VisitorSpace } from '../spaces.types';
 
 @ApiTags('Spaces')
 @Controller('spaces')

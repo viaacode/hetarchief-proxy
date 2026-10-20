@@ -1,15 +1,8 @@
 import { DataService, type IPagination, Pagination } from '@meemoo/admin-core-api';
 import { Injectable } from '@nestjs/common';
+import { mapLimit } from 'blend-promise-utils';
+import { addMilliseconds, format } from 'date-fns';
 import { countBy, set } from 'lodash';
-import {
-	MaterialRequestAttachment,
-	MaterialRequestAttachmentOrderProp,
-	MaterialRequestEvent,
-	MaterialRequestMessage,
-	MaterialRequestMessageBody,
-	MaterialRequestUnreadStatusOverview,
-} from '../material-request-messages.types';
-
 import {
 	CountUnreadMaterialRequestMessagesDocument,
 	CountUnreadMaterialRequestMessagesQuery,
@@ -43,15 +36,20 @@ import {
 	InsertMaterialRequestMessageUnreadStatusMutationVariables,
 	Lookup_App_Material_Request_Message_Type_Enum,
 } from '~generated/graphql-db-types-hetarchief';
-
-import { mapLimit } from 'blend-promise-utils';
-import { addMilliseconds, format } from 'date-fns';
 import { MaterialRequestMessageBodyAdditionalConditionsDto } from '~modules/material-request-messages/dto/material-request-message-body-additional-conditions.dto';
 import { MaterialRequestPdfGeneratorService } from '~modules/material-request-messages/services/material-request-pdf-generator';
 import { MaterialRequest } from '~modules/material-requests/material-requests.types';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { PaginationHelper } from '~shared/helpers/pagination';
 import { SortDirection } from '~shared/types';
+import {
+	MaterialRequestAttachment,
+	MaterialRequestAttachmentOrderProp,
+	MaterialRequestEvent,
+	MaterialRequestMessage,
+	MaterialRequestMessageBody,
+	MaterialRequestUnreadStatusOverview,
+} from '../material-request-messages.types';
 
 const ATTACHMENT_ORDER_PROP_TO_DB_PROP: Record<MaterialRequestAttachmentOrderProp, string> = {
 	[MaterialRequestAttachmentOrderProp.CREATED_AT]: 'created_at',

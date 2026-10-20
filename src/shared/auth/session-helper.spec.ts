@@ -1,12 +1,10 @@
 import { AvoAuthIdpType, PermissionName } from '@viaa/avo2-types';
-
-import { LdapApp } from './auth.types';
-
 import { beforeAll, describe, expect, it } from 'vitest';
 import { GroupId, GroupName, type User } from '~modules/users/types';
 import { SessionHelper } from '~shared/auth/session-helper';
 import { TestingLogger } from '~shared/logging/test-logger';
 import { Locale, SpecialPermissionGroups } from '~shared/types/types';
+import { LdapApp } from './auth.types';
 
 const mockLdapUser = {
 	name_id: 'test-name-id',

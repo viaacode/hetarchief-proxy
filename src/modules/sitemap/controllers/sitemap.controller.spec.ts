@@ -2,14 +2,11 @@ import { ConfigService } from '@nestjs/config';
 import { Test, type TestingModule } from '@nestjs/testing';
 import { AvoFileUploadAssetType } from '@viaa/avo2-types';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-
-import { mockSitemapConfig } from '../mocks/sitemap.mocks';
-import { SitemapService } from '../services/sitemap.service';
-
-import { SitemapController } from './sitemap.controller';
-
 import { TestingLogger } from '~shared/logging/test-logger';
 import { mockConfigService } from '~shared/test/mock-config-service';
+import { mockSitemapConfig } from '../mocks/sitemap.mocks';
+import { SitemapService } from '../services/sitemap.service';
+import { SitemapController } from './sitemap.controller';
 
 const mockSitemapService = {
 	generateSitemap: vi.fn(),

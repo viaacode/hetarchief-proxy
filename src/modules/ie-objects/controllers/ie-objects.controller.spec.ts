@@ -9,15 +9,23 @@ import { BadRequestException, ForbiddenException, NotFoundException } from '@nes
 import { ConfigService } from '@nestjs/config';
 import { Test, type TestingModule } from '@nestjs/testing';
 import type { HetArchiefIeObject, HetArchiefRelatedIeObject } from '@viaa/avo2-types';
-import type { Request, Response } from 'express';
-import { cloneDeep } from 'lodash';
-import { type MockInstance, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-
 import {
 	HetArchiefIeObjectAccessThrough,
 	HetArchiefIeObjectLicense,
 	HetArchiefIeObjectType,
 } from '@viaa/avo2-types';
+import type { Request, Response } from 'express';
+import { cloneDeep } from 'lodash';
+import { afterEach, beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
+import { EventsService } from '~modules/events/services/events.service';
+import { OrganisationsService } from '~modules/organisations/services/organisations.service';
+import { SessionUserEntity } from '~modules/users/classes/session-user';
+import { mockVisitRequest } from '~modules/visits/services/__mocks__/cp_visit';
+import { VisitsService } from '~modules/visits/services/visits.service';
+import type { VisitRequest } from '~modules/visits/types';
+import { mockTranslationsService } from '~shared/helpers/mockTranslationsService';
+import { TestingLogger } from '~shared/logging/test-logger';
+import { mockConfigService } from '~shared/test/mock-config-service';
 import {
 	mockIeObject1,
 	mockIeObjectWithMetadataSetALL,
@@ -30,18 +38,7 @@ import {
 import { IeObjectsService } from '../services/ie-objects.service';
 import { PlayableDisplayDataService } from '../services/playable-display-data.service';
 import { SubtitlesService } from '../services/subtitles.service';
-
 import { IeObjectsController } from './ie-objects.controller';
-
-import { EventsService } from '~modules/events/services/events.service';
-import { OrganisationsService } from '~modules/organisations/services/organisations.service';
-import { SessionUserEntity } from '~modules/users/classes/session-user';
-import { mockVisitRequest } from '~modules/visits/services/__mocks__/cp_visit';
-import { VisitsService } from '~modules/visits/services/visits.service';
-import type { VisitRequest } from '~modules/visits/types';
-import { mockTranslationsService } from '~shared/helpers/mockTranslationsService';
-import { TestingLogger } from '~shared/logging/test-logger';
-import { mockConfigService } from '~shared/test/mock-config-service';
 
 // Use function to return object to avoid cross contaminating the tests. Always a fresh object
 const getMockMediaResponse = (): IPagination<Partial<HetArchiefIeObject>> =>

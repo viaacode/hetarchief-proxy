@@ -1,11 +1,8 @@
 import { BadRequestException } from '@nestjs/common';
-import type { Expression, baseTypes } from 'jsep';
-
-import { SearchFilter } from '../dto/ie-objects.dto';
-
-import { decodeSearchterm } from './encode-search-term';
-
+import type { baseTypes, Expression } from 'jsep';
 import { AND, NOT, OR } from '~modules/ie-objects/elasticsearch/queryBuilder.helpers';
+import { SearchFilter } from '../dto/ie-objects.dto';
+import { decodeSearchterm } from './encode-search-term';
 
 export const convertNodeToEsQueryFilterObjects = (
 	node: Expression,

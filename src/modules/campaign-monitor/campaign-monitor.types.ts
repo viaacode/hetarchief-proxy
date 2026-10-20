@@ -1,14 +1,13 @@
+import { SendRequestListDto } from '~modules/material-requests/dto/material-requests.dto';
+import type { MaterialRequest } from '~modules/material-requests/material-requests.types';
+import type { VisitRequest } from '~modules/visits/types';
+import type { Locale, Recipient } from '~shared/types/types';
 import {
 	CampaignMonitorConfirmationData,
 	CampaignMonitorMaterialRequestData,
 	CampaignMonitorReportMetadataIssueData,
 	CampaignMonitorVisitData,
 } from './dto/campaign-monitor.dto';
-
-import { SendRequestListDto } from '~modules/material-requests/dto/material-requests.dto';
-import type { MaterialRequest } from '~modules/material-requests/material-requests.types';
-import type { VisitRequest } from '~modules/visits/types';
-import type { Locale, Recipient } from '~shared/types/types';
 
 export enum EmailTemplate {
 	CAMPAIGN_MONITOR_TEMPLATE_VISIT_REQUEST_CP = 'CAMPAIGN_MONITOR_TEMPLATE_VISIT_REQUEST_CP',

@@ -1,26 +1,23 @@
 import { Lookup_App_Material_Request_Requester_Capacity_Enum } from '@meemoo/admin-core-api/dist/src/modules/shared/generated/graphql-db-types-hetarchief';
 import { AvoAuthIdpType, PermissionName } from '@viaa/avo2-types';
-
+import type { SendRequestListDto } from '~modules/material-requests/dto/material-requests.dto';
+import { mockMaterialRequest1 } from '~modules/material-requests/mocks/material-requests.mocks';
+import { GroupId, GroupName, type User } from '~modules/users/types';
+import { mockConfigService } from '~shared/test/mock-config-service';
+import { Locale } from '~shared/types/types';
 import {
 	CampaignMonitorCustomFieldName,
 	type CampaignMonitorUserInfo,
 	EmailTemplate,
 	type MaterialRequestEmailInfo,
 } from '../campaign-monitor.types';
-
 import {
-	CampaignMonitorConfirmMailQueryDto,
 	CampaignMonitorConfirmationData,
+	CampaignMonitorConfirmMailQueryDto,
 	CampaignMonitorMaterialRequestData,
 	CampaignMonitorNewsletterUpdatePreferencesQueryDto,
 	RequestListItem,
 } from '../dto/campaign-monitor.dto';
-
-import type { SendRequestListDto } from '~modules/material-requests/dto/material-requests.dto';
-import { mockMaterialRequest1 } from '~modules/material-requests/mocks/material-requests.mocks';
-import { GroupId, GroupName, type User } from '~modules/users/types';
-import { mockConfigService } from '~shared/test/mock-config-service';
-import { Locale } from '~shared/types/types';
 
 export const mockUser: User = {
 	id: 'e791ecf1-e121-4c54-9d2e-34524b6467c6',

@@ -1,6 +1,5 @@
 import type { PermissionName } from '@viaa/avo2-types';
-import { AvoAuthIdpType } from '@viaa/avo2-types';
-import { type HetArchiefIeObjectSector } from '@viaa/avo2-types';
+import { AvoAuthIdpType, type HetArchiefIeObjectSector } from '@viaa/avo2-types';
 import type {
 	GetUserByIdentityIdQuery,
 	InsertUserMutation,

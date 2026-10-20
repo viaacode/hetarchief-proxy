@@ -3,13 +3,7 @@ import { InternalServerErrorException } from '@nestjs/common';
 import { Test, type TestingModule } from '@nestjs/testing';
 import { AvoAuthIdpType, PermissionName } from '@viaa/avo2-types';
 import { cloneDeep } from 'lodash';
-import { type MockInstance, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-
-import { CreateSpaceDto } from '../dto/spaces.dto';
-
-import { mockGqlSpace } from './__mocks__/cp_space';
-import { SpacesService } from './spaces.service';
-
+import { afterEach, beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
 import type {
 	CreateSpaceMutation,
 	FindSpaceByIdQuery,
@@ -28,6 +22,9 @@ import { mockTranslationsService } from '~shared/helpers/mockTranslationsService
 import { TestingLogger } from '~shared/logging/test-logger';
 import { SortDirection } from '~shared/types';
 import { Locale, VisitorSpaceStatus } from '~shared/types/types';
+import { CreateSpaceDto } from '../dto/spaces.dto';
+import { mockGqlSpace } from './__mocks__/cp_space';
+import { SpacesService } from './spaces.service';
 
 const mockUser: User = {
 	id: '0f5e3c9d-cf2a-4213-b888-dbf69b773c8e',

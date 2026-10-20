@@ -1,5 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import type { IPagination } from '@meemoo/admin-core-api';
+import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
 import {
 	Body,
 	Controller,
@@ -19,21 +20,6 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AvoAuthIdpType, PermissionName } from '@viaa/avo2-types';
 import type { Request } from 'express';
 import { isEmpty, isNil, noop } from 'lodash';
-
-import {
-	CreateMaterialRequestDto,
-	MaterialRequestsQueryDto,
-	SendRequestListDto,
-	UpdateMaterialRequestDto,
-	UpdateMaterialRequestStatusDto,
-} from '../dto/material-requests.dto';
-import {
-	MaterialRequest,
-	MaterialRequestMaintainer,
-	MaterialRequestStatus,
-} from '../material-requests.types';
-
-import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
 import { Lookup_App_Material_Request_Status_Enum } from '~generated/graphql-db-types-hetarchief';
 import { EventsService } from '~modules/events/services/events.service';
 import { type LogEvent, LogEventType } from '~modules/events/types';
@@ -49,6 +35,18 @@ import { RequireAllPermissions } from '~shared/decorators/require-permissions.de
 import { SessionUser } from '~shared/decorators/user.decorator';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
 import { EventsHelper } from '~shared/helpers/events';
+import {
+	CreateMaterialRequestDto,
+	MaterialRequestsQueryDto,
+	SendRequestListDto,
+	UpdateMaterialRequestDto,
+	UpdateMaterialRequestStatusDto,
+} from '../dto/material-requests.dto';
+import {
+	MaterialRequest,
+	MaterialRequestMaintainer,
+	MaterialRequestStatus,
+} from '../material-requests.types';
 import { MaterialRequestsService } from '../services/material-requests.service';
 
 @UseGuards(LoggedInGuard)
