@@ -1,0 +1,11 @@
+mutation insertIeObjectsIntoFolders($objects: [users_folder_ie_insert_input!]!) {
+	insert_users_folder_ie(
+		objects: $objects
+		on_conflict: { constraint: collection_item_pkey, update_columns: [] }
+	) {
+		returning {
+			user_collection_id
+			ie_object_id
+		}
+	}
+}

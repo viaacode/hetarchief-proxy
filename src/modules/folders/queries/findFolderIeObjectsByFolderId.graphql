@@ -1,6 +1,6 @@
 query findFolderIeObjectsByFolderId(
-	$folderId: uuid
-	$userProfileId: uuid
+	$folderId: uuid!
+	$folderOwnerWhere: users_folder_bool_exp!
 	$where: users_folder_ie_bool_exp!
 	$offset: Int
 	$limit: Int
@@ -8,7 +8,7 @@ query findFolderIeObjectsByFolderId(
 	users_folder_ie(
 		where: {
 			_and: [{ user_collection_id: { _eq: $folderId } }, $where]
-			collection: { user_profile_id: { _eq: $userProfileId }, is_deleted: { _eq: false } }
+			collection: { _and: [{ is_deleted: { _eq: false } }, $folderOwnerWhere] }
 		}
 		offset: $offset
 		limit: $limit
@@ -60,7 +60,7 @@ query findFolderIeObjectsByFolderId(
 	users_folder_ie_aggregate(
 		where: {
 			_and: [{ user_collection_id: { _eq: $folderId } }, $where]
-			collection: { user_profile_id: { _eq: $userProfileId }, is_deleted: { _eq: false } }
+			collection: { _and: [{ is_deleted: { _eq: false } }, $folderOwnerWhere] }
 		}
 	) {
 		aggregate {

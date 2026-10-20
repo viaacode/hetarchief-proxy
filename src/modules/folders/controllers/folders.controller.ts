@@ -1,12 +1,14 @@
 import { type IPagination, Pagination } from '@meemoo/admin-core-api';
 import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
 import {
+	BadRequestException,
 	Body,
 	Controller,
 	Delete,
 	ForbiddenException,
 	Get,
 	InternalServerErrorException,
+	NotFoundException,
 	Param,
 	ParseUUIDPipe,
 	Patch,
@@ -17,7 +19,6 @@ import {
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { HetArchiefIeObject, HetArchiefIeObjectLicense, PermissionName } from '@viaa/avo2-types';
-import * as promiseUtils from 'blend-promise-utils';
 import type { Request } from 'express';
 import { compact, isNil, noop } from 'lodash';
 import {
@@ -27,7 +28,17 @@ import {
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
-import { CreateOrUpdateFolderDto, FolderObjectsQueryDto } from '~modules/folders/dto/folders.dto';
+import {
+	AddObjectsToFoldersDto,
+	CreateFolderDto,
+	CreateOrUpdateFolderDto,
+	FolderObjectsQueryDto,
+} from '~modules/folders/dto/folders.dto';
+import {
+	canWriteToFolder,
+	getFolderOrganisationId,
+	getFolderOwnerFilter,
+} from '~modules/folders/helpers/folder-access';
 import { FoldersService } from '~modules/folders/services/folders.service';
 import { mapDcTermsFormatToSimpleType } from '~modules/ie-objects/helpers/map-dc-terms-format-to-simple-type';
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
@@ -41,7 +52,12 @@ import { LoggedInGuard } from '~shared/guards/logged-in.guard';
 import { customError } from '~shared/helpers/custom-error';
 import { EventsHelper } from '~shared/helpers/events';
 import { Locale } from '~shared/types/types';
-import { type Folder, type FolderShared, FolderStatus } from '../types';
+import {
+	type AddObjectsToFoldersResult,
+	type Folder,
+	type FolderShared,
+	FolderStatus,
+} from '../types';
 
 @ApiTags('Folders')
 @Controller('folders') // TODO rename this to folders, and also change this in the client
@@ -70,8 +86,9 @@ export class FoldersController {
 			});
 		}
 
-		const folders = await this.foldersService.findFoldersByUser(
-			user?.getId(),
+		// Personal folders and, for users with the MANAGE_ORGANISATION_FOLDERS permission, the organisation folders
+		const folders = await this.foldersService.findFoldersForUser(
+			getFolderOwnerFilter(user.getId(), getFolderOrganisationId(user)),
 			referer,
 			ip,
 			1,
@@ -106,10 +123,12 @@ export class FoldersController {
 		@Query() queryDto: FolderObjectsQueryDto,
 		@SessionUser() user: SessionUserEntity
 	): Promise<IPagination<Partial<HetArchiefIeObject>>> {
+		await this.getWritableFolder(folderId, user, referer, ip, 'You can only view your own folders');
+
 		const folderObjects: IPagination<Partial<HetArchiefIeObject>> =
 			await this.foldersService.findObjectsByFolderId(
 				folderId,
-				user?.getId(),
+				getFolderOwnerFilter(user.getId(), getFolderOrganisationId(user)),
 				queryDto,
 				referer,
 				ip
@@ -165,14 +184,31 @@ export class FoldersController {
 	public async createFolder(
 		@Referer() referer: string,
 		@Ip() ip: string,
-		@Body() createFolderDto: CreateOrUpdateFolderDto,
+		@Body() createFolderDto: CreateFolderDto,
 		@SessionUser() user: SessionUserEntity
 	): Promise<Folder> {
+		let owner: { user_profile_id: string | null; owner_organisation_id: string | null } = {
+			user_profile_id: user?.getId(),
+			owner_organisation_id: null,
+		};
+		if (createFolderDto.isOrganisation) {
+			if (!user.has(PermissionName.MANAGE_ORGANISATION_FOLDERS)) {
+				throw new ForbiddenException('You are not allowed to create organisation folders');
+			}
+			const organisationId = getFolderOrganisationId(user);
+			if (!organisationId) {
+				throw new BadRequestException(
+					'You need to be linked to an organisation to create organisation folders'
+				);
+			}
+			owner = { user_profile_id: null, owner_organisation_id: organisationId };
+		}
+
 		return this.foldersService.create(
 			{
 				name: createFolderDto.name,
 				description: createFolderDto.description,
-				user_profile_id: user?.getId(),
+				...owner,
 				is_default: false,
 			},
 			referer,
@@ -190,17 +226,41 @@ export class FoldersController {
 		@Body() updateFolderDto: CreateOrUpdateFolderDto,
 		@SessionUser() user: SessionUserEntity
 	): Promise<Folder> {
-		return await this.foldersService.update(folderId, user?.getId(), updateFolderDto, referer, ip);
+		await this.getWritableFolder(folderId, user, referer, ip, 'You can only edit your own folders');
+
+		return await this.foldersService.update(
+			folderId,
+			getFolderOwnerFilter(user.getId(), getFolderOrganisationId(user)),
+			{
+				name: updateFolderDto.name,
+				description: updateFolderDto.description,
+			},
+			referer,
+			ip
+		);
 	}
 
 	@Delete(':folderId')
 	@UseGuards(LoggedInGuard)
 	@RequireAllPermissions(PermissionName.MANAGE_FOLDERS)
 	public async deleteFolder(
+		@Referer() referer: string,
+		@Ip() ip: string,
 		@Param('folderId') folderId: string,
 		@SessionUser() user: SessionUserEntity
 	): Promise<{ status: string }> {
-		const affectedRows = await this.foldersService.delete(folderId, user?.getId());
+		await this.getWritableFolder(
+			folderId,
+			user,
+			referer,
+			ip,
+			'You can only delete your own folders'
+		);
+
+		const affectedRows = await this.foldersService.delete(
+			folderId,
+			getFolderOwnerFilter(user.getId(), getFolderOrganisationId(user))
+		);
 		if (affectedRows > 0) {
 			return { status: 'the folder has been deleted' };
 		}
@@ -218,10 +278,13 @@ export class FoldersController {
 		@Param('objectSchemaIdentifier') objectSchemaIdentifier: string,
 		@SessionUser() user: SessionUserEntity
 	): Promise<Partial<HetArchiefIeObject> & { folderEntryCreatedAt: string }> {
-		const collection = await this.foldersService.findFolderById(folderId, referer, ip);
-		if (collection.userProfileId !== user?.getId()) {
-			throw new ForbiddenException('You can only add objects to your own folders');
-		}
+		await this.getWritableFolder(
+			folderId,
+			user,
+			referer,
+			ip,
+			'You can only add objects to your own folders'
+		);
 
 		const ieObjectId = await this.ieObjectsService.getIeObjectIdFromObjectSchemaIdentifier(
 			objectSchemaIdentifier,
@@ -271,10 +334,13 @@ export class FoldersController {
 		@SessionUser() user: SessionUserEntity,
 		@Req() request: Request
 	): Promise<{ status: string }> {
-		const collection = await this.foldersService.findFolderById(folderId, referer, ip);
-		if (collection.userProfileId !== user?.getId()) {
-			throw new ForbiddenException('You can only delete objects from your own folders');
-		}
+		await this.getWritableFolder(
+			folderId,
+			user,
+			referer,
+			ip,
+			'You can only delete objects from your own folders'
+		);
 
 		const ieObjectId = await this.ieObjectsService.getIeObjectIdFromObjectSchemaIdentifier(
 			objectSchemaIdentifier,
@@ -284,7 +350,7 @@ export class FoldersController {
 		const affectedRows = await this.foldersService.removeObjectFromFolder(
 			folderId,
 			ieObjectId,
-			user?.getId()
+			getFolderOwnerFilter(user.getId(), getFolderOrganisationId(user))
 		);
 		if (affectedRows > 0) {
 			return { status: 'the object has been deleted' };
@@ -304,17 +370,23 @@ export class FoldersController {
 		@SessionUser() user: SessionUserEntity,
 		@Req() request: Request
 	): Promise<Partial<HetArchiefIeObject> & { folderEntryCreatedAt: string }> {
-		// Check user is owner of both folders
-		const [oldFolder, newFolder] = await Promise.all([
-			this.foldersService.findFolderById(oldFolderId, referer, ip),
-			this.foldersService.findFolderById(newFolderId, referer, ip),
+		// Check user has access to both folders
+		await Promise.all([
+			this.getWritableFolder(
+				oldFolderId,
+				user,
+				referer,
+				ip,
+				'You can only move objects from your own folders'
+			),
+			this.getWritableFolder(
+				newFolderId,
+				user,
+				referer,
+				ip,
+				'You can only move objects to your own folders'
+			),
 		]);
-		if (oldFolder.userProfileId !== user?.getId()) {
-			throw new ForbiddenException('You can only move objects from your own folders');
-		}
-		if (newFolder.userProfileId !== user?.getId()) {
-			throw new ForbiddenException('You can only move objects to your own folders');
-		}
 
 		const ieObjectId = await this.ieObjectsService.getIeObjectIdFromObjectSchemaIdentifier(
 			objectSchemaIdentifier,
@@ -327,8 +399,76 @@ export class FoldersController {
 			referer,
 			ip
 		);
-		await this.foldersService.removeObjectFromFolder(oldFolderId, ieObjectId, user?.getId());
+		await this.foldersService.removeObjectFromFolder(
+			oldFolderId,
+			ieObjectId,
+			getFolderOwnerFilter(user.getId(), getFolderOrganisationId(user))
+		);
 		return folderObject;
+	}
+
+	/**
+	 * Add multiple objects to multiple folders at once, eg: from the multiselect on the search page
+	 * Objects that are already in a folder are skipped, so the request can safely be retried
+	 */
+	@Post('objects')
+	@UseGuards(LoggedInGuard)
+	@RequireAllPermissions(PermissionName.MANAGE_FOLDERS)
+	public async addObjectsToFolders(
+		@Req() request: Request,
+		@Referer() referer: string,
+		@Ip() ip: string,
+		@Body() addObjectsToFoldersDto: AddObjectsToFoldersDto,
+		@SessionUser() user: SessionUserEntity
+	): Promise<AddObjectsToFoldersResult> {
+		const folderIds = [...new Set(addObjectsToFoldersDto.folderIds)];
+		const objectSchemaIdentifiers = [...new Set(addObjectsToFoldersDto.objectSchemaIdentifiers)];
+
+		// Check the user has access to all folders before inserting anything
+		await Promise.all(
+			folderIds.map((folderId) =>
+				this.getWritableFolder(
+					folderId,
+					user,
+					referer,
+					ip,
+					'You can only add objects to your own folders'
+				)
+			)
+		);
+
+		// Objects that no longer exist are skipped, instead of failing the whole selection
+		const resolvedIeObjectIds = await Promise.all(
+			objectSchemaIdentifiers.map((objectSchemaIdentifier) =>
+				this.ieObjectsService
+					.getIeObjectIdFromObjectSchemaIdentifier(objectSchemaIdentifier, request)
+					.catch((): null => null)
+			)
+		);
+		const notFoundSchemaIdentifiers = objectSchemaIdentifiers.filter(
+			(_, index) => !resolvedIeObjectIds[index]
+		);
+		const ieObjectIds = compact(resolvedIeObjectIds);
+		if (!ieObjectIds.length) {
+			throw new NotFoundException({
+				message: 'None of the objects were found',
+				notFoundSchemaIdentifiers,
+			});
+		}
+
+		const addedCount = await this.foldersService.addObjectsToFolders(folderIds, ieObjectIds);
+
+		// Log one bookmark event per (object, folder) pair, without delaying the response
+		this.logBookmarkEvents(request, user, folderIds, ieObjectIds, referer, ip).then(noop);
+
+		return {
+			folderIds,
+			objectSchemaIdentifiers: objectSchemaIdentifiers.filter(
+				(objectSchemaIdentifier) => !notFoundSchemaIdentifiers.includes(objectSchemaIdentifier)
+			),
+			notFoundSchemaIdentifiers,
+			addedCount,
+		};
 	}
 
 	/**
@@ -349,7 +489,16 @@ export class FoldersController {
 		@Param('folderId') folderId: string,
 		@SessionUser() user: SessionUserEntity
 	): Promise<{ message: 'success' }> {
-		const folder = await this.foldersService.findFolderById(folderId, referer, ip);
+		const folder = await this.getWritableFolder(
+			folderId,
+			user,
+			referer,
+			ip,
+			'You can only share your own folders'
+		);
+		if (folder.ownerOrganisationId) {
+			throw new BadRequestException('Organisation folders cannot be shared');
+		}
 
 		// If the "to" user already exists we take their preferred language otherwise we take the language of the person who is sending the "share folder" email
 		const toUser = await this.userService.getUserByEmail(emailInfo.to);
@@ -401,7 +550,15 @@ export class FoldersController {
 	): Promise<FolderShared> {
 		const folder = await this.foldersService.findFolderById(folderId, referer, ip);
 
-		if (folder?.userProfileId === user?.getId()) {
+		if (!folder) {
+			throw new NotFoundException('The shared folder was not found');
+		}
+
+		if (folder.ownerOrganisationId) {
+			throw new BadRequestException('Organisation folders cannot be shared');
+		}
+
+		if (folder.userProfileId === user?.getId()) {
 			return {
 				status: FolderStatus.ALREADY_OWNER,
 				folderId: folder.id,
@@ -424,41 +581,29 @@ export class FoldersController {
 		try {
 			folderObjects = await this.foldersService.findObjectsByFolderId(
 				folderId,
-				folder?.userProfileId,
+				getFolderOwnerFilter(folder.userProfileId, null),
 				{ size: 1000 },
 				referer,
 				ip
 			);
-			// TODO: make it possible to insert all objects to the new collection at once
-			await promiseUtils.mapLimit(folderObjects?.items, 20, async (item) => {
-				try {
-					const ieObjectId = item.iri;
-					if (!ieObjectId) {
-						const error = new CustomError(
-							'Failed to add object to accepted shared folder, since the iri is missing',
-							null,
-							{
-								folderId,
-								profileId: user?.getId(),
-								item,
-							}
-						);
-						console.error(error);
-						throw error;
-					}
-					await this.foldersService.addObjectToFolder(createdFolder.id, ieObjectId, referer, ip);
-				} catch (err) {
-					console.error(
-						customError('Failed to add object from original folder to shared folder', null, {
-							item,
-							folderId: folder.id,
-							folderName: folder.name,
-							createdFolderId: createdFolder.id,
-							createdFolderName: createdFolder.name,
-						})
-					);
-				}
-			});
+			const itemsWithoutIri = (folderObjects?.items ?? []).filter((item) => !item?.iri);
+			if (itemsWithoutIri.length) {
+				console.error(
+					new CustomError(
+						'Failed to add some objects to accepted shared folder, since the iri is missing',
+						null,
+						{
+							folderId,
+							profileId: user?.getId(),
+							items: itemsWithoutIri,
+						}
+					)
+				);
+			}
+			await this.foldersService.addObjectsToFolders(
+				[createdFolder.id],
+				compact((folderObjects?.items ?? []).map((item) => item?.iri))
+			);
 		} catch (err) {
 			if (err?.name !== 'NotFoundException') {
 				throw new InternalServerErrorException({
@@ -473,5 +618,68 @@ export class FoldersController {
 			folderId: createdFolder?.id,
 			folderName: createdFolder?.name,
 		};
+	}
+
+	/**
+	 * Fetch the folder and check the user can read and write it (personal folder of the user or organisation folder of their organisation)
+	 */
+	private async getWritableFolder(
+		folderId: string,
+		user: SessionUserEntity,
+		referer: string,
+		ip: string,
+		forbiddenMessage: string
+	): Promise<Folder> {
+		const folder = await this.foldersService.findFolderById(folderId, referer, ip);
+		if (!folder) {
+			throw new NotFoundException('Folder not found');
+		}
+		if (!canWriteToFolder(folder, user)) {
+			throw new ForbiddenException(forbiddenMessage);
+		}
+		return folder;
+	}
+
+	private async logBookmarkEvents(
+		request: Request,
+		user: SessionUserEntity,
+		folderIds: string[],
+		ieObjectIds: string[],
+		referer: string,
+		ip: string
+	): Promise<void> {
+		try {
+			const ieObjects = await Promise.all(
+				ieObjectIds.map((ieObjectId) =>
+					this.ieObjectsService.findByIeObjectId(ieObjectId, false, referer, ip)
+				)
+			);
+			await this.eventsService.insertEvents(
+				compact(ieObjects).flatMap((ieObject) =>
+					folderIds.map((folderId) => ({
+						id: EventsHelper.getEventId(request),
+						type: LogEventType.ITEM_BOOKMARK,
+						source: request.path,
+						subject: user?.getId(),
+						time: new Date().toISOString(),
+						data: {
+							type: mapDcTermsFormatToSimpleType(ieObject.dctermsFormat),
+							pid: ieObject.schemaIdentifier,
+							fragment_id: ieObject.schemaIdentifier,
+							folder_id: folderId,
+							or_id: ieObject.maintainerId,
+							...this.eventsService.mapUserToEventData(user?.getUser()),
+						},
+					}))
+				)
+			);
+		} catch (err) {
+			console.error(
+				customError('Failed to log bookmark events for adding objects to folders', err, {
+					folderIds,
+					ieObjectIds,
+				})
+			);
+		}
 	}
 }

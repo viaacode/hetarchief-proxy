@@ -16,9 +16,9 @@ import {
 	FindFolderIeObjectsByFolderIdDocument,
 	type FindFolderIeObjectsByFolderIdQuery,
 	type FindFolderIeObjectsByFolderIdQueryVariables,
-	FindFoldersByUserDocument,
-	type FindFoldersByUserQuery,
-	type FindFoldersByUserQueryVariables,
+	FindFoldersForUserDocument,
+	type FindFoldersForUserQuery,
+	type FindFoldersForUserQueryVariables,
 	FindIeObjectInFolderDocument,
 	type FindIeObjectInFolderQuery,
 	type FindIeObjectInFolderQueryVariables,
@@ -28,6 +28,9 @@ import {
 	InsertIeObjectIntoFolderDocument,
 	type InsertIeObjectIntoFolderMutation,
 	type InsertIeObjectIntoFolderMutationVariables,
+	InsertIeObjectsIntoFoldersDocument,
+	type InsertIeObjectsIntoFoldersMutation,
+	type InsertIeObjectsIntoFoldersMutationVariables,
 	RemoveObjectFromFolderDocument,
 	type RemoveObjectFromFolderMutation,
 	type RemoveObjectFromFolderMutationVariables,
@@ -37,6 +40,7 @@ import {
 	UpdateFolderDocument,
 	type UpdateFolderMutation,
 	type UpdateFolderMutationVariables,
+	type Users_Folder_Bool_Exp,
 	type Users_Folder_Ie_Bool_Exp,
 } from '~generated/graphql-db-types-hetarchief';
 import { FolderObjectsQueryDto } from '~modules/folders/dto/folders.dto';
@@ -138,7 +142,8 @@ export class FoldersService {
 			id: gqlFolder.id,
 			name: gqlFolder.name,
 			description: gqlFolder.description,
-			userProfileId: gqlFolder.user_profile_id,
+			userProfileId: gqlFolder.user_profile_id || null,
+			ownerOrganisationId: gqlFolder.owner_organisation_id || null,
 			createdAt: gqlFolder.created_at,
 			updatedAt: gqlFolder.updated_at,
 			isDefault: gqlFolder.is_default,
@@ -182,8 +187,12 @@ export class FoldersService {
 		};
 	}
 
-	public async findFoldersByUser(
-		userProfileId: string,
+	/**
+	 * Find the personal folders of the user and the organisation folders the user has access to
+	 * @param folderOwnerWhere filter on the owner of the folders, see getFolderOwnerFilter()
+	 */
+	public async findFoldersForUser(
+		folderOwnerWhere: Users_Folder_Bool_Exp,
 		referer: string,
 		ip: string,
 		page = 1,
@@ -191,10 +200,10 @@ export class FoldersService {
 	): Promise<IPagination<Folder>> {
 		const { offset, limit } = PaginationHelper.convertPagination(page, size);
 		const foldersResponse = await this.dataService.execute<
-			FindFoldersByUserQuery,
-			FindFoldersByUserQueryVariables
-		>(FindFoldersByUserDocument, {
-			userProfileId,
+			FindFoldersForUserQuery,
+			FindFoldersForUserQueryVariables
+		>(FindFoldersForUserDocument, {
+			where: folderOwnerWhere,
 			offset,
 			limit,
 		});
@@ -222,7 +231,7 @@ export class FoldersService {
 
 	public async findObjectsByFolderId(
 		folderId: string,
-		userProfileId: string,
+		folderOwnerWhere: Users_Folder_Bool_Exp,
 		queryDto: FolderObjectsQueryDto,
 		referer: string,
 		ip: string
@@ -269,7 +278,7 @@ export class FoldersService {
 			FindFolderIeObjectsByFolderIdQueryVariables
 		>(FindFolderIeObjectsByFolderIdDocument, {
 			folderId,
-			userProfileId,
+			folderOwnerWhere,
 			where,
 			offset,
 			limit,
@@ -306,7 +315,7 @@ export class FoldersService {
 
 	public async update(
 		folderId: string,
-		userProfileId: string,
+		folderOwnerWhere: Users_Folder_Bool_Exp,
 		folder: GqlUpdateFolder,
 		referer: string,
 		ip: string
@@ -316,7 +325,7 @@ export class FoldersService {
 			UpdateFolderMutationVariables
 		>(UpdateFolderDocument, {
 			folderId,
-			userProfileId,
+			folderOwnerWhere,
 			folder,
 		});
 
@@ -325,13 +334,13 @@ export class FoldersService {
 		return this.adaptFolder(updatedFolder, referer, ip);
 	}
 
-	public async delete(folderId: string, userProfileId: string): Promise<number> {
+	public async delete(folderId: string, folderOwnerWhere: Users_Folder_Bool_Exp): Promise<number> {
 		const response = await this.dataService.execute<
 			SoftDeleteFolderMutation,
 			SoftDeleteFolderMutationVariables
 		>(SoftDeleteFolderDocument, {
 			folderId,
-			userProfileId,
+			folderOwnerWhere,
 		});
 
 		return response.update_users_folder.affected_rows;
@@ -400,16 +409,49 @@ export class FoldersService {
 		};
 	}
 
-	public async removeObjectFromFolder(folderId: string, ieObjectId: string, userProfileId: string) {
+	public async removeObjectFromFolder(
+		folderId: string,
+		ieObjectId: string,
+		folderOwnerWhere: Users_Folder_Bool_Exp
+	) {
 		const response = await this.dataService.execute<
 			RemoveObjectFromFolderMutation,
 			RemoveObjectFromFolderMutationVariables
 		>(RemoveObjectFromFolderDocument, {
 			folderId,
 			ieObjectId,
-			userProfileId,
+			folderOwnerWhere,
 		});
 
 		return response.delete_users_folder_ie.affected_rows || 0;
+	}
+
+	/**
+	 * Add all objects to all folders in one transaction
+	 * Objects that are already in a folder are ignored, so retrying the same request is safe
+	 * The caller is responsible for checking that the user has access to the folders
+	 * @return the number of (folder, object) links that were newly created
+	 */
+	public async addObjectsToFolders(folderIds: string[], ieObjectIds: string[]): Promise<number> {
+		const uniqueFolderIds = [...new Set(folderIds)];
+		const uniqueIeObjectIds = [...new Set(ieObjectIds)];
+		if (!uniqueFolderIds.length || !uniqueIeObjectIds.length) {
+			return 0;
+		}
+
+		const response = await this.dataService.execute<
+			InsertIeObjectsIntoFoldersMutation,
+			InsertIeObjectsIntoFoldersMutationVariables
+		>(InsertIeObjectsIntoFoldersDocument, {
+			objects: uniqueFolderIds.flatMap((folderId) =>
+				uniqueIeObjectIds.map((ieObjectId) => ({
+					user_collection_id: folderId,
+					ie_object_id: ieObjectId,
+				}))
+			),
+		});
+
+		// The insert ignores conflicts (update_columns: []), so `returning` only contains rows that were newly inserted
+		return response.insert_users_folder_ie.returning.length;
 	}
 }
