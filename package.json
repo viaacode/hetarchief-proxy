@@ -13,6 +13,7 @@
     "Andry Charlier <andry.charlier@studiohyperdrive.be>"
   ],
   "scripts": {
+    "prepare": "lefthook install || echo \"lefthook install skipped, see message above\"",
     "prebuild": "rimraf dist",
     "build": "nest build",
     "start": "nest start",
@@ -33,7 +34,6 @@
     "test:cov": "vitest run --coverage",
     "test:debug": "vitest run --inspect --no-file-parallelism",
     "test:e2e": "vitest run --config ./vitest-e2e.config.ts",
-    "install-pre-commit-hook": "lefthook install",
     "generate-database-types": "dotenv -e ./.env/.env.local graphql-codegen -- --config codegen-hetarchief.yml",
     "bump": "bump-package-versions --part=patch --strategy=highest ./package.json"
   },
@@ -127,7 +127,6 @@
     "dotenv": "10.0.0",
     "dotenv-cli": "5.1.0",
     "glob": "7.2.0",
-    "lefthook": "^1.11.13",
     "prettier": "3.0.3",
     "redis-mock": "0.56.3",
     "sort-object-keys": "1.1.3",
@@ -138,7 +137,8 @@
     "tsconfig-paths": "3.12.0",
     "typescript": "5.9.3",
     "unplugin-swc": "^1.5.9",
-    "vitest": "^4.0.17"
+    "vitest": "^4.0.17",
+    "lefthook": "2.2.2"
   },
   "overrides": {
     "typescript": "5.9.3",
