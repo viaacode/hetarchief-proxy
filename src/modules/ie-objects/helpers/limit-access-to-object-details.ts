@@ -1,6 +1,10 @@
-import { intersection, isEmpty, pick, uniq } from 'lodash';
-
 import { HetArchiefIeObject, HetArchiefIeObjectLicense } from '@viaa/avo2-types';
+import { intersection, isEmpty, pick, uniq } from 'lodash';
+import type {
+	LimitAccessTrace,
+	LimitAccessUserInfo,
+} from '~modules/ie-objects/helpers/limit-access-to-object-details.types';
+import { GroupId } from '~modules/users/types';
 import {
 	IE_OBJECT_INTRA_CP_LICENSES,
 	IE_OBJECT_LICENSES_BY_USER_GROUP,
@@ -11,14 +15,7 @@ import {
 	IE_OBJECT_SUBTITLE_MIME_TYPES,
 } from '../ie-objects.conts';
 import { IeObjectExtraUserGroupType, IeObjectMetadataSet } from '../ie-objects.types';
-
 import { getAccessThrough } from './get-access-through';
-
-import type {
-	LimitAccessTrace,
-	LimitAccessUserInfo,
-} from '~modules/ie-objects/helpers/limit-access-to-object-details.types';
-import { GroupId } from '~modules/users/types';
 
 // figure out what properties the user can see and which should be stripped
 // Pass a trace object to get the intermediate values of each step (used by the access debug report)

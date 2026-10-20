@@ -1,11 +1,9 @@
 import { ConflictException, Controller, Headers, Post, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-
-import { SitemapService } from '../services/sitemap.service';
-
 import { AvoFileUploadAssetType } from '@viaa/avo2-types';
 import { APIKEY, ApiKeyGuard } from '~shared/guards/api-key.guard';
 import { customError } from '~shared/helpers/custom-error';
+import { SitemapService } from '../services/sitemap.service';
 
 @ApiTags('Sitemap')
 @Controller('sitemap')

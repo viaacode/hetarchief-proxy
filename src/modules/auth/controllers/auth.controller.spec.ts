@@ -4,13 +4,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Test, type TestingModule } from '@nestjs/testing';
 import { AvoAuthIdpType, PermissionName } from '@viaa/avo2-types';
 import { isFuture } from 'date-fns';
-import { type MockInstance, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-
-import { IdpService } from '../services/idp.service';
-import { LoginMessage, type LoginResponse } from '../types';
-
-import { AuthController } from './auth.controller';
-
+import { afterEach, beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
 import { CampaignMonitorModule } from '~modules/campaign-monitor';
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 import { SpacesModule } from '~modules/spaces';
@@ -23,6 +17,9 @@ import { TestingLogger } from '~shared/logging/test-logger';
 import { SessionService } from '~shared/services/session.service';
 import { mockConfigService } from '~shared/test/mock-config-service';
 import { Locale } from '~shared/types/types';
+import { IdpService } from '../services/idp.service';
+import { LoginMessage, type LoginResponse } from '../types';
+import { AuthController } from './auth.controller';
 
 const mockUser: User = {
 	id: 'e791ecf1-e121-4c54-9d2e-34524b6467c6',

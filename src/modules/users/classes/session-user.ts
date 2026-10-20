@@ -1,11 +1,8 @@
+import { convertUserInfoToCommonUser, UserInfoType } from '@meemoo/admin-core-api';
 import { Logger } from '@nestjs/common';
-import { AvoUserCommonUser, PermissionName } from '@viaa/avo2-types';
-
-import { GroupName, User } from '../types';
-
-import { UserInfoType, convertUserInfoToCommonUser } from '@meemoo/admin-core-api';
-import { type HetArchiefIeObjectSector } from '@viaa/avo2-types';
+import { AvoUserCommonUser, type HetArchiefIeObjectSector, PermissionName } from '@viaa/avo2-types';
 import { Locale } from '~shared/types/types';
+import { GroupName, User } from '../types';
 
 export class SessionUserEntity {
 	private logger = new Logger(SessionUserEntity.name, { timestamp: true });

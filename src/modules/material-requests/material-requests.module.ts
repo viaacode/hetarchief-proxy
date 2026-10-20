@@ -1,9 +1,5 @@
 import { AssetsModule, DataModule, VideoStillsModule } from '@meemoo/admin-core-api';
-import { Module, forwardRef } from '@nestjs/common';
-
-import { MaterialRequestsController } from './controllers/material-requests.controller';
-import { MaterialRequestsService } from './services/material-requests.service';
-
+import { forwardRef, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { EventsModule } from '~modules/events';
 import { IeObjectsModule } from '~modules/ie-objects';
@@ -14,6 +10,8 @@ import { NotificationsModule } from '~modules/notifications';
 import { OrganisationsModule } from '~modules/organisations/organisations.module';
 import { SpacesModule } from '~modules/spaces';
 import { UsersModule } from '~modules/users';
+import { MaterialRequestsController } from './controllers/material-requests.controller';
+import { MaterialRequestsService } from './services/material-requests.service';
 
 @Module({
 	controllers: [MaterialRequestsController, MaterialRequestsSchedulingController],

@@ -1,11 +1,12 @@
-import { HetArchiefIeObject, PermissionName } from '@viaa/avo2-types';
-import { isEmpty, uniq } from 'lodash';
-
 import {
+	HetArchiefIeObject,
 	HetArchiefIeObjectLicense,
 	HetArchiefIeObjectSector,
 	HetArchiefIeObjectType,
+	PermissionName,
 } from '@viaa/avo2-types';
+import { isEmpty, uniq } from 'lodash';
+import { GroupId } from '~modules/users/types';
 import {
 	AutocompleteEsField,
 	AutocompleteField,
@@ -13,8 +14,6 @@ import {
 	IeObjectMetadataSet,
 	type IeObjectSectorLicenseMatrix,
 } from './ie-objects.types';
-
-import { GroupId } from '~modules/users/types';
 
 export const IE_OBJECT_AV_TYPES: Readonly<HetArchiefIeObjectType[]> = [
 	HetArchiefIeObjectType.AUDIO,

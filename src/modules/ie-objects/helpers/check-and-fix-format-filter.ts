@@ -1,8 +1,6 @@
-import { find } from 'lodash';
-
-import { IeObjectsQueryDto, SearchFilter } from '../dto/ie-objects.dto';
-
 import { HetArchiefIeObjectType } from '@viaa/avo2-types';
+import { find } from 'lodash';
+import { IeObjectsQueryDto, SearchFilter } from '../dto/ie-objects.dto';
 
 export const checkAndFixFormatFilter = (queryDto: IeObjectsQueryDto | null): IeObjectsQueryDto => {
 	const formatFilter = find(queryDto?.filters || [], { field: 'format' }) as SearchFilter;

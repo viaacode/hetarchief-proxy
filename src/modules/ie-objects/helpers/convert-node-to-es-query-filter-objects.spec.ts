@@ -1,5 +1,6 @@
 import jsep from 'jsep';
-
+import { describe, expect, it } from 'vitest';
+import { IeObjectsSearchFilterField, Operator } from './../elasticsearch/elasticsearch.consts';
 import {
 	esQuerySearchTemplate,
 	mockConvertNodeToEsQueryFilterObject1,
@@ -7,9 +8,6 @@ import {
 	mockConvertNodeToEsQueryFilterObject3,
 	mockConvertNodeToEsQueryFilterObject4,
 } from '../mocks/elasticsearch.mock';
-
-import { describe, expect, it } from 'vitest';
-import { IeObjectsSearchFilterField, Operator } from './../elasticsearch/elasticsearch.consts';
 import { convertNodeToEsQueryFilterObjects } from './convert-node-to-es-query-filter-objects';
 
 (jsep as any).removeAllBinaryOps();

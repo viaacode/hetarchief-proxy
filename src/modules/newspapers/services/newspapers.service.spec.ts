@@ -1,12 +1,10 @@
 import { DataService } from '@meemoo/admin-core-api';
 import { ConfigService } from '@nestjs/config';
 import { Test, type TestingModule } from '@nestjs/testing';
-import { type MockInstance, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-
-import { NewspapersService } from './newspapers.service';
-
+import { afterEach, beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
 import { TestingLogger } from '~shared/logging/test-logger';
 import { mockConfigService } from '~shared/test/mock-config-service';
+import { NewspapersService } from './newspapers.service';
 
 const mockDataService: Partial<Record<keyof DataService, MockInstance>> = {
 	execute: vi.fn(),

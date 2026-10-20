@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { IE_OBJECT_NAME_SLUG_FALLBACK, getIeObjectNameSlug } from './get-ie-object-name-slug';
+import { getIeObjectNameSlug, IE_OBJECT_NAME_SLUG_FALLBACK } from './get-ie-object-name-slug';
 
 describe('getIeObjectNameSlug', () => {
 	it('kebab cases the title and strips accents', () => {

@@ -1,3 +1,5 @@
+import { HetArchiefIeObject } from '@viaa/avo2-types';
+import { describe, expect, it } from 'vitest';
 import {
 	mockIeObjectWithMetadataSetALL,
 	mockIeObjectWithMetadataSetALLWithEssence,
@@ -6,10 +8,7 @@ import {
 	mockIeObjectWithMetadataSetLTD,
 	mockIeObjectWithMetadataSetLtdCsv,
 } from '../mocks/ie-objects.mock';
-
-import { HetArchiefIeObject } from '@viaa/avo2-types';
-import { describe, expect, it } from 'vitest';
-import { convertObjectToCsv, convertObjectsToCsv } from './convert-objects-to-csv';
+import { convertObjectsToCsv, convertObjectToCsv } from './convert-objects-to-csv';
 
 describe('convertObjectToCsv', () => {
 	it('returns the csv version of an object', () => {

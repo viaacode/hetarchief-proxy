@@ -1,4 +1,5 @@
 import { TranslationsService } from '@meemoo/admin-core-api';
+import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
 import {
 	BadRequestException,
 	Injectable,
@@ -6,20 +7,27 @@ import {
 	Logger,
 	type OnApplicationBootstrap,
 } from '@nestjs/common';
-
 import { ConfigService } from '@nestjs/config';
 import * as promiseUtils from 'blend-promise-utils';
 import { groupBy, head, isArray, isEmpty, isNil, toPairs } from 'lodash';
 import * as queryString from 'query-string';
 import { stringifyUrl } from 'query-string';
-
 import type { Configuration } from '~config';
-
 import {
-	MATERIAL_REQUEST_REQUESTER_CAPACITY_TRANSLATIONS,
-	MATERIAL_REQUEST_TYPE_TRANSLATIONS,
+	Lookup_App_Material_Request_Type_Enum,
+	Lookup_Languages_Enum,
+} from '~generated/graphql-db-types-hetarchief';
+import { MaterialRequest } from '~modules/material-requests/material-requests.types';
+import type { VisitRequest } from '~modules/visits/types';
+import { customError } from '~shared/helpers/custom-error';
+import { checkRequiredEnvs } from '~shared/helpers/env-check';
+import { formatAsBelgianDate } from '~shared/helpers/format-belgian-date';
+import type { Locale } from '~shared/types/types';
+import {
 	getTemplateEnvVarName,
 	getTemplateId,
+	MATERIAL_REQUEST_REQUESTER_CAPACITY_TRANSLATIONS,
+	MATERIAL_REQUEST_TYPE_TRANSLATIONS,
 } from '../campaign-monitor.consts';
 import {
 	CampaignMonitorCustomFieldName,
@@ -33,8 +41,8 @@ import {
 	type VisitEmailInfo,
 } from '../campaign-monitor.types';
 import {
-	CampaignMonitorConfirmMailQueryDto,
 	CampaignMonitorConfirmationData,
+	CampaignMonitorConfirmMailQueryDto,
 	CampaignMonitorData,
 	CampaignMonitorMaterialRequestData,
 	CampaignMonitorNewsletterUpdatePreferencesQueryDto,
@@ -43,18 +51,6 @@ import {
 	CampaignMonitorVisitData,
 } from '../dto/campaign-monitor.dto';
 import { decryptData, encryptData } from '../helpers/crypto-helper';
-
-import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
-import {
-	Lookup_App_Material_Request_Type_Enum,
-	Lookup_Languages_Enum,
-} from '~generated/graphql-db-types-hetarchief';
-import { MaterialRequest } from '~modules/material-requests/material-requests.types';
-import type { VisitRequest } from '~modules/visits/types';
-import { customError } from '~shared/helpers/custom-error';
-import { checkRequiredEnvs } from '~shared/helpers/env-check';
-import { formatAsBelgianDate } from '~shared/helpers/format-belgian-date';
-import type { Locale } from '~shared/types/types';
 
 @Injectable()
 export class CampaignMonitorService implements OnApplicationBootstrap {

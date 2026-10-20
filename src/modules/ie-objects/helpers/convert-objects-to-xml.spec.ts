@@ -1,3 +1,6 @@
+import { HetArchiefIeObject } from '@viaa/avo2-types';
+import { describe, expect, it } from 'vitest';
+import { mockConfigService } from '~shared/test/mock-config-service';
 import {
 	mockIeObjectWithMetadataSetALL,
 	mockIeObjectWithMetadataSetALLWithEssence,
@@ -6,12 +9,7 @@ import {
 	mockIeObjectWithMetadataSetLTD,
 	mockIeObjectWithMetadataSetLtdXml,
 } from '../mocks/ie-objects.mock';
-
 import { convertObjectToXml } from './convert-objects-to-xml';
-
-import { HetArchiefIeObject } from '@viaa/avo2-types';
-import { describe, expect, it } from 'vitest';
-import { mockConfigService } from '~shared/test/mock-config-service';
 
 describe('convertObjectToXml', () => {
 	it('returns the xml version of an object', () => {

@@ -2,7 +2,7 @@ import { GetObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { DataService, MediahavenService } from '@meemoo/admin-core-api';
 import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
-import { Inject, Injectable, forwardRef } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AvoUserCommonUser } from '@viaa/avo2-types';
 import { mapLimit } from 'blend-promise-utils';

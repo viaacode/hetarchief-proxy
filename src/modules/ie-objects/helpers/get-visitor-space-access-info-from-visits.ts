@@ -1,8 +1,6 @@
 import { compact } from 'lodash';
-
-import type { IeObjectsVisitorSpaceInfo } from '../ie-objects.types';
-
 import { VisitAccessType, type VisitRequest } from '~modules/visits/types';
+import type { IeObjectsVisitorSpaceInfo } from '../ie-objects.types';
 
 export const getVisitorSpaceAccessInfoFromVisits = (
 	activeVisits: VisitRequest[]

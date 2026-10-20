@@ -6,6 +6,7 @@ import {
 	StillsObjectType,
 	VideoStillsService,
 } from '@meemoo/admin-core-api';
+import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
 import {
 	BadRequestException,
 	Injectable,
@@ -13,8 +14,20 @@ import {
 	Logger,
 	NotFoundException,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
+import {
+	AvoStillsStillInfo,
+	AvoUserCommonUser,
+	HetArchiefIeObject,
+	HetArchiefIeObjectAccessThrough,
+	HetArchiefIeObjectLicense,
+	type HetArchiefIeObjectSector,
+	HetArchiefIeObjectType,
+	HetArchiefSimpleIeObjectType,
+} from '@viaa/avo2-types';
 import { mapLimit } from 'blend-promise-utils';
+import { addDays, addMonths, isWithinInterval, subDays, subMonths } from 'date-fns';
 import {
 	compact,
 	groupBy,
@@ -26,45 +39,7 @@ import {
 	noop,
 	set,
 } from 'lodash';
-
-import {
-	CreateMaterialRequestDto,
-	MaterialRequestsQueryDto,
-	SendRequestListDto,
-	UpdateMaterialRequestStatusDto,
-} from '../dto/material-requests.dto';
-import {
-	MAP_MATERIAL_REQUEST_STATUS_TO_EVENT_TYPE,
-	MAP_MATERIAL_REQUEST_STATUS_TO_NOTIFICATION_TYPE,
-	MAP_NOTIFICATION_TYPE_TO_EMAIL_TEMPLATE,
-	ORDER_PROP_TO_DB_PROP,
-	getAdditionEventDate,
-	getLastStatusEventOfType,
-	getStatusEvent,
-} from '../material-requests.consts';
-import {
-	GqlMaterialRequest,
-	GqlMaterialRequestMaintainer,
-	MaterialRequest,
-	MaterialRequestDurationType,
-	MaterialRequestExportQuality,
-	MaterialRequestForDownload,
-	MaterialRequestMaintainer,
-	MaterialRequestOrderProp,
-	MaterialRequestReuseForm,
-	MaterialRequestReuseFormKey,
-	MaterialRequestSendRequestListUserInfo,
-	MaterialRequestStatus,
-} from '../material-requests.types';
-
-import {
-	HetArchiefIeObject,
-	HetArchiefIeObjectAccessThrough,
-	HetArchiefIeObjectLicense,
-	type HetArchiefIeObjectSector,
-	HetArchiefIeObjectType,
-	HetArchiefSimpleIeObjectType,
-} from '@viaa/avo2-types';
+import type { Configuration } from '~config';
 import {
 	type App_Material_Requests_Bool_Exp,
 	type App_Material_Requests_Set_Input,
@@ -125,21 +100,12 @@ import {
 	UpdateMaterialRequestStatusMutationVariables,
 } from '~generated/graphql-db-types-hetarchief';
 import { type MaterialRequestEmailInfo } from '~modules/campaign-monitor/campaign-monitor.types';
-import { IeObjectsVisitorSpaceInfo } from '~modules/ie-objects/ie-objects.types';
-import type { Organisation } from '~modules/organisations/organisations.types';
-
-import { OrganisationsService } from '~modules/organisations/services/organisations.service';
-
-import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
-import { ConfigService } from '@nestjs/config';
-import { AvoStillsStillInfo, AvoUserCommonUser } from '@viaa/avo2-types';
-import { addDays, addMonths, isWithinInterval, subDays, subMonths } from 'date-fns';
-import type { Configuration } from '~config';
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
 import { limitAccessToObjectDetails } from '~modules/ie-objects/helpers/limit-access-to-object-details';
 import { mapDcTermsFormatToSimpleType } from '~modules/ie-objects/helpers/map-dc-terms-format-to-simple-type';
 import { IE_OBJECT_INTRA_CP_LICENSES } from '~modules/ie-objects/ie-objects.conts';
+import { IeObjectsVisitorSpaceInfo } from '~modules/ie-objects/ie-objects.types';
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { MaterialRequestEvent } from '~modules/material-request-messages/material-request-messages.types';
 import { MaterialRequestMessagesService } from '~modules/material-request-messages/services/material-request-messages.service';
@@ -147,6 +113,8 @@ import { MediahavenJobsWatcherService } from '~modules/mediahaven-jobs-watcher/s
 import { NotificationsService } from '~modules/notifications/services/notifications.service';
 import { NotificationType } from '~modules/notifications/types';
 import { getOrganisationAddress } from '~modules/organisations/helpers/get-organisation-address';
+import type { Organisation } from '~modules/organisations/organisations.types';
+import { OrganisationsService } from '~modules/organisations/services/organisations.service';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { UsersService } from '~modules/users/services/users.service';
@@ -156,6 +124,35 @@ import { customError } from '~shared/helpers/custom-error';
 import { getSchemaName } from '~shared/helpers/get-schema-name';
 import { PaginationHelper } from '~shared/helpers/pagination';
 import { SortDirection } from '~shared/types';
+import {
+	CreateMaterialRequestDto,
+	MaterialRequestsQueryDto,
+	SendRequestListDto,
+	UpdateMaterialRequestStatusDto,
+} from '../dto/material-requests.dto';
+import {
+	getAdditionEventDate,
+	getLastStatusEventOfType,
+	getStatusEvent,
+	MAP_MATERIAL_REQUEST_STATUS_TO_EVENT_TYPE,
+	MAP_MATERIAL_REQUEST_STATUS_TO_NOTIFICATION_TYPE,
+	MAP_NOTIFICATION_TYPE_TO_EMAIL_TEMPLATE,
+	ORDER_PROP_TO_DB_PROP,
+} from '../material-requests.consts';
+import {
+	GqlMaterialRequest,
+	GqlMaterialRequestMaintainer,
+	MaterialRequest,
+	MaterialRequestDurationType,
+	MaterialRequestExportQuality,
+	MaterialRequestForDownload,
+	MaterialRequestMaintainer,
+	MaterialRequestOrderProp,
+	MaterialRequestReuseForm,
+	MaterialRequestReuseFormKey,
+	MaterialRequestSendRequestListUserInfo,
+	MaterialRequestStatus,
+} from '../material-requests.types';
 
 @Injectable()
 export class MaterialRequestsService {

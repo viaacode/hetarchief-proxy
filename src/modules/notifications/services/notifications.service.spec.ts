@@ -2,10 +2,7 @@ import { DataService, MaintenanceAlertsService, TranslationsService } from '@mee
 import { Test, type TestingModule } from '@nestjs/testing';
 import { AvoAuthIdpType, PermissionName } from '@viaa/avo2-types';
 import { addHours, addMonths, subHours } from 'date-fns';
-import { type MockInstance, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-
-import { NotificationsService } from './notifications.service';
-
+import { afterEach, beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
 import {
 	type App_Notification_Insert_Input,
 	type DeleteNotificationsMutation,
@@ -34,6 +31,7 @@ import { type VisitRequest, VisitStatus } from '~modules/visits/types';
 import { mockTranslationsService } from '~shared/helpers/mockTranslationsService';
 import { TestingLogger } from '~shared/logging/test-logger';
 import { AudienceType, Locale, VisitorSpaceStatus } from '~shared/types/types';
+import { NotificationsService } from './notifications.service';
 
 const mockGqlNotification1: GqlNotification = {
 	id: '1586f042-c61a-46b8-946b-ca2c2ea351ad',

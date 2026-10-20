@@ -1,12 +1,10 @@
 import { AdminTranslationsModule } from '@meemoo/admin-core-api';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-
-import { ZendeskController } from './controllers/zendesk.controller';
-import { ZendeskService } from './services/zendesk.service';
-
 import { CampaignMonitorModule } from '~modules/campaign-monitor';
 import { OrganisationsModule } from '~modules/organisations/organisations.module';
+import { ZendeskController } from './controllers/zendesk.controller';
+import { ZendeskService } from './services/zendesk.service';
 
 @Module({
 	controllers: [ZendeskController],

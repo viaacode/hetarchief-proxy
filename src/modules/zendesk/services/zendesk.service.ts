@@ -4,17 +4,6 @@ import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common
 import { ConfigService } from '@nestjs/config';
 import { addSeconds, isFuture } from 'date-fns';
 import zendesk from 'node-zendesk';
-
-import { CreateIeObjectSupportRequestDto, CreateTicketRequestDto } from '../dto/zendesk.dto';
-import {
-	type CreateTicketResponse,
-	ReportReason,
-	type ZendeskAccessToken,
-	type ZendeskOauthTokenResponse,
-	getReportLegalReasonLabels,
-	getReportReasonLabels,
-} from '../zendesk.types';
-
 import type { Configuration } from '~config';
 import {
 	ConsentToTrackOption,
@@ -24,6 +13,15 @@ import { CampaignMonitorService } from '~modules/campaign-monitor/services/campa
 import { ContactPointType } from '~modules/organisations/organisations.types';
 import { OrganisationsService } from '~modules/organisations/services/organisations.service';
 import { checkRequiredEnvs } from '~shared/helpers/env-check';
+import { CreateIeObjectSupportRequestDto, CreateTicketRequestDto } from '../dto/zendesk.dto';
+import {
+	type CreateTicketResponse,
+	getReportLegalReasonLabels,
+	getReportReasonLabels,
+	ReportReason,
+	type ZendeskAccessToken,
+	type ZendeskOauthTokenResponse,
+} from '../zendesk.types';
 
 /**
  * Zendesk is retiring api tokens (email + token over http basic auth) as an authentication method.

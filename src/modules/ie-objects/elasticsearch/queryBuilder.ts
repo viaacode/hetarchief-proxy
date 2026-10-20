@@ -1,8 +1,10 @@
+import { randomInt } from 'node:crypto';
 import {
 	BadRequestException,
 	ForbiddenException,
 	InternalServerErrorException,
 } from '@nestjs/common';
+import { HetArchiefIeObjectLicense, type HetArchiefIeObjectSector } from '@viaa/avo2-types';
 import jsep from 'jsep';
 import {
 	clamp,
@@ -15,8 +17,10 @@ import {
 	isNil,
 	uniq,
 } from 'lodash';
-
-import { HetArchiefIeObjectLicense, type HetArchiefIeObjectSector } from '@viaa/avo2-types';
+import { AND, applyFilter, OR } from '~modules/ie-objects/elasticsearch/queryBuilder.helpers';
+import { GroupId, GroupName } from '~modules/users/types';
+import { PaginationHelper } from '~shared/helpers/pagination';
+import type { SortDirection } from '~shared/types';
 import { IeObjectsQueryDto, SearchFilter } from '../dto/ie-objects.dto';
 import {
 	buildFreeTextFilter,
@@ -24,7 +28,6 @@ import {
 } from '../helpers/convert-node-to-es-query-filter-objects';
 import { encodeSearchterm } from '../helpers/encode-search-term';
 import { IE_OBJECT_METADATA_SET_BY_OBJECT_AND_USER_SECTOR } from '../ie-objects.conts';
-
 import {
 	AGGS_PROPERTIES,
 	DEFAULT_QUERY_TYPE,
@@ -37,18 +40,18 @@ import {
 	KEY_USER_ONLY_SEARCH_FILTER_FIELDS,
 	MAX_COUNT_SEARCH_RESULTS,
 	MAX_NUMBER_SEARCH_RESULTS,
+	MetadataAccessType,
 	MULTI_MATCH_AI_QUERY_MAPPING,
 	MULTI_MATCH_FIELDS,
 	MULTI_MATCH_QUERY_MAPPING,
-	MetadataAccessType,
 	NEEDS_AGG_SUFFIX,
 	NEEDS_FILTER_SUFFIX,
 	NUMBER_OF_FILTER_OPTIONS_DEFAULT,
 	NUMBER_OF_OPTIONS_PER_AGGREGATE,
 	OCCURRENCE_TYPE,
-	ORDER_MAPPINGS,
 	OccurenceType,
 	Operator,
+	ORDER_MAPPINGS,
 	OrderProperty,
 	type QueryBuilderInputInfo,
 	QueryType,
@@ -58,12 +61,6 @@ import {
 	RightsLabel,
 	VALUE_OPERATORS,
 } from './elasticsearch.consts';
-
-import { randomInt } from 'node:crypto';
-import { AND, OR, applyFilter } from '~modules/ie-objects/elasticsearch/queryBuilder.helpers';
-import { GroupId, GroupName } from '~modules/users/types';
-import { PaginationHelper } from '~shared/helpers/pagination';
-import type { SortDirection } from '~shared/types';
 
 (jsep as any).removeAllBinaryOps();
 (jsep as any).removeAllUnaryOps();

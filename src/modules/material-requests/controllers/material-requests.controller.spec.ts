@@ -1,8 +1,14 @@
 import { Lookup_App_Material_Request_Requester_Capacity_Enum } from '@meemoo/admin-core-api/dist/src/modules/shared/generated/graphql-db-types-hetarchief';
 import { ConfigService } from '@nestjs/config';
 import { Test, type TestingModule } from '@nestjs/testing';
-import { type MockInstance, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-
+import { PermissionName } from '@viaa/avo2-types';
+import { afterEach, beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
+import { EventsService } from '~modules/events/services/events.service';
+import { MaterialRequestMessagesService } from '~modules/material-request-messages/services/material-request-messages.service';
+import { MaterialRequestPdfGeneratorService } from '~modules/material-request-messages/services/material-request-pdf-generator';
+import { SessionUserEntity } from '~modules/users/classes/session-user';
+import { TestingLogger } from '~shared/logging/test-logger';
+import { mockConfigService } from '~shared/test/mock-config-service';
 import { MaterialRequestType } from '../material-requests.types';
 import {
 	mockMaintainerWithMaterialRequest,
@@ -11,16 +17,7 @@ import {
 	mockUser,
 } from '../mocks/material-requests.mocks';
 import { MaterialRequestsService } from '../services/material-requests.service';
-
 import { MaterialRequestsController } from './material-requests.controller';
-
-import { PermissionName } from '@viaa/avo2-types';
-import { EventsService } from '~modules/events/services/events.service';
-import { MaterialRequestMessagesService } from '~modules/material-request-messages/services/material-request-messages.service';
-import { MaterialRequestPdfGeneratorService } from '~modules/material-request-messages/services/material-request-pdf-generator';
-import { SessionUserEntity } from '~modules/users/classes/session-user';
-import { TestingLogger } from '~shared/logging/test-logger';
-import { mockConfigService } from '~shared/test/mock-config-service';
 
 const mockMaterialRequestsService: Partial<Record<keyof MaterialRequestsService, MockInstance>> = {
 	findAll: vi.fn(),

@@ -1,14 +1,12 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsArray, IsBoolean, IsEnum, IsNotEmpty, IsString, ValidateNested } from 'class-validator';
-
+import { Lookup_App_Material_Request_Status_Enum } from '~generated/graphql-db-types-hetarchief';
 import {
 	MaterialRequestAdditionalConditionsType,
 	MaterialRequestMessageBodyAdditionalCondition,
 	MaterialRequestMessageBodyAdditionalConditions,
 } from '../material-request-messages.types';
-
-import { Lookup_App_Material_Request_Status_Enum } from '~generated/graphql-db-types-hetarchief';
 
 export class MaterialRequestMessageBodyAdditionalConditionDto
 	implements MaterialRequestMessageBodyAdditionalCondition

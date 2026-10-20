@@ -1,6 +1,6 @@
 import type { HetArchiefIeObject, HetArchiefIeObjectLicense } from '@viaa/avo2-types';
 import { isEmpty, isNil, uniq } from 'lodash';
-
+import type { GroupName } from '~modules/users/types';
 import {
 	IE_OBJECT_INTRA_CP_LICENSES,
 	IE_OBJECT_METADATA_SET_BY_LICENSE,
@@ -9,10 +9,7 @@ import {
 	IE_OBJECT_VISITOR_LICENSES,
 } from '../ie-objects.conts';
 import { IeObjectMetadataSet } from '../ie-objects.types';
-
 import type { LimitAccessTrace } from './limit-access-to-object-details.types';
-
-import type { GroupName } from '~modules/users/types';
 
 /**
  * Builds the data for the ie-object access debug page in the admin dashboard

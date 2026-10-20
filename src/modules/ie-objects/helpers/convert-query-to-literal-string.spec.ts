@@ -1,13 +1,11 @@
 import { SortDirection } from '@meemoo/admin-core-api';
-
+import { describe, expect, it } from 'vitest';
 import { IeObjectsQueryDto } from '../dto/ie-objects.dto';
 import {
 	IeObjectsSearchFilterField,
 	Operator,
 	OrderProperty,
 } from '../elasticsearch/elasticsearch.consts';
-
-import { describe, expect, it } from 'vitest';
 import { convertQueryToLiteralString } from './convert-query-to-literal-string';
 
 describe('convertQueryToLiteralString', () => {

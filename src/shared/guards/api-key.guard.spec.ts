@@ -1,11 +1,10 @@
 import type { ExecutionContext } from '@nestjs/common';
-import { describe, expect, it, vi } from 'vitest';
-
 import { ConfigService } from '@nestjs/config';
+import { describe, expect, it, vi } from 'vitest';
 
 import type { Configuration } from '~config';
 
-import { APIKEY, API_KEY_EXCEPTION, ApiKeyGuard } from '~shared/guards/api-key.guard';
+import { API_KEY_EXCEPTION, APIKEY, ApiKeyGuard } from '~shared/guards/api-key.guard';
 
 const mockApiKey = 'MySecretApiKey';
 

@@ -1,10 +1,8 @@
 import { DataModule } from '@meemoo/admin-core-api';
-import { Module, forwardRef } from '@nestjs/common';
-
-import { IeObjectsModule } from '../ie-objects';
-
+import { forwardRef, Module } from '@nestjs/common';
 import { StatusController } from '~modules/status/controllers/status.controller';
 import { StatusService } from '~modules/status/services/status.service';
+import { IeObjectsModule } from '../ie-objects';
 
 @Module({
 	controllers: [StatusController],

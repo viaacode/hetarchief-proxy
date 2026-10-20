@@ -1,9 +1,8 @@
 import { InternalServerErrorException, Logger, type LoggerService } from '@nestjs/common';
+import { AvoAuthIdpType } from '@viaa/avo2-types';
 import { addDays, getHours, setHours, setMilliseconds, setMinutes, setSeconds } from 'date-fns/fp';
 import { get } from 'lodash';
 import flow from 'lodash/fp/flow';
-
-import { AvoAuthIdpType } from '@viaa/avo2-types';
 import type { User } from '~modules/users/types';
 import type { LdapUser } from '~shared/auth/auth.types';
 import { SpecialPermissionGroups } from '~shared/types/types';

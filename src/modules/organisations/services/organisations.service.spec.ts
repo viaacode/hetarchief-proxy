@@ -2,14 +2,11 @@ import { DataService } from '@meemoo/admin-core-api';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Test, type TestingModule } from '@nestjs/testing';
 import type { Cache } from 'cache-manager';
-import { type MockInstance, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-
-import { mockGqlOrganisation, mockOrganisation1 } from '../mocks/organisations.mocks';
-
-import { OrganisationsService } from './organisations.service';
-
+import { afterEach, beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
 import type { FindOrganisationsBySchemaIdsQuery } from '~generated/graphql-db-types-hetarchief';
 import { TestingLogger } from '~shared/logging/test-logger';
+import { mockGqlOrganisation, mockOrganisation1 } from '../mocks/organisations.mocks';
+import { OrganisationsService } from './organisations.service';
 
 const mockDataService: Partial<Record<keyof DataService, MockInstance>> = {
 	execute: vi.fn(),

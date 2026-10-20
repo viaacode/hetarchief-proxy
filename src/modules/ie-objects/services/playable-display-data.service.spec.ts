@@ -2,10 +2,10 @@ import { DataService, PlayerTicketService, VideoStillsService } from '@meemoo/ad
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { ConfigService } from '@nestjs/config';
 import { Test, type TestingModule } from '@nestjs/testing';
+import { HetArchiefIeObjectLicense, HetArchiefIeObjectType } from '@viaa/avo2-types';
 import type { Cache } from 'cache-manager';
 import { hoursToSeconds } from 'date-fns';
 import {
-	type MockInstance,
 	afterAll,
 	afterEach,
 	beforeAll,
@@ -13,15 +13,9 @@ import {
 	describe,
 	expect,
 	it,
+	type MockInstance,
 	vi,
 } from 'vitest';
-
-import { HetArchiefIeObjectLicense, HetArchiefIeObjectType } from '@viaa/avo2-types';
-import { mockIeObject2, mockUser } from '../mocks/ie-objects.mock';
-
-import { IeObjectsService } from './ie-objects.service';
-import { PlayableDisplayDataService } from './playable-display-data.service';
-
 import type { GetIeObjectPlayableDisplayDataQuery } from '~generated/graphql-db-types-hetarchief';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
@@ -29,6 +23,9 @@ import { VisitsService } from '~modules/visits/services/visits.service';
 import { AUDIO_WAVE_FORM_URL } from '~shared/consts/audio-wave-form-url';
 import { TestingLogger } from '~shared/logging/test-logger';
 import { mockConfigService } from '~shared/test/mock-config-service';
+import { mockIeObject2, mockUser } from '../mocks/ie-objects.mock';
+import { IeObjectsService } from './ie-objects.service';
+import { PlayableDisplayDataService } from './playable-display-data.service';
 
 const mockDataService: Partial<Record<keyof DataService, MockInstance>> = {
 	execute: vi.fn(),

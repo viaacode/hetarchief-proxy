@@ -1,10 +1,8 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsNumber, IsOptional, IsString } from 'class-validator';
-
-import { MaterialRequestAttachmentOrderProp } from '../material-request-messages.types';
-
 import { SortDirection } from '~shared/types';
+import { MaterialRequestAttachmentOrderProp } from '../material-request-messages.types';
 
 export class MaterialRequestAttachmentsQueryDto {
 	@IsNumber()

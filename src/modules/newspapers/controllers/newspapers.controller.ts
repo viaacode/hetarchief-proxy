@@ -12,18 +12,14 @@ import {
 
 import { ConfigService } from '@nestjs/config';
 import { ApiTags } from '@nestjs/swagger';
+import { HetArchiefIeObjectPage, HetArchiefSimpleIeObjectType } from '@viaa/avo2-types';
 import archiver from 'archiver';
 import { mapLimit } from 'blend-promise-utils';
 import type { Request, Response } from 'express';
 import { cloneDeep, isNil } from 'lodash';
-
 import type { Configuration } from '~config';
-
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
-
-import { HetArchiefIeObjectPage } from '@viaa/avo2-types';
-import { HetArchiefSimpleIeObjectType } from '@viaa/avo2-types';
 import { IeObjectsController } from '~modules/ie-objects/controllers/ie-objects.controller';
 import { convertObjectToCsv } from '~modules/ie-objects/helpers/convert-objects-to-csv';
 import { convertObjectToXml } from '~modules/ie-objects/helpers/convert-objects-to-xml';

@@ -1,18 +1,15 @@
 import { AssetsService, TranslationsService } from '@meemoo/admin-core-api';
 import { Test, type TestingModule } from '@nestjs/testing';
 import { AvoAuthIdpType, PermissionName } from '@viaa/avo2-types';
-import { type MockInstance, beforeEach, describe, expect, it, vi } from 'vitest';
-
-import { SpacesService } from '../services/spaces.service';
-
-import { SpacesController } from './spaces.controller';
-
+import { beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupId, GroupName, type User } from '~modules/users/types';
 import { getProxyNlTranslations } from '~shared/helpers/get-proxy-nl-translations';
 import { mockTranslationsService } from '~shared/helpers/mockTranslationsService';
 import { TestingLogger } from '~shared/logging/test-logger';
 import { Locale, VisitorSpaceStatus } from '~shared/types/types';
+import { SpacesService } from '../services/spaces.service';
+import { SpacesController } from './spaces.controller';
 
 const mockSpacesResponse = {
 	items: [

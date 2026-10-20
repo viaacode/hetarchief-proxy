@@ -4,10 +4,8 @@ import got from 'got';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { Configuration } from '~config';
-
-import { HetArchiefService } from './het-archief.service';
-
 import { IDP_XML_RESPONSE } from '~modules/folders/services/__mocks__/idpXmlResponse';
+import { HetArchiefService } from './het-archief.service';
 
 describe('HetArchiefService', () => {
 	let hetArchiefService: HetArchiefService;

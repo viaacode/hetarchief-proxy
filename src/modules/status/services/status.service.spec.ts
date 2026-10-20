@@ -1,13 +1,11 @@
 import { DataService } from '@meemoo/admin-core-api';
 import { Test, type TestingModule } from '@nestjs/testing';
-import { type MockInstance, beforeEach, describe, expect, it, vi } from 'vitest';
-
-import packageJson from '../../../../package.json';
-import { StatusService } from '../services/status.service';
-
+import { beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
 import type { GetFirstObjectIdQuery } from '~generated/graphql-db-types-hetarchief';
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { TestingLogger } from '~shared/logging/test-logger';
+import packageJson from '../../../../package.json';
+import { StatusService } from '../services/status.service';
 
 const mockIeObjectsService: Partial<Record<keyof IeObjectsService, MockInstance>> = {
 	executeQuery: vi.fn(),

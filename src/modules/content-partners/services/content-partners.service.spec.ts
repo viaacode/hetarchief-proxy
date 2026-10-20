@@ -1,11 +1,9 @@
 import { DataService } from '@meemoo/admin-core-api';
 import { Test, type TestingModule } from '@nestjs/testing';
-import { type MockInstance, beforeEach, describe, expect, it, vi } from 'vitest';
-
-import { ContentPartnersService } from './content-partners.service';
-
+import { beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
 import type { FindContentPartnersQuery } from '~generated/graphql-db-types-hetarchief';
 import { TestingLogger } from '~shared/logging/test-logger';
+import { ContentPartnersService } from './content-partners.service';
 
 const mockDataService: Partial<Record<keyof DataService, MockInstance>> = {
 	execute: vi.fn(),

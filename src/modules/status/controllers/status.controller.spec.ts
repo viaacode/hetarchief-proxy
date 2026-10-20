@@ -1,5 +1,5 @@
 import { Test, type TestingModule } from '@nestjs/testing';
-import { type MockInstance, beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
 
 import { StatusService } from '../services/status.service';
 

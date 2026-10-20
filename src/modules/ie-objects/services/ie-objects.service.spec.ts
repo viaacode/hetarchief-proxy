@@ -2,49 +2,24 @@ import { DataService, PlayerTicketService } from '@meemoo/admin-core-api';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { ConfigService } from '@nestjs/config';
 import { Test, type TestingModule } from '@nestjs/testing';
+import {
+	HetArchiefIeObjectLicense,
+	HetArchiefIeObjectRepresentation,
+	HetArchiefIeObjectSector,
+	HetArchiefIeObjectType,
+} from '@viaa/avo2-types';
 import type { Cache } from 'cache-manager';
 import { cloneDeep } from 'lodash';
 import {
-	type MockInstance,
 	afterAll,
 	afterEach,
 	beforeAll,
 	describe,
 	expect,
 	it,
+	type MockInstance,
 	vi,
 } from 'vitest';
-
-import { HetArchiefIeObjectRepresentation } from '@viaa/avo2-types';
-import {
-	HetArchiefIeObjectLicense,
-	HetArchiefIeObjectSector,
-	HetArchiefIeObjectType,
-} from '@viaa/avo2-types';
-import {
-	IeObjectsSearchFilterField,
-	Operator,
-	RightsLabel,
-} from '../elasticsearch/elasticsearch.consts';
-import { AutocompleteField, type ElasticsearchResponse } from '../ie-objects.types';
-import {
-	mockChildrenIeObjects,
-	mockGqlIeObjectFindByFolderId,
-	mockGqlIeObjectFindByFolderIdResult,
-	mockGqlSitemapObject,
-	mockIeObject1,
-	mockIeObject2,
-	mockIeObjectDefaultLimitedMetadata,
-	mockIeObjectEmpty,
-	mockIeObjectLimitedInFolder,
-	mockIeObjectRightsInfo,
-	mockParentIeObject,
-	mockSitemapObject,
-	mockUser,
-} from '../mocks/ie-objects.mock';
-
-import { IeObjectsService } from './ie-objects.service';
-
 import type {
 	FindIeObjectsForSitemapQuery,
 	GetIeObjectDetailQuery,
@@ -68,6 +43,28 @@ import { VisitsService } from '~modules/visits/services/visits.service';
 import { VisitAccessType } from '~modules/visits/types';
 import { TestingLogger } from '~shared/logging/test-logger';
 import { mockConfigService } from '~shared/test/mock-config-service';
+import {
+	IeObjectsSearchFilterField,
+	Operator,
+	RightsLabel,
+} from '../elasticsearch/elasticsearch.consts';
+import { AutocompleteField, type ElasticsearchResponse } from '../ie-objects.types';
+import {
+	mockChildrenIeObjects,
+	mockGqlIeObjectFindByFolderId,
+	mockGqlIeObjectFindByFolderIdResult,
+	mockGqlSitemapObject,
+	mockIeObject1,
+	mockIeObject2,
+	mockIeObjectDefaultLimitedMetadata,
+	mockIeObjectEmpty,
+	mockIeObjectLimitedInFolder,
+	mockIeObjectRightsInfo,
+	mockParentIeObject,
+	mockSitemapObject,
+	mockUser,
+} from '../mocks/ie-objects.mock';
+import { IeObjectsService } from './ie-objects.service';
 
 const mockDataService: Partial<Record<keyof DataService, MockInstance>> = {
 	execute: vi.fn(),
