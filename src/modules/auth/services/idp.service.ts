@@ -7,14 +7,11 @@ import { intersection } from 'lodash';
 import queryString from 'query-string';
 
 import type { Configuration } from '~config';
-
-import { NO_ORG_LINKED } from '../constants';
-
 import type { Organisation } from '~modules/organisations/organisations.types';
-
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { GroupId } from '~modules/users/types';
 import { LdapApp, type LdapUser } from '~shared/auth/auth.types';
+import { NO_ORG_LINKED } from '../constants';
 
 @Injectable()
 export class IdpService {

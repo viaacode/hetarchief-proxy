@@ -1,14 +1,13 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 import type { IPagination } from '@studiohyperdrive/pagination';
-import { AvoAuthIdpType, HetArchiefIeObject, PermissionName } from '@viaa/avo2-types';
+import {
+	AvoAuthIdpType,
+	HetArchiefIeObject,
+	HetArchiefIeObjectType,
+	PermissionName,
+} from '@viaa/avo2-types';
 import type { Request } from 'express';
-import { type MockInstance, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-
-import { FoldersService } from '../services/folders.service';
-
-import { FoldersController } from './folders.controller';
-
-import { HetArchiefIeObjectType } from '@viaa/avo2-types';
+import { afterEach, beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 import { EventsService } from '~modules/events/services/events.service';
 import { type Folder, FolderStatus } from '~modules/folders/types';
@@ -20,6 +19,8 @@ import { GroupId, GroupName, type User } from '~modules/users/types';
 import { VisitsService } from '~modules/visits/services/visits.service';
 import { TestingLogger } from '~shared/logging/test-logger';
 import { Locale } from '~shared/types/types';
+import { FoldersService } from '../services/folders.service';
+import { FoldersController } from './folders.controller';
 
 const mockFoldersResponse: IPagination<Folder> = {
 	items: [

@@ -2,7 +2,13 @@ import { TranslationsService } from '@meemoo/admin-core-api';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Test, type TestingModule } from '@nestjs/testing';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-
+import { Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum } from '~generated/graphql-db-types-hetarchief';
+import { mockMaterialRequest1 } from '~modules/material-requests/mocks/material-requests.mocks';
+import { type VisitRequest, VisitStatus } from '~modules/visits/types';
+import { mockTranslationsService } from '~shared/helpers/mockTranslationsService';
+import { TestingLogger } from '~shared/logging/test-logger';
+import { mockConfigService } from '~shared/test/mock-config-service';
+import { Locale } from '~shared/types/types';
 import { ConsentToTrackOption, EmailTemplate } from '../campaign-monitor.types';
 import {
 	mockCampaignMonitorMaterialRequestDataToMaintainer,
@@ -16,16 +22,7 @@ import {
 	mockUser,
 	mockUserInfo,
 } from '../mocks/campaign-monitor.mocks';
-
 import { CampaignMonitorService } from './campaign-monitor.service';
-
-import { Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum } from '~generated/graphql-db-types-hetarchief';
-import { mockMaterialRequest1 } from '~modules/material-requests/mocks/material-requests.mocks';
-import { type VisitRequest, VisitStatus } from '~modules/visits/types';
-import { mockTranslationsService } from '~shared/helpers/mockTranslationsService';
-import { TestingLogger } from '~shared/logging/test-logger';
-import { mockConfigService } from '~shared/test/mock-config-service';
-import { Locale } from '~shared/types/types';
 
 const getMockVisitRequest = (): VisitRequest => ({
 	id: '1',

@@ -4,20 +4,11 @@ import {
 	MaintenanceAlertsService,
 	TranslationsService,
 } from '@meemoo/admin-core-api';
+import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
 import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
-import { isPast } from 'date-fns';
-
-import { DeleteNotificationDto } from '../dto/notifications.dto';
-import {
-	type GqlNotification,
-	type Notification,
-	NotificationStatus,
-	NotificationType,
-} from '../types';
-
-import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
 import { AvoUserCommonUser } from '@viaa/avo2-types';
+import { isPast } from 'date-fns';
 import {
 	type App_Notification_Bool_Exp,
 	type App_Notification_Insert_Input,
@@ -57,6 +48,13 @@ import type { VisitRequest } from '~modules/visits/types';
 import { convertToDate, formatAsBelgianDate } from '~shared/helpers/format-belgian-date';
 import { PaginationHelper } from '~shared/helpers/pagination';
 import type { Recipient } from '~shared/types/types';
+import { DeleteNotificationDto } from '../dto/notifications.dto';
+import {
+	type GqlNotification,
+	type Notification,
+	NotificationStatus,
+	NotificationType,
+} from '../types';
 
 @Injectable()
 export class NotificationsService {

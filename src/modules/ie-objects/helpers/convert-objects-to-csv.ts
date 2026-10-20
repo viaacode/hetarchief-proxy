@@ -1,8 +1,7 @@
+import { HetArchiefIeObject } from '@viaa/avo2-types';
 import { flatten } from 'flat';
 import _ from 'lodash';
 import Papa from 'papaparse';
-
-import { HetArchiefIeObject } from '@viaa/avo2-types';
 import { IE_OBJECT_PROPS_METADATA_EXPORT } from '../ie-objects.conts';
 
 /**

@@ -1,7 +1,7 @@
-import { HetArchiefIeObjectRepresentation } from '@viaa/avo2-types';
 import {
 	HetArchiefIeObjectAccessThrough,
 	HetArchiefIeObjectLicense,
+	HetArchiefIeObjectRepresentation,
 	HetArchiefIeObjectType,
 } from '@viaa/avo2-types';
 import {

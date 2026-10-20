@@ -5,25 +5,10 @@ vi.mock('~modules/mediahaven-jobs-watcher/services/mediahaven-jobs-watcher.servi
 }));
 
 import { AssetsService, DataService, Locale, VideoStillsService } from '@meemoo/admin-core-api';
-import { Test, type TestingModule } from '@nestjs/testing';
-import { type MockInstance, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-
-import { MaterialRequestType } from '../material-requests.types';
-import {
-	mockGqlMaintainers,
-	mockGqlMaterialRequest1,
-	mockGqlMaterialRequest2,
-	mockGqlMaterialRequest3,
-	mockMaintainerWithMaterialRequest,
-	mockMaterialRequest1,
-	mockUser,
-	mockUserProfileId,
-} from '../mocks/material-requests.mocks';
-
-import { MaterialRequestsService } from './material-requests.service';
-
 import { ConfigService } from '@nestjs/config';
+import { Test, type TestingModule } from '@nestjs/testing';
 import { type AvoUserCommonUser, HetArchiefIeObjectLicense } from '@viaa/avo2-types';
+import { afterEach, beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
 import type {
 	DeleteMaterialRequestMutation,
 	FindMaintainersWithMaterialRequestsQuery,
@@ -48,6 +33,18 @@ import { UsersService } from '~modules/users/services/users.service';
 import { getSchemaName } from '~shared/helpers/get-schema-name';
 import { TestingLogger } from '~shared/logging/test-logger';
 import { mockConfigService } from '~shared/test/mock-config-service';
+import { MaterialRequestType } from '../material-requests.types';
+import {
+	mockGqlMaintainers,
+	mockGqlMaterialRequest1,
+	mockGqlMaterialRequest2,
+	mockGqlMaterialRequest3,
+	mockMaintainerWithMaterialRequest,
+	mockMaterialRequest1,
+	mockUser,
+	mockUserProfileId,
+} from '../mocks/material-requests.mocks';
+import { MaterialRequestsService } from './material-requests.service';
 
 const mockDataService: Partial<Record<keyof DataService, MockInstance>> = {
 	execute: vi.fn(),

@@ -1,13 +1,11 @@
 import { compact } from 'lodash';
-
+import type { GetIeObjectPlayableDisplayDataQuery } from '~generated/graphql-db-types-hetarchief';
 import { FLOWPLAYER_FORMATS, IMAGE_API_FORMATS } from '../ie-objects.conts';
 import type {
 	PlayableDisplayDataFile,
 	PlayableDisplayDataPage,
 	PlayableDisplayDataRepresentation,
 } from '../services/ie-objects.service.types';
-
-import type { GetIeObjectPlayableDisplayDataQuery } from '~generated/graphql-db-types-hetarchief';
 
 /**
  * Finds the first image-api file in a representation's files, same selection as

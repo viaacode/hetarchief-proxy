@@ -3,12 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { Test, type TestingModule } from '@nestjs/testing';
 import type { IPagination } from '@studiohyperdrive/pagination';
 import { AvoAuthIdpType, PermissionName } from '@viaa/avo2-types';
-import { type MockInstance, afterAll, beforeEach, describe, expect, it, vi } from 'vitest';
-
-import { NotificationsService } from '../services/notifications.service';
-
-import { NotificationsController } from './notifications.controller';
-
+import { afterAll, beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
 import { Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum } from '~generated/graphql-db-types-hetarchief';
 import {
 	type Notification,
@@ -25,6 +20,8 @@ import nlJson from '~shared/i18n/locales/nl.json';
 import { TestingLogger } from '~shared/logging/test-logger';
 import { MOCK_API_KEY, mockConfigService } from '~shared/test/mock-config-service';
 import { Locale } from '~shared/types/types';
+import { NotificationsService } from '../services/notifications.service';
+import { NotificationsController } from './notifications.controller';
 
 const mockNotification1: Notification = {
 	description:

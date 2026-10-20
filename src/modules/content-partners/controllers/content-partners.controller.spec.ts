@@ -1,11 +1,8 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-
-import { ContentPartnersService } from '../services/content-partners.service';
-
-import { ContentPartnersController } from './content-partners.controller';
-
 import { TestingLogger } from '~shared/logging/test-logger';
+import { ContentPartnersService } from '../services/content-partners.service';
+import { ContentPartnersController } from './content-partners.controller';
 
 const mockContentPartnerResponse = {
 	items: [

@@ -1,15 +1,13 @@
-import { AvoAuthIdpType, PermissionName } from '@viaa/avo2-types';
-
 import {
+	AvoAuthIdpType,
 	type HetArchiefIeObject,
 	HetArchiefIeObjectAccessThrough,
 	HetArchiefIeObjectLicense,
 	type HetArchiefIeObjectSector,
 	HetArchiefIeObjectType,
 	HetArchiefIsPartOfKey,
+	PermissionName,
 } from '@viaa/avo2-types';
-import { type IeObjectsSitemap } from '../ie-objects.types';
-
 import type {
 	FindAllIeObjectsByFolderIdQuery,
 	FindIeObjectsForSitemapQuery,
@@ -20,6 +18,7 @@ import type {
 import { GroupId, GroupName } from '~modules/users/types';
 import { mockConfigService } from '~shared/test/mock-config-service';
 import { Locale } from '~shared/types/types';
+import { type IeObjectsSitemap } from '../ie-objects.types';
 
 export const mockIeObjectRightsInfo = {
 	reuseLabel: '© VRT',

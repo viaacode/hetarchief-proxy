@@ -22,6 +22,6 @@ export interface UpdateResponse {
 
 export {
 	Lookup_Languages_Enum as Locale,
-	Lookup_Schema_Audience_Type_Enum as AudienceType,
 	Lookup_Maintainer_Visitor_Space_Status_Enum as VisitorSpaceStatus,
+	Lookup_Schema_Audience_Type_Enum as AudienceType,
 } from '~generated/graphql-db-types-hetarchief';

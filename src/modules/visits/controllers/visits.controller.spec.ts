@@ -3,13 +3,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { AvoAuthIdpType, PermissionName } from '@viaa/avo2-types';
 import { addHours } from 'date-fns';
 import type { Request } from 'express';
-import { type MockInstance, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-
-import { VisitsService } from '../services/visits.service';
-import { type VisitRequest, type VisitSpaceCount, VisitStatus } from '../types';
-
-import { VisitsController } from './visits.controller';
-
+import { afterEach, beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
 import { Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum } from '~generated/graphql-db-types-hetarchief';
 import { EventsService } from '~modules/events/services/events.service';
 import { NotificationsService } from '~modules/notifications/services/notifications.service';
@@ -27,6 +21,9 @@ import { getProxyNlTranslations } from '~shared/helpers/get-proxy-nl-translation
 import { mockTranslationsService } from '~shared/helpers/mockTranslationsService';
 import { TestingLogger } from '~shared/logging/test-logger';
 import { AudienceType, Locale, VisitorSpaceStatus } from '~shared/types/types';
+import { VisitsService } from '../services/visits.service';
+import { type VisitRequest, type VisitSpaceCount, VisitStatus } from '../types';
+import { VisitsController } from './visits.controller';
 
 const mockVisit1: VisitRequest = {
 	id: '93eedf1a-a508-4657-a942-9d66ed6934c2',

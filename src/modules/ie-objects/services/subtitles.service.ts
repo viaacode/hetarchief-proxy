@@ -1,11 +1,9 @@
 import { GetObjectCommand, NoSuchKey, S3Client } from '@aws-sdk/client-s3';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-
-import { convertSrtToVtt, decodeSubtitleBytes } from '../helpers/subtitles';
-
 import { Configuration } from '~config';
 import { customError } from '~shared/helpers/custom-error';
+import { convertSrtToVtt, decodeSubtitleBytes } from '../helpers/subtitles';
 
 @Injectable()
 export class SubtitlesService {

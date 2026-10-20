@@ -1,6 +1,5 @@
-import convert from 'xml-js';
-
 import { HetArchiefIeObject, HetArchiefIeObjectLicense } from '@viaa/avo2-types';
+import convert from 'xml-js';
 import {
 	IE_OBJECT_PROPERTY_TO_DUBLIN_CORE,
 	IE_OBJECT_PROPS_METADATA_EXPORT,

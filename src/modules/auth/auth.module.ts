@@ -3,12 +3,6 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
 import type { Configuration } from '~config';
-
-import { AuthController } from './controllers/auth.controller';
-import { HetArchiefController } from './controllers/het-archief.controller';
-import { HetArchiefService } from './services/het-archief.service';
-import { IdpService } from './services/idp.service';
-
 import { CampaignMonitorModule } from '~modules/campaign-monitor';
 import { EventsModule } from '~modules/events';
 import { FoldersModule } from '~modules/folders';
@@ -16,6 +10,10 @@ import { OrganisationsModule } from '~modules/organisations/organisations.module
 import { SpacesModule } from '~modules/spaces';
 import { UsersModule } from '~modules/users';
 import { SessionService } from '~shared/services/session.service';
+import { AuthController } from './controllers/auth.controller';
+import { HetArchiefController } from './controllers/het-archief.controller';
+import { HetArchiefService } from './services/het-archief.service';
+import { IdpService } from './services/idp.service';
 
 export const archiefServiceFactory = {
 	provide: HetArchiefService,

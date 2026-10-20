@@ -4,7 +4,12 @@ import {
 	HetArchiefIeObjectType,
 } from '@viaa/avo2-types';
 import { describe, expect, it } from 'vitest';
-
+import { IE_OBJECT_METADATA_SET_BY_OBJECT_AND_USER_SECTOR } from '~modules/ie-objects/ie-objects.conts';
+import { mockUser } from '~modules/ie-objects/mocks/ie-objects.mock';
+import { SessionUserEntity } from '~modules/users/classes/session-user';
+import { GroupId, GroupName } from '~modules/users/types';
+import { SortDirection } from '~shared/types';
+import { Locale } from '~shared/types/types';
 import {
 	ElasticsearchField,
 	type ElasticsearchSubQuery,
@@ -17,14 +22,6 @@ import {
 	RightsLabel,
 } from './elasticsearch.consts';
 import { QueryBuilder } from './queryBuilder';
-
-import { IE_OBJECT_METADATA_SET_BY_OBJECT_AND_USER_SECTOR } from '~modules/ie-objects/ie-objects.conts';
-
-import { mockUser } from '~modules/ie-objects/mocks/ie-objects.mock';
-import { SessionUserEntity } from '~modules/users/classes/session-user';
-import { GroupId, GroupName } from '~modules/users/types';
-import { SortDirection } from '~shared/types';
-import { Locale } from '~shared/types/types';
 
 const mockInputInfo = {
 	user: new SessionUserEntity({

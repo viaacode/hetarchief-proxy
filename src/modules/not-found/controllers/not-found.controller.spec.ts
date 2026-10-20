@@ -1,14 +1,12 @@
 import { TranslationsService } from '@meemoo/admin-core-api';
 import { Test, type TestingModule } from '@nestjs/testing';
 import { AvoAuthIdpType, PermissionName } from '@viaa/avo2-types';
-
-import { NotFoundController } from './not-found.controller';
-
 import { afterAll, beforeEach, describe, expect, it } from 'vitest';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupId, GroupName, type User } from '~modules/users/types';
 import { mockTranslationsService } from '~shared/helpers/mockTranslationsService';
 import { Locale } from '~shared/types/types';
+import { NotFoundController } from './not-found.controller';
 
 const mockUser: User = {
 	id: 'e791ecf1-e121-4c54-9d2e-34524b6467c6',

@@ -2,10 +2,6 @@ import { DataService, TranslationsService } from '@meemoo/admin-core-api';
 import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { set } from 'lodash';
-
-import { CreateSpaceDto, SpacesQueryDto, UpdateSpaceDto } from '../dto/spaces.dto';
-import { AccessType, type GqlSpace, type VisitorSpace } from '../spaces.types';
-
 import {
 	CreateSpaceDocument,
 	type CreateSpaceMutation,
@@ -35,6 +31,8 @@ import { ContactPointType, type GqlOrganisation } from '~modules/organisations/o
 import { DuplicateKeyException } from '~shared/exceptions/duplicate-key.exception';
 import { PaginationHelper } from '~shared/helpers/pagination';
 import type { Locale, Recipient } from '~shared/types/types';
+import { CreateSpaceDto, SpacesQueryDto, UpdateSpaceDto } from '../dto/spaces.dto';
+import { AccessType, type GqlSpace, type VisitorSpace } from '../spaces.types';
 
 @Injectable()
 export class SpacesService {

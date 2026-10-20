@@ -14,19 +14,17 @@ import {
 	ValidateNested,
 } from 'class-validator';
 import { isArray } from 'lodash';
-
+import {
+	AutocompleteField,
+	KEY_USER_ONLY_AUTOCOMPLETE_FIELDS,
+} from '~modules/ie-objects/ie-objects.types';
+import { SortDirection } from '~shared/types';
 import {
 	IeObjectsSearchFilterField,
 	KEY_USER_ONLY_SEARCH_FILTER_FIELDS,
 	Operator,
 	OrderProperty,
 } from '../elasticsearch/elasticsearch.consts';
-
-import {
-	AutocompleteField,
-	KEY_USER_ONLY_AUTOCOMPLETE_FIELDS,
-} from '~modules/ie-objects/ie-objects.types';
-import { SortDirection } from '~shared/types';
 
 export class SearchFilter {
 	@IsString()

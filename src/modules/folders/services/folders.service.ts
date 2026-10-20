@@ -1,24 +1,15 @@
 import { DataService } from '@meemoo/admin-core-api';
+import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
 import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
-import { format } from 'date-fns';
-import type { Request } from 'express';
-import { isEmpty, maxBy } from 'lodash';
-
-import type {
-	Folder,
-	FolderObjectLink,
-	GqlFolder,
-	GqlFolderWithIeObjects,
-	GqlObject,
-	GqlUpdateFolder,
-} from '../types';
-
 import {
 	HetArchiefIeObject,
 	type HetArchiefIeObjectSector,
 	type HetArchiefIeObjectType,
 } from '@viaa/avo2-types';
+import { format } from 'date-fns';
+import type { Request } from 'express';
+import { isEmpty, maxBy } from 'lodash';
 import {
 	FindFolderByIdDocument,
 	type FindFolderByIdQuery,
@@ -52,11 +43,17 @@ import {
 import { FolderObjectsQueryDto } from '~modules/folders/dto/folders.dto';
 
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
-
-import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
 import { VisitsService } from '~modules/visits/services/visits.service';
 import { getSchemaName } from '~shared/helpers/get-schema-name';
 import { PaginationHelper } from '~shared/helpers/pagination';
+import type {
+	Folder,
+	FolderObjectLink,
+	GqlFolder,
+	GqlFolderWithIeObjects,
+	GqlObject,
+	GqlUpdateFolder,
+} from '../types';
 
 @Injectable()
 export class FoldersService {
@@ -127,7 +124,7 @@ export class FoldersService {
 			return undefined;
 		}
 
-		let usedForLimitedAccessUntil: string | null = undefined;
+		let usedForLimitedAccessUntil: string | null;
 		try {
 			const visitsWithFolders: Date[] = await this.visitsService.findEndDatesByFolderId(
 				gqlFolder.id

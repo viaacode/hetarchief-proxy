@@ -3,7 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import connectRedis from 'connect-redis';
 import session from 'express-session';
-import { type RedisClient, createClient } from 'redis';
+import { createClient, type RedisClient } from 'redis';
 import SessionFileStore from 'session-file-store';
 
 import type { Configuration } from '~config';

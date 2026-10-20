@@ -1,6 +1,5 @@
-import { compact } from 'lodash';
-
 import { HetArchiefIeObjectLicense, type HetArchiefIeObjectSector } from '@viaa/avo2-types';
+import { compact } from 'lodash';
 import { IE_OBJECT_METADATA_SET_BY_OBJECT_AND_USER_SECTOR } from '../ie-objects.conts';
 
 export const getSectorsWithEssenceAccess = (

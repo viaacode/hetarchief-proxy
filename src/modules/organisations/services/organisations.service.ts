@@ -1,21 +1,12 @@
 import { DataService } from '@meemoo/admin-core-api';
+import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Inject, Injectable, InternalServerErrorException } from '@nestjs/common';
-import type { Cache } from 'cache-manager';
-import { isEmpty, set, shuffle } from 'lodash';
-
-import {
-	GqlOrganisation,
-	GqlOrganisationSlug,
-	MaintainerGridOrganisation,
-	Organisation,
-	OrganisationSlug,
-} from '../organisations.types';
-
-import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { type HetArchiefIeObjectSector } from '@viaa/avo2-types';
+import type { Cache } from 'cache-manager';
 import { hoursToSeconds } from 'date-fns';
+import { isEmpty, set, shuffle } from 'lodash';
 import {
 	FindOrganisationSlugsDocument,
 	FindOrganisationSlugsQuery,
@@ -39,6 +30,13 @@ import { getOrganisationAddress } from '~modules/organisations/helpers/get-organ
 import { ORDER_PROP_TO_DB_PROP } from '~modules/organisations/organisations.consts';
 import { PaginationHelper } from '~shared/helpers/pagination';
 import { SortDirection } from '~shared/types';
+import {
+	GqlOrganisation,
+	GqlOrganisationSlug,
+	MaintainerGridOrganisation,
+	Organisation,
+	OrganisationSlug,
+} from '../organisations.types';
 
 @Injectable()
 export class OrganisationsService {

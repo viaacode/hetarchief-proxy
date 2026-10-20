@@ -1,7 +1,11 @@
 import { AssetsService, ContentPagesService, DataService } from '@meemoo/admin-core-api';
 import { Test, type TestingModule } from '@nestjs/testing';
-import { type MockInstance, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-
+import { afterEach, beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
+import { mockSitemapObject } from '~modules/ie-objects/mocks/ie-objects.mock';
+import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
+import { SpacesService } from '~modules/spaces/services/spaces.service';
+import { TestingLogger } from '~shared/logging/test-logger';
+import { Locale } from '~shared/types/types';
 import {
 	mockContentPage,
 	mockGeneralXml,
@@ -9,14 +13,7 @@ import {
 	mockSitemapSpaces,
 } from '../mocks/sitemap.mocks';
 import type { SitemapItemInfo } from '../sitemap.types';
-
 import { SitemapService } from './sitemap.service';
-
-import { mockSitemapObject } from '~modules/ie-objects/mocks/ie-objects.mock';
-import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
-import { SpacesService } from '~modules/spaces/services/spaces.service';
-import { TestingLogger } from '~shared/logging/test-logger';
-import { Locale } from '~shared/types/types';
 
 const mockDataService: Partial<Record<keyof DataService, MockInstance>> = {
 	execute: vi.fn(),

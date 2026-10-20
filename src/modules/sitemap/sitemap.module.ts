@@ -1,12 +1,10 @@
 import { AssetsModule, ContentPagesModule, DataModule } from '@meemoo/admin-core-api';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-
-import { SitemapController } from './controllers/sitemap.controller';
-import { SitemapService } from './services/sitemap.service';
-
 import { IeObjectsModule } from '~modules/ie-objects';
 import { SpacesModule } from '~modules/spaces';
+import { SitemapController } from './controllers/sitemap.controller';
+import { SitemapService } from './services/sitemap.service';
 
 @Module({
 	controllers: [SitemapController],

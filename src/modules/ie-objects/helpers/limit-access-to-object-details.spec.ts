@@ -3,6 +3,8 @@ import {
 	HetArchiefIeObjectLicense,
 	HetArchiefIeObjectSector,
 } from '@viaa/avo2-types';
+import { describe, expect, it } from 'vitest';
+import { GroupId } from '~modules/users/types';
 import { IE_OBJECT_INTRA_CP_LICENSES } from '../ie-objects.conts';
 import {
 	mockIeObject1,
@@ -11,12 +13,8 @@ import {
 	mockIeObjectWithMetadataSetLTD,
 	mockUserInfo,
 } from '../mocks/ie-objects.mock';
-
 import { limitAccessToObjectDetails } from './limit-access-to-object-details';
 import type { LimitAccessUserInfo } from './limit-access-to-object-details.types';
-
-import { describe, expect, it } from 'vitest';
-import { GroupId } from '~modules/users/types';
 
 describe('Limit access to object details', () => {
 	it.each([

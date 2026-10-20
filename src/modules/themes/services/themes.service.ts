@@ -21,12 +21,6 @@ import {
 	GetIeObjectIdBySchemaIdentifierDocument,
 	GetIeObjectIdBySchemaIdentifierQuery,
 	GetIeObjectIdBySchemaIdentifierQueryVariables,
-	GetThemeWithObjectsDocument,
-	GetThemeWithObjectsInRandomOrderDocument,
-	GetThemeWithObjectsInRandomOrderQuery,
-	GetThemeWithObjectsInRandomOrderQueryVariables,
-	GetThemeWithObjectsQuery,
-	GetThemeWithObjectsQueryVariables,
 	GetThemesByIdsDocument,
 	GetThemesByIdsQuery,
 	GetThemesByIdsQueryVariables,
@@ -39,6 +33,12 @@ import {
 	GetThemesSearchDocument,
 	GetThemesSearchQuery,
 	GetThemesSearchQueryVariables,
+	GetThemeWithObjectsDocument,
+	GetThemeWithObjectsInRandomOrderDocument,
+	GetThemeWithObjectsInRandomOrderQuery,
+	GetThemeWithObjectsInRandomOrderQueryVariables,
+	GetThemeWithObjectsQuery,
+	GetThemeWithObjectsQueryVariables,
 	InsertIeObjectsIntoThemeDocument,
 	InsertIeObjectsIntoThemeMutation,
 	InsertIeObjectsIntoThemeMutationVariables,
@@ -432,7 +432,7 @@ export class ThemesService {
 			user
 		);
 
-		let thumbnailUrl: string | undefined = undefined;
+		let thumbnailUrl: string | undefined;
 
 		if (resolveThumbnailUrl && hasAccessToEssence) {
 			thumbnailUrl = await this.determineThumbnailUrl(rawIeObject, objectLicences, referer, ip);

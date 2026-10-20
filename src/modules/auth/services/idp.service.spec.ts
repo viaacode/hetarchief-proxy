@@ -1,12 +1,9 @@
 import { TranslationsService } from '@meemoo/admin-core-api';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Test, type TestingModule } from '@nestjs/testing';
-import { type MockInstance, beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
 
 import type { Configuration } from '~config';
-
-import { IdpService } from './idp.service';
-
 import type { Organisation } from '~modules/organisations/organisations.types';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { GroupId } from '~modules/users/types';
@@ -17,6 +14,7 @@ import {
 	mockConfigService,
 } from '~shared/test/mock-config-service';
 import { Locale } from '~shared/types/types';
+import { IdpService } from './idp.service';
 
 const mockSpacesService: Partial<Record<keyof SpacesService, MockInstance>> = {
 	findByMaintainerId: vi.fn(),

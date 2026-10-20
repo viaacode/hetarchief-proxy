@@ -22,30 +22,22 @@ import { get, isEmpty, isEqual, pick } from 'lodash';
 import { stringifyUrl } from 'query-string';
 
 import type { Configuration } from '~config';
-
-import { NO_ORG_LINKED } from '../constants';
-
-import { HetArchiefService } from '../services/het-archief.service';
-
-import { IdpService } from '../services/idp.service';
-import type { RelayState, SamlCallbackBody } from '../types';
-
 import { orgNotLinkedLogoutAndRedirectToErrorPage } from '~modules/auth/org-not-linked-redirect';
-
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
-
 import { FoldersService } from '~modules/folders/services/folders.service';
 import type { Organisation } from '~modules/organisations/organisations.types';
-
 import { OrganisationsService } from '~modules/organisations/services/organisations.service';
-
 import { CreateOrUpdateUserDto } from '~modules/users/dto/users.dto';
 import { UsersService } from '~modules/users/services/users.service';
 import { LdapApp, type LdapUser } from '~shared/auth/auth.types';
 import { SessionHelper } from '~shared/auth/session-helper';
 import { EventsHelper } from '~shared/helpers/events';
 import { Locale } from '~shared/types/types';
+import { NO_ORG_LINKED } from '../constants';
+import { HetArchiefService } from '../services/het-archief.service';
+import { IdpService } from '../services/idp.service';
+import type { RelayState, SamlCallbackBody } from '../types';
 
 @ApiTags('Auth')
 @Controller('auth/hetarchief')

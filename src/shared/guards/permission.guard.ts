@@ -7,9 +7,8 @@ import {
 } from '@nestjs/common';
 
 import { Reflector } from '@nestjs/core';
-import type { Observable } from 'rxjs';
-
 import type { PermissionName } from '@viaa/avo2-types';
+import type { Observable } from 'rxjs';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { SessionHelper } from '~shared/auth/session-helper';
 

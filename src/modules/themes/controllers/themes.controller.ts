@@ -24,19 +24,16 @@ import {
 	ApiParam,
 	ApiTags,
 } from '@nestjs/swagger';
-import { AvoFileUploadAssetType } from '@viaa/avo2-types';
-import { PermissionName } from '@viaa/avo2-types';
-
-import { RequireAllPermissions } from '~shared/decorators/require-permissions.decorator';
-
 import { type IPagination } from '@studiohyperdrive/pagination';
+import { AvoFileUploadAssetType, PermissionName } from '@viaa/avo2-types';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Ip } from '~shared/decorators/ip.decorator';
 import { Referer } from '~shared/decorators/referer.decorator';
+import { RequireAllPermissions } from '~shared/decorators/require-permissions.decorator';
 import { SessionUser } from '~shared/decorators/user.decorator';
 import {
-	AddIeObjectToThemeResultDto,
 	AddIeObjectsToThemeDto,
+	AddIeObjectToThemeResultDto,
 	CreateThemeDto,
 	IeObjectInThemeResponseDto,
 	IeObjectsInThemeResponseDto,
