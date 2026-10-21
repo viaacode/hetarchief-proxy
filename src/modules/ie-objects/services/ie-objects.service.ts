@@ -2269,14 +2269,15 @@ export class IeObjectsService {
 		const ieObjectId = await this.getObjectIdBySchemaIdentifierCached(objectSchemaIdentifier);
 
 		if (!ieObjectId) {
-			const error = new CustomError('No object id was found for objectSchemaIdentifier', null, {
-				path: '/folders/:folderId/objects/:objectSchemaIdentifier',
+			// The object might have been removed from the database, this is not a server error
+			console.warn('No object id was found for objectSchemaIdentifier', {
 				requestPath: request?.path,
-				params: request?.params,
 				objectSchemaIdentifier,
 			});
-			console.error(error);
-			throw error;
+			throw new NotFoundException({
+				message: 'No object id was found for objectSchemaIdentifier',
+				objectSchemaIdentifier,
+			});
 		}
 
 		return ieObjectId;
