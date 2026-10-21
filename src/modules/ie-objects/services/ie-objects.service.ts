@@ -37,6 +37,7 @@ import { hoursToMilliseconds } from 'date-fns';
 import { Request } from 'express';
 import got, { type Got } from 'got';
 import {
+	castArray,
 	compact,
 	find,
 	groupBy,
@@ -1163,7 +1164,8 @@ export class IeObjectsService {
 				kebabCase(esObject?.schema_maintainer?.schema_name || ''),
 			maintainerLogo: null,
 			maintainerOverlay: null,
-			name: esObject?.schema_name,
+			// schema_name can be an array for some newspapers (ARC-4090)
+			name: castArray(esObject?.schema_name)[0],
 			publisher: esObject?.schema_publisher,
 			spatial: esObject?.schema_spatial_coverage,
 			temporal: esObject?.schema_temporal_coverage,
