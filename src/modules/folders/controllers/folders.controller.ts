@@ -442,7 +442,13 @@ export class FoldersController {
 			objectSchemaIdentifiers.map((objectSchemaIdentifier) =>
 				this.ieObjectsService
 					.getIeObjectIdFromObjectSchemaIdentifier(objectSchemaIdentifier, request)
-					.catch((): null => null)
+					.catch((err): null => {
+						// Only skip objects that don't exist, other errors (eg: database errors) should fail the request
+						if (err instanceof NotFoundException) {
+							return null;
+						}
+						throw err;
+					})
 			)
 		);
 		const notFoundSchemaIdentifiers = objectSchemaIdentifiers.filter(
