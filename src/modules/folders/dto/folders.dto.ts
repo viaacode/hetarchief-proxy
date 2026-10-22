@@ -59,7 +59,7 @@ export class AddObjectsToFoldersDto {
 
 	@IsArray()
 	@ArrayMinSize(1)
-	@ArrayMaxSize(100)
+	@ArrayMaxSize(240)
 	@IsString({ each: true })
 	@IsNotEmpty({ each: true })
 	@ApiProperty({
