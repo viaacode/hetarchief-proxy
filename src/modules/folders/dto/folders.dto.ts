@@ -1,6 +1,16 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+import {
+	ArrayMaxSize,
+	ArrayMinSize,
+	IsArray,
+	IsBoolean,
+	IsNotEmpty,
+	IsNumber,
+	IsOptional,
+	IsString,
+	IsUUID,
+} from 'class-validator';
 import { string } from 'joi';
 
 export class CreateOrUpdateFolderDto {
@@ -21,6 +31,77 @@ export class CreateOrUpdateFolderDto {
 		example: 'my favorite movies',
 	})
 	description?: string;
+}
+
+export class CreateFolderDto extends CreateOrUpdateFolderDto {
+	@IsBoolean()
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: Boolean,
+		description:
+			'Create an organisation folder instead of a personal folder. Requires the MANAGE_ORGANISATION_FOLDERS permission',
+		default: false,
+	})
+	isOrganisation?: boolean;
+}
+
+export class AddObjectsToFoldersDto {
+	@IsArray()
+	@ArrayMinSize(1)
+	@ArrayMaxSize(50)
+	@IsUUID('all', { each: true })
+	@ApiProperty({
+		type: [String],
+		description: 'The ids of the folders to add the objects to',
+		example: ['0018c1b6-97ae-435f-abef-31a2cde011fd'],
+	})
+	folderIds: string[];
+
+	@IsArray()
+	@ArrayMinSize(1)
+	@ArrayMaxSize(240)
+	@IsString({ each: true })
+	@IsNotEmpty({ each: true })
+	@ApiProperty({
+		type: [String],
+		description: 'The schema identifiers of the objects to add to the folders',
+		example: ['8911p09j1g'],
+	})
+	objectSchemaIdentifiers: string[];
+}
+
+export class UpdateObjectsInFoldersDto {
+	@IsArray()
+	@ArrayMaxSize(50)
+	@IsUUID('all', { each: true })
+	@ApiProperty({
+		type: [String],
+		description: 'The ids of the folders to add the objects to',
+		example: ['0018c1b6-97ae-435f-abef-31a2cde011fd'],
+	})
+	addToFolderIds: string[];
+
+	@IsArray()
+	@ArrayMaxSize(50)
+	@IsUUID('all', { each: true })
+	@ApiProperty({
+		type: [String],
+		description: 'The ids of the folders to remove the objects from',
+		example: ['6a0b5b0e-8f3e-4a43-9b7e-2b6f0c8c1d11'],
+	})
+	removeFromFolderIds: string[];
+
+	@IsArray()
+	@ArrayMinSize(1)
+	@ArrayMaxSize(240)
+	@IsString({ each: true })
+	@IsNotEmpty({ each: true })
+	@ApiProperty({
+		type: [String],
+		description: 'The schema identifiers of the objects to add to or remove from the folders',
+		example: ['8911p09j1g'],
+	})
+	objectSchemaIdentifiers: string[];
 }
 
 export class FolderObjectsQueryDto {

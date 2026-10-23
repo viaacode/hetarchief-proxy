@@ -1,6 +1,6 @@
-query findFoldersByUser($userProfileId: uuid, $offset: Int, $limit: Int) {
+query findFoldersForUser($where: users_folder_bool_exp!, $offset: Int, $limit: Int) {
 	users_folder(
-		where: { user_profile_id: { _eq: $userProfileId }, is_deleted: { _eq: false } }
+		where: { _and: [{ is_deleted: { _eq: false } }, $where] }
 		order_by: { created_at: asc }
 		offset: $offset
 		limit: $limit
@@ -9,6 +9,7 @@ query findFoldersByUser($userProfileId: uuid, $offset: Int, $limit: Int) {
 		name
 		description
 		user_profile_id
+		owner_organisation_id
 		is_default
 		created_at
 		updated_at
@@ -25,9 +26,7 @@ query findFoldersByUser($userProfileId: uuid, $offset: Int, $limit: Int) {
 			}
 		}
 	}
-	users_folder_aggregate(
-		where: { user_profile_id: { _eq: $userProfileId }, is_deleted: { _eq: false } }
-	) {
+	users_folder_aggregate(where: { _and: [{ is_deleted: { _eq: false } }, $where] }) {
 		aggregate {
 			count
 		}

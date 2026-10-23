@@ -2,7 +2,7 @@ import { HetArchiefIeObject } from '@viaa/avo2-types';
 import type {
 	FindFolderByIdQuery,
 	FindFolderIeObjectsByFolderIdQuery,
-	FindFoldersByUserQuery,
+	FindFoldersForUserQuery,
 	FindIeObjectBySchemaIdentifierQuery,
 	FindIeObjectInFolderQuery,
 	InsertFolderMutation,
@@ -16,13 +16,20 @@ export interface Folder {
 	createdAt: string;
 	updatedAt: string;
 	isDefault: boolean;
-	userProfileId: string;
+	/**
+	 * Owner of a personal folder. null for organisation folders
+	 */
+	userProfileId: string | null;
+	/**
+	 * Organisation that owns an organisation folder (eg: OR-rf5kf25). null for personal folders
+	 */
+	ownerOrganisationId: string | null;
 	duration?: string;
 	objects?: Partial<HetArchiefIeObject>[];
 	usedForLimitedAccessUntil?: string | null;
 }
 
-export type GqlFolderWithIeObjects = FindFoldersByUserQuery['users_folder'][0];
+export type GqlFolderWithIeObjects = FindFoldersForUserQuery['users_folder'][0];
 
 export type GqlFolder =
 	| GqlFolderWithIeObjects
@@ -34,6 +41,7 @@ export type GqlCreateFolder = InsertFolderMutation['insert_users_folder']['retur
 
 export interface GqlUpdateFolder {
 	name?: string;
+	description?: string;
 	is_default?: boolean;
 	created_at?: string;
 	updated_at?: string;
@@ -41,10 +49,47 @@ export interface GqlUpdateFolder {
 
 export type FolderObjectLink =
 	| FindIeObjectInFolderQuery['users_folder_ie'][0]
-	| FindFoldersByUserQuery['users_folder'][0]['intellectualEntities'][0]
+	| FindFoldersForUserQuery['users_folder'][0]['intellectualEntities'][0]
 	| FindFolderIeObjectsByFolderIdQuery['users_folder_ie'][0];
 
 export type GqlObject = FindIeObjectBySchemaIdentifierQuery['graph_intellectual_entity'][0];
+
+export interface AddObjectsToFoldersResult {
+	folderIds: string[];
+	/**
+	 * The objects that were added (or were already in the folders)
+	 */
+	objectSchemaIdentifiers: string[];
+	/**
+	 * The objects that could not be found, these were skipped
+	 */
+	notFoundSchemaIdentifiers: string[];
+	/**
+	 * Number of (folder, object) links that did not exist yet
+	 */
+	addedCount: number;
+}
+
+export interface UpdateObjectsInFoldersResult {
+	addToFolderIds: string[];
+	removeFromFolderIds: string[];
+	/**
+	 * The objects that were added to or removed from the folders
+	 */
+	objectSchemaIdentifiers: string[];
+	/**
+	 * The objects that could not be found, these were skipped
+	 */
+	notFoundSchemaIdentifiers: string[];
+	/**
+	 * Number of (folder, object) links that did not exist yet
+	 */
+	addedCount: number;
+	/**
+	 * Number of (folder, object) links that were removed
+	 */
+	removedCount: number;
+}
 
 export interface FolderShared {
 	status: FolderStatus;
