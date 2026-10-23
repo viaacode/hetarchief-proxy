@@ -40,6 +40,9 @@ import {
 	UpdateFolderDocument,
 	type UpdateFolderMutation,
 	type UpdateFolderMutationVariables,
+	UpdateIeObjectsInFoldersDocument,
+	type UpdateIeObjectsInFoldersMutation,
+	type UpdateIeObjectsInFoldersMutationVariables,
 	type Users_Folder_Bool_Exp,
 	type Users_Folder_Ie_Bool_Exp,
 } from '~generated/graphql-db-types-hetarchief';
@@ -453,5 +456,51 @@ export class FoldersService {
 
 		// The insert ignores conflicts (update_columns: []), so `returning` only contains rows that were newly inserted
 		return response.insert_users_folder_ie.returning.length;
+	}
+
+	/**
+	 * Add all objects to some folders and remove them from other folders in one transaction
+	 * Objects that are already in a folder are ignored, so retrying the same request is safe
+	 * The caller is responsible for checking that the user has access to the folders
+	 * @return the number of (folder, object) links that were newly created and the number that were removed
+	 */
+	public async updateObjectsInFolders(
+		addToFolderIds: string[],
+		removeFromFolderIds: string[],
+		ieObjectIds: string[],
+		folderOwnerWhere: Users_Folder_Bool_Exp
+	): Promise<{ addedCount: number; removedCount: number }> {
+		const uniqueAddToFolderIds = [...new Set(addToFolderIds)];
+		const uniqueRemoveFromFolderIds = [...new Set(removeFromFolderIds)];
+		const uniqueIeObjectIds = [...new Set(ieObjectIds)];
+		if (
+			(!uniqueAddToFolderIds.length && !uniqueRemoveFromFolderIds.length) ||
+			!uniqueIeObjectIds.length
+		) {
+			return { addedCount: 0, removedCount: 0 };
+		}
+
+		// Hasura runs all root fields of one mutation in a single transaction
+		// An empty insert or an empty _in filter does not touch any rows
+		const response = await this.dataService.execute<
+			UpdateIeObjectsInFoldersMutation,
+			UpdateIeObjectsInFoldersMutationVariables
+		>(UpdateIeObjectsInFoldersDocument, {
+			objectsToInsert: uniqueAddToFolderIds.flatMap((folderId) =>
+				uniqueIeObjectIds.map((ieObjectId) => ({
+					user_collection_id: folderId,
+					ie_object_id: ieObjectId,
+				}))
+			),
+			removeFromFolderIds: uniqueRemoveFromFolderIds,
+			ieObjectIds: uniqueIeObjectIds,
+			folderOwnerWhere,
+		});
+
+		return {
+			// The insert ignores conflicts (update_columns: []), so `returning` only contains rows that were newly inserted
+			addedCount: response.insert_users_folder_ie?.returning.length || 0,
+			removedCount: response.delete_users_folder_ie?.affected_rows || 0,
+		};
 	}
 }

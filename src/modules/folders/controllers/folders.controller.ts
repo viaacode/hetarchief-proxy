@@ -33,6 +33,7 @@ import {
 	CreateFolderDto,
 	CreateOrUpdateFolderDto,
 	FolderObjectsQueryDto,
+	UpdateObjectsInFoldersDto,
 } from '~modules/folders/dto/folders.dto';
 import {
 	canWriteToFolder,
@@ -57,6 +58,7 @@ import {
 	type Folder,
 	type FolderShared,
 	FolderStatus,
+	type UpdateObjectsInFoldersResult,
 } from '../types';
 
 @ApiTags('Folders')
@@ -437,30 +439,8 @@ export class FoldersController {
 			)
 		);
 
-		// Objects that no longer exist are skipped, instead of failing the whole selection
-		const resolvedIeObjectIds = await Promise.all(
-			objectSchemaIdentifiers.map((objectSchemaIdentifier) =>
-				this.ieObjectsService
-					.getIeObjectIdFromObjectSchemaIdentifier(objectSchemaIdentifier, request)
-					.catch((err): null => {
-						// Only skip objects that don't exist, other errors (eg: database errors) should fail the request
-						if (err instanceof NotFoundException) {
-							return null;
-						}
-						throw err;
-					})
-			)
-		);
-		const notFoundSchemaIdentifiers = objectSchemaIdentifiers.filter(
-			(_, index) => !resolvedIeObjectIds[index]
-		);
-		const ieObjectIds = compact(resolvedIeObjectIds);
-		if (!ieObjectIds.length) {
-			throw new NotFoundException({
-				message: 'None of the objects were found',
-				notFoundSchemaIdentifiers,
-			});
-		}
+		const { ieObjectIds, foundSchemaIdentifiers, notFoundSchemaIdentifiers } =
+			await this.resolveIeObjectIds(objectSchemaIdentifiers, request);
 
 		const addedCount = await this.foldersService.addObjectsToFolders(folderIds, ieObjectIds);
 
@@ -469,11 +449,82 @@ export class FoldersController {
 
 		return {
 			folderIds,
-			objectSchemaIdentifiers: objectSchemaIdentifiers.filter(
-				(objectSchemaIdentifier) => !notFoundSchemaIdentifiers.includes(objectSchemaIdentifier)
-			),
+			objectSchemaIdentifiers: foundSchemaIdentifiers,
 			notFoundSchemaIdentifiers,
 			addedCount,
+		};
+	}
+
+	/**
+	 * Add multiple objects to some folders and remove them from other folders at once, eg: from the multiselect on the search page
+	 * Both happen in one transaction, and objects that are already in a folder are skipped, so the request can safely be retried
+	 */
+	@Patch('objects')
+	@UseGuards(LoggedInGuard)
+	@RequireAllPermissions(PermissionName.MANAGE_FOLDERS)
+	public async updateObjectsInFolders(
+		@Req() request: Request,
+		@Referer() referer: string,
+		@Ip() ip: string,
+		@Body() updateObjectsInFoldersDto: UpdateObjectsInFoldersDto,
+		@SessionUser() user: SessionUserEntity
+	): Promise<UpdateObjectsInFoldersResult> {
+		const addToFolderIds = [...new Set(updateObjectsInFoldersDto.addToFolderIds)];
+		const removeFromFolderIds = [...new Set(updateObjectsInFoldersDto.removeFromFolderIds)];
+		const objectSchemaIdentifiers = [...new Set(updateObjectsInFoldersDto.objectSchemaIdentifiers)];
+		if (!addToFolderIds.length && !removeFromFolderIds.length) {
+			throw new BadRequestException('At least one folder to add to or remove from is required');
+		}
+		if (addToFolderIds.some((folderId) => removeFromFolderIds.includes(folderId))) {
+			throw new BadRequestException(
+				'A folder cannot be in both addToFolderIds and removeFromFolderIds'
+			);
+		}
+
+		// Check the user has access to all folders before changing anything
+		await Promise.all([
+			...addToFolderIds.map((folderId) =>
+				this.getWritableFolder(
+					folderId,
+					user,
+					referer,
+					ip,
+					'You can only add objects to your own folders'
+				)
+			),
+			...removeFromFolderIds.map((folderId) =>
+				this.getWritableFolder(
+					folderId,
+					user,
+					referer,
+					ip,
+					'You can only delete objects from your own folders'
+				)
+			),
+		]);
+
+		const { ieObjectIds, foundSchemaIdentifiers, notFoundSchemaIdentifiers } =
+			await this.resolveIeObjectIds(objectSchemaIdentifiers, request);
+
+		const { addedCount, removedCount } = await this.foldersService.updateObjectsInFolders(
+			addToFolderIds,
+			removeFromFolderIds,
+			ieObjectIds,
+			getFolderOwnerFilter(user.getId(), getFolderOrganisationId(user))
+		);
+
+		// Log one bookmark event per added (object, folder) pair, without delaying the response
+		if (addToFolderIds.length) {
+			this.logBookmarkEvents(request, user, addToFolderIds, ieObjectIds, referer, ip).then(noop);
+		}
+
+		return {
+			addToFolderIds,
+			removeFromFolderIds,
+			objectSchemaIdentifiers: foundSchemaIdentifiers,
+			notFoundSchemaIdentifiers,
+			addedCount,
+			removedCount,
 		};
 	}
 
@@ -644,6 +695,51 @@ export class FoldersController {
 			throw new ForbiddenException(forbiddenMessage);
 		}
 		return folder;
+	}
+
+	/**
+	 * Look up the ie object ids of the objects
+	 * Objects that no longer exist are skipped, instead of failing the whole selection
+	 * Throws a 404 when none of the objects exist
+	 */
+	private async resolveIeObjectIds(
+		objectSchemaIdentifiers: string[],
+		request: Request
+	): Promise<{
+		ieObjectIds: string[];
+		foundSchemaIdentifiers: string[];
+		notFoundSchemaIdentifiers: string[];
+	}> {
+		const resolvedIeObjectIds = await Promise.all(
+			objectSchemaIdentifiers.map((objectSchemaIdentifier) =>
+				this.ieObjectsService
+					.getIeObjectIdFromObjectSchemaIdentifier(objectSchemaIdentifier, request)
+					.catch((err): null => {
+						// Only skip objects that don't exist, other errors (eg: database errors) should fail the request
+						if (err instanceof NotFoundException) {
+							return null;
+						}
+						throw err;
+					})
+			)
+		);
+		const notFoundSchemaIdentifiers = objectSchemaIdentifiers.filter(
+			(_, index) => !resolvedIeObjectIds[index]
+		);
+		const ieObjectIds = compact(resolvedIeObjectIds);
+		if (!ieObjectIds.length) {
+			throw new NotFoundException({
+				message: 'None of the objects were found',
+				notFoundSchemaIdentifiers,
+			});
+		}
+		return {
+			ieObjectIds,
+			foundSchemaIdentifiers: objectSchemaIdentifiers.filter(
+				(objectSchemaIdentifier) => !notFoundSchemaIdentifiers.includes(objectSchemaIdentifier)
+			),
+			notFoundSchemaIdentifiers,
+		};
 	}
 
 	private async logBookmarkEvents(

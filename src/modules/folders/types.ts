@@ -70,6 +70,27 @@ export interface AddObjectsToFoldersResult {
 	addedCount: number;
 }
 
+export interface UpdateObjectsInFoldersResult {
+	addToFolderIds: string[];
+	removeFromFolderIds: string[];
+	/**
+	 * The objects that were added to or removed from the folders
+	 */
+	objectSchemaIdentifiers: string[];
+	/**
+	 * The objects that could not be found, these were skipped
+	 */
+	notFoundSchemaIdentifiers: string[];
+	/**
+	 * Number of (folder, object) links that did not exist yet
+	 */
+	addedCount: number;
+	/**
+	 * Number of (folder, object) links that were removed
+	 */
+	removedCount: number;
+}
+
 export interface FolderShared {
 	status: FolderStatus;
 	folderId: string;

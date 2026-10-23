@@ -653,4 +653,41 @@ describe('FoldersService', () => {
 			expect(mockDataService.execute).not.toHaveBeenCalled();
 		});
 	});
+
+	describe('updateObjectsInFolders', () => {
+		it('adds and removes the objects in one mutation and returns both counts', async () => {
+			mockDataService.execute.mockResolvedValueOnce({
+				insert_users_folder_ie: {
+					returning: [{ user_collection_id: 'folder-1', ie_object_id: 'object-2' }],
+				},
+				delete_users_folder_ie: { affected_rows: 1 },
+			});
+			const folderOwnerWhere = { user_profile_id: { _eq: mockUser.id } };
+			const result = await foldersService.updateObjectsInFolders(
+				['folder-1', 'folder-1'],
+				['folder-2'],
+				['object-1', 'object-2'],
+				folderOwnerWhere
+			);
+			expect(result).toEqual({ addedCount: 1, removedCount: 1 });
+			expect(mockDataService.execute).toHaveBeenCalledTimes(1);
+			expect(mockDataService.execute.mock.calls[0][1]).toEqual({
+				objectsToInsert: [
+					{ user_collection_id: 'folder-1', ie_object_id: 'object-1' },
+					{ user_collection_id: 'folder-1', ie_object_id: 'object-2' },
+				],
+				removeFromFolderIds: ['folder-2'],
+				ieObjectIds: ['object-1', 'object-2'],
+				folderOwnerWhere,
+			});
+		});
+
+		it('does not call the database when there are no folders', async () => {
+			const result = await foldersService.updateObjectsInFolders([], [], ['object-1'], {
+				user_profile_id: { _eq: mockUser.id },
+			});
+			expect(result).toEqual({ addedCount: 0, removedCount: 0 });
+			expect(mockDataService.execute).not.toHaveBeenCalled();
+		});
+	});
 });

@@ -1,4 +1,5 @@
 import type { IPagination } from '@meemoo/admin-core-api';
+import { NotFoundException } from '@nestjs/common';
 import { Test, type TestingModule } from '@nestjs/testing';
 import {
 	AvoAuthIdpType,
@@ -122,6 +123,7 @@ const mockFoldersService: Partial<Record<keyof FoldersService, MockInstance>> = 
 	addObjectToFolder: vi.fn(),
 	removeObjectFromFolder: vi.fn(),
 	addObjectsToFolders: vi.fn(),
+	updateObjectsInFolders: vi.fn(),
 };
 
 const mockEventsService: Partial<Record<keyof EventsService, MockInstance>> = {
@@ -533,7 +535,9 @@ describe('FoldersController', () => {
 			mockFoldersService.findFolderById.mockResolvedValueOnce(mockFoldersResponse.items[0]);
 			mockIeObjectsService.getIeObjectIdFromObjectSchemaIdentifier
 				.mockResolvedValueOnce('ie-object-id-1')
-				.mockRejectedValueOnce(new Error('No object id was found for objectSchemaIdentifier'));
+				.mockRejectedValueOnce(
+					new NotFoundException('No object id was found for objectSchemaIdentifier')
+				);
 			mockFoldersService.addObjectsToFolders.mockResolvedValueOnce(1);
 			mockIeObjectsService.findByIeObjectId.mockResolvedValue(mockIeObject1);
 			mockEventsService.insertEvents.mockResolvedValue([]);
@@ -560,7 +564,7 @@ describe('FoldersController', () => {
 		it('should return a 404 when none of the objects exist', async () => {
 			mockFoldersService.findFolderById.mockResolvedValueOnce(mockFoldersResponse.items[0]);
 			mockIeObjectsService.getIeObjectIdFromObjectSchemaIdentifier.mockRejectedValueOnce(
-				new Error('No object id was found for objectSchemaIdentifier')
+				new NotFoundException('No object id was found for objectSchemaIdentifier')
 			);
 
 			await expect(
@@ -594,6 +598,110 @@ describe('FoldersController', () => {
 				)
 			).rejects.toThrow('Folder not found');
 			expect(mockFoldersService.addObjectsToFolders).not.toHaveBeenCalled();
+		});
+	});
+
+	describe('updateObjectsInFolders', () => {
+		it('should add the objects to some folders and remove them from others in one call', async () => {
+			mockFoldersService.findFolderById
+				.mockResolvedValueOnce(mockFoldersResponse.items[0])
+				.mockResolvedValueOnce(mockOrganisationFolder);
+			mockIeObjectsService.getIeObjectIdFromObjectSchemaIdentifier
+				.mockResolvedValueOnce('ie-object-id-1')
+				.mockResolvedValueOnce('ie-object-id-2');
+			mockFoldersService.updateObjectsInFolders.mockResolvedValueOnce({
+				addedCount: 1,
+				removedCount: 2,
+			});
+			mockIeObjectsService.findByIeObjectId.mockResolvedValue(mockIeObject1);
+			mockEventsService.insertEvents.mockResolvedValue([]);
+
+			const result = await foldersController.updateObjectsInFolders(
+				mockRequest,
+				'referer',
+				'127.0.0.1',
+				{
+					addToFolderIds: [mockFoldersResponse.items[0].id],
+					removeFromFolderIds: [mockOrganisationFolder.id],
+					objectSchemaIdentifiers: ['schema-identifier-1', 'schema-identifier-2'],
+				},
+				new SessionUserEntity(mockCpAdminUser)
+			);
+
+			expect(result).toEqual({
+				addToFolderIds: [mockFoldersResponse.items[0].id],
+				removeFromFolderIds: [mockOrganisationFolder.id],
+				objectSchemaIdentifiers: ['schema-identifier-1', 'schema-identifier-2'],
+				notFoundSchemaIdentifiers: [],
+				addedCount: 1,
+				removedCount: 2,
+			});
+			expect(mockFoldersService.updateObjectsInFolders).toHaveBeenCalledWith(
+				[mockFoldersResponse.items[0].id],
+				[mockOrganisationFolder.id],
+				['ie-object-id-1', 'ie-object-id-2'],
+				{
+					_or: [
+						{ user_profile_id: { _eq: mockCpAdminUser.id } },
+						{ owner_organisation_id: { _eq: mockOrganisationId } },
+					],
+				}
+			);
+		});
+
+		it('should not change anything if the user has no access to one of the folders', async () => {
+			mockFoldersService.findFolderById
+				.mockResolvedValueOnce(mockFoldersResponse.items[0])
+				.mockResolvedValueOnce({ ...mockOrganisationFolder, ownerOrganisationId: 'OR-other' });
+
+			await expect(
+				foldersController.updateObjectsInFolders(
+					mockRequest,
+					'referer',
+					'127.0.0.1',
+					{
+						addToFolderIds: [mockFoldersResponse.items[0].id],
+						removeFromFolderIds: [mockOrganisationFolder.id],
+						objectSchemaIdentifiers: ['schema-identifier-1'],
+					},
+					new SessionUserEntity(mockCpAdminUser)
+				)
+			).rejects.toThrow('You can only delete objects from your own folders');
+			expect(mockFoldersService.updateObjectsInFolders).not.toHaveBeenCalled();
+		});
+
+		it('should return a 400 when no folders are passed', async () => {
+			await expect(
+				foldersController.updateObjectsInFolders(
+					mockRequest,
+					'referer',
+					'127.0.0.1',
+					{
+						addToFolderIds: [],
+						removeFromFolderIds: [],
+						objectSchemaIdentifiers: ['schema-identifier-1'],
+					},
+					new SessionUserEntity(mockUser)
+				)
+			).rejects.toThrow('At least one folder to add to or remove from is required');
+			expect(mockFoldersService.updateObjectsInFolders).not.toHaveBeenCalled();
+		});
+
+		it('should return a 400 when a folder is both added to and removed from', async () => {
+			await expect(
+				foldersController.updateObjectsInFolders(
+					mockRequest,
+					'referer',
+					'127.0.0.1',
+					{
+						addToFolderIds: [mockFoldersResponse.items[0].id],
+						removeFromFolderIds: [mockFoldersResponse.items[0].id],
+						objectSchemaIdentifiers: ['schema-identifier-1'],
+					},
+					new SessionUserEntity(mockUser)
+				)
+			).rejects.toThrow('A folder cannot be in both addToFolderIds and removeFromFolderIds');
+			expect(mockFoldersService.updateObjectsInFolders).not.toHaveBeenCalled();
 		});
 	});
 
