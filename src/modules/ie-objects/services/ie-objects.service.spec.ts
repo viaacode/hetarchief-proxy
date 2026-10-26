@@ -1248,7 +1248,6 @@ describe('ieObjectsService', () => {
 		const buildAnnotation = (overrides: Record<string, unknown> = {}) => ({
 			id: 'annotation-1',
 			annotation_type: 'face',
-			annotation_confidence: 0.9,
 			is_ai_generated: true,
 			has_annotation_related_artefact_thing: {
 				id: 'https://data-int.hetarchief.be/id/entity/thing-1',
@@ -1393,7 +1392,6 @@ describe('ieObjectsService', () => {
 				{
 					startTime: null,
 					endTime: null,
-					confidence: 0.9,
 					annotationType: 'named-entity',
 					isAiGenerated: true,
 				},
