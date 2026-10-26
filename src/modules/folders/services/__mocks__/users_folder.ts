@@ -17,6 +17,7 @@ export const mockGqlFolder: GqlFolderWithIeObjects = {
 				schemaNames: [
 					{
 						schema_name: 'CGSO. De mannenbeweging - mannenemancipatie - 1982',
+						is_ai_generated: false,
 					},
 				],
 			},

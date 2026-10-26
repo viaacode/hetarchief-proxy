@@ -2001,21 +2001,17 @@ export class IeObjectsService {
 						)
 							? (annotation.annotation_type as FileMentionAnnotationType)
 							: null;
-						const confidence = this.parseNumber(annotation.annotation_confidence);
 						const isAiGenerated = annotation.is_ai_generated ?? false;
 
 						// Some annotations (typically NER hits) have no media fragment at all. Keep them:
 						// the entity was detected, we just cannot place it on the timeline.
 						if (isEmpty(annotation.is_annotated_media_resource)) {
-							return [
-								{ startTime: null, endTime: null, confidence, annotationType, isAiGenerated },
-							];
+							return [{ startTime: null, endTime: null, annotationType, isAiGenerated }];
 						}
 
 						return annotation.is_annotated_media_resource.map((mediaResource) => ({
 							startTime: this.parseNumber(mediaResource.start_offset),
 							endTime: this.parseNumber(mediaResource.end_offset),
-							confidence,
 							annotationType,
 							isAiGenerated,
 						}));

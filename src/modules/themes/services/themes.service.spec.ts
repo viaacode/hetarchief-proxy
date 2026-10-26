@@ -44,6 +44,7 @@ const mockGetIeObjectsInThemeResponse: GetThemeWithObjectsInRandomOrderQuery = {
 					schemaNames: [
 						{
 							schema_name: 'Natuur documentaire',
+							is_ai_generated: false,
 						},
 					],
 					dctermsFormat: [{ dcterms_format: 'video' }],
@@ -62,6 +63,7 @@ const mockGetIeObjectsInThemeResponse: GetThemeWithObjectsInRandomOrderQuery = {
 					schemaNames: [
 						{
 							schema_name: 'Natuur foto',
+							is_ai_generated: false,
 						},
 					],
 					dctermsFormat: [{ dcterms_format: 'image' }],
