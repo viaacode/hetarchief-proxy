@@ -315,8 +315,8 @@ describe('ieObjectsService', () => {
 			// Validate the object
 			expect(ieObject.schemaIdentifier).toEqual(mockObjectSchemaIdentifier);
 			expect(ieObject.maintainerId).toEqual(mockIeObject2Metadata.schemaMaintainer.org_identifier);
-			// TODO ARC-3604/ARC-3652: Restore this assertion once ha_des_purl is available in Hasura.
-			expect(ieObject.providerPurl).toBeUndefined();
+			// Placeholder values that are not a URL are skipped
+			expect(ieObject.providerPurl).toEqual('https://gias.stad.gent/detail.php?id=27369822');
 			expect(ieObject.copyrightHolder).toEqual(
 				mockIeObject2.getSchemaCopyrightHolder
 					.map((item) => item.schema_copyright_holder)

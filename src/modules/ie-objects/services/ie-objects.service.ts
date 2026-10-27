@@ -782,6 +782,9 @@ export class IeObjectsService {
 		const isPartOfResponse = ieObjectResponse.getIsPartOf?.[0];
 		const hasCarrierResponse = ieObjectResponse.getHasCarrier?.[0];
 		const meemooLocalIdResponse = ieObjectResponse.getMeemooLocalId;
+		const providerPurl = ieObjectResponse.getProviderPurl
+			?.map((item) => item?.provider_purl?.trim())
+			.find((value) => /^https?:\/\//i.test(value || ''));
 		const mhFragmentIdentifierResponse = ieObjectResponse.getMhFragmentIdentifier;
 		const parentCollectionResponse = ieObjectResponse.getParentCollection;
 		const schemaAlternateNameResponse = ieObjectResponse.getSchemaAlternateName;
@@ -944,8 +947,7 @@ export class IeObjectsService {
 			numberOfPages: ie?.schema_number_of_pages,
 			pageNumber: ie?.schema_position,
 			meemooLocalId: meemooLocalIdResponse?.map((item) => item?.meemoo_local_id).join(', '),
-			// TODO ARC-3604/ARC-3652: Restore providerPurl mapping once graph.intellectual_entity.ha_des_purl is available in Hasura.
-			providerPurl: undefined,
+			providerPurl,
 			collectionName: parentCollectionResponse?.[0]?.collection?.schema_name,
 			collectionId: parentCollectionResponse?.[0]?.collection?.id,
 			issueNumber: ie?.schema_issue_number,
