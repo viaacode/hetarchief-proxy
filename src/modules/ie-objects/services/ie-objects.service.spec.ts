@@ -257,6 +257,32 @@ describe('ieObjectsService', () => {
 			]);
 		});
 
+		it('restores the casing of the lowercased audio/video rights buckets', async () => {
+			const esResponse = {
+				aggregations: {
+					'reuse_category.id': {
+						buckets: [
+							{ key: RightsLabel.PUBLIC_DOMAIN, doc_count: 1 },
+							{ key: RightsLabel.IN_COPYRIGHT.toLowerCase(), doc_count: 2 },
+							{ key: RightsLabel.COPYRIGHT_UNDETERMINED.toLowerCase(), doc_count: 3 },
+							{ key: 'https://example.com/unknown-rights/', doc_count: 4 },
+						],
+					},
+				},
+			} as unknown as ElasticsearchResponse;
+			const result = await ieObjectsService.adaptESResponse(esResponse);
+			expect(result.aggregations['reuse_category.id'].buckets.map(({ key }) => key)).toEqual([
+				RightsLabel.PUBLIC_DOMAIN,
+				RightsLabel.IN_COPYRIGHT,
+				RightsLabel.COPYRIGHT_UNDETERMINED,
+				'https://example.com/unknown-rights/',
+			]);
+			expect(result.aggregations.reusability.buckets).toEqual([
+				{ key: 'freely-reusable', doc_count: 1 },
+				{ key: 'possibly-reusable', doc_count: 5 },
+			]);
+		});
+
 		it('adds no reusability aggregation when the rights were not requested', async () => {
 			const esResponse = {
 				aggregations: { dcterms_format: { buckets: [] } },
