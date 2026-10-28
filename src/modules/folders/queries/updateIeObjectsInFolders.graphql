@@ -1,0 +1,25 @@
+mutation updateIeObjectsInFolders(
+	$objectsToInsert: [users_folder_ie_insert_input!]!
+	$removeFromFolderIds: [uuid!]!
+	$ieObjectIds: [String!]!
+	$folderOwnerWhere: users_folder_bool_exp!
+) {
+	insert_users_folder_ie(
+		objects: $objectsToInsert
+		on_conflict: { constraint: collection_item_pkey, update_columns: [] }
+	) {
+		returning {
+			user_collection_id
+			ie_object_id
+		}
+	}
+	delete_users_folder_ie(
+		where: {
+			ie_object_id: { _in: $ieObjectIds }
+			user_collection_id: { _in: $removeFromFolderIds }
+			collection: $folderOwnerWhere
+		}
+	) {
+		affected_rows
+	}
+}

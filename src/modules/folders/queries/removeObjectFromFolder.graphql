@@ -1,9 +1,13 @@
-mutation removeObjectFromFolder($ieObjectId: String, $folderId: uuid, $userProfileId: uuid) {
+mutation removeObjectFromFolder(
+	$ieObjectId: String!
+	$folderId: uuid!
+	$folderOwnerWhere: users_folder_bool_exp!
+) {
 	delete_users_folder_ie(
 		where: {
 			ie_object_id: { _eq: $ieObjectId }
 			user_collection_id: { _eq: $folderId }
-			collection: { user_profile_id: { _eq: $userProfileId } }
+			collection: $folderOwnerWhere
 		}
 	) {
 		affected_rows

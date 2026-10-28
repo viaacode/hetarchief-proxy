@@ -1,6 +1,6 @@
-mutation softDeleteFolder($folderId: uuid, $userProfileId: uuid) {
+mutation softDeleteFolder($folderId: uuid!, $folderOwnerWhere: users_folder_bool_exp!) {
 	update_users_folder(
-		where: { id: { _eq: $folderId }, user_profile_id: { _eq: $userProfileId } }
+		where: { _and: [{ id: { _eq: $folderId } }, $folderOwnerWhere] }
 		_set: { is_deleted: true }
 	) {
 		affected_rows

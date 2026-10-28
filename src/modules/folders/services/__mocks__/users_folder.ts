@@ -5,6 +5,7 @@ export const mockGqlFolder: GqlFolderWithIeObjects = {
 	name: 'Favorieten',
 	description: 'Mijn favoriete items',
 	user_profile_id: 'e791ecf1-e121-4c54-9d2e-34524b6467c6',
+	owner_organisation_id: null,
 	is_default: true,
 	created_at: '2022-02-18T09:19:09.487977',
 	updated_at: '2022-02-18T09:19:09.487977',

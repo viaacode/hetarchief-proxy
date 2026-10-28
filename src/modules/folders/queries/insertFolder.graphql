@@ -5,6 +5,7 @@ mutation insertFolder($object: users_folder_insert_input!) {
 			name
 			description
 			user_profile_id
+			owner_organisation_id
 			is_default
 			created_at
 			updated_at

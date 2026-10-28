@@ -7,5 +7,6 @@ query findFolderById($folderId: uuid) {
 		description
 		updated_at
 		user_profile_id
+		owner_organisation_id
 	}
 }

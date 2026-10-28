@@ -9,7 +9,7 @@ import { format } from 'date-fns';
 import { afterEach, beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
 import type {
 	FindFolderIeObjectsByFolderIdQuery,
-	FindFoldersByUserQuery,
+	FindFoldersForUserQuery,
 	FindIeObjectInFolderQuery,
 	InsertFolderMutation,
 	InsertIeObjectIntoFolderMutation,
@@ -38,22 +38,24 @@ const mockVisitsService: Partial<Record<keyof VisitsService, MockInstance>> = {
 	findEndDatesByFolderId: vi.fn(),
 };
 
-const mockGqlFolder1: FindFoldersByUserQuery['users_folder'][0] = {
+const mockGqlFolder1: FindFoldersForUserQuery['users_folder'][0] = {
 	id: '0018c1b6-97ae-435f-abef-31a2cde011fd',
 	name: 'Favorieten',
 	description: 'Favorieten',
 	user_profile_id: 'e791ecf1-e121-4c54-9d2e-34524b6467c6',
+	owner_organisation_id: null,
 	is_default: true,
 	created_at: '2022-02-18T09:19:09.487977',
 	updated_at: '2022-02-18T09:19:09.487977',
 	intellectualEntities: [],
 };
 
-const mockGqlFolder2: FindFoldersByUserQuery['users_folder'][0] = {
+const mockGqlFolder2: FindFoldersForUserQuery['users_folder'][0] = {
 	id: 'be84632b-1f80-4c4f-b61c-e7f3b437a56b',
 	name: 'mijn favorite films',
 	description: 'mijn favorite films',
 	user_profile_id: 'e791ecf1-e121-4c54-9d2e-34524b6467c6',
+	owner_organisation_id: null,
 	is_default: false,
 	created_at: '2022-02-22T13:51:01.995293',
 	updated_at: '2022-02-22T13:51:01.995293',
@@ -99,7 +101,7 @@ const mockGqlFolderObjectLink: FolderObjectLink = {
 	intellectualEntity: mockGqlFolderObject,
 };
 
-const mockGqlFoldersResult: FindFoldersByUserQuery = {
+const mockGqlFoldersResult: FindFoldersForUserQuery = {
 	users_folder: [mockGqlFolder1, mockGqlFolder2],
 	users_folder_aggregate: {
 		aggregate: {
@@ -108,7 +110,7 @@ const mockGqlFoldersResult: FindFoldersByUserQuery = {
 	},
 };
 
-const mockGqlFolderResult: FindFoldersByUserQuery = {
+const mockGqlFolderResult: FindFoldersForUserQuery = {
 	users_folder: [mockGqlFolder1],
 	users_folder_aggregate: {
 		aggregate: {
@@ -117,7 +119,7 @@ const mockGqlFolderResult: FindFoldersByUserQuery = {
 	},
 };
 
-const mockGqlFolderResultEmpty: FindFoldersByUserQuery = {
+const mockGqlFolderResultEmpty: FindFoldersForUserQuery = {
 	users_folder: [],
 	users_folder_aggregate: {
 		aggregate: {
@@ -359,11 +361,11 @@ describe('FoldersService', () => {
 		});
 	});
 
-	describe('findFoldersByUser', () => {
+	describe('findFoldersForUser', () => {
 		it('returns a paginated response with all folders for a user', async () => {
 			mockDataService.execute.mockResolvedValueOnce(mockGqlFoldersResult);
-			const response = await foldersService.findFoldersByUser(
-				mockGqlFoldersResult.users_folder[0].user_profile_id,
+			const response = await foldersService.findFoldersForUser(
+				{ user_profile_id: { _eq: mockGqlFoldersResult.users_folder[0].user_profile_id } },
 				'referer',
 				''
 			);
@@ -401,7 +403,7 @@ describe('FoldersService', () => {
 			mockDataService.execute.mockResolvedValueOnce(mockGqlFolderObjectsResult);
 			const response = await foldersService.findObjectsByFolderId(
 				mockGqlFolder1.id,
-				mockUser.id,
+				{ user_profile_id: { _eq: mockUser.id } },
 				{},
 				'referer',
 				''
@@ -424,7 +426,7 @@ describe('FoldersService', () => {
 
 			const response = await foldersService.findObjectsByFolderId(
 				'unknown-id',
-				mockUser.id,
+				{ user_profile_id: { _eq: mockUser.id } },
 				{},
 				'referer',
 				''
@@ -471,7 +473,13 @@ describe('FoldersService', () => {
 			};
 			mockDataService.execute.mockResolvedValueOnce(mockData);
 			const { id, created_at, updated_at, user_profile_id, ...mockFolder } = mockGqlFolder1;
-			const response = await foldersService.update(id, user_profile_id, mockFolder, 'referer', '');
+			const response = await foldersService.update(
+				id,
+				{ user_profile_id: { _eq: user_profile_id } },
+				mockFolder,
+				'referer',
+				''
+			);
 			expect(response.id).toBe(mockGqlFolder1.id);
 		});
 	});
@@ -485,7 +493,9 @@ describe('FoldersService', () => {
 			};
 			mockDataService.execute.mockResolvedValueOnce(mockData);
 			const { id, user_profile_id } = mockGqlFolder1;
-			const affectedRows = await foldersService.delete(id, user_profile_id);
+			const affectedRows = await foldersService.delete(id, {
+				user_profile_id: { _eq: user_profile_id },
+			});
 			expect(affectedRows).toBe(1);
 		});
 
@@ -497,7 +507,9 @@ describe('FoldersService', () => {
 			};
 			mockDataService.execute.mockResolvedValueOnce(mockData);
 			const { user_profile_id } = mockGqlFolder1;
-			const affectedRows = await foldersService.delete('unknown-id', user_profile_id);
+			const affectedRows = await foldersService.delete('unknown-id', {
+				user_profile_id: { _eq: user_profile_id },
+			});
 			expect(affectedRows).toBe(0);
 		});
 	});
@@ -588,7 +600,7 @@ describe('FoldersService', () => {
 			const affectedRows = await foldersService.removeObjectFromFolder(
 				mockGqlFolder1.id,
 				mockGqlFolderObjectLink.intellectualEntity.schema_identifier,
-				mockUser.id
+				{ user_profile_id: { _eq: mockUser.id } }
 			);
 			expect(affectedRows).toBe(1);
 		});
@@ -603,9 +615,79 @@ describe('FoldersService', () => {
 			const affectedRows = await foldersService.removeObjectFromFolder(
 				mockGqlFolder1.id,
 				'unknown-id',
-				mockUser.id
+				{ user_profile_id: { _eq: mockUser.id } }
 			);
 			expect(affectedRows).toBe(0);
+		});
+	});
+
+	describe('addObjectsToFolders', () => {
+		it('inserts every (folder, object) pair in one mutation and returns the number of new links', async () => {
+			mockDataService.execute.mockResolvedValueOnce({
+				insert_users_folder_ie: {
+					returning: [
+						{ user_collection_id: 'folder-1', ie_object_id: 'object-1' },
+						{ user_collection_id: 'folder-2', ie_object_id: 'object-2' },
+					],
+				},
+			});
+			const addedCount = await foldersService.addObjectsToFolders(
+				['folder-1', 'folder-2', 'folder-1'],
+				['object-1', 'object-2']
+			);
+			expect(addedCount).toBe(2);
+			expect(mockDataService.execute).toHaveBeenCalledTimes(1);
+			expect(mockDataService.execute.mock.calls[0][1]).toEqual({
+				objects: [
+					{ user_collection_id: 'folder-1', ie_object_id: 'object-1' },
+					{ user_collection_id: 'folder-1', ie_object_id: 'object-2' },
+					{ user_collection_id: 'folder-2', ie_object_id: 'object-1' },
+					{ user_collection_id: 'folder-2', ie_object_id: 'object-2' },
+				],
+			});
+		});
+
+		it('does not call the database when there is nothing to insert', async () => {
+			const addedCount = await foldersService.addObjectsToFolders(['folder-1'], []);
+			expect(addedCount).toBe(0);
+			expect(mockDataService.execute).not.toHaveBeenCalled();
+		});
+	});
+
+	describe('updateObjectsInFolders', () => {
+		it('adds and removes the objects in one mutation and returns both counts', async () => {
+			mockDataService.execute.mockResolvedValueOnce({
+				insert_users_folder_ie: {
+					returning: [{ user_collection_id: 'folder-1', ie_object_id: 'object-2' }],
+				},
+				delete_users_folder_ie: { affected_rows: 1 },
+			});
+			const folderOwnerWhere = { user_profile_id: { _eq: mockUser.id } };
+			const result = await foldersService.updateObjectsInFolders(
+				['folder-1', 'folder-1'],
+				['folder-2'],
+				['object-1', 'object-2'],
+				folderOwnerWhere
+			);
+			expect(result).toEqual({ addedCount: 1, removedCount: 1 });
+			expect(mockDataService.execute).toHaveBeenCalledTimes(1);
+			expect(mockDataService.execute.mock.calls[0][1]).toEqual({
+				objectsToInsert: [
+					{ user_collection_id: 'folder-1', ie_object_id: 'object-1' },
+					{ user_collection_id: 'folder-1', ie_object_id: 'object-2' },
+				],
+				removeFromFolderIds: ['folder-2'],
+				ieObjectIds: ['object-1', 'object-2'],
+				folderOwnerWhere,
+			});
+		});
+
+		it('does not call the database when there are no folders', async () => {
+			const result = await foldersService.updateObjectsInFolders([], [], ['object-1'], {
+				user_profile_id: { _eq: mockUser.id },
+			});
+			expect(result).toEqual({ addedCount: 0, removedCount: 0 });
+			expect(mockDataService.execute).not.toHaveBeenCalled();
 		});
 	});
 });

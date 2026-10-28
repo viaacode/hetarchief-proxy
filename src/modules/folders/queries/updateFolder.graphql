@@ -1,6 +1,10 @@
-mutation updateFolder($folderId: uuid, $userProfileId: uuid, $folder: users_folder_set_input) {
+mutation updateFolder(
+	$folderId: uuid!
+	$folderOwnerWhere: users_folder_bool_exp!
+	$folder: users_folder_set_input
+) {
 	update_users_folder(
-		where: { id: { _eq: $folderId }, user_profile_id: { _eq: $userProfileId } }
+		where: { _and: [{ id: { _eq: $folderId } }, $folderOwnerWhere] }
 		_set: $folder
 	) {
 		returning {
@@ -8,6 +12,7 @@ mutation updateFolder($folderId: uuid, $userProfileId: uuid, $folder: users_fold
 			name
 			description
 			user_profile_id
+			owner_organisation_id
 			is_default
 			created_at
 			updated_at
