@@ -68,6 +68,7 @@ const mockGqlFolderObject: GqlObject = {
 	schemaNames: [
 		{
 			schema_name: MOCK_SCHEMA_NAME,
+			is_ai_generated: false,
 		},
 	],
 	dcterms_available: '2015-09-19T12:08:24',
@@ -132,6 +133,7 @@ const mockGqlFolderObjectsResult: FindFolderIeObjectsByFolderIdQuery = {
 				schemaNames: [
 					{
 						schema_name: MOCK_SCHEMA_NAME,
+						is_ai_generated: false,
 					},
 				],
 				dcterms_available: '2015-09-19T12:08:24',
@@ -173,6 +175,7 @@ const mockGqlFolderObjectResult: FindIeObjectInFolderQuery = {
 				schemaNames: [
 					{
 						schema_name: MOCK_SCHEMA_NAME,
+						is_ai_generated: false,
 					},
 				],
 				dcterms_available: '2015-09-19T12:08:24',

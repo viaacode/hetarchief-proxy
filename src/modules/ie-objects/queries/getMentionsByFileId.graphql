@@ -5,7 +5,6 @@ query getMentionsByFileId($fileId: String!) {
 		has_annotations {
 			id
 			annotation_type
-			annotation_confidence
 			is_ai_generated
 			has_annotation_related_artefact_thing {
 				id

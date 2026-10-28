@@ -107,7 +107,7 @@ describe('convertNodeToSearchStrings', () => {
 			fail(
 				'convertStringToSearchTerms should have thrown an error when there are special characters'
 			);
-		} catch (err) {
+		} catch {
 			// If it fails the first time, we try again with quotes around the whole string
 			const result = convertStringToSearchTerms('"The big -)( test"');
 			expect(result.plainTextSearchTerms).toEqual([

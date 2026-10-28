@@ -505,6 +505,7 @@ export const mockIeObject2: GetIeObjectDetailQuery = {
 			schemaNames: [
 				{
 					schema_name: 'In Dienende liefde (prosessie zuster Agnes Boudry)',
+					is_ai_generated: false,
 				},
 			],
 			schema_description: null,
@@ -550,6 +551,7 @@ export const mockIeObject2: GetIeObjectDetailQuery = {
 				schemaNames: [
 					{
 						schema_name: 'Gazet van Antwerpen - 1892-09-09',
+						is_ai_generated: false,
 					},
 				],
 				schema_description: null,
@@ -626,6 +628,14 @@ export const mockIeObject2: GetIeObjectDetailQuery = {
 	getMeemooLocalId: [
 		{
 			meemoo_local_id: 'In Dienende liefde (prosessie zuster Agnes Boudry)',
+		},
+	],
+	getProviderPurl: [
+		{
+			provider_purl: 'persistente uri record',
+		},
+		{
+			provider_purl: 'https://gias.stad.gent/detail.php?id=27369822',
 		},
 	],
 	getMhFragmentIdentifier: [
@@ -792,6 +802,7 @@ export const mockIeObjectEmpty: Readonly<GetIeObjectDetailQuery> = {
 	getIsPartOf: [],
 	getHasCarrier: [],
 	getMeemooLocalId: [],
+	getProviderPurl: [],
 	getMhFragmentIdentifier: [],
 	getParentCollection: [],
 	getSchemaAlternateName: [],
@@ -819,6 +830,7 @@ const mockRelatedIeObject:
 	schemaNames: [
 		{
 			schema_name: 'Het annoncenblad van Moll en omliggende dorpen',
+			is_ai_generated: false,
 		},
 	],
 	dcterms_available: '2020-08-28T11:48:11',
@@ -891,6 +903,7 @@ export const mockGqlIeObjectFindByFolderId: FindAllIeObjectsByFolderIdQuery['use
 			schemaNames: [
 				{
 					schema_name: 'Op de boerderij',
+					is_ai_generated: false,
 				},
 			],
 			dcterms_format: 'video',
@@ -963,6 +976,7 @@ export const mockGqlSitemapObject: FindIeObjectsForSitemapQuery['graph_intellect
 		schemaNames: [
 			{
 				schema_name: 'Durf te vragen R002 A0001',
+				is_ai_generated: false,
 			},
 		],
 		schemaMaintainer: {

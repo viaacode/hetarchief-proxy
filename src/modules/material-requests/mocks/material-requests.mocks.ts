@@ -54,6 +54,7 @@ export const mockGqlMaterialRequest1: FindMaterialRequestsQuery['app_material_re
 		schemaNames: [
 			{
 				schema_name: '',
+				is_ai_generated: false,
 			},
 		],
 		premisIdentifier: [],
@@ -112,6 +113,7 @@ export const mockGqlMaterialRequest2: FindMaterialRequestsByIdQuery['app_materia
 		schemaNames: [
 			{
 				schema_name: 'STIHL: SV DUBLIN ZOO/STIHL zoo na',
+				is_ai_generated: false,
 			},
 		],
 		premisIdentifier: [],

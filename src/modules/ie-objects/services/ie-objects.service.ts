@@ -782,6 +782,9 @@ export class IeObjectsService {
 		const isPartOfResponse = ieObjectResponse.getIsPartOf?.[0];
 		const hasCarrierResponse = ieObjectResponse.getHasCarrier?.[0];
 		const meemooLocalIdResponse = ieObjectResponse.getMeemooLocalId;
+		const providerPurl = ieObjectResponse.getProviderPurl
+			?.map((item) => item?.provider_purl?.trim())
+			.find((value) => /^https?:\/\//i.test(value || ''));
 		const mhFragmentIdentifierResponse = ieObjectResponse.getMhFragmentIdentifier;
 		const parentCollectionResponse = ieObjectResponse.getParentCollection;
 		const schemaAlternateNameResponse = ieObjectResponse.getSchemaAlternateName;
@@ -944,8 +947,7 @@ export class IeObjectsService {
 			numberOfPages: ie?.schema_number_of_pages,
 			pageNumber: ie?.schema_position,
 			meemooLocalId: meemooLocalIdResponse?.map((item) => item?.meemoo_local_id).join(', '),
-			// TODO ARC-3604/ARC-3652: Restore providerPurl mapping once graph.intellectual_entity.ha_des_purl is available in Hasura.
-			providerPurl: undefined,
+			providerPurl,
 			collectionName: parentCollectionResponse?.[0]?.collection?.schema_name,
 			collectionId: parentCollectionResponse?.[0]?.collection?.id,
 			issueNumber: ie?.schema_issue_number,
@@ -2001,21 +2003,17 @@ export class IeObjectsService {
 						)
 							? (annotation.annotation_type as FileMentionAnnotationType)
 							: null;
-						const confidence = this.parseNumber(annotation.annotation_confidence);
 						const isAiGenerated = annotation.is_ai_generated ?? false;
 
 						// Some annotations (typically NER hits) have no media fragment at all. Keep them:
 						// the entity was detected, we just cannot place it on the timeline.
 						if (isEmpty(annotation.is_annotated_media_resource)) {
-							return [
-								{ startTime: null, endTime: null, confidence, annotationType, isAiGenerated },
-							];
+							return [{ startTime: null, endTime: null, annotationType, isAiGenerated }];
 						}
 
 						return annotation.is_annotated_media_resource.map((mediaResource) => ({
 							startTime: this.parseNumber(mediaResource.start_offset),
 							endTime: this.parseNumber(mediaResource.end_offset),
-							confidence,
 							annotationType,
 							isAiGenerated,
 						}));

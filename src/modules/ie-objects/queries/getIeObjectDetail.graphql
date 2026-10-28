@@ -279,6 +279,12 @@ query getIeObjectDetail($ieObjectId: String!) {
 		meemoo_local_id: value
 	}
 
+	getProviderPurl: graph_premis_identifier(
+		where: { intellectual_entity_id: { _eq: $ieObjectId }, type: { _eq: "PersistenteURI_Record" } }
+	) {
+		provider_purl: value
+	}
+
 	getMhFragmentIdentifier: graph_mh_fragment_identifier(
 		where: { intellectual_entity_id: { _eq: $ieObjectId } }
 	) {
