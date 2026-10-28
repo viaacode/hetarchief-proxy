@@ -633,6 +633,14 @@ export const mockIeObject2: GetIeObjectDetailQuery = {
 			meemoo_local_id: 'In Dienende liefde (prosessie zuster Agnes Boudry)',
 		},
 	],
+	getProviderPurl: [
+		{
+			provider_purl: 'persistente uri record',
+		},
+		{
+			provider_purl: 'https://gias.stad.gent/detail.php?id=27369822',
+		},
+	],
 	getMhFragmentIdentifier: [
 		{
 			mh_fragment_identifier:
@@ -800,6 +808,7 @@ export const mockIeObjectEmpty: Readonly<GetIeObjectDetailQuery> = {
 	getIsPartOf: [],
 	getHasCarrier: [],
 	getMeemooLocalId: [],
+	getProviderPurl: [],
 	getMhFragmentIdentifier: [],
 	getParentCollection: [],
 	getSchemaAlternateName: [],

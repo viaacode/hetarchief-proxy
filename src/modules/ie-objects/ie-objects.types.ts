@@ -312,7 +312,6 @@ export interface FileMentionOccurrence {
 	startTime: number | null;
 	/** TC-out in seconds */
 	endTime: number | null;
-	confidence: number | null;
 	/** Passed through as-is when it isn't one of the known values */
 	annotationType: FileMentionAnnotationType | null;
 	isAiGenerated: boolean;

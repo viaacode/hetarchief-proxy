@@ -257,6 +257,32 @@ describe('ieObjectsService', () => {
 			]);
 		});
 
+		it('restores the casing of the lowercased audio/video rights buckets', async () => {
+			const esResponse = {
+				aggregations: {
+					'reuse_category.id': {
+						buckets: [
+							{ key: RightsLabel.PUBLIC_DOMAIN, doc_count: 1 },
+							{ key: RightsLabel.IN_COPYRIGHT.toLowerCase(), doc_count: 2 },
+							{ key: RightsLabel.COPYRIGHT_UNDETERMINED.toLowerCase(), doc_count: 3 },
+							{ key: 'https://example.com/unknown-rights/', doc_count: 4 },
+						],
+					},
+				},
+			} as unknown as ElasticsearchResponse;
+			const result = await ieObjectsService.adaptESResponse(esResponse);
+			expect(result.aggregations['reuse_category.id'].buckets.map(({ key }) => key)).toEqual([
+				RightsLabel.PUBLIC_DOMAIN,
+				RightsLabel.IN_COPYRIGHT,
+				RightsLabel.COPYRIGHT_UNDETERMINED,
+				'https://example.com/unknown-rights/',
+			]);
+			expect(result.aggregations.reusability.buckets).toEqual([
+				{ key: 'freely-reusable', doc_count: 1 },
+				{ key: 'possibly-reusable', doc_count: 5 },
+			]);
+		});
+
 		it('adds no reusability aggregation when the rights were not requested', async () => {
 			const esResponse = {
 				aggregations: { dcterms_format: { buckets: [] } },
@@ -315,8 +341,8 @@ describe('ieObjectsService', () => {
 			// Validate the object
 			expect(ieObject.schemaIdentifier).toEqual(mockObjectSchemaIdentifier);
 			expect(ieObject.maintainerId).toEqual(mockIeObject2Metadata.schemaMaintainer.org_identifier);
-			// TODO ARC-3604/ARC-3652: Restore this assertion once ha_des_purl is available in Hasura.
-			expect(ieObject.providerPurl).toBeUndefined();
+			// Placeholder values that are not a URL are skipped
+			expect(ieObject.providerPurl).toEqual('https://gias.stad.gent/detail.php?id=27369822');
 			expect(ieObject.copyrightHolder).toEqual(
 				mockIeObject2.getSchemaCopyrightHolder
 					.map((item) => item.schema_copyright_holder)
@@ -1249,7 +1275,6 @@ describe('ieObjectsService', () => {
 		const buildAnnotation = (overrides: Record<string, unknown> = {}) => ({
 			id: 'annotation-1',
 			annotation_type: 'face',
-			annotation_confidence: 0.9,
 			is_ai_generated: true,
 			has_annotation_related_artefact_thing: {
 				id: 'https://data-int.hetarchief.be/id/entity/thing-1',
@@ -1394,7 +1419,6 @@ describe('ieObjectsService', () => {
 				{
 					startTime: null,
 					endTime: null,
-					confidence: 0.9,
 					annotationType: 'named-entity',
 					isAiGenerated: true,
 				},
