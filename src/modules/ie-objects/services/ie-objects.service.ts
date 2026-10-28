@@ -96,6 +96,7 @@ import {
 	MAX_COUNT_SEARCH_RESULTS,
 	REUSABILITY_FILTER_VALUES,
 	type ReusabilityCategory,
+	RightsLabel,
 } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
 import { AND } from '~modules/ie-objects/elasticsearch/queryBuilder.helpers';
 import {
@@ -1080,6 +1081,23 @@ export class IeObjectsService {
 					}
 					return true; // not an audio fragment bucket -> include in response
 				});
+		}
+
+		// reuse_category.id is indexed with a lowercase normalizer, so its buckets hold lowercased
+		// urls, eg: https://rightsstatements.org/page/inc/1.0/
+		// Give them back the casing of the RightsLabel they stand for, so they match the rights filter
+		// values and the reusability categories. https://meemoo.atlassian.net/browse/ARC-4146
+		const reuseCategoryBuckets =
+			esResponse?.aggregations?.[`${ElasticsearchField.reuse_category}.${ElasticsearchField.id}`]
+				?.buckets;
+		if (reuseCategoryBuckets) {
+			const rightsLabels = Object.values(RightsLabel) as string[];
+			for (const bucket of reuseCategoryBuckets) {
+				bucket.key =
+					rightsLabels.find(
+						(rightsLabel) => rightsLabel.toLowerCase() === String(bucket.key).toLowerCase()
+					) ?? bucket.key;
+			}
 		}
 
 		// Offer a reusability category when one of the rights statements it groups has hits
