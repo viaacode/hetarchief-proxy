@@ -899,32 +899,51 @@
 										<li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">Meemoo identifier: {{ item.pid }}</li>
 										<li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">URL van het item: {{ item.page_url }}</li>
 										<li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">Gebruikersvraag: {{ item.request_type }}</li>
+										{% if item.is_complex_reuse_flow %}
+										<li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">Meer informatie bij de aanvraag: <a style="text-decoration: underline;transition: opacity 0.1s ease-in;color: #009690;" href="{{ item.request_url }}">bekijk het ingevulde formulier</a></li>
+										{% else %}
 										<li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">Meer informatie bij de aanvraag: {{ item.request_description }}</li>
+										{% endif %}
 									</ul>
-									{% if item.is_complex_reuse_flow %}
-									<p style="Margin-top: 12px;Margin-bottom: 0;">Dit is een uitgebreide aanvraag voor hergebruik. Deze aanvraag wordt verder afgehandeld op hetarchief.be. <a style="text-decoration: underline;transition: opacity 0.1s ease-in;color: #009690;" href="{{ item.request_url }}">Bekijk en beoordeel de materiaalaanvraag</a></p>
-									{% endif %}
 									<p style="color: #00C8AA">___</p>
 									{% endfor %}
 
+									{% if request_list_type == "complex" %}
+									<p style="Margin-top: 20px;Margin-bottom: 0;">Hieronder vind je de gegevens van de aanvrager:</p>
+									{% elsif request_list_type == "mixed" %}
+									<p style="Margin-top: 20px;Margin-bottom: 0;">Hieronder vind je de gegevens van de aanvrager:</p>
+									{% else %}
 									<p style="Margin-top: 20px;Margin-bottom: 0;">Je kan de aanvrager bereiken via deze contactgegevens om
 										hun verzoek te beantwoorden: </p>
+									{% endif %}
 									<ul style="Margin-top: 20px;Margin-bottom: 20px;Margin-left: 24px;padding: 0;list-style-type: disc;">
 										<li style="Margin-top: 20px;Margin-bottom: 0;Margin-left: 0;">Voornaam: {{ user_firstname }}</li>
 										<li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">Naam: {{ user_lastname }}</li>
 										<li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">E-mailadres: {{ user_email }}</li>
+										{% if request_list_type == "complex" %}
+										<li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">Type: sleutelgebruiker</li>
+										{% elsif request_list_type == "mixed" %}
+										<li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">Type: sleutelgebruiker</li>
+										{% else %}
 										<li style="Margin-top: 0;Margin-bottom: 0;Margin-left:
 0;">Type: {{ user_request_context }}</li>
+										{% endif %}
 										<li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">Organisatie (optioneel): {{ user_organisation }}</li>
 									</ul>
 								</div>
 							</div>
 
 							<div style="Margin-left: 20px;Margin-right: 20px;">
+								{% if request_list_type == "complex" %}
+								<p style="Margin-top: 20px;Margin-bottom: 0;">Om als <strong>beoordelaar</strong> de aanvraag goed te keuren (al dan niet met bijkomende voorwaarden) of af te keuren, <a style="text-decoration: underline;transition: opacity 0.1s ease-in;color: #009690;" href="{{ evaluate_requests_url }}">bekijk de aanvraag hier</a> op hetarchief.be.</p>
+								{% elsif request_list_type == "mixed" %}
+								<p style="Margin-top: 20px;Margin-bottom: 0;">Om de bovenstaande aanvraag tot <strong>hergebruik als sleutelgebruiker</strong> goed te keuren (al dan niet met bijkomende voorwaarden) of af te keuren: <a style="text-decoration: underline;transition: opacity 0.1s ease-in;color: #009690;" href="{{ evaluate_requests_url }}">bekijk de aanvraag hier</a> op hetarchief.be. De opvolging van alle andere types aanvragen gebeurt buiten het platform. Je kan de gebruiker voor deze items doorsturen naar de bezoekertool, of op een andere manier de aanvraag verwerken. Op hetarchief.be geven we aan dat iedere organisatie een eigen beleid heeft inzake raadpleging, vergoeding, klaring van rechten en hergebruik.</p>
+								{% else %}
 								<p style="Margin-top: 20px;Margin-bottom: 0;">Opgelet: de opvolging van de aanvraag ligt volledig in jouw
 									handen. Je kan de gebruiker doorsturen naar de bezoekertool, of op een andere manier de aanvraag
 									verwerken. Op hetarchief.be geven we aan dat iedere organisatie een eigen beleid heeft inzake
 									raadpleging, vergoeding, klaring van rechten en hergebruik.</p>
+								{% endif %}
 								<p style="Margin-top: 20px;Margin-bottom: 0;">Alvast bedankt om deze aanvraag spoedig te behandelen,<br>Team
 									meemoo</p>
 

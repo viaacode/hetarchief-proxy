@@ -3,13 +3,18 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Test, type TestingModule } from '@nestjs/testing';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum } from '~generated/graphql-db-types-hetarchief';
+import type { MaterialRequest } from '~modules/material-requests/material-requests.types';
 import { mockMaterialRequest1 } from '~modules/material-requests/mocks/material-requests.mocks';
 import { type VisitRequest, VisitStatus } from '~modules/visits/types';
 import { mockTranslationsService } from '~shared/helpers/mockTranslationsService';
 import { TestingLogger } from '~shared/logging/test-logger';
 import { mockConfigService } from '~shared/test/mock-config-service';
 import { Locale } from '~shared/types/types';
-import { ConsentToTrackOption, EmailTemplate } from '../campaign-monitor.types';
+import {
+	ConsentToTrackOption,
+	EmailTemplate,
+	MaterialRequestListType,
+} from '../campaign-monitor.types';
 import {
 	mockCampaignMonitorMaterialRequestDataToMaintainer,
 	mockCampaignMonitorMaterialRequestDataToRequester,
@@ -251,6 +256,78 @@ describe('CampaignMonitorService', () => {
 					},
 				],
 			});
+		});
+
+		const mockComplexMaterialRequest: MaterialRequest = {
+			...mockMaterialRequest1,
+			id: 'b9a4a0b2-6a6b-4d0e-9a3c-2f4f8e2f3c11',
+			reason: undefined,
+			reuseForm: { representationId: 'mock-representation-id' } as any,
+		};
+
+		it('should mark extended reuse requests and link to the request when the maintainer list only contains one', () => {
+			const result = campaignMonitorService.convertMaterialRequestsToEmailTemplateData({
+				...mockMaterialRequestEmailInfo,
+				template: EmailTemplate.CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_MAINTAINER,
+				materialRequests: [mockComplexMaterialRequest],
+			});
+			const complexRequestUrl = `${mockConfigService.get('CLIENT_HOST')}/beheer/materiaalaanvragen?materialRequest=${mockComplexMaterialRequest.id}`;
+
+			expect(result.request_list_type).toEqual(MaterialRequestListType.COMPLEX);
+			expect(result.evaluate_requests_url).toEqual(complexRequestUrl);
+			expect(result.request_list[0]).toEqual(
+				expect.objectContaining({
+					request_type: expect.stringContaining('sleutelgebruikers'),
+					is_complex_reuse_flow: true,
+					material_request_id: mockComplexMaterialRequest.id,
+					request_url: complexRequestUrl,
+				})
+			);
+		});
+
+		it('should mark a maintainer list with simple and extended requests as mixed', () => {
+			const result = campaignMonitorService.convertMaterialRequestsToEmailTemplateData({
+				...mockMaterialRequestEmailInfo,
+				template: EmailTemplate.CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_MAINTAINER,
+				materialRequests: [mockMaterialRequest1, mockComplexMaterialRequest],
+			});
+
+			expect(result.request_list_type).toEqual(MaterialRequestListType.MIXED);
+			expect(result.evaluate_requests_url).toEqual(
+				`${mockConfigService.get('CLIENT_HOST')}/beheer/materiaalaanvragen?materialRequest=${mockComplexMaterialRequest.id}`
+			);
+			expect(result.request_list.map((item) => item.is_complex_reuse_flow)).toEqual([false, true]);
+		});
+
+		it('should link to the overview when the maintainer list contains multiple extended requests', () => {
+			const result = campaignMonitorService.convertMaterialRequestsToEmailTemplateData({
+				...mockMaterialRequestEmailInfo,
+				template: EmailTemplate.CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_MAINTAINER,
+				materialRequests: [
+					mockMaterialRequest1,
+					mockComplexMaterialRequest,
+					{ ...mockComplexMaterialRequest, id: '0c7d5f0e-3b8f-4a43-9b0e-6f5f0b8a1d22' },
+				],
+			});
+
+			expect(result.request_list_type).toEqual(MaterialRequestListType.MIXED);
+			expect(result.evaluate_requests_url).toEqual(
+				`${mockConfigService.get('CLIENT_HOST')}/beheer/materiaalaanvragen`
+			);
+		});
+
+		it('should mark a requester list with only extended requests as complex', () => {
+			const result = campaignMonitorService.convertMaterialRequestsToEmailTemplateData({
+				...mockMaterialRequestEmailInfo,
+				template: EmailTemplate.CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_REQUESTER,
+				materialRequests: [mockComplexMaterialRequest],
+			});
+
+			expect(result.request_list_type).toEqual(MaterialRequestListType.COMPLEX);
+			expect(result.evaluate_requests_url).toBeUndefined();
+			expect(result.request_list[0].request_url).toEqual(
+				`${mockConfigService.get('CLIENT_HOST')}/account/mijn-materiaalaanvragen?materialRequest=${mockComplexMaterialRequest.id}`
+			);
 		});
 	});
 

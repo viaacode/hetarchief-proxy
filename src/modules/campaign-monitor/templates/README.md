@@ -35,7 +35,7 @@ fe933d54-23ec-43bc-93f6-a1a3f4a68617 (https://meemoo.createsend.com/triggered/wo
 			"local_cp_id": "local cp id van het item",
 			"pid": "meemoo id",
 			"page_url": "https://qas.hetarchief.be/item-url",
-			"request_type": "bekijken/herbruiken/meer info",
+			"request_type": "bekijken/herbruiken/meer info/hergebruik voor sleutelgebruikers",
 			"request_description": "input invulveld gebruiker",
 			"material_request_id": "uuid van de materiaalaanvraag",
 			"request_url": "https://qas.hetarchief.be/...?materialRequest=<id> (link naar de materiaalaanvraag op het platform)",
@@ -44,7 +44,8 @@ fe933d54-23ec-43bc-93f6-a1a3f4a68617 (https://meemoo.createsend.com/triggered/wo
 	],
 	"user_request_context": "beroepsdoeleinden/onderzoek/...",
 	"user_organisation": "organisatie van de gebruiker",
-	"user_email": "mailadres van de eindgebruiker"
+	"user_email": "mailadres van de eindgebruiker",
+	"request_list_type": "simple | complex | mixed (enkel gewone, enkel uitgebreide of beide soorten aanvragen)"
 }
 
 ```
@@ -79,7 +80,7 @@ f93e7d47-5974-4965-a327-72471f5a0d4d (https://meemoo.createsend.com/triggered/wo
 			"local_cp_id": "local cp id van het item",
 			"pid": "meemoo id",
 			"page_url": "https://qas.hetarchief.be/item-url",
-			"request_type": "bekijken/herbruiken/meer info",
+			"request_type": "bekijken/herbruiken/meer info/hergebruik voor sleutelgebruikers",
 			"request_description": "input invulveld gebruiker",
 			"material_request_id": "uuid van de materiaalaanvraag",
 			"request_url": "https://qas.hetarchief.be/...?materialRequest=<id> (link naar de materiaalaanvraag op het platform)",
@@ -88,6 +89,8 @@ f93e7d47-5974-4965-a327-72471f5a0d4d (https://meemoo.createsend.com/triggered/wo
 	],
 	"user_request_context": "beroepsdoeleinden/onderzoek/...",
 	"user_organisation": "organisatie van de gebruiker",
-	"user_email": "mailadres van de eindgebruiker"
+	"user_email": "mailadres van de eindgebruiker",
+	"request_list_type": "simple | complex | mixed (enkel gewone, enkel uitgebreide of beide soorten aanvragen)",
+	"evaluate_requests_url": "https://qas.hetarchief.be/beheer/materiaalaanvragen (link naar de uitgebreide aanvraag als er maar 1 is, anders naar het overzicht)"
 }
 ```

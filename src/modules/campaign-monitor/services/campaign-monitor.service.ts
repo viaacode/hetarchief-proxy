@@ -38,6 +38,7 @@ import {
 	ConsentToTrackOption,
 	EmailTemplate,
 	type MaterialRequestEmailInfo,
+	MaterialRequestListType,
 	type VisitEmailInfo,
 } from '../campaign-monitor.types';
 import {
@@ -516,27 +517,35 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 				emailInfo.language === Lookup_Languages_Enum.En
 					? 'en/management/item-requests'
 					: 'beheer/materiaalaanvragen';
+			const requestList = emailInfo.materialRequests.map((materialRequest) => ({
+				...this.convertMaterialRequestToEmailTemplateFields(materialRequest, emailInfo.language),
+				request_url: stringifyUrl({
+					url: `${this.configService.get('CLIENT_HOST')}/${requestUrl}`,
+					query: {
+						materialRequest: materialRequest.id,
+					},
+				}),
+			}));
+			const complexRequests = requestList.filter((request) => request.is_complex_reuse_flow);
 
 			return {
 				user_firstname: emailInfo.requesterFirstName,
 				user_lastname: emailInfo.requesterLastName,
 				cp_name: emailInfo.materialRequests[0]?.maintainerName,
 				cp_email: emailInfo.materialRequests[0]?.contactMail,
-				request_list: emailInfo.materialRequests.map((materialRequest) => ({
-					...this.convertMaterialRequestToEmailTemplateFields(materialRequest, emailInfo.language),
-					request_url: stringifyUrl({
-						url: `${this.configService.get('CLIENT_HOST')}/${requestUrl}`,
-						query: {
-							materialRequest: materialRequest.id,
-						},
-					}),
-				})),
+				request_list: requestList,
 				user_request_context: MATERIAL_REQUEST_REQUESTER_CAPACITY_TRANSLATIONS(
 					emailInfo.language,
 					this.translationsService
 				)[emailInfo.sendRequestListDto.type],
 				user_organisation: emailInfo.sendRequestListDto.organisationName,
 				user_email: emailInfo.materialRequests[0]?.requesterMail,
+				request_list_type: this.getMaterialRequestListType(emailInfo.materialRequests),
+				// Link directly to the extended request if there is only one, otherwise to the overview
+				evaluate_requests_url:
+					complexRequests.length === 1
+						? complexRequests[0].request_url
+						: `${this.configService.get('CLIENT_HOST')}/${requestUrl}`,
 			};
 		}
 
@@ -564,7 +573,25 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 			)[emailInfo.sendRequestListDto.type],
 			user_organisation: emailInfo.sendRequestListDto.organisationName,
 			user_email: emailInfo.materialRequests[0]?.requesterMail,
+			request_list_type: this.getMaterialRequestListType(emailInfo.materialRequests),
 		};
+	}
+
+	private isComplexReuseFlow(materialRequest: MaterialRequest): boolean {
+		return (
+			materialRequest.type === Lookup_App_Material_Request_Type_Enum.Reuse &&
+			!!materialRequest.reuseForm
+		);
+	}
+
+	private getMaterialRequestListType(materialRequests: MaterialRequest[]): MaterialRequestListType {
+		const hasComplexRequests = materialRequests.some((request) => this.isComplexReuseFlow(request));
+		const hasSimpleRequests = materialRequests.some((request) => !this.isComplexReuseFlow(request));
+
+		if (hasComplexRequests && hasSimpleRequests) {
+			return MaterialRequestListType.MIXED;
+		}
+		return hasComplexRequests ? MaterialRequestListType.COMPLEX : MaterialRequestListType.SIMPLE;
 	}
 
 	public convertMaterialRequestsToAdditionalConditionsEmailTemplateData(
@@ -586,6 +613,7 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 		materialRequest: MaterialRequest,
 		language: Locale
 	) {
+		const isComplexReuseFlow = this.isComplexReuseFlow(materialRequest);
 		return {
 			title: materialRequest.objectSchemaName,
 			local_cp_id: materialRequest.objectMeemooLocalId,
@@ -594,12 +622,16 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 			page_url: `${this.configService.get('CLIENT_HOST')}/zoeken/${
 				materialRequest.maintainerSlug
 			}/${materialRequest.objectSchemaIdentifier}`,
-			request_type: MATERIAL_REQUEST_TYPE_TRANSLATIONS(language, this.translationsService)[
-				materialRequest.type
-			],
-			is_complex_reuse_flow:
-				materialRequest.type === Lookup_App_Material_Request_Type_Enum.Reuse &&
-				!!materialRequest.reuseForm,
+			request_type: isComplexReuseFlow
+				? this.translationsService.tText(
+						'modules/campaign-monitor/services/campaign-monitor___hergebruik-voor-sleutelgebruikers',
+						null,
+						language
+					)
+				: MATERIAL_REQUEST_TYPE_TRANSLATIONS(language, this.translationsService)[
+						materialRequest.type
+					],
+			is_complex_reuse_flow: isComplexReuseFlow,
 			request_description: materialRequest.reason,
 			material_request_id: materialRequest.id,
 		};

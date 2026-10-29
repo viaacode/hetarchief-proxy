@@ -10,6 +10,7 @@ import {
 	type CampaignMonitorUserInfo,
 	EmailTemplate,
 	type MaterialRequestEmailInfo,
+	MaterialRequestListType,
 } from '../campaign-monitor.types';
 import {
 	CampaignMonitorConfirmationData,
@@ -133,6 +134,8 @@ export const mockCampaignMonitorMaterialRequestDataToMaintainer: CampaignMonitor
 		user_request_context: 'Andere',
 		user_organisation: mockMaterialRequestEmailInfo.sendRequestListDto.organisationName,
 		user_email: mockMaterialRequestEmailInfo.materialRequests[0].requesterMail,
+		request_list_type: MaterialRequestListType.SIMPLE,
+		evaluate_requests_url: `${mockConfigService.get('CLIENT_HOST')}/beheer/materiaalaanvragen`,
 	};
 
 export const mockCampaignMonitorMaterialRequestDataToRequester: CampaignMonitorMaterialRequestData =
@@ -143,6 +146,7 @@ export const mockCampaignMonitorMaterialRequestDataToRequester: CampaignMonitorM
 		user_request_context: 'Andere',
 		user_organisation: mockMaterialRequestEmailInfo.sendRequestListDto.organisationName,
 		user_email: mockMaterialRequestEmailInfo.materialRequests[0].requesterMail,
+		request_list_type: MaterialRequestListType.SIMPLE,
 	};
 
 export const mockNewsletterTemplateDataWithNewsletter = {

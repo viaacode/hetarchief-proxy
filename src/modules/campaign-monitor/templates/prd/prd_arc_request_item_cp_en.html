@@ -897,32 +897,51 @@
 										<li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">Meemoo identifier: {{ item.pid }}</li>
 										<li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">Item URL: {{ item.page_url }}</li>
 										<li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">User question: {{ item.request_type }}</li>
+										{% if item.is_complex_reuse_flow %}
+										<li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">More information about the request: <a style="text-decoration: underline;transition: opacity 0.1s ease-in;color: #009690;" href="{{ item.request_url }}">view the completed form</a></li>
+										{% else %}
 										<li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">More information about the request: {{ item.request_description }}</li>
+										{% endif %}
 									</ul>
-									{% if item.is_complex_reuse_flow %}
-									<p style="Margin-top: 12px;Margin-bottom: 0;">This is an extended request for reuse. This request will be handled further on hetarchief.be. <a style="text-decoration: underline;transition: opacity 0.1s ease-in;color: #009690;" href="{{ item.request_url }}">View and evaluate the material request</a></p>
-									{% endif %}
 									<p style="color: #00C8AA">___</p>
 									{% endfor %}
 
+									{% if request_list_type == "complex" %}
+									<p style="Margin-top: 20px;Margin-bottom: 0;">Below you will find the requester's details:</p>
+									{% elsif request_list_type == "mixed" %}
+									<p style="Margin-top: 20px;Margin-bottom: 0;">Below you will find the requester's details:</p>
+									{% else %}
 									<p style="Margin-top: 20px;Margin-bottom: 0;">You can use these details to respond to the user's
 										request: </p>
+									{% endif %}
 									<ul style="Margin-top: 20px;Margin-bottom: 20px;Margin-left: 24px;padding: 0;list-style-type: disc;">
 										<li style="Margin-top: 20px;Margin-bottom: 0;Margin-left: 0;">First name: {{ user_firstname }}</li>
 										<li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">Surname: {{ user_lastname }}</li>
 										<li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">Email: {{ user_email }}</li>
+										{% if request_list_type == "complex" %}
+										<li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">Type: key user</li>
+										{% elsif request_list_type == "mixed" %}
+										<li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">Type: key user</li>
+										{% else %}
 										<li style="Margin-top: 0;Margin-bottom: 0;Margin-left:
 0;">Type: {{ user_request_context }}</li>
+										{% endif %}
 										<li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">Organisation (optional): {{ user_organisation }}</li>
 									</ul>
 								</div>
 							</div>
 
 							<div style="Margin-left: 20px;Margin-right: 20px;">
+								{% if request_list_type == "complex" %}
+								<p style="Margin-top: 20px;Margin-bottom: 0;">To approve the request as an <strong>evaluator</strong> (with or without additional conditions) or to reject it, <a style="text-decoration: underline;transition: opacity 0.1s ease-in;color: #009690;" href="{{ evaluate_requests_url }}">view the request here</a> on hetarchief.be.</p>
+								{% elsif request_list_type == "mixed" %}
+								<p style="Margin-top: 20px;Margin-bottom: 0;">To approve the above request for <strong>reuse as a key user</strong> (with or without additional conditions) or to reject it: <a style="text-decoration: underline;transition: opacity 0.1s ease-in;color: #009690;" href="{{ evaluate_requests_url }}">view the request here</a> on hetarchief.be. All other types of requests are handled outside the platform. You can direct the user to the visitor tool for these items, or process the request in another way. On thearchives.be, we indicate that each organisation has its own policy regarding consultation, fees, rights clearance and reuse.</p>
+								{% else %}
 								<p style="Margin-top: 20px;Margin-bottom: 0;">Please note: the follow-up of this request is entirely in your
 									hands. You can direct the user to the visitor tool or process the request in another way. On
 									thearchives.be, we indicate that each organisation has its own policy regarding consultation, fees,
 									rights clearance and reuse.</p>
+								{% endif %}
 								<p style="Margin-top: 20px;Margin-bottom: 0;">Thank you in advance for handling this request promptly,<br>Team
 									meemoo</p>
 

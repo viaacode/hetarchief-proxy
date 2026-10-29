@@ -16,6 +16,7 @@ import {
 	type CampaignMonitorShareFolderInfo,
 	ConsentToTrackOption,
 	EmailTemplate,
+	MaterialRequestListType,
 } from '../campaign-monitor.types';
 
 export class CampaignMonitorVisitData {
@@ -117,6 +118,18 @@ export class CampaignMonitorMaterialRequestData {
 	@IsString()
 	@IsOptional()
 	cp_email?: string;
+
+	@IsEnum(MaterialRequestListType)
+	@IsOptional()
+	request_list_type?: MaterialRequestListType;
+
+	/**
+	 * Maintainer email only: link to evaluate the extended material requests for reuse on hetarchief.be
+	 * Points to the request itself if there is only one, otherwise to the material requests overview
+	 */
+	@IsString()
+	@IsOptional()
+	evaluate_requests_url?: string;
 }
 
 export class CampaignMonitorConfirmationData {

@@ -901,11 +901,12 @@
 										<li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">Meemoo identifier: {{ item.pid }}</li>
 										<li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">Item URL: {{ item.page_url }}</li>
 										<li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">Your request type: {{ item.request_type }}</li>
+										{% if item.is_complex_reuse_flow %}
+										<li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">More information: <a style="text-decoration: underline;transition: opacity 0.1s ease-in;color: #009690;" href="{{ item.request_url }}">view your completed form</a></li>
+										{% else %}
 										<li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">More information: {{ item.request_description }}</li>
+										{% endif %}
 									</ul>
-									{% if item.is_complex_reuse_flow %}
-									<p style="Margin-top: 12px;Margin-bottom: 0;">This is an extended request for reuse. Your request will be handled further on hetarchief.be. <a style="text-decoration: underline;transition: opacity 0.1s ease-in;color: #009690;" href="{{ item.request_url }}">View your material request</a></p>
-									{% endif %}
 									<p style="color: #00C8AA">___</p>
 									{% endfor %}
 
@@ -915,8 +916,11 @@
 										<li style="Margin-top: 20px;Margin-bottom: 0;Margin-left: 0;">First name: {{ user_firstname }}</li>
 										<li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">Surname: {{ user_lastname }}</li>
 										<li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">Email: {{ user_email }}</li>
+										{% if request_list_type == "complex" %}
+										{% else %}
 										<li style="Margin-top: 0;Margin-bottom: 0;Margin-left:
 0;">Context: {{ user_request_context }}</li>
+										{% endif %}
 										<li style="Margin-top: 0;Margin-bottom: 0;Margin-left: 0;">Organisation (optional): {{ user_organisation }}</li>
 									</ul>
 								</div>

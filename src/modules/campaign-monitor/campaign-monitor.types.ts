@@ -31,6 +31,18 @@ export enum EmailTemplate {
 	CAMPAIGN_MONITOR_TEMPLATE_REPORT_METADATA_ISSUE_IE_OBJECT = 'CAMPAIGN_MONITOR_TEMPLATE_REPORT_METADATA_ISSUE_IE_OBJECT',
 }
 
+/**
+ * Indicates which kind of material requests are in the request list of a material request email
+ * simple: only regular material requests (view, more info, reuse without reuse form)
+ * complex: only extended material requests for reuse (key users, with reuse form, handled on hetarchief.be)
+ * mixed: both regular and extended material requests
+ */
+export enum MaterialRequestListType {
+	SIMPLE = 'simple',
+	COMPLEX = 'complex',
+	MIXED = 'mixed',
+}
+
 export interface VisitEmailInfo {
 	to: Recipient[];
 	replyTo: string;
