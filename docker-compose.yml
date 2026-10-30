@@ -15,3 +15,31 @@ services:
       - ./package-lock.json:/app/package-lock.json
       - /app/node_modules
       - /app/dist
+  # Image resize service used by /images (see INFRA-2030), run with: docker compose up imagor
+  imagor:
+    image: shumc/imagor:1.9.8
+    container_name: hetarchief-imagor
+    ports:
+      - 8000:8000
+    environment:
+      PORT: 8000
+      IMAGOR_SECRET: local-imagor-secret
+      IMAGOR_SIGNER_TYPE: sha256
+      HTTP_LOADER_ALLOWED_SOURCES: "*.hetarchief.be,*.viaa.be"
+      HTTP_LOADER_BLOCK_PRIVATE_NETWORKS: 1
+      HTTP_LOADER_BLOCK_LOOPBACK_NETWORKS: 1
+      HTTP_LOADER_BLOCK_LINK_LOCAL_NETWORKS: 1
+      HTTP_LOADER_MAX_ALLOWED_SIZE: 52428800
+      IMAGOR_BASE_PARAMS: "filters:no_upscale():quality(80)"
+      VIPS_STRIP_METADATA: 1
+      VIPS_MAX_WIDTH: 8000
+      VIPS_MAX_HEIGHT: 8000
+      VIPS_MAX_RESOLUTION: 100000000
+      VIPS_MAX_ANIMATION_FRAMES: 100
+      IMAGOR_PROCESS_CONCURRENCY: 4
+      IMAGOR_PROCESS_QUEUE_SIZE: 50
+      IMAGOR_LOAD_TIMEOUT: 10s
+      IMAGOR_PROCESS_TIMEOUT: 20s
+      IMAGOR_REQUEST_TIMEOUT: 30s
+      IMAGOR_DISABLE_ERROR_BODY: 1
+      IMAGOR_DISABLE_PARAMS_ENDPOINT: 1

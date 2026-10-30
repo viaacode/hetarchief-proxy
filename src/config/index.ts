@@ -161,6 +161,8 @@ const config = (): Configuration => {
 		ASSET_SERVER_TOKEN_USERNAME: getEnvValue('ASSET_SERVER_TOKEN_USERNAME', true),
 		ASSET_SERVER_BUCKET_NAME: getEnvValue('ASSET_SERVER_BUCKET_NAME', true),
 		TEMP_ASSET_FOLDER: getEnvValue('TEMP_ASSET_FOLDER', false) || '/tmp',
+		IMAGOR_URL: getEnvValue('IMAGOR_URL', false),
+		IMAGOR_SECRET: getEnvValue('IMAGOR_SECRET', false),
 		MULTER_OPTIONS: {
 			dest: getEnvValue('TEMP_ASSET_FOLDER', false) || '/tmp',
 			limits: {

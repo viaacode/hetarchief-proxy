@@ -36,6 +36,10 @@ export const mockConfigService = {
 				return 'http://elasticsearch'; // should be a syntactically valid url
 			case 'TICKET_SERVICE_URL':
 				return 'http://ticketservice';
+			case 'IMAGOR_URL':
+				return 'http://imagor';
+			case 'IMAGOR_SECRET':
+				return 'mysecret';
 			case 'MEDIA_SERVICE_URL':
 				return 'http://mediaservice';
 			case 'ENVIRONMENT':
