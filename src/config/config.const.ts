@@ -39,6 +39,8 @@ export const configValidationSchema = Joi.object({
 	ASSET_SERVER_TOKEN_USERNAME: Joi.string(),
 	ASSET_SERVER_BUCKET_NAME: Joi.string(),
 	TEMP_ASSET_FOLDER: Joi.string().allow(''),
+	IMAGOR_URL: Joi.string(),
+	IMAGOR_SECRET: Joi.string(),
 	MEEMOO_ADMIN_ORGANIZATION_IDS: Joi.string(),
 	REROUTE_EMAILS_TO: Joi.string().allow(''),
 	ELASTICSEARCH_LOG_QUERIES: Joi.boolean().default(false),

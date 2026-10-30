@@ -13,6 +13,7 @@ import { ContentPartnersModule } from '~modules/content-partners';
 import { EventsModule } from '~modules/events';
 import { FoldersModule } from '~modules/folders';
 import { IeObjectsModule } from '~modules/ie-objects';
+import { ImagesModule } from '~modules/images';
 import { MaterialRequestMessagesModule } from '~modules/material-request-messages';
 import { MaterialRequestsModule } from '~modules/material-requests';
 import { MediahavenJobsWatcherModule } from '~modules/mediahaven-jobs-watcher/mediahaven-jobs-watcher.module';
@@ -69,6 +70,7 @@ checkRequiredEnvs(['ADMIN_CORE_ROUTES_PREFIX']);
 		SitemapModule,
 		MediahavenJobsWatcherModule,
 		ThemesModule,
+		ImagesModule,
 	],
 	controllers: [],
 	providers: [

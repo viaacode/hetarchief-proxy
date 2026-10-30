@@ -64,6 +64,8 @@ export interface Configuration {
 	ASSET_SERVER_TOKEN_USERNAME: string;
 	ASSET_SERVER_BUCKET_NAME: string;
 	TEMP_ASSET_FOLDER: string;
+	IMAGOR_URL: string;
+	IMAGOR_SECRET: string;
 	MULTER_OPTIONS: MulterOptions;
 	MEEMOO_ADMIN_ORGANIZATION_IDS: string;
 	REROUTE_EMAILS_TO: string;
