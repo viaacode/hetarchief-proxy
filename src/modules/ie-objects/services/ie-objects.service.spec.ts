@@ -312,10 +312,12 @@ describe('ieObjectsService', () => {
 		it('returns the full object details as retrieved from the DB', async () => {
 			// Mock the ie object
 			const objectIeMock = cloneDeep(mockIeObject2);
+			(objectIeMock.getIeObject[0] as any).haDesLicenseDistributors = [
+				{ hades_license_distributor: mockIeObjectRightsInfo.licenseDistributor },
+			];
 			(objectIeMock.getIeObject[0] as any).rights = {
 				reuse_label: mockIeObjectRightsInfo.reuseLabel,
 				reuse_category_id: mockIeObjectRightsInfo.reuseCategoryUrl,
-				ha_des_license_distributor: mockIeObjectRightsInfo.licenseDistributor,
 				reuse_category: {
 					id: mockIeObjectRightsInfo.reuseCategoryId,
 					label: mockIeObjectRightsInfo.reuseCategoryLabel,
@@ -435,10 +437,12 @@ describe('ieObjectsService', () => {
 
 		it('maps rights info from graph.rights when available', async () => {
 			const objectIeMock = cloneDeep(mockIeObject2);
+			(objectIeMock.getIeObject[0] as any).haDesLicenseDistributors = [
+				{ hades_license_distributor: 'VRT' },
+			];
 			(objectIeMock.getIeObject[0] as any).rights = {
 				reuse_label: 'CC0',
 				reuse_category_id: RightsLabel.CC0,
-				ha_des_license_distributor: 'VRT',
 				reuse_category: {
 					id: RightsLabel.CC0,
 					label: 'CC0',
@@ -473,10 +477,12 @@ describe('ieObjectsService', () => {
 					schema_license: HetArchiefIeObjectLicense.INTRA_CP_CONTENT,
 				},
 			];
+			(objectIeMock.getIeObject[0] as any).haDesLicenseDistributors = [
+				{ hades_license_distributor: 'ATV' },
+			];
 			(objectIeMock.getIeObject[0] as any).rights = {
 				reuse_label: 'Auteursrechtelijk beschermd',
 				reuse_category_id: RightsLabel.IN_COPYRIGHT,
-				ha_des_license_distributor: 'ATV',
 				reuse_category: {
 					id: RightsLabel.IN_COPYRIGHT,
 					label: 'Auteursrechtelijk beschermd',

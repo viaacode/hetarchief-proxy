@@ -519,6 +519,7 @@ export const mockIeObject2: GetIeObjectDetailQuery = {
 			ebucoreSynopses: [],
 			schema_number_of_pages: null,
 			premis_is_part_of: null,
+			haDesLicenseDistributors: [],
 			schemaMaintainer: {
 				org_identifier: 'OR-x05xc02',
 				skos_pref_label: 'Stadsarchief Ieper',

@@ -23,10 +23,12 @@ query getIeObjectDetail($ieObjectId: String!) {
 		}
 		schema_number_of_pages: ha_des_number_of_pages
 		premis_is_part_of: relation_is_part_of
+		haDesLicenseDistributors(order_by: { hades_license_distributor: asc }) {
+			hades_license_distributor
+		}
 		rights {
 			reuse_label
 			reuse_category_id
-			ha_des_license_distributor
 			reuse_category {
 				id
 				label

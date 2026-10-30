@@ -828,6 +828,11 @@ export class IeObjectsService {
 				licenses.includes(HetArchiefIeObjectLicense.INTRA_CP_CONTENT) ||
 				licenses.includes(HetArchiefIeObjectLicense.BEZOEKERTOOL_CONTENT));
 		const rights = shouldExposeRightsInfo ? ie?.rights : undefined;
+		// The license distributor is synced from the MAM into graph.hades_license_distributor,
+		// replacing the static value in graph.rights. See ARC-3837.
+		const licenseDistributor = compact(
+			ie?.haDesLicenseDistributors?.map((item) => item.hades_license_distributor)
+		).join(', ');
 
 		// Themes are editorial labels on publicly disclosed objects, so they must not travel in the
 		// response for anything else, the same way rights info is withheld above. Without this the
@@ -989,7 +994,7 @@ export class IeObjectsService {
 						reuseCategoryId: rights.reuse_category_id,
 						reuseCategoryLabel: rights.reuse_category?.label,
 						reuseCategoryGroup: rights.reuse_category?.group,
-						licenseDistributor: rights.ha_des_license_distributor || undefined,
+						licenseDistributor: licenseDistributor || undefined,
 					}
 				: undefined,
 			pages: ieObjectByPages?.pages || [],
